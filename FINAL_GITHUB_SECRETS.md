@@ -28,13 +28,13 @@ Name: DB_HOST
 Value: db.winnmedia.co.kr
 
 Name: DB_NAME
-Value: dbwinnmedia
-
-Name: DB_USER
 Value: winnmedia
 
+Name: DB_USER
+Value: dbwinnmedia
+
 Name: DB_PASSWORD
-Value: dnlsdos123
+Value: dnlsdos123!
 ```
 
 ### 🤖 Twelve Labs API
@@ -56,7 +56,7 @@ Value: VideoPlanet
 ## ⚠️ DB_PASSWORD 확인 필요
 
 데이터베이스 비밀번호가 확실하지 않습니다. 다음 중 하나일 가능성:
-- `dnlsdos123$` (가비아 계정 비밀번호와 동일)
+- `dnlsdos123!` (가비아 계정 비밀번호와 동일)
 - 별도로 설정한 데이터베이스 전용 비밀번호
 
 My가비아에서 데이터베이스 정보를 확인해주세요!

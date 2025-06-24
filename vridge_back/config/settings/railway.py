@@ -31,12 +31,12 @@ DJANGO_APPS = [
 ]
 
 PROJECT_APPS = [
-    "core",
-    "users",
-    "projects",
-    "feedbacks",
-    "onlines",
-    "video_analysis",
+    # "core",
+    # "users", 
+    # "projects",
+    # "feedbacks",
+    # "onlines",
+    # "video_analysis",
 ]
 
 THIRD_PARTY_APPS = [
@@ -152,8 +152,8 @@ SIMPLE_JWT = {
 TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY')
 TWELVE_LABS_INDEX_ID = os.environ.get('TWELVE_LABS_INDEX_ID')
 
-# 사용자 모델
-AUTH_USER_MODEL = "users.User"
+# 사용자 모델 (기본 User 사용)
+# AUTH_USER_MODEL = "users.User"
 
 # 보안 헤더
 SECURE_BROWSER_XSS_FILTER = True

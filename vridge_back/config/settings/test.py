@@ -25,12 +25,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls_simple'
 
-# 데이터베이스 - SQLite로 테스트
+# 데이터베이스 - PostgreSQL 테스트
+import dj_database_url
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')),
+        conn_max_age=600,
+    )
 }
 
 # 정적파일

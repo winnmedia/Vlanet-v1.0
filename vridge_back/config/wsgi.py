@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 
 import os
 
-# 강제로 설정 모듈 지정
-os.environ["DJANGO_SETTINGS_MODULE"] = "config.settings.test"
+# 기본 설정 사용 (이미 안전한 버전으로 교체됨)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 from django.core.wsgi import get_wsgi_application
 

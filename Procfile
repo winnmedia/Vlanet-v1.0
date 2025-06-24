@@ -1,2 +1,2 @@
-web: DJANGO_SETTINGS_MODULE=config.settings.test gunicorn --pythonpath vridge_back config.wsgi:application --bind 0.0.0.0:$PORT
-release: DJANGO_SETTINGS_MODULE=config.settings.test python manage.py migrate
+web: gunicorn --pythonpath vridge_back config.wsgi:application --bind 0.0.0.0:$PORT
+release: python manage.py migrate

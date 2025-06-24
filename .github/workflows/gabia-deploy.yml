@@ -28,7 +28,7 @@ jobs:
     - name: 🏗️ Build React Frontend
       run: |
         cd vridge_front
-        npm ci
+        npm install
         npm run build
         echo "✅ Frontend build completed"
         

@@ -37,7 +37,7 @@ jobs:
         echo "✅ Backend dependencies installed"
         
     - name: 🚀 Deploy to Gabia via SSH
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.GABIA_HOST }}
         username: ${{ secrets.GABIA_USERNAME }}
@@ -86,7 +86,7 @@ jobs:
         strip_components: 2
         
     - name: ⚙️ Configure Gabia Server
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.GABIA_HOST }}
         username: ${{ secrets.GABIA_USERNAME }}
@@ -139,7 +139,7 @@ jobs:
           echo "✅ Django configuration completed"
           
     - name: 🌐 Setup Web Server Configuration  
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.GABIA_HOST }}
         username: ${{ secrets.GABIA_USERNAME }}
@@ -220,7 +220,7 @@ jobs:
           echo "✅ Web server configuration completed"
           
     - name: 🧪 Test Deployment
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.GABIA_HOST }}
         username: ${{ secrets.GABIA_USERNAME }}

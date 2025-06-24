@@ -5,13 +5,13 @@
 ### 🏠 가비아 호스팅 정보
 ```
 Name: GABIA_HOST
-Value: winnmedia
+Value: winnmedia.co.kr
 
 Name: GABIA_USERNAME
-Value: sukkeun17
+Value: winnmedia
 
 Name: GABIA_PASSWORD
-Value: dnlsdos123$
+Value: dnlsdos123
 
 Name: GABIA_DOMAIN
 Value: vlanet.net
@@ -20,8 +20,7 @@ Value: vlanet.net
 ### 🔧 Django 설정
 ```
 Name: DJANGO_SECRET_KEY
-Value: django-insecure-/=mpPQ]{7dr6+Y<W4CT 2fSe9V>i-v?Xuh.(2/>=P+y&j,f)3_
-```
+Value: django-insecure-DcuaI3zQmYubdwPqXgkCQgJkfZJCeiJ5NM7-HqsgEQRUADnZeb
 
 ### 🗄️ 가비아 데이터베이스 정보
 ```

@@ -1,11 +1,13 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "NIXPACKS",
+    "buildCommand": "pip install -r vridge_back/requirements.txt && cd vridge_front && npm install && npm run build"
   },
   "deploy": {
     "numReplicas": 1,
     "sleepApplication": false,
-    "restartPolicyType": "ON_FAILURE"
+    "restartPolicyType": "ON_FAILURE",
+    "startCommand": "cd vridge_back && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
   }
 }

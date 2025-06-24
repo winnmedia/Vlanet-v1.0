@@ -39,4 +39,4 @@ RUN mkdir -p /app/vridge_back/staticfiles
 EXPOSE 8000
 
 # Run the application (WhiteNoise handles static files)
-CMD ["gunicorn", "--pythonpath", "vridge_back", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD bash -c "gunicorn --pythonpath vridge_back config.wsgi:application --bind 0.0.0.0:\${PORT:-8000}"

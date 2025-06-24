@@ -36,8 +36,25 @@ def db_test(request):
         <p><strong>DATABASE_URL:</strong> {os.environ.get('DATABASE_URL', 'Not set')}</p>
         """)
 
+def debug_all(request):
+    """모든 요청에 대한 디버그 정보"""
+    return HttpResponse(f"""
+    <h1>🔍 Debug Info</h1>
+    <p><strong>Path:</strong> {request.path}</p>
+    <p><strong>Method:</strong> {request.method}</p>
+    <p><strong>Available URLs:</strong></p>
+    <ul>
+        <li><a href="/">/ - Home</a></li>
+        <li><a href="/health/">health/ - Health Check</a></li>
+        <li><a href="/db/">db/ - Database Test</a></li>
+        <li><a href="/debug/">debug/ - This page</a></li>
+    </ul>
+    <p><strong>Django Settings:</strong> {os.environ.get('DJANGO_SETTINGS_MODULE', 'Not set')}</p>
+    """)
+
 urlpatterns = [
     path('', home, name='home'),
     path('health/', health, name='health'),
     path('db/', db_test, name='db_test'),
+    path('debug/', debug_all, name='debug'),
 ]

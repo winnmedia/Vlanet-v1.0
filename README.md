@@ -15,7 +15,7 @@ VideoPlanet은 **Twelve Labs AI**를 활용한 차세대 영상 분석 및 피�
 - **Django 4.2** - 웹 프레임워크
 - **Django REST Framework** - API 개발
 - **Twelve Labs API** - AI 영상 분석
-- **MySQL** - 데이터베이스 (가비아 호스팅)
+- **PostgreSQL** - 데이터베이스
 - **Redis** - 캐싱 및 세션 관리
 
 ### 프론트엔드
@@ -23,16 +23,16 @@ VideoPlanet은 **Twelve Labs AI**를 활용한 차세대 영상 분석 및 피�
 - **Modern CSS** - 반응형 디자인
 
 ### 🚀 배포 & 인프라
-- **GitHub Actions** - CI/CD 자동화
-- **가비아 웹호스팅** - 프로덕션 환경
-- **SSH 자동 배포** - 코드 푸시 시 자동 배포
+- **Railway** - 클라우드 플랫폼
+- **GitHub 자동 배포** - 코드 푸시 시 자동 배포
+- **PostgreSQL** - Railway 통합 데이터베이스
 
 ## 📦 설치 및 실행
 
 ### 🔧 환경 요구사항
 - Node.js 18+
 - Python 3.9+
-- MySQL 8.0+
+- PostgreSQL 14+
 
 ### 🚀 빠른 시작
 
@@ -59,42 +59,37 @@ python manage.py runserver
 # 🌐 http://localhost:8000
 ```
 
-## 🌐 자동 배포
+## 🌐 Railway 자동 배포
 
-### GitHub Actions를 통한 가비아 배포
-이 프로젝트는 **완전 자동화된 배포 시스템**을 구축했습니다!
+### GitHub에서 Railway로 자동 배포
+이 프로젝트는 **Railway**에서 **완전 자동화된 배포**를 지원합니다!
 
 ```bash
 # 코드 수정 후 푸시만 하면 자동 배포!
 git add .
 git commit -m "feat: 새로운 기능 추가"
 git push origin main
-# 🚀 자동으로 가비아 서버에 배포됩니다!
+# 🚀 자동으로 Railway에 배포됩니다!
 ```
 
 ### 📋 배포 과정
 1. **🔧 빌드**: React 앱 빌드, Django 설정
-2. **📤 업로드**: SSH를 통해 가비아 서버에 파일 전송
-3. **⚙️ 설정**: Django 마이그레이션, 정적 파일 수집
-4. **🌐 웹서버**: Apache 설정, CGI 스크립트 구성
-5. **🧪 테스트**: 배포 후 자동 동작 확인
+2. **📦 설치**: Python/Node.js 의존성 설치
+3. **🗄️ 데이터베이스**: PostgreSQL 자동 마이그레이션
+4. **📁 정적파일**: collectstatic 자동 실행
+5. **🌐 배포**: Gunicorn으로 Django 서버 시작
 
 ## 🔐 환경 설정
 
-### GitHub Secrets 설정 필요
+### Railway 환경변수 설정
 ```
-GABIA_HOST=your-domain.com
-GABIA_USERNAME=호스팅계정명
-GABIA_PASSWORD=호스팅비밀번호
-GABIA_DOMAIN=your-domain.com
-
-DJANGO_SECRET_KEY=django-secret-key
-DB_NAME=database_name
-DB_USER=database_user
-DB_PASSWORD=database_password
+SECRET_KEY=django-insecure-DcuaI3zQmYubdwPqXgkCQgJkfZJCeiJ5NM7-HqsgEQRUADnZeb
+DJANGO_SETTINGS_MODULE=config.settings.railway
 
 TWELVE_LABS_API_KEY=tlk_your_api_key
 TWELVE_LABS_INDEX_ID=your_index_id
+
+DATABASE_URL=postgresql://... (자동 생성)
 ```
 
 ## 🤖 Twelve Labs AI 연동
@@ -122,13 +117,15 @@ VideoPlanet/
 │   └── package.json
 ├── 🛠 vridge_back/           # Django 백엔드
 │   ├── config/               # Django 설정
+│   │   └── settings/
+│   │       └── railway.py    # Railway 배포 설정
 │   ├── video_analysis/       # Twelve Labs 연동
 │   ├── feedbacks/            # 피드백 관리
 │   └── manage.py
-├── 🚀 .github/workflows/     # GitHub Actions
-│   └── gabia-deploy.yml      # 자동 배포 설정
-├── 📚 docs/                  # 문서
-└── 🔧 scripts/               # 배포 스크립트
+├── 🚀 Procfile              # Railway 배포 명령어
+├── 🔧 nixpacks.toml         # Railway 빌드 설정
+├── 📊 railway.json          # Railway 구성
+└── 📚 RAILWAY_SETUP_GUIDE.md # 배포 가이드
 ```
 
 ## 🎯 주요 기능
@@ -155,15 +152,15 @@ VideoPlanet/
 
 ## 🔗 링크
 
-- **프로덕션**: https://your-domain.com
-- **API 문서**: https://your-domain.com/api/docs/
-- **관리자**: https://your-domain.com/admin/
+- **프로덕션**: https://your-app.railway.app
+- **API 문서**: https://your-app.railway.app/api/docs/
+- **관리자**: https://your-app.railway.app/admin/
 
 ## 👥 팀
 
 - **개발팀**: VideoPlanet Development Team
 - **AI 파트너**: Twelve Labs
-- **호스팅**: 가비아
+- **클라우드**: Railway
 
 ## 📄 라이선스
 
@@ -177,14 +174,15 @@ VideoPlanet/
 - **실시간 영상 분석** 및 피드백
 
 ### 🚀 현대적인 개발 환경
+- **Railway 클라우드 네이티브** 배포
 - **완전 자동화된 CI/CD** 파이프라인
 - **모던 React & Django** 스택
-- **클라우드 네이티브** 아키텍처
 
 ### 💰 비용 효율적인 배포
-- **가비아 웹호스팅** 활용 (월 13,200원)
+- **Railway 호스팅** 활용 (무료 → $5/월)
+- **PostgreSQL** 통합 데이터베이스
 - **Twelve Labs API** 사용량 기반 과금
-- **총 운영비용**: 월 15,000-50,000원
+- **총 운영비용**: 월 무료 → $10 (13,000원)
 
 ---
 

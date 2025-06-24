@@ -1,0 +1,33 @@
+.Header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 30px;
+  .logo {
+    img {
+      width: 150px;
+    }
+  }
+  .profile {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    .nick {
+      width: 40px;
+      height: 40px;
+      background: #516e8b;
+      border-radius: 100%;
+      position: relative;
+      overflow: hidden;
+      line-height: 40px;
+      text-align: Center;
+      font-size: 16px;
+      color: #fff;
+      margin-right: 10px;
+    }
+    .mail {
+      font-size: 13px;
+    }
+  }
+}

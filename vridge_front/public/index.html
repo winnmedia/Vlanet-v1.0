@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <!-- cache -->
+    <meta
+      http-equiv="Cache-Control"
+      content="s-maxage: 86400,max-age=0, no-cache, no-store,must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <!-- iframe 방지 -->
+    <!-- <meta http-equiv="X-Frame-Options" content="deny" /> -->
+
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!--<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" /> -->
+
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="../src/images/favicon/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="../src/images/favicon/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="../src/images/favicon/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="../src/images/favicon/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="../src/images/favicon/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="../src/images/favicon/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="../src/images/favicon/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="../src/images/favicon/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../src/images/favicon/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="../src/images/favicon/android-icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../src/images/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="../src/images/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../src/images/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <meta name="google" content="notranslate" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Vlanet" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <meta
+      name="naver-site-verification"
+      content="6656837f959c6a740f988b06b6b813900d0e79c7"
+    />
+    <title>영상 협업 툴의 신세계 ㅣ 브이래닛 VLANET</title>
+    <meta name="title" content="영상 협업 툴의 신세계 ㅣ 브이래닛 VLANET" />
+    <meta name="subject" content="영상 협업 툴의 신세계 ㅣ 브이래닛 VLANET" />
+    <meta
+      name="description"
+      content="복잡하고 힘든 영상 제작을 이제는 쉽고 체계적으로. 행복한 크리에이터 생활의 시작, 브이래닛"
+    />
+    <meta
+      name="keywords"
+      content="그룹웨어, 협업툴, 사내메신저, 메신저, 협업, 업무분장, 공유캘린더, 일잘러, 업무다이어리, 간트차트, 동영상편집어플, 영상편집, 동영상편집, 영상편집프로그램, 모션그래픽, 동영상보정, 유투브동영상, 유투브영상편집, 유투브편집, 영상제작, 프로덕션, SNS마케팅, 스튜디오촬영, 제품디자인, 동영상만들기, 동영상제작"
+    />
+    <meta
+      property="og:title"
+      content="영상 협업 툴의 신세계 ㅣ 브이래닛 VLANET"
+    />
+    <meta
+      property="og:description"
+      content="복잡하고 힘든 영상 제작을 이제는 쉽고 체계적으로. 행복한 크리에이터 생활의 시작, 브이래닛"
+    />
+
+    <title>Vlanet</title>
+  </head>
+
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+
+  <script type="text/javascript">
+    function setScreenSize() {
+      let vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    }
+    setScreenSize()
+    window.addEventListener('resize', setScreenSize)
+    disableScroll = () => {
+      document
+        .querySelector('body')
+        .addEventListener('touchmove', this.removeEvent, { passive: false })
+      document
+        .querySelector('body')
+        .addEventListener('onclick', this.removeEvent, { passive: false })
+      document
+        .querySelector('body')
+        .addEventListener('mousewheel', this.removeEvent, { passive: false })
+    }
+
+    removeEvent = (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
+    enableScroll = () => {
+      document
+        .querySelector('body')
+        .removeEventListener('touchmove', this.removeEvent)
+      document
+        .querySelector('body')
+        .removeEventListener('onclick', this.removeEvent)
+      document
+        .querySelector('body')
+        .removeEventListener('mousewheel', this.removeEvent)
+    }
+  </script>
+</html>

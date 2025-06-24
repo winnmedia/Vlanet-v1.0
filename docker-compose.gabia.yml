@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: vridge_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-vridge}
+      POSTGRES_USER: ${DB_USER:-vridge}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vridge}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - vridge_network
+
+  # Redis Cache & Channel Layer
+  redis:
+    image: redis:7-alpine
+    container_name: vridge_redis
+    restart: unless-stopped
+    command: >
+      redis-server 
+      --appendonly yes 
+      --requirepass ${REDIS_PASSWORD:-}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - vridge_network
+
+  # Django Backend
+  backend:
+    build:
+      context: ./vridge_back
+      dockerfile: Dockerfile.gabia
+      args:
+        - BUILD_ENV=production
+    container_name: vridge_backend
+    restart: unless-stopped
+    environment:
+      - DJANGO_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - ./logs:/app/logs
+      - ./vridge_back/.env:/app/.env:ro
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/admin/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - vridge_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./vridge_front
+      dockerfile: Dockerfile.gabia
+      args:
+        - BUILD_ENV=production
+        - REACT_APP_BACKEND_URI=${REACT_APP_BACKEND_URI:-http://localhost:8000}
+        - REACT_APP_SOCKET_URI=${REACT_APP_SOCKET_URI:-ws://localhost:8000}
+    container_name: vridge_frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - vridge_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Nginx Proxy (Internal)
+  nginx-internal:
+    image: nginx:alpine
+    container_name: vridge_nginx_internal
+    restart: unless-stopped
+    volumes:
+      - ./nginx/internal.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/var/www/static:ro
+      - media_volume:/var/www/media:ro
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - vridge_network
+    profiles:
+      - internal-proxy
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  static_volume:
+    driver: local
+  media_volume:
+    driver: local
+
+networks:
+  vridge_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

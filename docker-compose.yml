@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: vridge_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-vridge}
+      POSTGRES_USER: ${DB_USER:-vridge}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vridge}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: vridge_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Backend
+  backend:
+    build:
+      context: ./vridge_back
+      dockerfile: Dockerfile
+    container_name: vridge_backend
+    environment:
+      - DJANGO_ENV=development
+    volumes:
+      - ./vridge_back:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             daphne -b 0.0.0.0 -p 8000 config.asgi:application"
+
+  # Frontend
+  frontend:
+    build:
+      context: ./vridge_front
+      dockerfile: Dockerfile
+    container_name: vridge_frontend
+    volumes:
+      - ./vridge_front:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URI=http://localhost:8000
+      - REACT_APP_SOCKET_URI=ws://localhost:8000
+    depends_on:
+      - backend
+
+  # Nginx (for production)
+  nginx:
+    image: nginx:alpine
+    container_name: vridge_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/var/www/static
+      - media_volume:/var/www/media
+      - ./ssl:/etc/ssl/certs
+    depends_on:
+      - backend
+      - frontend
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+
+networks:
+  default:
+    name: vridge_network

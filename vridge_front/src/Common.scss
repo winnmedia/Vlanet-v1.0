@@ -1,0 +1,255 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'suit';
+  line-height: 1.5;
+  font-size: 15px;
+}
+.mt10 {
+  margin-top: 10px;
+}
+.mt20 {
+  margin-top: 20px;
+}
+.mt30 {
+  margin-top: 30px;
+}
+.mt40 {
+  margin-top: 40px;
+}
+.mt50 {
+  margin-top: 50px;
+}
+.mt60 {
+  margin-top: 60px;
+}
+.mt70 {
+  margin-top: 70px;
+}
+.mt80 {
+  margin-top: 80px;
+}
+.mt90 {
+  margin-top: 90px;
+}
+.mt100 {
+  margin-top: 100px;
+}
+.mt110 {
+  margin-top: 110px;
+}
+.mt120 {
+  margin-top: 120px;
+}
+.mt130 {
+  margin-top: 130px;
+}
+.mt140 {
+  margin-top: 140px;
+}
+.mt150 {
+  margin-top: 150px;
+}
+.mt160 {
+  margin-top: 160px;
+}
+.mt170 {
+  margin-top: 170px;
+}
+.mt180 {
+  margin-top: 180px;
+}
+.mt190 {
+  margin-top: 190px;
+}
+.mt200 {
+  margin-top: 200px;
+}
+.float {
+  &:after {
+    content: '';
+    display: block;
+    float: none;
+    clear: both;
+  }
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.pr {
+  position: relative;
+}
+.flex {
+  display: flex;
+}
+.flex.space_between {
+  justify-content: space-between;
+}
+.flex.align_center {
+  align-items: center;
+}
+.flex.justify_center {
+  justify-content: center;
+}
+.tr {
+  text-align: right;
+}
+.tl {
+  text-align: left;
+}
+.tc {
+  text-align: center;
+}
+
+input,
+select,
+button,
+textarea {
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  font-family: 'suit';
+  width: 100%;
+}
+input {
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0;
+}
+input[type='text'].ty01,
+input[type='password'].ty01 {
+  border: 1px solid #eeeeee;
+  border-radius: 15px;
+  padding: 0 15px;
+  height: 54px;
+  font-size: 16px;
+}
+input::placeholder {
+  font-size: 16px;
+  font-family: 'suit';
+  color: #919191;
+}
+input.ty01:focus {
+  background: #fff;
+  box-shadow: 5px 5px 10px #e8e8e8;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+}
+input.ty01:hover {
+  background: #fff;
+  box-shadow: 5px 5px 10px #e8e8e8;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+}
+input[type='radio'] {
+  display: none;
+}
+input[type='radio'].ty02 + label {
+  display: inline-block;
+  width: 100%;
+  padding: 0 0 0 24px;
+  background: url('images/Common/check.png') no-repeat;
+  background-size: 18px;
+  background-position: left 0 top 1px;
+  color: #c1c1c1;
+}
+input[type='radio'].ty02:checked + label {
+  background: url('images/Common/checked.png') no-repeat;
+  background-size: 18px;
+  background-position: left 0 top 1px;
+  color: #0058da;
+  font-weight: Bold;
+}
+
+textarea {
+  border: 1px solid #eeeeee;
+  border-radius: 15px;
+  padding: 15px;
+  min-height: 54px;
+  font-size: 16px;
+}
+textarea::placeholder {
+  font-size: 16px;
+  font-family: 'suit';
+  color: #919191;
+}
+textarea:focus {
+  background: #fff;
+  box-shadow: 5px 5px 10px #e8e8e8;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+}
+textarea:hover {
+  background: #fff;
+  box-shadow: 5px 5px 10px #e8e8e8;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+select::-ms-expand {
+  display: none; /* 화살표 없애기 for IE10, 11*/
+}
+
+button {
+  cursor: pointer;
+}
+button.submit {
+  background: #0031ff;
+  color: #fff;
+  border-radius: 15px;
+  height: 54px;
+  font-size: 18px;
+}
+button.cert {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  background: rgba(0, 74, 193, 0.3);
+  width: 60px;
+  color: #fff;
+  border-radius: 5px;
+  height: 36px;
+  transition: all 0.3s;
+  &:hover {
+    background: #0058da;
+    transition: all 0.3s;
+  }
+}
+span.timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  background: rgba(0, 74, 193, 0.3);
+  width: 60px;
+  color: #fff;
+  border-radius: 5px;
+  height: 36px;
+  text-align: center;
+  align-self: center;
+}

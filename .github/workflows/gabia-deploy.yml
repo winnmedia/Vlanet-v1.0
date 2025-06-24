@@ -1,0 +1,280 @@
+name: Deploy to Gabia Hosting
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🚀 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: vridge_front/package-lock.json
+        
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: 🏗️ Build React Frontend
+      run: |
+        cd vridge_front
+        npm ci
+        npm run build
+        echo "✅ Frontend build completed"
+        
+    - name: 📦 Prepare Django Backend
+      run: |
+        cd vridge_back
+        pip install -r requirements.txt
+        echo "✅ Backend dependencies installed"
+        
+    - name: 🚀 Deploy to Gabia via SSH
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GABIA_HOST }}
+        username: ${{ secrets.GABIA_USERNAME }}
+        password: ${{ secrets.GABIA_PASSWORD }}
+        port: 22
+        script: |
+          echo "🔧 Starting deployment process..."
+          
+          # 백업 생성
+          if [ -d ~/videoplanet ]; then
+            echo "📦 Creating backup..."
+            cp -r ~/videoplanet ~/videoplanet_backup_$(date +%Y%m%d_%H%M%S)
+          fi
+          
+          # 필요한 디렉토리 생성
+          echo "📁 Creating directories..."
+          mkdir -p ~/videoplanet
+          mkdir -p ~/htdocs 2>/dev/null || mkdir -p ~/public_html 2>/dev/null || mkdir -p ~/www
+          
+          # 기존 파일 정리
+          echo "🧹 Cleaning old files..."
+          rm -rf ~/videoplanet/* 2>/dev/null || true
+          
+          echo "✅ Server preparation completed"
+          
+    - name: 📤 Upload Backend Files
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.GABIA_HOST }}
+        username: ${{ secrets.GABIA_USERNAME }}
+        password: ${{ secrets.GABIA_PASSWORD }}
+        port: 22
+        source: "vridge_back/*"
+        target: "/home/${{ secrets.GABIA_USERNAME }}/videoplanet/"
+        strip_components: 1
+        
+    - name: 🌐 Upload Frontend Files
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.GABIA_HOST }}
+        username: ${{ secrets.GABIA_USERNAME }}
+        password: ${{ secrets.GABIA_PASSWORD }}
+        port: 22
+        source: "vridge_front/build/*"
+        target: "/home/${{ secrets.GABIA_USERNAME }}/htdocs/"
+        strip_components: 2
+        
+    - name: ⚙️ Configure Gabia Server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GABIA_HOST }}
+        username: ${{ secrets.GABIA_USERNAME }}
+        password: ${{ secrets.GABIA_PASSWORD }}
+        port: 22
+        script: |
+          cd ~/videoplanet
+          echo "🔧 Configuring Django application..."
+          
+          # Python 패키지 설치
+          echo "📦 Installing Python packages..."
+          pip install -r requirements.txt --user
+          
+          # 환경 변수 설정
+          echo "🔐 Setting up environment variables..."
+          cat > .env << EOF
+          SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          DEBUG=False
+          ALLOWED_HOSTS=${{ secrets.GABIA_DOMAIN }},www.${{ secrets.GABIA_DOMAIN }}
+          
+          # 데이터베이스
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_HOST=localhost
+          DB_PORT=3306
+          
+          # Twelve Labs API
+          TWELVE_LABS_API_KEY=${{ secrets.TWELVE_LABS_API_KEY }}
+          TWELVE_LABS_INDEX_ID=${{ secrets.TWELVE_LABS_INDEX_ID }}
+          
+          # 파일 경로 설정
+          STATIC_ROOT=/home/${{ secrets.GABIA_USERNAME }}/htdocs/static/
+          MEDIA_ROOT=/home/${{ secrets.GABIA_USERNAME }}/htdocs/media/
+          EOF
+          
+          # Django 마이그레이션 및 정적 파일 수집
+          echo "🗃️ Running Django migrations..."
+          python manage.py migrate --settings=config.settings.production
+          
+          echo "📁 Collecting static files..."
+          python manage.py collectstatic --noinput --settings=config.settings.production
+          
+          # 권한 설정
+          echo "🔒 Setting file permissions..."
+          chmod 755 ~/videoplanet
+          chmod 644 ~/videoplanet/*.py 2>/dev/null || true
+          chmod 600 ~/.env
+          
+          echo "✅ Django configuration completed"
+          
+    - name: 🌐 Setup Web Server Configuration  
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GABIA_HOST }}
+        username: ${{ secrets.GABIA_USERNAME }}
+        password: ${{ secrets.GABIA_PASSWORD }}
+        port: 22
+        script: |
+          # 웹 루트 디렉토리 찾기
+          if [ -d ~/htdocs ]; then
+            WEBROOT=~/htdocs
+          elif [ -d ~/public_html ]; then
+            WEBROOT=~/public_html
+          elif [ -d ~/www ]; then
+            WEBROOT=~/www
+          else
+            echo "❌ Web root directory not found"
+            exit 1
+          fi
+          
+          echo "🌐 Setting up web server in $WEBROOT..."
+          cd $WEBROOT
+          
+          # .htaccess 파일 생성
+          echo "📝 Creating .htaccess file..."
+          cat > .htaccess << 'EOF'
+          RewriteEngine On
+          
+          # API 요청을 Django로 전달
+          RewriteRule ^api/(.*)$ /cgi-bin/videoplanet.cgi/$1 [QSA,L]
+          RewriteRule ^admin/(.*)$ /cgi-bin/videoplanet.cgi/admin/$1 [QSA,L]
+          RewriteRule ^ws/(.*)$ /cgi-bin/videoplanet.cgi/ws/$1 [QSA,L]
+          
+          # React Router 지원
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteRule . /index.html [L]
+          
+          # 보안 헤더
+          Header always set X-Frame-Options "SAMEORIGIN"
+          Header always set X-XSS-Protection "1; mode=block"
+          Header always set X-Content-Type-Options "nosniff"
+          
+          # Gzip 압축
+          <IfModule mod_deflate.c>
+              AddOutputFilterByType DEFLATE text/css
+              AddOutputFilterByType DEFLATE application/javascript
+              AddOutputFilterByType DEFLATE application/json
+          </IfModule>
+          EOF
+          
+          # CGI 스크립트 디렉토리 생성
+          echo "🔧 Setting up CGI script..."
+          mkdir -p $WEBROOT/cgi-bin
+          cd $WEBROOT/cgi-bin
+          
+          # Django CGI 스크립트 생성
+          cat > videoplanet.cgi << EOF
+          #!/usr/bin/python3
+          
+          import sys
+          import os
+          
+          # 프로젝트 경로 설정
+          sys.path.insert(0, '/home/${{ secrets.GABIA_USERNAME }}/videoplanet')
+          os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings.production'
+          
+          # Django WSGI 애플리케이션
+          from django.core.wsgi import get_wsgi_application
+          application = get_wsgi_application()
+          
+          # CGI 핸들러
+          from wsgiref.handlers import CGIHandler
+          CGIHandler().run(application)
+          EOF
+          
+          # 실행 권한 부여
+          chmod +x videoplanet.cgi
+          
+          echo "✅ Web server configuration completed"
+          
+    - name: 🧪 Test Deployment
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.GABIA_HOST }}
+        username: ${{ secrets.GABIA_USERNAME }}
+        password: ${{ secrets.GABIA_PASSWORD }}
+        port: 22
+        script: |
+          echo "🧪 Testing deployment..."
+          
+          # Django 앱 테스트
+          cd ~/videoplanet
+          python manage.py check --settings=config.settings.production
+          
+          # 웹 루트 파일 확인
+          if [ -d ~/htdocs ]; then
+            WEBROOT=~/htdocs
+          elif [ -d ~/public_html ]; then
+            WEBROOT=~/public_html  
+          elif [ -d ~/www ]; then
+            WEBROOT=~/www
+          fi
+          
+          if [ -f "$WEBROOT/index.html" ]; then
+            echo "✅ Frontend files deployed successfully"
+          else
+            echo "❌ Frontend files not found"
+          fi
+          
+          if [ -f "$WEBROOT/cgi-bin/videoplanet.cgi" ]; then
+            echo "✅ CGI script deployed successfully"
+          else
+            echo "❌ CGI script not found"
+          fi
+          
+          echo "🎉 Deployment test completed"
+          
+    - name: 📊 Deployment Summary
+      run: |
+        echo "## 🎉 Deployment Completed Successfully!"
+        echo ""
+        echo "### 📋 Deployment Details:"
+        echo "- **Website**: https://${{ secrets.GABIA_DOMAIN }}"
+        echo "- **Admin Panel**: https://${{ secrets.GABIA_DOMAIN }}/admin/"
+        echo "- **Commit**: ${{ github.sha }}"
+        echo "- **Branch**: ${{ github.ref_name }}"
+        echo "- **Actor**: ${{ github.actor }}"
+        echo "- **Timestamp**: $(date)"
+        echo ""
+        echo "### 🔗 Useful Links:"
+        echo "- [Gabia Hosting Management](https://my.gabia.com)"
+        echo "- [Twelve Labs Dashboard](https://playground.twelvelabs.io)"
+        echo ""
+        echo "### 📝 Next Steps:"
+        echo "1. Test website functionality"
+        echo "2. Create Django superuser account"
+        echo "3. Upload test video for AI analysis"

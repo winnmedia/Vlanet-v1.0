@@ -1,0 +1,194 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: videoplanet_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-videoplanet}
+      POSTGRES_USER: ${DB_USER:-videoplanet}  
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-videoplanet}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  redis:
+    image: redis:7-alpine
+    container_name: videoplanet_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 1g --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  backend:
+    build:
+      context: ./vridge_back
+      dockerfile: Dockerfile.gpu
+    container_name: videoplanet_backend
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - DJANGO_ENV=production
+      - PYTHONUNBUFFERED=1
+      - USE_GPU=true
+      - CUDA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - ./logs:/app/logs
+      - ./vridge_back/.env:/app/.env:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
+        generic_resources:
+          - discrete_resource_spec:
+              kind: 'NVIDIA-GPU'
+              value: 1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # GPU 기반 영상 처리 워커
+  video_worker:
+    build:
+      context: ./vridge_back
+      dockerfile: Dockerfile.gpu
+    container_name: videoplanet_video_worker
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - DJANGO_ENV=production
+      - PYTHONUNBUFFERED=1
+      - USE_GPU=true
+      - CUDA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+      - WORKER_TYPE=video_processing
+    volumes:
+      - media_volume:/app/media
+      - ./logs:/app/logs
+      - ./vridge_back/.env:/app/.env:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["poetry", "run", "celery", "-A", "config", "worker", "-l", "info", "-Q", "video_processing", "--concurrency=1"]
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 3G
+        generic_resources:
+          - discrete_resource_spec:
+              kind: 'NVIDIA-GPU'
+              value: 1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  frontend:
+    build:
+      context: ./vridge_front
+      dockerfile: Dockerfile.gcp
+    container_name: videoplanet_frontend
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    depends_on:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # GPU 모니터링
+  gpu_monitor:
+    image: nvidia/cuda:11.8-runtime-ubuntu20.04
+    container_name: videoplanet_gpu_monitor
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    command: |
+      bash -c "
+        apt-get update && apt-get install -y curl python3 python3-pip
+        pip3 install gpustat
+        while true; do
+          echo '=== GPU 상태 $(date) ==='
+          nvidia-smi --query-gpu=timestamp,name,temperature.gpu,utilization.gpu,utilization.memory,memory.total,memory.used,memory.free --format=csv
+          gpustat --json | python3 -m json.tool
+          sleep 60
+        done
+      "
+    volumes:
+      - ./logs:/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+
+networks:
+  default:
+    driver: bridge

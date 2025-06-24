@@ -1,0 +1,193 @@
+name: Deploy to Gabia Hosting
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  GABIA_HOST: ${{ secrets.GABIA_HOST }}
+  GABIA_USERNAME: ${{ secrets.GABIA_USERNAME }}
+  GABIA_DOMAIN: ${{ secrets.GABIA_DOMAIN }}
+
+jobs:
+  deploy:
+    name: Deploy to Gabia Hosting
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 🚀 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: vridge_front/package-lock.json
+        
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: 🏗️ Build Frontend
+      run: |
+        cd vridge_front
+        npm ci
+        npm run build
+        
+    - name: 📦 Prepare Backend
+      run: |
+        cd vridge_back
+        pip install -r requirements.txt
+    
+    - name: 🛑 Stop services (if full restart)
+      if: github.event.inputs.deploy_type == 'full-restart'
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          docker-compose down
+        "
+    
+    - name: 📦 Deploy code to server
+      run: |
+        # 서버에 코드 동기화
+        rsync -avz --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='__pycache__' \
+          --exclude='.env*' \
+          --delete \
+          ./ ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.PROJECT_PATH }}/
+    
+    - name: 🔧 Set execute permissions
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          chmod +x scripts/*.sh
+        "
+    
+    - name: 📝 Create deployment info
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          echo 'Deployment Info:' > deployment-info.txt &&
+          echo 'Date: $(date)' >> deployment-info.txt &&
+          echo 'Commit: ${{ github.sha }}' >> deployment-info.txt &&
+          echo 'Branch: ${{ github.ref_name }}' >> deployment-info.txt &&
+          echo 'Actor: ${{ github.actor }}' >> deployment-info.txt
+        "
+    
+    - name: 🐳 Build and start services
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          
+          # Docker 이미지 빌드 (캐시 활용)
+          docker-compose -f docker-compose.gabia.yml build --pull
+          
+          # 서비스 시작
+          docker-compose -f docker-compose.gabia.yml up -d
+          
+          # 헬스체크 대기
+          echo '⏳ Waiting for services to be ready...'
+          sleep 30
+        "
+    
+    - name: 🏥 Health check
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          
+          # 컨테이너 상태 확인
+          docker-compose -f docker-compose.gabia.yml ps
+          
+          # 백엔드 헬스체크
+          if curl -f http://localhost:8000/admin/ > /dev/null 2>&1; then
+            echo '✅ Backend is healthy'
+          else
+            echo '❌ Backend health check failed'
+            exit 1
+          fi
+          
+          # 프론트엔드 헬스체크  
+          if curl -f http://localhost:3000/ > /dev/null 2>&1; then
+            echo '✅ Frontend is healthy'
+          else
+            echo '❌ Frontend health check failed'
+            exit 1
+          fi
+        "
+    
+    - name: 🔄 Reload Nginx
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          sudo nginx -t && sudo systemctl reload nginx
+        "
+    
+    - name: 📊 Post-deployment status
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          echo '🎉 Deployment completed successfully!' &&
+          echo '📊 Service Status:' &&
+          docker-compose -f docker-compose.gabia.yml ps --format 'table {{.Name}}\t{{.Status}}\t{{.Ports}}' &&
+          echo '' &&
+          echo '💾 Disk Usage:' &&
+          df -h / | tail -1 &&
+          echo '' &&
+          echo '🧠 Memory Usage:' &&
+          free -h | grep Mem
+        "
+    
+    - name: 🧹 Cleanup old Docker images
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          # 사용하지 않는 Docker 이미지 정리
+          docker image prune -f
+          docker container prune -f
+        "
+    
+    - name: 📧 Notify deployment result
+      if: always()
+      run: |
+        STATUS="${{ job.status }}"
+        COMMIT_MSG="${{ github.event.head_commit.message }}"
+        
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          echo 'Deployment $STATUS at $(date)' >> ${{ env.PROJECT_PATH }}/deployment.log &&
+          echo 'Commit: ${{ github.sha }}' >> ${{ env.PROJECT_PATH }}/deployment.log &&
+          echo 'Message: $COMMIT_MSG' >> ${{ env.PROJECT_PATH }}/deployment.log &&
+          echo '---' >> ${{ env.PROJECT_PATH }}/deployment.log
+        "
+
+  # 롤백 작업 (선택사항)
+  rollback:
+    name: Rollback deployment
+    runs-on: ubuntu-latest
+    if: github.event.inputs.deploy_type == 'rollback'
+    
+    steps:
+    - name: 🔑 Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: 🌐 Add server to known hosts
+      run: |
+        ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+    
+    - name: 🔄 Rollback to previous version
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          
+          # Git을 사용한 롤백
+          git reset --hard HEAD~1
+          
+          # 서비스 재시작
+          docker-compose -f docker-compose.gabia.yml down
+          docker-compose -f docker-compose.gabia.yml up --build -d
+          
+          echo '🔄 Rollback completed'
+        "

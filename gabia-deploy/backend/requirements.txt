@@ -1,0 +1,28 @@
+# 가비아 웹호스팅용 패키지
+Django==4.2.7
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+django-storages==1.14.2
+Pillow==10.0.1
+python-dotenv==1.0.0
+channels==4.0.0
+channels-redis==4.1.0
+celery==5.3.4
+django-celery-results==2.5.1
+django-celery-beat==2.5.0
+redis==5.0.1
+mysqlclient==2.2.0
+moviepy==1.0.3
+requests==2.31.0
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Twelve Labs API
+httpx==0.25.0
+
+# 성능 최적화
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# 모니터링 (선택사항)
+sentry-sdk[django]==1.38.0

@@ -1,0 +1,19 @@
+.PageTemplate {
+  overflow-y: scroll;
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &.auth {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &.cmshome {
+    background: url('../images/Home/bg02.png') no-repeat;
+    background-size: cover;
+  }
+}

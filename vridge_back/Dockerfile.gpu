@@ -1,0 +1,122 @@
+# GCP GPU 최적화 Django Dockerfile
+FROM nvidia/cuda:11.8-devel-ubuntu20.04
+
+# 환경 변수 설정
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DJANGO_ENV=production \
+    DEBIAN_FRONTEND=noninteractive \
+    CUDA_HOME=/usr/local/cuda \
+    PATH=/usr/local/cuda/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+# 시스템 의존성 설치 (GPU 지원 포함)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-dev \
+    build-essential \
+    libpq-dev \
+    curl \
+    wget \
+    git \
+    netcat-openbsd \
+    # OpenCV 의존성
+    libopencv-dev \
+    python3-opencv \
+    # 영상 처리 라이브러리
+    ffmpeg \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    # 추가 GPU 지원 라이브러리
+    libnvidia-encode-470 \
+    libnvidia-decode-470 \
+    # 그래픽 라이브러리 (선택적)
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python 패키지 관리자 업데이트
+RUN python3 -m pip install --upgrade pip setuptools wheel
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# Poetry 설치
+RUN pip install poetry
+
+# Poetry 설정 (GPU 환경용)
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VENV_IN_PROJECT=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache \
+    PIP_NO_CACHE_DIR=1
+
+# 의존성 파일 복사
+COPY pyproject.toml poetry.lock* ./
+
+# GPU 지원 파이썬 패키지 설치
+RUN poetry install --no-dev --no-interaction --no-ansi \
+    && poetry run pip install \
+        # PyTorch GPU 버전
+        torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
+        # TensorFlow GPU 버전
+        tensorflow-gpu==2.13.0 \
+        # 영상 처리 라이브러리
+        opencv-python-headless==4.8.0.76 \
+        opencv-contrib-python-headless==4.8.0.76 \
+        # CUDA 가속 영상 처리
+        cupy-cuda11x \
+        # 추가 AI/ML 라이브러리
+        scikit-image \
+        pillow-simd \
+        moviepy \
+        imageio \
+        imageio-ffmpeg \
+        # GPU 모니터링
+        gpustat \
+        pynvml \
+        nvidia-ml-py3 \
+    && rm -rf $POETRY_CACHE_DIR
+
+# 프로젝트 파일 복사
+COPY . .
+
+# 정적 파일 수집
+RUN poetry run python manage.py collectstatic --noinput --clear || true
+
+# 앱 사용자 생성 및 권한 설정
+RUN groupadd -r appuser && useradd -r -g appuser appuser \
+    && mkdir -p /app/staticfiles /app/media /app/logs \
+    && chown -R appuser:appuser /app
+
+# GPU 장치 접근 권한 (런타임에서 처리)
+RUN usermod -a -G video appuser || true
+
+USER appuser
+
+# 포트 노출
+EXPOSE 8000
+
+# GPU 상태 확인 스크립트
+RUN echo '#!/bin/bash\necho "=== GPU 상태 확인 ==="\nnvidia-smi || echo "GPU 정보 확인 실패"\necho "=== CUDA 버전 ==="\nnvcc --version || echo "CUDA 정보 확인 실패"\necho "=== PyTorch GPU 지원 ==="\npython3 -c "import torch; print(f\"CUDA 사용 가능: {torch.cuda.is_available()}\"); print(f\"GPU 개수: {torch.cuda.device_count()}\"); print(f\"현재 GPU: {torch.cuda.current_device() if torch.cuda.is_available() else \"없음\"}\")"\necho "=== TensorFlow GPU 지원 ==="\npython3 -c "import tensorflow as tf; print(f\"GPU 장치: {tf.config.list_physical_devices(\"GPU\")}\")"\necho "=== OpenCV GPU 지원 ==="\npython3 -c "import cv2; print(f\"OpenCV CUDA 지원: {cv2.cuda.getCudaEnabledDeviceCount()}\")"\n' > /app/gpu_check.sh \
+    && chmod +x /app/gpu_check.sh
+
+# 헬스체크 (GPU 포함)
+HEALTHCHECK --interval=60s --timeout=30s --start-period=120s --retries=3 \
+    CMD curl -f http://localhost:8000/health/ || exit 1
+
+# 시작 스크립트
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+USER root
+RUN chmod +x /app/docker-entrypoint.sh
+USER appuser
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["poetry", "run", "daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]

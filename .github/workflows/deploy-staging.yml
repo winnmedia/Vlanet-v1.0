@@ -1,0 +1,149 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ develop, staging ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  SERVER_HOST: ${{ secrets.STAGING_SERVER_HOST || secrets.SERVER_HOST }}
+  SERVER_USER: ${{ secrets.SERVER_USER }}
+  PROJECT_PATH: /var/www/vridge-staging
+
+jobs:
+  staging-deploy:
+    name: Deploy to Staging Environment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: 🚀 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🔑 Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: 🌐 Add server to known hosts
+      run: |
+        ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+    
+    - name: 📦 Deploy to staging
+      run: |
+        # 스테이징 디렉토리 생성
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          sudo mkdir -p ${{ env.PROJECT_PATH }}
+          sudo chown ${{ env.SERVER_USER }}:${{ env.SERVER_USER }} ${{ env.PROJECT_PATH }}
+        "
+        
+        # 코드 동기화
+        rsync -avz --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='__pycache__' \
+          --exclude='.env*' \
+          --delete \
+          ./ ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.PROJECT_PATH }}/
+    
+    - name: 🔧 Configure staging environment
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          
+          # 스테이징용 환경 변수 설정
+          if [ ! -f vridge_back/.env ]; then
+            cp vridge_back/.env.example vridge_back/.env
+            sed -i 's/DEBUG=False/DEBUG=True/' vridge_back/.env
+            sed -i 's/your-domain.com/staging.vlanet.net/' vridge_back/.env
+          fi
+          
+          if [ ! -f vridge_front/.env.staging ]; then
+            cp vridge_front/.env.example vridge_front/.env.staging
+            sed -i 's/production/staging/' vridge_front/.env.staging
+          fi
+          
+          chmod +x scripts/*.sh
+        "
+    
+    - name: 🐳 Start staging services
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          
+          # 다른 포트로 서비스 실행 (충돌 방지)
+          export FRONTEND_PORT=3001
+          export BACKEND_PORT=8001
+          export POSTGRES_PORT=5433
+          export REDIS_PORT=6380
+          
+          # Docker Compose 오버라이드로 포트 변경
+          cat > docker-compose.override.yml << EOF
+services:
+  frontend:
+    ports:
+      - \"127.0.0.1:\${FRONTEND_PORT:-3001}:80\"
+  backend:
+    ports:
+      - \"127.0.0.1:\${BACKEND_PORT:-8001}:8000\"
+  postgres:
+    ports:
+      - \"127.0.0.1:\${POSTGRES_PORT:-5433}:5432\"
+  redis:
+    ports:
+      - \"127.0.0.1:\${REDIS_PORT:-6380}:6379\"
+EOF
+          
+          docker-compose -f docker-compose.gabia.yml up --build -d
+        "
+    
+    - name: 🏥 Staging health check
+      run: |
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} "
+          cd ${{ env.PROJECT_PATH }} && 
+          sleep 30
+          
+          if curl -f http://localhost:8001/admin/ > /dev/null 2>&1; then
+            echo '✅ Staging backend is healthy'
+          else
+            echo '❌ Staging backend health check failed'
+          fi
+          
+          if curl -f http://localhost:3001/ > /dev/null 2>&1; then
+            echo '✅ Staging frontend is healthy'
+          else
+            echo '❌ Staging frontend health check failed'
+          fi
+        "
+
+  # PR 미리보기 (코멘트로 스테이징 URL 제공)
+  pr-preview:
+    name: PR Preview Comment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: 💬 Comment PR with preview info
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## 🔍 PR 미리보기
+            
+            이 PR의 변경사항을 미리 확인할 수 있습니다:
+            
+            - **스테이징 사이트**: http://staging.vlanet.net:3001
+            - **API 엔드포인트**: http://staging.vlanet.net:8001
+            - **커밋**: \`${context.sha.substring(0, 7)}\`
+            
+            ### 테스트 방법
+            1. 위 스테이징 URL에서 기능 테스트
+            2. 문제가 없으면 이 PR을 승인해주세요
+            3. 메인 브랜치 머지 시 자동으로 프로덕션 배포됩니다
+            
+            ---
+            🤖 *이 코멘트는 GitHub Actions에 의해 자동 생성되었습니다*`
+          })

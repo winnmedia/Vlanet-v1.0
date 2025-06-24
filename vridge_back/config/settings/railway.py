@@ -113,7 +113,12 @@ USE_TZ = True
 # 정적 파일 설정
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = []
+
+# WhiteNoise 설정 (collectstatic 없이도 작동)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
 
 # 미디어 파일 설정  
 MEDIA_URL = '/media/'

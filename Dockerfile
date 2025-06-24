@@ -32,12 +32,11 @@ COPY . .
 # Build frontend
 RUN cd vridge_front && npm install && npm run build
 
-# Create staticfiles directory and collect static files
+# Create staticfiles directory
 RUN mkdir -p /app/vridge_back/staticfiles
-RUN DJANGO_SETTINGS_MODULE=config.settings.railway python manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000
 
-# Run the application
+# Run the application (WhiteNoise handles static files)
 CMD ["gunicorn", "--pythonpath", "vridge_back", "config.wsgi:application", "--bind", "0.0.0.0:8000"]

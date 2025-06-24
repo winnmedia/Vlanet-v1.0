@@ -17,8 +17,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: vridge_front/package-lock.json
         
     - name: 🐍 Setup Python
       uses: actions/setup-python@v4

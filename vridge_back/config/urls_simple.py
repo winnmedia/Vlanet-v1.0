@@ -60,13 +60,9 @@ def debug_all(request):
     <p><strong>Django Settings:</strong> {os.environ.get('DJANGO_SETTINGS_MODULE', 'Not set')}</p>
     """)
 
-from django.urls import path, re_path
-
 urlpatterns = [
     path('', home, name='home'),
     path('health/', health, name='health'),
     path('db/', db_test, name='db_test'),
     path('debug/', debug_all, name='debug'),
-    # 모든 다른 요청도 잡아서 디버그 정보 제공
-    re_path(r'^.*/$', debug_all, name='catch_all'),
 ]

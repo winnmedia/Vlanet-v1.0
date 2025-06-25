@@ -1,0 +1,34 @@
+# 간단한 백엔드 전용 Dockerfile (프론트엔드 제외)
+FROM python:3.9-slim
+
+# 시스템 패키지 설치
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# Python 의존성 설치
+COPY vridge_back/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 백엔드 코드 복사
+COPY vridge_back/ ./vridge_back/
+
+# 스크립트 실행 권한
+RUN chmod +x /app/vridge_back/scripts/start-production.sh
+
+# 작업 디렉토리 변경
+WORKDIR /app/vridge_back
+
+# 포트 노출
+EXPOSE 8000
+
+# 환경변수 설정
+ENV DJANGO_SETTINGS_MODULE=config.settings.production
+ENV PYTHONUNBUFFERED=1
+
+# 실행
+CMD ["./scripts/start-production.sh"]

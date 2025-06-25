@@ -53,14 +53,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls_production'
+ROOT_URLCONF = 'config.urls_backend'  # 백엔드 전용
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
-            ROOT_DIR / 'vridge_front' / 'build',  # React 빌드 파일
+            # ROOT_DIR / 'vridge_front' / 'build',  # React 빌드 파일 (프론트엔드 추가 후)
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -108,7 +108,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    ROOT_DIR / 'vridge_front' / 'build' / 'static',
+    # ROOT_DIR / 'vridge_front' / 'build' / 'static',  # 프론트엔드 빌드 후 활성화
 ]
 
 # WhiteNoise configuration

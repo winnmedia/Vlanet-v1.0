@@ -17,8 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM node:18-slim as frontend-builder
 
 WORKDIR /app
-COPY vridge_front/package*.json ./
-RUN npm ci --only=production
+COPY vridge_front/package.json ./
+COPY vridge_front/package-lock.json* ./
+RUN npm install
 
 COPY vridge_front/ ./
 RUN npm run build

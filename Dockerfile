@@ -4,7 +4,8 @@ FROM python:3.9-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=config.settings.railway_no_db
+# Django 설정을 스크립트에서 강제로 설정함
+# ENV DJANGO_SETTINGS_MODULE=config.settings.railway_no_db
 
 # Set work directory
 WORKDIR /app

@@ -2,7 +2,7 @@
   height: 100%;
   padding: 50px;
   position: relative;
-  background: url('../../images/User/bg.png') no-repeat;
+  background: #4A90E2 url('../../images/User/bg.png') no-repeat;
   background-size: cover;
   .intro_wrap {
     .logo {
@@ -15,7 +15,7 @@
       font-size: 57px;
       line-height: 1.24;
       margin-top: 30px;
-      display: none;
+      // display: none;
       span {
         font-weight: bold;
       }
@@ -26,7 +26,7 @@
       bottom: 50px;
       width: 100%;
       padding: 0 50px;
-      display: none;
+      // display: none;
       ul {
         li {
           color: #fff;

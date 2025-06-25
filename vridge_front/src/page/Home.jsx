@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { checkSession } from 'util/util'
 import 'css/Home.scss'
 import logo from 'images/Common/w_logo.svg'
 import icon01 from 'images/Home/icon01.svg'
@@ -36,6 +37,16 @@ import end02 from 'images/Home/new/end-img02.png'
 
 export default function Home() {
   const navigate = useNavigate()
+  
+  const handleNavigate = () => {
+    const session = checkSession()
+    if (session) {
+      navigate('/CmsHome')
+    } else {
+      navigate('/Login')
+    }
+  }
+  
   return (
     <div id="Home">
       <section id="header">
@@ -64,7 +75,7 @@ export default function Home() {
                 </a>
               </li>
             </ul>
-            <button onClick={() => navigate('/Login')} className="submit">
+            <button onClick={handleNavigate} className="submit">
               로그인
             </button>
             {/* <button className="submit">시작하기</button> */}
@@ -98,7 +109,7 @@ export default function Home() {
           <div className="txt_box">
             영상 콘텐츠 협업에 <br />
             다리를 잇다, 브이래닛
-            <button onClick={() => navigate('/login')} className="submit">
+            <button onClick={handleNavigate} className="submit">
               무료로 사용해보기
             </button>
           </div>
@@ -131,7 +142,7 @@ export default function Home() {
                   영상 피드백은 익명일 때 가장 효과적입니다. 이제 익명으로
                   피드백해보세요!
                 </p>
-                <button onClick={() => navigate('/login')} className="submit">
+                <button onClick={handleNavigate} className="submit">
                   바로가기
                 </button>
               </div>
@@ -157,7 +168,7 @@ export default function Home() {
                   오늘 어떤 프로젝트가 진행되는지 쉽게 추적하고, 앞으로 해야 할
                   일이 무엇인지 정확하게 알려줍니다.
                 </p>
-                <button onClick={() => navigate('/login')} className="submit">
+                <button onClick={handleNavigate} className="submit">
                   바로가기
                 </button>
               </div>
@@ -183,7 +194,7 @@ export default function Home() {
                   라이브코멘트 기능을 통해 영상을 보면서 실시간 미팅이
                   가능합니다.
                 </p>
-                <button onClick={() => navigate('/login')} className="submit">
+                <button onClick={handleNavigate} className="submit">
                   바로가기
                 </button>
               </div>
@@ -210,7 +221,7 @@ export default function Home() {
                   체계적으로 영상을 만드는 방법을 알려드려요. <br />
                   고수의 제작 방법을 이용해보세요!
                 </p>
-                <button onClick={() => navigate('/login')} className="submit">
+                <button onClick={handleNavigate} className="submit">
                   바로가기
                 </button>
               </div>
@@ -513,7 +524,7 @@ export default function Home() {
                   기간(월,주,일) 별로 확인하고! <br />
                   프로젝트 별로 확인하고!
                 </p>
-                <button onClick={() => navigate('/login')} className="submit">
+                <button onClick={handleNavigate} className="submit">
                   바로가기
                 </button>
               </div>
@@ -538,7 +549,7 @@ export default function Home() {
                   프로세스(기획안,구성안,대본 등)의 <br />
                   모든 것을 손 쉽게 관리 OK!
                 </p>
-                <button onClick={() => navigate('/login')} className="submit">
+                <button onClick={handleNavigate} className="submit">
                   바로가기
                 </button>
               </div>
@@ -573,7 +584,7 @@ export default function Home() {
                   영상을 같이 보며 정확하게 피드백 해보세요! <br />
                   영상 수정 횟수가 절반으로 줄어들어요.
                 </p>
-                <button onClick={() => navigate('/login')} className="submit">
+                <button onClick={handleNavigate} className="submit">
                   바로가기
                 </button>
               </div>

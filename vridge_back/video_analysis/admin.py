@@ -80,8 +80,7 @@ class VideoAnalysisResultAdmin(admin.ModelAdmin):
     list_filter = [
         'status', 
         'ai_model_version', 
-        'created_at',
-        'feedback__user'
+        'created_at'
     ]
     
     search_fields = [

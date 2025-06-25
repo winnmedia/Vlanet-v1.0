@@ -71,8 +71,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# 임시로 디버그 URL 사용
-ROOT_URLCONF = "config.urls_debug"  # 임시
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {

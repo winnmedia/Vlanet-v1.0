@@ -2,7 +2,7 @@
 AI 영상 분석 결과 모델
 """
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from feedbacks.models import FeedBack
 import json
 
@@ -142,7 +142,7 @@ class AIAnalysisSettings(models.Model):
     # 수정 시간
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True

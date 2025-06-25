@@ -100,6 +100,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:3001",
+    "https://videoplanetready.vercel.app",
     "https://videoplanet.vercel.app",
     "https://videoplanet-winnmedia.vercel.app",
     "https://vridge-front.vercel.app",

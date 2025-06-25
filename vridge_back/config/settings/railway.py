@@ -8,8 +8,9 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # 보안 설정
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-DcuaI3zQmYubdwPqXgkCQgJkfZJCeiJ5NM7-HqsgEQRUADnZeb')
+ALGORITHM = os.environ.get('ALGORITHM', 'HS256')
 
 # 허용된 호스트
 ALLOWED_HOSTS = [
@@ -31,12 +32,12 @@ DJANGO_APPS = [
 ]
 
 PROJECT_APPS = [
-    # "core",
-    # "users", 
-    # "projects",
-    # "feedbacks",
-    # "onlines",
-    # "video_analysis",
+    "core",
+    "users", 
+    "projects",
+    "feedbacks",
+    "onlines",
+    "video_analysis",
 ]
 
 THIRD_PARTY_APPS = [
@@ -152,8 +153,32 @@ SIMPLE_JWT = {
 TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY')
 TWELVE_LABS_INDEX_ID = os.environ.get('TWELVE_LABS_INDEX_ID')
 
-# 사용자 모델 (기본 User 사용)
-# AUTH_USER_MODEL = "users.User"
+# 소셜 로그인 설정
+NAVER_CLIENT_ID = os.environ.get('NAVER_CLIENT_ID')
+NAVER_SECRET_KEY = os.environ.get('NAVER_SECRET_KEY')
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+KAKAO_API_KEY = os.environ.get('KAKAO_API_KEY')
+
+# AWS 설정
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'vridge-front')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-northeast-2')
+
+# 이메일 설정
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('GOOGLE_ID')
+EMAIL_HOST_PASSWORD = os.environ.get('GOOGLE_APP_PASSWORD')
+
+# Sentry 설정
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+
+# 사용자 모델
+AUTH_USER_MODEL = "users.User"
 
 # 보안 헤더
 SECURE_BROWSER_XSS_FILTER = True

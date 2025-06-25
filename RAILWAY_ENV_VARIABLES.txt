@@ -1,0 +1,44 @@
+# Railway 환경변수 설정 가이드
+
+Railway 대시보드의 Variables 탭에서 다음 환경변수들을 추가해주세요:
+
+## 필수 환경변수
+
+# Django 기본 설정
+SECRET_KEY=(Django secret key를 입력하세요)
+ALGORITHM=HS256
+DEBUG=False
+
+# 데이터베이스 (Railway가 자동으로 제공하는 DATABASE_URL을 사용합니다)
+# DATABASE_URL은 Railway가 자동으로 설정합니다
+
+# 소셜 로그인 - 네이버
+NAVER_CLIENT_ID=(네이버 클라이언트 ID)
+NAVER_SECRET_KEY=(네이버 시크릿 키)
+
+# 소셜 로그인 - 구글
+GOOGLE_CLIENT_ID=(구글 클라이언트 ID)
+GOOGLE_CLIENT_SECRET=(구글 클라이언트 시크릿)
+GOOGLE_ID=(구글 이메일)
+GOOGLE_APP_PASSWORD=(구글 앱 패스워드)
+
+# 소셜 로그인 - 카카오
+KAKAO_API_KEY=(카카오 API 키)
+
+# AWS S3 설정
+AWS_ACCESS_KEY_ID=(AWS 액세스 키 ID)
+AWS_SECRET_ACCESS_KEY=(AWS 시크릿 액세스 키)
+AWS_STORAGE_BUCKET_NAME=vridge-front
+AWS_S3_REGION_NAME=ap-northeast-2
+
+# Sentry 모니터링 (선택사항)
+SENTRY_DSN=(Sentry DSN URL)
+
+# Django 설정 모듈 지정
+DJANGO_SETTINGS_MODULE=config.settings.railway
+
+## 주의사항
+1. my_settings.py 파일의 값들을 참고하여 위 환경변수들을 설정하세요
+2. SECRET_KEY는 프로덕션에서 반드시 새로 생성하세요
+3. 소셜 로그인 키들은 실제 서비스 도메인에 맞게 재발급 받아야 합니다
+4. AWS 키는 보안을 위해 권한이 제한된 IAM 사용자 키로 변경을 권장합니다

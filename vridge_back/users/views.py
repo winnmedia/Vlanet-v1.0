@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import logging, json, jwt, my_settings, random, requests
+import logging, json, jwt, random, requests
+import os
+from django.conf import settings
 from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.contrib.auth import authenticate
@@ -36,8 +38,8 @@ class SignUp(View):
                         "user_id": new_user.id,
                         "exp": datetime.utcnow() + timedelta(days=28),
                     },
-                    my_settings.SECRET_KEY,
-                    my_settings.ALGORITHM,
+                    settings.SECRET_KEY,
+                    settings.ALGORITHM,
                 )
                 res = JsonResponse(
                     {
@@ -72,8 +74,8 @@ class SignIn(View):
             if user is not None:
                 vridge_session = jwt.encode(
                     {"user_id": user.id, "exp": datetime.utcnow() + timedelta(days=28)},
-                    my_settings.SECRET_KEY,
-                    my_settings.ALGORITHM,
+                    settings.SECRET_KEY,
+                    settings.ALGORITHM,
                 )
                 res = JsonResponse(
                     {
@@ -225,8 +227,8 @@ class KakaoLogin(View):
                     "user_id": user.id,
                     "exp": datetime.utcnow() + timedelta(days=28),
                 },
-                my_settings.SECRET_KEY,
-                my_settings.ALGORITHM,
+                settings.SECRET_KEY,
+                settings.ALGORITHM,
             )
             res = JsonResponse(
                 {
@@ -258,8 +260,8 @@ class NaverLogin(View):
             code = data.get("code")
             state = data.get("state")
 
-            NAVER_CLIENT_ID = my_settings.NAVER_CLIENT_ID
-            NAVER_SECRET_KEY = my_settings.NAVER_SECRET_KEY
+            NAVER_CLIENT_ID = settings.NAVER_CLIENT_ID
+            NAVER_SECRET_KEY = settings.NAVER_SECRET_KEY
 
             token_request = requests.post(
                 f"https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&state={state}&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_SECRET_KEY}&code={code}"
@@ -307,8 +309,8 @@ class NaverLogin(View):
                     "user_id": user.id,
                     "exp": datetime.utcnow() + timedelta(days=28),
                 },
-                my_settings.SECRET_KEY,
-                my_settings.ALGORITHM,
+                settings.SECRET_KEY,
+                settings.ALGORITHM,
             )
             res = JsonResponse(
                 {
@@ -381,8 +383,8 @@ class GoogleLogin(View):
                     "user_id": user.id,
                     "exp": datetime.utcnow() + timedelta(days=28),
                 },
-                my_settings.SECRET_KEY,
-                my_settings.ALGORITHM,
+                settings.SECRET_KEY,
+                settings.ALGORITHM,
             )
             res = JsonResponse(
                 {

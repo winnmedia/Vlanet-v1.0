@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoPlanet 미리보기</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .page {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        details {
+            margin: 15px 0;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px 0;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <strong>VideoPlanet 에뮬레이터</strong>
+            <a href="#home">홈</a>
+            <a href="#health">헬스체크</a>
+            <a href="#db">데이터베이스</a>
+            <a href="#code">소스코드</a>
+        </div>
+
+        <!-- 홈 페이지 -->
+        <div id="home" class="page">
+            <h1>✅ Django is working! All systems operational. (Updated 23:25)</h1>
+            <p><strong>Available endpoints:</strong></p>
+            <ul>
+                <li><a href="#health">Health Check</a></li>
+                <li><a href="#db">Database Test</a></li>
+            </ul>
+            <p><strong>Debug info:</strong> urls_ultra_simple.py loaded successfully</p>
+            <div class="endpoint">URL: https://videoplanet.up.railway.app/</div>
+        </div>
+
+        <!-- 헬스체크 페이지 -->
+        <div id="health" class="page">
+            <h1>Health Check</h1>
+            <p class="success">✅ OK</p>
+            <div class="endpoint">URL: https://videoplanet.up.railway.app/health/</div>
+        </div>
+
+        <!-- 데이터베이스 테스트 페이지 -->
+        <div id="db" class="page">
+            <h1>🗄️ Database Status</h1>
+            <p><strong>DATABASE_URL:</strong> postgresql://postgres:xxxxx@db.railway...</p>
+            <p><strong>Engine:</strong> django.db.backends.postgresql</p>
+            <p><strong>Query Status:</strong> <span class="success">✅ Success: (1,)</span></p>
+            <p><strong>Database Name:</strong> railway</p>
+            <p><strong>Host:</strong> containers-us-west-123.railway.app</p>
+            <p><a href="#home">← Back to Home</a></p>
+            <div class="endpoint">URL: https://videoplanet.up.railway.app/db/</div>
+            
+            <details>
+                <summary>에러 발생 시 표시되는 내용</summary>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    <h2 class="error">❌ Database Error</h2>
+                    <p><strong>Error Type:</strong> OperationalError</p>
+                    <p><strong>Error Message:</strong> could not connect to server</p>
+                    <p><strong>DATABASE_URL:</strong> Not set</p>
+                    <details>
+                        <summary>Full Traceback</summary>
+                        <pre>Traceback (most recent call last):
+  File "urls_ultra_simple.py", line 41, in db_test
+    with connection.cursor() as cursor:
+...</pre>
+                    </details>
+                </div>
+            </details>
+        </div>
+
+        <!-- 소스코드 보기 -->
+        <div id="code" class="page">
+            <h1>📄 주요 소스코드</h1>
+            
+            <details open>
+                <summary>urls_ultra_simple.py - URL 라우팅</summary>
+                <pre><code>"""
+초간단 URL 설정 - crashed 방지용
+"""
+from django.http import HttpResponse
+from django.urls import path
+import os
+
+def home(request):
+    return HttpResponse("""
+    &lt;h1&gt;✅ Django is working! All systems operational. (Updated 23:25)&lt;/h1&gt;
+    &lt;p&gt;&lt;strong&gt;Available endpoints:&lt;/strong&gt;&lt;/p&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href="/health/"&gt;Health Check&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="/db/"&gt;Database Test&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;p&gt;&lt;strong&gt;Debug info:&lt;/strong&gt; urls_ultra_simple.py loaded successfully&lt;/p&gt;
+    """)
+
+def health(request):
+    return HttpResponse("OK")
+
+def db_test(request):
+    import traceback
+    try:
+        # Step 1: Check if DATABASE_URL exists
+        db_url = os.environ.get('DATABASE_URL', 'Not set')
+        
+        # Step 2: Try to import and use connection
+        from django.db import connection
+        
+        # Step 3: Get database settings
+        try:
+            db_settings = connection.settings_dict
+            db_engine = db_settings.get('ENGINE', 'Unknown')
+        except Exception as settings_error:
+            db_engine = f"Error getting engine: {settings_error}"
+            db_settings = {}
+        
+        # Step 4: Try to execute query
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                result = cursor.fetchone()
+            query_status = f"✅ Success: {result}"
+        except Exception as query_error:
+            query_status = f"❌ Query failed: {query_error}"
+            result = None
+        
+        return HttpResponse(f"""
+        &lt;h1&gt;🗄️ Database Status&lt;/h1&gt;
+        &lt;p&gt;&lt;strong&gt;DATABASE_URL:&lt;/strong&gt; {db_url[:50] if db_url != 'Not set' else 'Not set'}...&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Engine:&lt;/strong&gt; {db_engine}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Query Status:&lt;/strong&gt; {query_status}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Database Name:&lt;/strong&gt; {db_settings.get('NAME', 'Unknown')}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Host:&lt;/strong&gt; {db_settings.get('HOST', 'Unknown')}&lt;/p&gt;
+        &lt;p&gt;&lt;a href="/"&gt;← Back to Home&lt;/a&gt;&lt;/p&gt;
+        """)
+    except Exception as e:
+        # Get full traceback for debugging
+        tb = traceback.format_exc()
+        return HttpResponse(f"""
+        &lt;h1&gt;❌ Database Error&lt;/h1&gt;
+        &lt;p&gt;&lt;strong&gt;Error Type:&lt;/strong&gt; {type(e).__name__}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Error Message:&lt;/strong&gt; {str(e)}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;DATABASE_URL:&lt;/strong&gt; {os.environ.get('DATABASE_URL', 'Not set')}&lt;/p&gt;
+        &lt;details&gt;
+            &lt;summary&gt;Full Traceback&lt;/summary&gt;
+            &lt;pre&gt;{tb}&lt;/pre&gt;
+        &lt;/details&gt;
+        &lt;p&gt;&lt;a href="/"&gt;← Back to Home&lt;/a&gt;&lt;/p&gt;
+        """, status=500)
+
+urlpatterns = [
+    path('', home),
+    path('health/', health),
+    path('db/', db_test),
+]</code></pre>
+            </details>
+
+            <details>
+                <summary>settings.py - Django 설정</summary>
+                <pre><code>"""
+가장 기본적인 Django 설정 - Railway 테스트용
+"""
+import os
+from pathlib import Path
+import dj_database_url
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# 기본 설정
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-test-key-for-railway')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = ['*']
+
+# 애플리케이션 정의
+INSTALLED_APPS = [
+    'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+]
+
+ROOT_URLCONF = 'config.urls_ultra_simple'
+
+# 데이터베이스 설정
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# Static files
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+WHITENOISE_USE_FINDERS = True</code></pre>
+            </details>
+
+            <details>
+                <summary>Dockerfile - Railway 배포 설정</summary>
+                <pre><code>FROM python:3.9-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=config.settings
+
+WORKDIR /app
+
+# 시스템 패키지 설치
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    build-essential \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Node.js 설치
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
+
+# Python 의존성 설치
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 애플리케이션 코드 복사
+COPY . .
+
+# React 빌드
+RUN cd vridge_front && npm install && npm run build
+
+# Static 파일 디렉토리 생성
+RUN mkdir -p /app/vridge_back/staticfiles
+
+EXPOSE 8000
+
+CMD ["sh", "-c", "gunicorn --pythonpath vridge_back config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]</code></pre>
+            </details>
+        </div>
+    </div>
+</body>
+</html>

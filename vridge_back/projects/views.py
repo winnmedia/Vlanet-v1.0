@@ -1,4 +1,5 @@
-import logging, json, my_settings, random
+import logging, json, random
+from django.conf import settings
 from datetime import datetime
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -227,7 +228,7 @@ class ProjectList(View):
             sample_files = [
                 {
                     "file_name": i.files.name,
-                    "files": "http://127.0.0.1:8000" + i.files.url if my_settings.DEBUG else i.files.url,
+                    "files": "http://127.0.0.1:8000" + i.files.url if settings.DEBUG else i.files.url,
                 }
                 for i in models.SampleFiles.objects.all()
                 if i.files
@@ -489,7 +490,7 @@ class ProjectDetail(View):
                     {
                         "id": i.id,
                         "file_name": i.files.name,
-                        "files": "http://127.0.0.1:8000" + i.files.url if my_settings.DEBUG else i.files.url,
+                        "files": "http://127.0.0.1:8000" + i.files.url if settings.DEBUG else i.files.url,
                     }
                     for i in project.files.all()
                     if i.files

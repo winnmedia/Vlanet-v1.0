@@ -1,4 +1,5 @@
-import jwt, my_settings, threading
+import jwt, threading
+from django.conf import settings
 from django.http import JsonResponse
 from . import models
 from projects import models as project_model
@@ -17,7 +18,7 @@ def user_validator(function):
                 return JsonResponse({"message": "NEED_ACCESS_TOKEN"}, status=401)
 
             payload = jwt.decode(
-                vridge_session, my_settings.SECRET_KEY, my_settings.ALGORITHM
+                vridge_session, settings.SECRET_KEY, settings.ALGORITHM
             )
             try:
                 request.user = models.User.objects.get(id=payload["user_id"])
@@ -60,7 +61,7 @@ def auth_send_email(request, email, secret):
 
 
 def invite_send_email(request, email, uid, token, name):
-    if my_settings.DEBUG:
+    if settings.DEBUG:
         url = "http://localhost:3000/EmailCheck"
     else:
         url = "https://vlanet.net/EmailCheck"
@@ -109,7 +110,7 @@ def project_token_generator(project):
     token = salted_hmac(
         "django.winnmedia.virege.project.inviteToken",
         value,
-        secret=my_settings.SECRET_KEY,
+        secret=settings.SECRET_KEY,
     ).hexdigest()[::2]
     return token
 

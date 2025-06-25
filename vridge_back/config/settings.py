@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # 기본 설정
 SECRET_KEY = 'django-insecure-test-key-for-railway'
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '0.0.0.0']
 
 # 최소 앱
 INSTALLED_APPS = [

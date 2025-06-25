@@ -1,4 +1,5 @@
-import json, logging, my_settings, os
+import json, logging, os
+from django.conf import settings
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
@@ -27,7 +28,7 @@ class FeedbackDetail(View):
 
             # print(feedback.files.name) path , url
             if feedback.files:
-                if my_settings.DEBUG:
+                if settings.DEBUG:
                     file_url = "http://127.0.0.1:8000" + feedback.files.url
                 else:
                     file_url = feedback.files.url

@@ -12,13 +12,19 @@ from django.utils.html import strip_tags
 def user_validator(function):
     def wrapper(self, request, *args, **kwargs):
         try:
-            vridge_session = request.COOKIES.get("vridge_session", None)
+            # Try to get token from Authorization header first
+            auth_header = request.headers.get('Authorization', None)
+            if auth_header and auth_header.startswith('Bearer '):
+                vridge_session = auth_header.split(' ')[1]
+            else:
+                # Fallback to cookie
+                vridge_session = request.COOKIES.get("vridge_session", None)
 
             if not vridge_session:
                 return JsonResponse({"message": "NEED_ACCESS_TOKEN"}, status=401)
 
             payload = jwt.decode(
-                vridge_session, settings.SECRET_KEY, settings.ALGORITHM
+                vridge_session, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
             )
             try:
                 request.user = models.User.objects.get(id=payload["user_id"])

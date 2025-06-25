@@ -44,4 +44,5 @@ COPY vridge_back/scripts/start-server-no-migrate.sh /app/start-server-no-migrate
 RUN chmod +x /app/start-server-no-migrate.sh
 
 # Run the application WITHOUT migrations
-CMD cd vridge_back && /app/start-server-no-migrate.sh
+WORKDIR /app/vridge_back
+CMD ["/app/start-server-no-migrate.sh"]

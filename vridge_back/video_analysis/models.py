@@ -3,7 +3,7 @@ AI 영상 분석 결과 모델
 """
 from django.db import models
 from django.contrib.auth.models import User
-from feedbacks.models import Feedback
+from feedbacks.models import FeedBack
 import json
 
 
@@ -18,7 +18,7 @@ class VideoAnalysisResult(models.Model):
     ]
     
     feedback = models.OneToOneField(
-        Feedback, 
+        FeedBack, 
         on_delete=models.CASCADE,
         related_name='ai_analysis'
     )

@@ -145,8 +145,8 @@ def batch_analyze_videos(feedback_ids):
     
     for feedback_id in feedback_ids:
         try:
-            from feedbacks.models import Feedback
-            feedback = Feedback.objects.get(id=feedback_id)
+            from feedbacks.models import FeedBack
+            feedback = FeedBack.objects.get(id=feedback_id)
             
             # 분석 결과 생성
             analysis_result, created = VideoAnalysisResult.objects.get_or_create(

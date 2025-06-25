@@ -10,7 +10,7 @@ from django.conf import settings
 import os
 import logging
 
-from feedbacks.models import Feedback
+from feedbacks.models import FeedBack
 from .models import VideoAnalysisResult, AIFeedbackItem, AIAnalysisSettings
 from .analyzer import video_analyzer
 from .tasks import analyze_video_task
@@ -38,7 +38,7 @@ def analyze_video_api(request):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         # 피드백 객체 확인
-        feedback = get_object_or_404(Feedback, id=feedback_id)
+        feedback = get_object_or_404(FeedBack, id=feedback_id)
         
         # 권한 확인 (작성자 또는 관리자만)
         if feedback.user != request.user and not request.user.is_staff:

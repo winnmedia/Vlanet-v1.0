@@ -4,7 +4,7 @@ FROM python:3.9-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=config.settings.railway
+ENV DJANGO_SETTINGS_MODULE=config.settings.railway_no_db
 
 # Set work directory
 WORKDIR /app
@@ -38,9 +38,9 @@ RUN mkdir -p /app/vridge_back/staticfiles
 # Expose port
 EXPOSE 8000
 
-# Copy start script
-COPY vridge_back/scripts/start-server.sh /app/start-server.sh
-RUN chmod +x /app/start-server.sh
+# Copy start scripts
+COPY vridge_back/scripts/start-server-no-migrate.sh /app/start-server-no-migrate.sh
+RUN chmod +x /app/start-server-no-migrate.sh
 
-# Run the application
-CMD cd vridge_back && /app/start-server.sh
+# Run the application WITHOUT migrations
+CMD cd vridge_back && /app/start-server-no-migrate.sh

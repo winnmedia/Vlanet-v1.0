@@ -57,7 +57,30 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt.token_blacklist",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+# users 앱이 auth보다 먼저 로드되어야 함
+INSTALLED_APPS = [
+    # Project apps 먼저 (특히 users)
+    "core",
+    "users",
+    "projects",
+    "feedbacks",
+    "onlines",
+    "video_analysis",
+    
+    # Django apps
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    
+    # Third party apps
+    "corsheaders",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

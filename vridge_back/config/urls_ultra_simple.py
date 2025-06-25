@@ -20,30 +20,55 @@ def health(request):
     return HttpResponse("OK")
 
 def db_test(request):
+    import traceback
     try:
-        from django.db import connection
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-            result = cursor.fetchone()
-        
+        # Step 1: Check if DATABASE_URL exists
         db_url = os.environ.get('DATABASE_URL', 'Not set')
-        db_engine = connection.settings_dict['ENGINE']
+        
+        # Step 2: Try to import and use connection
+        from django.db import connection
+        
+        # Step 3: Get database settings
+        try:
+            db_settings = connection.settings_dict
+            db_engine = db_settings.get('ENGINE', 'Unknown')
+        except Exception as settings_error:
+            db_engine = f"Error getting engine: {settings_error}"
+            db_settings = {}
+        
+        # Step 4: Try to execute query
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                result = cursor.fetchone()
+            query_status = f"✅ Success: {result}"
+        except Exception as query_error:
+            query_status = f"❌ Query failed: {query_error}"
+            result = None
         
         return HttpResponse(f"""
         <h1>🗄️ Database Status</h1>
-        <p><strong>Connection:</strong> ✅ Success</p>
+        <p><strong>DATABASE_URL:</strong> {db_url[:50] if db_url != 'Not set' else 'Not set'}...</p>
         <p><strong>Engine:</strong> {db_engine}</p>
-        <p><strong>DATABASE_URL:</strong> {db_url[:50]}...</p>
-        <p><strong>Query Result:</strong> {result}</p>
+        <p><strong>Query Status:</strong> {query_status}</p>
+        <p><strong>Database Name:</strong> {db_settings.get('NAME', 'Unknown')}</p>
+        <p><strong>Host:</strong> {db_settings.get('HOST', 'Unknown')}</p>
         <p><a href="/">← Back to Home</a></p>
         """)
     except Exception as e:
+        # Get full traceback for debugging
+        tb = traceback.format_exc()
         return HttpResponse(f"""
         <h1>❌ Database Error</h1>
-        <p><strong>Error:</strong> {str(e)}</p>
+        <p><strong>Error Type:</strong> {type(e).__name__}</p>
+        <p><strong>Error Message:</strong> {str(e)}</p>
         <p><strong>DATABASE_URL:</strong> {os.environ.get('DATABASE_URL', 'Not set')}</p>
+        <details>
+            <summary>Full Traceback</summary>
+            <pre>{tb}</pre>
+        </details>
         <p><a href="/">← Back to Home</a></p>
-        """)
+        """, status=500)
 
 urlpatterns = [
     path('', home),

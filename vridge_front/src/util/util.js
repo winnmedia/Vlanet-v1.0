@@ -16,6 +16,7 @@ export function axiosOpts(method, url, data, config) {
 }
 
 export function axiosCredentials(method, url, data, config) {
+  const token = checkSession();
   return axios({
     method: method,
     url: url,
@@ -23,6 +24,10 @@ export function axiosCredentials(method, url, data, config) {
     withCredentials: true,
     timeout: 30000,
     crossDomain: true,
+    headers: {
+      ...(token && { 'Authorization': `Bearer ${token}` }),
+      ...config?.headers
+    },
     ...config,
   })
 }

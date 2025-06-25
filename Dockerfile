@@ -38,5 +38,9 @@ RUN mkdir -p /app/vridge_back/staticfiles
 # Expose port
 EXPOSE 8000
 
-# Run the application (WhiteNoise handles static files)
-CMD bash -c "gunicorn --pythonpath vridge_back config.wsgi:application --bind 0.0.0.0:\${PORT:-8000}"
+# Copy start script
+COPY vridge_back/scripts/start-server.sh /app/start-server.sh
+RUN chmod +x /app/start-server.sh
+
+# Run the application
+CMD cd vridge_back && /app/start-server.sh

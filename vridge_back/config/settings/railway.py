@@ -11,6 +11,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
 if IS_RAILWAY:
     print("Running on Railway environment")
+    print(f"Railway environment: {os.environ.get('RAILWAY_ENVIRONMENT')}")
+    # 모든 Railway 환경변수 출력
+    railway_vars = {k: v for k, v in os.environ.items() if k.startswith('RAILWAY_')}
+    print(f"Railway variables found: {list(railway_vars.keys())}")
 
 # 보안 설정
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
@@ -23,7 +27,8 @@ ALLOWED_HOSTS = [
     'vlanet.net', 
     'www.vlanet.net',
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
+    '*'  # 임시로 모든 호스트 허용 (테스트용)
 ]
 
 # Application definition
@@ -88,6 +93,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 # 데이터베이스 (PostgreSQL)
 # Railway는 RAILWAY_DATABASE_URL 또는 DATABASE_URL 환경변수를 제공합니다
 DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('RAILWAY_DATABASE_URL')
+
+# 환경변수 확인을 위한 디버그 출력
+print("Checking database environment variables...")
+print(f"DATABASE_URL exists: {'DATABASE_URL' in os.environ}")
+print(f"RAILWAY_DATABASE_URL exists: {'RAILWAY_DATABASE_URL' in os.environ}")
 
 if DATABASE_URL:
     DATABASES = {
@@ -193,6 +203,10 @@ SENTRY_DSN = os.environ.get('SENTRY_DSN')
 # 사용자 모델
 AUTH_USER_MODEL = "users.User"
 
+# WSGI 설정 확인
+print(f"\nDJANGO_SETTINGS_MODULE: {os.environ.get('DJANGO_SETTINGS_MODULE')}")
+print(f"Current settings file: {__file__}")
+
 # 보안 헤더
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -215,3 +229,10 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# 데이터베이스 연결 확인을 위한 로그
+print(f"DATABASE_URL: {DATABASE_URL[:20]}..." if DATABASE_URL else "DATABASE_URL not found")
+if DATABASE_URL:
+    print("Database configured with PostgreSQL")
+else:
+    print("WARNING: No database URL found, using SQLite")

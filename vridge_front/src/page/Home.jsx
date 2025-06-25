@@ -64,7 +64,7 @@ export default function Home() {
                 </a>
               </li>
             </ul>
-            <button onClick={() => navigate('/login')} className="submit">
+            <button onClick={() => navigate('/Login')} className="submit">
               로그인
             </button>
             {/* <button className="submit">시작하기</button> */}

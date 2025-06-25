@@ -83,7 +83,7 @@ export function refetchProject(dispatch, navigate) {
           error.response.data.message === 'NEED_ACCESS_TOKEN'
         ) {
           window.localStorage.removeItem('VGID')
-          navigate('/login', { replace: true })
+          navigate('/Login', { replace: true })
         }
       })
   }

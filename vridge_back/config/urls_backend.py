@@ -6,6 +6,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
+from django.db import connection
 
 def api_root(request):
     """API 루트 엔드포인트"""
@@ -20,8 +21,29 @@ def api_root(request):
             'projects': '/api/projects/',
             'feedbacks': '/api/feedbacks/',
             'online': '/api/onlines/',
+            'db_test': '/api/db_test/',
         }
     })
+
+def db_test(request):
+    """데이터베이스 연결 테스트"""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            result = cursor.fetchone()
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Database connection successful',
+            'database': connection.settings_dict.get('ENGINE', 'unknown'),
+            'test_query': result[0] if result else None
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e),
+            'database': connection.settings_dict.get('ENGINE', 'unknown')
+        }, status=500)
 
 # API URLs
 api_patterns = [
@@ -29,11 +51,13 @@ api_patterns = [
     path('projects/', include('projects.urls')),
     path('feedbacks/', include('feedbacks.urls')),
     path('onlines/', include('onlines.urls')),
+    path('db_test/', db_test, name='db-test'),
 ]
 
 urlpatterns = [
     # Root
     path('', api_root, name='api-root'),
+    path('api/', api_root, name='api-root-alt'),
     
     # Admin
     path('admin/', admin.site.urls),

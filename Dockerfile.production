@@ -1,0 +1,56 @@
+# 통합 배포용 Dockerfile (프론트엔드 + 백엔드)
+FROM python:3.9-slim as backend-builder
+
+# 시스템 패키지 설치
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python 의존성 설치
+WORKDIR /app
+COPY vridge_back/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Node.js 설치 (프론트엔드 빌드용)
+FROM node:18-slim as frontend-builder
+
+WORKDIR /app
+COPY vridge_front/package*.json ./
+RUN npm ci --only=production
+
+COPY vridge_front/ ./
+RUN npm run build
+
+# 최종 이미지
+FROM python:3.9-slim
+
+# 런타임 의존성 설치
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Python 패키지 복사
+COPY --from=backend-builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
+COPY --from=backend-builder /usr/local/bin /usr/local/bin
+
+# 백엔드 코드 복사
+COPY vridge_back/ ./vridge_back/
+
+# 프론트엔드 빌드 파일 복사
+COPY --from=frontend-builder /app/build ./vridge_front/build
+
+# 스크립트 실행 권한
+RUN chmod +x /app/vridge_back/scripts/start-production.sh
+
+# 작업 디렉토리 설정
+WORKDIR /app/vridge_back
+
+# 포트 노출
+EXPOSE 8000
+
+# 실행
+CMD ["/app/vridge_back/scripts/start-production.sh"]

@@ -23,7 +23,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls_ultra_simple'
+ROOT_URLCONF = 'config.urls_simple'
 
 # 데이터베이스 - PostgreSQL 테스트
 import dj_database_url

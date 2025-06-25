@@ -72,6 +72,9 @@ def db_test(request):
 
 urlpatterns = [
     path('', home),
+    path('api/', home),  # /api/ 경로 추가
     path('health/', health),
     path('db/', db_test),
+    path('db_test/', db_test),  # /db_test/ 경로 추가
+    path('api/db_test/', db_test),  # /api/db_test/ 경로 추가
 ]

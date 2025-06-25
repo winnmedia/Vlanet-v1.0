@@ -10,6 +10,9 @@ echo "Using Django settings: $DJANGO_SETTINGS_MODULE"
 echo "Database URL available: ${DATABASE_URL:+Yes}"
 echo "Railway Database URL available: ${RAILWAY_DATABASE_URL:+Yes}"
 
+# Create staticfiles directory to avoid warning
+mkdir -p /app/vridge_back/staticfiles
+
 # Gunicorn 시작
 exec gunicorn config.wsgi:application \
     --bind 0.0.0.0:${PORT:-8000} \

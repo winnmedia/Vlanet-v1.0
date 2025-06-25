@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY vridge_back/ ./vridge_back/
 
 # 스크립트 실행 권한
-RUN chmod +x /app/vridge_back/scripts/start-production.sh
+RUN chmod +x /app/vridge_back/scripts/start-simple.sh
 
 # 작업 디렉토리 변경
 WORKDIR /app/vridge_back
@@ -31,4 +31,4 @@ ENV DJANGO_SETTINGS_MODULE=config.settings.production
 ENV PYTHONUNBUFFERED=1
 
 # 실행
-CMD ["./scripts/start-production.sh"]
+CMD ["./scripts/start-simple.sh"]

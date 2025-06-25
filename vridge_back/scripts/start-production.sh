@@ -6,7 +6,7 @@ echo "Environment: ${RAILWAY_ENVIRONMENT:-production}"
 echo "Port: ${PORT:-8000}"
 
 # 환경변수 설정
-export DJANGO_SETTINGS_MODULE=config.settings.production
+export DJANGO_SETTINGS_MODULE=config.settings.railway_simple
 
 # Python 경로 설정
 export PYTHONPATH=/app/vridge_back:$PYTHONPATH

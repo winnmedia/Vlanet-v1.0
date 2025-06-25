@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'daphne',
-    'channels',
+    # 'daphne',  # Railway에서 WebSocket 지원 안함
+    # 'channels',  # Railway에서 WebSocket 지원 안함
 ]
 
 MIDDLEWARE = [
@@ -174,13 +174,13 @@ KAKAO_API_KEY = os.environ.get('KAKAO_API_KEY')
 TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY')
 TWELVE_LABS_INDEX_ID = os.environ.get('TWELVE_LABS_INDEX_ID')
 
-# Channels (WebSocket)
-ASGI_APPLICATION = 'config.asgi.application'
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
-    }
-}
+# Channels (WebSocket) - Railway에서 지원 안함
+# ASGI_APPLICATION = 'config.asgi.application'
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels.layers.InMemoryChannelLayer'
+#     }
+# }
 
 # Security
 SECURE_BROWSER_XSS_FILTER = True

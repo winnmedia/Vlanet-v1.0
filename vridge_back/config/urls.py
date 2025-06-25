@@ -19,7 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.models import Group
-from rest_framework_simplejwt import token_blacklist
+
+# token_blacklist import를 보호
+try:
+    from rest_framework_simplejwt import token_blacklist
+    HAS_TOKEN_BLACKLIST = True
+except ImportError:
+    HAS_TOKEN_BLACKLIST = False
+    token_blacklist = None
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -33,9 +40,18 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-admin.site.unregister(token_blacklist.models.BlacklistedToken)
-admin.site.unregister(token_blacklist.models.OutstandingToken)
-admin.site.unregister(Group)
+# token_blacklist가 있을 때만 unregister
+if HAS_TOKEN_BLACKLIST and token_blacklist:
+    try:
+        admin.site.unregister(token_blacklist.models.BlacklistedToken)
+        admin.site.unregister(token_blacklist.models.OutstandingToken)
+    except admin.sites.NotRegistered:
+        pass
+
+try:
+    admin.site.unregister(Group)
+except admin.sites.NotRegistered:
+    pass
 
 admin.site.site_title = "윈앤미디어"
 admin.site.site_header = "윈앤미디어"

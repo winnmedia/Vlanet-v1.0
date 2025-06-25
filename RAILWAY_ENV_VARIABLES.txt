@@ -48,3 +48,22 @@ DJANGO_SETTINGS_MODULE=config.settings.railway
 2. SECRET_KEY는 프로덕션에서 반드시 새로 생성하세요
 3. 소셜 로그인 키들은 실제 서비스 도메인에 맞게 재발급 받아야 합니다
 4. AWS 키는 보안을 위해 권한이 제한된 IAM 사용자 키로 변경을 권장합니다
+
+## 수동 마이그레이션 방법
+
+서버가 실행 중이지만 마이그레이션이 필요한 경우:
+
+1. Railway CLI를 사용하여 접속:
+   ```
+   railway run python manage.py migrate
+   ```
+
+2. 또는 Railway 대시보드에서:
+   - 서비스 클릭
+   - "Settings" 탭
+   - "Deploy" 섹션에서 "Restart" 클릭
+
+3. 수퍼유저 생성:
+   ```
+   railway run python manage.py createsuperuser
+   ```

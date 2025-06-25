@@ -9,28 +9,17 @@ echo "DJANGO_SETTINGS_MODULE: $DJANGO_SETTINGS_MODULE"
 echo "DATABASE_URL: ${DATABASE_URL:0:20}..."
 echo "RAILWAY_DATABASE_URL: ${RAILWAY_DATABASE_URL:0:20}..."
 
-# 마이그레이션 실행 (단계별로)
+# 마이그레이션 실행
 echo "Running database migrations..."
 
-# contenttypes 먼저 (Django 기본)
-echo "Step 1: Migrating contenttypes..."
-python manage.py migrate contenttypes 0001 --noinput || echo "Contenttypes initial migration failed"
-
-# users 앱 마이그레이션 (Custom User 모델)
-echo "Step 2: Migrating users app..."
-python manage.py migrate users 0001 --noinput || echo "Users initial migration failed"
-
-# auth 마이그레이션 (users가 먼저 생성된 후)
-echo "Step 3: Migrating auth..."
-python manage.py migrate auth 0001 --noinput || echo "Auth initial migration failed"
-
-# admin 마이그레이션
-echo "Step 4: Migrating admin..."
-python manage.py migrate admin 0001 --noinput || echo "Admin initial migration failed"
-
-# 나머지 모든 마이그레이션
-echo "Step 5: Running all remaining migrations..."
-python manage.py migrate --noinput || echo "Other migrations failed"
+# 모든 마이그레이션 한 번에 실행 (실패해도 계속)
+python manage.py migrate --noinput || {
+    echo "Migration failed. This might be a fresh database."
+    echo "Trying to create tables without migrations..."
+    
+    # 마이그레이션이 실패하면 기본 테이블만 생성
+    python manage.py migrate --run-syncdb --noinput || echo "Sync DB also failed"
+}
 
 # 정적 파일 수집 (이미 WhiteNoise가 처리하지만 안전을 위해)
 echo "Collecting static files..."

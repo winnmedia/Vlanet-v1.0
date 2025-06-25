@@ -7,6 +7,11 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Railway 환경 확인
+IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
+if IS_RAILWAY:
+    print("Running on Railway environment")
+
 # 보안 설정
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-DcuaI3zQmYubdwPqXgkCQgJkfZJCeiJ5NM7-HqsgEQRUADnZeb')
@@ -81,13 +86,21 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # 데이터베이스 (PostgreSQL)
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+# Railway는 RAILWAY_DATABASE_URL 또는 DATABASE_URL 환경변수를 제공합니다
+DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('RAILWAY_DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # 개발 환경을 위한 기본 설정
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

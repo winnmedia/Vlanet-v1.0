@@ -4,6 +4,12 @@ Railway 대시보드의 Variables 탭에서 다음 환경변수들을 추가해�
 
 ## 필수 환경변수
 
+### 데이터베이스 연결 (중요!)
+# Railway가 PostgreSQL을 자동으로 제공하는 경우 DATABASE_URL 또는 RAILWAY_DATABASE_URL이 자동 설정됩니다.
+# 만약 PostgreSQL 서비스가 연결되지 않았다면:
+# 1. Railway 대시보드에서 "New" -> "Database" -> "Add PostgreSQL" 클릭
+# 2. PostgreSQL 서비스에서 "Connect" 탭 -> "Connect to Service" -> VideoPlanet 선택
+
 # Django 기본 설정
 SECRET_KEY=(Django secret key를 입력하세요)
 ALGORITHM=HS256

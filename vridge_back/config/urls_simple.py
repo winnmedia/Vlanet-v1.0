@@ -20,10 +20,8 @@ def home(request):
 
 def health(request):
     """헬스체크 엔드포인트"""
-    return JsonResponse({
-        'status': 'healthy',
-        'service': 'VideoPlanet Backend'
-    })
+    from django.http import HttpResponse
+    return HttpResponse("OK", content_type="text/plain", status=200)
 
 def db_test(request):
     """데이터베이스 연결 테스트"""

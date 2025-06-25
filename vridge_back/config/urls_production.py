@@ -23,9 +23,15 @@ def api_root(request):
         }
     })
 
+def health_check(request):
+    """헬스체크 엔드포인트"""
+    from django.http import HttpResponse
+    return HttpResponse("OK", content_type="text/plain", status=200)
+
 # API URLs
 api_patterns = [
     path('', api_root, name='api-root'),
+    path('health/', health_check, name='health-check'),
     path('users/', include('users.urls')),
     path('projects/', include('projects.urls')),
     path('feedbacks/', include('feedbacks.urls')),

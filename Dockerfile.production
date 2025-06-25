@@ -22,6 +22,12 @@ COPY vridge_front/package-lock.json* ./
 RUN npm install
 
 COPY vridge_front/ ./
+
+# Set production environment variables
+ENV REACT_APP_API_BASE_URL=/api
+ENV REACT_APP_BACKEND_API_URL=/api
+ENV GENERATE_SOURCEMAP=false
+
 RUN npm run build
 
 # 최종 이미지

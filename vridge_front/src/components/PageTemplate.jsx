@@ -29,10 +29,14 @@ export default function PageTemplate({
     if (!noLogin) {
       const session = checkSession()
       if (!session) {
-        navigate('/Login', { replace: true })
+        // 이미 로그인 페이지에 있다면 리다이렉트하지 않음
+        const currentPath = window.location.pathname
+        if (currentPath !== '/Login' && currentPath !== '/login') {
+          navigate('/Login', { replace: true })
+        }
       }
     }
-  }, [noLogin, navigate])
+  }, [noLogin])
 
   // if (rightItems === undefined)
   //   rightItems = [

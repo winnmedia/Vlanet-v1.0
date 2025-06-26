@@ -3,7 +3,7 @@ import 'Common.scss'
 import AppRoute from './AppRoute'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { refetchProject } from 'util/util'
+import { refetchProject, checkSession } from 'util/util'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { GoogleOAuthProvider } from '@react-oauth/google'
@@ -12,10 +12,15 @@ export default function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const pathname = useLocation().pathname
-  // refetchProject를 각 페이지에서 필요할 때 호출하도록 변경
-  // useEffect(() => {
-  //   refetchProject(dispatch, navigate)
-  // }, [])
+  
+  useEffect(() => {
+    // 로그인된 사용자만 프로젝트 데이터 로드
+    const session = checkSession()
+    if (session) {
+      refetchProject(dispatch, navigate)
+    }
+  }, [])
+  
   return (
     <div className="App">
       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>

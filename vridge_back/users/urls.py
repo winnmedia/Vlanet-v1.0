@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .create_users_endpoint import CreateTestUsers
 
 urlpatterns = [
     path("login", views.SignIn.as_view()),
@@ -12,4 +13,5 @@ urlpatterns = [
     path("login/google", views.GoogleLogin.as_view()),
     path("memo", views.UserMemo.as_view()),  # create memo
     path("memo/<int:id>", views.UserMemo.as_view()),  # delete memo
+    path("create-test-users", CreateTestUsers.as_view()),  # 테스트 사용자 생성
 ]

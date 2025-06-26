@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Deploy to Railway
         run: |
@@ -23,17 +25,20 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           
-      - name: Install dependencies
+      - name: Clean cache and install dependencies
         working-directory: ./vridge_front
         run: |
-          rm -rf node_modules package-lock.json
-          npm install
+          rm -rf node_modules package-lock.json .next build
+          npm cache clean --force
+          npm install --legacy-peer-deps
         
       - name: Create production env file
         working-directory: ./vridge_front

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 import { DeleteFeedback } from 'api/feedback'
 
-export default function FeedbackManage({ refetch, current_project, user }) {
+export default function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   function DropFeedback(feedback_id) {
     DeleteFeedback(feedback_id)
       .then((res) => {
@@ -28,7 +28,17 @@ export default function FeedbackManage({ refetch, current_project, user }) {
             <li key={index}>
               <div className="flex align_center space_between">
                 <div className="txt_box">
-                  <div className="time">{feedback.section}</div>
+                  <div 
+                    className="time" 
+                    style={{ cursor: 'pointer', color: '#ff4545' }}
+                    onClick={() => {
+                      if (onTimeClick && feedback.section) {
+                        onTimeClick(feedback.section)
+                      }
+                    }}
+                  >
+                    {feedback.section}
+                  </div>
                   <p>{feedback.text}</p>
                 </div>
                 <button

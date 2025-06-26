@@ -6,6 +6,7 @@ import CalendarBody from 'tasks/Calendar/CalendarBody'
 import CalendarHeader from 'tasks/Calendar/CalendarHeader'
 import CalendarTotal from 'tasks/Calendar/CalendarTotal'
 import ProjectList from 'tasks/Calendar/ProjectList'
+import CalendarEnhanced from 'components/CalendarEnhanced'
 
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -16,11 +17,12 @@ import { Select, Space } from 'antd'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { refetchProject, checkSession } from 'util/util'
+import { UpdateDate, WriteMemo } from 'api/project'
 
 export default function Calendar() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { project_list, this_month_project, next_month_project, user_memos } =
+  const { project_list, this_month_project, next_month_project, user_memos, user } =
     useSelector((s) => s.ProjectStore)
   const [project_filter, set_project_filter] = useState(project_list)
   const { Option } = Select
@@ -52,6 +54,33 @@ export default function Calendar() {
   const [year, setYear] = useState(new Date().getFullYear())
   const [week_index, set_week_index] = useState(0)
   const [totalDate, setTotalDate] = useState([])
+  const [showEnhancedView, setShowEnhancedView] = useState(false)
+  
+  // Enhanced calendar handlers
+  const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
+    const data = {
+      type: phase,
+      start_date: startDate,
+      end_date: endDate
+    }
+    UpdateDate(data, projectId)
+      .then(() => {
+        refetch()
+      })
+      .catch(err => {
+        console.error('Failed to update phase:', err)
+      })
+  }
+  
+  const handleMemoAdd = (date, memo) => {
+    WriteMemo({ date, memo }, 'user')
+      .then(() => {
+        refetch()
+      })
+      .catch(err => {
+        console.error('Failed to add memo:', err)
+      })
+  }
 
   const current_project_list = useMemo(() => {
     return project_list.filter((i) => {
@@ -146,7 +175,25 @@ export default function Calendar() {
       <div className="cms_wrap">
         <SideBar />
         <main>
-          <div className="title">전체 일정</div>
+          <div className="title">
+            전체 일정
+            <button 
+              className="enhanced-toggle"
+              onClick={() => setShowEnhancedView(!showEnhancedView)}
+              style={{
+                marginLeft: '20px',
+                padding: '6px 12px',
+                fontSize: '14px',
+                background: showEnhancedView ? '#4A90E2' : '#f0f0f0',
+                color: showEnhancedView ? 'white' : '#333',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              {showEnhancedView ? '기본 보기' : '향상된 보기'}
+            </button>
+          </div>
           <div className="content calendar">
             <div className="filter flex space_between align_center">
               <CalendarHeader
@@ -191,7 +238,19 @@ export default function Calendar() {
                 </Space>
               </div>
             </div>
-            {totalDate && (
+            {showEnhancedView ? (
+              <CalendarEnhanced
+                projects={project_filter}
+                phases={[
+                  'basic_plan', 'story_board', 'filming', 'video_edit',
+                  'post_work', 'video_preview', 'confirmation', 'video_delivery'
+                ]}
+                onPhaseUpdate={handlePhaseUpdate}
+                onMemoAdd={handleMemoAdd}
+                isAdmin={user === 'admin' || user === 'calendar'}
+              />
+            ) : (
+              totalDate && (
               <CalendarBody
                 totalDate={totalDate}
                 month={month}
@@ -203,6 +262,7 @@ export default function Calendar() {
                 user_memos={user_memos}
                 refetch={refetch}
               />
+            ))
             )}
             <div className="list_mark">
               <ul>

@@ -10,6 +10,7 @@ import FeedbackInput from 'tasks/Feedback/FeedbackInput'
 import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessage from 'tasks/Feedback/FeedbackMessage'
+import FeedbackPlayer from 'components/FeedbackPlayer'
 
 import useTab from 'hooks/UseTab'
 
@@ -30,6 +31,8 @@ export default function Feedback() {
 
   const [trigger, setTrigger] = useState(0)
   const [current_project, set_current_project] = useState(null)
+  const [currentVideoTime, setCurrentVideoTime] = useState(0)
+  const videoPlayerRef = useRef(null)
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -183,6 +186,18 @@ export default function Feedback() {
           refetch={refetch}
           current_project={current_project}
           user={user}
+          onTimeClick={(timeStr) => {
+            // Parse time string (MM:SS) to seconds
+            const parts = timeStr.split(':')
+            const minutes = parseInt(parts[0]) || 0
+            const seconds = parseInt(parts[1]) || 0
+            const totalSeconds = minutes * 60 + seconds
+            
+            // Seek video to this time
+            if (videoPlayerRef.current && videoPlayerRef.current.seekTo) {
+              videoPlayerRef.current.seekTo(totalSeconds)
+            }
+          }}
         />
       ),
     },
@@ -269,21 +284,38 @@ export default function Feedback() {
 
   function FileChange(e) {
     const files = e.target.files[0]
+    if (!files) {
+      console.error('No file selected')
+      return
+    }
+    
+    console.log('Selected file:', files.name, 'Size:', files.size, 'Type:', files.type)
+    
     const formData = new FormData()
-
     formData.append('files', files)
+    
     if (window.confirm('파일을 업로드 하시겠습니까?')) {
       SetVideoLoad(true)
+      console.log('Uploading file to project:', project_id)
+      
       FeedbackFile(formData, project_id)
         .then((res) => {
-          console.log(res)
+          console.log('Upload success:', res)
+          SetVideoLoad(false)
           refetch()
+          window.alert('파일이 성공적으로 업로드되었습니다.')
+          e.target.value = '' // Reset file input
         })
         .catch((err) => {
+          console.error('Upload error:', err)
+          console.error('Error response:', err.response)
           e.target.value = ''
-          if (err.response && err.response.data) {
+          SetVideoLoad(false)
+          
+          if (err.response && err.response.data && err.response.data.message) {
             window.alert(err.response.data.message)
-            SetVideoLoad(false)
+          } else {
+            window.alert('파일 업로드 중 오류가 발생했습니다.')
           }
         })
     } else {
@@ -330,9 +362,21 @@ export default function Feedback() {
                   }
                 >
                   {current_project.files && (
-                    <Clip
-                      url={current_project.files}
-                      SetVideoLoad={SetVideoLoad}
+                    <FeedbackPlayer
+                      ref={videoPlayerRef}
+                      videoUrl={current_project.files}
+                      currentTime={currentVideoTime}
+                      onTimeClick={(time) => {
+                        // 시간 클릭 시 해당 시간으로 코멘트 추가
+                        const minutes = Math.floor(time / 60)
+                        const seconds = Math.floor(time % 60)
+                        const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                        // 코멘트 입력 폼에 시간 추가
+                        const sectionInput = document.querySelector('input[name="section"]')
+                        if (sectionInput) {
+                          sectionInput.value = timeStr
+                        }
+                      }}
                     />
                   )}
                   {IsAdmin(current_project) && !current_project.files && (
@@ -406,7 +450,21 @@ export default function Feedback() {
                     </div>
                   </div>
                   <div className="list">
-                    <FeedbackMore current_project={current_project} />
+                    <FeedbackMore 
+                      current_project={current_project} 
+                      onTimeClick={(timeStr) => {
+                        // Parse time string (MM:SS) to seconds
+                        const parts = timeStr.split(':')
+                        const minutes = parseInt(parts[0]) || 0
+                        const seconds = parseInt(parts[1]) || 0
+                        const totalSeconds = minutes * 60 + seconds
+                        
+                        // Seek video to this time
+                        if (videoPlayerRef.current && videoPlayerRef.current.seekTo) {
+                          videoPlayerRef.current.seekTo(totalSeconds)
+                        }
+                      }}
+                    />
                   </div>
                 </div>
               </div>

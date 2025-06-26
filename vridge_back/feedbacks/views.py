@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
 from users.utils import user_validator
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from . import models
 from projects import models as project_model
@@ -11,6 +13,7 @@ from projects import models as project_model
 from django.db.models import F
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class FeedbackDetail(View):
     @user_validator
     def get(self, request, id):
@@ -137,57 +140,88 @@ class FeedbackDetail(View):
     @user_validator
     def post(self, request, id):
         try:
+            logging.info(f"File upload request for project {id}")
+            logging.info(f"Request FILES: {request.FILES}")
+            logging.info(f"Request method: {request.method}")
+            logging.info(f"Content type: {request.content_type}")
+            
             user = request.user
             email = user.username
 
             project = project_model.Project.objects.get_or_none(id=id)
-            feedback = project.feedback
-
             if not project:
+                logging.error(f"Project {id} not found")
                 return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
+            
+            feedback = project.feedback
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
+                logging.error(f"User {email} has no permission for project {id}")
                 return JsonResponse({"message": "권한이 없습니다."}, status=500)
 
+            if not request.FILES:
+                logging.error("No files in request")
+                return JsonResponse({"message": "파일이 없습니다."}, status=400)
+                
             files = request.FILES.getlist("files")
+            if not files:
+                logging.error("No files found with key 'files'")
+                return JsonResponse({"message": "파일이 없습니다."}, status=400)
+                
             files = files[0]
-            # logging.info(files)
-            # logging.info(dir(files))
+            logging.info(f"File name: {files.name}, size: {files.size}")
 
             from moviepy.editor import VideoFileClip
             import boto3, uuid
             from django.core.files import File
 
-            if ".mov" in files.name:
-                uid = uuid.uuid4().hex + ".mov"
-                f = open(uid, "wb")
-                f.write(files.read())
-                # logging.info(files.chunks())
-                f.close()
-
-                video = VideoFileClip(uid)
-                output_path = uid.replace(".mov", ".mp4")
-                video.write_videofile(output_path, codec="libx264", audio_codec="aac")
-
-                with open(output_path, "rb") as f:
-                    output_file = File(f)
-                    feedback.files.save(output_path, output_file)
+            try:
+                if ".mov" in files.name.lower():
+                    logging.info("Processing .mov file")
+                    uid = uuid.uuid4().hex + ".mov"
+                    temp_path = os.path.join(settings.MEDIA_ROOT, uid)
+                    
+                    with open(temp_path, "wb") as f:
+                        for chunk in files.chunks():
+                            f.write(chunk)
+                    
+                    logging.info(f"Saved temp file: {temp_path}")
+                    
+                    video = VideoFileClip(temp_path)
+                    output_path = temp_path.replace(".mov", ".mp4")
+                    video.write_videofile(output_path, codec="libx264", audio_codec="aac")
+                    
+                    logging.info(f"Converted to mp4: {output_path}")
+                    
+                    with open(output_path, "rb") as f:
+                        output_file = File(f)
+                        feedback.files.save(os.path.basename(output_path), output_file)
+                    
+                    # Cleanup temp files
                     if os.path.isfile(output_path):
                         os.remove(output_path)
-                    if os.path.isfile(uid):
-                        os.remove(uid)
-            else:
-                feedback.files = files
-                feedback.save()
-
-            return JsonResponse({"result": "result"}, status=200)
+                    if os.path.isfile(temp_path):
+                        os.remove(temp_path)
+                    
+                    logging.info("MOV file processed and saved successfully")
+                else:
+                    logging.info(f"Saving file directly: {files.name}")
+                    feedback.files = files
+                    feedback.save()
+                    logging.info("File saved successfully")
+                
+                return JsonResponse({"message": "파일이 성공적으로 업로드되었습니다.", "result": "success"}, status=200)
+            except Exception as upload_error:
+                logging.error(f"Error during file processing: {str(upload_error)}")
+                return JsonResponse({"message": f"파일 처리 중 오류: {str(upload_error)}"}, status=500)
         except Exception as e:
             print(e)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class FeedbackFileDelete(View):
     @user_validator
     def delete(self, request, id):

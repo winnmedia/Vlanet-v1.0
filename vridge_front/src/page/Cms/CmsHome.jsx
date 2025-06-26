@@ -2,6 +2,7 @@ import 'css/Cms/Cms.scss'
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
+import ProjectDashboard from 'components/ProjectDashboard'
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -23,6 +24,7 @@ export default function CmsHome() {
   const initial = { tab: '', on_menu: '' }
   const [side, set_side] = useState(initial)
   const { tab, on_menu } = side
+  const [showDashboard, setShowDashboard] = useState(false)
 
   // 인증 체크
   useEffect(() => {
@@ -79,14 +81,7 @@ export default function CmsHome() {
                 <li
                   className="menu_project"
                   onClick={() => {
-                    if (tab === 'project') {
-                      set_side(initial)
-                    } else {
-                      set_side({
-                        on_menu: true,
-                        tab: 'project',
-                      })
-                    }
+                    setShowDashboard(!showDashboard)
                   }}
                 >
                   <div className="img"></div>
@@ -117,6 +112,12 @@ export default function CmsHome() {
                 </li>
               </ul>
             </div>
+
+            {showDashboard && (
+              <div style={{ marginTop: '30px' }}>
+                <ProjectDashboard projects={project_list} />
+              </div>
+            )}
 
             <div className="part">
               <div className="s_title">프로젝트 진행사항</div>

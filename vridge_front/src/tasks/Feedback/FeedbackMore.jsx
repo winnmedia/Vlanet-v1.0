@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
 import 'moment/locale/ko'
 
-export default function FeedbackMore({ current_project }) {
+export default function FeedbackMore({ current_project, onTimeClick }) {
   const [feedback, setFeedback] = useState([])
   const [openPopup, setOpenPopup] = useState(null) // 추가된 부분
 
@@ -36,7 +36,17 @@ export default function FeedbackMore({ current_project }) {
           <ul>
             {item[1].map((data, i) => (
               <li className={openPopup && openPopup.id === data.id ? 'on' : ''} key={i} onClick={() => setOpenPopup(data)}>
-                {data.section}
+                <span 
+                  style={{ cursor: 'pointer', color: '#ff4545' }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (onTimeClick && data.section) {
+                      onTimeClick(data.section)
+                    }
+                  }}
+                >
+                  {data.section}
+                </span>
                 {openPopup &&
                   openPopup.id === data.id && ( // 추가된 부분
                     <div className="view-container">

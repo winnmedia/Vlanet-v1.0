@@ -128,6 +128,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3001",
     "https://videoplanetready.vercel.app",
     "https://*.railway.app",
+    "https://vlanet.net",
+    "https://www.vlanet.net",
 ]
 CORS_ALLOW_CREDENTIALS = True
 

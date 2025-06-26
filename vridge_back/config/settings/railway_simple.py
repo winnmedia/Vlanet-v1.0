@@ -104,6 +104,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://videoplanet.vercel.app",
     "https://videoplanet-winnmedia.vercel.app",
     "https://vridge-front.vercel.app",
+    "https://vlanet.net",
+    "https://www.vlanet.net",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [

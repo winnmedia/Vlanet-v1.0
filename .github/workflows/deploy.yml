@@ -31,7 +31,9 @@ jobs:
           
       - name: Install dependencies
         working-directory: ./vridge_front
-        run: npm ci
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
         
       - name: Create production env file
         working-directory: ./vridge_front

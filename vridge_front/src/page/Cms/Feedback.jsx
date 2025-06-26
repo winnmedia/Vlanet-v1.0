@@ -4,6 +4,7 @@ import { checkSession } from 'util/util'
 import 'css/Cms/Cms.scss'
 import 'css/Cms/FeedbackResponsive.scss'
 import 'css/Cms/FeedbackMobile.scss'
+import 'css/Cms/UploadProgress.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
@@ -300,21 +301,31 @@ export default function Feedback() {
     
     if (window.confirm('파일을 업로드 하시겠습니까?')) {
       SetVideoLoad(true)
+      setUploadProgress(0)
       console.log('Uploading file to project:', project_id)
       
-      FeedbackFile(formData, project_id)
+      const onUploadProgress = (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        setUploadProgress(percentCompleted)
+        console.log('Upload progress:', percentCompleted + '%')
+      }
+      
+      FeedbackFile(formData, project_id, onUploadProgress)
         .then((res) => {
           console.log('Upload success:', res)
           SetVideoLoad(false)
+          setUploadProgress(100)
           refetch()
           window.alert('파일이 성공적으로 업로드되었습니다.')
           e.target.value = '' // Reset file input
+          setTimeout(() => setUploadProgress(0), 1000)
         })
         .catch((err) => {
           console.error('Upload error:', err)
           console.error('Error response:', err.response)
           e.target.value = ''
           SetVideoLoad(false)
+          setUploadProgress(0)
           
           if (err.response && err.response.data && err.response.data.message) {
             window.alert(err.response.data.message)
@@ -327,6 +338,7 @@ export default function Feedback() {
     }
   }
   const [VideoLoad, SetVideoLoad] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
 
   function DeleteFile() {
     if (window.confirm('파일을 삭제 하시겠습니까?')) {
@@ -402,7 +414,18 @@ export default function Feedback() {
                   )}
                   {VideoLoad && (
                     <div className="loading">
-                      <div className="animation"></div>
+                      <div className="loading-content">
+                        <div className="progress-container">
+                          <div className="progress-bar">
+                            <div 
+                              className="progress-fill" 
+                              style={{ width: `${uploadProgress}%` }}
+                            ></div>
+                          </div>
+                          <div className="progress-text">{uploadProgress}%</div>
+                        </div>
+                        <div className="loading-message">영상 업로드 중...</div>
+                      </div>
                     </div>
                   )}
                 </div>

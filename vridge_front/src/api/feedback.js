@@ -26,7 +26,7 @@ export function DeleteFeedback(id) {
 }
 
 // 피드백 file uploads
-export function FeedbackFile(data, id) {
+export function FeedbackFile(data, id, onUploadProgress) {
   return axiosCredentials(
     'post',
     `${process.env.REACT_APP_BACKEND_API_URL}/feedbacks/${id}`,
@@ -35,6 +35,8 @@ export function FeedbackFile(data, id) {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      onUploadProgress: onUploadProgress,
+      timeout: 300000, // 5분 타임아웃
     },
   )
 }

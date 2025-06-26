@@ -1,0 +1,143 @@
+// 업로드 프로그레스 스타일
+.loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  z-index: 10;
+  
+  .loading-content {
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    
+    .progress-container {
+      margin-bottom: 20px;
+      
+      .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #0059db 0%, #0073ff 100%);
+          border-radius: 10px;
+          transition: width 0.3s ease;
+          position: relative;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+              45deg,
+              rgba(255, 255, 255, 0.2) 25%,
+              transparent 25%,
+              transparent 50%,
+              rgba(255, 255, 255, 0.2) 50%,
+              rgba(255, 255, 255, 0.2) 75%,
+              transparent 75%,
+              transparent
+            );
+            background-size: 20px 20px;
+            animation: progress-animation 1s linear infinite;
+          }
+        }
+      }
+      
+      .progress-text {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 15px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+    }
+    
+    .loading-message {
+      color: white;
+      font-size: 16px;
+      opacity: 0.9;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes progress-animation {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+// 반응형 스타일
+@media (max-width: 768px) {
+  .loading {
+    .loading-content {
+      width: 85%;
+      max-width: 300px;
+      
+      .progress-container {
+        .progress-bar {
+          height: 16px;
+        }
+        
+        .progress-text {
+          font-size: 20px;
+          margin-top: 12px;
+        }
+      }
+      
+      .loading-message {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// 기존 로딩 애니메이션 제거 또는 숨김
+.loading {
+  .animation {
+    display: none;
+  }
+}
+
+// 비디오 영역의 로딩 스타일
+.video_inner {
+  position: relative;
+  
+  &.active {
+    .loading {
+      border-radius: 8px;
+    }
+  }
+  
+  // 업로드 영역 로딩
+  .upload_btn_wrap + .loading {
+    border-radius: 8px;
+  }
+}

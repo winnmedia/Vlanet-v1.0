@@ -1,0 +1,129 @@
+// 데스크톱 및 태블릿 반응형 스타일
+// 1200px 이하에서 영상과 코멘트를 수직 배치
+
+// 중간 화면 크기 (1200px 이하)
+@media (max-width: 1200px) {
+  .cms_wrap {
+    main {
+      .content.feedback {
+        &.feedback_page {
+          flex-direction: column !important;
+          
+          .wrap_inner {
+            flex-direction: column !important;
+            width: 100%;
+            
+            // 영상 영역
+            .videobox {
+              width: 100% !important;
+              margin-right: 0 !important;
+              margin-bottom: 30px;
+              
+              &.video_section {
+                width: 100% !important;
+              }
+              
+              .video_inner {
+                width: 100%;
+                
+                // 영상 플레이어 컨테이너
+                .feedback-player {
+                  width: 100%;
+                }
+              }
+              
+              .etc_box {
+                margin-top: 20px;
+              }
+            }
+            
+            // 사이드박스 (코멘트/탭 영역)
+            .sidebox {
+              width: 100% !important;
+              max-width: none !important;
+              margin-left: 0 !important;
+              padding-left: 0 !important;
+              margin-top: 0;
+              
+              // 탭 메뉴
+              .top_box {
+                &.tab_menu {
+                  margin-bottom: 20px;
+                  
+                  .tab_list {
+                    display: flex;
+                    gap: 10px;
+                    flex-wrap: wrap;
+                    
+                    li {
+                      button {
+                        padding: 10px 20px;
+                      }
+                    }
+                  }
+                }
+              }
+              
+              // 탭 콘텐츠
+              .tab_content {
+                min-height: 400px;
+                max-height: 600px;
+                overflow-y: auto;
+              }
+            }
+          }
+        }
+        
+        // 기존 feedback 클래스도 대응
+        &:not(.feedback_page) {
+          flex-direction: column !important;
+          
+          .videobox {
+            width: 100% !important;
+            margin-bottom: 30px;
+          }
+          
+          .sidebox {
+            width: 100% !important;
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 태블릿 화면 (768px - 1024px)
+@media (min-width: 769px) and (max-width: 1024px) {
+  .cms_wrap {
+    main {
+      .content.feedback {
+        .sidebox {
+          .tab_content {
+            min-height: 450px;
+            
+            // 채팅 영역 높이 조정
+            .comment {
+              height: 400px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 작은 태블릿 (768px - 900px)
+@media (min-width: 769px) and (max-width: 900px) {
+  .cms_wrap {
+    // 사이드바가 있는 경우 여백 조정
+    .sidebar {
+      & + main {
+        .content.feedback {
+          padding: 20px;
+        }
+      }
+    }
+  }
+}

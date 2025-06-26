@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { checkSession } from 'util/util'
 import 'css/Cms/Cms.scss'
+import 'css/Cms/FeedbackResponsive.scss'
 import 'css/Cms/FeedbackMobile.scss'
 
 /* 상단 이미지 - 샘플, 기본 */

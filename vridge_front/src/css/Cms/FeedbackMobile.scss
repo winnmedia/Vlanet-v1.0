@@ -1,3 +1,41 @@
+// 태블릿 및 중간 화면 크기 (1200px 이하)
+@media (max-width: 1200px) {
+  .feedback_page {
+    .wrap_inner {
+      flex-direction: column !important;
+      
+      // 영상 플레이어 영역
+      .video_section {
+        width: 100% !important;
+        margin-bottom: 30px;
+      }
+      
+      // 사이드박스 (코멘트 영역)
+      .sidebox {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 20px;
+        min-height: 500px;
+      }
+    }
+    
+    // content 영역도 수직 정렬
+    &.feedback {
+      flex-direction: column !important;
+      
+      .videobox {
+        width: 100% !important;
+        margin-bottom: 30px;
+      }
+      
+      .sidebox {
+        width: 100% !important;
+        max-width: none !important;
+      }
+    }
+  }
+}
+
 // 모바일 반응형 스타일
 @media (max-width: 768px) {
   .feedback_page {

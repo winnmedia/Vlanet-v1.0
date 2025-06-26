@@ -4,10 +4,10 @@ import queryString from 'query-string'
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { SignIn } from 'api/auth'
+import { SignIn, GoogleLoginAPI } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
 
-// Social login imports removed
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google'
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -111,7 +111,30 @@ export default function Login() {
             브이릿지가 처음이신가요?{' '}
             <span onClick={() => navigate('/Signup')}>간편 가입하기</span>
           </div>
-          
+          <div className="line"></div>
+          <div className="sns_login">
+            <ul>
+              <li
+                onClick={useGoogleLogin({
+                  onSuccess: (res) => {
+                    GoogleLoginAPI(res)
+                      .then((res) => {
+                        CommonLoginSuccess(res.data.vridge_session)
+                      })
+                      .catch((err) => {
+                        CommonErrorMessage(err)
+                      })
+                  },
+                  onError: (err) => console.log(err),
+                  scope:
+                    'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
+                })}
+                className="google"
+              >
+                구글 로그인
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </PageTemplate>

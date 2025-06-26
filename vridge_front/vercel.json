@@ -9,6 +9,7 @@
   "env": {
     "REACT_APP_API_BASE_URL": "https://videoplanet.up.railway.app/api",
     "REACT_APP_BACKEND_API_URL": "https://videoplanet.up.railway.app/api",
+    "REACT_APP_GOOGLE_CLIENT_ID": "@google_client_id",
     "CI": "false"
   }
 }

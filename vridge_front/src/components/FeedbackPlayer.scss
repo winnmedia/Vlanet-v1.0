@@ -4,6 +4,12 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  // 모바일에서 터치 제스처 지원
+  @media (max-width: 768px) {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
 
   .video-container {
     position: relative;

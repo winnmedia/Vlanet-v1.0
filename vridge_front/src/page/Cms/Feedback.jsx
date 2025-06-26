@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { checkSession } from 'util/util'
 import 'css/Cms/Cms.scss'
+import 'css/Cms/FeedbackMobile.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
@@ -356,8 +357,9 @@ export default function Feedback() {
         <SideBar />
         <main>
           {current_project && (
-            <div className="content feedback flex space_between">
-              <div className="videobox">
+            <div className="content feedback feedback_page flex space_between">
+              <div className="wrap_inner">
+              <div className="videobox video_section">
                 <div
                   className={
                     current_project.files ? 'video_inner active' : 'video_inner'
@@ -474,8 +476,8 @@ export default function Feedback() {
                 <div className="b_title">
                   <div className="s_title">{currentItem.tab}</div>
                 </div>
-                <div className="top_box">
-                  <ul className="tab_menu">
+                <div className="top_box tab_menu">
+                  <ul className="tab_list">
                     {content.map((section, index) => (
                       <li
                         className={
@@ -484,13 +486,14 @@ export default function Feedback() {
                         key={index}
                         onClick={() => changeItem(index)}
                       >
-                        {section.tab}
+                        <button>{section.tab}</button>
                       </li>
                     ))}
                   </ul>
                   <div className="edit"></div>
                 </div>
                 <div className="tab_content">{currentItem.content}</div>
+              </div>
               </div>
             </div>
           )}

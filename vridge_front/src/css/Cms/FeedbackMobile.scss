@@ -1,0 +1,329 @@
+// 모바일 반응형 스타일
+@media (max-width: 768px) {
+  .feedback_page {
+    .wrap_inner {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      
+      // 영상 플레이어 영역
+      .video_section {
+        width: 100%;
+        margin-bottom: 20px;
+        
+        .video_container {
+          width: 100%;
+          position: relative;
+          
+          // 영상 업로드 영역
+          .upload_box {
+            padding: 60px 20px;
+            
+            h2 {
+              font-size: 18px;
+              margin-bottom: 10px;
+            }
+            
+            p {
+              font-size: 14px;
+            }
+            
+            .video_upload_label {
+              padding: 12px 24px;
+              font-size: 14px;
+            }
+          }
+          
+          // 영상 컨트롤
+          .etc_box {
+            padding: 10px;
+            
+            .flex {
+              flex-wrap: wrap;
+              gap: 10px;
+              
+              button, .share {
+                font-size: 12px;
+                padding: 8px 12px;
+              }
+              
+              .good {
+                display: flex;
+                gap: 5px;
+                
+                .change_btn_wrap {
+                  .video_upload_label {
+                    padding: 6px 12px;
+                    font-size: 12px;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // 탭 메뉴
+      .tab_menu {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        
+        .tab_list {
+          display: flex;
+          min-width: fit-content;
+          gap: 5px;
+          padding: 0 10px;
+          
+          li {
+            button {
+              padding: 10px 15px;
+              font-size: 14px;
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+      
+      // 탭 컨텐츠 영역
+      .tab_content {
+        width: 100%;
+        padding: 15px;
+        
+        // 코멘트 섹션
+        .comment_section {
+          .comment_list {
+            max-height: 400px;
+            
+            .comment_item {
+              padding: 12px;
+              margin-bottom: 10px;
+              
+              .comment_header {
+                font-size: 12px;
+                
+                .time {
+                  font-size: 11px;
+                }
+              }
+              
+              .comment_body {
+                font-size: 14px;
+                margin-top: 8px;
+              }
+            }
+          }
+        }
+        
+        // 피드백 입력 폼
+        .feedback_form {
+          .form_group {
+            margin-bottom: 15px;
+            
+            label {
+              font-size: 14px;
+              margin-bottom: 5px;
+            }
+            
+            input, textarea {
+              font-size: 14px;
+              padding: 10px;
+            }
+            
+            textarea {
+              min-height: 80px;
+            }
+          }
+          
+          .submit_btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+          }
+        }
+        
+        // 채팅 섹션
+        .chat_section {
+          height: 400px;
+          
+          .chat_messages {
+            height: calc(100% - 60px);
+            padding: 10px;
+            
+            .message {
+              padding: 8px 12px;
+              font-size: 14px;
+              margin-bottom: 8px;
+              
+              &.my_message {
+                margin-left: 20%;
+              }
+              
+              &.other_message {
+                margin-right: 20%;
+              }
+            }
+          }
+          
+          .chat_input {
+            display: flex;
+            padding: 10px;
+            gap: 10px;
+            
+            input {
+              flex: 1;
+              padding: 10px;
+              font-size: 14px;
+              border-radius: 20px;
+            }
+            
+            button {
+              padding: 10px 20px;
+              font-size: 14px;
+              border-radius: 20px;
+            }
+          }
+        }
+        
+        // 멤버 리스트
+        .member_section {
+          .member_list {
+            .member_item {
+              padding: 12px;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              
+              .avatar {
+                width: 40px;
+                height: 40px;
+              }
+              
+              .member_info {
+                flex: 1;
+                
+                .name {
+                  font-size: 14px;
+                  font-weight: 600;
+                }
+                
+                .role {
+                  font-size: 12px;
+                  color: #666;
+                }
+              }
+            }
+          }
+        }
+        
+        // 프로젝트 정보
+        .project_info {
+          .info_item {
+            margin-bottom: 15px;
+            
+            .label {
+              font-size: 12px;
+              color: #666;
+              margin-bottom: 5px;
+            }
+            
+            .value {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 비디오 플레이어 모바일 최적화
+  .feedback-player {
+    .controls {
+      padding: 8px 10px;
+      
+      .control-buttons {
+        flex-wrap: wrap;
+        gap: 5px;
+        
+        .left-controls {
+          gap: 10px;
+          
+          .time-display {
+            font-size: 12px;
+          }
+          
+          .skip-button {
+            font-size: 11px;
+            padding: 4px 8px;
+          }
+        }
+        
+        .right-controls {
+          gap: 10px;
+          
+          .add-comment-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+          }
+          
+          .volume-control {
+            display: none; // 모바일에서는 볼륨 컨트롤 숨김
+          }
+          
+          .playback-rate {
+            select {
+              padding: 4px 8px;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 작은 모바일 기기 (375px 이하)
+@media (max-width: 375px) {
+  .feedback_page {
+    .wrap_inner {
+      padding: 5px;
+      
+      .tab_menu {
+        .tab_list {
+          li {
+            button {
+              padding: 8px 12px;
+              font-size: 13px;
+            }
+          }
+        }
+      }
+      
+      .tab_content {
+        padding: 10px;
+        
+        .chat_section {
+          height: 350px;
+        }
+      }
+    }
+  }
+}
+
+// 가로 모드 최적화
+@media (max-width: 768px) and (orientation: landscape) {
+  .feedback_page {
+    .video_section {
+      .video_container {
+        max-height: 50vh;
+      }
+    }
+    
+    .tab_content {
+      .comment_section,
+      .chat_section {
+        max-height: 40vh;
+      }
+    }
+  }
+}

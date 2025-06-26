@@ -51,6 +51,48 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, currentTime }, ref) 
     }
   }, [videoUrl])
   
+  // Touch gestures for mobile
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    
+    let touchStartX = 0
+    let touchStartTime = 0
+    
+    const handleTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX
+      touchStartTime = video.currentTime
+    }
+    
+    const handleTouchMove = (e) => {
+      if (!touchStartX) return
+      
+      const touchEndX = e.touches[0].clientX
+      const diff = touchEndX - touchStartX
+      const seekAmount = (diff / video.clientWidth) * 30 // 30초 범위
+      
+      video.currentTime = Math.max(0, Math.min(touchStartTime + seekAmount, video.duration))
+    }
+    
+    const handleTouchEnd = () => {
+      touchStartX = 0
+      touchStartTime = 0
+    }
+    
+    // 모바일에서만 터치 이벤트 추가
+    if (window.innerWidth <= 768) {
+      video.addEventListener('touchstart', handleTouchStart)
+      video.addEventListener('touchmove', handleTouchMove)
+      video.addEventListener('touchend', handleTouchEnd)
+    }
+    
+    return () => {
+      video.removeEventListener('touchstart', handleTouchStart)
+      video.removeEventListener('touchmove', handleTouchMove)
+      video.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [])
+  
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e) => {

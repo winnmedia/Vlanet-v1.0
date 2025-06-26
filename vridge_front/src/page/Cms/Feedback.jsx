@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { checkSession } from 'util/util'
 import 'css/Cms/Cms.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
@@ -51,6 +52,15 @@ export default function Feedback() {
   const refetch = () => {
     setTrigger(Date.now())
   }
+
+  // 인증 체크
+  useEffect(() => {
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login', { replace: true })
+    }
+  }, [])
+
   useEffect(() => {
     GetFeedBack(project_id)
       .then((res) => {

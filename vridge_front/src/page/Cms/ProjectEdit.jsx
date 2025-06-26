@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { produce } from 'immer'
 import { useSelector, useDispatch } from 'react-redux'
-import { project_initial, project_dateRange, refetchProject } from 'util/util'
+import { project_initial, project_dateRange, refetchProject, checkSession } from 'util/util'
 import {
   GetProject,
   UpdateProjectAPI,
@@ -35,6 +35,14 @@ export default function ProjectEdit() {
   const null_date = process.filter(
     (i, index) => i.startDate == null || i.endDate == null,
   )
+
+  // 인증 체크
+  useEffect(() => {
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login', { replace: true })
+    }
+  }, [])
 
   useEffect(() => {
     GetProject(project_id)

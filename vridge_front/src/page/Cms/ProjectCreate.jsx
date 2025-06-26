@@ -7,10 +7,10 @@ import useInput from 'hooks/UseInput'
 import useFile from 'hooks/Usefile'
 import ProcessDate from 'tasks/Project/ProcessDate'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CreateProjectAPI } from 'api/project'
-import { refetchProject, project_initial, project_dateRange } from 'util/util'
+import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
 import { useDispatch, useSelector } from 'react-redux'
 
 export default function ProjectCreate() {
@@ -30,6 +30,14 @@ export default function ProjectCreate() {
     (i, index) => i.startDate == null || i.endDate == null,
   )
   const { files, FileChange, FileDelete } = useFile([])
+
+  // 인증 체크
+  useEffect(() => {
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login', { replace: true })
+    }
+  }, [])
 
   // const ValidForm =
   //   name && description && manager && consumer && null_date.length === 0

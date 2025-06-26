@@ -14,12 +14,12 @@ export default function App() {
   const pathname = useLocation().pathname
   
   useEffect(() => {
-    // 로그인된 사용자만 프로젝트 데이터 로드
+    // 최초 로드 시에만 프로젝트 데이터 로드
     const session = checkSession()
     if (session && pathname !== '/Login' && pathname !== '/') {
       refetchProject(dispatch, navigate)
     }
-  }, [pathname])
+  }, [])
   
   return (
     <div className="App">

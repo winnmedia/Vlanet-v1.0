@@ -9,6 +9,7 @@ import ProjectList from 'tasks/Calendar/ProjectList'
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { checkSession } from 'util/util'
 
 import { Select, Space } from 'antd'
 import moment from 'moment'
@@ -75,6 +76,14 @@ export default function ProjectView() {
   const [year, setYear] = useState(new Date().getFullYear())
   const [week_index, set_week_index] = useState(0)
   const [totalDate, setTotalDate] = useState([])
+
+  // 인증 체크
+  useEffect(() => {
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login', { replace: true })
+    }
+  }, [])
 
   const changeDate = (type) => {
     //이전 날짜

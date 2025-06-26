@@ -65,7 +65,7 @@ export default function Calendar() {
     if (!session) {
       navigate('/Login', { replace: true })
     }
-  }, [navigate])
+  }, [])
 
   useEffect(() => {
     ProjectChange('전체')

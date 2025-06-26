@@ -30,7 +30,7 @@ export default function CmsHome() {
     if (!session) {
       navigate('/Login', { replace: true })
     }
-  }, [navigate])
+  }, [])
 
   useEffect(() => {
     setTime(moment(date).format('HH:mm:ss'))
@@ -44,16 +44,17 @@ export default function CmsHome() {
     return () => clearInterval(intervalId)
   }, [])
 
-  // 프로젝트 데이터가 로드되지 않았을 때 로딩 표시
-  if (!project_list) {
-    return (
-      <PageTemplate>
-        <div className="cms_wrap" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <div>Loading...</div>
-        </div>
-      </PageTemplate>
-    )
-  }
+  // 프로젝트 데이터가 로드되지 않았을 때 로딩 표시 제거
+  // 빈 배열도 허용
+  // if (!project_list) {
+  //   return (
+  //     <PageTemplate>
+  //       <div className="cms_wrap" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+  //         <div>Loading...</div>
+  //       </div>
+  //     </PageTemplate>
+  //   )
+  // }
 
   return (
     <PageTemplate>

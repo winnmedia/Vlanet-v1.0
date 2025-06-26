@@ -97,17 +97,21 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # CORS
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://videoplanetready.vercel.app",
-    "https://videoplanet.vercel.app",
-    "https://videoplanet-winnmedia.vercel.app",
-    "https://vridge-front.vercel.app",
-    "https://vlanet.net",
-    "https://www.vlanet.net",
-]
+# 임시로 모든 origin 허용 (프로덕션에서는 보안상 권장하지 않음)
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+# 특정 도메인만 허용하려면 아래 사용
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://localhost:3001",
+#     "https://videoplanetready.vercel.app",
+#     "https://videoplanet.vercel.app",
+#     "https://videoplanet-winnmedia.vercel.app",
+#     "https://vridge-front.vercel.app",
+#     "https://vlanet.net",
+#     "https://www.vlanet.net",
+# ]
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -118,6 +122,14 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+]
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
 ]
 
 # REST Framework

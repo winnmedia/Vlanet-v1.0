@@ -123,15 +123,38 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'users.User'
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://videoplanetready.vercel.app",
-    "https://*.railway.app",
-    "https://vlanet.net",
-    "https://www.vlanet.net",
-]
+# 임시로 모든 origin 허용
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+# 특정 도메인만 허용하려면 아래 사용
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://localhost:3001",
+#     "https://videoplanetready.vercel.app",
+#     "https://*.railway.app",
+#     "https://vlanet.net",
+#     "https://www.vlanet.net",
+# ]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 # REST Framework
 REST_FRAMEWORK = {

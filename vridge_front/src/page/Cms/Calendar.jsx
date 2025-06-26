@@ -262,7 +262,7 @@ export default function Calendar() {
                 user_memos={user_memos}
                 refetch={refetch}
               />
-            ))
+            )
             )}
             <div className="list_mark">
               <ul>

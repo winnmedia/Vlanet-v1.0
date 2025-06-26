@@ -1,0 +1,72 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend to Railway
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy to Railway
+        run: |
+          echo "Railway will auto-deploy from GitHub push"
+          
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        working-directory: ./vridge_front
+        run: npm ci
+        
+      - name: Create production env file
+        working-directory: ./vridge_front
+        run: |
+          cat > .env.production.local << EOF
+          REACT_APP_API_BASE_URL=https://videoplanet.up.railway.app/api
+          REACT_APP_BACKEND_API_URL=https://videoplanet.up.railway.app/api
+          REACT_APP_BACKEND_URI=https://videoplanet.up.railway.app
+          REACT_APP_SOCKET_URI=wss://videoplanet.up.railway.app
+          GENERATE_SOURCEMAP=false
+          CI=false
+          EOF
+          
+      - name: Build project
+        working-directory: ./vridge_front
+        run: npm run build
+        
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./vridge_front
+          vercel-args: '--prod'
+          
+  notify:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend]
+    if: always()
+    
+    steps:
+      - name: Send notification
+        run: |
+          echo "Deployment completed!"
+          echo "Backend: https://videoplanet.up.railway.app"
+          echo "Frontend: https://vlanet.net"

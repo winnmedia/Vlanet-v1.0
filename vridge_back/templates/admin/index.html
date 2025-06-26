@@ -1,0 +1,210 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0 40px 0;
+    }
+    
+    .stat-box {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .stat-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+    
+    .stat-box .stat-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+    
+    .stat-box.projects .stat-icon { color: #0059db; }
+    .stat-box.users .stat-icon { color: #27ae60; }
+    .stat-box.feedbacks .stat-icon { color: #e74c3c; }
+    .stat-box.files .stat-icon { color: #f39c12; }
+    
+    .stat-box .stat-number {
+        font-size: 36px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    
+    .stat-box .stat-label {
+        color: #666;
+        font-size: 16px;
+    }
+    
+    .welcome-box {
+        background: linear-gradient(135deg, #004ac1, #0059db);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .welcome-box h2 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+        font-weight: 600;
+    }
+    
+    .welcome-box p {
+        margin: 0;
+        font-size: 16px;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    
+    <div class="welcome-box">
+        <h2>Vlanet 관리 시스템에 오신 것을 환영합니다</h2>
+        <p>프로젝트와 사용자를 효율적으로 관리하세요</p>
+    </div>
+    
+    <div class="dashboard-stats">
+        <div class="stat-box projects">
+            <div class="stat-icon">📁</div>
+            <div class="stat-number" id="project-count">0</div>
+            <div class="stat-label">전체 프로젝트</div>
+        </div>
+        
+        <div class="stat-box users">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number" id="user-count">0</div>
+            <div class="stat-label">등록 사용자</div>
+        </div>
+        
+        <div class="stat-box feedbacks">
+            <div class="stat-icon">💬</div>
+            <div class="stat-number" id="feedback-count">0</div>
+            <div class="stat-label">피드백 수</div>
+        </div>
+        
+        <div class="stat-box files">
+            <div class="stat-icon">📎</div>
+            <div class="stat-number" id="file-count">0</div>
+            <div class="stat-label">업로드 파일</div>
+        </div>
+    </div>
+
+    {% if app_list %}
+        {% for app in app_list %}
+            <div class="app-{{ app.app_label }} module">
+            <table>
+            <caption>
+                <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
+            </caption>
+            {% for model in app.models %}
+                <tr class="model-{{ model.object_name|lower }}">
+                {% if model.admin_url %}
+                    <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+                {% else %}
+                    <th scope="row">{{ model.name }}</th>
+                {% endif %}
+
+                {% if model.add_url %}
+                    <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+
+                {% if model.admin_url %}
+                    {% if model.view_only %}
+                    <td><a href="{{ model.admin_url }}" class="viewlink">{% trans 'View' %}</a></td>
+                    {% else %}
+                    <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+                    {% endif %}
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+                </tr>
+            {% endfor %}
+            </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>{% trans 'You don't have permission to view or edit anything.' %}</p>
+    {% endif %}
+</div>
+
+<script>
+    // 통계 데이터 로드 (실제로는 AJAX로 서버에서 가져와야 함)
+    document.addEventListener('DOMContentLoaded', function() {
+        // 임시 데이터 - 실제로는 서버에서 가져와야 함
+        const stats = {
+            projects: Math.floor(Math.random() * 50) + 10,
+            users: Math.floor(Math.random() * 200) + 50,
+            feedbacks: Math.floor(Math.random() * 500) + 100,
+            files: Math.floor(Math.random() * 1000) + 200
+        };
+        
+        // 카운트 애니메이션
+        function animateCount(id, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                document.getElementById(id).textContent = Math.floor(current);
+            }, 20);
+        }
+        
+        animateCount('project-count', stats.projects);
+        animateCount('user-count', stats.users);
+        animateCount('feedback-count', stats.feedbacks);
+        animateCount('file-count', stats.files);
+    });
+</script>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>{% trans 'Recent actions' %}</h2>
+        <h3>{% trans 'My actions' %}</h3>
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p>{% trans 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br/>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{{ entry.content_type }}</span>
+                {% else %}
+                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+    </div>
+</div>
+{% endblock %}

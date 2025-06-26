@@ -76,6 +76,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.static",
             ],
         },
     },
@@ -207,6 +208,10 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 429916160  # ~410MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 429916160  # ~410MB
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Social Login Settings
 NAVER_CLIENT_ID = env('NAVER_CLIENT_ID', default='')

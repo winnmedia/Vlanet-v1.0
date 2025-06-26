@@ -192,6 +192,9 @@ X_FRAME_OPTIONS = 'DENY'
 # Default field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# JWT Settings
+ALGORITHM = "HS256"
+
 # Logging
 LOGGING = {
     'version': 1,

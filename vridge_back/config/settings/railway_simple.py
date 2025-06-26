@@ -127,4 +127,7 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# JWT Settings
+ALGORITHM = "HS256"
+
 print("Railway Simple Settings Loaded")

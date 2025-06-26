@@ -87,7 +87,7 @@ export default function Feedback() {
     nickname: '',
     rating: '',
   })
-  const webSocketUrl = `${process.env.REACT_APP_SOCKET_URI}/ws/chat/${project_id}/`
+  const webSocketUrl = `${process.env.REACT_APP_SOCKET_URI || 'wss://videoplanet.up.railway.app'}/ws/chat/${project_id}/`
   let ws = useRef(null)
 
   const [items, setItems] = useState([])

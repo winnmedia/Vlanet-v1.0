@@ -13,7 +13,7 @@ ROOT_DIR = BASE_DIR.parent  # VideoPlanet 루트
 # Security
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-production-key')
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-ALLOWED_HOSTS = ['*']  # Production에서는 구체적인 도메인으로 제한 필요
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'videoplanet.up.railway.app', 'vlanet.net', '.railway.app']
 
 # Application definition
 INSTALLED_APPS = [
@@ -123,19 +123,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'users.User'
 
 # CORS settings
-# 임시로 모든 origin 허용
-CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-# 특정 도메인만 허용하려면 아래 사용
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://localhost:3001",
-#     "https://videoplanetready.vercel.app",
-#     "https://*.railway.app",
-#     "https://vlanet.net",
-#     "https://www.vlanet.net",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://videoplanetready.vercel.app",
+    "https://videoplanet.up.railway.app",
+    "https://vlanet.net",
+    "https://www.vlanet.net",
+]
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -218,9 +214,13 @@ X_FRAME_OPTIONS = 'DENY'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # File upload settings
-FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 429916160  # ~410MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 429916160  # ~410MB
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # JWT Settings
 ALGORITHM = "HS256"

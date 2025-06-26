@@ -21,7 +21,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 'videoplanet.up.railway.app', 'vlanet.net', '.railway.app'])
 
 # Application definition
 DJANGO_APPS = [
@@ -182,6 +182,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://api.vridge.kr",
     "https://vlanet.net",
+    "https://videoplanet.up.railway.app",
 ]
 
 CORS_ALLOW_HEADERS = [

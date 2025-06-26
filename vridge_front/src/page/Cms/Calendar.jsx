@@ -15,7 +15,7 @@ import { Select, Space } from 'antd'
 
 import moment from 'moment'
 import 'moment/locale/ko'
-import { refetchProject } from 'util/util'
+import { refetchProject, checkSession } from 'util/util'
 
 export default function Calendar() {
   const navigate = useNavigate()
@@ -58,6 +58,14 @@ export default function Calendar() {
       return new Date(i.end_date).getMonth() == month || new Date(i.first_date).getMonth() == month
     })
   }, [month, project_list])
+
+  // 인증 체크
+  useEffect(() => {
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login', { replace: true })
+    }
+  }, [navigate])
 
   useEffect(() => {
     ProjectChange('전체')

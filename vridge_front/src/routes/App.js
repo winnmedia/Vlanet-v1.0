@@ -16,10 +16,10 @@ export default function App() {
   useEffect(() => {
     // 로그인된 사용자만 프로젝트 데이터 로드
     const session = checkSession()
-    if (session) {
+    if (session && pathname !== '/Login' && pathname !== '/') {
       refetchProject(dispatch, navigate)
     }
-  }, [])
+  }, [pathname])
   
   return (
     <div className="App">

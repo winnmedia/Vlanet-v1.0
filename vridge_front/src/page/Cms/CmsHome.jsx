@@ -6,7 +6,7 @@ import SideBar from 'components/SideBar'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { refetchProject } from 'util/util'
+import { refetchProject, checkSession } from 'util/util'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -24,10 +24,13 @@ export default function CmsHome() {
   const [side, set_side] = useState(initial)
   const { tab, on_menu } = side
 
-  // App.js에서 이미 로드하므로 제거
-  // useEffect(() => {
-  //   refetchProject(dispatch, navigate)
-  // }, [dispatch, navigate])
+  // 인증 체크
+  useEffect(() => {
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login', { replace: true })
+    }
+  }, [navigate])
 
   useEffect(() => {
     setTime(moment(date).format('HH:mm:ss'))

@@ -83,7 +83,8 @@ export function refetchProject(dispatch, navigate) {
           error.response.data.message === 'NEED_ACCESS_TOKEN'
         ) {
           window.localStorage.removeItem('VGID')
-          navigate('/Login', { replace: true })
+          // navigate를 제거하고 PageTemplate에서 처리하도록 함
+          // navigate('/Login', { replace: true })
         }
       })
   }

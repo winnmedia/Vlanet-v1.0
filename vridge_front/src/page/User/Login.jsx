@@ -4,11 +4,10 @@ import queryString from 'query-string'
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { SignIn, KakaoLoginAPI, NaverLoginAPI, GoogleLoginAPI } from 'api/auth'
+import { SignIn } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
 
-import KakaoLogin from 'react-kakao-login'
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google'
+// Social login imports removed
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -21,9 +20,9 @@ export default function Login() {
   const { email, password } = inputs
   const [login_message, SetLoginMessage] = useState('')
   const [param] = useSearchParams()
-  const { uid, token, code, state } = queryString.parse(param.toString())
+  const { uid, token } = queryString.parse(param.toString())
 
-  const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${process.env.REACT_APP_NAVER_CLIENT_ID}&state=${process.env.REACT_APP_NAVER_STATE}&redirect_uri=${process.env.REACT_APP_NAVER_REDIRECT_URI}`
+  // Social login URLs removed
 
   const OnChange = (e) => {
     const { value, name } = e.target
@@ -44,35 +43,7 @@ export default function Login() {
     }
   }, [])
 
-  const [naver_info, set_naver_info] = useState({ code: '', state: '' })
-  useEffect(() => {
-    // 0.5초 interval로 로그인 체크
-    let intervalId
-    intervalId = setInterval(() => {
-      if (code && state) {
-        clearInterval(intervalId) // Naver
-        set_naver_info({ code: code, state: state })
-      }
-    }, 500)
-
-    // 로그인 페이지 벗어나면 interval 지우기
-    return () => {
-      clearInterval(intervalId)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (naver_info.code && naver_info.state) {
-      NaverLoginAPI(naver_info)
-        .then((res) => {
-          CommonLoginSuccess(res.data.vridge_session)
-        })
-        .catch((err) => {
-          navigate('/login')
-          CommonErrorMessage(err)
-        })
-    }
-  }, [naver_info])
+  // Social login code removed
 
   const CommonLoginSuccess = (jwt) => {
     window.localStorage.setItem('VGID', JSON.stringify(jwt))
@@ -140,93 +111,7 @@ export default function Login() {
             브이릿지가 처음이신가요?{' '}
             <span onClick={() => navigate('/Signup')}>간편 가입하기</span>
           </div>
-          <div className="line"></div>
-          <div className="sns_login">
-            <ul>
-              <KakaoLogin
-                token={process.env.REACT_APP_KAKAO_API_KEY}
-                onSuccess={(json) => {
-                  KakaoLoginAPI({ access_token: json.response.access_token })
-                    .then((res) => {
-                      CommonLoginSuccess(res.data.vridge_session)
-                    })
-                    .catch((err) => {
-                      CommonErrorMessage(err)
-                    })
-                }}
-                onFail={console.error}
-                onLogout={console.info}
-                useLoginForm
-                render={({ onClick }) => {
-                  return (
-                    <li
-                      onClick={(e) => {
-                        onClick()
-                      }}
-                      className="kakao"
-                    >
-                      카카오 로그인
-                    </li>
-                  )
-                }}
-              />
-
-              <li
-                onClick={useGoogleLogin({
-                  onSuccess: (res) => {
-                    // console.log(res)
-                    GoogleLoginAPI(res)
-                      .then((res) => {
-                        console.log(res)
-                        CommonLoginSuccess(res.data.vridge_session)
-                      })
-                      .catch((err) => {
-                        CommonErrorMessage(err)
-                      })
-                  },
-                  onError: (err) => console.log(err),
-                  scope:
-                    'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
-                  state: String(Math.floor(Math.random() * 10000)),
-                  include_granted_scopes: true,
-                })}
-                className="google"
-              >
-                구글 로그인
-              </li>
-              {/* <li>
-                <GoogleLogin
-                  onSuccess={(res) => {
-                    console.log(res)
-
-                    GoogleLoginAPI(res)
-                      .then((res) => {
-                        console.log(res)
-                        // CommonLoginSuccess(res.data.vridge_session)
-                      })
-                      .catch((err) => {
-                        CommonErrorMessage(err)
-                      })
-                  }}
-                  onFailure={(err) => {
-                    console.log(err)
-                  }}
-                  type="icon"
-                  shape="circle"
-                  size="large"
-                  width="400px"
-                />
-              </li> */}
-              <li
-                onClick={() => {
-                  window.location.href = NAVER_AUTH_URL
-                }}
-                className="naver"
-              >
-                네이버 로그인
-              </li>
-            </ul>
-          </div>
+          
         </div>
       </div>
     </PageTemplate>

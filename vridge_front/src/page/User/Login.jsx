@@ -69,8 +69,13 @@ export default function Login() {
           CommonLoginSuccess(res.data.vridge_session)
         })
         .catch((err) => {
-          // console.log(err.response.data.message)
-          SetLoginMessage('이메일 또는 비밀번호가 일치하지 않습니다.')
+          console.error('Login error:', err)
+          console.error('Error response:', err.response)
+          if (err.response && err.response.data && err.response.data.message) {
+            SetLoginMessage(err.response.data.message)
+          } else {
+            SetLoginMessage('이메일 또는 비밀번호가 일치하지 않습니다.')
+          }
         })
     } else {
       if (email.length === 0) SetLoginMessage('아이디를 입력해주세요.')

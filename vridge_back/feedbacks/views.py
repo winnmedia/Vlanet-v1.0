@@ -172,44 +172,15 @@ class FeedbackDetail(View):
             files = files[0]
             logging.info(f"File name: {files.name}, size: {files.size}")
 
-            from moviepy.editor import VideoFileClip
-            import boto3, uuid
+            import uuid
             from django.core.files import File
 
             try:
-                if ".mov" in files.name.lower():
-                    logging.info("Processing .mov file")
-                    uid = uuid.uuid4().hex + ".mov"
-                    temp_path = os.path.join(settings.MEDIA_ROOT, uid)
-                    
-                    with open(temp_path, "wb") as f:
-                        for chunk in files.chunks():
-                            f.write(chunk)
-                    
-                    logging.info(f"Saved temp file: {temp_path}")
-                    
-                    video = VideoFileClip(temp_path)
-                    output_path = temp_path.replace(".mov", ".mp4")
-                    video.write_videofile(output_path, codec="libx264", audio_codec="aac")
-                    
-                    logging.info(f"Converted to mp4: {output_path}")
-                    
-                    with open(output_path, "rb") as f:
-                        output_file = File(f)
-                        feedback.files.save(os.path.basename(output_path), output_file)
-                    
-                    # Cleanup temp files
-                    if os.path.isfile(output_path):
-                        os.remove(output_path)
-                    if os.path.isfile(temp_path):
-                        os.remove(temp_path)
-                    
-                    logging.info("MOV file processed and saved successfully")
-                else:
-                    logging.info(f"Saving file directly: {files.name}")
-                    feedback.files = files
-                    feedback.save()
-                    logging.info("File saved successfully")
+                # 모든 파일을 직접 저장 (MOV 변환 제거)
+                logging.info(f"Saving file directly: {files.name}")
+                feedback.files = files
+                feedback.save()
+                logging.info("File saved successfully")
                 
                 return JsonResponse({"message": "파일이 성공적으로 업로드되었습니다.", "result": "success"}, status=200)
             except Exception as upload_error:

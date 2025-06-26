@@ -10,14 +10,17 @@
           flex-direction: column !important;
           
           .wrap_inner {
+            display: flex !important;
             flex-direction: column !important;
             width: 100%;
             
             // 영상 영역
             .videobox {
+              display: block !important;
               width: 100% !important;
               margin-right: 0 !important;
               margin-bottom: 30px;
+              visibility: visible !important;
               
               &.video_section {
                 width: 100% !important;

@@ -382,7 +382,7 @@ export default function Feedback() {
                     <FeedbackPlayer
                       ref={videoPlayerRef}
                       videoUrl={current_project.files}
-                      currentTime={currentVideoTime}
+                      initialTime={currentVideoTime}
                       onTimeClick={(time) => {
                         // 시간 클릭 시 해당 시간으로 코멘트 추가
                         const minutes = Math.floor(time / 60)

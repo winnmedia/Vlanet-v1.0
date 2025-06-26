@@ -12,9 +12,10 @@ export default function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const pathname = useLocation().pathname
-  useEffect(() => {
-    refetchProject(dispatch, navigate)
-  }, [])
+  // refetchProject를 각 페이지에서 필요할 때 호출하도록 변경
+  // useEffect(() => {
+  //   refetchProject(dispatch, navigate)
+  // }, [])
   return (
     <div className="App">
       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>

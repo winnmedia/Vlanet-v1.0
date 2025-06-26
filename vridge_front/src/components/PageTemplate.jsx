@@ -32,7 +32,7 @@ export default function PageTemplate({
         navigate('/Login', { replace: true })
       }
     }
-  }, [])
+  }, [noLogin, navigate])
 
   // if (rightItems === undefined)
   //   rightItems = [

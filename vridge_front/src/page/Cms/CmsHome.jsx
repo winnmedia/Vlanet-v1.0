@@ -5,13 +5,15 @@ import SideBar from 'components/SideBar'
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { refetchProject } from 'util/util'
 
 import moment from 'moment'
 import 'moment/locale/ko'
 
 export default function CmsHome() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { project_list, this_month_project, next_month_project } = useSelector(
     (s) => s.ProjectStore,
   )
@@ -21,6 +23,11 @@ export default function CmsHome() {
   const initial = { tab: '', on_menu: '' }
   const [side, set_side] = useState(initial)
   const { tab, on_menu } = side
+
+  useEffect(() => {
+    // 프로젝트 데이터 로드
+    refetchProject(dispatch, navigate)
+  }, [dispatch, navigate])
 
   useEffect(() => {
     setTime(moment(date).format('HH:mm:ss'))

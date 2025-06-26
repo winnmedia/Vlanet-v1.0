@@ -11,11 +11,14 @@ from django.http import JsonResponse
 from .utils import user_validator, auth_send_email
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 # from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
 
 
 ########## username이 kakao,naver,google이든 회원가입 때 중복되면 생성x
+@method_decorator(csrf_exempt, name='dispatch')
 class SignUp(View):
     def post(self, request):
         try:
@@ -63,6 +66,7 @@ class SignUp(View):
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class SignIn(View):
     def post(self, request):
         try:
@@ -70,7 +74,7 @@ class SignIn(View):
             email = data.get("email")
             password = data.get("password")
 
-            user = authenticate(request, username=email, password=password, login_method="email")
+            user = authenticate(request, username=email, password=password)
             if user is not None:
                 vridge_session = jwt.encode(
                     {"user_id": user.id, "exp": datetime.utcnow() + timedelta(days=28)},
@@ -334,6 +338,7 @@ class NaverLogin(View):
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class GoogleLogin(View):
     def post(self, request):
         try:

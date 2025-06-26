@@ -4,6 +4,8 @@ from datetime import datetime
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from users.utils import (
     user_validator,
     invite_send_email,
@@ -345,6 +347,7 @@ class AcceptInvite(View):
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class CreateProject(View):
     @user_validator
     def post(self, request):

@@ -2,7 +2,7 @@ import './PageTemplate.scss'
 import cx from 'classnames'
 import { useNavigate } from 'react-router-dom'
 
-import logo from 'images/Common/b_logo.svg'
+import logo from 'images/Common/logo.svg'
 import profile from 'images/Cms/profie_sample.png'
 import Header from './Header'
 import LoginIntro from './LoginIntro'

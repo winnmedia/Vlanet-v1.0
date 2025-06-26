@@ -36,9 +36,9 @@ jobs:
       - name: Clean cache and install dependencies
         working-directory: ./vridge_front
         run: |
-          rm -rf node_modules package-lock.json .next build
+          rm -rf node_modules package-lock.json .next build .cache
           npm cache clean --force
-          npm install --legacy-peer-deps --no-cache
+          npm install --legacy-peer-deps --force
         
       - name: Create production env file
         working-directory: ./vridge_front

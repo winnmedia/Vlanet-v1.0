@@ -90,7 +90,7 @@ export default function Feedback() {
     nickname: '',
     rating: '',
   })
-  const webSocketUrl = `${process.env.REACT_APP_SOCKET_URI || 'wss://videoplanet.up.railway.app'}/ws/chat/${project_id}/`
+  const webSocketUrl = project_id ? `${process.env.REACT_APP_SOCKET_URI || 'wss://videoplanet.up.railway.app'}/ws/chat/${project_id}/` : null
   let ws = useRef(null)
 
   const [items, setItems] = useState([])
@@ -120,6 +120,8 @@ export default function Feedback() {
   }, [current_project, user])
 
   useEffect(() => {
+    if (!webSocketUrl || !project_id) return;
+    
     // if (!ws.current) {
     ws.current = new WebSocket(webSocketUrl)
 

@@ -101,12 +101,17 @@ jobs:
         run: |
           cd vridge_front
           
+          # Debug: Show current directory and structure
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
+          
           # Create .vercel directory and project.json
           mkdir -p .vercel
           echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
           
-          # Deploy the pre-built project from current directory
-          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
+          # Deploy with explicit build output directory
+          vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --prebuilt ./build
           
           # Set up custom domain
           vercel alias --token=${{ secrets.VERCEL_TOKEN }} set vlanet.net

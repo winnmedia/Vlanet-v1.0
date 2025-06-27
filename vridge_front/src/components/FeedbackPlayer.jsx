@@ -40,9 +40,16 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
+    if (!video || !videoUrl) return
 
     console.log('Video URL changed:', videoUrl)
+    
+    // URL 유효성 검사
+    if (!videoUrl.includes('/media/') && !videoUrl.startsWith('http')) {
+      setError('잘못된 비디오 URL입니다.');
+      setIsLoading(false);
+      return;
+    }
 
     const updateTime = () => setCurrentTime(video.currentTime)
     const updateDuration = () => {
@@ -52,10 +59,12 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
     }
     const handleLoadStart = () => {
       setIsLoading(true)
+      setError(null)
       console.log('Video loading started')
     }
     const handleCanPlay = () => {
       setIsLoading(false)
+      setError(null)
       console.log('Video can play')
     }
 

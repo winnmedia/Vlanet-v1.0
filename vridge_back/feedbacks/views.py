@@ -180,26 +180,35 @@ class FeedbackDetail(View):
             from django.core.files import File
 
             try:
-                # 파일명 안전하게 변환
-                import re
-                from django.utils.text import slugify
-                import os
+                # 파일 유효성 검사
+                if files.size == 0:
+                    return JsonResponse({"message": "비어있는 파일입니다."}, status=400)
                 
+                # 파일 형식 검사
+                allowed_extensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv']
+                import os
                 original_name = files.name
-                name, ext = os.path.splitext(original_name)
+                name, ext = os.path.splitext(original_name.lower())
+                
+                if ext not in allowed_extensions:
+                    return JsonResponse({"message": f"지원하지 않는 파일 형식입니다. ({', '.join(allowed_extensions)} 형식만 가능)"}, status=400)
+                
+                # 파일명 안전하게 변환
+                from django.utils.text import slugify
+                import uuid
+                
                 # 한글 파일명을 영문으로 변환하거나 UUID 사용
                 safe_name = slugify(name, allow_unicode=False)
-                if not safe_name:
-                    import uuid
-                    safe_name = str(uuid.uuid4())
+                if not safe_name or safe_name == 'mp4' or safe_name == 'video':
+                    safe_name = f"video_{uuid.uuid4().hex[:8]}"
                 
                 files.name = f"{safe_name}{ext}"
                 
-                # 모든 파일을 직접 저장 (MOV 변환 제거)
-                logging.info(f"Saving file with safe name: {files.name} (original: {original_name})")
+                # 파일 저장
+                logging.info(f"Saving file with safe name: {files.name} (original: {original_name}, size: {files.size} bytes)")
                 feedback.files = files
                 feedback.save()
-                logging.info("File saved successfully")
+                logging.info(f"File saved successfully at: {feedback.files.path}")
                 
                 # Get the file URL
                 file_url = None

@@ -293,6 +293,25 @@ export default function Feedback() {
       return
     }
     
+    // 파일 크기 검사 (600MB)
+    const maxSize = 600 * 1024 * 1024; // 600MB
+    if (files.size > maxSize) {
+      window.alert('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.');
+      e.target.value = '';
+      return;
+    }
+    
+    // 파일 형식 검사
+    const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'];
+    const fileExtension = files.name.split('.').pop().toLowerCase();
+    const allowedExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+    
+    if (!allowedTypes.includes(files.type) && !allowedExtensions.includes(fileExtension)) {
+      window.alert('지원하지 않는 파일 형식입니다. MP4, WebM, OGG, MOV, AVI, MKV 형식만 가능합니다.');
+      e.target.value = '';
+      return;
+    }
+    
     console.log('Selected file:', files.name, 'Size:', files.size, 'Type:', files.type)
     
     const formData = new FormData()

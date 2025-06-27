@@ -94,13 +94,23 @@ jobs:
           echo "Build completed successfully"
           ls -la build/
         
+      - name: Prepare Vercel deployment
+        run: |
+          cd vridge_front
+          # Create .vercel directory structure
+          mkdir -p .vercel/output/static
+          # Copy build files
+          cp -r build/* .vercel/output/static/
+          # Create config.json
+          echo '{"version": 3}' > .vercel/output/config.json
+          
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod --cwd ./vridge_front'
+          vercel-args: '--prod --prebuilt --cwd ./vridge_front'
           
   notify:
     name: Deployment Notification

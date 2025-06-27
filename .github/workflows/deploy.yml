@@ -105,8 +105,8 @@ jobs:
           mkdir -p .vercel
           echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
           
-          # Deploy the pre-built project
-          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --cwd .
+          # Deploy the pre-built project from current directory
+          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
           
           # Set up custom domain
           vercel alias --token=${{ secrets.VERCEL_TOKEN }} set vlanet.net

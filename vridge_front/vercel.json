@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Skipping build'",
+  "buildCommand": "npm run build",
   "outputDirectory": "build",
   "installCommand": "npm install",
   "env": {

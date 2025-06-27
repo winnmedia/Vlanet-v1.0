@@ -41,16 +41,23 @@ jobs:
         
       - name: Build project
         working-directory: ./vridge_front
+        env:
+          REACT_APP_API_BASE_URL: https://videoplanet.up.railway.app/api
+          REACT_APP_BACKEND_API_URL: https://videoplanet.up.railway.app/api
+          REACT_APP_BACKEND_URI: https://videoplanet.up.railway.app
+          REACT_APP_SOCKET_URI: wss://videoplanet.up.railway.app
+          CI: false
         run: npm run build
         
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+        
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./vridge_front
-          vercel-args: '--prod --skip-build'
+        working-directory: ./vridge_front
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel --prod --token=$VERCEL_TOKEN --yes
           
   notify:
     name: Deployment Notification

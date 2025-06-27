@@ -32,8 +32,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: vridge_front/package-lock.json
           
       - name: Verify environment
         run: |
@@ -46,8 +44,8 @@ jobs:
         working-directory: ./vridge_front
         run: |
           # Clean install to ensure consistency
-          rm -rf node_modules
-          npm install --legacy-peer-deps
+          rm -rf node_modules package-lock.json
+          npm install --legacy-peer-deps --silent
         
       - name: Verify build environment
         working-directory: ./vridge_front

@@ -1,0 +1,223 @@
+// Vlanet Design System
+// 브랜드 색상과 일관된 디자인 시스템
+
+// ===== Color Palette =====
+// Primary Colors
+$primary-blue: #1E88E5;      // 메인 블루
+$primary-dark: #1565C0;      // 다크 블루
+$primary-light: #42A5F5;     // 라이트 블루
+$primary-pale: #E3F2FD;      // 페일 블루
+
+// Secondary Colors  
+$success-green: #43A047;     // 성공/완료
+$warning-yellow: #FFA726;    // 경고
+$danger-red: #E53935;        // 삭제/위험
+$info-cyan: #00ACC1;         // 정보
+
+// Neutral Colors
+$gray-900: #212529;          // 제목
+$gray-800: #343A40;          // 본문
+$gray-700: #495057;          // 서브텍스트
+$gray-600: #6C757D;          // 비활성 텍스트
+$gray-500: #ADB5BD;          // 보더
+$gray-400: #CED4DA;          // 라이트 보더
+$gray-300: #DEE2E6;          // 배경 보더
+$gray-200: #E9ECEF;          // 라이트 배경
+$gray-100: #F8F9FA;          // 가장 밝은 배경
+$white: #FFFFFF;
+
+// ===== Spacing System =====
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// ===== Typography =====
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+$font-size-xxxl: 32px;
+
+// ===== Border Radius =====
+$radius-xs: 4px;
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-pill: 100px;
+$radius-circle: 50%;
+
+// ===== Shadows =====
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+// ===== Transitions =====
+$transition-fast: 150ms ease-in-out;
+$transition-base: 250ms ease-in-out;
+$transition-slow: 350ms ease-in-out;
+
+// ===== Z-index =====
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+
+// ===== Button Mixins =====
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  font-weight: 500;
+  line-height: 1.5;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-base;
+  white-space: nowrap;
+  user-select: none;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-blue, 0.25);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background-color: $primary-blue;
+  color: $white;
+  
+  &:hover:not(:disabled) {
+    background-color: $primary-dark;
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: $gray-200;
+  color: $gray-800;
+  
+  &:hover:not(:disabled) {
+    background-color: $gray-300;
+    transform: translateY(-1px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+@mixin button-success {
+  @include button-base;
+  background-color: $success-green;
+  color: $white;
+  
+  &:hover:not(:disabled) {
+    background-color: darken($success-green, 8%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+}
+
+@mixin button-danger {
+  @include button-base;
+  background-color: $danger-red;
+  color: $white;
+  
+  &:hover:not(:disabled) {
+    background-color: darken($danger-red, 8%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+}
+
+@mixin button-outline {
+  @include button-base;
+  background-color: transparent;
+  border: 2px solid $primary-blue;
+  color: $primary-blue;
+  
+  &:hover:not(:disabled) {
+    background-color: $primary-blue;
+    color: $white;
+    transform: translateY(-1px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+// ===== Card Mixin =====
+@mixin card {
+  background-color: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  transition: box-shadow $transition-base;
+  
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+// ===== Input Mixin =====
+@mixin input-base {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $gray-800;
+  background-color: $white;
+  border: 2px solid $gray-300;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-blue;
+    box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+  }
+  
+  &::placeholder {
+    color: $gray-600;
+  }
+  
+  &:disabled {
+    background-color: $gray-100;
+    cursor: not-allowed;
+  }
+}
+
+// ===== Utility Classes =====
+.text-primary { color: $primary-blue !important; }
+.text-success { color: $success-green !important; }
+.text-danger { color: $danger-red !important; }
+.text-warning { color: $warning-yellow !important; }
+.text-info { color: $info-cyan !important; }
+
+.bg-primary { background-color: $primary-blue !important; }
+.bg-success { background-color: $success-green !important; }
+.bg-danger { background-color: $danger-red !important; }
+.bg-warning { background-color: $warning-yellow !important; }
+.bg-info { background-color: $info-cyan !important; }

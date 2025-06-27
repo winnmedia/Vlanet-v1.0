@@ -1,0 +1,579 @@
+// Feedback Page Complete Redesign
+@import './DesignSystem.scss';
+
+// ===== Layout Structure =====
+.content.feedback {
+  &.feedback_page {
+    height: 100%;
+    padding: 0;
+    background-color: $gray-100;
+    
+    .wrap_inner {
+      display: flex;
+      gap: $spacing-lg;
+      height: 100%;
+      padding: $spacing-lg;
+      
+      @media (max-width: 1200px) {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+    }
+  }
+}
+
+// ===== Video Section =====
+.videobox {
+  flex: 1.3;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  min-height: 0;
+  
+  &.video_section {
+    padding: 0;
+  }
+  
+  // Video Player Container
+  .video_inner {
+    @include card;
+    flex: 1;
+    background-color: #000;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+    
+    // Upload Button State
+    &:not(.active) {
+      background-color: $gray-900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      .upload_btn_wrap {
+        .video_upload {
+          display: none;
+        }
+        
+        .video_upload_label {
+          @include button-primary;
+          padding: $spacing-md $spacing-xl;
+          font-size: $font-size-lg;
+          
+          div {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+            
+            &::before {
+              content: "⬆";
+              font-size: 20px;
+            }
+          }
+        }
+      }
+    }
+    
+    // Video Active State
+    &.active {
+      padding: 0;
+      
+      .feedback-player {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    
+    // Upload Progress
+    .loading {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      
+      .loading-content {
+        text-align: center;
+        
+        .progress-container {
+          width: 320px;
+          
+          .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: $radius-pill;
+            overflow: hidden;
+            margin-bottom: $spacing-md;
+            
+            .progress-fill {
+              height: 100%;
+              background: linear-gradient(90deg, $primary-blue, $primary-light);
+              border-radius: $radius-pill;
+              transition: width 0.3s ease;
+              position: relative;
+              
+              &::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                  90deg,
+                  transparent,
+                  rgba(255, 255, 255, 0.3),
+                  transparent
+                );
+                animation: shimmer 1.5s infinite;
+              }
+            }
+          }
+          
+          .progress-text {
+            font-size: $font-size-xxxl;
+            font-weight: 700;
+            color: $white;
+            margin-bottom: $spacing-sm;
+          }
+        }
+        
+        .loading-message {
+          font-size: $font-size-base;
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
+  }
+  
+  // Controls Section
+  .etc_box {
+    @include card;
+    padding: $spacing-lg;
+    
+    > div:first-child {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: $spacing-md;
+      margin-bottom: $spacing-lg;
+      
+      // All Feedback Button
+      .all {
+        @include button-secondary;
+        
+        &::before {
+          content: "📋";
+          font-size: 16px;
+        }
+      }
+      
+      // File Management Buttons
+      .good {
+        display: flex;
+        gap: $spacing-sm;
+        
+        .change_btn_wrap {
+          .video_upload {
+            display: none;
+          }
+          
+          .video_upload_label {
+            @include button-outline;
+            
+            &:hover {
+              background-color: $primary-blue;
+              color: $white;
+            }
+          }
+          
+          .delete {
+            @include button-danger;
+            
+            &::before {
+              content: "🗑";
+              font-size: 16px;
+            }
+          }
+        }
+      }
+      
+      // Share Button
+      .share {
+        @include button-success;
+        
+        &::before {
+          content: "🔗";
+          font-size: 16px;
+        }
+      }
+    }
+    
+    // Feedback List
+    .list {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: $spacing-sm;
+      
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: $gray-100;
+        border-radius: $radius-pill;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: $gray-400;
+        border-radius: $radius-pill;
+        
+        &:hover {
+          background: $gray-500;
+        }
+      }
+    }
+  }
+}
+
+// ===== Sidebar Section =====
+.sidebox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: $spacing-md;
+  
+  // Title Section
+  .b_title {
+    @include card;
+    padding: $spacing-md $spacing-lg;
+    
+    .s_title {
+      font-size: $font-size-xl;
+      font-weight: 600;
+      color: $gray-900;
+      margin: 0;
+    }
+  }
+  
+  // Tab Container
+  .tab_container {
+    @include card;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    
+    // Tab Menu
+    .top_box.tab_menu {
+      padding: $spacing-md;
+      background-color: $gray-50;
+      border-bottom: 2px solid $gray-200;
+      
+      .tab_list {
+        display: flex;
+        gap: $spacing-sm;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        overflow-x: auto;
+        
+        &::-webkit-scrollbar {
+          height: 0;
+        }
+        
+        li {
+          button {
+            @include button-base;
+            background: transparent;
+            color: $gray-600;
+            padding: $spacing-sm $spacing-md;
+            border: 2px solid transparent;
+            
+            &:hover {
+              color: $primary-blue;
+              background-color: rgba($primary-blue, 0.05);
+            }
+          }
+          
+          &.active button {
+            color: $primary-blue;
+            background-color: $white;
+            border-color: $primary-blue;
+            font-weight: 600;
+            box-shadow: $shadow-sm;
+          }
+        }
+      }
+    }
+    
+    // Tab Content
+    .tab_content {
+      flex: 1;
+      padding: $spacing-lg;
+      overflow-y: auto;
+      min-height: 0;
+      
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: $gray-100;
+        border-radius: $radius-pill;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: $gray-400;
+        border-radius: $radius-pill;
+        
+        &:hover {
+          background: $gray-500;
+        }
+      }
+      
+      // Comment Section Styles
+      .comment {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        
+        .message-list {
+          flex: 1;
+          overflow-y: auto;
+          padding-bottom: $spacing-md;
+        }
+        
+        .message-input {
+          border-top: 2px solid $gray-200;
+          padding-top: $spacing-md;
+          
+          input, textarea {
+            @include input-base;
+            margin-bottom: $spacing-sm;
+          }
+          
+          button {
+            @include button-primary;
+            width: 100%;
+          }
+        }
+      }
+      
+      // Feedback Input Styles
+      .feedback-input {
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-md;
+          
+          .form-group {
+            label {
+              display: block;
+              font-size: $font-size-sm;
+              font-weight: 600;
+              color: $gray-700;
+              margin-bottom: $spacing-xs;
+            }
+            
+            input, textarea {
+              @include input-base;
+            }
+            
+            textarea {
+              min-height: 120px;
+              resize: vertical;
+            }
+          }
+          
+          .button-group {
+            display: flex;
+            gap: $spacing-sm;
+            margin-top: $spacing-md;
+            
+            button[type="submit"] {
+              @include button-primary;
+              flex: 1;
+            }
+            
+            button[type="button"] {
+              @include button-secondary;
+            }
+          }
+        }
+      }
+      
+      // Member List Styles
+      .member {
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          
+          li {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
+            padding: $spacing-md;
+            border-radius: $radius-md;
+            transition: background-color $transition-fast;
+            
+            &:hover {
+              background-color: $gray-100;
+            }
+            
+            .img {
+              width: 48px;
+              height: 48px;
+              border-radius: $radius-circle;
+              background: linear-gradient(135deg, $primary-light, $primary-blue);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: $white;
+              font-weight: 600;
+              font-size: $font-size-lg;
+              
+              &::before {
+                content: attr(data-initial);
+              }
+            }
+            
+            .txt {
+              flex: 1;
+              
+              > span:first-child {
+                display: block;
+                font-weight: 600;
+                color: $gray-900;
+                margin-bottom: 2px;
+              }
+              
+              span:last-child {
+                display: block;
+                font-size: $font-size-sm;
+                color: $gray-600;
+              }
+            }
+            
+            &.admin {
+              .img {
+                background: linear-gradient(135deg, $success-green, darken($success-green, 10%));
+              }
+            }
+          }
+        }
+      }
+      
+      // Project Info Styles
+      .info {
+        dl {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: $spacing-md;
+          padding-bottom: $spacing-md;
+          border-bottom: 1px solid $gray-200;
+          
+          &:last-of-type {
+            border-bottom: none;
+          }
+          
+          dt {
+            min-width: 140px;
+            font-weight: 600;
+            color: $gray-700;
+            font-size: $font-size-sm;
+          }
+          
+          dd {
+            flex: 1;
+            color: $gray-900;
+            margin: 0;
+          }
+        }
+        
+        .project_btn {
+          @include button-primary;
+          width: 100%;
+          margin-top: $spacing-lg;
+          
+          &::before {
+            content: "⚙";
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ===== Animations =====
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.videobox, .sidebox {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// ===== Responsive Design =====
+@media (max-width: 1400px) {
+  .content.feedback.feedback_page .wrap_inner {
+    padding: $spacing-md;
+  }
+}
+
+@media (max-width: 768px) {
+  .content.feedback.feedback_page {
+    .wrap_inner {
+      padding: $spacing-sm;
+      gap: $spacing-md;
+    }
+    
+    .videobox {
+      .video_inner {
+        min-height: 300px;
+      }
+      
+      .etc_box {
+        padding: $spacing-md;
+        
+        > div:first-child {
+          justify-content: center;
+        }
+      }
+    }
+    
+    .sidebox {
+      .tab_container {
+        .tab_content {
+          padding: $spacing-md;
+        }
+      }
+    }
+  }
+  
+  // Button size adjustments for mobile
+  button {
+    min-height: 44px; // iOS touch target
+  }
+}

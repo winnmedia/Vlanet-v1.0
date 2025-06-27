@@ -170,7 +170,16 @@ WHITENOISE_AUTOREFRESH = True
 
 # 미디어 파일 설정  
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Railway 볼륨이 마운트된 경우 사용, 아니면 로컬 디렉토리
+MEDIA_ROOT = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', BASE_DIR / 'media')
+
+# 미디어 디렉토리 확인 및 생성
+import os as os_module
+if not os_module.path.exists(MEDIA_ROOT):
+    os_module.makedirs(MEDIA_ROOT, exist_ok=True)
+    print(f"Created media directory at: {MEDIA_ROOT}")
+else:
+    print(f"Media directory exists at: {MEDIA_ROOT}")
 
 # CORS 설정
 CORS_ALLOWED_ORIGINS = [

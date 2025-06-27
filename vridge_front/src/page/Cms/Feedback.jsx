@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { checkSession } from 'util/util'
 import 'css/Cms/Cms.scss'
-import 'css/Cms/FeedbackModern.scss'
-import 'css/Cms/FeedbackResponsive.scss'
-import 'css/Cms/FeedbackMobile.scss'
+import 'css/Cms/FeedbackRedesign.scss'
 import 'css/Cms/UploadProgress.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
@@ -314,6 +312,7 @@ export default function Feedback() {
       FeedbackFile(formData, project_id, onUploadProgress)
         .then((res) => {
           console.log('Upload success:', res)
+          console.log('Uploaded file URL:', res.data?.file_url || 'No URL returned')
           SetVideoLoad(false)
           setUploadProgress(100)
           refetch()
@@ -505,23 +504,24 @@ export default function Feedback() {
                 <div className="b_title">
                   <div className="s_title">{currentItem.tab}</div>
                 </div>
-                <div className="top_box tab_menu">
-                  <ul className="tab_list">
-                    {content.map((section, index) => (
-                      <li
-                        className={
-                          currentItem.tab == section.tab ? 'active' : ''
-                        }
-                        key={index}
-                        onClick={() => changeItem(index)}
-                      >
-                        <button>{section.tab}</button>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="edit"></div>
+                <div className="tab_container">
+                  <div className="top_box tab_menu">
+                    <ul className="tab_list">
+                      {content.map((section, index) => (
+                        <li
+                          className={
+                            currentItem.tab == section.tab ? 'active' : ''
+                          }
+                          key={index}
+                          onClick={() => changeItem(index)}
+                        >
+                          <button>{section.tab}</button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="tab_content">{currentItem.content}</div>
                 </div>
-                <div className="tab_content">{currentItem.content}</div>
               </div>
               </div>
             </div>

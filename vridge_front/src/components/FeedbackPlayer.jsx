@@ -229,6 +229,12 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) 
           onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
+          onError={(e) => {
+            console.error('Video playback error:', e)
+            console.error('Video URL:', videoUrl)
+          }}
+          playsInline
+          crossOrigin="anonymous"
         />
         <div className="video-overlay" onClick={togglePlay}>
           {!isPlaying && (

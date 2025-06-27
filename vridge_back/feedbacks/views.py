@@ -182,7 +182,21 @@ class FeedbackDetail(View):
                 feedback.save()
                 logging.info("File saved successfully")
                 
-                return JsonResponse({"message": "파일이 성공적으로 업로드되었습니다.", "result": "success"}, status=200)
+                # Get the file URL
+                file_url = None
+                if feedback.files:
+                    try:
+                        file_url = request.build_absolute_uri(feedback.files.url)
+                    except:
+                        file_url = feedback.files.url
+                    logging.info(f"File URL: {file_url}")
+                
+                return JsonResponse({
+                    "message": "파일이 성공적으로 업로드되었습니다.",
+                    "result": "success",
+                    "file_url": file_url,
+                    "file_name": feedback.files.name if feedback.files else None
+                }, status=200)
             except Exception as upload_error:
                 logging.error(f"Error during file processing: {str(upload_error)}")
                 return JsonResponse({"message": f"파일 처리 중 오류: {str(upload_error)}"}, status=500)

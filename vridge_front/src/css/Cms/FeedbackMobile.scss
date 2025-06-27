@@ -1,3 +1,12 @@
+// Import color variables from FeedbackOriginal.scss
+$primary-color: #0058da;
+$primary-hover: #0047b8;
+$background-light: #f8f8f8;
+$border-color: #efefef;
+$text-dark: #000;
+$text-gray: #707175;
+$white: #fff;
+
 // 태블릿 및 중간 화면 크기 (1200px 이하)
 @media (max-width: 1200px) {
   .feedback_page {

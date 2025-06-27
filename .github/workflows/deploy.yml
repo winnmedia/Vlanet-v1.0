@@ -73,9 +73,17 @@ jobs:
           CI: false
           GENERATE_SOURCEMAP: false
         run: |
+          set -e
           echo "Starting build with environment variables:"
-          echo "REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL"
-          npm run build
+          printenv | grep REACT_APP_ || true
+          
+          # Show package.json scripts for debugging
+          echo "Available npm scripts:"
+          npm run
+          
+          # Run build with verbose output
+          echo "Running npm build..."
+          npm run build --verbose
           
           # Verify build output
           if [ ! -d "build" ]; then
@@ -86,17 +94,21 @@ jobs:
           echo "Build completed successfully"
           ls -la build/
         
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+        
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        id: vercel-deployment
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./vridge_front
-          vercel-args: '--prod'
-          alias-domains: |
-            vlanet.net
+        working-directory: ./vridge_front
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          echo "Deploying to Vercel..."
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          vercel build --prod --token=$VERCEL_TOKEN
+          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN > deployment-url.txt
+          echo "Deployment URL: $(cat deployment-url.txt)"
           
   notify:
     name: Deployment Notification

@@ -125,3 +125,72 @@ if USE_S3:
    - 수정할 부분의 정확한 위치 확인
    - 들여쓰기와 공백 정확히 매칭
    - 변수명이나 함수명이 다른 곳에서도 사용되는지 확인
+
+## 2025-06-27 Vercel 배포 성공 - 최종 해결책
+
+### 배포 오류 히스토리
+1. **초기 문제**: `The provided path "~/work/Vlanet-v1.0/Vlanet-v1.0/vridge_front/vridge_front" does not exist`
+2. **시도한 방법들**:
+   - Vercel CLI 직접 사용 (실패)
+   - --cwd 옵션 사용 (실패)
+   - npx vercel link (실패)
+   - vercel.json framework 설정 (실패)
+
+### ✅ 최종 성공한 배포 설정
+
+#### GitHub Actions 워크플로우 (.github/workflows/deploy.yml)
+```yaml
+- name: Prepare Vercel deployment
+  run: |
+    cd vridge_front
+    # Create .vercel directory structure
+    mkdir -p .vercel/output/static
+    # Copy build files
+    cp -r build/* .vercel/output/static/
+    # Create config.json
+    echo '{"version": 3}' > .vercel/output/config.json
+    
+- name: Deploy to Vercel
+  uses: amondnet/vercel-action@v25
+  with:
+    vercel-token: ${{ secrets.VERCEL_TOKEN }}
+    vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+    vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+    vercel-args: '--prod --prebuilt --cwd ./vridge_front'
+```
+
+### 핵심 포인트
+1. **amondnet/vercel-action@v25 사용**: 안정적인 GitHub Action
+2. **Prebuilt 방식**: 
+   - React 빌드를 먼저 수행
+   - `.vercel/output/static` 디렉토리에 빌드 결과물 복사
+   - `config.json`에 version 3 명시
+3. **--prebuilt 옵션**: Vercel이 재빌드하지 않고 준비된 파일 배포
+4. **--cwd ./vridge_front**: 작업 디렉토리 명시
+
+### 프로젝트 구조
+```
+Vlanet-v1.0/
+├── .github/workflows/deploy.yml
+├── vridge_front/               # React 프론트엔드
+│   ├── package.json
+│   ├── vercel.json
+│   ├── build/                  # npm run build 결과물
+│   └── .vercel/output/        # Vercel 배포용 디렉토리
+└── vridge_back/                # Django 백엔드
+```
+
+### 환경 변수 (GitHub Secrets)
+- `VERCEL_TOKEN`: Vercel 인증 토큰
+- `VERCEL_ORG_ID`: Vercel 조직 ID
+- `VERCEL_PROJECT_ID`: Vercel 프로젝트 ID
+
+### 배포 URL
+- **프론트엔드**: https://vlanet.net (Vercel)
+- **백엔드**: https://videoplanet.up.railway.app (Railway)
+
+### 주의사항
+- vercel.json 파일은 vridge_front 디렉토리 안에 있어야 함
+- 빌드 명령어는 GitHub Actions에서 실행 (CI=false 환경변수 사용)
+- Vercel 프로젝트명: videoplanetready
+- Vercel 조직명: vlanets-projects

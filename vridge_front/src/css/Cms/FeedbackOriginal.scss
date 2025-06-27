@@ -17,15 +17,15 @@ $white: #fff;
     margin: 0 0 50px;
     display: flex;
     
-    .wrap_inner {
-      display: flex;
+    // ResizablePanel을 위한 스타일
+    .resizable-panel {
       width: 100%;
       gap: 15px;
     }
     
     // Video Section (기존 스타일 유지)
     .videobox {
-      width: calc(100% - 490px);
+      width: 100%;
       background: transparent;
       overflow-y: auto;
       display: flex;
@@ -264,7 +264,7 @@ $white: #fff;
     
     // Sidebar (기존 너비 유지)
     .sidebox {
-      width: 475px;
+      width: 100%;
       background: $white;
       border-radius: 15px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -558,7 +558,7 @@ $white: #fff;
 // Responsive (기존 구조 유지)
 @media (max-width: 1200px) {
   .content.feedback.feedback_page {
-    .wrap_inner {
+    .resizable-panel {
       flex-direction: column;
     }
     

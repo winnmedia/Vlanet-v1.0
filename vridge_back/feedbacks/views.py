@@ -186,10 +186,11 @@ class FeedbackDetail(View):
                 # Get the file URL
                 file_url = None
                 if feedback.files:
-                    try:
-                        file_url = request.build_absolute_uri(feedback.files.url)
-                    except:
-                        file_url = feedback.files.url
+                    if settings.DEBUG:
+                        file_url = f"http://127.0.0.1:8000{feedback.files.url}"
+                    else:
+                        # 프로덕션 환경에서도 전체 URL 반환
+                        file_url = f"https://videoplanet.up.railway.app{feedback.files.url}"
                     logging.info(f"File URL: {file_url}")
                 
                 return JsonResponse({

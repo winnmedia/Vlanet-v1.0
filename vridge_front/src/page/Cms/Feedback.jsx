@@ -13,6 +13,7 @@ import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessage from 'tasks/Feedback/FeedbackMessage'
 import FeedbackPlayer from 'components/FeedbackPlayer'
+import ResizablePanel from 'components/ResizablePanel'
 
 import useTab from 'hooks/UseTab'
 
@@ -370,9 +371,9 @@ export default function Feedback() {
         <SideBar />
         <main>
           {current_project && (
-            <div className="content feedback feedback_page flex space_between">
-              <div className="wrap_inner">
-              <div className="videobox video_section">
+            <div className="content feedback feedback_page">
+              <ResizablePanel defaultWidth={65} minWidth={40} maxWidth={80}>
+                <div className="videobox video_section">
                 <div
                   className={
                     current_project.files ? 'video_inner active' : 'video_inner'
@@ -495,8 +496,8 @@ export default function Feedback() {
                     />
                   </div>
                 </div>
-              </div>
-              <div className="sidebox">
+                </div>
+                <div className="sidebox">
                 <div className="b_title">
                   <div className="s_title">{currentItem.tab}</div>
                 </div>
@@ -518,8 +519,8 @@ export default function Feedback() {
                   </div>
                   <div className="tab_content">{currentItem.content}</div>
                 </div>
-              </div>
-              </div>
+                </div>
+              </ResizablePanel>
             </div>
           )}
         </main>

@@ -1,0 +1,107 @@
+.resizable-panel {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  
+  .panel-left,
+  .panel-right {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .panel-left {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .panel-right {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .resize-handle {
+    width: 12px;
+    cursor: col-resize;
+    position: relative;
+    user-select: none;
+    touch-action: none;
+    background: transparent;
+    transition: background 0.2s;
+    
+    &:hover {
+      background: rgba(0, 88, 218, 0.05);
+      
+      .handle-bar {
+        opacity: 1;
+      }
+    }
+    
+    &.resizing {
+      background: rgba(0, 88, 218, 0.1);
+      
+      .handle-bar {
+        opacity: 1;
+        background: #0058da;
+      }
+    }
+    
+    .handle-bar {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 60px;
+      background: #ddd;
+      border-radius: 2px;
+      opacity: 0.6;
+      transition: all 0.2s;
+      
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: inherit;
+        border-radius: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      
+      &::before {
+        top: -2px;
+      }
+      
+      &::after {
+        bottom: -2px;
+      }
+    }
+  }
+}
+
+// 모바일에서는 리사이즈 비활성화
+@media (max-width: 768px) {
+  .resizable-panel {
+    flex-direction: column;
+    
+    .panel-left,
+    .panel-right {
+      width: 100% !important;
+    }
+    
+    .panel-left {
+      height: 60%;
+    }
+    
+    .panel-right {
+      height: 40%;
+    }
+    
+    .resize-handle {
+      display: none;
+    }
+  }
+}

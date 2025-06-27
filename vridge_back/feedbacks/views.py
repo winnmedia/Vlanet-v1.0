@@ -31,14 +31,8 @@ class FeedbackDetail(View):
 
             # print(feedback.files.name) path , url
             if feedback.files:
-                # URL을 빌드할 때 인코딩 처리
-                from urllib.parse import quote
+                # URL 그대로 사용 (인코딩 제거)
                 file_path = feedback.files.url
-                # 파일명만 인코딩
-                if '/media/' in file_path:
-                    path_parts = file_path.split('/')
-                    path_parts[-1] = quote(path_parts[-1].encode('utf-8'))
-                    file_path = '/'.join(path_parts)
                 
                 if settings.DEBUG:
                     file_url = f"http://127.0.0.1:8000{file_path}"
@@ -210,14 +204,8 @@ class FeedbackDetail(View):
                 # Get the file URL
                 file_url = None
                 if feedback.files:
-                    # URL을 빌드할 때 인코딩 처리
-                    from urllib.parse import quote
+                    # URL 그대로 사용 (인코딩 제거)
                     file_path = feedback.files.url
-                    # 파일명만 인코딩
-                    if '/media/' in file_path:
-                        path_parts = file_path.split('/')
-                        path_parts[-1] = quote(path_parts[-1].encode('utf-8'))
-                        file_path = '/'.join(path_parts)
                     
                     if settings.DEBUG:
                         file_url = f"http://127.0.0.1:8000{file_path}"

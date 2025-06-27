@@ -261,10 +261,16 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
         )}
         <video
           ref={videoRef}
+          src={videoUrl}
           onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onError={(e) => {
+            // source 태그의 에러는 무시 (video 태그의 에러만 처리)
+            if (e.target.tagName.toLowerCase() === 'source') {
+              return;
+            }
+            
             const error = e.target.error;
             console.error('Video playback error:', e)
             console.error('Video URL:', videoUrl)
@@ -294,16 +300,12 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
           }}
           onLoadedData={() => {
             console.log('Video loaded successfully:', videoUrl)
+            setError(null)
           }}
           playsInline
           controls={false}
           preload="metadata"
-        >
-          <source src={videoUrl} type="video/mp4" />
-          <source src={videoUrl} type="video/webm" />
-          <source src={videoUrl} type="video/ogg" />
-          브라우저가 비디오 태그를 지원하지 않습니다.
-        </video>
+        />
         <div className="video-overlay" onClick={togglePlay}>
           {!isPlaying && (
             <div className="play-button">

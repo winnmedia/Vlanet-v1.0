@@ -13,6 +13,7 @@ import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessage from 'tasks/Feedback/FeedbackMessage'
 import FeedbackPlayer from 'components/FeedbackPlayer'
+import VideoUploadGuide from 'components/VideoUploadGuide'
 
 import useTab from 'hooks/UseTab'
 
@@ -35,6 +36,7 @@ export default function Feedback() {
   const [current_project, set_current_project] = useState(null)
   const [currentVideoTime, setCurrentVideoTime] = useState(0)
   const videoPlayerRef = useRef(null)
+  const [showUploadGuide, setShowUploadGuide] = useState(false)
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -416,18 +418,26 @@ export default function Feedback() {
                   )}
                   {IsAdmin(current_project) && !current_project.files && (
                     // <button className="submit">영상 추가</button>
-                    <div className="upload_btn_wrap">
-                      <input
-                        type="file"
-                        accept="video/*"
-                        onChange={FileChange}
-                        className="video_upload"
-                        id="files"
-                        name="files"
-                      />
-                      <label htmlFor="files" className="video_upload_label">
-                        <div>영상 추가</div>
-                      </label>
+                    <div className="upload_area">
+                      <div className="upload_btn_wrap">
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={FileChange}
+                          className="video_upload"
+                          id="files"
+                          name="files"
+                        />
+                        <label htmlFor="files" className="video_upload_label">
+                          <div>영상 추가</div>
+                        </label>
+                      </div>
+                      <button 
+                        className="guide_btn"
+                        onClick={() => setShowUploadGuide(true)}
+                      >
+                        업로드 가이드
+                      </button>
                     </div>
                   )}
                   {VideoLoad && (
@@ -541,6 +551,9 @@ export default function Feedback() {
           )}
         </main>
       </div>
+      {showUploadGuide && (
+        <VideoUploadGuide onClose={() => setShowUploadGuide(false)} />
+      )}
     </PageTemplate>
   )
 }

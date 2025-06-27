@@ -45,45 +45,68 @@ $white: #fff;
           box-shadow: 0 4px 12px rgba(0, 88, 218, 0.1);
         }
         
-        // Upload Button (기존 스타일 개선)
-        .upload_btn_wrap {
+        // Upload Area
+        .upload_area {
           position: absolute;
           left: 50%;
           top: 50%;
           transform: translate(-50%, -50%);
+          text-align: center;
           
-          .video_upload {
-            display: none;
+          .upload_btn_wrap {
+            margin-bottom: 15px;
+            
+            .video_upload {
+              display: none;
+            }
+            
+            .video_upload_label {
+              cursor: pointer;
+              display: inline-block;
+              
+              div {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                line-height: 50px;
+                background: $primary-color;
+                color: $white;
+                width: 180px;
+                height: 50px;
+                border-radius: 15px;
+                font-size: 16px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                
+                &:hover {
+                  background: $primary-hover;
+                  transform: translateY(-2px);
+                  box-shadow: 0 4px 8px rgba(0, 88, 218, 0.3);
+                }
+                
+                &::before {
+                  content: "📹";
+                  font-size: 20px;
+                }
+              }
+            }
           }
           
-          .video_upload_label {
+          .guide_btn {
+            background: none;
+            border: 2px solid $primary-color;
+            color: $primary-color;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.3s ease;
             
-            div {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 8px;
-              line-height: 50px;
+            &:hover {
               background: $primary-color;
               color: $white;
-              width: 180px;
-              height: 50px;
-              border-radius: 15px;
-              font-size: 16px;
-              font-weight: 500;
-              transition: all 0.3s ease;
-              
-              &:hover {
-                background: $primary-hover;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0, 88, 218, 0.3);
-              }
-              
-              &::before {
-                content: "📹";
-                font-size: 20px;
-              }
             }
           }
         }
@@ -173,6 +196,11 @@ $white: #fff;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             
             &:hover {
               background: $primary-color;
@@ -192,14 +220,19 @@ $white: #fff;
           .good {
             display: flex;
             gap: 10px;
+            align-items: center;
             
             .change_btn_wrap {
+              display: flex;
+              align-items: center;
+              
               .video_upload {
                 display: none;
               }
               
               .video_upload_label {
                 cursor: pointer;
+                display: inline-block;
                 
                 div {
                   padding: 8px 20px;
@@ -209,6 +242,7 @@ $white: #fff;
                   font-size: 14px;
                   font-weight: 500;
                   transition: all 0.3s ease;
+                  white-space: nowrap;
                   
                   &:hover {
                     background: $primary-color;

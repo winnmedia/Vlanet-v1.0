@@ -105,13 +105,22 @@ jobs:
           echo "Current directory: $(pwd)"
           echo "Directory contents:"
           ls -la
+          echo "Build directory contents:"
+          ls -la build/
           
           # Create .vercel directory and project.json
           mkdir -p .vercel
           echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
           
-          # Deploy with explicit build output directory
-          vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --prebuilt ./build
+          # Copy build output to .vercel/output/static
+          mkdir -p .vercel/output/static
+          cp -r build/* .vercel/output/static/
+          
+          # Create config.json for Vercel
+          echo '{"version": 3}' > .vercel/output/config.json
+          
+          # Deploy with prebuilt option
+          vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --prebuilt
           
           # Set up custom domain
           vercel alias --token=${{ secrets.VERCEL_TOKEN }} set vlanet.net

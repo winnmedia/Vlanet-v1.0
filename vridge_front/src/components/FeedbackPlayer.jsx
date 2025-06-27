@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import './FeedbackPlayer.scss'
 
-const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) => {
+const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError }, ref) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -10,6 +10,9 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) 
   const [showScreenshot, setShowScreenshot] = useState(false)
   const [screenshotUrl, setScreenshotUrl] = useState(null)
   const [showHelp, setShowHelp] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false)
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   
@@ -40,14 +43,23 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) 
     if (!video) return
 
     const updateTime = () => setCurrentTime(video.currentTime)
-    const updateDuration = () => setDuration(video.duration)
+    const updateDuration = () => {
+      setDuration(video.duration)
+      setIsLoading(false)
+    }
+    const handleLoadStart = () => setIsLoading(true)
+    const handleCanPlay = () => setIsLoading(false)
 
     video.addEventListener('timeupdate', updateTime)
     video.addEventListener('loadedmetadata', updateDuration)
+    video.addEventListener('loadstart', handleLoadStart)
+    video.addEventListener('canplay', handleCanPlay)
 
     return () => {
       video.removeEventListener('timeupdate', updateTime)
       video.removeEventListener('loadedmetadata', updateDuration)
+      video.removeEventListener('loadstart', handleLoadStart)
+      video.removeEventListener('canplay', handleCanPlay)
     }
   }, [videoUrl])
   
@@ -223,6 +235,21 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) 
   return (
     <div className="feedback-player">
       <div className="video-container" onMouseEnter={() => setShowHelp(true)} onMouseLeave={() => setShowHelp(false)}>
+        {isLoading && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+            <p>영상 로딩중...</p>
+          </div>
+        )}
+        {error && (
+          <div className="error-overlay">
+            <svg viewBox="0 0 24 24" width="48" height="48">
+              <path fill="#ff4444" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+            <p>{error}</p>
+            <p className="error-url">URL: {videoUrl}</p>
+          </div>
+        )}
         <video
           ref={videoRef}
           src={videoUrl}
@@ -232,6 +259,13 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) 
           onError={(e) => {
             console.error('Video playback error:', e)
             console.error('Video URL:', videoUrl)
+            console.error('Error details:', e.target.error)
+            setError('영상을 재생할 수 없습니다. URL을 확인해주세요.')
+            setIsLoading(false)
+            if (onError) onError(e)
+          }}
+          onLoadedData={() => {
+            console.log('Video loaded successfully:', videoUrl)
           }}
           playsInline
           crossOrigin="anonymous"
@@ -291,11 +325,17 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) 
               )}
             </button>
 
-            <button onClick={() => handleSkip(-10)} className="skip-button">
-              -10s
+            <button onClick={() => handleSkip(-10)} className="skip-button" title="10초 뒤로">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+                <text x="12" y="16" text-anchor="middle" fill="currentColor" font-size="10" font-weight="bold">10</text>
+              </svg>
             </button>
-            <button onClick={() => handleSkip(10)} className="skip-button">
-              +10s
+            <button onClick={() => handleSkip(10)} className="skip-button" title="10초 앞으로">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M12.01 19V23l5-5-5-5v4c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6h2c0-4.42-3.58-8-8-8s-8 3.58-8 8 3.58 8 8 8z"/>
+                <text x="12" y="8" text-anchor="middle" fill="currentColor" font-size="10" font-weight="bold">10</text>
+              </svg>
             </button>
 
             <div className="time-display">
@@ -304,53 +344,71 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime }, ref) 
           </div>
 
           <div className="right-controls">
-            <button onClick={handleAddComment} className="add-comment-btn">
+            <button onClick={handleAddComment} className="icon-button" title="현재 시간에 코멘트 추가">
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
               </svg>
-              코멘트 추가
+              <span className="button-text">코멘트</span>
             </button>
             
-            <button onClick={handleScreenshot} className="screenshot-btn" title="스크린샷">
+            <button onClick={handleScreenshot} className="icon-button" title="스크린샷 찍기">
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path fill="currentColor" d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
               </svg>
             </button>
 
-            <div className="volume-control">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
-              </svg>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume * 100}
-                onChange={handleVolumeChange}
-                className="volume-slider"
-              />
+            <div className="volume-control" onMouseEnter={() => setShowVolumeSlider(true)} onMouseLeave={() => setShowVolumeSlider(false)}>
+              <button className="icon-button volume-button" onClick={() => setVolume(volume > 0 ? 0 : 1)}>
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  {volume === 0 ? (
+                    <path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                  ) : volume < 0.5 ? (
+                    <path fill="currentColor" d="M7 9v6h4l5 5V4l-5 5H7z" />
+                  ) : (
+                    <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                  )}
+                </svg>
+              </button>
+              <div className={`volume-slider-container ${showVolumeSlider ? 'show' : ''}`}>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume * 100}
+                  onChange={handleVolumeChange}
+                  className="volume-slider"
+                />
+              </div>
             </div>
 
             <div className="playback-rate">
-              <select 
-                value={playbackRate} 
-                onChange={(e) => handlePlaybackRateChange(Number(e.target.value))}
-              >
-                <option value="0.5">0.5x</option>
-                <option value="0.75">0.75x</option>
-                <option value="1">1x</option>
-                <option value="1.25">1.25x</option>
-                <option value="1.5">1.5x</option>
-                <option value="2">2x</option>
-              </select>
+              <button className="icon-button rate-button" onClick={() => {
+                const rates = [0.5, 0.75, 1, 1.25, 1.5, 2];
+                const currentIndex = rates.indexOf(playbackRate);
+                const nextIndex = (currentIndex + 1) % rates.length;
+                handlePlaybackRateChange(rates[nextIndex]);
+              }}>
+                <span className="rate-text">{playbackRate}x</span>
+              </button>
             </div>
 
             <button 
-              onClick={() => videoRef.current.requestFullscreen()} 
-              className="fullscreen-btn"
+              onClick={() => {
+                if (document.fullscreenElement) {
+                  document.exitFullscreen();
+                } else {
+                  videoRef.current.requestFullscreen();
+                }
+              }} 
+              className="icon-button"
+              title="전체화면"
             >
               <svg viewBox="0 0 24 24" width="20" height="20">
-                <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                {document.fullscreenElement ? (
+                  <path fill="currentColor" d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
+                ) : (
+                  <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                )}
               </svg>
             </button>
           </div>

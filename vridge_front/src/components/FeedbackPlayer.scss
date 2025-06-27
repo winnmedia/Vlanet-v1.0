@@ -1,10 +1,11 @@
+// Modern Video Player Styles
 .feedback-player {
   width: 100%;
   height: 100%;
   background: #000;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   
@@ -52,43 +53,145 @@
         background: rgba(0, 0, 0, 0.7);
         border-radius: 50%;
         padding: 20px;
-        transition: transform 0.2s;
+        transition: transform 0.3s;
 
         &:hover {
           transform: scale(1.1);
         }
       }
     }
+    
+    // Loading and Error Overlays
+    .loading-overlay,
+    .error-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      z-index: 10;
+      
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      p {
+        margin-top: 20px;
+        font-size: 16px;
+      }
+      
+      .error-url {
+        font-size: 12px;
+        color: #999;
+        word-break: break-all;
+        max-width: 80%;
+        text-align: center;
+      }
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    // Keyboard help overlay
+    .keyboard-help {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      max-width: 300px;
+      
+      .help-content {
+        color: white;
+        
+        h4 {
+          margin: 0 0 15px 0;
+          font-size: 16px;
+          color: #fff;
+        }
+        
+        .help-grid {
+          display: grid;
+          gap: 8px;
+          font-size: 13px;
+          
+          div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            
+            kbd {
+              background: rgba(255, 255, 255, 0.1);
+              border: 1px solid rgba(255, 255, 255, 0.3);
+              border-radius: 3px;
+              padding: 2px 6px;
+              font-family: monospace;
+              font-size: 12px;
+              min-width: 60px;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+    
+    &:hover .keyboard-help {
+      opacity: 1;
+    }
   }
 
   .controls {
-    background: #222;
-    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     .progress-bar {
       position: relative;
-      width: 100%;
-      height: 6px;
-      background: #444;
-      border-radius: 3px;
-      margin-bottom: 10px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
       cursor: pointer;
+      transition: height 0.2s;
+
+      &:hover {
+        height: 6px;
+      }
 
       .seek-slider {
         position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        opacity: 0;
+        margin: 0;
         cursor: pointer;
+        opacity: 0;
         z-index: 2;
       }
 
       .progress-fill {
         position: absolute;
+        top: 0;
+        left: 0;
         height: 100%;
-        background: #ff4545;
-        border-radius: 3px;
+        background: #0058da;
         pointer-events: none;
+        transition: width 0.1s;
       }
     }
 
@@ -96,71 +199,131 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 12px 20px;
+      gap: 10px;
       color: white;
-
-      button {
-        background: none;
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: opacity 0.2s;
-
-        &:hover {
-          opacity: 0.8;
-        }
-      }
 
       .left-controls {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
+        flex: 1;
 
         .play-pause {
-          padding: 0;
+          background: none;
+          border: none;
+          padding: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.3s;
+          color: white;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+          }
         }
 
         .skip-button {
-          font-size: 12px;
-          padding: 5px 10px;
           background: rgba(255, 255, 255, 0.1);
-          border-radius: 4px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: white;
+          padding: 6px 10px;
+          cursor: pointer;
+          border-radius: 6px;
+          transition: all 0.3s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          svg {
+            display: block;
+          }
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
         }
 
         .time-display {
           font-size: 14px;
           color: #ccc;
+          font-variant-numeric: tabular-nums;
+          user-select: none;
         }
       }
 
       .right-controls {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 8px;
 
-        .add-comment-btn {
-          background: #ff4545;
-          padding: 8px 15px;
-          border-radius: 4px;
-          font-size: 14px;
-          font-weight: 500;
-
-          &:hover {
-            background: #e03e3e;
-          }
-        }
-        
-        .screenshot-btn {
+        // 통일된 아이콘 버튼 스타일
+        .icon-button {
           background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: white;
           padding: 8px;
-          border-radius: 4px;
-          transition: background 0.2s;
+          cursor: pointer;
+          border-radius: 6px;
+          transition: all 0.3s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          font-size: 13px;
+          min-height: 36px;
           
+          svg {
+            display: block;
+          }
+          
+          .button-text {
+            display: none;
+            
+            @media (min-width: 768px) {
+              display: block;
+            }
+          }
+
           &:hover {
             background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+          
+          // 코멘트 버튼은 강조
+          &:first-child {
+            background: #0058da;
+            border-color: #0058da;
+            
+            &:hover {
+              background: #0047b8;
+              border-color: #0047b8;
+            }
+          }
+          
+          &.rate-button {
+            padding: 8px 12px;
+            min-width: 60px;
+            
+            .rate-text {
+              font-weight: 600;
+              font-size: 13px;
+            }
           }
         }
 
@@ -168,83 +331,103 @@
           display: flex;
           align-items: center;
           gap: 8px;
+          position: relative;
 
-          .volume-slider {
-            width: 80px;
-            height: 4px;
-            background: #444;
-            outline: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-
-            &::-webkit-slider-thumb {
+          .volume-button {
+            background: none;
+            padding: 6px;
+          }
+          
+          .volume-slider-container {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            margin-bottom: 10px;
+            
+            &.show {
+              opacity: 1;
+              pointer-events: all;
+            }
+            
+            &::after {
+              content: '';
+              position: absolute;
+              top: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              border: 8px solid transparent;
+              border-top-color: rgba(0, 0, 0, 0.9);
+            }
+            
+            .volume-slider {
+              width: 100px;
+              height: 4px;
+              background: #444;
+              outline: none;
               -webkit-appearance: none;
-              width: 12px;
-              height: 12px;
-              background: white;
-              border-radius: 50%;
               cursor: pointer;
+              border-radius: 2px;
+
+              &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 12px;
+                height: 12px;
+                background: white;
+                border-radius: 50%;
+                cursor: pointer;
+              }
+              
+              &::-moz-range-thumb {
+                width: 12px;
+                height: 12px;
+                background: white;
+                border-radius: 50%;
+                cursor: pointer;
+                border: none;
+              }
             }
           }
         }
 
         .playback-rate {
-          select {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-
-            option {
-              background: #222;
-            }
-          }
-        }
-
-        .fullscreen-btn {
-          padding: 5px;
+          display: flex;
+          align-items: center;
         }
       }
     }
-    
-    .keyboard-help {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.9);
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      font-size: 12px;
-      z-index: 10;
-      
-      h4 {
-        margin: 0 0 10px 0;
-        font-size: 14px;
-        color: #ff4545;
-      }
-      
-      .help-grid {
-        display: grid;
-        gap: 5px;
+  }
+}
+
+// 모바일 반응형
+@media (max-width: 768px) {
+  .feedback-player {
+    .controls {
+      .control-buttons {
+        padding: 8px 12px;
         
-        div {
-          display: flex;
-          align-items: center;
+        .left-controls {
           gap: 8px;
+          
+          .time-display {
+            font-size: 12px;
+          }
         }
         
-        kbd {
-          background: rgba(255, 255, 255, 0.2);
-          padding: 2px 6px;
-          border-radius: 3px;
-          font-family: monospace;
-          font-size: 11px;
-          min-width: 40px;
-          text-align: center;
+        .right-controls {
+          gap: 4px;
+          
+          .icon-button {
+            padding: 6px;
+            min-height: 32px;
+          }
         }
       }
     }

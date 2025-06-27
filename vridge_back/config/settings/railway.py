@@ -216,11 +216,9 @@ GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 KAKAO_API_KEY = os.environ.get('KAKAO_API_KEY')
 
-# AWS 설정
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'vridge-front')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-northeast-2')
+# Railway 볼륨 스토리지 설정
+# Railway는 영구 볼륨을 제공하며, RAILWAY_VOLUME_MOUNT_PATH에 마운트됨
+print("Using Railway volume storage for media files")
 
 # 이메일 설정
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

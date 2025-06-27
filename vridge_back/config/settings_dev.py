@@ -14,7 +14,7 @@ DATABASES = {
     }
 }
 
-# Disable S3 storage for development
+# Use local file storage for development
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 

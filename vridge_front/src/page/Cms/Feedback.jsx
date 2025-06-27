@@ -384,7 +384,7 @@ export default function Feedback() {
                       videoUrl={
                         current_project.files.startsWith('http') 
                           ? current_project.files 
-                          : `${process.env.REACT_APP_BACKEND_URI}${current_project.files}`
+                          : `${process.env.REACT_APP_BACKEND_URI || 'https://videoplanet.up.railway.app'}${current_project.files}`
                       }
                       initialTime={currentVideoTime}
                       onTimeClick={(time) => {

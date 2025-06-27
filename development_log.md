@@ -194,3 +194,27 @@ Vlanet-v1.0/
 - 빌드 명령어는 GitHub Actions에서 실행 (CI=false 환경변수 사용)
 - Vercel 프로젝트명: videoplanetready
 - Vercel 조직명: vlanets-projects
+
+## 2025-06-27 UI/UX 개선 및 버그 수정
+
+### 수정된 내용
+1. **랜딩페이지 로그인 버튼**
+   - 대표 색상 (#0059db) 적용
+   - 반응형 스타일 추가 (768px, 480px 브레이크포인트)
+   - 작은 화면에서도 로그인 버튼이 보이도록 수정
+
+2. **프로젝트 정보 표시 문제 해결**
+   - CmsHome 컴포넌트에 refetchProject 호출 추가
+   - 로그인 후 프로젝트 데이터 자동 로드
+
+3. **영상 피드백 영상 로드 문제**
+   - CORS 설정에 CORS_ALLOW_CREDENTIALS = True 추가
+   - 미디어 파일 서빙을 위한 Railway 볼륨 설정 확인
+   - 프론트엔드 .env 파일에 백엔드 URL 설정 확인
+
+### 환경 변수 설정 (.env)
+```
+REACT_APP_BACKEND_URI=https://videoplanet.up.railway.app
+REACT_APP_BACKEND_API_URL=https://videoplanet.up.railway.app/api
+REACT_APP_SOCKET_URI=wss://videoplanet.up.railway.app
+```

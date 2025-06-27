@@ -26,11 +26,14 @@ export default function CmsHome() {
   const { tab, on_menu } = side
   const [showDashboard, setShowDashboard] = useState(false)
 
-  // 인증 체크
+  // 인증 체크 및 프로젝트 데이터 로드
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
+    } else {
+      // 프로젝트 데이터 가져오기
+      refetchProject(dispatch, navigate)
     }
   }, [])
 

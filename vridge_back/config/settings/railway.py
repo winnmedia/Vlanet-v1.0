@@ -185,8 +185,11 @@ else:
 CORS_ALLOWED_ORIGINS = [
     "https://vlanet.net",
     "https://www.vlanet.net",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 CORS_ALLOW_ALL_ORIGINS = True  # 개발용
+CORS_ALLOW_CREDENTIALS = True
 
 # REST Framework 설정
 REST_FRAMEWORK = {

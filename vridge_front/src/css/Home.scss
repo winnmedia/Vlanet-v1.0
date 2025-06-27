@@ -109,7 +109,7 @@
           width: 90px;
           height: 45px;
           margin-left: 40px;
-          background: #000;
+          background: #0059db;
           color: #fff;
           border: none;
           border-radius: 8px;
@@ -117,10 +117,11 @@
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
+          white-space: nowrap;
           &:hover {
-            background: #333;
+            background: #0047b3;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0,89,219,0.3);
           }
         }
       }
@@ -2145,6 +2146,54 @@
               background-size: 20px;
               background-position: center;
             }
+          }
+        }
+      }
+    }
+  }
+  
+  // 반응형 스타일
+  @media (max-width: 768px) {
+    #header {
+      .inner {
+        padding: 15px 20px;
+        
+        .logo {
+          img {
+            width: 100px;
+          }
+        }
+        
+        .etc {
+          ul {
+            li {
+              width: 35px;
+              height: 35px;
+              margin-left: 10px;
+            }
+          }
+          
+          button.submit {
+            width: 70px;
+            height: 40px;
+            margin-left: 15px;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    #header {
+      .inner {
+        .etc {
+          ul {
+            display: none; // 작은 화면에서는 SNS 아이콘 숨김
+          }
+          
+          button.submit {
+            margin-left: 0;
           }
         }
       }

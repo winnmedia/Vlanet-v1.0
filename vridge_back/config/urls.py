@@ -37,8 +37,9 @@ urlpatterns = [
     # path("feedbacks/", include("feedbacks.routing")),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Always serve media files
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # token_blacklist가 있을 때만 unregister
 if HAS_TOKEN_BLACKLIST and token_blacklist:

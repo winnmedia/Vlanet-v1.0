@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { checkSession } from 'util/util'
 import 'css/Cms/Cms.scss'
+import 'css/Cms/FeedbackModern.scss'
 import 'css/Cms/FeedbackResponsive.scss'
 import 'css/Cms/FeedbackMobile.scss'
 import 'css/Cms/UploadProgress.scss'
@@ -381,7 +382,11 @@ export default function Feedback() {
                   {current_project.files && (
                     <FeedbackPlayer
                       ref={videoPlayerRef}
-                      videoUrl={current_project.files}
+                      videoUrl={
+                        current_project.files.startsWith('http') 
+                          ? current_project.files 
+                          : `${process.env.REACT_APP_BACKEND_URI}${current_project.files}`
+                      }
                       initialTime={currentVideoTime}
                       onTimeClick={(time) => {
                         // 시간 클릭 시 해당 시간으로 코멘트 추가

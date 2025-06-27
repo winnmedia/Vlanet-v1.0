@@ -1,0 +1,424 @@
+// Modern Feedback Page Design
+// 깔끔하고 현대적인 디자인
+
+// Variables
+$primary-color: #4A90E2;
+$secondary-color: #2C3E50;
+$background-light: #F8F9FA;
+$border-color: #E1E4E8;
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+$radius-small: 8px;
+$radius-medium: 12px;
+$radius-large: 16px;
+
+// Feedback Page Styles
+.content.feedback {
+  &.feedback_page {
+    background: transparent;
+    padding: 0;
+    
+    .wrap_inner {
+      display: flex;
+      gap: 30px;
+      height: 100%;
+      align-items: stretch;
+    }
+    
+    // Video Section
+    .videobox {
+      flex: 1.2;
+      background: white;
+      border-radius: $radius-large;
+      box-shadow: $shadow-light;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      
+      &.video_section {
+        padding: 0;
+      }
+      
+      .video_inner {
+        flex: 1;
+        background: #000;
+        position: relative;
+        overflow: hidden;
+        
+        &.active {
+          .feedback-player {
+            display: block;
+          }
+        }
+        
+        // Upload Button
+        .upload_btn_wrap {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          
+          .video_upload {
+            display: none;
+          }
+          
+          .video_upload_label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 32px;
+            background: $primary-color;
+            color: white;
+            border-radius: $radius-medium;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: $shadow-light;
+            
+            &:hover {
+              background: darken($primary-color, 10%);
+              transform: translateY(-2px);
+              box-shadow: $shadow-medium;
+            }
+            
+            div {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              
+              &:before {
+                content: "📹";
+                font-size: 20px;
+              }
+            }
+          }
+        }
+        
+        // Loading State
+        .loading {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.9);
+          display: flex !important;
+          align-items: center;
+          justify-content: center;
+          z-index: 10;
+          
+          .loading-content {
+            text-align: center;
+            
+            .progress-container {
+              width: 300px;
+              margin: 0 auto 20px;
+              
+              .progress-bar {
+                height: 6px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 3px;
+                overflow: hidden;
+                
+                .progress-fill {
+                  height: 100%;
+                  background: $primary-color;
+                  transition: width 0.3s ease;
+                  border-radius: 3px;
+                }
+              }
+              
+              .progress-text {
+                color: white;
+                font-size: 24px;
+                font-weight: 600;
+                margin-top: 16px;
+              }
+            }
+            
+            .loading-message {
+              color: rgba(255, 255, 255, 0.8);
+              font-size: 16px;
+            }
+          }
+        }
+      }
+      
+      // Controls Section
+      .etc_box {
+        background: white;
+        padding: 20px;
+        border-top: 1px solid $border-color;
+        
+        > div {
+          &:first-child {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            
+            .all {
+              padding: 10px 20px;
+              background: $background-light;
+              border: 1px solid $border-color;
+              border-radius: $radius-small;
+              font-size: 14px;
+              color: $secondary-color;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              
+              &:hover {
+                background: white;
+                border-color: $primary-color;
+                color: $primary-color;
+              }
+            }
+            
+            .good {
+              display: flex;
+              gap: 10px;
+              
+              .change_btn_wrap {
+                .video_upload_label {
+                  padding: 8px 16px;
+                  background: $background-light;
+                  border: 1px solid $border-color;
+                  border-radius: $radius-small;
+                  font-size: 14px;
+                  color: $secondary-color;
+                  cursor: pointer;
+                  transition: all 0.2s ease;
+                  
+                  &:hover {
+                    background: white;
+                    border-color: $primary-color;
+                    color: $primary-color;
+                  }
+                  
+                  .delete {
+                    color: #E74C3C;
+                    
+                    &:hover {
+                      color: darken(#E74C3C, 10%);
+                    }
+                  }
+                }
+              }
+            }
+            
+            .share {
+              padding: 8px 16px;
+              background: $primary-color;
+              color: white;
+              border-radius: $radius-small;
+              font-size: 14px;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              
+              &:hover {
+                background: darken($primary-color, 10%);
+              }
+            }
+          }
+        }
+        
+        // Feedback List
+        .list {
+          max-height: 200px;
+          overflow-y: auto;
+          
+          &::-webkit-scrollbar {
+            width: 6px;
+          }
+          
+          &::-webkit-scrollbar-track {
+            background: $background-light;
+            border-radius: 3px;
+          }
+          
+          &::-webkit-scrollbar-thumb {
+            background: #BDC3C7;
+            border-radius: 3px;
+            
+            &:hover {
+              background: #95A5A6;
+            }
+          }
+        }
+      }
+    }
+    
+    // Sidebar Section
+    .sidebox {
+      flex: 1;
+      background: white;
+      border-radius: $radius-large;
+      box-shadow: $shadow-light;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      
+      .b_title {
+        padding: 20px 24px;
+        border-bottom: 1px solid $border-color;
+        
+        .s_title {
+          font-size: 18px;
+          font-weight: 600;
+          color: $secondary-color;
+        }
+      }
+      
+      .top_box {
+        &.tab_menu {
+          padding: 16px 24px;
+          background: $background-light;
+          border-bottom: 1px solid $border-color;
+          
+          .tab_list {
+            display: flex;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            
+            li {
+              button {
+                padding: 8px 16px;
+                background: transparent;
+                border: 1px solid transparent;
+                border-radius: $radius-small;
+                font-size: 14px;
+                color: #6C757D;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                
+                &:hover {
+                  background: white;
+                  border-color: $border-color;
+                }
+              }
+              
+              &.active button {
+                background: white;
+                color: $primary-color;
+                border-color: $primary-color;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+      }
+      
+      .tab_content {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+        
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: $background-light;
+          border-radius: 3px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #BDC3C7;
+          border-radius: 3px;
+          
+          &:hover {
+            background: #95A5A6;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1400px) {
+  .content.feedback.feedback_page {
+    .wrap_inner {
+      gap: 20px;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .content.feedback.feedback_page {
+    .wrap_inner {
+      flex-direction: column;
+      gap: 20px;
+      
+      .videobox {
+        width: 100%;
+        max-height: 60vh;
+      }
+      
+      .sidebox {
+        width: 100%;
+        min-height: 400px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .content.feedback.feedback_page {
+    .wrap_inner {
+      gap: 15px;
+      
+      .videobox {
+        border-radius: $radius-medium;
+        
+        .etc_box {
+          padding: 15px;
+          
+          > div:first-child {
+            flex-wrap: wrap;
+            gap: 10px;
+          }
+        }
+      }
+      
+      .sidebox {
+        border-radius: $radius-medium;
+        
+        .b_title {
+          padding: 15px 20px;
+        }
+        
+        .top_box.tab_menu {
+          padding: 12px 20px;
+          
+          .tab_list {
+            flex-wrap: wrap;
+          }
+        }
+        
+        .tab_content {
+          padding: 20px;
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.videobox, .sidebox {
+  animation: fadeIn 0.5s ease-out;
+}

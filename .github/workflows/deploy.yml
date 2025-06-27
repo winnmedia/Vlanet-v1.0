@@ -32,12 +32,38 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: vridge_front/package-lock.json
+          
+      - name: Verify environment
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Working directory: $(pwd)"
+          ls -la vridge_front/
           
       - name: Install dependencies
         working-directory: ./vridge_front
         run: |
-          rm -rf node_modules package-lock.json
-          npm install
+          # Clean install to ensure consistency
+          rm -rf node_modules
+          npm install --legacy-peer-deps
+        
+      - name: Verify build environment
+        working-directory: ./vridge_front
+        run: |
+          # Check if all required files exist
+          if [ ! -f "package.json" ]; then
+            echo "ERROR: package.json not found"
+            exit 1
+          fi
+          
+          if [ ! -f "vercel.json" ]; then
+            echo "ERROR: vercel.json not found"
+            exit 1
+          fi
+          
+          echo "Build environment verified"
         
       - name: Build project
         working-directory: ./vridge_front
@@ -47,17 +73,32 @@ jobs:
           REACT_APP_BACKEND_URI: https://videoplanet.up.railway.app
           REACT_APP_SOCKET_URI: wss://videoplanet.up.railway.app
           CI: false
-        run: npm run build
-        
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+          GENERATE_SOURCEMAP: false
+        run: |
+          echo "Starting build with environment variables:"
+          echo "REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL"
+          npm run build
+          
+          # Verify build output
+          if [ ! -d "build" ]; then
+            echo "ERROR: Build directory not created"
+            exit 1
+          fi
+          
+          echo "Build completed successfully"
+          ls -la build/
         
       - name: Deploy to Vercel
-        working-directory: ./vridge_front
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          vercel --prod --token=$VERCEL_TOKEN --yes
+        uses: amondnet/vercel-action@v25
+        id: vercel-deployment
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./vridge_front
+          vercel-args: '--prod'
+          alias-domains: |
+            vlanet.net
           
   notify:
     name: Deployment Notification

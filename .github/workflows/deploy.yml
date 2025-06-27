@@ -98,14 +98,15 @@ jobs:
         run: npm install -g vercel@latest
         
       - name: Deploy to Vercel
-        working-directory: ./vridge_front
         run: |
+          cd vridge_front
+          
           # Create .vercel directory and project.json
           mkdir -p .vercel
           echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
           
           # Deploy the pre-built project
-          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
+          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --cwd .
           
           # Set up custom domain
           vercel alias --token=${{ secrets.VERCEL_TOKEN }} set vlanet.net

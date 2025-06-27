@@ -2,7 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "installCommand": "npm ci",
+  "installCommand": "npm install",
   "env": {
     "REACT_APP_API_BASE_URL": "https://videoplanet.up.railway.app/api",
     "REACT_APP_BACKEND_API_URL": "https://videoplanet.up.railway.app/api",

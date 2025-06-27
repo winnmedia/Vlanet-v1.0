@@ -392,6 +392,80 @@ $white: #fff;
           }
         }
         
+        // Form Section - Feedback Input
+        .form {
+          .flex {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            
+            > div {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              
+              input[type="radio"] {
+                width: 18px;
+                height: 18px;
+                margin: 0;
+                cursor: pointer;
+                
+                &.ty02 {
+                  accent-color: $primary-color;
+                }
+              }
+              
+              label {
+                margin: 0;
+                cursor: pointer;
+                font-size: 14px;
+                color: $text-dark;
+              }
+            }
+          }
+          
+          input.ty01 {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid $border-color;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            
+            &:focus {
+              outline: none;
+              border-color: $primary-color;
+            }
+            
+            &.mt20 {
+              margin-top: 20px;
+            }
+          }
+          
+          button.submit {
+            width: 100%;
+            padding: 12px;
+            background: $primary-color;
+            color: $white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            &.mt40 {
+              margin-top: 40px;
+            }
+            
+            &:hover {
+              background: $primary-hover;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 8px rgba(0, 88, 218, 0.3);
+            }
+          }
+        }
+        
         // Member List
         .member {
           ul {

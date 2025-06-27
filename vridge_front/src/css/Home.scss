@@ -1282,11 +1282,11 @@
               margin-left: 10px;
             }
           }
-          button {
+          button.submit {
             width: 80px;
             height: 40px;
             font-size: 15px;
-            display: none;
+            margin-left: 20px;
           }
         }
       }
@@ -2153,6 +2153,18 @@
   }
   
   // 반응형 스타일
+  @media (min-width: 769px) and (max-width: 1024px) {
+    #header {
+      .inner {
+        .etc {
+          button.submit {
+            display: block !important;
+          }
+        }
+      }
+    }
+  }
+  
   @media (max-width: 768px) {
     #header {
       .inner {
@@ -2165,6 +2177,9 @@
         }
         
         .etc {
+          display: flex !important;
+          align-items: center;
+          
           ul {
             li {
               width: 35px;
@@ -2174,10 +2189,12 @@
           }
           
           button.submit {
+            display: block !important;
             width: 70px;
             height: 40px;
             margin-left: 15px;
             font-size: 14px;
+            flex-shrink: 0;
           }
         }
       }
@@ -2193,6 +2210,7 @@
           }
           
           button.submit {
+            display: block !important;
             margin-left: 0;
           }
         }

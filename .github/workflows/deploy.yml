@@ -101,29 +101,13 @@ jobs:
         run: |
           cd vridge_front
           
-          # Debug: Show current directory and structure
-          echo "Current directory: $(pwd)"
-          echo "Directory contents:"
-          ls -la
-          echo "Build directory contents:"
-          ls -la build/
-          
           # Create .vercel directory and project.json
           mkdir -p .vercel
           echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
           
-          # Copy build output to .vercel/output/static
-          mkdir -p .vercel/output/static
-          cp -r build/* .vercel/output/static/
-          
-          # Create config.json for Vercel
-          echo '{"version": 3}' > .vercel/output/config.json
-          
-          # Deploy with prebuilt option
-          vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --prebuilt
-          
-          # Set up custom domain
-          vercel alias --token=${{ secrets.VERCEL_TOKEN }} set vlanet.net
+          # Deploy directly without prebuilt option
+          # Vercel will use the existing build directory
+          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
           
   notify:
     name: Deployment Notification

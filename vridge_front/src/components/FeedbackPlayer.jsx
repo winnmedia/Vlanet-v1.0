@@ -266,10 +266,30 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onError={(e) => {
+            const error = e.target.error;
             console.error('Video playback error:', e)
             console.error('Video URL:', videoUrl)
-            console.error('Error details:', e.target.error)
-            setError('영상을 재생할 수 없습니다. URL을 확인해주세요.')
+            console.error('Error details:', error)
+            
+            let errorMessage = '영상을 재생할 수 없습니다.';
+            if (error) {
+              switch(error.code) {
+                case error.MEDIA_ERR_NETWORK:
+                  errorMessage = '네트워크 오류: 영상을 로드할 수 없습니다.';
+                  break;
+                case error.MEDIA_ERR_DECODE:
+                  errorMessage = '디코드 오류: 영상 형식을 지원하지 않습니다.';
+                  break;
+                case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                  errorMessage = '지원하지 않는 영상 형식입니다.';
+                  break;
+                case error.MEDIA_ERR_ABORTED:
+                  errorMessage = '영상 로드가 취소되었습니다.';
+                  break;
+              }
+            }
+            
+            setError(errorMessage)
             setIsLoading(false)
             if (onError) onError(e)
           }}

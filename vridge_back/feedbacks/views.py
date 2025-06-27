@@ -31,11 +31,20 @@ class FeedbackDetail(View):
 
             # print(feedback.files.name) path , url
             if feedback.files:
+                # URL을 빌드할 때 인코딩 처리
+                from urllib.parse import quote
+                file_path = feedback.files.url
+                # 파일명만 인코딩
+                if '/media/' in file_path:
+                    path_parts = file_path.split('/')
+                    path_parts[-1] = quote(path_parts[-1].encode('utf-8'))
+                    file_path = '/'.join(path_parts)
+                
                 if settings.DEBUG:
-                    file_url = "http://127.0.0.1:8000" + feedback.files.url
+                    file_url = f"http://127.0.0.1:8000{file_path}"
                 else:
                     # 프로덕션 환경에서도 전체 URL 반환
-                    file_url = "https://videoplanet.up.railway.app" + feedback.files.url
+                    file_url = f"https://videoplanet.up.railway.app{file_path}"
             else:
                 file_url = None
 
@@ -177,8 +186,23 @@ class FeedbackDetail(View):
             from django.core.files import File
 
             try:
+                # 파일명 안전하게 변환
+                import re
+                from django.utils.text import slugify
+                import os
+                
+                original_name = files.name
+                name, ext = os.path.splitext(original_name)
+                # 한글 파일명을 영문으로 변환하거나 UUID 사용
+                safe_name = slugify(name, allow_unicode=False)
+                if not safe_name:
+                    import uuid
+                    safe_name = str(uuid.uuid4())
+                
+                files.name = f"{safe_name}{ext}"
+                
                 # 모든 파일을 직접 저장 (MOV 변환 제거)
-                logging.info(f"Saving file directly: {files.name}")
+                logging.info(f"Saving file with safe name: {files.name} (original: {original_name})")
                 feedback.files = files
                 feedback.save()
                 logging.info("File saved successfully")
@@ -186,11 +210,20 @@ class FeedbackDetail(View):
                 # Get the file URL
                 file_url = None
                 if feedback.files:
+                    # URL을 빌드할 때 인코딩 처리
+                    from urllib.parse import quote
+                    file_path = feedback.files.url
+                    # 파일명만 인코딩
+                    if '/media/' in file_path:
+                        path_parts = file_path.split('/')
+                        path_parts[-1] = quote(path_parts[-1].encode('utf-8'))
+                        file_path = '/'.join(path_parts)
+                    
                     if settings.DEBUG:
-                        file_url = f"http://127.0.0.1:8000{feedback.files.url}"
+                        file_url = f"http://127.0.0.1:8000{file_path}"
                     else:
                         # 프로덕션 환경에서도 전체 URL 반환
-                        file_url = f"https://videoplanet.up.railway.app{feedback.files.url}"
+                        file_url = f"https://videoplanet.up.railway.app{file_path}"
                     logging.info(f"File URL: {file_url}")
                 
                 return JsonResponse({

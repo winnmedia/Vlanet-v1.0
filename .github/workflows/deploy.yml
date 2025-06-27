@@ -94,21 +94,14 @@ jobs:
           echo "Build completed successfully"
           ls -la build/
         
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-        
       - name: Deploy to Vercel
-        run: |
-          cd vridge_front
-          
-          # Remove existing .vercel directory
-          rm -rf .vercel
-          
-          # Link to existing project and deploy
-          npx vercel@latest link --token=${{ secrets.VERCEL_TOKEN }} --yes --project=videoplanetready --scope=vlanets-projects
-          
-          # Deploy to production
-          npx vercel@latest --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./vridge_front
+          vercel-args: '--prod'
           
   notify:
     name: Deployment Notification

@@ -22,13 +22,14 @@
   }
   
   .resize-handle {
-    width: 12px;
+    width: 8px;
     cursor: col-resize;
     position: relative;
     user-select: none;
     touch-action: none;
     background: transparent;
     transition: background 0.2s;
+    flex-shrink: 0;
     
     &:hover {
       background: rgba(0, 88, 218, 0.05);
@@ -52,11 +53,11 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 4px;
-      height: 60px;
+      width: 3px;
+      height: 40px;
       background: #ddd;
       border-radius: 2px;
-      opacity: 0.6;
+      opacity: 0.5;
       transition: all 0.2s;
       
       &::before,

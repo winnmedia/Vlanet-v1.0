@@ -42,13 +42,22 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
     const video = videoRef.current
     if (!video) return
 
+    console.log('Video URL changed:', videoUrl)
+
     const updateTime = () => setCurrentTime(video.currentTime)
     const updateDuration = () => {
       setDuration(video.duration)
       setIsLoading(false)
+      console.log('Video duration:', video.duration)
     }
-    const handleLoadStart = () => setIsLoading(true)
-    const handleCanPlay = () => setIsLoading(false)
+    const handleLoadStart = () => {
+      setIsLoading(true)
+      console.log('Video loading started')
+    }
+    const handleCanPlay = () => {
+      setIsLoading(false)
+      console.log('Video can play')
+    }
 
     video.addEventListener('timeupdate', updateTime)
     video.addEventListener('loadedmetadata', updateDuration)
@@ -268,7 +277,6 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
             console.log('Video loaded successfully:', videoUrl)
           }}
           playsInline
-          crossOrigin="anonymous"
         />
         <div className="video-overlay" onClick={togglePlay}>
           {!isPlaying && (

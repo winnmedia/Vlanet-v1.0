@@ -20,7 +20,7 @@ $white: #fff;
     // ResizablePanel을 위한 스타일
     .resizable-panel {
       width: 100%;
-      gap: 15px;
+      height: 100%;
     }
     
     // Video Section (기존 스타일 유지)
@@ -31,6 +31,7 @@ $white: #fff;
       display: flex;
       flex-direction: column;
       padding: 15px;
+      height: 100%;
       
       &.video_section {
         // 기존 스타일 유지
@@ -271,6 +272,8 @@ $white: #fff;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      height: 100%;
+      margin-right: 15px;
       
       .b_title {
         padding: 20px 25px;

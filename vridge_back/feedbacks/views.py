@@ -34,7 +34,8 @@ class FeedbackDetail(View):
                 if settings.DEBUG:
                     file_url = "http://127.0.0.1:8000" + feedback.files.url
                 else:
-                    file_url = feedback.files.url
+                    # 프로덕션 환경에서도 전체 URL 반환
+                    file_url = "https://videoplanet.up.railway.app" + feedback.files.url
             else:
                 file_url = None
 

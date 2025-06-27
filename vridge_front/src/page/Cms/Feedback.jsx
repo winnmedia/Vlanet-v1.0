@@ -381,11 +381,7 @@ export default function Feedback() {
                   {current_project.files && (
                     <FeedbackPlayer
                       ref={videoPlayerRef}
-                      videoUrl={
-                        current_project.files.startsWith('http') 
-                          ? current_project.files 
-                          : `https://videoplanet.up.railway.app${current_project.files}`
-                      }
+                      videoUrl={current_project.files}
                       initialTime={currentVideoTime}
                       onTimeClick={(time) => {
                         // 시간 클릭 시 해당 시간으로 코멘트 추가

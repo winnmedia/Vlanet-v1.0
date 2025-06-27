@@ -39,6 +39,10 @@ jobs:
           rm -rf node_modules package-lock.json
           npm install
         
+      - name: Build project
+        working-directory: ./vridge_front
+        run: npm run build
+        
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
@@ -46,7 +50,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./vridge_front
-          vercel-args: '--prod'
+          vercel-args: '--prod --skip-build'
           
   notify:
     name: Deployment Notification

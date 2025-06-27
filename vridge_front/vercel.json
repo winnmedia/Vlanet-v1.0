@@ -25,11 +25,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "env": {
-    "REACT_APP_API_BASE_URL": "@vlanet_api_url",
-    "REACT_APP_BACKEND_API_URL": "@vlanet_api_url",
-    "REACT_APP_BACKEND_URI": "@vlanet_backend_uri",
-    "REACT_APP_SOCKET_URI": "@vlanet_socket_uri"
-  }
+  ]
 }

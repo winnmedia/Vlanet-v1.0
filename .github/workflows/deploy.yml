@@ -101,20 +101,14 @@ jobs:
         run: |
           cd vridge_front
           
-          # Remove existing .vercel directory to avoid conflicts
+          # Remove existing .vercel directory
           rm -rf .vercel
           
-          # Create .vercel directory and project.json with correct structure
-          mkdir -p .vercel
-          cat > .vercel/project.json << EOF
-          {
-            "orgId": "${{ secrets.VERCEL_ORG_ID }}",
-            "projectId": "${{ secrets.VERCEL_PROJECT_ID }}"
-          }
-          EOF
+          # Link to existing project and deploy
+          npx vercel@latest link --token=${{ secrets.VERCEL_TOKEN }} --yes --project=videoplanetready --scope=vlanets-projects
           
-          # Deploy using npx to ensure correct path resolution
-          npx vercel@latest --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --build-env CI=false
+          # Deploy to production
+          npx vercel@latest --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
           
   notify:
     name: Deployment Notification

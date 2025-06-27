@@ -101,13 +101,20 @@ jobs:
         run: |
           cd vridge_front
           
-          # Create .vercel directory and project.json
-          mkdir -p .vercel
-          echo '{"orgId":"'${{ secrets.VERCEL_ORG_ID }}'","projectId":"'${{ secrets.VERCEL_PROJECT_ID }}'"}' > .vercel/project.json
+          # Remove existing .vercel directory to avoid conflicts
+          rm -rf .vercel
           
-          # Deploy directly without prebuilt option
-          # Vercel will use the existing build directory
-          vercel --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
+          # Create .vercel directory and project.json with correct structure
+          mkdir -p .vercel
+          cat > .vercel/project.json << EOF
+          {
+            "orgId": "${{ secrets.VERCEL_ORG_ID }}",
+            "projectId": "${{ secrets.VERCEL_PROJECT_ID }}"
+          }
+          EOF
+          
+          # Deploy using npx to ensure correct path resolution
+          npx vercel@latest --token=${{ secrets.VERCEL_TOKEN }} --prod --yes --build-env CI=false
           
   notify:
     name: Deployment Notification

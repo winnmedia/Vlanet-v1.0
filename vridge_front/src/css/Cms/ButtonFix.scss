@@ -1,0 +1,125 @@
+// Global Button Fix - 버튼 크기 통일 및 중앙 정렬
+// 이 파일을 Feedback.jsx에 추가로 import하여 사용
+
+// 컨트롤 박스 내 버튼들 - 동일한 크기로 통일
+.etc_box .flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  // 모든 버튼 동일한 크기
+  button, .all, .share {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    white-space: nowrap;
+  }
+  
+  // 교체/삭제 버튼도 동일한 크기
+  .good {
+    .change_btn_wrap {
+      .video_upload_label div {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 36px !important;
+        min-height: 36px !important;
+        padding: 0 20px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        line-height: 1 !important;
+      }
+    }
+  }
+}
+
+// 업로드 영역 버튼들
+.upload_area {
+  .upload_btn_wrap {
+    .video_upload_label div {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      height: 48px !important;
+      min-height: 48px !important;
+      width: 180px !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      
+      &::before {
+        margin-right: 8px;
+      }
+    }
+  }
+  
+  .guide_btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 20px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+  }
+}
+
+// 사이드바 버튼들
+.tab_content {
+  // 코멘트 전송 버튼
+  .comment .input-area button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    line-height: 1 !important;
+  }
+  
+  // 폼 제출 버튼
+  .form button.submit {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    line-height: 1 !important;
+  }
+  
+  // 프로젝트 관리 버튼
+  .info .project_btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    line-height: 1 !important;
+  }
+}
+
+// 탭 버튼은 예외 - 원래 스타일 유지
+.tab_list button {
+  height: auto !important;
+  min-height: auto !important;
+  display: block !important;
+}
+
+// 반응형에서도 크기 유지
+@media (max-width: 768px) {
+  .etc_box .flex {
+    button, .all, .share,
+    .good .change_btn_wrap .video_upload_label div {
+      height: 36px !important;
+      min-height: 36px !important;
+      padding: 0 16px !important;
+      font-size: 13px !important;
+    }
+  }
+}

@@ -1,0 +1,217 @@
+// Content Page - Modern Minimal Design
+// 콘텐츠 페이지 모던 미니멀 디자인
+
+// Color Variables - 기존 파란색 유지
+$primary-color: #0058da;
+$primary-hover: #0047b8;
+$primary-light: #e8f0ff;
+$background: #f5f7fa;
+$surface: #ffffff;
+$text-primary: #1a1a1a;
+$text-secondary: #6b7280;
+$border-light: #e5e7eb;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+$youtube-red: #ff0000;
+
+// Content Page Overrides
+.content.elearning {
+  padding: 20px;
+  background: $background;
+  border-radius: 16px;
+  min-height: calc(100vh - 200px);
+  
+  // YouTube Channel Link
+  .channel-link {
+    margin-bottom: 30px;
+    text-align: center;
+    
+    .youtube-channel-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: $surface;
+      color: $youtube-red;
+      border: 2px solid $youtube-red;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: $shadow-sm;
+      
+      &:hover {
+        background: $youtube-red;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+        
+        svg path {
+          fill: white;
+        }
+      }
+      
+      svg {
+        transition: all 0.3s ease;
+      }
+    }
+  }
+  
+  // Loading State
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid $border-light;
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    p {
+      margin-top: 20px;
+      color: $text-secondary;
+      font-size: 16px;
+    }
+  }
+  
+  // Video Grid
+  ul.oc {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 30px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      background: $surface;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: $shadow-sm;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: $shadow-lg;
+        
+        .video-title {
+          color: $primary-color;
+        }
+      }
+      
+      .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; // 16:9 aspect ratio
+        height: 0;
+        overflow: hidden;
+        background: #000;
+        
+        iframe {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border: none;
+        }
+      }
+      
+      .video-title {
+        padding: 20px;
+        font-size: 16px;
+        font-weight: 600;
+        color: $text-primary;
+        line-height: 1.4;
+        transition: color 0.3s ease;
+      }
+    }
+  }
+  
+  // Empty State
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: $text-secondary;
+    
+    p {
+      font-size: 18px;
+      margin: 0;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1400px) {
+  .content.elearning {
+    ul.oc {
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .content.elearning {
+    padding: 15px;
+    
+    .channel-link {
+      margin-bottom: 20px;
+      
+      .youtube-channel-btn {
+        padding: 12px 24px;
+        font-size: 14px;
+      }
+    }
+    
+    ul.oc {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      
+      li {
+        border-radius: 12px;
+        
+        .video-title {
+          padding: 16px;
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Smooth scroll
+.content.elearning {
+  scroll-behavior: smooth;
+}
+
+// YouTube iframe optimizations
+.video-wrapper iframe {
+  // Lazy loading is already in the HTML
+  background: #000;
+  
+  // Preconnect to YouTube domains for faster loading
+  &::before {
+    content: '';
+    display: none;
+    // Browser will handle preconnects
+  }
+}

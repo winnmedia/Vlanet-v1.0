@@ -74,12 +74,19 @@ CORS_ALLOWED_METHODS = [
 ]
 
 # Security settings
-SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() == 'true'
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() == 'true'  # 임시로 비활성화
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'  # CORS 요청 허용
+SESSION_COOKIE_SAMESITE = 'None'  # CORS 요청 허용
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
+CSRF_TRUSTED_ORIGINS = [
+    'https://vridge-front-production.up.railway.app',
+    'https://vlanet.net',
+    'https://www.vlanet.net',
+]
 
 # Whitenoise for static files
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')

@@ -7,8 +7,6 @@ import { useDispatch } from 'react-redux'
 import { SignIn, GoogleLoginAPI } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
 
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google'
-
 export default function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -21,27 +19,6 @@ export default function Login() {
   const [login_message, SetLoginMessage] = useState('')
   const [param] = useSearchParams()
   const { uid, token } = queryString.parse(param.toString())
-
-  // Google login hook
-  const googleLogin = useGoogleLogin({
-    onSuccess: (res) => {
-      console.log('Google login success:', res)
-      GoogleLoginAPI(res)
-        .then((res) => {
-          console.log('Google API response:', res.data)
-          CommonLoginSuccess(res.data.vridge_session)
-        })
-        .catch((err) => {
-          console.error('Google API error:', err)
-          CommonErrorMessage(err)
-        })
-    },
-    onError: (err) => {
-      console.error('Google login error:', err)
-      CommonErrorMessage({ response: { data: { message: '구글 로그인에 실패했습니다.' } } })
-    },
-    scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
-  })
 
   const OnChange = (e) => {
     const { value, name } = e.target
@@ -140,17 +117,6 @@ export default function Login() {
           <div className="mt20 signup_link">
             브이래닛이 처음이신가요?{' '}
             <span onClick={() => navigate('/Signup')}>간편 가입하기</span>
-          </div>
-          <div className="line"></div>
-          <div className="sns_login">
-            <ul>
-              <li
-                onClick={() => googleLogin()}
-                className="google"
-              >
-                구글 로그인
-              </li>
-            </ul>
           </div>
         </div>
       </div>

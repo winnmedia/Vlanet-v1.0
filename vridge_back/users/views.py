@@ -132,8 +132,14 @@ class SendAuthNumber(View):
             data = json.loads(request.body)
             email = data.get("email")
             print(f"[SendAuthNumber] Email: {email}")
+            
+            # 이메일 유효성 검사
+            import re
+            email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+            if not email or not re.match(email_regex, email):
+                return JsonResponse({"message": "올바른 이메일 주소를 입력해주세요."}, status=400)
 
-            auth_number = random.randint(100000, 1000000)
+            auth_number = random.randint(100000, 999999)  # 6자리 숫자
 
             user = models.User.objects.get_or_none(username=email)
 
@@ -154,14 +160,26 @@ class SendAuthNumber(View):
                 email_verify.save()
 
             try:
-                auth_send_email(request, email, auth_number)
-                print(f"[SendAuthNumber] Email sent successfully to {email}")
+                result = auth_send_email(request, email, auth_number)
+                if result:
+                    print(f"[SendAuthNumber] Email sent successfully to {email}")
+                    return JsonResponse({
+                        "message": "success",
+                        "detail": "인증번호가 이메일로 발송되었습니다.",
+                        "email": email
+                    }, status=200)
+                else:
+                    print(f"[SendAuthNumber] Email sending failed for {email}")
+                    return JsonResponse({
+                        "message": "이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요."
+                    }, status=500)
             except Exception as email_error:
-                print(f"[SendAuthNumber] Email sending failed: {str(email_error)}")
+                print(f"[SendAuthNumber] Email sending error: {str(email_error)}")
                 import traceback
                 traceback.print_exc()
-
-            return JsonResponse({"message": "success"}, status=200)
+                return JsonResponse({
+                    "message": "이메일 발송 중 오류가 발생했습니다."
+                }, status=500)
         except Exception as e:
             print(e)
             logging.info(str(e))

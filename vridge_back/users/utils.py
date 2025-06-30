@@ -93,9 +93,79 @@ class EmailThread(threading.Thread):
 
 
 def auth_send_email(request, email, secret):
-    html_message = render_to_string("verify_email.html", {"secret": secret})
-    to = [email]
-    EmailThread("Vlanet", strip_tags(html_message), to, html_message).start()
+    """인증 번호 이메일 발송"""
+    try:
+        # 이메일 설정 확인
+        print(f"[Email] Sending auth email to: {email}")
+        print(f"[Email] Auth number: {secret}")
+        
+        # 실제 이메일 발송이 필요한 경우 설정 확인
+        if settings.EMAIL_BACKEND != 'django.core.mail.backends.console.EmailBackend':
+            if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
+                print("[Email] ERROR: Email credentials not configured")
+                return False
+        
+        # HTML 템플릿이 없는 경우를 대비한 간단한 HTML 메시지
+        html_message = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>VideoPlanet 인증번호</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; padding: 20px; margin: 0; background-color: #f5f5f5;">
+            <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #012fff; margin: 0; font-size: 32px;">VideoPlanet</h1>
+                    <p style="color: #666; margin-top: 10px; font-size: 18px;">이메일 인증</p>
+                </div>
+                
+                <div style="background: #f9f9f9; padding: 30px; border-radius: 8px; text-align: center;">
+                    <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+                        회원가입을 계속하려면 아래 인증번호를 입력해주세요:
+                    </p>
+                    
+                    <div style="background: #012fff; color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px;">{secret}</span>
+                    </div>
+                    
+                    <p style="font-size: 14px; color: #666; margin-top: 20px;">
+                        이 인증번호는 3분간 유효합니다.
+                    </p>
+                </div>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+                    <p style="font-size: 12px; color: #999; margin: 0;">
+                        이 이메일은 VideoPlanet 회원가입 과정에서 발송되었습니다.
+                    </p>
+                    <p style="font-size: 12px; color: #999; margin: 5px 0;">
+                        본인이 요청하지 않은 경우, 이 메일을 무시하셔도 됩니다.
+                    </p>
+                    <p style="font-size: 12px; color: #999; margin: 5px 0;">
+                        © 2024 VideoPlanet. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        try:
+            # verify_email.html 템플릿이 있으면 사용
+            html_message = render_to_string("verify_email.html", {"secret": secret})
+        except:
+            # 템플릿이 없으면 위의 기본 HTML 사용
+            pass
+        
+        to = [email]
+        EmailThread("VideoPlanet 인증번호", strip_tags(html_message), to, html_message).start()
+        return True
+        
+    except Exception as e:
+        print(f"[Email] Error in auth_send_email: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 def invite_send_email(request, email, uid, token, name):

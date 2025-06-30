@@ -10,8 +10,10 @@ export default function AuthEmail({
   set_inputs,
 }) {
   const [errorMessage, SetErrorMessage] = useState('')
+  const [successMessage, SetSuccessMessage] = useState('')
   const [send, set_send] = useState(false)
-  const [btn_text, set_btn_text] = useState('인증')
+  const [btn_text, set_btn_text] = useState('인증번호 발송')
+  const [isLoading, setIsLoading] = useState(false)
   const pathname = useLocation().pathname
 
   const types = useMemo(() => {
@@ -27,7 +29,14 @@ export default function AuthEmail({
   function TimeoutMessage() {
     setTimeout(() => {
       SetErrorMessage('')
+      SetSuccessMessage('')
     }, 3000)
+  }
+  
+  // 이메일 유효성 검사
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return re.test(email)
   }
 
   function onChange(e) {
@@ -60,66 +69,92 @@ export default function AuthEmail({
   }, [minutes, seconds])
 
   function AuthNumber() {
+    const isEmailValid = validateEmail(email)
+    const canSend = isEmailValid && !isLoading && (minutes === 0 && seconds === 0)
+    
     return (
-      email.length > 5 &&
-      !send && (
-        <button
-          onClick={() => {
-            if (email.length > 5) {
-              set_send(true)
+      <button
+        onClick={() => {
+          if (!isEmailValid) {
+            SetErrorMessage('올바른 이메일 주소를 입력해주세요.')
+            TimeoutMessage()
+            return
+          }
+          
+          setIsLoading(true)
+          SetErrorMessage('')
+          SetSuccessMessage('')
+          
+          SendAuthNumber(inputs, types)
+            .then((res) => {
+              console.log('인증번호 발송 성공:', res)
+              setIsLoading(false)
               setMinutes(3)
               setSeconds(0)
-              SendAuthNumber(inputs, types)
-                .then((res) => {
-                  console.log('인증번호 발송 성공:', res)
-                  setTimeout(() => {
-                    set_send(false)
-                    set_btn_text('재 인증')
-                  }, 3000)
-                })
-                .catch((err) => {
-                  console.error('인증번호 발송 실패:', err)
-                  set_send(false)
-                  if (err.response && err.response.data) {
-                    SetErrorMessage(err.response.data.message)
-                    setMinutes(0)
-                    setSeconds(0)
-                    TimeoutMessage()
-                  } else {
-                    SetErrorMessage('인증번호 발송에 실패했습니다.')
-                    TimeoutMessage()
-                  }
-                })
-            }
-          }}
-          className="cert"
-        >
-          {btn_text}
-        </button>
-      )
+              set_btn_text('재발송')
+              SetSuccessMessage('인증번호가 이메일로 발송되었습니다.')
+              TimeoutMessage()
+            })
+            .catch((err) => {
+              console.error('인증번호 발송 실패:', err)
+              setIsLoading(false)
+              if (err.response && err.response.data) {
+                SetErrorMessage(err.response.data.message)
+              } else {
+                SetErrorMessage('인증번호 발송에 실패했습니다. 잠시 후 다시 시도해주세요.')
+              }
+              TimeoutMessage()
+            })
+        }}
+        className="cert"
+        disabled={!canSend}
+        style={{ 
+          opacity: canSend ? 1 : 0.5,
+          cursor: canSend ? 'pointer' : 'not-allowed'
+        }}
+      >
+        {isLoading ? '발송 중...' : btn_text}
+      </button>
     )
   }
 
   function CheckBtn() {
+    const canVerify = auth_number.length === 6 && (minutes > 0 || seconds > 0)
+    
     return (
-      auth_number.length > 0 && (
+      canVerify && (
         <button
           onClick={() => {
+            if (auth_number.length !== 6) {
+              SetErrorMessage('인증번호는 6자리입니다.')
+              TimeoutMessage()
+              return
+            }
+            
+            setIsLoading(true)
             EmailAuth(inputs, types)
               .then((res) => {
+                setIsLoading(false)
+                SetSuccessMessage('이메일 인증이 완료되었습니다!')
                 SetValidEmail(true)
+                setMinutes(0)
+                setSeconds(0)
               })
               .catch((err) => {
+                setIsLoading(false)
                 if (err.response && err.response.data) {
                   SetErrorMessage(err.response.data.message)
-                  TimeoutMessage()
+                } else {
+                  SetErrorMessage('인증번호가 일치하지 않습니다.')
                 }
+                TimeoutMessage()
                 set_inputs({ ...inputs, auth_number: '' })
               })
           }}
           className="submit mt30"
+          disabled={isLoading}
         >
-          확인
+          {isLoading ? '확인 중...' : '인증 확인'}
         </button>
       )
     )
@@ -154,6 +189,7 @@ export default function AuthEmail({
         </div>
       )}
       {errorMessage && <div className="error">{errorMessage}</div>}
+      {successMessage && <div className="success" style={{ color: '#4CAF50', marginTop: '10px', fontSize: '14px' }}>{successMessage}</div>}
       <CheckBtn />
     </>
   )

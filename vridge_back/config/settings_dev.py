@@ -21,6 +21,16 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 # Development CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
 
+# Development-specific email settings
+# 개발 환경에서는 이메일을 콘솔에 출력
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'VideoPlanet <noreply@vlanet.net>'
+
+# 실제 SMTP를 테스트하려면 아래 주석을 해제하고 환경 변수 설정
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST_USER = 'your-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your-app-password'
+
 # Override cache settings for development
 CACHES = {
     'default': {

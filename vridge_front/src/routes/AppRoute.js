@@ -16,14 +16,14 @@ const Elearning = lazy(() => import('page/Cms/Elearning'))
 const CmsHome = lazy(() => import('page/Cms/CmsHome'))
 const EmailCheck = lazy(() => import('page/User/EmailCheck'))
 const FeedbackAll = lazy(() => import('page/Cms/FeedbackAll'))
-const Privacy = lazy(() => import('page/Privacy'))
-const Terms = lazy(() => import('page/Terms'))
+const PrivacyPolicy = lazy(() => import('page/Policy/PrivacyPolicy'))
+const TermsOfService = lazy(() => import('page/Policy/TermsOfService'))
 
 export default function AppRoute() {
   const routes = [
     { path: '/', component: <LazyWrapper><Home /></LazyWrapper> },
-    { path: '/Privacy', component: <LazyWrapper><Privacy /></LazyWrapper> },
-    { path: '/Terms', component: <LazyWrapper><Terms /></LazyWrapper> },
+    { path: '/privacy', component: <LazyWrapper><PrivacyPolicy /></LazyWrapper> },
+    { path: '/terms', component: <LazyWrapper><TermsOfService /></LazyWrapper> },
     { path: '/Login', component: <LazyWrapper><Login /></LazyWrapper> },
     { path: '/Signup', component: <LazyWrapper><Signup /></LazyWrapper> },
     { path: '/ResetPw', component: <LazyWrapper><ResetPw /></LazyWrapper> },

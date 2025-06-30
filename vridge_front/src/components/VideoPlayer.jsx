@@ -15,33 +15,22 @@ const VideoPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError, o
     return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/')
   }
   
-  // URL이 유효하지 않은 경우
-  if (!isValidUrl(videoUrl)) {
-    console.error('Invalid video URL:', videoUrl)
-    return (
-      <div className="video-player-wrapper">
-        <div className="error-container">
-          <p>⚠️ 유효하지 않은 비디오 URL입니다.</p>
-          <p className="error-detail">URL: {videoUrl || '없음'}</p>
-        </div>
-      </div>
-    )
-  }
+  const isUrlValid = isValidUrl(videoUrl)
   
-  // Expose methods to parent
+  // Expose methods to parent - Hook must be called unconditionally
   useImperativeHandle(ref, () => ({
     seekTo: (time) => {
-      if (playerRef.current) {
+      if (playerRef.current && isUrlValid) {
         playerRef.current.seekTo(time)
       }
     },
     play: () => {
-      if (playerRef.current) {
+      if (playerRef.current && isUrlValid) {
         playerRef.current.play()
       }
     },
     pause: () => {
-      if (playerRef.current) {
+      if (playerRef.current && isUrlValid) {
         playerRef.current.pause()
       }
     }
@@ -62,10 +51,16 @@ const VideoPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError, o
   }
   
   const extension = getFileExtension(videoUrl)
-  const problematicFormats = ['avi', 'mkv', 'wmv', 'flv', 'm4v']
   
   // 문제가 될 수 있는 형식은 네이티브 플레이어 사용
   useEffect(() => {
+    const problematicFormats = ['avi', 'mkv', 'wmv', 'flv', 'm4v']
+    
+    if (!isUrlValid) {
+      setIsChecking(false)
+      return
+    }
+    
     setIsChecking(true)
     setVideoError(false)
     
@@ -81,7 +76,20 @@ const VideoPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError, o
     }, 100)
     
     return () => clearTimeout(checkTimer)
-  }, [videoUrl, extension])
+  }, [videoUrl, extension, isUrlValid])
+  
+  // URL이 유효하지 않은 경우
+  if (!isUrlValid) {
+    console.error('Invalid video URL:', videoUrl)
+    return (
+      <div className="video-player-wrapper">
+        <div className="error-container">
+          <p>⚠️ 유효하지 않은 비디오 URL입니다.</p>
+          <p className="error-detail">URL: {videoUrl || '없음'}</p>
+        </div>
+      </div>
+    )
+  }
   
   if (isChecking) {
     return (

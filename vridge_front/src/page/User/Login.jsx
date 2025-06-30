@@ -138,7 +138,7 @@ export default function Login() {
             로그인
           </button>
           <div className="mt20 signup_link">
-            브이릿지가 처음이신가요?{' '}
+            브이래닛이 처음이신가요?{' '}
             <span onClick={() => navigate('/Signup')}>간편 가입하기</span>
           </div>
           <div className="line"></div>

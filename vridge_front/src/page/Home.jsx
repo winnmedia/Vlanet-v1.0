@@ -691,7 +691,7 @@ export default function Home() {
       <section id="footer">
         <div className="inner flex space_between align_center">
           <div>
-            <div className="logo">vlanet</div>
+            <div className="logo">브이래닛</div>
             <ul>
               <li>윈앤미디어</li>
               <li>대전광역시 서구 청사로 228 청사오피스</li>

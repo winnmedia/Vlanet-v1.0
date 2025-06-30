@@ -84,6 +84,15 @@ LOGGING = {
     },
 }
 
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', os.environ.get('GOOGLE_ID', ''))
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', os.environ.get('GOOGLE_APP_PASSWORD', ''))
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'VideoPlanet <noreply@vlanet.net>')
+
 # Email settings (for production error notifications)
 ADMINS = [('Admin', os.environ.get('ADMIN_EMAIL', 'admin@example.com'))]
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'noreply@example.com')

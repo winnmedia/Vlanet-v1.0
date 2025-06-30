@@ -153,7 +153,13 @@ class SendAuthNumber(View):
                 email_verify.auth_number = auth_number
                 email_verify.save()
 
-            auth_send_email(request, email, auth_number)
+            try:
+                auth_send_email(request, email, auth_number)
+                print(f"[SendAuthNumber] Email sent successfully to {email}")
+            except Exception as email_error:
+                print(f"[SendAuthNumber] Email sending failed: {str(email_error)}")
+                import traceback
+                traceback.print_exc()
 
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:

@@ -1,0 +1,19 @@
+// Sidebar Project Spacing - 프로젝트 개수 위치만 조정
+
+aside.SideBar {
+  nav ul li {
+    // 프로젝트 관리 메뉴의 레이아웃 수정
+    &.menu_project {
+      // flexbox 설정은 유지하되 간격만 조정
+      justify-content: flex-start !important; // space-between 대신 flex-start
+      gap: 8px !important; // 텍스트와 숫자 사이 간격
+      
+      span {
+        // 기존 스타일은 모두 유지 (색상, 크기, 모양 등)
+        // 위치만 조정
+        margin-left: 0 !important; // 왼쪽 여백 제거
+        margin-right: auto !important; // 오른쪽으로 밀리지 않도록
+      }
+    }
+  }
+}

@@ -1,11 +1,16 @@
 .SideBar {
   width: 300px;
   padding: 50px 30px;
-  position: relative;
+  position: sticky; // sticky로 변경하여 스크롤 시에도 고정
+  top: 0;
   box-shadow: 16px 0px 16px rgba(0, 0, 0, 0.06);
   border-radius: 0 30px 30px 0;
-  z-index: 3;
+  z-index: 10;
   background: #fff;
+  height: 100vh; // 뷰포트 전체 높이
+  box-sizing: border-box;
+  flex-shrink: 0; // 플렉스박스에서 크기 고정
+  align-self: flex-start; // 상단에 정렬
   nav {
     ul {
       li {
@@ -161,29 +166,54 @@
 }
 .Submenu {
   width: 330px;
-  padding: 20px 20px 20px 70px;
+  padding: 0; // 패딩 제거
   box-shadow: 16px 0px 16px rgba(0, 0, 0, 0.06);
   border-radius: 0 30px 30px 0;
-  overflow-y: scroll;
-  position: absolute;
-  left: calc(0% - 30px);
+  overflow: hidden; // 스크롤 영역 제어
+  position: fixed;
+  left: 0;
   top: 0;
-  height: 100%;
-  background: #f8f8f8;
-  z-index: 2;
-  transition: all 0.5s;
+  height: 100vh; // 사이드바와 동일한 뷰포트 높이
+  background: rgba(248, 248, 248, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 2; // 사이드바보다 낮은 z-index
+  transform: translateX(-100%); // 왼쫝으로 완전히 숨김
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  pointer-events: none;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   &.active {
-    left: calc(0% + 280px);
+    transform: translateX(300px); // 사이드바 너비(300px)만큼 이동
+    pointer-events: auto;
+    opacity: 1;
+    // 슬라이드 애니메이션 강조
+    animation: slideFromLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  @keyframes slideFromLeft {
+    from {
+      transform: translateX(0);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(300px);
+      opacity: 1;
+    }
   }
   &::-webkit-scrollbar {
     display: none;
   }
   -ms-overflow-style: none;
   .etc {
+    padding: 50px 40px 20px 40px; // 사이드바 홈버튼 위치와 맞춤
     text-align: right;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); // 홈버튼 위 줄과 동일한 느낌
     .ss_title {
       font-size: 20px;
     }
@@ -196,6 +226,8 @@
         text-align: center;
         text-indent: -99999px;
         cursor: pointer;
+        position: relative;
+        z-index: 20;
         &.plus {
           background: #efefef url('../images/Common/plus_icon.png') no-repeat;
           background-size: 16px;
@@ -211,7 +243,9 @@
     }
   }
   nav {
-    margin-top: 50px;
+    padding: 30px 40px; // 적절한 패딩
+    flex: 1; // 남은 공간 차지
+    overflow-y: auto;
     ul {
       li {
         margin-top: 30px;
@@ -220,8 +254,14 @@
         transition: all 0.3s;
         font-size: 18px;
         position: relative;
+        z-index: 10;
+        padding: 10px;
+        margin-left: -10px;
+        margin-right: -10px;
+        border-radius: 8px;
         &:hover {
           color: #012fff;
+          background: rgba(1, 47, 255, 0.05);
         }
         &:first-child {
           margin-top: 0;
@@ -233,6 +273,17 @@
     margin-top: 50px;
     font-size: 18px;
     text-align: center;
+    .submit {
+      margin-top: 30px;
+      font-size: 16px;
+    }
+  }
+  
+  .empty {
+    margin-top: 50px;
+    font-size: 18px;
+    text-align: center;
+    padding: 0 40px;
     .submit {
       margin-top: 30px;
       font-size: 16px;

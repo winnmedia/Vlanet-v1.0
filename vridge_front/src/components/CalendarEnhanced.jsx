@@ -8,13 +8,16 @@ export default function CalendarEnhanced({
   phases, 
   onPhaseUpdate, 
   onMemoAdd,
-  isAdmin 
+  isAdmin,
+  initialViewMode = 'timeline',
+  initialSearchTerm = '',
+  initialSelectedPhase = 'all'
 }) {
   const [draggedItem, setDraggedItem] = useState(null)
   const [dragOverDate, setDragOverDate] = useState(null)
-  const [selectedPhase, setSelectedPhase] = useState('all')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [viewMode, setViewMode] = useState('month') // month, timeline, gantt
+  const [selectedPhase, setSelectedPhase] = useState(initialSelectedPhase)
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm)
+  const [viewMode, setViewMode] = useState(initialViewMode) // month, timeline, gantt
   
   const phaseColors = {
     basic_plan: '#4A90E2',
@@ -228,50 +231,6 @@ export default function CalendarEnhanced({
   
   return (
     <div className="calendar-enhanced">
-      <div className="calendar-controls">
-        <div className="search-filter">
-          <input
-            type="text"
-            placeholder="프로젝트 검색..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-          
-          <select
-            value={selectedPhase}
-            onChange={(e) => setSelectedPhase(e.target.value)}
-            className="phase-filter"
-          >
-            <option value="all">모든 단계</option>
-            {Object.entries(phaseNames).map(([key, name]) => (
-              <option key={key} value={key}>{name}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="view-switcher">
-          <button
-            className={viewMode === 'month' ? 'active' : ''}
-            onClick={() => setViewMode('month')}
-          >
-            월간 보기
-          </button>
-          <button
-            className={viewMode === 'timeline' ? 'active' : ''}
-            onClick={() => setViewMode('timeline')}
-          >
-            타임라인
-          </button>
-          <button
-            className={viewMode === 'gantt' ? 'active' : ''}
-            onClick={() => setViewMode('gantt')}
-          >
-            간트 차트
-          </button>
-        </div>
-      </div>
-      
       <div className="calendar-content">
         {viewMode === 'timeline' && renderTimelineView()}
         {viewMode === 'gantt' && renderGanttView()}

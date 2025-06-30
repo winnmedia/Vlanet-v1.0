@@ -1,0 +1,100 @@
+// 영상 피드백 페이지 서브메뉴 수정
+.feedback_page {
+  .Submenu {
+    // 기본 투명도 및 블러 효과
+    background: rgba(248, 248, 248, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    
+    // z-index 우선순위 - 비디오 플레이어보다 높게 설정
+    z-index: 9999 !important;
+    position: fixed !important;
+    
+    // 활성화 상태
+    &.active {
+      pointer-events: auto !important;
+      opacity: 1 !important;
+      
+      // 모든 하위 요소 클릭 가능
+      * {
+        pointer-events: auto !important;
+      }
+    }
+    
+    // 버튼 영역
+    .etc {
+      position: relative;
+      z-index: 1001;
+      
+      ul li {
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        
+        &.close, &.plus {
+          &:hover {
+            opacity: 0.7;
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+          }
+        }
+      }
+    }
+    
+    // 네비게이션 항목
+    nav {
+      ul li {
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        position: relative;
+        z-index: 1001;
+        
+        &:hover {
+          color: #012fff !important;
+          background: rgba(1, 47, 255, 0.08) !important;
+        }
+      }
+    }
+  }
+}
+
+// 전역 서브메뉴 수정
+.Submenu {
+  &.active {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+// 비디오 플레이어 z-index 조정
+.feedback_page {
+  .videobox {
+    position: relative;
+    z-index: 1;
+    
+    .video_inner {
+      position: relative;
+      z-index: 1;
+      
+      video {
+        position: relative;
+        z-index: 1;
+      }
+    }
+  }
+  
+  // 피드백 플레이어 컴포넌트
+  .feedback-player,
+  .video-player-wrapper {
+    position: relative;
+    z-index: 1;
+    
+    video {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .controls {
+      position: relative;
+      z-index: 2;
+    }
+  }
+}

@@ -1,10 +1,14 @@
-import 'css/Cms/Cms.scss'
+import 'css/Cms/CmsCommon.scss'
+import 'css/Cms/CalendarToolbar.scss'
+import 'css/Cms/CalendarLayout.scss'
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import CalendarHeader from 'tasks/Calendar/CalendarHeader'
 import CalendarBody from 'tasks/Calendar/CalendarBody'
 import ProjectList from 'tasks/Calendar/ProjectList'
+import CalendarEnhanced from 'components/CalendarEnhanced'
+import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -17,7 +21,7 @@ import 'moment/locale/ko'
 
 import down from 'images/Cms/down_icon.svg'
 
-import { GetProject } from 'api/project'
+import { GetProject, UpdateDate } from 'api/project'
 
 export default function ProjectView() {
   const navigate = useNavigate()
@@ -27,6 +31,9 @@ export default function ProjectView() {
 
   const DateList = ['월', '주', '일']
   const [DateType, SetDateType] = useState('월')
+  const [viewMode, setViewMode] = useState('month') // month, timeline, gantt
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [showEnhancedView, setShowEnhancedView] = useState(false)
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -63,6 +70,23 @@ export default function ProjectView() {
           window.alert(err.response.data.message)
           navigate('/CmsHome')
         }
+      })
+  }
+  
+  // 프로젝트 단계 업데이트 핸들러
+  const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
+    const data = {
+      type: phase,
+      start_date: startDate,
+      end_date: endDate
+    }
+    UpdateDate(data, projectId)
+      .then(() => {
+        refetch()
+      })
+      .catch(err => {
+        console.error('Failed to update phase:', err)
+        window.alert('프로젝트 단계 업데이트에 실패했습니다.')
       })
   }
 
@@ -163,94 +187,200 @@ export default function ProjectView() {
             <>
               <Info current_project={current_project} />
               <div className="content calendar">
-                <div className="filter flex space_between align_center">
-                  <CalendarHeader
-                    totalDate={totalDate}
-                    year={year}
-                    month={month}
-                    setMonth={setMonth}
-                    setYear={setYear}
-                    week_index={week_index}
-                    set_week_index={set_week_index}
-                    type={DateType}
-                    changeDate={changeDate}
-                    day={day}
-                    setDay={setDay}
-                  />
-                  <div className="type flex align_center">
-                    <Select
-                      defaultValue={DateType}
-                      style={{ width: 140 }}
-                      value={DateType}
-                      onChange={CityChange}
-                      options={DateList.map((option) => ({
-                        label: option,
-                        value: option,
-                      }))}
-                    />
-                    {is_admin && (
-                      <button
-                        onClick={() =>
-                          navigate(`/ProjectEdit/${current_project.id}`)
-                        }
-                        className="submit"
+                <div style={{ marginBottom: '20px' }}>
+                  <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    개별 일정표
+                    <button 
+                      className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
+                      onClick={() => setIsCollapsed(!isCollapsed)}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        background: '#012fff',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="white">
+                        <path d={isCollapsed ? "M4 2 L8 6 L4 10" : "M2 4 L6 8 L10 4"} stroke="white" strokeWidth="2" fill="none" />
+                      </svg>
+                    </button>
+                    
+                    <div style={{ marginLeft: '20px', display: 'flex', gap: '6px' }}>
+                      <button 
+                        className={`view-btn ${viewMode === 'month' ? 'active' : ''}`}
+                        onClick={() => setViewMode('month')}
+                        style={{
+                          padding: '5px 15px',
+                          border: '1px solid #012fff',
+                          background: viewMode === 'month' ? '#012fff' : 'white',
+                          color: viewMode === 'month' ? 'white' : '#012fff',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          transition: 'all 0.3s ease',
+                          whiteSpace: 'nowrap'
+                        }}
                       >
-                        프로젝트 관리
+                        월간보기
                       </button>
-                    )}
+                      <button 
+                        className={`view-btn ${viewMode === 'timeline' ? 'active' : ''}`}
+                        onClick={() => setViewMode('timeline')}
+                        style={{
+                          padding: '5px 15px',
+                          border: '1px solid #012fff',
+                          background: viewMode === 'timeline' ? '#012fff' : 'white',
+                          color: viewMode === 'timeline' ? 'white' : '#012fff',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          transition: 'all 0.3s ease',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        타임라인
+                      </button>
+                      <button 
+                        className={`view-btn ${viewMode === 'gantt' ? 'active' : ''}`}
+                        onClick={() => setViewMode('gantt')}
+                        style={{
+                          padding: '5px 15px',
+                          border: '1px solid #012fff',
+                          background: viewMode === 'gantt' ? '#012fff' : 'white',
+                          color: viewMode === 'gantt' ? 'white' : '#012fff',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          transition: 'all 0.3s ease',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        간트차트
+                      </button>
+                    </div>
                   </div>
                 </div>
-                {totalDate && (
-                  <CalendarBody
-                    totalDate={totalDate}
-                    month={month}
-                    year={year}
-                    week_index={week_index}
-                    type={DateType}
-                    day={day}
-                    current_project={current_project}
-                    is_admin={is_admin}
-                    refetch={refetch}
-                  />
+                
+                {!isCollapsed && (
+                  <>
+                    <div className="filter flex space_between align_center">
+                      <CalendarHeader
+                        totalDate={totalDate}
+                        year={year}
+                        month={month}
+                        setMonth={setMonth}
+                        setYear={setYear}
+                        week_index={week_index}
+                        set_week_index={set_week_index}
+                        type={DateType}
+                        changeDate={changeDate}
+                        day={day}
+                        setDay={setDay}
+                      />
+                      <div className="type flex align_center">
+                        <Select
+                          defaultValue={DateType}
+                          style={{ width: 140 }}
+                          value={DateType}
+                          onChange={CityChange}
+                          options={DateList.map((option) => ({
+                            label: option,
+                            value: option,
+                          }))}
+                        />
+                        {is_admin && (
+                          <button
+                            onClick={() =>
+                              navigate(`/ProjectEdit/${current_project.id}`)
+                            }
+                            className="submit"
+                          >
+                            프로젝트 관리
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    {totalDate && viewMode === 'month' && (
+                      <CalendarBody
+                        totalDate={totalDate}
+                        month={month}
+                        year={year}
+                        week_index={week_index}
+                        type={DateType}
+                        day={day}
+                        current_project={current_project}
+                        is_admin={is_admin}
+                        refetch={refetch}
+                      />
+                    )}
+                    
+                    {viewMode !== 'month' && (
+                      <CalendarEnhanced
+                        projects={[current_project]}
+                        viewMode={viewMode}
+                        selectedPhase="all"
+                        onPhaseUpdate={handlePhaseUpdate}
+                        isAdmin={is_admin}
+                      />
+                    )}
+                    
+                    <div className="list_mark">
+                      <ul>
+                        <li>
+                          <span className="first"></span>
+                          기초기획안 작성
+                        </li>
+                        <li>
+                          <span className="second"></span>
+                          스토리보드 작성
+                        </li>
+                        <li>
+                          <span className="third"></span>
+                          촬영 (계획/진행)
+                        </li>
+                        <li>
+                          <span className="fourth"></span>
+                          비디오 편집
+                        </li>
+                        <li>
+                          <span className="fifth"></span>
+                          후반 작업
+                        </li>
+                        <li>
+                          <span className="sixth"></span>
+                          비디오 시사 (피드백)
+                        </li>
+                        <li>
+                          <span className="seven"></span>
+                          최종 컨펌
+                        </li>
+                        <li>
+                          <span className="eighth"></span>
+                          영상 납품
+                        </li>
+                      </ul>
+                    </div>
+                  </>
                 )}
-                <div className="list_mark">
-                  <ul>
-                    <li>
-                      <span className="first"></span>
-                      기초기획안 작성
-                    </li>
-                    <li>
-                      <span className="second"></span>
-                      스토리보드 작성
-                    </li>
-                    <li>
-                      <span className="third"></span>
-                      촬영 (계획/진행)
-                    </li>
-                    <li>
-                      <span className="fourth"></span>
-                      비디오 편집
-                    </li>
-                    <li>
-                      <span className="fifth"></span>
-                      후반 작업
-                    </li>
-                    <li>
-                      <span className="sixth"></span>
-                      비디오 시사 (피드백)
-                    </li>
-                    <li>
-                      <span className="seven"></span>
-                      최종 컨펌
-                    </li>
-                    <li>
-                      <span className="eighth"></span>
-                      영상 납품
-                    </li>
-                  </ul>
-                </div>
-
-                <ProjectList project_list={[current_project]} />
+              </div>
+              
+              {/* 프로젝트 단계 보드 추가 */}
+              <div className="content" style={{ marginTop: '30px' }}>
+                <div className="title">프로젝트 진행 현황</div>
+                <ProjectPhaseBoard 
+                  projects={[current_project]}
+                  isAdmin={is_admin}
+                  onPhaseUpdate={handlePhaseUpdate}
+                />
               </div>
             </>
           )}

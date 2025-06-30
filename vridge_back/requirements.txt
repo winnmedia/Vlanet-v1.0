@@ -8,3 +8,8 @@ gunicorn==21.2.0
 whitenoise==6.6.0
 django-environ==0.11.2
 requests==2.31.0
+celery==5.3.4
+redis==5.0.1
+django-redis==5.4.0
+ffmpeg-python==0.2.0
+pillow==10.1.0

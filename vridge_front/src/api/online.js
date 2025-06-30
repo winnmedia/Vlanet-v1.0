@@ -4,6 +4,6 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 export function OnlineListAPI() {
   return axiosCredentials(
     'get',
-    `${process.env.REACT_APP_BACKEND_API_URL}/onlines/`,
+    `/onlines/`,
   )
 }

@@ -21,6 +21,17 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 # Development CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
 
+# Override cache settings for development
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Override session engine for development
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
 # Logging Configuration
 LOGGING = {
     'version': 1,

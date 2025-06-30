@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import 'css/Cms/Cms.scss'
+import 'css/Cms/CmsCommon.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 /* 상단 이미지 - 샘플, 기본 */

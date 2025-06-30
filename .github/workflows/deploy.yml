@@ -62,7 +62,7 @@ jobs:
           fi
           
           echo "Build environment verified"
-        
+
       - name: Build project
         working-directory: ./vridge_front
         env:

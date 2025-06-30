@@ -5,7 +5,7 @@ echo "Starting VideoPlot Local Development Environment..."
 # Backend 시작
 echo "Starting Django backend..."
 cd vridge_back
-python manage.py runserver &
+python3 manage.py runserver &
 BACKEND_PID=$!
 
 # Frontend는 이미 실행 중

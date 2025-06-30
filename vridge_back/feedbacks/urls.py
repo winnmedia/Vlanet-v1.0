@@ -4,4 +4,5 @@ from . import views
 urlpatterns = [
     path("<int:id>", views.FeedbackDetail.as_view()),
     path("file/<int:id>", views.FeedbackFileDelete.as_view()),
+    path("encoding-status/<int:id>", views.VideoEncodingStatus.as_view()),
 ]

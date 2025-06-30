@@ -1,0 +1,170 @@
+// Share & Delete Button Fix - 공유/삭제 버튼 스타일 통일
+// 모든 버튼을 대표 색상(파란색)으로 통일
+
+// 컨트롤 박스 버튼 스타일 통일
+.etc_box .flex {
+  // 공유 버튼 스타일 - 파란색 채우기
+  .share {
+    background: #0058da !important;
+    border: 2px solid #0058da !important;
+    color: #fff !important;
+    padding: 0 20px !important;
+    height: 36px !important;
+    min-width: 70px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap;
+    text-indent: 0 !important;
+    text-decoration: none !important;
+    line-height: 1 !important;
+    
+    // 모든 가상 요소 제거
+    &::before,
+    &::after {
+      display: none !important;
+      content: none !important;
+    }
+    
+    // 아이콘 숨기기
+    svg, img, i {
+      display: none !important;
+    }
+    
+    // 호버 효과
+    &:hover {
+      background: #0047b8 !important;
+      border-color: #0047b8 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 88, 218, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  // 교체/삭제 버튼 그룹
+  .good {
+    .change_btn_wrap {
+      // 삭제 버튼 - 빨간색으로 변경
+      .video_upload_label {
+        div.delete {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          background: #dc3545 !important;
+          border: 2px solid #dc3545 !important;
+          color: #fff !important;
+          padding: 0 20px !important;
+          height: 36px !important;
+          min-width: 70px !important;
+          border-radius: 8px !important;
+          font-size: 13px !important;
+          font-weight: 500 !important;
+          cursor: pointer;
+          transition: all 0.3s ease !important;
+          white-space: nowrap;
+          text-indent: 0 !important;
+          overflow: visible !important;
+          
+          &:hover {
+            background: #c82333 !important;
+            border-color: #c82333 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+      
+      // 교체 버튼 - 파란색으로 통일
+      &:first-child {
+        .video_upload_label div {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          background: #0058da !important;
+          border: 2px solid #0058da !important;
+          color: #fff !important;
+          padding: 0 20px !important;
+          height: 36px !important;
+          min-width: 70px !important;
+          border-radius: 8px !important;
+          font-size: 13px !important;
+          font-weight: 500 !important;
+          transition: all 0.3s ease !important;
+          
+          &:hover {
+            background: #0047b8 !important;
+            border-color: #0047b8 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 88, 218, 0.3);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+    }
+  }
+  
+  // 피드백 전체보기 버튼 - 파란색으로 통일
+  .all {
+    background: #0058da !important;
+    border: 2px solid #0058da !important;
+    color: #fff !important;
+    padding: 0 20px !important;
+    height: 36px !important;
+    min-width: 120px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    &:hover {
+      background: #0047b8 !important;
+      border-color: #0047b8 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 88, 218, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// 반응형
+@media (max-width: 768px) {
+  .etc_box .flex {
+    .share,
+    .all {
+      min-width: 80px !important;
+      height: 34px !important;
+      font-size: 12px !important;
+      padding: 0 16px !important;
+    }
+    
+    .good .change_btn_wrap {
+      .video_upload_label div,
+      div.delete {
+        min-width: 60px !important;
+        height: 34px !important;
+        font-size: 12px !important;
+        padding: 0 14px !important;
+      }
+    }
+  }
+}

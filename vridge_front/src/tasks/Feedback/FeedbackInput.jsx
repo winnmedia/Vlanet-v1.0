@@ -3,27 +3,46 @@ import React, { useState, useEffect } from 'react'
 
 import { CreateFeedback } from 'api/feedback'
 
-export default function FeedbackInput({ project_id, refetch }) {
+export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange }) {
   const initial = {
     secret: '',
     title: '',
-    section: '',
+    section: initialTime || '',
     contents: '',
   }
 
   const { inputs, onChange, set_inputs } = useInput(initial)
   const { secret, section, contents } = inputs
+  
+  // initialTime이 변경될 때 section 값 업데이트
+  useEffect(() => {
+    if (initialTime) {
+      set_inputs(prevInputs => ({
+        ...prevInputs,
+        section: initialTime
+      }))
+    }
+  }, [initialTime, set_inputs])
 
   function SendFeedback() {
     if (secret && section && contents) {
       CreateFeedback(inputs, project_id)
         .then((res) => {
           window.alert('피드백 등록이 되었습니다.')
-          set_inputs(initial)
+          set_inputs({
+            secret: '',
+            title: '',
+            section: '',
+            contents: '',
+          })
           const secret = document.getElementsByName("secret")
           secret.forEach((checkbox) => {
             checkbox.checked = false
           })
+          // 시간 초기화 콜백 호출
+          if (onTimeChange) {
+            onTimeChange('')
+          }
           refetch()
         })
         .catch((err) => {

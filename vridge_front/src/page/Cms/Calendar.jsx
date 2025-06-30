@@ -1,4 +1,6 @@
-import 'css/Cms/Cms.scss'
+import 'css/Cms/CmsCommon.scss'
+import 'css/Cms/CalendarToolbar.scss'
+import 'css/Cms/CalendarLayout.scss'
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -7,6 +9,7 @@ import CalendarHeader from 'tasks/Calendar/CalendarHeader'
 import CalendarTotal from 'tasks/Calendar/CalendarTotal'
 import ProjectList from 'tasks/Calendar/ProjectList'
 import CalendarEnhanced from 'components/CalendarEnhanced'
+import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -55,6 +58,10 @@ export default function Calendar() {
   const [week_index, set_week_index] = useState(0)
   const [totalDate, setTotalDate] = useState([])
   const [showEnhancedView, setShowEnhancedView] = useState(false)
+  const [viewMode, setViewMode] = useState('month') // month, timeline, gantt
+  const [selectedPhase, setSelectedPhase] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isCollapsed, setIsCollapsed] = useState(false)
   
   // Enhanced calendar handlers
   const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
@@ -175,26 +182,199 @@ export default function Calendar() {
       <div className="cms_wrap">
         <SideBar />
         <main>
-          <div className="title">
-            전체 일정
+          <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            캘린더
             <button 
-              className="enhanced-toggle"
-              onClick={() => setShowEnhancedView(!showEnhancedView)}
+              className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
+              onClick={() => setIsCollapsed(!isCollapsed)}
               style={{
-                marginLeft: '20px',
-                padding: '6px 12px',
-                fontSize: '14px',
-                background: showEnhancedView ? '#4A90E2' : '#f0f0f0',
-                color: showEnhancedView ? 'white' : '#333',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: '#012fff',
                 border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                flexShrink: 0
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#0047b8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#012fff';
               }}
             >
-              {showEnhancedView ? '기본 보기' : '향상된 보기'}
+              <svg 
+                width="10" 
+                height="10" 
+                viewBox="0 0 10 10" 
+                fill="white"
+                style={{
+                  transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.3s ease'
+                }}
+              >
+                <path d="M5 7L1 3h8L5 7z"/>
+              </svg>
             </button>
           </div>
-          <div className="content calendar">
+          <div className="calendar-toolbar" style={{ 
+            marginBottom: '20px',
+            display: isCollapsed ? 'none' : 'flex'
+          }}>
+            <ul className="tab_list" style={{ 
+              display: 'flex', 
+              gap: '8px',
+              listStyle: 'none',
+              padding: 0,
+              margin: 0,
+              alignItems: 'center'
+            }}>
+              <li className={viewMode === 'month' ? 'active' : ''}>
+                <button 
+                  onClick={() => setViewMode('month')}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    background: viewMode === 'month' ? '#012fff' : 'transparent',
+                    color: viewMode === 'month' ? 'white' : '#333',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: viewMode === 'month' ? '600' : '400',
+                    transition: 'all 0.3s ease',
+                    minHeight: '36px'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (viewMode !== 'month') {
+                      e.target.style.background = 'rgba(1, 47, 255, 0.1)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (viewMode !== 'month') {
+                      e.target.style.background = 'transparent'
+                    }
+                  }}
+                >
+                  월간 보기
+                </button>
+              </li>
+              <li className={viewMode === 'timeline' ? 'active' : ''}>
+                <button 
+                  onClick={() => setViewMode('timeline')}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    background: viewMode === 'timeline' ? '#012fff' : 'transparent',
+                    color: viewMode === 'timeline' ? 'white' : '#333',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: viewMode === 'timeline' ? '600' : '400',
+                    transition: 'all 0.3s ease',
+                    minHeight: '36px'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (viewMode !== 'timeline') {
+                      e.target.style.background = 'rgba(1, 47, 255, 0.1)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (viewMode !== 'timeline') {
+                      e.target.style.background = 'transparent'
+                    }
+                  }}
+                >
+                  타임라인
+                </button>
+              </li>
+              <li className={viewMode === 'gantt' ? 'active' : ''}>
+                <button 
+                  onClick={() => setViewMode('gantt')}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    background: viewMode === 'gantt' ? '#012fff' : 'transparent',
+                    color: viewMode === 'gantt' ? 'white' : '#333',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: viewMode === 'gantt' ? '600' : '400',
+                    transition: 'all 0.3s ease',
+                    minHeight: '36px'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (viewMode !== 'gantt') {
+                      e.target.style.background = 'rgba(1, 47, 255, 0.1)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (viewMode !== 'gantt') {
+                      e.target.style.background = 'transparent'
+                    }
+                  }}
+                >
+                  간트 차트
+                </button>
+              </li>
+              <div style={{ borderLeft: '1px solid #e0e0e0', height: '16px', margin: '0 12px' }}></div>
+              <li style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="프로젝트 검색..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '6px',
+                    width: '150px',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#0058da'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e0e0e0'
+                  }}
+                />
+                <select
+                  value={selectedPhase}
+                  onChange={(e) => setSelectedPhase(e.target.value)}
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '13px',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    background: 'white'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#0058da'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e0e0e0'
+                  }}
+                >
+                  <option value="all">모든 단계</option>
+                  <option value="basic_plan">기초기획안</option>
+                  <option value="story_board">스토리보드</option>
+                  <option value="filming">촬영</option>
+                  <option value="video_edit">편집</option>
+                  <option value="post_work">후반작업</option>
+                  <option value="video_preview">시사</option>
+                  <option value="confirmation">컨펌</option>
+                  <option value="video_delivery">납품</option>
+                </select>
+              </li>
+            </ul>
+          </div>
+          <div className={`content calendar ${isCollapsed ? 'collapsed' : ''}`}>
             <div className="filter flex space_between align_center">
               <CalendarHeader
                 totalDate={totalDate}
@@ -238,31 +418,43 @@ export default function Calendar() {
                 </Space>
               </div>
             </div>
-            {showEnhancedView ? (
-              <CalendarEnhanced
-                projects={project_filter}
-                phases={[
-                  'basic_plan', 'story_board', 'filming', 'video_edit',
-                  'post_work', 'video_preview', 'confirmation', 'video_delivery'
-                ]}
-                onPhaseUpdate={handlePhaseUpdate}
-                onMemoAdd={handleMemoAdd}
-                isAdmin={user === 'admin' || user === 'calendar'}
-              />
-            ) : (
-              totalDate && (
-              <CalendarBody
-                totalDate={totalDate}
-                month={month}
-                year={year}
-                week_index={week_index}
-                type={DateType}
-                day={day}
-                project_list={project_filter}
-                user_memos={user_memos}
-                refetch={refetch}
-              />
-            )
+            {!isCollapsed && (
+              viewMode === 'month' ? (
+                totalDate && (
+                  <CalendarBody
+                    totalDate={totalDate}
+                    month={month}
+                    year={year}
+                    week_index={week_index}
+                    type={DateType}
+                    day={day}
+                    project_list={project_filter.filter(project => {
+                      // Apply search filter
+                      const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase())
+                      // Apply phase filter
+                      const matchesPhase = selectedPhase === 'all' || 
+                        (project[selectedPhase] && project[selectedPhase].start_date)
+                      return matchesSearch && matchesPhase
+                    })}
+                    user_memos={user_memos}
+                    refetch={refetch}
+                  />
+                )
+              ) : (
+                <CalendarEnhanced
+                  projects={project_filter}
+                  phases={[
+                    'basic_plan', 'story_board', 'filming', 'video_edit',
+                    'post_work', 'video_preview', 'confirmation', 'video_delivery'
+                  ]}
+                  onPhaseUpdate={handlePhaseUpdate}
+                  onMemoAdd={handleMemoAdd}
+                  isAdmin={user === 'admin' || user === 'calendar'}
+                  initialViewMode={viewMode}
+                  initialSearchTerm={searchTerm}
+                  initialSelectedPhase={selectedPhase}
+                />
+              )
             )}
             <div className="list_mark">
               <ul>
@@ -279,7 +471,14 @@ export default function Calendar() {
               this_month_project={this_month_project}
               next_month_project={next_month_project}
             />
-            <ProjectList project_list={[...project_list]} />
+            {viewMode === 'month' ? (
+              <ProjectPhaseBoard 
+                projects={[...project_list]} 
+                onPhaseUpdate={handlePhaseUpdate}
+              />
+            ) : (
+              <ProjectList project_list={[...project_list]} />
+            )}
           </div>
         </main>
       </div>

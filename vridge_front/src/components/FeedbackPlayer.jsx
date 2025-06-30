@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import './FeedbackPlayer.scss'
 
-const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError }, ref) => {
+const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError, onFeedbackClick }, ref) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -9,12 +9,20 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
   const [playbackRate, setPlaybackRate] = useState(1)
   const [showScreenshot, setShowScreenshot] = useState(false)
   const [screenshotUrl, setScreenshotUrl] = useState(null)
-  const [showHelp, setShowHelp] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const isMountedRef = useRef(true)
+  
+  // 컴포넌트 언마운트 감지
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false) // 기본값을 false로 설정
   
   // Expose methods to parent component
   useImperativeHandle(ref, () => ({
@@ -44,40 +52,81 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
 
     console.log('Video URL changed:', videoUrl)
     
-    // URL 유효성 검사
-    if (!videoUrl.includes('/media/') && !videoUrl.startsWith('http')) {
-      setError('잘못된 비디오 URL입니다.');
-      setIsLoading(false);
-      return;
-    }
+    // URL 유효성 검사 (더 느슨하게)
+    console.log('Checking video URL validity:', videoUrl);
+    
+    // 비디오 src 직접 설정
+    video.src = videoUrl;
+    
+    // 에러 핸들러 추가
+    const handleError = (e) => {
+      console.error('Video error event:', e);
+      console.error('Video readyState:', video.readyState);
+      console.error('Video networkState:', video.networkState);
+      console.error('Current src:', video.src);
+    };
+    
+    video.addEventListener('error', handleError);
+    video.load();
+
+    // 로딩 타임아웃 설정 (30초)
+    const loadingTimeout = setTimeout(() => {
+      if (isLoading && isMountedRef.current) {
+        setError('영상 로딩 시간이 초과되었습니다. 페이지를 새로고침해주세요.');
+        setIsLoading(false);
+      }
+    }, 30000);
 
     const updateTime = () => setCurrentTime(video.currentTime)
     const updateDuration = () => {
       setDuration(video.duration)
       setIsLoading(false)
+      clearTimeout(loadingTimeout)
       console.log('Video duration:', video.duration)
     }
     const handleLoadStart = () => {
-      setIsLoading(true)
-      setError(null)
-      console.log('Video loading started')
+      // 처음 URL이 설정될 때만 로딩 상태로 설정
+      if (!video.src || video.src !== videoUrl) {
+        setIsLoading(true)
+        setError(null)
+        console.log('Video loading started')
+      }
     }
     const handleCanPlay = () => {
       setIsLoading(false)
       setError(null)
+      clearTimeout(loadingTimeout)
       console.log('Video can play')
+    }
+    const handleLoadedData = () => {
+      setIsLoading(false)
+      setError(null)
+      clearTimeout(loadingTimeout)
+      console.log('Video data loaded')
     }
 
     video.addEventListener('timeupdate', updateTime)
     video.addEventListener('loadedmetadata', updateDuration)
     video.addEventListener('loadstart', handleLoadStart)
     video.addEventListener('canplay', handleCanPlay)
+    video.addEventListener('loadeddata', handleLoadedData)
 
     return () => {
+      clearTimeout(loadingTimeout)
+      
+      // 비디오 정리 - 재생 중지 및 src 제거로 play() 인터럽트 방지
+      if (video) {
+        video.pause()
+        video.removeAttribute('src')
+        video.load()
+      }
+      
       video.removeEventListener('timeupdate', updateTime)
       video.removeEventListener('loadedmetadata', updateDuration)
       video.removeEventListener('loadstart', handleLoadStart)
       video.removeEventListener('canplay', handleCanPlay)
+      video.removeEventListener('loadeddata', handleLoadedData)
+      video.removeEventListener('error', handleError)
     }
   }, [videoUrl])
   
@@ -186,12 +235,46 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
 
   const togglePlay = () => {
     const video = videoRef.current
+    if (!video) return;
+    
     if (isPlaying) {
       video.pause()
+      setIsPlaying(false)
     } else {
-      video.play()
+      // play() 프로미스를 적절히 처리
+      const playPromise = video.play()
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // 재생 성공 - 컴포넌트가 마운트된 경우에만 상태 업데이트
+            if (isMountedRef.current) {
+              setIsPlaying(true)
+            }
+          })
+          .catch((error) => {
+            // 재생 실패 - DOM 제거 등의 이유
+            if (error.name === 'AbortError') {
+              console.log('Playback was prevented')
+            } else if (error.name === 'NotAllowedError') {
+              // 사용자 상호작용이 필요한 경우
+              console.log('User interaction required')
+              setError('재생 버튼을 다시 클릭해주세요.')
+              setTimeout(() => setError(null), 3000)
+            } else {
+              console.error('Error attempting to play video:', error)
+              setError('영상 재생에 실패했습니다.')
+            }
+            
+            if (isMountedRef.current) {
+              setIsPlaying(false)
+            }
+          })
+      } else {
+        // 구형 브라우저의 경우
+        setIsPlaying(true)
+      }
     }
-    setIsPlaying(!isPlaying)
   }
 
   const handleSeek = (e) => {
@@ -219,7 +302,9 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
   }
 
   const handleAddComment = () => {
-    if (onTimeClick) {
+    if (onFeedbackClick) {
+      onFeedbackClick(currentTime)
+    } else if (onTimeClick) {
       onTimeClick(currentTime)
     }
   }
@@ -230,29 +315,61 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
   }
   
   const handleScreenshot = () => {
-    const video = videoRef.current
-    const canvas = document.createElement('canvas')
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    const ctx = canvas.getContext('2d')
-    ctx.drawImage(video, 0, 0)
-    
-    canvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob)
-      setScreenshotUrl(url)
-      setShowScreenshot(true)
+    try {
+      const video = videoRef.current
       
-      // Auto download
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `screenshot_${formatTime(currentTime).replace(':', '')}.png`
-      a.click()
-    })
+      // 비디오가 로드되었는지 확인
+      if (!video || video.readyState < 2) {
+        console.error('Video not ready for screenshot')
+        alert('영상이 아직 로드되지 않았습니다.')
+        return
+      }
+      
+      // Canvas 생성
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth || video.clientWidth
+      canvas.height = video.videoHeight || video.clientHeight
+      
+      const ctx = canvas.getContext('2d')
+      
+      // 비디오 프레임을 캔버스에 그리기
+      try {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+        
+        // 이미지 데이터 URL로 변환
+        const dataURL = canvas.toDataURL('image/png', 1.0)
+        
+        // 다운로드 링크 생성
+        const a = document.createElement('a')
+        a.href = dataURL
+        a.download = `screenshot_${formatTime(currentTime).replace(':', '-')}_${Date.now()}.png`
+        
+        // 다운로드 실행
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        
+        // 성공 메시지
+        console.log('Screenshot saved successfully')
+        // alert('스크린샷이 저장되었습니다.')
+      } catch (e) {
+        console.error('Screenshot failed:', e)
+        // CORS 에러 메시지 개선
+        if (e.name === 'SecurityError') {
+          alert('CORS 정책으로 인해 스크린샷을 찍을 수 없습니다.\n\n이 기능을 사용하려면 서버에서 적절한 CORS 헤더가 설정되어야 합니다.')
+        } else {
+          alert('스크린샷 캡처에 실패했습니다.')
+        }
+      }
+    } catch (error) {
+      console.error('Screenshot error:', error)
+      alert('스크린샷 캡처 중 오류가 발생했습니다.')
+    }
   }
 
   return (
     <div className="feedback-player">
-      <div className="video-container" onMouseEnter={() => setShowHelp(true)} onMouseLeave={() => setShowHelp(false)}>
+      <div className="video-container">
         {isLoading && (
           <div className="loading-overlay">
             <div className="spinner"></div>
@@ -270,10 +387,10 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
         )}
         <video
           ref={videoRef}
-          src={videoUrl}
           onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
+          crossOrigin="anonymous"
           onError={(e) => {
             // source 태그의 에러는 무시 (video 태그의 에러만 처리)
             if (e.target.tagName.toLowerCase() === 'source') {
@@ -295,12 +412,19 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
                   errorMessage = '디코드 오류: 영상 형식을 지원하지 않습니다.';
                   break;
                 case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                  errorMessage = '지원하지 않는 영상 형식입니다.';
+                  errorMessage = '지원하지 않는 영상 형식입니다. MP4, WebM, OGG 형식을 권장합니다.';
                   break;
                 case error.MEDIA_ERR_ABORTED:
                   errorMessage = '영상 로드가 취소되었습니다.';
                   break;
               }
+            }
+            
+            // 파일 확장자 확인
+            const extension = videoUrl.split('.').pop().toLowerCase();
+            const supportedFormats = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+            if (!supportedFormats.includes(extension)) {
+              errorMessage += ` (${extension} 형식은 브라우저에서 직접 재생이 어려울 수 있습니다)`;
             }
             
             setError(errorMessage)
@@ -325,22 +449,6 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
           )}
         </div>
         
-        {showHelp && (
-          <div className="keyboard-help">
-            <div className="help-content">
-              <h4>단축키 안내</h4>
-              <div className="help-grid">
-                <div><kbd>Space</kbd> 재생/일시정지</div>
-                <div><kbd>←/→</kbd> 10초 이동</div>
-                <div><kbd>Shift+←/→</kbd> 프레임 이동</div>
-                <div><kbd>↑/↓</kbd> 볼륨 조절</div>
-                <div><kbd>F</kbd> 전체화면</div>
-                <div><kbd>S</kbd> 스크린샷</div>
-                <div><kbd>C</kbd> 코멘트 추가</div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       <div className="controls">
@@ -370,18 +478,6 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
               )}
             </button>
 
-            <button onClick={() => handleSkip(-10)} className="skip-button" title="10초 뒤로">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path fill="currentColor" d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-                <text x="12" y="16" text-anchor="middle" fill="currentColor" font-size="10" font-weight="bold">10</text>
-              </svg>
-            </button>
-            <button onClick={() => handleSkip(10)} className="skip-button" title="10초 앞으로">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path fill="currentColor" d="M12.01 19V23l5-5-5-5v4c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6h2c0-4.42-3.58-8-8-8s-8 3.58-8 8 3.58 8 8 8z"/>
-                <text x="12" y="8" text-anchor="middle" fill="currentColor" font-size="10" font-weight="bold">10</text>
-              </svg>
-            </button>
 
             <div className="time-display">
               {formatTime(currentTime)} / {formatTime(duration)}
@@ -389,11 +485,11 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
           </div>
 
           <div className="right-controls">
-            <button onClick={handleAddComment} className="icon-button" title="현재 시간에 코멘트 추가">
+            <button onClick={handleAddComment} className="icon-button comment-button" title="현재 시점에 피드백 추가">
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
               </svg>
-              <span className="button-text">코멘트</span>
+              <span className="button-text">현재 시점에 피드백</span>
             </button>
             
             <button onClick={handleScreenshot} className="icon-button" title="스크린샷 찍기">

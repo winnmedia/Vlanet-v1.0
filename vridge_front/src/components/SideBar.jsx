@@ -1,6 +1,6 @@
 import './SideBar.scss'
 import cx from 'classnames'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
@@ -12,6 +12,8 @@ export default function SideBar({ tab, on_menu }) {
   const [SubMenu, SetSubMenu] = useState(false)
   const [tab_name, set_tab_name] = useState('')
   const [SortProject, SetSortProject] = useState([])
+  const submenuRef = useRef(null)
+  const sidebarRef = useRef(null)
 
   useEffect(() => {
     if (project_list) {
@@ -34,10 +36,37 @@ export default function SideBar({ tab, on_menu }) {
     }
     set_tab_name(tab)
   }, [on_menu, tab])
+  
+  // 경로에 따라 tab_name 설정
+  useEffect(() => {
+    if (path.includes('/Feedback')) {
+      set_tab_name('feedback')
+    } else if (path.includes('/ProjectView') || path.includes('/ProjectEdit') || path.includes('/ProjectCreate')) {
+      set_tab_name('project')
+    }
+  }, [path])
+
+  // 외부 클릭 감지
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (SubMenu && 
+          submenuRef.current && 
+          !submenuRef.current.contains(event.target) &&
+          sidebarRef.current &&
+          !sidebarRef.current.contains(event.target)) {
+        SetSubMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [SubMenu])
 
   return (
     <>
-      <aside className="SideBar">
+      <aside className="SideBar" ref={sidebarRef}>
         <nav>
           <ul>
             <li
@@ -119,18 +148,36 @@ export default function SideBar({ tab, on_menu }) {
         </div>
       </aside>
 
-      <div className={SubMenu ? 'Submenu active' : 'Submenu'}>
+      <div 
+        ref={submenuRef}
+        className={SubMenu ? 'Submenu active' : 'Submenu'}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <div className="etc">
           <div className="ss_title">
             {tab_name === 'feedback' ? '영상 피드백' : '프로젝트 관리'}
           </div>
           <ul>
             {tab_name === 'project' && SortProject.length > 0 && (
-              <li onClick={() => navigate('/ProjectCreate')} className="plus">
+              <li 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate('/ProjectCreate');
+                }} 
+                className="plus"
+              >
                 +
               </li>
             )}
-            <li onClick={() => SetSubMenu(false)} className="close">
+            <li 
+              onClick={(e) => {
+                e.stopPropagation();
+                SetSubMenu(false);
+              }} 
+              className="close"
+            >
               x
             </li>
           </ul>
@@ -140,12 +187,14 @@ export default function SideBar({ tab, on_menu }) {
           <ul>
             {SortProject.map((item, index) => (
               <li
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (tab_name === 'project') {
                     navigate(`/ProjectView/${item.id}`)
                   } else {
                     navigate(`/Feedback/${item.id}`)
                   }
+                  SetSubMenu(false);
                 }}
                 key={index}
               >

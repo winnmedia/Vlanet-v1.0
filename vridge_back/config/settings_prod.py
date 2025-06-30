@@ -1,73 +1,70 @@
 """
-Production settings
+Django Production Settings for VideoPlanet
 """
+import os
+import dj_database_url
 from .settings_base import *
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
-# Production specific settings
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'YOUR-PRODUCTION-SECRET-KEY-HERE')
+
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# Security settings for production
-SECURE_SSL_REDIRECT = True
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', '*').split(',') if host.strip()]
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'videoplanet'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
+    }
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# CORS settings
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if origin.strip()]
+
+# Security settings
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() == 'true'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
-# Use local file storage for production (Railway volume)
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+# Whitenoise for static files
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Sentry Configuration
-sentry_sdk.init(
-    dsn=env('SENTRY_DSN', default=''),
-    integrations=[
-        DjangoIntegration(),
-    ],
-    traces_sample_rate=0.1,
-    send_default_pii=False,
-    environment='production'
-)
-
-# Production Logging
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        },
-    },
     'handlers': {
         'file': {
             'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'django_error.log'),
-            'maxBytes': 1024 * 1024 * 15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'verbose',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'error.log'),
         },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler',
-        },
-    },
-    'root': {
-        'handlers': ['file'],
-        'level': 'WARNING',
     },
     'loggers': {
         'django': {
@@ -75,13 +72,18 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'django.request': {
-            'handlers': ['file', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
     },
 }
 
-# Ensure logs directory exists
-os.makedirs(os.path.join(BASE_DIR, 'logs'), exist_ok=True)
+# Email settings (for production error notifications)
+ADMINS = [('Admin', os.environ.get('ADMIN_EMAIL', 'admin@example.com'))]
+SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'noreply@example.com')
+
+# Cache settings (optional)
+if os.environ.get('REDIS_URL'):
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': os.environ.get('REDIS_URL'),
+        }
+    }

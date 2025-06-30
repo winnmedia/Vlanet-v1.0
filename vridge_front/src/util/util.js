@@ -16,25 +16,52 @@ export function axiosOpts(method, url, data, config) {
 }
 
 export function axiosCredentials(method, url, data, config) {
-  const token = checkSession();
-  return axios({
+  let token = checkSession();
+  
+  // 토큰에서 따옴표 제거 (안전을 위해)
+  if (token && typeof token === 'string' && token.includes('"')) {
+    token = token.replace(/"/g, '');
+  }
+  
+  console.log('Token for request:', token); // 디버깅용
+  
+  // checkSession returns the jwt token directly now (it's a string, not an object)
+  const axiosConfig = {
     method: method,
     url: url,
     data: data,
     withCredentials: true,
-    timeout: 30000,
+    timeout: config?.timeout || 30000,
     crossDomain: true,
     headers: {
       ...(token && { 'Authorization': `Bearer ${token}` }),
       ...config?.headers
     },
     ...config,
-  })
+  };
+  
+  console.log('Axios config:', axiosConfig); // 디버깅용
+  
+  return axios(axiosConfig).catch(error => {
+    console.error('API Error:', error.response?.data || error.message);
+    throw error;
+  });
 }
 
 export function checkSession() {
   let session = window.localStorage.getItem('VGID')
-  if (session) session = JSON.parse(session)
+  if (session) {
+    try {
+      // Try to parse if it's JSON (for backward compatibility)
+      session = JSON.parse(session)
+    } catch (e) {
+      // If parsing fails, it's already a plain string token
+      // Remove quotes if they exist
+      if (session.startsWith('"') && session.endsWith('"')) {
+        session = session.slice(1, -1)
+      }
+    }
+  }
   return session
 }
 

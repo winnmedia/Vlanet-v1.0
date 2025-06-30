@@ -1,0 +1,277 @@
+.project-phase-board {
+  margin-top: 30px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  
+  .board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .status-legend {
+      display: flex;
+      gap: 16px;
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #666;
+        
+        .status-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+  
+  .project-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .project-section {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    
+    &.delayed-section {
+      border-left: 3px solid #F44336;
+    }
+    
+    &.completed-section {
+      opacity: 0.8;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .icon {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  .project-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .project-header {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      &:hover {
+        background: #f5f5f5;
+      }
+      
+      .project-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        
+        .project-color-bar {
+          width: 4px;
+          height: 24px;
+          border-radius: 2px;
+        }
+        
+        .project-name {
+          font-size: 15px;
+          font-weight: 600;
+          color: #333;
+          margin: 0;
+        }
+        
+        .project-consumer {
+          font-size: 13px;
+          color: #666;
+        }
+      }
+      
+      .project-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        
+        .progress-info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .progress-bar {
+            width: 80px;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            
+            .progress-fill {
+              height: 100%;
+              transition: width 0.3s ease;
+            }
+          }
+          
+          .progress-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            min-width: 35px;
+          }
+        }
+        
+        .expand-btn {
+          background: none;
+          border: none;
+          font-size: 12px;
+          color: #666;
+          cursor: pointer;
+          padding: 4px;
+          transition: transform 0.2s ease;
+        }
+      }
+    }
+    
+    .project-phases {
+      padding: 0 16px 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      
+      .phase-item {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 10px;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        
+        &.completed {
+          background: #e8f5e9;
+          border-color: #4caf50;
+        }
+        
+        &.in_progress {
+          background: #e3f2fd;
+          border-color: #2196f3;
+        }
+        
+        &.delayed {
+          background: #ffebee;
+          border-color: #f44336;
+        }
+        
+        &.pending {
+          opacity: 0.7;
+        }
+        
+        .phase-header {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-bottom: 4px;
+          
+          .phase-icon {
+            font-size: 16px;
+          }
+          
+          .phase-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            flex: 1;
+          }
+          
+          .phase-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+          }
+        }
+        
+        .phase-dates {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .date-range {
+            font-size: 12px;
+            color: #666;
+          }
+          
+          .delay-days {
+            font-size: 11px;
+            color: #f44336;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+  
+  // 반응형 디자인
+  @media (max-width: 768px) {
+    padding: 16px;
+    
+    .board-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .project-card {
+      .project-header {
+        flex-wrap: wrap;
+        
+        .project-info {
+          flex: 100%;
+          margin-bottom: 8px;
+        }
+      }
+      
+      .project-phases {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

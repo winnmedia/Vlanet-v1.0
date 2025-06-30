@@ -74,13 +74,31 @@ class SignIn(View):
             email = data.get("email")
             password = data.get("password")
 
-            user = authenticate(request, username=email, password=password)
+            # Debug
+            print(f"Login attempt - email: {email}, password: {'*' * len(password) if password else 'None'}")
+            
+            # Try direct user lookup first
+            try:
+                user_obj = models.User.objects.get(username=email)
+                print(f"User found: {user_obj.username}, has_password: {bool(user_obj.password)}")
+                
+                # Check password manually
+                from django.contrib.auth.hashers import check_password
+                if check_password(password, user_obj.password):
+                    user = user_obj
+                    print("Password check passed")
+                else:
+                    user = None
+                    print("Password check failed")
+            except models.User.DoesNotExist:
+                user = None
+                print("User not found in database")
+            
             if user is not None:
-                vridge_session = jwt.encode(
-                    {"user_id": user.id, "exp": datetime.utcnow() + timedelta(days=28)},
-                    settings.SECRET_KEY,
-                    settings.ALGORITHM,
-                )
+                # Use Django REST Framework SimpleJWT instead
+                from rest_framework_simplejwt.tokens import RefreshToken
+                refresh = RefreshToken.for_user(user)
+                vridge_session = str(refresh.access_token)
                 res = JsonResponse(
                     {
                         "message": "success",

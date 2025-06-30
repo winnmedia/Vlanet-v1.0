@@ -1,10 +1,19 @@
 * {
   box-sizing: border-box;
 }
+
+// 스크롤바로 인한 레이아웃 흔들림 방지
+html {
+  overflow-y: scroll;
+}
+
 body {
   font-family: 'suit';
   line-height: 1.5;
   font-size: 15px;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 .mt10 {
   margin-top: 10px;

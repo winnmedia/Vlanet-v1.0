@@ -37,8 +37,8 @@ class FeedbackDetail(View):
                 if settings.DEBUG:
                     file_url = f"http://127.0.0.1:8000{file_path}"
                 else:
-                    # 프로덕션 환경에서도 전체 URL 반환
-                    file_url = f"https://videoplanet.up.railway.app{file_path}"
+                    # 프로덕션 환경에서 요청의 호스트 사용
+                    file_url = request.build_absolute_uri(file_path)
             else:
                 file_url = None
 
@@ -184,6 +184,12 @@ class FeedbackDetail(View):
                 if files.size == 0:
                     return JsonResponse({"message": "비어있는 파일입니다."}, status=400)
                 
+                # 파일 크기 검사
+                max_size = 600 * 1024 * 1024  # 600MB
+                if files.size > max_size:
+                    size_mb = files.size / (1024 * 1024)
+                    return JsonResponse({"message": f"파일 크기가 너무 큽니다. (현재: {size_mb:.1f}MB, 최대: 600MB)"}, status=413)
+                
                 # 파일 형식 검사
                 allowed_extensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv']
                 import os
@@ -192,6 +198,8 @@ class FeedbackDetail(View):
                 
                 if ext not in allowed_extensions:
                     return JsonResponse({"message": f"지원하지 않는 파일 형식입니다. ({', '.join(allowed_extensions)} 형식만 가능)"}, status=400)
+                
+                logging.info(f"Processing upload: {original_name}, size: {files.size / (1024*1024):.1f}MB")
                 
                 # 파일명 안전하게 변환
                 from django.utils.text import slugify
@@ -210,6 +218,16 @@ class FeedbackDetail(View):
                 feedback.save()
                 logging.info(f"File saved successfully at: {feedback.files.path}")
                 
+                # 비디오 파일인 경우 인코딩 작업 시작 (임시 비활성화)
+                if feedback.is_video:
+                    try:
+                        # Celery가 설치될 때까지 인코딩 비활성화
+                        logging.info(f"Video encoding disabled temporarily for feedback {feedback.id}")
+                        feedback.encoding_status = 'none'
+                        feedback.save()
+                    except Exception as meta_error:
+                        logging.error(f"Error processing video: {str(meta_error)}")
+                
                 # Get the file URL
                 file_url = None
                 if feedback.files:
@@ -219,16 +237,30 @@ class FeedbackDetail(View):
                     if settings.DEBUG:
                         file_url = f"http://127.0.0.1:8000{file_path}"
                     else:
-                        # 프로덕션 환경에서도 전체 URL 반환
-                        file_url = f"https://videoplanet.up.railway.app{file_path}"
+                        # 프로덕션 환경에서 요청의 호스트 사용
+                        file_url = request.build_absolute_uri(file_path)
                     logging.info(f"File URL: {file_url}")
                 
-                return JsonResponse({
+                response_data = {
                     "message": "파일이 성공적으로 업로드되었습니다.",
                     "result": "success",
                     "file_url": file_url,
                     "file_name": feedback.files.name if feedback.files else None
-                }, status=200)
+                }
+                
+                # 비디오인 경우 인코딩 상태 추가
+                if feedback.is_video:
+                    response_data.update({
+                        "encoding_status": feedback.encoding_status,
+                        "video_metadata": {
+                            "duration": feedback.duration,
+                            "width": feedback.width,
+                            "height": feedback.height,
+                            "file_size": feedback.file_size
+                        }
+                    })
+                
+                return JsonResponse(response_data, status=200)
             except Exception as upload_error:
                 logging.error(f"Error during file processing: {str(upload_error)}")
                 return JsonResponse({"message": f"파일 처리 중 오류: {str(upload_error)}"}, status=500)
@@ -259,6 +291,64 @@ class FeedbackFileDelete(View):
             feedback.files = None
             feedback.save()
             return JsonResponse({"result": "result"}, status=200)
+        except Exception as e:
+            print(e)
+            logging.info(str(e))
+            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class VideoEncodingStatus(View):
+    """Check video encoding status"""
+    @user_validator
+    def get(self, request, id):
+        try:
+            user = request.user
+            email = user.username
+
+            project = project_model.Project.objects.get_or_none(id=id)
+            if not project:
+                return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
+            
+            feedback = project.feedback
+
+            members = project.members.all().filter(user__username=email)
+            if project.user.username != email and not members.exists():
+                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+
+            response_data = {
+                "encoding_status": feedback.encoding_status or "none",
+                "has_original": bool(feedback.files),
+                "has_web_version": bool(feedback.video_file_web),
+                "has_thumbnail": bool(feedback.thumbnail),
+                "has_hls": bool(feedback.hls_playlist_url),
+            }
+
+            # Add URLs for encoded versions if available
+            if feedback.video_file_web:
+                response_data["web_video_url"] = feedback.video_file_web.url
+            
+            if feedback.thumbnail:
+                response_data["thumbnail_url"] = feedback.thumbnail.url
+            
+            if feedback.hls_playlist_url:
+                response_data["hls_url"] = feedback.hls_playlist_url
+
+            # Add quality versions if available
+            quality_versions = []
+            for quality in ['high', 'medium', 'low']:
+                field_name = f'video_file_{quality}'
+                if getattr(feedback, field_name):
+                    quality_versions.append({
+                        "quality": quality,
+                        "path": getattr(feedback, field_name)
+                    })
+            
+            if quality_versions:
+                response_data["quality_versions"] = quality_versions
+
+            return JsonResponse(response_data, status=200)
+            
         except Exception as e:
             print(e)
             logging.info(str(e))

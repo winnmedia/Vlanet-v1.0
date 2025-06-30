@@ -1,0 +1,47 @@
+// Calendar Toolbar Styles
+.calendar-toolbar {
+  .view-btn {
+    &:hover {
+      background: #012fff !important;
+      color: white !important;
+      border: none !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(1, 47, 255, 0.2);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  input[type="text"] {
+    transition: all 0.2s ease;
+    
+    &:focus {
+      border-color: #012fff !important;
+      box-shadow: 0 0 0 2px rgba(1, 47, 255, 0.1);
+    }
+  }
+  
+  select {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: #012fff !important;
+    }
+    
+    &:focus {
+      border-color: #012fff !important;
+      box-shadow: 0 0 0 2px rgba(1, 47, 255, 0.1);
+    }
+  }
+}
+
+// Calendar filter section adjustment
+.calendar {
+  .filter {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+  }
+}

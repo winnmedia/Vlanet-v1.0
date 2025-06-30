@@ -1,0 +1,248 @@
+// Button Alignment Fix - 모든 버튼 중앙 정렬 및 크기 조정
+// 비디오 플레이어 포함 전체 버튼 스타일 통일
+
+// 전역 버튼 중앙 정렬
+button,
+.button,
+[type="button"],
+[type="submit"],
+.all,
+.share,
+.video_upload_label div,
+.change_btn_wrap div,
+.guide_btn,
+.project_btn,
+.submit,
+.cert {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+// 컨트롤 박스 버튼들
+.etc_box {
+  .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    
+    // 모든 버튼 동일한 크기
+    button,
+    .all,
+    .share {
+      min-width: 120px;
+      height: 40px !important;
+      padding: 0 20px !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+    }
+    
+    // 중간 버튼 그룹
+    .good {
+      display: flex;
+      gap: 8px;
+      
+      .change_btn_wrap {
+        .video_upload_label div {
+          min-width: 80px;
+          height: 40px !important;
+          padding: 0 16px !important;
+          font-size: 14px !important;
+        }
+      }
+    }
+  }
+}
+
+// 비디오 플레이어 컨트롤 버튼
+.feedback-player {
+  .controls {
+    button,
+    .control-button {
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 36px !important;
+      padding: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 50% !important;
+      background: rgba(0, 0, 0, 0.6) !important;
+      transition: all 0.2s ease !important;
+      
+      &:hover {
+        background: rgba(0, 0, 0, 0.8) !important;
+        transform: scale(1.1) !important;
+      }
+      
+      svg {
+        width: 18px !important;
+        height: 18px !important;
+      }
+    }
+    
+    // 재생/일시정지 버튼 크게
+    .play-pause-btn {
+      width: 44px !important;
+      height: 44px !important;
+      min-width: 44px !important;
+      
+      svg {
+        width: 22px !important;
+        height: 22px !important;
+      }
+    }
+    
+    // 시간 표시
+    .time-display {
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      color: white !important;
+      min-width: 100px !important;
+      text-align: center !important;
+    }
+    
+    // 볼륨 슬라이더
+    .volume-control {
+      .volume-slider {
+        width: 80px !important;
+        height: 4px !important;
+        margin: 0 10px !important;
+      }
+    }
+    
+    // 타임라인
+    .timeline {
+      height: 6px !important;
+      background: rgba(255, 255, 255, 0.3) !important;
+      border-radius: 3px !important;
+      
+      .progress {
+        background: #0058da !important;
+        height: 100% !important;
+        border-radius: 3px !important;
+      }
+      
+      .scrubber {
+        width: 14px !important;
+        height: 14px !important;
+        background: white !important;
+        border-radius: 50% !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+      }
+    }
+  }
+}
+
+// 업로드 영역 버튼
+.upload_area {
+  .upload_btn_wrap {
+    .video_upload_label div {
+      width: 180px !important;
+      height: 50px !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      
+      &::before {
+        margin-right: 8px;
+      }
+    }
+  }
+  
+  .guide_btn {
+    min-width: 140px !important;
+    height: 40px !important;
+    padding: 0 20px !important;
+    font-size: 14px !important;
+  }
+}
+
+// 사이드바 버튼들
+.tab_content {
+  // 코멘트 입력 버튼
+  .pr button.cert {
+    width: 90px !important;
+    height: 38px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+  }
+  
+  // 폼 제출 버튼
+  .form button.submit {
+    height: 44px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+  }
+  
+  // 프로젝트 관리 버튼
+  .info .project_btn {
+    height: 44px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  }
+}
+
+// 탭 버튼은 예외
+.tab_list button {
+  height: auto !important;
+  min-height: auto !important;
+  padding: 8px 16px !important;
+}
+
+// 반응형
+@media (max-width: 768px) {
+  .etc_box .flex {
+    flex-wrap: wrap;
+    justify-content: center;
+    
+    button,
+    .all,
+    .share {
+      min-width: 100px !important;
+      height: 36px !important;
+      font-size: 13px !important;
+    }
+    
+    .good {
+      width: 100%;
+      justify-content: center;
+      margin-top: 10px;
+      
+      .change_btn_wrap .video_upload_label div {
+        min-width: 70px !important;
+        height: 36px !important;
+        font-size: 13px !important;
+      }
+    }
+  }
+  
+  .feedback-player .controls {
+    button,
+    .control-button {
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      
+      svg {
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
+    
+    .play-pause-btn {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      
+      svg {
+        width: 20px !important;
+        height: 20px !important;
+      }
+    }
+  }
+}

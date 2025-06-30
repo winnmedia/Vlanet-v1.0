@@ -4,7 +4,7 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 export function SignUp(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/signup`,
+    `/users/signup`,
     data,
   )
 }
@@ -13,7 +13,7 @@ export function SignUp(data) {
 export function SignIn(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/login`,
+    `/users/login`,
     data,
   )
 }
@@ -22,7 +22,7 @@ export function SignIn(data) {
 export function SendAuthNumber(data, types) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/send_authnumber/${types}`,
+    `/users/send_authnumber/${types}`,
     data,
   )
 }
@@ -31,7 +31,7 @@ export function SendAuthNumber(data, types) {
 export function EmailAuth(data, types) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/signup_emailauth/${types}`,
+    `/users/signup_emailauth/${types}`,
     data,
   )
 }
@@ -40,7 +40,7 @@ export function EmailAuth(data, types) {
 export function ResetPassword(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/password_reset`,
+    `/users/password_reset`,
     data,
   )
 }
@@ -49,7 +49,7 @@ export function ResetPassword(data) {
 export function KakaoLoginAPI(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/login/kakao`,
+    `/users/login/kakao`,
     data,
   )
 }
@@ -58,7 +58,7 @@ export function KakaoLoginAPI(data) {
 export function NaverLoginAPI(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/login/naver`,
+    `/users/login/naver`,
     data,
   )
 }
@@ -67,7 +67,7 @@ export function NaverLoginAPI(data) {
 export function GoogleLoginAPI(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/login/google`,
+    `/users/login/google`,
     data,
   )
 }
@@ -76,7 +76,7 @@ export function GoogleLoginAPI(data) {
 export function WriteUserMemo(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/memo`,
+    `/users/memo`,
     data,
   )
 }
@@ -85,6 +85,6 @@ export function WriteUserMemo(data) {
 export function DeleteUserMemo(id) {
   return axiosCredentials(
     'delete',
-    `${process.env.REACT_APP_BACKEND_API_URL}/users/memo/${id}`,
+    `/users/memo/${id}`,
   )
 }

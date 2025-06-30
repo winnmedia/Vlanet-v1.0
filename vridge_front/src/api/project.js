@@ -4,7 +4,7 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 export function ProjectList() {
   return axiosCredentials(
     'get',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/project_list`,
+    `/projects/project_list`,
   )
 }
 
@@ -12,7 +12,7 @@ export function ProjectList() {
 export function GetProject(project_id) {
   return axiosCredentials(
     'get',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/detail/${project_id}`,
+    `/projects/detail/${project_id}`,
   )
 }
 
@@ -20,7 +20,7 @@ export function GetProject(project_id) {
 export function CreateProjectAPI(data) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/create`,
+    `/projects/create`,
     data,
     {
       headers: {
@@ -34,7 +34,7 @@ export function CreateProjectAPI(data) {
 export function UpdateProjectAPI(data, project_id) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/detail/${project_id}`,
+    `/projects/detail/${project_id}`,
     data,
     {
       headers: {
@@ -48,7 +48,7 @@ export function UpdateProjectAPI(data, project_id) {
 export function DeleteProjectAPI(project_id) {
   return axiosCredentials(
     'delete',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/detail/${project_id}`,
+    `/projects/detail/${project_id}`,
   )
 }
 
@@ -56,7 +56,7 @@ export function DeleteProjectAPI(project_id) {
 export function InviteProject(data, id) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/invite_project/${id}`,
+    `/projects/invite_project/${id}`,
     data,
   )
 }
@@ -65,7 +65,7 @@ export function InviteProject(data, id) {
 export function InviteCancel(data, id) {
   return axiosCredentials(
     'delete',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/invite_project/${id}`,
+    `/projects/invite_project/${id}`,
     data,
   )
 }
@@ -74,7 +74,7 @@ export function InviteCancel(data, id) {
 export function FileDeleteAPI(id) {
   return axiosCredentials(
     'delete',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/file/delete/${id}`,
+    `/projects/file/delete/${id}`,
   )
 }
 
@@ -82,7 +82,7 @@ export function FileDeleteAPI(id) {
 export function AcceptInvite(uid, token) {
   return axiosCredentials(
     'get',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/invite/${uid}/${token}`,
+    `/projects/invite/${uid}/${token}`,
   )
 }
 
@@ -90,7 +90,7 @@ export function AcceptInvite(uid, token) {
 export function WriteMemo(data, id) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/memo/${id}`,
+    `/projects/memo/${id}`,
     data,
   )
 }
@@ -99,7 +99,7 @@ export function WriteMemo(data, id) {
 export function DeleteMemo(data, id) {
   return axiosCredentials(
     'delete',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/memo/${id}`,
+    `/projects/memo/${id}`,
     data,
   )
 }
@@ -108,7 +108,7 @@ export function DeleteMemo(data, id) {
 export function UpdateDate(data, id) {
   return axiosCredentials(
     'post',
-    `${process.env.REACT_APP_BACKEND_API_URL}/projects/date_update/${id}`,
+    `/projects/date_update/${id}`,
     data,
   )
 }

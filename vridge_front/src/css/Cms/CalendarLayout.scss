@@ -1,0 +1,72 @@
+// Calendar Layout Adjustments
+.cms_wrap {
+  display: flex; // 플렉스 컨테이너로 안정적인 레이아웃
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  
+  // 사이드바 고정 너비 및 위치 설정
+  .SideBar {
+    width: 300px !important; // 고정 너비 강제
+    flex-shrink: 0; // 사이드바 크기 축소 방지
+    position: sticky; // 스크롤 시 고정
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 10; // 콘텐츠보다 위에 표시
+  }
+  
+  // 메인 콘텐츠 영역
+  main {
+    flex: 1 1 auto; // 남은 공간 모두 사용
+    width: calc(100% - 300px); // 사이드바 너비 제외
+    min-width: 0; // 플렉스 아이템 최소 너비 재설정
+    margin-left: 0; // 마진 제거
+    padding: 50px 32px 50px 24px; // 상하좌우 패딩
+    box-sizing: border-box;
+    overflow-x: hidden; // 가로 스크롤 방지
+    background: #fff;
+    
+    // 반응형 디자인
+    @media (max-width: 1200px) {
+      padding: 50px 20px;
+    }
+  }
+}
+
+// 캘린더 제목 스타일
+.calendar {
+  // 캘린더 섹션 안정적인 레이아웃
+  position: relative;
+  width: 100%;
+  max-width: 1400px; // 충분한 너비 확보
+  margin: 0 auto; // 중앙 정렬
+  
+  .title {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 20px;
+    
+    .collapse-btn {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      
+      &:hover {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      }
+      
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+}
+
+// 캘린더 접힌 상태
+.calendar.collapsed {
+  .filter,
+  .list_mark,
+  .total,
+  .project_list {
+    display: none !important;
+  }
+}

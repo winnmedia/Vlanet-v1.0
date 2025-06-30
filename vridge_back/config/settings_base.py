@@ -25,7 +25,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 'vi
 
 # Application definition
 DJANGO_APPS = [
-    "daphne",
+    # "daphne",  # Temporarily disabled - missing module
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,7 +43,7 @@ PROJECT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "channels",
+    # "channels",  # Temporarily disabled - missing module
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -133,7 +133,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Media files
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # AWS Settings
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
@@ -177,14 +177,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
 }
 
-# CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "https://vridge.kr",
-    "http://localhost:3000",
-    "https://api.vridge.kr",
-    "https://vlanet.net",
-    "https://videoplanet.up.railway.app",
-]
+# CORS settings (removed - defined later in file)
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -249,6 +242,17 @@ CACHES = {
 # Session Configuration
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+
+# Celery Configuration
+CELERY_BROKER_URL = f"redis://{env('REDIS_HOST', default='127.0.0.1')}:{env('REDIS_PORT', default='6379')}/0"
+CELERY_RESULT_BACKEND = f"redis://{env('REDIS_HOST', default='127.0.0.1')}:{env('REDIS_PORT', default='6379')}/0"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 3600  # 1 hour
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [

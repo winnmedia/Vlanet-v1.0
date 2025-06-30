@@ -199,6 +199,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='VideoPlanet <noreply@vlanet.net>')
 
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 629145600  # 600MB

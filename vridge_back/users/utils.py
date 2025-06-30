@@ -68,12 +68,28 @@ class EmailThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        email = EmailMultiAlternatives(
-            subject=self.subject, body=self.body, to=self.recipient_list
-        )
-        if self.html_message:
-            email.attach_alternative(self.html_message, "text/html")
-        email.send(self.fail_silently)
+        try:
+            from django.conf import settings
+            print(f"[Email] Attempting to send email to {self.recipient_list}")
+            print(f"[Email] EMAIL_BACKEND: {settings.EMAIL_BACKEND}")
+            print(f"[Email] EMAIL_HOST: {settings.EMAIL_HOST}")
+            print(f"[Email] EMAIL_PORT: {settings.EMAIL_PORT}")
+            print(f"[Email] EMAIL_HOST_USER: {settings.EMAIL_HOST_USER[:3]}..." if settings.EMAIL_HOST_USER else "[Email] EMAIL_HOST_USER: Not set")
+            
+            email = EmailMultiAlternatives(
+                subject=self.subject, 
+                body=self.body, 
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=self.recipient_list
+            )
+            if self.html_message:
+                email.attach_alternative(self.html_message, "text/html")
+            result = email.send(self.fail_silently)
+            print(f"[Email] Email sent successfully to {self.recipient_list}. Result: {result}")
+        except Exception as e:
+            print(f"[Email] Failed to send email to {self.recipient_list}: {str(e)}")
+            import traceback
+            traceback.print_exc()
 
 
 def auth_send_email(request, email, secret):

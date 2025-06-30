@@ -30,6 +30,13 @@ EMAIL_HOST_PASSWORD=your-16-digit-app-password
 DEFAULT_FROM_EMAIL=VideoPlanet <your-email@gmail.com>
 ```
 
+**중요**: Railway에서 환경 변수 설정 방법
+1. [Railway 대시보드](https://railway.app) 접속
+2. 프로젝트 선택 → 백엔드 서비스 클릭
+3. Settings 탭 → Variables 섹션
+4. 위 3개의 환경 변수 추가
+5. 변경사항은 자동으로 적용되며 서비스가 재시작됩니다
+
 ## 2. 다른 이메일 서비스 사용 시
 
 ### SendGrid (대량 발송 시 권장)
@@ -166,6 +173,14 @@ curl -X POST http://localhost:8000/api/users/send_authnumber/signup \
    - 스팸함 확인
    - DEFAULT_FROM_EMAIL 설정 확인
    - Gmail의 경우 "보안 수준이 낮은 앱 액세스" 확인
+
+4. **Railway 환경에서 이메일이 발송되지 않음**
+   - Railway 대시보드에서 환경 변수가 올바르게 설정되었는지 확인
+   - 백엔드 서비스 로그에서 [Email] 로그 확인
+   - 환경 변수 이름이 정확한지 확인:
+     * EMAIL_HOST_USER (이메일 주소)
+     * EMAIL_HOST_PASSWORD (앱 비밀번호)
+     * DEFAULT_FROM_EMAIL (발신자 표시 이름)
 
 ### 디버깅 모드
 개발 중에는 콘솔에 이메일을 출력하도록 설정:

@@ -71,16 +71,22 @@ export default function AuthEmail({
               setSeconds(0)
               SendAuthNumber(inputs, types)
                 .then((res) => {
+                  console.log('인증번호 발송 성공:', res)
                   setTimeout(() => {
                     set_send(false)
                     set_btn_text('재 인증')
                   }, 3000)
                 })
                 .catch((err) => {
+                  console.error('인증번호 발송 실패:', err)
+                  set_send(false)
                   if (err.response && err.response.data) {
                     SetErrorMessage(err.response.data.message)
                     setMinutes(0)
                     setSeconds(0)
+                    TimeoutMessage()
+                  } else {
+                    SetErrorMessage('인증번호 발송에 실패했습니다.')
                     TimeoutMessage()
                   }
                 })

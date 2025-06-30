@@ -66,10 +66,10 @@ jobs:
       - name: Build project
         working-directory: ./vridge_front
         env:
-          REACT_APP_API_BASE_URL: https://videoplanet.up.railway.app/api
-          REACT_APP_BACKEND_API_URL: https://videoplanet.up.railway.app/api
-          REACT_APP_BACKEND_URI: https://videoplanet.up.railway.app
-          REACT_APP_SOCKET_URI: wss://videoplanet.up.railway.app
+          REACT_APP_API_BASE_URL: https://vridge-back-production.up.railway.app
+          REACT_APP_BACKEND_API_URL: https://vridge-back-production.up.railway.app
+          REACT_APP_BACKEND_URI: https://vridge-back-production.up.railway.app
+          REACT_APP_SOCKET_URI: wss://vridge-back-production.up.railway.app
           CI: false
           GENERATE_SOURCEMAP: false
         run: |

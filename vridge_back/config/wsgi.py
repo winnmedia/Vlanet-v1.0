@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 
 import os
 
-# 기본 설정 사용 (이미 안전한 버전으로 교체됨)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+# Railway 환경에서는 settings_prod 사용
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_prod")
+else:
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_dev")
 
 from django.core.wsgi import get_wsgi_application
 

@@ -6,7 +6,11 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    # Railway 환경에서는 settings_prod 사용
+    if os.environ.get('RAILWAY_ENVIRONMENT'):
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_prod")
+    else:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_dev")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

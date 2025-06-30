@@ -123,11 +123,15 @@ class SignIn(View):
             return JsonResponse({"message": str(e)}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class SendAuthNumber(View):
     def post(self, request, types):
         try:
+            print(f"[SendAuthNumber] Request received for {types}")
+            print(f"[SendAuthNumber] Request body: {request.body}")
             data = json.loads(request.body)
             email = data.get("email")
+            print(f"[SendAuthNumber] Email: {email}")
 
             auth_number = random.randint(100000, 1000000)
 
@@ -158,6 +162,7 @@ class SendAuthNumber(View):
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class EmailAuth(View):
     def post(self, request, types):
         try:

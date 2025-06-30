@@ -42,6 +42,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if origin.strip()]
+if not CORS_ALLOWED_ORIGINS:
+    # 환경 변수가 설정되지 않은 경우 기본값 사용
+    CORS_ALLOWED_ORIGINS = [
+        'https://vridge-front-production.up.railway.app',
+        'https://vlanet.net',
+        'http://localhost:3000',
+    ]
+# 디버깅을 위해 임시로 모든 origin 허용 (프로덕션에서는 권장하지 않음)
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Security settings
 SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() == 'true'

@@ -68,7 +68,7 @@ export function checkSession() {
 export function refetchProject(dispatch, navigate) {
   if (checkSession()) {
     const date = new Date()
-    ProjectList()
+    return ProjectList()
       .then((res) => {
         const data = res.data.result
         const result = data.sort((a, b) => {
@@ -101,6 +101,7 @@ export function refetchProject(dispatch, navigate) {
             user_memos: res.data.user_memos,
           }),
         )
+        return res
       })
       .catch((error) => {
         console.log(error)
@@ -113,8 +114,10 @@ export function refetchProject(dispatch, navigate) {
           // navigate를 제거하고 PageTemplate에서 처리하도록 함
           // navigate('/Login', { replace: true })
         }
+        throw error
       })
   }
+  return Promise.resolve()
 }
 
 export function project_initial(current_project) {

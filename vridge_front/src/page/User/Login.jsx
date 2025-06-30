@@ -22,7 +22,26 @@ export default function Login() {
   const [param] = useSearchParams()
   const { uid, token } = queryString.parse(param.toString())
 
-  // Social login URLs removed
+  // Google login hook
+  const googleLogin = useGoogleLogin({
+    onSuccess: (res) => {
+      console.log('Google login success:', res)
+      GoogleLoginAPI(res)
+        .then((res) => {
+          console.log('Google API response:', res.data)
+          CommonLoginSuccess(res.data.vridge_session)
+        })
+        .catch((err) => {
+          console.error('Google API error:', err)
+          CommonErrorMessage(err)
+        })
+    },
+    onError: (err) => {
+      console.error('Google login error:', err)
+      CommonErrorMessage({ response: { data: { message: '구글 로그인에 실패했습니다.' } } })
+    },
+    scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
+  })
 
   const OnChange = (e) => {
     const { value, name } = e.target
@@ -45,13 +64,19 @@ export default function Login() {
 
   // Social login code removed
 
-  const CommonLoginSuccess = (jwt) => {
+  const CommonLoginSuccess = async (jwt) => {
+    console.log('Login success, saving token:', jwt)
     window.localStorage.setItem('VGID', JSON.stringify(jwt))
-    refetchProject(dispatch, navigate)
+    
+    // refetchProject를 기다린 후 navigate
+    await refetchProject(dispatch, navigate)
+    
     if (uid && token) {
       // 초대 링크 처리 페이지
+      console.log('Navigating to EmailCheck with uid and token')
       navigate(`/EmailCheck?uid=${uid}&token=${token}`)
     } else {
+      console.log('Navigating to CmsHome')
       navigate('/CmsHome', { replace: true })
     }
   }
@@ -120,20 +145,7 @@ export default function Login() {
           <div className="sns_login">
             <ul>
               <li
-                onClick={useGoogleLogin({
-                  onSuccess: (res) => {
-                    GoogleLoginAPI(res)
-                      .then((res) => {
-                        CommonLoginSuccess(res.data.vridge_session)
-                      })
-                      .catch((err) => {
-                        CommonErrorMessage(err)
-                      })
-                  },
-                  onError: (err) => console.log(err),
-                  scope:
-                    'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
-                })}
+                onClick={() => googleLogin()}
                 className="google"
               >
                 구글 로그인

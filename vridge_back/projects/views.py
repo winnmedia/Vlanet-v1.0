@@ -15,6 +15,7 @@ from users.utils import (
 )
 from . import models
 from feedbacks import models as feedback_model
+from .utils_date import parse_date_flexible
 
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -371,37 +372,17 @@ class CreateProject(View):
                     start_date = i.get("startDate")
                     end_date = i.get("endDate")
                     
-                    # 날짜 문자열을 datetime 객체로 변환
-                    if start_date:
-                        # JavaScript Date 객체는 ISO 형식으로 올 수 있음
-                        if isinstance(start_date, str):
-                            try:
-                                # 먼저 "YYYY-MM-DD HH:mm" 형식 시도
-                                start_date = timezone.make_aware(datetime.strptime(start_date, "%Y-%m-%d %H:%M"))
-                            except ValueError:
-                                try:
-                                    # "YYYY-MM-DD" 형식 시도
-                                    start_date = timezone.make_aware(datetime.strptime(start_date, "%Y-%m-%d"))
-                                except ValueError:
-                                    # ISO 형식 시도
-                                    start_date = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
-                                    if timezone.is_naive(start_date):
-                                        start_date = timezone.make_aware(start_date)
-                    
-                    if end_date:
-                        if isinstance(end_date, str):
-                            try:
-                                # 먼저 "YYYY-MM-DD HH:mm" 형식 시도
-                                end_date = timezone.make_aware(datetime.strptime(end_date, "%Y-%m-%d %H:%M"))
-                            except ValueError:
-                                try:
-                                    # "YYYY-MM-DD" 형식 시도
-                                    end_date = timezone.make_aware(datetime.strptime(end_date, "%Y-%m-%d"))
-                                except ValueError:
-                                    # ISO 형식 시도
-                                    end_date = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
-                                    if timezone.is_naive(end_date):
-                                        end_date = timezone.make_aware(end_date)
+                    # 날짜 문자열을 datetime 객체로 변환 (유연한 파싱)
+                    try:
+                        start_date = parse_date_flexible(start_date)
+                        end_date = parse_date_flexible(end_date)
+                    except ValueError as e:
+                        logging.error(f"Date parsing error for {key}: {str(e)}")
+                        logging.error(f"Start date: {start_date}, End date: {end_date}")
+                        return JsonResponse({
+                            "message": f"{key} 단계의 날짜 형식이 올바르지 않습니다.",
+                            "error": str(e)
+                        }, status=400)
                     
                     if key == "basic_plan":
                         basic_plan = models.BasicPlan.objects.create(start_date=start_date, end_date=end_date)

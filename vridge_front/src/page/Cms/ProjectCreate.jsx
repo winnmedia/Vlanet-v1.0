@@ -66,6 +66,10 @@ export default function ProjectCreate() {
         startDate: item.startDate ? moment(item.startDate).format('YYYY-MM-DD HH:mm') : null,
         endDate: item.endDate ? moment(item.endDate).format('YYYY-MM-DD HH:mm') : null
       }))
+      
+      // 디버깅: 전송되는 날짜 형식 확인
+      console.log('[ProjectCreate] Process data:', formattedProcess)
+      
       formData.append('process', JSON.stringify(formattedProcess))
       
       files.forEach((file, index) => {

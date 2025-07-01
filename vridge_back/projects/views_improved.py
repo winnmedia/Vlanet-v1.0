@@ -12,6 +12,7 @@ from django.db import transaction
 from users.utils import user_validator
 from . import models
 from feedbacks import models as feedback_model
+from .utils_date import parse_date_flexible
 
 logger = logging.getLogger(__name__)
 
@@ -143,37 +144,7 @@ class CreateProjectImproved(View):
     
     def parse_date(self, date_str):
         """다양한 형식의 날짜 문자열을 파싱"""
-        if not date_str:
-            return None
-            
-        if isinstance(date_str, datetime):
-            return timezone.make_aware(date_str) if timezone.is_naive(date_str) else date_str
-            
-        date_formats = [
-            "%Y-%m-%d %H:%M:%S",
-            "%Y-%m-%d %H:%M",
-            "%Y-%m-%d",
-            "%Y-%m-%dT%H:%M:%S",
-            "%Y-%m-%dT%H:%M:%SZ",
-            "%Y-%m-%dT%H:%M:%S.%fZ",
-        ]
-        
-        for fmt in date_formats:
-            try:
-                parsed_date = datetime.strptime(date_str, fmt)
-                return timezone.make_aware(parsed_date) if timezone.is_naive(parsed_date) else parsed_date
-            except ValueError:
-                continue
-        
-        # ISO format 시도
-        try:
-            parsed_date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-            return timezone.make_aware(parsed_date) if timezone.is_naive(parsed_date) else parsed_date
-        except ValueError:
-            pass
-            
-        logger.error(f"Unable to parse date: {date_str}")
-        raise ValueError(f"날짜 형식을 인식할 수 없습니다: {date_str}")
+        return parse_date_flexible(date_str)
 
 
 class ProjectDebugInfo(View):

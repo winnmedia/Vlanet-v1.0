@@ -9,6 +9,15 @@ export function SignUp(data) {
   )
 }
 
+// 닉네임 중복 확인
+export function CheckNickname(nickname) {
+  return axiosOpts(
+    'post',
+    `/users/check_nickname`,
+    { nickname },
+  )
+}
+
 // 이메일 로그인
 export function SignIn(data) {
   return axiosOpts(

@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python manage.py migrate --settings=config.settings.railway && python manage.py collectstatic --noinput --settings=config.settings.railway && mkdir -p /app/media/feedback_file && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 300 --workers 3 --env DJANGO_SETTINGS_MODULE=config.settings.railway",
+    "startCommand": "python manage.py migrate --settings=config.settings.railway_cors_fix && python manage.py collectstatic --noinput --settings=config.settings.railway_cors_fix && mkdir -p /app/media/feedback_file && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 300 --workers 3 --env DJANGO_SETTINGS_MODULE=config.settings.railway_cors_fix",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   },

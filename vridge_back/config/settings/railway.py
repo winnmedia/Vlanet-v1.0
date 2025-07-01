@@ -185,17 +185,17 @@ else:
 CORS_ALLOWED_ORIGINS = [
     "https://vlanet.net",
     "https://www.vlanet.net",
+    "http://vlanet.net",
+    "http://www.vlanet.net",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://vridge-front-production.up.railway.app",
+    "https://vlanet-v1-0.vercel.app",
 ]
-
-# CORS_ALLOW_ALL_ORIGINS를 False로 설정하여 CORS_ALLOWED_ORIGINS만 허용
-CORS_ALLOW_ALL_ORIGINS = False
 
 # CORS 추가 설정
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_METHODS = [
+CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
     'OPTIONS',
@@ -203,7 +203,7 @@ CORS_ALLOWED_METHODS = [
     'POST',
     'PUT',
 ]
-CORS_ALLOWED_HEADERS = [
+CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
     'authorization',
@@ -214,6 +214,9 @@ CORS_ALLOWED_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# CORS_ALLOW_ALL_ORIGINS를 False로 설정하여 CORS_ALLOWED_ORIGINS만 허용
+CORS_ALLOW_ALL_ORIGINS = False
 
 # CSRF 신뢰할 수 있는 도메인
 CSRF_TRUSTED_ORIGINS = [

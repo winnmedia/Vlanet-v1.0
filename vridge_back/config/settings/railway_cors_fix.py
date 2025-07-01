@@ -18,6 +18,12 @@ CORS_ALLOWED_ORIGINS = [
     "https://vlanet-v1-0.vercel.app",
 ]
 
+# CORS 허용할 정규식 패턴 (Vercel preview URLs 포함)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+    r"^https://vlanet.*\.vercel\.app$",
+]
+
 # Preflight 요청을 위한 설정
 CORS_ALLOW_METHODS = [
     'DELETE',

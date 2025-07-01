@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class SignUpRequest(View):
-    """Step 1: 이메일 확인 및 인증번호 발송"""
+    """Step 1: 이메일 확인 및 인증번호 발송 (중복 확인 통합)"""
     
     def post(self, request):
         try:
@@ -32,16 +32,28 @@ class SignUpRequest(View):
             import re
             email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
             if not re.match(email_regex, email):
-                return JsonResponse({"message": "올바른 이메일 형식이 아닙니다."}, status=400)
+                return JsonResponse({
+                    "message": "올바른 이메일 형식이 아닙니다.",
+                    "status": "invalid_format"
+                }, status=400)
             
             # 이미 가입된 이메일인지 확인
             if models.User.objects.filter(username=email).exists():
-                return JsonResponse({"message": "이미 가입되어 있는 이메일입니다."}, status=409)
+                return JsonResponse({
+                    "message": "이미 가입되어 있는 이메일입니다.",
+                    "status": "already_registered",
+                    "email": email
+                }, status=409)
             
             # 최근 요청 제한 (Rate limiting)
             rate_limit_key = f"signup_request_{email}"
             if cache.get(rate_limit_key):
-                return JsonResponse({"message": "잠시 후 다시 시도해주세요. (30초)"}, status=429)
+                remaining_time = cache.ttl(rate_limit_key)  # 남은 시간 확인
+                return JsonResponse({
+                    "message": f"잠시 후 다시 시도해주세요. ({remaining_time}초)",
+                    "status": "rate_limited",
+                    "remaining_seconds": remaining_time
+                }, status=429)
             
             # 인증번호 생성 (6자리)
             auth_number = str(random.randint(100000, 999999))
@@ -64,18 +76,26 @@ class SignUpRequest(View):
                 return JsonResponse({
                     "message": "success",
                     "detail": "인증번호가 이메일로 발송되었습니다.",
+                    "status": "email_sent",
                     "email": email
                 }, status=200)
             else:
                 return JsonResponse({
-                    "message": "이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요."
+                    "message": "이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.",
+                    "status": "email_failed"
                 }, status=500)
                 
         except json.JSONDecodeError:
-            return JsonResponse({"message": "잘못된 요청 형식입니다."}, status=400)
+            return JsonResponse({
+                "message": "잘못된 요청 형식입니다.",
+                "status": "invalid_request"
+            }, status=400)
         except Exception as e:
             logger.error(f"SignUpRequest Error: {str(e)}")
-            return JsonResponse({"message": "처리 중 오류가 발생했습니다."}, status=500)
+            return JsonResponse({
+                "message": "처리 중 오류가 발생했습니다.",
+                "status": "server_error"
+            }, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

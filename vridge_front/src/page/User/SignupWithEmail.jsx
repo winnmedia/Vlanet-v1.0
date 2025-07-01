@@ -7,6 +7,34 @@ import { CircularProgress } from "@material-ui/core";
 const SignupWithEmail = () => {
   const navigate = useNavigate();
   
+  // 스타일 정의
+  const styles = {
+    errorInput: {
+      borderColor: '#ff4444',
+      backgroundColor: '#fff5f5'
+    },
+    successMessage: {
+      color: '#4CAF50',
+      fontSize: '14px',
+      marginTop: '5px',
+      display: 'block'
+    },
+    errorMessage: {
+      color: '#ff4444',
+      fontSize: '14px',
+      marginTop: '5px',
+      display: 'block'
+    },
+    disabledButton: {
+      opacity: 0.6,
+      cursor: 'not-allowed'
+    },
+    errorButton: {
+      backgroundColor: '#ff4444',
+      color: 'white'
+    }
+  };
+  
   // 단계 관리 (1: 이메일 인증, 2: 정보 입력)
   const [step, setStep] = useState(1);
   
@@ -16,6 +44,7 @@ const SignupWithEmail = () => {
   const [authToken, setAuthToken] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [emailStatus, setEmailStatus] = useState(""); // 이메일 상태 (empty, invalid, checking, available, registered)
   
   // Step 2: 정보 입력
   const [nickname, setNickname] = useState("");
@@ -41,7 +70,29 @@ const SignupWithEmail = () => {
     }
   }, [countdown]);
   
-  // Step 1: 이메일 인증번호 발송
+  // 이메일 입력 변경 시 상태 업데이트
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    
+    if (!value) {
+      setEmailStatus("empty");
+      setErrors({});
+    } else if (!validateEmail(value)) {
+      setEmailStatus("invalid");
+      setErrors({ email: "올바른 이메일 형식이 아닙니다." });
+    } else {
+      setEmailStatus("valid");
+      setErrors({});
+    }
+    
+    // 이메일이 변경되면 인증 상태 초기화
+    setEmailSent(false);
+    setAuthNumber("");
+    setCountdown(0);
+  };
+  
+  // Step 1: 이메일 인증번호 발송 (중복 확인 포함)
   const handleSendEmail = async () => {
     if (!validateEmail(email)) {
       setErrors({ email: "올바른 이메일 형식이 아닙니다." });
@@ -50,17 +101,34 @@ const SignupWithEmail = () => {
     
     setLoading(true);
     setErrors({});
+    setEmailStatus("checking");
     
     try {
       const response = await SignUpRequest(email);
-      if (response.data.message === "success") {
+      const { status, message, detail } = response.data;
+      
+      if (status === "email_sent") {
         setEmailSent(true);
+        setEmailStatus("available");
         setCountdown(30); // 30초 후 재발송 가능
-        alert("인증번호가 이메일로 발송되었습니다.");
+        setErrors({});
+        alert(detail || "인증번호가 이메일로 발송되었습니다.");
       }
     } catch (error) {
-      const message = error.response?.data?.message || "이메일 발송에 실패했습니다.";
-      setErrors({ email: message });
+      const { status, message, remaining_seconds } = error.response?.data || {};
+      
+      if (status === "already_registered") {
+        setEmailStatus("registered");
+        setErrors({ email: message || "이미 가입되어 있는 이메일입니다." });
+        setEmailSent(false);
+      } else if (status === "rate_limited") {
+        setCountdown(remaining_seconds || 30);
+        setErrors({ email: message });
+        setEmailStatus("rate_limited");
+      } else {
+        setErrors({ email: message || "이메일 발송에 실패했습니다." });
+        setEmailStatus("error");
+      }
     } finally {
       setLoading(false);
     }
@@ -173,20 +241,29 @@ const SignupWithEmail = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   placeholder="이메일을 입력하세요"
-                  disabled={emailSent}
+                  disabled={emailSent && emailStatus === "available"}
+                  style={emailStatus === "registered" ? styles.errorInput : {}}
                 />
                 <button
                   onClick={handleSendEmail}
-                  disabled={loading || (emailSent && countdown > 0)}
+                  disabled={loading || !email || emailStatus === "invalid" || (countdown > 0 && emailStatus !== "registered")}
+                  style={
+                    emailStatus === "registered" ? styles.errorButton :
+                    (loading || !email || emailStatus === "invalid" || (countdown > 0 && emailStatus !== "registered")) ? styles.disabledButton : {}
+                  }
                 >
                   {loading ? <CircularProgress size={20} /> : 
-                   countdown > 0 ? `재발송 (${countdown}초)` : 
-                   emailSent ? "재발송" : "인증번호 발송"}
+                   countdown > 0 && emailStatus !== "registered" ? `재발송 (${countdown}초)` : 
+                   emailStatus === "registered" ? "이미 가입된 이메일" :
+                   emailSent ? "재발송" : "인증"}
                 </button>
               </div>
-              {errors.email && <span className="error">{errors.email}</span>}
+              {errors.email && <span style={styles.errorMessage}>{errors.email}</span>}
+              {emailStatus === "available" && !errors.email && (
+                <span style={styles.successMessage}>✓ 사용 가능한 이메일입니다.</span>
+              )}
             </div>
             
             {emailSent && (
@@ -199,7 +276,7 @@ const SignupWithEmail = () => {
                   placeholder="6자리 인증번호 입력"
                   maxLength={6}
                 />
-                {errors.auth && <span className="error">{errors.auth}</span>}
+                {errors.auth && <span style={styles.errorMessage}>{errors.auth}</span>}
                 
                 <button
                   className="verify-button"
@@ -233,9 +310,9 @@ const SignupWithEmail = () => {
                 }}
                 placeholder="닉네임을 입력하세요 (2자 이상)"
               />
-              {nicknameValid === true && <span className="success">✓ 사용 가능한 닉네임입니다.</span>}
-              {nicknameValid === false && <span className="error">✗ 사용할 수 없는 닉네임입니다.</span>}
-              {errors.nickname && <span className="error">{errors.nickname}</span>}
+              {nicknameValid === true && <span style={styles.successMessage}>✓ 사용 가능한 닉네임입니다.</span>}
+              {nicknameValid === false && <span style={styles.errorMessage}>✗ 사용할 수 없는 닉네임입니다.</span>}
+              {errors.nickname && <span style={styles.errorMessage}>{errors.nickname}</span>}
             </div>
             
             <div className="form-group">
@@ -245,7 +322,7 @@ const SignupWithEmail = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요 (10자 이상)"
               />
-              {errors.password && <span className="error">{errors.password}</span>}
+              {errors.password && <span style={styles.errorMessage}>{errors.password}</span>}
             </div>
             
             <div className="form-group">
@@ -255,10 +332,10 @@ const SignupWithEmail = () => {
                 onChange={(e) => setPasswordConfirm(e.target.value)}
                 placeholder="비밀번호를 다시 입력하세요"
               />
-              {errors.passwordConfirm && <span className="error">{errors.passwordConfirm}</span>}
+              {errors.passwordConfirm && <span style={styles.errorMessage}>{errors.passwordConfirm}</span>}
             </div>
             
-            {errors.general && <div className="error general">{errors.general}</div>}
+            {errors.general && <div style={styles.errorMessage}>{errors.general}</div>}
             
             <button
               className="signup-button"

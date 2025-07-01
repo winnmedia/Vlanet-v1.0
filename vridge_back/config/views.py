@@ -1,14 +1,22 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
 
 @csrf_exempt
+@require_http_methods(["GET", "POST", "OPTIONS"])
 def health_check(request):
     """헬스체크 엔드포인트"""
     return JsonResponse({
         "status": "healthy",
         "service": "vridge-backend",
-        "message": "Service is running"
+        "message": "Service is running",
+        "cors_test": True,
+        "method": request.method,
+        "headers": {
+            "origin": request.META.get('HTTP_ORIGIN', 'No origin'),
+            "host": request.META.get('HTTP_HOST', 'No host')
+        }
     })
 
 

@@ -377,22 +377,30 @@ export default function Signup() {
                 />
                 <button
                   type="button"
-                  onClick={checkEmailDuplicate}
-                  disabled={!email || !email.includes('@') || checkingEmail}
+                  onClick={sendEmailAuth}
+                  disabled={!email || !email.includes('@') || checkingEmail || emailVerified || (authCountdown > 0 && authCountdown < 150)}
                   style={{
                     width: '110px',
                     padding: '12px 16px',
                     fontSize: '14px',
                     fontWeight: '600',
-                    backgroundColor: (!email || !email.includes('@')) ? '#e9ecef' : '#1631F8',
+                    backgroundColor: 
+                      emailVerified ? '#28a745' :
+                      (!email || !email.includes('@')) ? '#e9ecef' : 
+                      '#1631F8',
                     color: (!email || !email.includes('@')) ? '#6c757d' : 'white',
                     border: 'none',
                     borderRadius: '8px',
-                    cursor: (!email || !email.includes('@') || checkingEmail) ? 'not-allowed' : 'pointer',
+                    cursor: 
+                      (!email || !email.includes('@') || checkingEmail || emailVerified || (authCountdown > 0 && authCountdown < 150)) ? 
+                      'not-allowed' : 'pointer',
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  {checkingEmail ? '확인 중...' : '중복 확인'}
+                  {emailVerified ? '인증 완료' :
+                   checkingEmail ? '전송 중...' : 
+                   authCountdown > 0 && authCountdown < 150 ? `재전송 (${authCountdown}초)` : 
+                   '인증'}
                 </button>
               </div>
               {emailMessage && (

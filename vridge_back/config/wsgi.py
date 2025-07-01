@@ -11,7 +11,8 @@ import os
 
 # Railway 환경에서는 railway 설정 사용
 if os.environ.get('RAILWAY_ENVIRONMENT'):
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway")
+    # 환경변수로 설정 모듈을 지정할 수 있도록 수정
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", os.environ.get('DJANGO_SETTINGS_MODULE', "config.settings.railway"))
 else:
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_dev")
 

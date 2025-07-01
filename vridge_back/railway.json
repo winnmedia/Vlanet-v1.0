@@ -1,7 +1,8 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "NIXPACKS",
+    "nixpacksConfigPath": "railway.toml"
   },
   "deploy": {
     "startCommand": "python manage.py migrate --settings=config.settings.railway && python manage.py collectstatic --noinput --settings=config.settings.railway && mkdir -p /app/media/feedback_file && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 300 --workers 3 --env DJANGO_SETTINGS_MODULE=config.settings.railway",

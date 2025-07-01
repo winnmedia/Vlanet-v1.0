@@ -76,43 +76,78 @@ class SignUp(View):
             nickname = data.get("nickname")
             password = data.get("password")
 
-            print(data)
+            # 입력값 검증
+            if not email or not nickname or not password:
+                return JsonResponse({"message": "모든 필드를 입력해주세요."}, status=400)
+            
+            # 이메일 형식 검증
+            import re
+            email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+            if not re.match(email_regex, email):
+                return JsonResponse({"message": "올바른 이메일 형식이 아닙니다."}, status=400)
+            
+            # 닉네임 길이 검증
+            if len(nickname) < 2:
+                return JsonResponse({"message": "닉네임은 최소 2자 이상이어야 합니다."}, status=400)
+            
+            # 비밀번호 길이 검증
+            if len(password) < 10:
+                return JsonResponse({"message": "비밀번호는 최소 10자 이상이어야 합니다."}, status=400)
+
+            print(f"회원가입 시도 - 이메일: {email}, 닉네임: {nickname}")
+            
+            # 이메일 중복 확인
             user = models.User.objects.get_or_none(username=email)
             if user:
-                return JsonResponse({"message": "이미 가입되어 있는 사용자입니다."}, status=500)
-            else:
-                new_user = models.User.objects.create(username=email, nickname=nickname)
-                new_user.set_password(password)
-                new_user.save()
+                return JsonResponse({"message": "이미 가입되어 있는 이메일입니다."}, status=409)
+            
+            # 닉네임 중복 확인
+            nickname_exists = models.User.objects.filter(nickname=nickname).exists()
+            if nickname_exists:
+                return JsonResponse({"message": "이미 사용 중인 닉네임입니다."}, status=409)
+            
+            # 새 사용자 생성
+            new_user = models.User.objects.create(
+                username=email, 
+                nickname=nickname,
+                login_method='email'
+            )
+            new_user.set_password(password)
+            new_user.save()
+            
+            print(f"회원가입 성공 - ID: {new_user.id}, 이메일: {new_user.username}")
 
-                vridge_session = jwt.encode(
-                    {
-                        "user_id": new_user.id,
-                        "exp": datetime.utcnow() + timedelta(days=28),
-                    },
-                    settings.SECRET_KEY,
-                    settings.ALGORITHM,
-                )
-                res = JsonResponse(
-                    {
-                        "message": "success",
-                        "vridge_session": vridge_session,
-                        "user": new_user.username,
-                    },
-                    status=201,
-                )
-                res.set_cookie(
-                    "vridge_session",
-                    vridge_session,
-                    samesite="None",
-                    secure=True,
-                    max_age=2419200,
-                )
-                return res
+            # JWT 토큰 생성 (SimpleJWT 사용)
+            from rest_framework_simplejwt.tokens import RefreshToken
+            refresh = RefreshToken.for_user(new_user)
+            vridge_session = str(refresh.access_token)
+            
+            res = JsonResponse(
+                {
+                    "message": "success",
+                    "vridge_session": vridge_session,
+                    "user": new_user.username,
+                    "nickname": new_user.nickname,
+                },
+                status=201,
+            )
+            res.set_cookie(
+                "vridge_session",
+                vridge_session,
+                samesite="None",
+                secure=True,
+                max_age=2419200,
+            )
+            return res
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "잘못된 요청 형식입니다."}, status=400)
         except Exception as e:
-            print(e)
-            logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            print(f"회원가입 에러: {str(e)}")
+            logging.error(f"SignUp Error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return JsonResponse({"message": "회원가입 처리 중 오류가 발생했습니다."}, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

@@ -190,6 +190,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://vridge-front-production.up.railway.app",
+    "https://videoplanetready.vercel.app",
     "https://vlanet-v1-0.vercel.app",
 ]
 

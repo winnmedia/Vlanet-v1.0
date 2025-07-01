@@ -5,14 +5,18 @@ import moment from 'moment'
 import 'moment/locale/ko'
 
 export function axiosOpts(method, url, data, config) {
-  return {
+  // 인증이 필요없는 요청 (로그인, 회원가입 등)
+  const axiosConfig = {
     method: method,
     url: url,
     data: data,
-    withCredentials: true,
-    crossDomain: true,
     ...config,
-  }
+  };
+  
+  return axios(axiosConfig).catch(error => {
+    console.error('API Error:', error.response?.data || error.message);
+    throw error;
+  });
 }
 
 export function axiosCredentials(method, url, data, config) {

@@ -2,7 +2,7 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 
 // 이메일 회원가입
 export function SignUp(data) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/signup`,
     data,
@@ -11,7 +11,7 @@ export function SignUp(data) {
 
 // 이메일 로그인
 export function SignIn(data) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/login`,
     data,
@@ -20,7 +20,7 @@ export function SignIn(data) {
 
 // 이메일 인증번호 보내기
 export function SendAuthNumber(data, types) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/send_authnumber/${types}`,
     data,
@@ -29,7 +29,7 @@ export function SendAuthNumber(data, types) {
 
 // 인증번호 확인
 export function EmailAuth(data, types) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/signup_emailauth/${types}`,
     data,
@@ -38,7 +38,7 @@ export function EmailAuth(data, types) {
 
 // 패스워드 리셋
 export function ResetPassword(data) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/password_reset`,
     data,
@@ -47,7 +47,7 @@ export function ResetPassword(data) {
 
 // 카카오 로그인
 export function KakaoLoginAPI(data) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/login/kakao`,
     data,
@@ -56,7 +56,7 @@ export function KakaoLoginAPI(data) {
 
 // 네이버 로그인
 export function NaverLoginAPI(data) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/login/naver`,
     data,
@@ -65,7 +65,7 @@ export function NaverLoginAPI(data) {
 
 // 구글 로그인
 export function GoogleLoginAPI(data) {
-  return axiosCredentials(
+  return axiosOpts(
     'post',
     `/users/login/google`,
     data,

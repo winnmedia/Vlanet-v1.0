@@ -2,6 +2,30 @@
 from .railway_cors_fix import *
 import os
 
+# CORS 디버깅 미들웨어 추가
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS는 최상단에
+    'middleware.cors_debug.CorsDebugMiddleware',  # CORS 디버깅
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# CORS 설정 재확인 및 로깅
+print(f"[SendGrid Config] CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
+print(f"[SendGrid Config] CORS_ALLOW_CREDENTIALS: {CORS_ALLOW_CREDENTIALS}")
+
+# 추가 CORS 헤더 설정
+CORS_EXPOSE_HEADERS = [
+    'Content-Type',
+    'X-CSRFToken',
+]
+
 # SendGrid 설정
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.sendgrid.net'

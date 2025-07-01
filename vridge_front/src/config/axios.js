@@ -1,7 +1,14 @@
 import axios from 'axios';
 
 // 환경에 따라 API URL 설정
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+// 환경변수가 잘못되어 있을 경우를 대비한 폴백
+let API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+
+// 잘못된 URL이 설정되어 있는 경우 올바른 URL로 교체
+if (API_BASE_URL.includes('vridge-back-production')) {
+  console.warn('[Axios] Detected incorrect backend URL, using correct URL');
+  API_BASE_URL = 'https://videoplanet.up.railway.app';
+}
 
 // API URL 설정
 if (API_BASE_URL) {

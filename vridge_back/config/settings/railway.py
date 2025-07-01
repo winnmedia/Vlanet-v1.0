@@ -258,13 +258,35 @@ KAKAO_API_KEY = os.environ.get('KAKAO_API_KEY')
 # Railway는 영구 볼륨을 제공하며, RAILWAY_VOLUME_MOUNT_PATH에 마운트됨
 print("Using Railway volume storage for media files")
 
-# 이메일 설정
+# 이메일 설정 (SendGrid 또는 Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('GOOGLE_ID')
-EMAIL_HOST_PASSWORD = os.environ.get('GOOGLE_APP_PASSWORD')
+
+# SendGrid를 사용하는 경우
+if os.environ.get('SENDGRID_API_KEY'):
+    EMAIL_HOST = 'smtp.sendgrid.net'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'apikey'  # SendGrid는 항상 'apikey'를 사용
+    EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+    print(f"SendGrid configured with API key: {EMAIL_HOST_PASSWORD[:10]}..." if EMAIL_HOST_PASSWORD else "SendGrid API key not found")
+# Gmail을 사용하는 경우
+else:
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', os.environ.get('GOOGLE_ID'))
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', os.environ.get('GOOGLE_APP_PASSWORD'))
+    print(f"Gmail configured with user: {EMAIL_HOST_USER}" if EMAIL_HOST_USER else "Gmail credentials not configured")
+
+# 공통 설정
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'VideoPlanet <vridgeofficial@gmail.com>')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# 이메일 설정 디버깅
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    print(f"Email configured successfully")
+else:
+    print("WARNING: Email credentials not configured!")
 
 # Sentry 설정
 SENTRY_DSN = os.environ.get('SENTRY_DSN')

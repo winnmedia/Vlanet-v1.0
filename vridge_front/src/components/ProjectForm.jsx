@@ -82,7 +82,7 @@ export default function ProjectForm({
       const processData = phases.map(phase => {
         const range = values[`${phase.key}_range`]
         return {
-          type: phase.key,
+          key: phase.key,  // 'type' 대신 'key' 사용
           startDate: range?.[0] ? range[0].format('YYYY-MM-DD') : null,
           endDate: range?.[1] ? range[1].format('YYYY-MM-DD') : null
         }

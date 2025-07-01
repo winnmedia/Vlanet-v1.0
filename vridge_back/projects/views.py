@@ -2,6 +2,7 @@ import logging, json, random
 from django.conf import settings
 from datetime import datetime
 from django.shortcuts import render
+from django.utils import timezone
 from django.http import JsonResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -361,11 +362,47 @@ class CreateProject(View):
                 project = models.Project.objects.create(user=user)
                 for k, v in inputs.items():
                     setattr(project, k, v)
+                
+                logging.info(f"Creating project with inputs: {inputs}")
+                logging.info(f"Process data: {process}")
 
                 for i in process:
                     key = i.get("key")
                     start_date = i.get("startDate")
                     end_date = i.get("endDate")
+                    
+                    # 날짜 문자열을 datetime 객체로 변환
+                    if start_date:
+                        # JavaScript Date 객체는 ISO 형식으로 올 수 있음
+                        if isinstance(start_date, str):
+                            try:
+                                # 먼저 "YYYY-MM-DD HH:mm" 형식 시도
+                                start_date = timezone.make_aware(datetime.strptime(start_date, "%Y-%m-%d %H:%M"))
+                            except ValueError:
+                                try:
+                                    # "YYYY-MM-DD" 형식 시도
+                                    start_date = timezone.make_aware(datetime.strptime(start_date, "%Y-%m-%d"))
+                                except ValueError:
+                                    # ISO 형식 시도
+                                    start_date = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+                                    if timezone.is_naive(start_date):
+                                        start_date = timezone.make_aware(start_date)
+                    
+                    if end_date:
+                        if isinstance(end_date, str):
+                            try:
+                                # 먼저 "YYYY-MM-DD HH:mm" 형식 시도
+                                end_date = timezone.make_aware(datetime.strptime(end_date, "%Y-%m-%d %H:%M"))
+                            except ValueError:
+                                try:
+                                    # "YYYY-MM-DD" 형식 시도
+                                    end_date = timezone.make_aware(datetime.strptime(end_date, "%Y-%m-%d"))
+                                except ValueError:
+                                    # ISO 형식 시도
+                                    end_date = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+                                    if timezone.is_naive(end_date):
+                                        end_date = timezone.make_aware(end_date)
+                    
                     if key == "basic_plan":
                         basic_plan = models.BasicPlan.objects.create(start_date=start_date, end_date=end_date)
                         setattr(project, key, basic_plan)
@@ -415,8 +452,18 @@ class CreateProject(View):
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
             print(e)
-            logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            logging.error(f"Project creation error: {str(e)}")
+            logging.error(f"Error type: {type(e).__name__}")
+            import traceback
+            logging.error(f"Traceback: {traceback.format_exc()}")
+            
+            # 더 구체적인 에러 메시지 반환
+            if "key" in str(e):
+                return JsonResponse({"message": "프로젝트 단계 정보가 올바르지 않습니다. 프론트엔드와 백엔드 데이터 형식을 확인해주세요."}, status=400)
+            elif "date" in str(e).lower():
+                return JsonResponse({"message": "날짜 형식이 올바르지 않습니다."}, status=400)
+            else:
+                return JsonResponse({"message": f"프로젝트 생성 중 오류가 발생했습니다: {str(e)}"}, status=500)
 
 
 class ProjectDetail(View):

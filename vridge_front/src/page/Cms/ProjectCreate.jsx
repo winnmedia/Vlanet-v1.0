@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { CreateProjectAPI } from 'api/project'
 import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
 import { useDispatch, useSelector } from 'react-redux'
+import moment from 'moment'
 
 export default function ProjectCreate() {
   const dispatch = useDispatch()
@@ -58,7 +59,15 @@ export default function ProjectCreate() {
     if (ValidForm) {
       const formData = new FormData()
       formData.append('inputs', JSON.stringify(inputs))
-      formData.append('process', JSON.stringify(process))
+      
+      // process 데이터를 포맷팅하여 전송
+      const formattedProcess = process.map(item => ({
+        key: item.key,
+        startDate: item.startDate ? moment(item.startDate).format('YYYY-MM-DD HH:mm') : null,
+        endDate: item.endDate ? moment(item.endDate).format('YYYY-MM-DD HH:mm') : null
+      }))
+      formData.append('process', JSON.stringify(formattedProcess))
+      
       files.forEach((file, index) => {
         formData.append('files', file)
       })

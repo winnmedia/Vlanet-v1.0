@@ -18,6 +18,15 @@ export function CreateFeedback(data, id) {
   )
 }
 
+// 피드백 update
+export function UpdateFeedback(id, data) {
+  return axiosCredentials(
+    'patch',
+    `/feedbacks/${id}`,
+    data,
+  )
+}
+
 // 피드백 create
 export function DeleteFeedback(id) {
   return axiosCredentials(

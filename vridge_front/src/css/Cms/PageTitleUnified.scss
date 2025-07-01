@@ -1,0 +1,77 @@
+// 통일된 페이지 타이틀 스타일
+.page-title-container {
+  margin-bottom: 24px;
+  
+  // 메인 페이지 타이틀 (대제목)
+  .page-main-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    // 타이틀 텍스트
+    .title-text {
+      flex: 1;
+    }
+    
+    // 토글 버튼이나 액션 버튼
+    .title-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  }
+  
+  // 섹션 타이틀 (중제목)
+  .page-section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .title-text {
+      flex: 1;
+    }
+    
+    .title-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+  
+  // 서브섹션 타이틀 (소제목)
+  .page-subsection-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    
+    .title-text {
+      flex: 1;
+    }
+  }
+}
+
+// 기존 클래스에 통일된 스타일 적용
+.content {
+  > .title:first-child {
+    @extend .page-main-title;
+  }
+  
+  .s_title {
+    @extend .page-section-title;
+  }
+  
+  .ss_title {
+    @extend .page-subsection-title;
+  }
+}

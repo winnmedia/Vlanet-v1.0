@@ -17,6 +17,8 @@ import 'css/Cms/SidebarResize.scss'
 import 'css/Cms/SidebarProjectSpacing.scss'
 import 'css/Cms/FeedbackPageSpacing.scss'
 import 'css/Cms/EncodingStatus.scss'
+import 'css/Cms/FeedbackPopup.scss'
+import 'css/Cms/OpinionInput.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
@@ -27,6 +29,7 @@ import FeedbackInput from 'tasks/Feedback/FeedbackInput'
 import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessage from 'tasks/Feedback/FeedbackMessage'
+import OpinionInput from 'tasks/Feedback/OpinionInput'
 import VideoPlayer from 'components/VideoPlayer'
 import VideoUploadGuide from 'components/VideoUploadGuide'
 
@@ -58,6 +61,7 @@ export default function Feedback() {
   const [encodingCheckInterval, setEncodingCheckInterval] = useState(null)
   const [feedbackTime, setFeedbackTime] = useState('') // 피드백 시간 상태 추가
   const [showProjectInfo, setShowProjectInfo] = useState(false) // 프로젝트 정보 표시 상태
+  const [selectedFeedback, setSelectedFeedback] = useState(null) // 선택된 피드백
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -266,14 +270,11 @@ export default function Feedback() {
   }, [items])
   const content = [
     {
-      tab: '피드백',
+      tab: '코멘트',
       content: current_project && (
-        <FeedbackMessage
-          Rating={Rating}
-          socketConnected={socketConnected}
-          ws={ws}
-          items={items}
-          me={me}
+        <OpinionInput
+          project_id={project_id}
+          refetch={refetch}
         />
       ),
     },
@@ -695,6 +696,137 @@ export default function Feedback() {
                       공유
                     </div>
                   </div>
+                  {/* 선택된 피드백 내용 표시 - 피드백 전체 보기 버튼 바로 아래 */}
+                  {selectedFeedback && (
+                    <div 
+                      className="feedback-detail-display"
+                      style={{
+                        marginTop: '20px',
+                        marginBottom: '20px',
+                        padding: '24px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '16px',
+                        border: '1px solid #e9ecef',
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
+                        animation: 'fadeIn 0.3s ease',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {/* 상단 액센트 바 */}
+                      <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '4px',
+                        background: 'linear-gradient(90deg, #1631F8 0%, #0F23C9 100%)'
+                      }} />
+                      
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '20px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          {/* 프로필 아이콘 */}
+                          <div style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '20px',
+                            fontWeight: '600'
+                          }}>
+                            {selectedFeedback.security ? '?' : (selectedFeedback.nickname || '').charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div style={{
+                              fontSize: '17px',
+                              fontWeight: '600',
+                              color: '#212529',
+                              marginBottom: '4px'
+                            }}>
+                              {selectedFeedback.security ? '익명' : selectedFeedback.nickname}
+                            </div>
+                            <div style={{
+                              fontSize: '13px',
+                              color: '#6c757d',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px'
+                            }}>
+                              <span>{moment(selectedFeedback.created).format('YYYY.MM.DD')}</span>
+                              <span style={{ fontSize: '10px' }}>•</span>
+                              <span>{moment(selectedFeedback.created).format('HH:mm')}</span>
+                              {selectedFeedback.section && (
+                                <>
+                                  <span style={{ fontSize: '10px' }}>•</span>
+                                  <span style={{
+                                    background: '#e3f2fd',
+                                    color: '#1976d2',
+                                    padding: '2px 8px',
+                                    borderRadius: '12px',
+                                    fontSize: '12px',
+                                    fontWeight: '500'
+                                  }}>
+                                    {selectedFeedback.section}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setSelectedFeedback(null)}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background: 'white',
+                            border: '1px solid #e9ecef',
+                            fontSize: '20px',
+                            color: '#999',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#f8f9fa'
+                            e.currentTarget.style.borderColor = '#dee2e6'
+                            e.currentTarget.style.color = '#495057'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'white'
+                            e.currentTarget.style.borderColor = '#e9ecef'
+                            e.currentTarget.style.color = '#999'
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div style={{
+                        fontSize: '15px',
+                        color: '#495057',
+                        lineHeight: '1.8',
+                        wordBreak: 'break-word',
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '12px',
+                        border: '1px solid #e9ecef'
+                      }}>
+                        {selectedFeedback.text}
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="list">
                     <FeedbackMore 
                       current_project={current_project} 
@@ -710,6 +842,7 @@ export default function Feedback() {
                           videoPlayerRef.current.seekTo(totalSeconds)
                         }
                       }}
+                      onFeedbackSelect={setSelectedFeedback}
                     />
                   </div>
                 </div>

@@ -13,6 +13,7 @@ import 'moment/locale/ko'
 export default function FeedbackAll() {
   const navigate = useNavigate()
   const [feedback, setFeedback] = useState([])
+  const [reactions, setReactions] = useState({})
   const state = useLocation().state
   const { user } = state
 
@@ -96,6 +97,71 @@ export default function FeedbackAll() {
                             <span className="time">{data.section}</span>
                           </div>
                           <p>{data.text}</p>
+                          
+                          {/* 반응 표시 */}
+                          {data.reaction && (
+                            <div style={{ 
+                              marginTop: '12px',
+                              paddingTop: '12px',
+                              borderTop: '1px solid #e9ecef',
+                              display: 'flex',
+                              gap: '12px',
+                              alignItems: 'center'
+                            }}>
+                              <span style={{ 
+                                fontSize: '12px', 
+                                color: '#666',
+                                fontWeight: '500' 
+                              }}>
+                                반응:
+                              </span>
+                              {data.reaction === 'like' && (
+                                <span style={{
+                                  padding: '4px 12px',
+                                  borderRadius: '16px',
+                                  backgroundColor: '#e3f2fd',
+                                  color: '#1976d2',
+                                  fontSize: '12px',
+                                  fontWeight: '500',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}>
+                                  <span>👍</span> 좋아요
+                                </span>
+                              )}
+                              {data.reaction === 'dislike' && (
+                                <span style={{
+                                  padding: '4px 12px',
+                                  borderRadius: '16px',
+                                  backgroundColor: '#ffebee',
+                                  color: '#d32f2f',
+                                  fontSize: '12px',
+                                  fontWeight: '500',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}>
+                                  <span>👎</span> 싫어요
+                                </span>
+                              )}
+                              {data.reaction === 'needExplanation' && (
+                                <span style={{
+                                  padding: '4px 12px',
+                                  borderRadius: '16px',
+                                  backgroundColor: '#fff3e0',
+                                  color: '#f57c00',
+                                  fontSize: '12px',
+                                  fontWeight: '500',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}>
+                                  <span>❓</span> 설명필요
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </li>
                       ))}
                     </ul>

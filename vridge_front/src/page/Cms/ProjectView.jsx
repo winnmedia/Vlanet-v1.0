@@ -375,11 +375,11 @@ export default function ProjectView() {
               
               {/* 프로젝트 단계 보드 추가 */}
               <div className="content" style={{ marginTop: '30px' }}>
-                <div className="title">프로젝트 진행 현황</div>
                 <ProjectPhaseBoard 
                   projects={[current_project]}
                   isAdmin={is_admin}
                   onPhaseUpdate={handlePhaseUpdate}
+                  showTitle={true}
                 />
               </div>
             </>

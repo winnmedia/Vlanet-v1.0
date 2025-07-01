@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../config/axios'
 import { updateProjectStore } from 'redux/project'
 import { ProjectList } from 'api/project'
 import moment from 'moment'
@@ -16,31 +16,26 @@ export function axiosOpts(method, url, data, config) {
 }
 
 export function axiosCredentials(method, url, data, config) {
-  let token = checkSession();
+  // 토큰 체크는 axios 인터셉터에서 처리됨
+  const token = checkSession();
   
-  // 토큰에서 따옴표 제거 (안전을 위해)
-  if (token && typeof token === 'string' && token.includes('"')) {
-    token = token.replace(/"/g, '');
+  // 토큰이 없으면 에러 발생
+  if (!token) {
+    console.error('No authentication token found');
+    // 로그인 페이지로 리다이렉트
+    window.location.href = '/Login';
+    return Promise.reject(new Error('No authentication token'));
   }
   
-  console.log('Token for request:', token); // 디버깅용
-  
-  // checkSession returns the jwt token directly now (it's a string, not an object)
+  // axios 설정 (인터셉터가 자동으로 토큰을 추가함)
   const axiosConfig = {
     method: method,
     url: url,
     data: data,
-    withCredentials: true,
-    timeout: config?.timeout || 30000,
-    crossDomain: true,
-    headers: {
-      ...(token && { 'Authorization': `Bearer ${token}` }),
-      ...config?.headers
-    },
     ...config,
   };
   
-  console.log('Axios config:', axiosConfig); // 디버깅용
+  console.log('API Request:', method, url); // 디버깅용
   
   return axios(axiosConfig).catch(error => {
     console.error('API Error:', error.response?.data || error.message);

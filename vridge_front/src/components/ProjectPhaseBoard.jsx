@@ -3,7 +3,10 @@ import './ProjectPhaseBoard.scss'
 import moment from 'moment'
 import 'moment/locale/ko'
 
-export default function ProjectPhaseBoard({ projects, onPhaseUpdate }) {
+export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCounts, showTitle = false }) {
+  // 토글 상태 추가
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  
   // 모든 프로젝트를 기본적으로 펼친 상태로 설정
   const [expandedProjects, setExpandedProjects] = useState(() => {
     const initial = {}
@@ -23,14 +26,14 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate }) {
   }, [projects])
   
   const phases = [
-    { key: 'basic_plan', name: '기초기획안', icon: '📋' },
-    { key: 'story_board', name: '스토리보드', icon: '🎬' },
-    { key: 'filming', name: '촬영', icon: '📹' },
-    { key: 'video_edit', name: '편집', icon: '✂️' },
-    { key: 'post_work', name: '후반작업', icon: '🎨' },
-    { key: 'video_preview', name: '시사', icon: '👁️' },
-    { key: 'confirmation', name: '컨펌', icon: '✅' },
-    { key: 'video_delivery', name: '납품', icon: '📦' }
+    { key: 'basic_plan', name: '기초기획안' },
+    { key: 'story_board', name: '스토리보드' },
+    { key: 'filming', name: '촬영' },
+    { key: 'video_edit', name: '편집' },
+    { key: 'post_work', name: '후반작업' },
+    { key: 'video_preview', name: '시사' },
+    { key: 'confirmation', name: '컨펌' },
+    { key: 'video_delivery', name: '납품' }
   ]
   
   // 단계 상태 계산
@@ -121,30 +124,137 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate }) {
   }
   
   return (
-    <div className="project-phase-board">
-      <div className="board-header">
-        <h3>프로젝트 진행 현황</h3>
-        <div className="status-legend">
-          {Object.entries(statusNames).map(([key, name]) => (
-            <div key={key} className="legend-item">
-              <span 
-                className="status-dot" 
-                style={{ backgroundColor: statusColors[key] }}
-              />
-              <span>{name}</span>
-            </div>
-          ))}
+    <>
+      {showTitle && (
+        <div className="title" style={{ marginTop: '40px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          프로젝트 진행 현황
+          <button 
+            className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              background: '#1631F8',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              flexShrink: 0
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#0F23C9';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#1631F8';
+            }}
+          >
+            <svg 
+              width="10" 
+              height="10" 
+              viewBox="0 0 10 10" 
+              fill="white"
+              style={{
+                transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s ease'
+              }}
+            >
+              <path d="M5 7L1 3h8L5 7z"/>
+            </svg>
+          </button>
         </div>
-      </div>
+      )}
+      <div className="project-phase-board" style={{ marginTop: showTitle ? 0 : '32px' }}>
+        {!showTitle && (
+          <div className="board-header">
+            <button 
+              className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: '#1631F8',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                flexShrink: 0,
+                marginBottom: '20px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#0F23C9';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#1631F8';
+              }}
+            >
+              <svg 
+                width="10" 
+                height="10" 
+                viewBox="0 0 10 10" 
+                fill="white"
+                style={{
+                  transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.3s ease'
+                }}
+              >
+                <path d="M5 7L1 3h8L5 7z"/>
+              </svg>
+            </button>
+          </div>
+        )}
       
-      <div className="project-sections">
-        {/* 진행중인 프로젝트 */}
-        {projectsByStatus.active.length > 0 && (
+      {!isCollapsed && projectCounts && (
+        <div className="project-counts-section">
+          <ul className="schedule">
+            <li>
+              전체 <br />
+              프로젝트 <span>{projectCounts.total}</span>
+            </li>
+            <li>
+              이번 달 <br />
+              프로젝트 <span>{projectCounts.thisMonth}</span>
+            </li>
+            <li>
+              다음 달 <br />
+              프로젝트 <span>{projectCounts.nextMonth}</span>
+            </li>
+          </ul>
+        </div>
+      )}
+      
+      {!isCollapsed && (
+        <div className="project-sections">
+          {/* 진행중인 프로젝트 */}
+          {projectsByStatus.active.length > 0 && (
           <div className="project-section">
-            <h4 className="section-title">
-              <span className="icon">🚀</span>
-              진행중 ({projectsByStatus.active.length})
-            </h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h4 className="section-title" style={{ margin: 0 }}>
+                진행중 ({projectsByStatus.active.length})
+              </h4>
+              <div className="status-legend" style={{ display: 'flex', gap: '16px' }}>
+                {Object.entries(statusNames).map(([key, name]) => (
+                  <div key={key} className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span 
+                      className="status-dot" 
+                      style={{ 
+                        backgroundColor: statusColors[key],
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        display: 'inline-block'
+                      }}
+                    />
+                    <span style={{ fontSize: '13px', color: '#495057' }}>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
             {projectsByStatus.active.map(project => (
               <ProjectCard
                 key={project.id}
@@ -165,7 +275,6 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate }) {
         {projectsByStatus.delayed.length > 0 && (
           <div className="project-section delayed-section">
             <h4 className="section-title">
-              <span className="icon">⚠️</span>
               지연됨 ({projectsByStatus.delayed.length})
             </h4>
             {projectsByStatus.delayed.map(project => (
@@ -188,7 +297,6 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate }) {
         {projectsByStatus.completed.length > 0 && (
           <div className="project-section completed-section">
             <h4 className="section-title">
-              <span className="icon">✅</span>
               완료됨 ({projectsByStatus.completed.length})
             </h4>
             {projectsByStatus.completed.map(project => (
@@ -206,8 +314,10 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate }) {
             ))}
           </div>
         )}
+        </div>
+      )}
       </div>
-    </div>
+    </>
   )
 }
 
@@ -223,6 +333,21 @@ function ProjectCard({
   onPhaseUpdate 
 }) {
   const progress = getProjectProgress(project)
+  
+  // 단계 완료 처리 함수
+  const handlePhaseComplete = (phase) => {
+    if (onPhaseUpdate) {
+      const phaseData = project[phase.key]
+      if (phaseData && phaseData.start_date) {
+        // 완료 상태를 토글
+        const updatedPhase = {
+          ...phaseData,
+          completed: !phaseData.completed
+        }
+        onPhaseUpdate(project.id, phase.key, updatedPhase.start_date, updatedPhase.end_date, updatedPhase.completed)
+      }
+    }
+  }
   
   return (
     <div className="project-card">
@@ -259,16 +384,45 @@ function ProjectCard({
             return (
               <div key={phase.key} className={`phase-item ${status}`}>
                 <div className="phase-header">
-                  <span className="phase-icon">{phase.icon}</span>
                   <span className="phase-name">{phase.name}</span>
-                  <span 
-                    className="phase-status"
-                    style={{ backgroundColor: statusColors[status] }}
-                  >
-                    {status === 'completed' ? '✓' : 
-                     status === 'in_progress' ? '●' :
-                     status === 'delayed' ? '!' : '○'}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {phaseData && phaseData.start_date && status !== 'pending' && (
+                      <button
+                        onClick={() => handlePhaseComplete(phase)}
+                        style={{
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          borderRadius: '4px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          backgroundColor: phaseData.completed ? '#43A047' : '#e0e0e0',
+                          color: phaseData.completed ? 'white' : '#666'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!phaseData.completed) {
+                            e.target.style.backgroundColor = '#bdbdbd';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!phaseData.completed) {
+                            e.target.style.backgroundColor = '#e0e0e0';
+                          }
+                        }}
+                      >
+                        {phaseData.completed ? '완료됨' : '완료'}
+                      </button>
+                    )}
+                    <span 
+                      className="phase-status"
+                      style={{ backgroundColor: statusColors[status] }}
+                    >
+                      {status === 'completed' ? '✓' : 
+                       status === 'in_progress' ? '●' :
+                       status === 'delayed' ? '!' : '○'}
+                    </span>
+                  </div>
                 </div>
                 {phaseData && phaseData.start_date && (
                   <div className="phase-dates">

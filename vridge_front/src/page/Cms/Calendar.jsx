@@ -1,6 +1,7 @@
 import 'css/Cms/CmsCommon.scss'
 import 'css/Cms/CalendarToolbar.scss'
 import 'css/Cms/CalendarLayout.scss'
+import 'css/Cms/CalendarResponsive.scss'
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -64,11 +65,12 @@ export default function Calendar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   
   // Enhanced calendar handlers
-  const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
+  const handlePhaseUpdate = (projectId, phase, startDate, endDate, completed) => {
     const data = {
       type: phase,
       start_date: startDate,
-      end_date: endDate
+      end_date: endDate,
+      completed: completed !== undefined ? completed : false
     }
     UpdateDate(data, projectId)
       .then(() => {
@@ -182,69 +184,74 @@ export default function Calendar() {
       <div className="cms_wrap">
         <SideBar />
         <main>
-          <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            캘린더
-            <button 
-              className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                background: '#012fff',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.3s ease',
-                flexShrink: 0
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#0047b8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#012fff';
-              }}
-            >
-              <svg 
-                width="10" 
-                height="10" 
-                viewBox="0 0 10 10" 
-                fill="white"
+          <div className="title" style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            marginBottom: '20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              캘린더
+              <button 
+                className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
+                onClick={() => setIsCollapsed(!isCollapsed)}
                 style={{
-                  transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.3s ease'
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: '#012fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.3s ease',
+                  flexShrink: 0
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#0047b8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#012fff';
                 }}
               >
-                <path d="M5 7L1 3h8L5 7z"/>
-              </svg>
-            </button>
-          </div>
-          <div className="calendar-toolbar" style={{ 
-            marginBottom: '20px',
-            display: isCollapsed ? 'none' : 'flex'
-          }}>
-            <ul className="tab_list" style={{ 
-              display: 'flex', 
-              gap: '8px',
-              listStyle: 'none',
-              padding: 0,
-              margin: 0,
-              alignItems: 'center'
-            }}>
-              <li className={viewMode === 'month' ? 'active' : ''}>
-                <button 
-                  onClick={() => setViewMode('month')}
+                <svg 
+                  width="10" 
+                  height="10" 
+                  viewBox="0 0 10 10" 
+                  fill="white"
                   style={{
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    background: viewMode === 'month' ? '#012fff' : 'transparent',
-                    color: viewMode === 'month' ? 'white' : '#333',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: viewMode === 'month' ? '600' : '400',
+                    transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease'
+                  }}
+                >
+                  <path d="M5 7L1 3h8L5 7z"/>
+                </svg>
+              </button>
+            </div>
+            <div className="calendar-toolbar" style={{ 
+              display: isCollapsed ? 'none' : 'flex'
+            }}>
+              <ul className="tab_list" style={{ 
+                display: 'flex', 
+                gap: '8px',
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+                alignItems: 'center'
+              }}>
+                <li className={viewMode === 'month' ? 'active' : ''}>
+                  <button 
+                    onClick={() => setViewMode('month')}
+                    style={{
+                      padding: '8px 16px',
+                      fontSize: '14px',
+                      background: viewMode === 'month' ? '#012fff' : 'transparent',
+                      color: viewMode === 'month' ? 'white' : '#333',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: viewMode === 'month' ? '600' : '400',
                     transition: 'all 0.3s ease',
                     minHeight: '36px'
                   }}
@@ -373,6 +380,7 @@ export default function Calendar() {
                 </select>
               </li>
             </ul>
+            </div>
           </div>
           <div className={`content calendar ${isCollapsed ? 'collapsed' : ''}`}>
             <div className="filter flex space_between align_center">
@@ -466,15 +474,16 @@ export default function Calendar() {
                 ))}
               </ul>
             </div>
-            <CalendarTotal
-              project_list={project_list}
-              this_month_project={this_month_project}
-              next_month_project={next_month_project}
-            />
             {viewMode === 'month' ? (
               <ProjectPhaseBoard 
                 projects={[...project_list]} 
                 onPhaseUpdate={handlePhaseUpdate}
+                projectCounts={{
+                  total: project_list.length,
+                  thisMonth: this_month_project.length,
+                  nextMonth: next_month_project.length
+                }}
+                showTitle={true}
               />
             ) : (
               <ProjectList project_list={[...project_list]} />

@@ -4,15 +4,9 @@ import React, { useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
 import 'moment/locale/ko'
 
-export default function FeedbackMore({ current_project, onTimeClick }) {
+export default function FeedbackMore({ current_project, onTimeClick, onFeedbackSelect }) {
   const [feedback, setFeedback] = useState([])
-  const [openPopup, setOpenPopup] = useState(null) // 추가된 부분
-
-
-  const closeView = (event, date_index, item_index) => {
-    event.stopPropagation()
-    setOpenPopup(null) // 팝업 닫을 때 현재 열려있는 팝업 인덱스 초기화
-  }
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState(null)
 
   useEffect(() => {
     let groupedObjects = {}
@@ -28,60 +22,77 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
     setFeedback(Object.entries(groupedObjects))
   }, [current_project])
 
+  const handleFeedbackClick = (data) => {
+    if (selectedFeedbackId === data.id) {
+      setSelectedFeedbackId(null)
+      if (onFeedbackSelect) {
+        onFeedbackSelect(null)
+      }
+    } else {
+      setSelectedFeedbackId(data.id)
+      if (onFeedbackSelect) {
+        onFeedbackSelect(data)
+      }
+    }
+  }
+
   return (
-    <>
+    <div className="feedback-list-container">
       {feedback.map((item, index) => (
         <div key={index} className="box">
           <div className="day">{item[0]}</div>
           <ul>
             {item[1].map((data, i) => (
-              <li className={openPopup && openPopup.id === data.id ? 'on' : ''} key={i} onClick={() => setOpenPopup(data)}>
+              <li 
+                key={i} 
+                style={{
+                  padding: '8px',
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease'
+                }}
+              >
                 <span 
-                  style={{ cursor: 'pointer', color: '#ff4545' }}
+                  className="feedback-time-marker"
+                  style={{ 
+                    cursor: 'pointer', 
+                    backgroundColor: selectedFeedbackId === data.id ? '#1E3A8A' : '#2B56D1',
+                    color: '#ffffff',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    display: 'inline-block',
+                    transition: 'all 0.2s ease',
+                    position: 'relative',
+                    border: 'none'
+                  }}
                   onClick={(e) => {
                     e.stopPropagation()
-                    if (onTimeClick && data.section) {
-                      onTimeClick(data.section)
+                    handleFeedbackClick(data)
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedFeedbackId !== data.id) {
+                      e.target.style.backgroundColor = '#1E3A8A'
                     }
+                    e.target.style.transform = 'scale(1.05)'
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedFeedbackId !== data.id) {
+                      e.target.style.backgroundColor = '#2B56D1'
+                    } else {
+                      e.target.style.backgroundColor = '#1E3A8A'
+                    }
+                    e.target.style.transform = 'scale(1)'
                   }}
                 >
                   {data.section}
                 </span>
-                {openPopup &&
-                  openPopup.id === data.id && ( // 추가된 부분
-                    <div className="view-container">
-                      <div className="view">
-                        <div>
-                          <div className="txt_box">
-                            {openPopup.security ? (
-                              <>
-                                <span className="name">익명</span>
-                                <span className="name">{openPopup.section}</span>
-                              </>
-                            ) : (
-                              <>
-                                <span className="name">{openPopup.nickname}</span>
-                                <span className="email">{openPopup.email}</span>
-                              </>
-                            )}
-                          </div>
-                          <div className="comment_box">{openPopup.text}</div>
-                        </div>
-                      </div>
-                      <button
-                        className="close-button"
-                        onClick={(event) => closeView(event, index, i)}
-                      >
-                        X
-                      </button>
-                    </div>
-                  )}
               </li>
             ))}
           </ul>
         </div>
       ))}
-    </>
+    </div>
   )
 }
 

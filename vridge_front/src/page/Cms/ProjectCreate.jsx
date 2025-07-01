@@ -19,6 +19,15 @@ export default function ProjectCreate() {
 
   const navigate = useNavigate()
   const initial = project_initial()
+  
+  // 인증 체크
+  useEffect(() => {
+    const session = checkSession()
+    if (!session) {
+      window.alert('로그인이 필요합니다.')
+      navigate('/Login', { replace: true })
+    }
+  }, [])
 
   const initialDateRanges = project_dateRange()
 
@@ -62,8 +71,19 @@ export default function ProjectCreate() {
         })
         .catch((err) => {
           console.log(err)
-          if (err.response && err.response.data) {
-            window.alert(err.response.data.message)
+          if (err.response) {
+            if (err.response.status === 401) {
+              window.alert('인증이 만료되었습니다. 다시 로그인해주세요.')
+              navigate('/Login', { replace: true })
+            } else if (err.response.data && err.response.data.message) {
+              window.alert(err.response.data.message)
+            } else {
+              window.alert('프로젝트 생성 중 오류가 발생했습니다.')
+            }
+          } else if (err.request) {
+            window.alert('서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.')
+          } else {
+            window.alert('프로젝트 생성 중 오류가 발생했습니다.')
           }
         })
     } else {

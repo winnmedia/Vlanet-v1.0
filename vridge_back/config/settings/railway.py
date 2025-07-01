@@ -187,9 +187,40 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.vlanet.net",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://vridge-front-production.up.railway.app",
 ]
-CORS_ALLOW_ALL_ORIGINS = True  # 개발용
+
+# CORS_ALLOW_ALL_ORIGINS를 False로 설정하여 CORS_ALLOWED_ORIGINS만 허용
+CORS_ALLOW_ALL_ORIGINS = False
+
+# CORS 추가 설정
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# CSRF 신뢰할 수 있는 도메인
+CSRF_TRUSTED_ORIGINS = [
+    'https://vlanet.net',
+    'https://www.vlanet.net',
+    'https://*.railway.app',
+]
 
 # REST Framework 설정
 REST_FRAMEWORK = {

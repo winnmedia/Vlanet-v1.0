@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 
 import 'css/User/Auth.scss'
 import PageTemplate from 'components/PageTemplate'
-import { SignUp, CheckNickname, CheckEmail } from 'api/auth'
+import { SignUp, CheckNickname, SignUpRequest, SignUpVerify, SignUpComplete } from 'api/auth'
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -15,6 +15,12 @@ export default function Signup() {
   const [emailChecked, setEmailChecked] = useState(false)
   const [emailAvailable, setEmailAvailable] = useState(false)
   const [emailMessage, setEmailMessage] = useState('')
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [authNumber, setAuthNumber] = useState('')
+  const [authToken, setAuthToken] = useState('')
+  const [showAuthInput, setShowAuthInput] = useState(false)
+  const [verifyingAuth, setVerifyingAuth] = useState(false)
+  const [authCountdown, setAuthCountdown] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [checkingEmail, setCheckingEmail] = useState(false)
   const [checkingNickname, setCheckingNickname] = useState(false)
@@ -58,11 +64,16 @@ export default function Signup() {
       [name]: value,
     })
     
-    // 이메일이 변경되면 중복 확인 초기화
+    // 이메일이 변경되면 인증 상태 초기화
     if (name === 'email') {
       setEmailChecked(false)
       setEmailAvailable(false)
       setEmailMessage('')
+      setEmailVerified(false)
+      setShowAuthInput(false)
+      setAuthNumber('')
+      setAuthToken('')
+      setAuthCountdown(0)
     }
     
     // 닉네임이 변경되면 중복 확인 초기화
@@ -84,8 +95,16 @@ export default function Signup() {
     }, 5000)
   }
   
-  // 이메일 중복 확인 함수
-  function checkEmailDuplicate() {
+  // 인증번호 카운트다운
+  useEffect(() => {
+    if (authCountdown > 0) {
+      const timer = setTimeout(() => setAuthCountdown(authCountdown - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [authCountdown])
+  
+  // 이메일 인증 요청 함수
+  function sendEmailAuth() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setEmailMessage('올바른 이메일 형식이 아닙니다.');
@@ -96,23 +115,61 @@ export default function Signup() {
     
     setCheckingEmail(true)
     
-    CheckEmail(email)
+    SignUpRequest(email)
       .then((res) => {
-        setEmailChecked(true)
-        setEmailAvailable(true)
-        setEmailMessage('사용 가능한 이메일입니다.')
+        if (res.data.status === 'email_sent') {
+          setShowAuthInput(true)
+          setAuthCountdown(180) // 3분 카운트다운
+          setEmailMessage('인증번호가 이메일로 발송되었습니다.')
+          setEmailAvailable(true)
+        }
       })
       .catch((err) => {
-        setEmailChecked(true)
-        setEmailAvailable(false)
-        if (err.response && err.response.status === 409) {
-          setEmailMessage('이미 사용 중인 이메일입니다.')
+        const status = err.response?.data?.status
+        const message = err.response?.data?.message
+        
+        if (status === 'already_registered') {
+          setEmailChecked(true)
+          setEmailAvailable(false)
+          setEmailMessage(message || '이미 가입된 이메일입니다.')
+        } else if (status === 'rate_limited') {
+          const remaining = err.response?.data?.remaining_seconds || 30
+          setEmailMessage(`잠시 후 다시 시도해주세요. (${remaining}초)`)
+          setAuthCountdown(remaining)
         } else {
-          setEmailMessage('이메일 확인 중 오류가 발생했습니다.')
+          setEmailMessage(message || '이메일 인증 요청에 실패했습니다.')
         }
       })
       .finally(() => {
         setCheckingEmail(false)
+      })
+  }
+  
+  // 이메일 인증번호 확인 함수
+  function verifyAuthNumber() {
+    if (!authNumber || authNumber.length !== 6) {
+      setEmailMessage('6자리 인증번호를 입력해주세요.')
+      return
+    }
+    
+    setVerifyingAuth(true)
+    
+    SignUpVerify({ email, auth_number: authNumber })
+      .then((res) => {
+        if (res.data.message === 'success') {
+          setAuthToken(res.data.auth_token)
+          setEmailVerified(true)
+          setEmailChecked(true)
+          setEmailMessage('이메일 인증이 완료되었습니다.')
+          setShowAuthInput(false)
+        }
+      })
+      .catch((err) => {
+        const message = err.response?.data?.message || '인증번호가 올바르지 않습니다.'
+        setEmailMessage(message)
+      })
+      .finally(() => {
+        setVerifyingAuth(false)
       })
   }
   
@@ -164,15 +221,9 @@ export default function Signup() {
       return;
     }
     
-    // 이메일 중복 확인 여부 검증
-    if (!emailChecked) {
-      SetErrorMessage('이메일 중복 확인을 해주세요.');
-      TimeoutMessage();
-      return;
-    }
-    
-    if (!emailAvailable) {
-      SetErrorMessage('사용할 수 없는 이메일입니다.');
+    // 이메일 인증 여부 검증
+    if (!emailVerified) {
+      SetErrorMessage('이메일 인증을 완료해주세요.');
       TimeoutMessage();
       return;
     }
@@ -225,8 +276,13 @@ export default function Signup() {
     // 로딩 시작
     setIsLoading(true);
     
-    // 회원가입 요청
-    SignUp(inputs)
+    // 새로운 이메일 인증 방식으로 회원가입
+    SignUpComplete({
+      email,
+      auth_token: authToken,
+      nickname,
+      password
+    })
       .then((res) => {
         // 토큰 저장
         const token = res.data.vridge_session;
@@ -298,7 +354,11 @@ export default function Signup() {
                     flex: 1,
                     padding: '12px 16px',
                     fontSize: '16px',
-                    border: `2px solid ${emailChecked ? (emailAvailable ? '#28a745' : '#dc3545') : '#e9ecef'}`,
+                    border: `2px solid ${
+                      emailVerified ? '#28a745' :
+                      emailChecked ? (emailAvailable ? '#ffc107' : '#dc3545') : 
+                      '#e9ecef'
+                    }`,
                     borderRadius: '8px',
                     outline: 'none',
                     transition: 'border-color 0.3s ease',
@@ -345,6 +405,75 @@ export default function Signup() {
                   gap: '4px'
                 }}>
                   {emailAvailable ? '✓' : '✗'} {emailMessage}
+                </div>
+              )}
+              
+              {/* 인증번호 입력 필드 */}
+              {showAuthInput && !emailVerified && (
+                <div style={{ 
+                  marginTop: '12px',
+                  padding: '16px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '8px',
+                  border: '1px solid #e9ecef'
+                }}>
+                  <div style={{ 
+                    fontSize: '13px', 
+                    color: '#666',
+                    marginBottom: '8px'
+                  }}>
+                    이메일로 발송된 6자리 인증번호를 입력해주세요.
+                    {authCountdown > 0 && (
+                      <span style={{ color: '#dc3545', marginLeft: '8px' }}>
+                        ({Math.floor(authCountdown / 60)}분 {authCountdown % 60}초 남음)
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="text"
+                      value={authNumber}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '')
+                        if (value.length <= 6) {
+                          setAuthNumber(value)
+                        }
+                      }}
+                      placeholder="인증번호 6자리"
+                      maxLength={6}
+                      style={{
+                        flex: 1,
+                        padding: '10px 12px',
+                        fontSize: '16px',
+                        border: '2px solid #e9ecef',
+                        borderRadius: '6px',
+                        outline: 'none',
+                        textAlign: 'center',
+                        letterSpacing: '4px',
+                        fontWeight: '600'
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = '#1631F8'}
+                      onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
+                    />
+                    <button
+                      type="button"
+                      onClick={verifyAuthNumber}
+                      disabled={!authNumber || authNumber.length !== 6 || verifyingAuth}
+                      style={{
+                        padding: '10px 20px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        backgroundColor: (!authNumber || authNumber.length !== 6) ? '#e9ecef' : '#1631F8',
+                        color: (!authNumber || authNumber.length !== 6) ? '#6c757d' : 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: (!authNumber || authNumber.length !== 6 || verifyingAuth) ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      {verifyingAuth ? '확인 중...' : '확인'}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

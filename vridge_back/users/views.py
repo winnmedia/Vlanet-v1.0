@@ -109,6 +109,7 @@ class SignUp(View):
             # 새 사용자 생성
             new_user = models.User.objects.create(
                 username=email, 
+                email=email,  # email 필드도 설정
                 nickname=nickname,
                 login_method='email'
             )

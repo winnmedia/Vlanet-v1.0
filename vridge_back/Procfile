@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application
+web: export DJANGO_SETTINGS_MODULE=config.settings.railway && python manage.py migrate --settings=config.settings.railway && python manage.py collectstatic --noinput --settings=config.settings.railway && gunicorn config.wsgi:application

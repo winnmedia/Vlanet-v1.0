@@ -5,6 +5,8 @@ from .create_users_endpoint import CreateTestUsers
 urlpatterns = [
     path("login", views.SignIn.as_view()),
     path("signup", views.SignUp.as_view()),
+    path("check_email", views.CheckEmail.as_view()),  # 이메일 중복 확인
+    path("check_nickname", views.CheckNickname.as_view()),  # 닉네임 중복 확인
     path("send_authnumber/<str:types>", views.SendAuthNumber.as_view()),  # 인증번호 보내기 (회원가입)
     path("signup_emailauth/<str:types>", views.EmailAuth.as_view()),  # 인증번호 확인하기 (회원가입)
     path("password_reset", views.ResetPassword.as_view()),

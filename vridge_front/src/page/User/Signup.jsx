@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import 'css/User/Auth.scss'
 import PageTemplate from 'components/PageTemplate'
-import { SignUp, CheckNickname } from 'api/auth'
+import { SignUp, CheckNickname, CheckEmail } from 'api/auth'
 import AuthEmail from 'tasks/AuthEmail'
 
 export default function Signup() {
@@ -13,6 +13,9 @@ export default function Signup() {
   const [nicknameChecked, setNicknameChecked] = useState(false)
   const [nicknameAvailable, setNicknameAvailable] = useState(false)
   const [nicknameMessage, setNicknameMessage] = useState('')
+  const [emailChecked, setEmailChecked] = useState(false)
+  const [emailAvailable, setEmailAvailable] = useState(false)
+  const [emailMessage, setEmailMessage] = useState('')
   const initial = {
     email: '',
     auth_number: '',
@@ -30,6 +33,13 @@ export default function Signup() {
       [name]: value,
     })
     
+    // 이메일이 변경되면 중복 확인 초기화
+    if (name === 'email') {
+      setEmailChecked(false)
+      setEmailAvailable(false)
+      setEmailMessage('')
+    }
+    
     // 닉네임이 변경되면 중복 확인 초기화
     if (name === 'nickname') {
       setNicknameChecked(false)
@@ -42,6 +52,34 @@ export default function Signup() {
     setTimeout(() => {
       SetErrorMessage('')
     }, 3000)
+  }
+  
+  // 이메일 중복 확인 함수
+  function checkEmailDuplicate() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailMessage('올바른 이메일 형식이 아닙니다.');
+      setEmailAvailable(false)
+      return
+    }
+    
+    CheckEmail(email)
+      .then((res) => {
+        // 성공 시 사용 가능
+        setEmailChecked(true)
+        setEmailAvailable(true)
+        setEmailMessage('사용 가능한 이메일입니다.')
+      })
+      .catch((err) => {
+        // 실패 시 중복
+        setEmailChecked(true)
+        setEmailAvailable(false)
+        if (err.response && err.response.data) {
+          setEmailMessage(err.response.data.message || '이미 사용 중인 이메일입니다.')
+        } else {
+          setEmailMessage('이미 사용 중인 이메일입니다.')
+        }
+      })
   }
   
   // 닉네임 중복 확인 함수
@@ -81,6 +119,12 @@ export default function Signup() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       SetErrorMessage('올바른 이메일 형식이 아닙니다.');
+      return;
+    }
+    
+    // 이메일 중복 확인 여부 검증
+    if (!emailChecked || !emailAvailable) {
+      SetErrorMessage('이메일 중복 확인을 해주세요.');
       return;
     }
     
@@ -132,23 +176,57 @@ export default function Signup() {
           <div className="title">SIGN UP</div>
           {/* 이메일 인증 임시 비활성화 - 바로 가입 폼 표시 */}
           <>
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={onChange}
-              placeholder="이메일 입력"
-              className="ty01 mt50"
-              maxLength={50}
-              style={{
-                width: '100%',
-                padding: '15px',
-                fontSize: '16px',
-                border: '1px solid #e0e0e0',
-                borderRadius: '8px',
-                marginTop: '30px'
-              }}
-            />
+            <div style={{ position: 'relative', marginTop: '30px' }}>
+              <input
+                type="email"
+                name="email"
+                value={email}
+                onChange={onChange}
+                placeholder="이메일 입력"
+                className="ty01"
+                maxLength={50}
+                style={{
+                  width: '100%',
+                  padding: '15px',
+                  paddingRight: '110px',
+                  fontSize: '16px',
+                  border: `1px solid ${emailChecked ? (emailAvailable ? '#28a745' : '#dc3545') : '#e0e0e0'}`,
+                  borderRadius: '8px'
+                }}
+              />
+              <button
+                type="button"
+                onClick={checkEmailDuplicate}
+                style={{
+                  position: 'absolute',
+                  right: '8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  backgroundColor: '#1631F8',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#0F23C9'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#1631F8'}
+              >
+                중복 확인
+              </button>
+            </div>
+            {emailMessage && (
+              <div style={{ 
+                marginTop: '5px', 
+                fontSize: '14px', 
+                color: emailAvailable ? '#28a745' : '#dc3545' 
+              }}>
+                {emailMessage}
+              </div>
+            )}
             <div style={{ position: 'relative', marginTop: '10px' }}>
               <input
                 type="text"
@@ -178,15 +256,15 @@ export default function Signup() {
                   padding: '8px 16px',
                   fontSize: '14px',
                   fontWeight: '500',
-                  backgroundColor: '#6c757d',
+                  backgroundColor: '#1631F8',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
                   cursor: 'pointer',
                   transition: 'background-color 0.3s ease'
                 }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#5a6268'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#6c757d'}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#0F23C9'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#1631F8'}
               >
                 중복 확인
               </button>
@@ -243,7 +321,7 @@ export default function Signup() {
                 padding: '15px',
                 fontSize: '18px',
                 fontWeight: '600',
-                backgroundColor: '#0058da',
+                backgroundColor: '#1631F8',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
@@ -251,8 +329,8 @@ export default function Signup() {
                 cursor: 'pointer',
                 transition: 'background-color 0.3s ease'
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#0047b8'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#0058da'}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#0F23C9'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#1631F8'}
             >
               회원가입
             </button>

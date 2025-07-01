@@ -18,6 +18,15 @@ export function CheckNickname(nickname) {
   )
 }
 
+// 이메일 중복 확인
+export function CheckEmail(email) {
+  return axiosOpts(
+    'post',
+    `/users/check_email`,
+    { email },
+  )
+}
+
 // 이메일 로그인
 export function SignIn(data) {
   return axiosOpts(

@@ -18,6 +18,55 @@ from django.utils.decorators import method_decorator
 
 
 ########## username이 kakao,naver,google이든 회원가입 때 중복되면 생성x
+# 이메일 중복 확인
+@method_decorator(csrf_exempt, name='dispatch')
+class CheckEmail(View):
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            email = data.get("email")
+            
+            if not email:
+                return JsonResponse({"message": "이메일을 입력해주세요."}, status=400)
+            
+            user = models.User.objects.filter(username=email).first()
+            if user:
+                return JsonResponse({"message": "이미 사용 중인 이메일입니다."}, status=409)
+            else:
+                return JsonResponse({"message": "사용 가능한 이메일입니다."}, status=200)
+                
+        except Exception as e:
+            print(e)
+            logging.info(str(e))
+            return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
+
+
+# 닉네임 중복 확인
+@method_decorator(csrf_exempt, name='dispatch')
+class CheckNickname(View):
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            nickname = data.get("nickname")
+            
+            if not nickname:
+                return JsonResponse({"message": "닉네임을 입력해주세요."}, status=400)
+            
+            if len(nickname) < 2:
+                return JsonResponse({"message": "닉네임은 최소 2자 이상이어야 합니다."}, status=400)
+            
+            user = models.User.objects.filter(nickname=nickname).first()
+            if user:
+                return JsonResponse({"message": "이미 사용 중인 닉네임입니다."}, status=409)
+            else:
+                return JsonResponse({"message": "사용 가능한 닉네임입니다."}, status=200)
+                
+        except Exception as e:
+            print(e)
+            logging.info(str(e))
+            return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class SignUp(View):
     def post(self, request):

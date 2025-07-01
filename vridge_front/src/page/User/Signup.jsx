@@ -8,7 +8,7 @@ import AuthEmail from 'tasks/AuthEmail'
 
 export default function Signup() {
   const navigate = useNavigate()
-  const [valid_email, SetValidEmail] = useState(false)
+  const [valid_email, SetValidEmail] = useState(true) // 이메일 인증 임시 비활성화
   const [errorMessage, SetErrorMessage] = useState('')
   const initial = {
     email: '',
@@ -36,11 +36,19 @@ export default function Signup() {
 
   function SignUpBtn() {
     return (
+      email.length > 0 &&
       nickname.length > 1 &&
       password.length > 9 &&
       password1.length > 9 && (
         <button
           onClick={() => {
+            // 이메일 형식 검증
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+              SetErrorMessage('올바른 이메일 형식이 아닙니다.');
+              return;
+            }
+            
             if (password === password1) {
               SignUp(inputs)
                 .then((res) => {
@@ -76,47 +84,47 @@ export default function Signup() {
       <div className="Auth_Form">
         <div className="form_wrap">
           <div className="title">SIGN UP</div>
-          {!valid_email ? (
-            <AuthEmail
-              email={email}
-              auth_number={auth_number}
-              SetValidEmail={SetValidEmail}
-              inputs={inputs}
-              set_inputs={set_inputs}
+          {/* 이메일 인증 임시 비활성화 - 바로 가입 폼 표시 */}
+          <>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={onChange}
+              placeholder="이메일 입력"
+              className="ty01 mt50"
+              maxLength={50}
             />
-          ) : (
-            <>
-              <input
-                type="text"
-                name="nickname"
-                value={nickname}
-                onChange={onChange}
-                placeholder="닉네임 입력 (최소 2자)"
-                className="ty01 mt50"
-                maxLength={10}
-              />
-              <input
-                type="password"
-                name="password"
-                value={password}
-                onChange={onChange}
-                placeholder="비밀번호 입력 (최소 10자)"
-                className="ty01 mt10"
-                maxLength={20}
-              />
-              <input
-                type="password"
-                name="password1"
-                value={password1}
-                onChange={onChange}
-                placeholder="비밀번호 확인"
-                className="ty01 mt10"
-                maxLength={20}
-              />
-              {errorMessage && <div className="error">{errorMessage}</div>}
-              <SignUpBtn />
-            </>
-          )}
+            <input
+              type="text"
+              name="nickname"
+              value={nickname}
+              onChange={onChange}
+              placeholder="닉네임 입력 (최소 2자)"
+              className="ty01 mt10"
+              maxLength={10}
+            />
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={onChange}
+              placeholder="비밀번호 입력 (최소 10자)"
+              className="ty01 mt10"
+              maxLength={20}
+            />
+            <input
+              type="password"
+              name="password1"
+              value={password1}
+              onChange={onChange}
+              placeholder="비밀번호 확인"
+              className="ty01 mt10"
+              maxLength={20}
+            />
+            {errorMessage && <div className="error">{errorMessage}</div>}
+            <SignUpBtn />
+          </>
         </div>
       </div>
     </PageTemplate>

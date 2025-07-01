@@ -182,7 +182,12 @@ else:
     print(f"Media directory exists at: {MEDIA_ROOT}")
 
 # CORS 설정
-CORS_ALLOWED_ORIGINS = [
+# 환경변수에서 추가 CORS origin 가져오기
+CORS_ALLOWED_ORIGINS_ENV = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS_ENV = [origin.strip() for origin in CORS_ALLOWED_ORIGINS_ENV if origin.strip()]
+
+# 기본 CORS 허용 목록
+CORS_ALLOWED_ORIGINS_DEFAULT = [
     "https://vlanet.net",
     "https://www.vlanet.net",
     "http://vlanet.net",
@@ -193,6 +198,12 @@ CORS_ALLOWED_ORIGINS = [
     "https://videoplanetready.vercel.app",
     "https://vlanet-v1-0.vercel.app",
 ]
+
+# 환경변수와 기본값 병합
+CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS_DEFAULT + CORS_ALLOWED_ORIGINS_ENV))
+
+# CORS 디버깅
+print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
 
 # CORS 추가 설정
 CORS_ALLOW_CREDENTIALS = True

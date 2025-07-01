@@ -1,7 +1,4 @@
 name: Vercel Production Deployment
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
   push:
     branches:
@@ -9,6 +6,9 @@ on:
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
@@ -16,13 +16,11 @@ jobs:
         with:
           node-version: '18'
       - name: Install dependencies
-        run: |
-          cd vridge_front
-          npm install --legacy-peer-deps
+        working-directory: ./vridge_front
+        run: npm install --legacy-peer-deps
       - name: Build React app
-        run: |
-          cd vridge_front
-          npm run build
+        working-directory: ./vridge_front
+        run: npm run build
         env:
           REACT_APP_API_BASE_URL: "https://vridge-back-production.up.railway.app"
           REACT_APP_BACKEND_API_URL: "https://vridge-back-production.up.railway.app"
@@ -30,12 +28,19 @@ jobs:
           REACT_APP_SOCKET_URI: "wss://vridge-back-production.up.railway.app"
           GENERATE_SOURCEMAP: "false"
           CI: "false"
+      - name: Create vercel.json in build directory
+        working-directory: ./vridge_front
+        run: |
+          echo '{
+            "rewrites": [
+              {
+                "source": "/(.*)",
+                "destination": "/index.html"
+              }
+            ]
+          }' > build/vercel.json
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Deploy to Vercel
-        run: |
-          cd vridge_front
-          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --cwd build
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./vridge_front
+        run: vercel deploy ./build --prod --token=${{ secrets.VERCEL_TOKEN }} --yes

@@ -15,22 +15,27 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Check directory structure
+      - name: Install dependencies
         run: |
-          pwd
-          ls -la
-          ls -la vridge_front/
+          cd vridge_front
+          npm install --legacy-peer-deps
+      - name: Build React app
+        run: |
+          cd vridge_front
+          npm run build
+        env:
+          REACT_APP_API_BASE_URL: "https://vridge-back-production.up.railway.app"
+          REACT_APP_BACKEND_API_URL: "https://vridge-back-production.up.railway.app"
+          REACT_APP_BACKEND_URI: "https://vridge-back-production.up.railway.app"
+          REACT_APP_SOCKET_URI: "wss://vridge-back-production.up.railway.app"
+          GENERATE_SOURCEMAP: "false"
+          CI: "false"
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-      - name: Pull Vercel Environment Information
+      - name: Deploy to Vercel
         run: |
           cd vridge_front
-          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build Project Artifacts
-        run: |
-          cd vridge_front
-          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy Project Artifacts to Vercel
-        run: |
-          cd vridge_front
-          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --cwd build
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

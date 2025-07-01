@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.models import Group
+from .views import health_check, root_view
 
 # token_blacklist import를 보호
 try:
@@ -29,6 +30,8 @@ except ImportError:
     token_blacklist = None
 
 urlpatterns = [
+    path("", root_view, name="root"),  # 루트 경로
+    path("health/", health_check, name="health"),  # 헬스체크
     path("admin/", admin.site.urls),
     path("users/", include("users.urls")),
     path("projects/", include("projects.urls")),

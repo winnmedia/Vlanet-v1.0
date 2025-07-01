@@ -80,7 +80,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 # 미들웨어 순서 재확인 (CORS가 최상단에)
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # 가장 먼저
+    'middleware.force_cors.ForceCorsMiddleware',  # 강제 CORS 헤더 추가
+    'corsheaders.middleware.CorsMiddleware',  # django-cors-headers
     'django.middleware.security.SecurityMiddleware',
     'middleware.cors_debug.CorsDebugMiddleware',  # CORS 디버깅
     'whitenoise.middleware.WhiteNoiseMiddleware',

@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python manage.py migrate --settings=config.settings.cors_final_fix && python manage.py collectstatic --noinput --settings=config.settings.cors_final_fix && mkdir -p /app/media/feedback_file && mkdir -p /app/logs && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 300 --workers 3 --access-logfile /app/logs/access.log --error-logfile /app/logs/error.log --env DJANGO_SETTINGS_MODULE=config.settings.cors_final_fix",
+    "startCommand": "python manage.py migrate --settings=config.settings.cors_emergency_fix && python manage.py collectstatic --noinput --settings=config.settings.cors_emergency_fix && mkdir -p /app/media/feedback_file && mkdir -p /app/logs && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 300 --workers 3 --access-logfile /app/logs/access.log --error-logfile /app/logs/error.log --env DJANGO_SETTINGS_MODULE=config.settings.cors_emergency_fix",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   },

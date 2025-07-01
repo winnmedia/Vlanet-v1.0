@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.models import Group
 from .views import health_check, root_view
+from .views_cors_test import cors_test_view, PublicProjectListView
 
 # token_blacklist import를 보호
 try:
@@ -32,6 +33,8 @@ except ImportError:
 urlpatterns = [
     path("", root_view, name="root"),  # 루트 경로
     path("health/", health_check, name="health"),  # 헬스체크
+    path("cors-test/", cors_test_view, name="cors_test"),  # CORS 테스트
+    path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
     path("admin/", admin.site.urls),
     path("users/", include("users.urls")),
     path("projects/", include("projects.urls")),

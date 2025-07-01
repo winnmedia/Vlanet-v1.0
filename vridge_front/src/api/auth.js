@@ -158,3 +158,32 @@ export function DeleteUserMemo(id) {
     `/users/memo/${id}`,
   )
 }
+
+// ===== 새로운 이메일 인증 회원가입 API =====
+
+// Step 1: 회원가입 이메일 인증 요청
+export function SignUpRequest(email) {
+  return axiosOpts(
+    'post',
+    `/users/signup/request`,
+    { email },
+  )
+}
+
+// Step 2: 회원가입 인증번호 확인
+export function SignUpVerify(data) {
+  return axiosOpts(
+    'post',
+    `/users/signup/verify`,
+    data,
+  )
+}
+
+// Step 3: 회원가입 완료
+export function SignUpComplete(data) {
+  return axiosOpts(
+    'post',
+    `/users/signup/complete`,
+    data,
+  )
+}

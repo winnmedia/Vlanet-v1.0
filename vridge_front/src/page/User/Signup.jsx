@@ -460,13 +460,14 @@ export default function Signup() {
                   maxLength={20}
                   style={{
                     width: '100%',
-                    padding: '12px 45px 12px 16px',
+                    padding: '12px 50px 12px 16px',
                     fontSize: '16px',
                     border: '2px solid #e9ecef',
                     borderRadius: '8px',
                     outline: 'none',
                     transition: 'border-color 0.3s ease',
-                    backgroundColor: '#fff'
+                    backgroundColor: '#fff',
+                    boxSizing: 'border-box'
                   }}
                   onFocus={(e) => e.target.style.borderColor = '#1631F8'}
                   onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
@@ -476,15 +477,24 @@ export default function Signup() {
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
                     position: 'absolute',
-                    right: '12px',
+                    right: '8px',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    background: 'none',
+                    background: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
-                    padding: '4px',
-                    color: '#6c757d'
+                    padding: '8px',
+                    color: '#6c757d',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '4px',
+                    transition: 'background-color 0.2s'
                   }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
                   {showPassword ? (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -555,13 +565,14 @@ export default function Signup() {
                   maxLength={20}
                   style={{
                     width: '100%',
-                    padding: '12px 45px 12px 16px',
+                    padding: '12px 50px 12px 16px',
                     fontSize: '16px',
                     border: `2px solid ${password1 && (password === password1 ? '#28a745' : '#dc3545')}`,
                     borderRadius: '8px',
                     outline: 'none',
                     transition: 'border-color 0.3s ease',
-                    backgroundColor: '#fff'
+                    backgroundColor: '#fff',
+                    boxSizing: 'border-box'
                   }}
                   onFocus={(e) => {
                     if (!password1 || password === password1) {
@@ -583,15 +594,24 @@ export default function Signup() {
                   onClick={() => setShowPassword1(!showPassword1)}
                   style={{
                     position: 'absolute',
-                    right: '12px',
+                    right: '8px',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    background: 'none',
+                    background: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
-                    padding: '4px',
-                    color: '#6c757d'
+                    padding: '8px',
+                    color: '#6c757d',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '4px',
+                    transition: 'background-color 0.2s'
                   }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
                   {showPassword1 ? (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

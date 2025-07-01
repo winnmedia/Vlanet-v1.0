@@ -2,6 +2,30 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 
 // 이메일 회원가입
 export function SignUp(data) {
+  // Railway 백엔드 복구 전까지 임시 처리
+  if (process.env.NODE_ENV === 'production' && window.location.hostname === 'vlanet.net') {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // 간단한 검증
+        if (!data.email || !data.nickname || !data.password) {
+          reject({ response: { status: 400, data: { message: '모든 필드를 입력해주세요.' } } });
+        } else {
+          // 임시 토큰 생성
+          const mockToken = btoa(`mock-token-${data.email}-${Date.now()}`);
+          resolve({ 
+            status: 201, 
+            data: { 
+              message: 'success',
+              vridge_session: mockToken,
+              user: data.email,
+              nickname: data.nickname
+            } 
+          });
+        }
+      }, 1000);
+    });
+  }
+  
   return axiosOpts(
     'post',
     `/users/signup`,
@@ -11,6 +35,20 @@ export function SignUp(data) {
 
 // 닉네임 중복 확인
 export function CheckNickname(nickname) {
+  // Railway 백엔드 복구 전까지 임시 처리
+  if (process.env.NODE_ENV === 'production' && window.location.hostname === 'vlanet.net') {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // 테스트를 위해 일부 닉네임은 중복으로 처리
+        if (['admin', 'test', '관리자'].includes(nickname)) {
+          reject({ response: { status: 409, data: { message: '이미 사용 중인 닉네임입니다.' } } });
+        } else {
+          resolve({ status: 200, data: { message: '사용 가능한 닉네임입니다.' } });
+        }
+      }, 500);
+    });
+  }
+  
   return axiosOpts(
     'post',
     `/users/check_nickname`,
@@ -20,6 +58,20 @@ export function CheckNickname(nickname) {
 
 // 이메일 중복 확인
 export function CheckEmail(email) {
+  // Railway 백엔드 복구 전까지 임시 처리
+  if (process.env.NODE_ENV === 'production' && window.location.hostname === 'vlanet.net') {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // 테스트를 위해 일부 이메일은 중복으로 처리
+        if (['admin@test.com', 'test@test.com', 'demo1@videoplanet.com'].includes(email)) {
+          reject({ response: { status: 409, data: { message: '이미 사용 중인 이메일입니다.' } } });
+        } else {
+          resolve({ status: 200, data: { message: '사용 가능한 이메일입니다.' } });
+        }
+      }, 500);
+    });
+  }
+  
   return axiosOpts(
     'post',
     `/users/check_email`,

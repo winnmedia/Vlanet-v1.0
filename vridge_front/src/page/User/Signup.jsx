@@ -90,11 +90,11 @@ export default function Signup() {
       return;
     }
     
-    // 닉네임 중복 확인 여부 검증 - 임시 비활성화 (CORS 문제 해결 후 활성화)
-    // if (!nicknameChecked || !nicknameAvailable) {
-    //   SetErrorMessage('닉네임 중복 확인을 해주세요.');
-    //   return;
-    // }
+    // 닉네임 중복 확인 여부 검증
+    if (!nicknameChecked || !nicknameAvailable) {
+      SetErrorMessage('닉네임 중복 확인을 해주세요.');
+      return;
+    }
     
     // 비밀번호 검증
     if (password.length < 10) {

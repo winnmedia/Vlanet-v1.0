@@ -35,7 +35,7 @@ class ForceCorsMiddleware:
             response['Access-Control-Allow-Origin'] = origin
             response['Access-Control-Allow-Credentials'] = 'true'
             response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-            response['Access-Control-Allow-Headers'] = 'Accept, Accept-Encoding, Authorization, Content-Type, Origin, X-Requested-With, X-CSRFToken'
+            response['Access-Control-Allow-Headers'] = 'Accept, Accept-Encoding, Authorization, Content-Type, Origin, X-Requested-With, X-CSRFToken, X-Idempotency-Key'
             response['Access-Control-Max-Age'] = '86400'
             
             # OPTIONS 요청인 경우 (preflight)

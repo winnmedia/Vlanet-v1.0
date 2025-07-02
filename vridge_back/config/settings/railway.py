@@ -225,6 +225,7 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'x-idempotency-key',  # 멱등성 키 헤더 추가
 ]
 
 # CORS_ALLOW_ALL_ORIGINS를 False로 설정하여 CORS_ALLOWED_ORIGINS만 허용

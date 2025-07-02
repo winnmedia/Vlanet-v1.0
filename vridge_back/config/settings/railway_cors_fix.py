@@ -44,6 +44,7 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'x-idempotency-key',  # 멱등성 키 헤더 추가
 ]
 
 # CORS preflight 캐시 시간 (초)

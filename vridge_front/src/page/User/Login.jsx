@@ -43,7 +43,7 @@ export default function Login() {
 
   const CommonLoginSuccess = async (jwt) => {
     console.log('Login success, saving token:', jwt)
-    window.localStorage.setItem('VGID', JSON.stringify(jwt))
+    window.localStorage.setItem('VGID', jwt)
     
     // refetchProject를 기다린 후 navigate
     console.log('[Login] Loading project list after successful login')

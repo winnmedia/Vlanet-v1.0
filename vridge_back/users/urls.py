@@ -3,6 +3,8 @@ from . import views
 from .create_users_endpoint import CreateTestUsers
 from . import views_signup_with_email
 from . import views_profile
+from . import views_mypage
+from . import views_profile_upload
 
 urlpatterns = [
     path("login", views.SignIn.as_view()),
@@ -30,4 +32,13 @@ urlpatterns = [
     path("profile/change-password", views_profile.ChangePassword.as_view()),  # 비밀번호 변경
     path("profile/stats", views_profile.UserStats.as_view()),  # 사용자 통계
     path("profile/delete-account", views_profile.DeleteAccount.as_view()),  # 계정 삭제
+    
+    # 마이페이지 관련 URL
+    path("mypage", views_mypage.MyPageView.as_view()),  # 마이페이지 종합 정보
+    path("mypage/activity", views_mypage.UserActivityView.as_view()),  # 활동 내역
+    path("mypage/preferences", views_mypage.UserPreferencesView.as_view()),  # 사용자 설정
+    
+    # 프로필 업로드 관련 URL
+    path("profile/upload-image", views_profile_upload.ProfileImageUpload.as_view()),  # 프로필 이미지 업로드/삭제
+    path("profile/update", views_profile_upload.ProfileUpdate.as_view()),  # 프로필 정보 업데이트
 ]

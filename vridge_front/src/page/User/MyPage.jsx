@@ -1,28 +1,463 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './MyPage.scss'
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import { checkSession } from 'util/util'
+import { getMyPageInfo, uploadProfileImage, updateProfile } from 'api/user'
+import { useSelector } from 'react-redux'
 
 export default function MyPage() {
   const navigate = useNavigate()
+  const user = useSelector((state) => state.project.user)
+  const nickname = useSelector((state) => state.project.nickname)
+  
+  const [loading, setLoading] = useState(true)
+  const [myPageData, setMyPageData] = useState(null)
+  const [activeTab, setActiveTab] = useState('profile')
+  const [isEditing, setIsEditing] = useState(false)
+  const [profileImage, setProfileImage] = useState(null)
+  const [profileForm, setProfileForm] = useState({
+    nickname: '',
+    bio: '',
+    phone: '',
+    company: '',
+    position: ''
+  })
+  const [imagePreview, setImagePreview] = useState(null)
 
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
+    } else {
+      fetchMyPageData()
     }
   }, [navigate])
+
+  const fetchMyPageData = async () => {
+    try {
+      const response = await getMyPageInfo()
+      console.log('MyPage API response:', response)
+      if (response.data && response.data.status === 'success') {
+        setMyPageData(response.data.data)
+        setProfileForm({
+          nickname: response.data.data.profile.nickname || '',
+          bio: response.data.data.profile.bio || '',
+          phone: response.data.data.profile.phone || '',
+          company: response.data.data.profile.company || '',
+          position: response.data.data.profile.position || ''
+        })
+        if (response.data.data.profile.profile_image) {
+          setImagePreview(response.data.data.profile.profile_image)
+        }
+      }
+    } catch (error) {
+      console.error('마이페이지 데이터 로드 실패:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('이미지 크기는 5MB를 초과할 수 없습니다.')
+        return
+      }
+      setProfileImage(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleImageUpload = async () => {
+    if (!profileImage) return
+
+    const formData = new FormData()
+    formData.append('profile_image', profileImage)
+
+    try {
+      const response = await uploadProfileImage(formData)
+      if (response.data && response.data.status === 'success') {
+        alert('프로필 이미지가 업로드되었습니다.')
+        setProfileImage(null)
+        fetchMyPageData()
+      }
+    } catch (error) {
+      alert('이미지 업로드 실패: ' + (error.message || '알 수 없는 오류'))
+    }
+  }
+
+  const handleProfileUpdate = async () => {
+    try {
+      const response = await updateProfile(profileForm)
+      if (response.data && response.data.status === 'success') {
+        alert('프로필이 업데이트되었습니다.')
+        setIsEditing(false)
+        fetchMyPageData()
+      }
+    } catch (error) {
+      alert('프로필 업데이트 실패: ' + (error.message || '알 수 없는 오류'))
+    }
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setProfileForm(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const getProjectStatus = (status) => {
+    const statusMap = {
+      'planned': '계획됨',
+      'in_progress': '진행중',
+      'completed': '완료됨'
+    }
+    return statusMap[status] || status
+  }
+
+  const getProjectStatusClass = (status) => {
+    const classMap = {
+      'planned': 'status-planned',
+      'in_progress': 'status-progress',
+      'completed': 'status-completed'
+    }
+    return classMap[status] || ''
+  }
+
+  if (loading) {
+    return (
+      <PageTemplate>
+        <div className="cms_wrap">
+          <SideBar />
+          <main className="mypage">
+            <div className="loading">로딩 중...</div>
+          </main>
+        </div>
+      </PageTemplate>
+    )
+  }
+
+  if (!myPageData) {
+    return (
+      <PageTemplate>
+        <div className="cms_wrap">
+          <SideBar />
+          <main className="mypage">
+            <div className="error">데이터를 불러올 수 없습니다.</div>
+          </main>
+        </div>
+      </PageTemplate>
+    )
+  }
 
   return (
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar />
         <main className="mypage">
-          <div className="title">마이페이지</div>
-          <div className="content">
-            <p>마이페이지 기능은 준비 중입니다.</p>
+          <div className="mypage-header">
+            <h1>마이페이지</h1>
+            <div className="header-info">
+              <span className="welcome-text">{myPageData.profile.nickname}님, 환영합니다!</span>
+            </div>
+          </div>
+
+          <div className="mypage-tabs">
+            <button 
+              className={activeTab === 'profile' ? 'active' : ''}
+              onClick={() => setActiveTab('profile')}
+            >
+              프로필
+            </button>
+            <button 
+              className={activeTab === 'projects' ? 'active' : ''}
+              onClick={() => setActiveTab('projects')}
+            >
+              프로젝트
+            </button>
+            <button 
+              className={activeTab === 'activity' ? 'active' : ''}
+              onClick={() => setActiveTab('activity')}
+            >
+              활동 내역
+            </button>
+            <button 
+              className={activeTab === 'stats' ? 'active' : ''}
+              onClick={() => setActiveTab('stats')}
+            >
+              통계
+            </button>
+          </div>
+
+          <div className="mypage-content">
+            {activeTab === 'profile' && (
+              <div className="profile-section">
+                <div className="profile-header">
+                  <h2>프로필 정보</h2>
+                  {!isEditing && (
+                    <button className="edit-btn" onClick={() => setIsEditing(true)}>
+                      수정
+                    </button>
+                  )}
+                </div>
+
+                <div className="profile-image-section">
+                  <div className="profile-image-container">
+                    {imagePreview ? (
+                      <img src={imagePreview} alt="프로필" className="profile-image" />
+                    ) : (
+                      <div className="profile-image-placeholder">
+                        <span>{myPageData.profile.nickname.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  {isEditing && (
+                    <div className="image-upload">
+                      <input 
+                        type="file" 
+                        id="profile-image-input"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        style={{ display: 'none' }}
+                      />
+                      <label htmlFor="profile-image-input" className="upload-btn">
+                        이미지 선택
+                      </label>
+                      {profileImage && (
+                        <button onClick={handleImageUpload} className="upload-confirm-btn">
+                          업로드
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="profile-info">
+                  <div className="info-row">
+                    <label>이메일</label>
+                    <div className="info-value">{myPageData.profile.email}</div>
+                  </div>
+
+                  <div className="info-row">
+                    <label>닉네임</label>
+                    {isEditing ? (
+                      <input 
+                        type="text" 
+                        name="nickname"
+                        value={profileForm.nickname}
+                        onChange={handleInputChange}
+                        placeholder="닉네임"
+                      />
+                    ) : (
+                      <div className="info-value">{myPageData.profile.nickname}</div>
+                    )}
+                  </div>
+
+                  <div className="info-row">
+                    <label>자기소개</label>
+                    {isEditing ? (
+                      <textarea 
+                        name="bio"
+                        value={profileForm.bio}
+                        onChange={handleInputChange}
+                        placeholder="자기소개를 입력해주세요"
+                        rows="3"
+                      />
+                    ) : (
+                      <div className="info-value">{myPageData.profile.bio || '-'}</div>
+                    )}
+                  </div>
+
+                  <div className="info-row">
+                    <label>전화번호</label>
+                    {isEditing ? (
+                      <input 
+                        type="tel" 
+                        name="phone"
+                        value={profileForm.phone}
+                        onChange={handleInputChange}
+                        placeholder="전화번호"
+                      />
+                    ) : (
+                      <div className="info-value">{myPageData.profile.phone || '-'}</div>
+                    )}
+                  </div>
+
+                  <div className="info-row">
+                    <label>회사/소속</label>
+                    {isEditing ? (
+                      <input 
+                        type="text" 
+                        name="company"
+                        value={profileForm.company}
+                        onChange={handleInputChange}
+                        placeholder="회사/소속"
+                      />
+                    ) : (
+                      <div className="info-value">{myPageData.profile.company || '-'}</div>
+                    )}
+                  </div>
+
+                  <div className="info-row">
+                    <label>직책</label>
+                    {isEditing ? (
+                      <input 
+                        type="text" 
+                        name="position"
+                        value={profileForm.position}
+                        onChange={handleInputChange}
+                        placeholder="직책"
+                      />
+                    ) : (
+                      <div className="info-value">{myPageData.profile.position || '-'}</div>
+                    )}
+                  </div>
+
+                  <div className="info-row">
+                    <label>로그인 방식</label>
+                    <div className="info-value">{myPageData.profile.login_method}</div>
+                  </div>
+
+                  <div className="info-row">
+                    <label>가입일</label>
+                    <div className="info-value">{myPageData.profile.date_joined}</div>
+                  </div>
+
+                  {isEditing && (
+                    <div className="profile-actions">
+                      <button onClick={handleProfileUpdate} className="save-btn">
+                        저장
+                      </button>
+                      <button onClick={() => {
+                        setIsEditing(false)
+                        setProfileForm({
+                          nickname: myPageData.profile.nickname || '',
+                          bio: myPageData.profile.bio || '',
+                          phone: myPageData.profile.phone || '',
+                          company: myPageData.profile.company || '',
+                          position: myPageData.profile.position || ''
+                        })
+                      }} className="cancel-btn">
+                        취소
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'projects' && (
+              <div className="projects-section">
+                <div className="project-group">
+                  <h3>내가 소유한 프로젝트 ({myPageData.projects.owned.total}개)</h3>
+                  <div className="project-list">
+                    {myPageData.projects.owned.recent.map(project => (
+                      <div key={project.id} className="project-item">
+                        <div className="project-name">{project.name}</div>
+                        <div className="project-info">
+                          <span className="created-date">생성일: {project.created}</span>
+                          <span className={`project-status ${getProjectStatusClass(project.status)}`}>
+                            {getProjectStatus(project.status)}
+                          </span>
+                        </div>
+                        <button 
+                          className="view-project-btn"
+                          onClick={() => navigate(`/ProjectView/${project.id}`)}
+                        >
+                          보기
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="project-group">
+                  <h3>참여 중인 프로젝트 ({myPageData.projects.member.total}개)</h3>
+                  <div className="sub-stats">
+                    <span>관리자: {myPageData.projects.member.as_manager}개</span>
+                    <span>멤버: {myPageData.projects.member.as_member}개</span>
+                  </div>
+                  <div className="project-list">
+                    {myPageData.projects.member.recent.map(project => (
+                      <div key={project.id} className="project-item">
+                        <div className="project-name">{project.name}</div>
+                        <div className="project-info">
+                          <span className="role">{project.role === 'manager' ? '관리자' : '멤버'}</span>
+                          <span className="joined-date">참여일: {project.joined}</span>
+                        </div>
+                        <button 
+                          className="view-project-btn"
+                          onClick={() => navigate(`/ProjectView/${project.id}`)}
+                        >
+                          보기
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'activity' && (
+              <div className="activity-section">
+                <h2>최근 활동</h2>
+                <div className="activity-list">
+                  {myPageData.projects.recent_activity.map((activity, index) => (
+                    <div key={index} className="activity-item">
+                      <div className="activity-name">
+                        {activity.name}
+                        {activity.is_owner && <span className="owner-badge">소유자</span>}
+                      </div>
+                      <div className="activity-time">
+                        마지막 업데이트: {activity.updated}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <h3>최근 메모</h3>
+                <div className="memo-list">
+                  {myPageData.recent_memos.map(memo => (
+                    <div key={memo.id} className="memo-item">
+                      <div className="memo-content">{memo.content}</div>
+                      <div className="memo-date">{memo.created}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'stats' && (
+              <div className="stats-section">
+                <h2>통계</h2>
+                <div className="stats-grid">
+                  <div className="stat-card">
+                    <div className="stat-label">전체 프로젝트</div>
+                    <div className="stat-value">{myPageData.stats.total_projects}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-label">진행 중인 프로젝트</div>
+                    <div className="stat-value">{myPageData.stats.active_projects}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-label">완료된 프로젝트</div>
+                    <div className="stat-value">{myPageData.stats.completed_projects}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-label">협업자 수</div>
+                    <div className="stat-value">{myPageData.stats.total_collaborators}</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>

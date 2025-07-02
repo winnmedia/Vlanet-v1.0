@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <!-- Vlanet Logo -->
+  <g fill="#0059db">
+    <!-- V -->
+    <path d="M10 10 L20 40 L30 10 L25 10 L20 30 L15 10 Z"/>
+    
+    <!-- L -->
+    <rect x="35" y="10" width="5" height="25"/>
+    <rect x="35" y="35" width="15" height="5"/>
+    
+    <!-- A -->
+    <path d="M55 40 L60 25 L65 25 L70 40 L66 40 L64.5 35 L61.5 35 L60 40 Z M62 31 L64 31 L63 27 Z"/>
+    
+    <!-- N -->
+    <rect x="75" y="25" width="4" height="15"/>
+    <path d="M79 25 L79 29 L86 40 L86 25 L90 25 L90 40 L86 40 L79 29 L79 40"/>
+    
+    <!-- E -->
+    <rect x="95" y="25" width="4" height="15"/>
+    <rect x="95" y="25" width="12" height="3"/>
+    <rect x="95" y="31" width="10" height="3"/>
+    <rect x="95" y="37" width="12" height="3"/>
+    
+    <!-- T -->
+    <rect x="112" y="25" width="15" height="3"/>
+    <rect x="117.5" y="25" width="4" height="15"/>
+  </g>
+  
+  <!-- Tagline -->
+  <text x="10" y="52" font-family="Arial, sans-serif" font-size="10" fill="#666">Video Content Management</text>
+</svg>

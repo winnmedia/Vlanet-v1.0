@@ -140,39 +140,44 @@
             </div>
         {% endfor %}
     {% else %}
-        <p>{% trans 'You don't have permission to view or edit anything.' %}</p>
+        <p>{% trans "You don't have permission to view or edit anything." %}</p>
     {% endif %}
 </div>
 
 <script>
-    // 통계 데이터 로드 (실제로는 AJAX로 서버에서 가져와야 함)
+    // 통계 데이터 로드
     document.addEventListener('DOMContentLoaded', function() {
-        // 임시 데이터 - 실제로는 서버에서 가져와야 함
-        const stats = {
-            projects: Math.floor(Math.random() * 50) + 10,
-            users: Math.floor(Math.random() * 200) + 50,
-            feedbacks: Math.floor(Math.random() * 500) + 100,
-            files: Math.floor(Math.random() * 1000) + 200
-        };
-        
-        // 카운트 애니메이션
-        function animateCount(id, target) {
-            let current = 0;
-            const increment = target / 50;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(timer);
+        // 실제 데이터를 서버에서 가져오기
+        fetch('/admin-dashboard/stats/')
+            .then(response => response.json())
+            .then(stats => {
+                // 카운트 애니메이션
+                function animateCount(id, target) {
+                    let current = 0;
+                    const increment = target / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        document.getElementById(id).textContent = Math.floor(current);
+                    }, 20);
                 }
-                document.getElementById(id).textContent = Math.floor(current);
-            }, 20);
-        }
-        
-        animateCount('project-count', stats.projects);
-        animateCount('user-count', stats.users);
-        animateCount('feedback-count', stats.feedbacks);
-        animateCount('file-count', stats.files);
+                
+                animateCount('project-count', stats.projects);
+                animateCount('user-count', stats.users);
+                animateCount('feedback-count', stats.feedbacks);
+                animateCount('file-count', stats.files);
+            })
+            .catch(error => {
+                console.error('통계 데이터 로드 실패:', error);
+                // 에러 시 기본값 표시
+                document.getElementById('project-count').textContent = '0';
+                document.getElementById('user-count').textContent = '0';
+                document.getElementById('feedback-count').textContent = '0';
+                document.getElementById('file-count').textContent = '0';
+            });
     });
 </script>
 {% endblock %}

@@ -9,25 +9,88 @@
       width: 150px;
     }
   }
-  .profile {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    .nick {
-      width: 40px;
-      height: 40px;
-      background: #516e8b;
-      border-radius: 100%;
-      position: relative;
-      overflow: hidden;
-      line-height: 40px;
-      text-align: Center;
-      font-size: 16px;
-      color: #fff;
-      margin-right: 10px;
+  .profile-wrapper {
+    position: relative;
+    
+    .profile {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      
+      &:hover {
+        background-color: #f0f0f0;
+      }
+      
+      .nick {
+        width: 40px;
+        height: 40px;
+        background: #516e8b;
+        border-radius: 100%;
+        position: relative;
+        overflow: hidden;
+        line-height: 40px;
+        text-align: Center;
+        font-size: 16px;
+        color: #fff;
+        margin-right: 10px;
+        
+        &.clickable {
+          cursor: pointer;
+        }
+      }
+      .mail {
+        font-size: 13px;
+      }
     }
-    .mail {
-      font-size: 13px;
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      min-width: 200px;
+      z-index: 1000;
+      overflow: hidden;
+      
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background-color: #f5f5f5;
+        }
+        
+        &.logout {
+          color: #ff4757;
+          
+          &:hover {
+            background-color: #fff1f0;
+          }
+        }
+        
+        .dropdown-icon {
+          margin-right: 10px;
+          font-size: 16px;
+        }
+      }
+      
+      .dropdown-divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 4px 0;
+      }
     }
   }
 }

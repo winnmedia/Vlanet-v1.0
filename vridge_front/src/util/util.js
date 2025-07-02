@@ -63,6 +63,17 @@ export function axiosCredentials(method, url, data, config) {
     });
 }
 
+export function axiosFormData(method, url, formData, config) {
+  // FormData 전송을 위한 특별한 설정
+  return axiosCredentials(method, url, formData, {
+    ...config,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      ...config?.headers,
+    }
+  });
+}
+
 export function checkSession() {
   let session = window.localStorage.getItem('VGID')
   if (session) {

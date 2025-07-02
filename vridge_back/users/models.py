@@ -17,6 +17,14 @@ class User(AbstractUser):
         max_length=50, verbose_name="로그인 방식", choices=LOGIN_CHOICES, default="email"
     )
     email_secret = models.CharField(verbose_name="비밀번호 찾기(인증번호)", max_length=10, null=True, blank=True)
+    
+    # 프로필 추가 필드
+    profile_image = models.ImageField(verbose_name="프로필 이미지", upload_to="profile_images/", null=True, blank=True)
+    bio = models.TextField(verbose_name="자기소개", max_length=500, blank=True)
+    phone = models.CharField(verbose_name="전화번호", max_length=20, blank=True)
+    company = models.CharField(verbose_name="회사/소속", max_length=100, blank=True)
+    position = models.CharField(verbose_name="직책", max_length=100, blank=True)
+    
     objects = managers.CustomUserManager()
 
     class Meta:

@@ -80,7 +80,9 @@ class ProjectAdmin(admin.ModelAdmin):
             obj.basic_plan, obj.story_board, obj.filming, obj.video_edit,
             obj.post_work, obj.video_preview, obj.confirmation, obj.video_delivery
         ]
-        completed = sum(1 for phase in phases if phase and phase.end_date and phase.end_date < datetime.date.today())
+        today = datetime.date.today()
+        completed = sum(1 for phase in phases if phase and phase.end_date and 
+                       (phase.end_date.date() if hasattr(phase.end_date, 'date') else phase.end_date) < today)
         total = len(phases)
         percentage = (completed / total) * 100
         
@@ -99,10 +101,27 @@ class ProjectAdmin(admin.ModelAdmin):
     get_members_count.short_description = '참여자'
     
     def get_status(self, obj):
-        if obj.video_delivery and obj.video_delivery.end_date and obj.video_delivery.end_date < datetime.date.today():
+        # 비디오 배송이 완료된 경우
+        if obj.video_delivery and hasattr(obj.video_delivery, 'end_date'):
+            if obj.video_delivery.end_date:
+                today = datetime.date.today()
+                end_date = obj.video_delivery.end_date
+                if hasattr(end_date, 'date'):
+                    end_date = end_date.date()
+                if end_date < today:
+                    return format_html('<span style="color: #27ae60; font-weight: bold;">완료</span>')
+        
+        # 진행 상태 확인
+        phases = [
+            obj.basic_plan, obj.story_board, obj.filming, obj.video_edit,
+            obj.post_work, obj.video_preview, obj.confirmation, obj.video_delivery
+        ]
+        active_phases = [p for p in phases if p is not None]
+        
+        if len(active_phases) == 0:
+            return format_html('<span style="color: #95a5a6; font-weight: bold;">대기</span>')
+        elif len(active_phases) == len(phases):
             return format_html('<span style="color: #27ae60; font-weight: bold;">완료</span>')
-        elif obj.end_date and obj.end_date < datetime.date.today():
-            return format_html('<span style="color: #e74c3c; font-weight: bold;">지연</span>')
         else:
             return format_html('<span style="color: #3498db; font-weight: bold;">진행중</span>')
     get_status.short_description = '상태'

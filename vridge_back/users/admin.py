@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.db.models import Count
 from . import models
+from projects.models import Project
 
 
 @admin.register(models.User)
@@ -96,7 +97,9 @@ class UserAdmin(UserAdmin):
     
     def get_project_count(self, obj):
         owned = obj.projects.count()
-        member = obj.member_projects.count()
+        # Members 모델을 통해 참여 중인 프로젝트 수 확인
+        from projects.models import Members
+        member = Members.objects.filter(user=obj).count()
         total = owned + member
         return format_html(
             '<span style="color: #0059db; font-weight: bold;">{}</span> <small>(소유: {}, 참여: {})</small>',

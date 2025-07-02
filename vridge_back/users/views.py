@@ -189,6 +189,7 @@ class SignIn(View):
                         "message": "success",
                         "vridge_session": vridge_session,
                         "user": user.username,
+                        "nickname": user.nickname if user.nickname else user.username,
                     },
                     status=201,
                 )

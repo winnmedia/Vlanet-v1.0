@@ -61,6 +61,6 @@ try:
 except admin.sites.NotRegistered:
     pass
 
-admin.site.site_title = "윈앤미디어"
-admin.site.site_header = "윈앤미디어"
-admin.site.index_title = "윈앤미디어"
+admin.site.site_title = "Vlanet 관리자"
+admin.site.site_header = "Vlanet 관리 시스템"
+admin.site.index_title = "대시보드"

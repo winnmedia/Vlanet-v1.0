@@ -33,6 +33,11 @@ class UserProfile(View):
                 "date_joined": user.date_joined.strftime("%Y-%m-%d"),
                 "projects_count": user.projects.count(),
                 "member_projects_count": user.members.count(),
+                "profile_image": user.profile_image.url if user.profile_image else None,
+                "bio": user.bio,
+                "phone": user.phone,
+                "company": user.company,
+                "position": user.position,
             }
             
             return JsonResponse({

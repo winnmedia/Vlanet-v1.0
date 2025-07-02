@@ -5,7 +5,7 @@ import SideBar from 'components/SideBar'
 import ProjectInput from 'tasks/Project/ProjectInput'
 import useInput from 'hooks/UseInput'
 import useFile from 'hooks/Usefile'
-import ProcessDate from 'tasks/Project/ProcessDate'
+import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
 
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -13,6 +13,7 @@ import { CreateProjectAPI } from 'api/project'
 import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
+import { formatProcessDatesForBackend } from 'utils/dateUtils'
 
 export default function ProjectCreate() {
   const dispatch = useDispatch()
@@ -61,14 +62,11 @@ export default function ProjectCreate() {
       formData.append('inputs', JSON.stringify(inputs))
       
       // process 데이터를 포맷팅하여 전송
-      const formattedProcess = process.map(item => ({
-        key: item.key,
-        startDate: item.startDate ? moment(item.startDate).format('YYYY-MM-DD HH:mm') : null,
-        endDate: item.endDate ? moment(item.endDate).format('YYYY-MM-DD HH:mm') : null
-      }))
+      const formattedProcess = formatProcessDatesForBackend(process)
       
       // 디버깅: 전송되는 날짜 형식 확인
-      console.log('[ProjectCreate] Process data:', formattedProcess)
+      console.log('[ProjectCreate] Process data before format:', process)
+      console.log('[ProjectCreate] Process data after format:', formattedProcess)
       
       formData.append('process', JSON.stringify(formattedProcess))
       
@@ -128,7 +126,7 @@ export default function ProjectCreate() {
             <div className="group mt50">
               <div className="part day">
                 <div className="s_title">프로젝트 일정</div>
-                <ProcessDate process={process} set_process={set_process} />
+                <ProcessDateEnhanced process={process} set_process={set_process} />
               </div>
             </div>
             <div className="group grid mt50">

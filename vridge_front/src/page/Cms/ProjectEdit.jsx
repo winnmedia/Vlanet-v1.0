@@ -6,7 +6,8 @@ import InviteInput from 'tasks/Project/InviteInput'
 import ProjectInput from 'tasks/Project/ProjectInput'
 import useInput from 'hooks/UseInput'
 import useFile from 'hooks/Usefile'
-import ProcessDate from 'tasks/Project/ProcessDate'
+import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
+import { formatProcessDatesForBackend } from 'utils/dateUtils'
 
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -68,7 +69,13 @@ export default function ProjectEdit() {
     if (ValidForm) {
       const formData = new FormData()
       formData.append('inputs', JSON.stringify(inputs))
-      formData.append('process', JSON.stringify(process))
+      
+      // 날짜 포맷팅 적용
+      const formattedProcess = formatProcessDatesForBackend(process)
+      console.log('[ProjectEdit] Process data before format:', process)
+      console.log('[ProjectEdit] Process data after format:', formattedProcess)
+      
+      formData.append('process', JSON.stringify(formattedProcess))
       files.forEach((file, index) => {
         formData.append('files', file)
       })
@@ -182,7 +189,7 @@ export default function ProjectEdit() {
               <div className="group mt50">
                 <div className="part day">
                   <div className="s_title">프로젝트 일정</div>
-                  <ProcessDate process={process} set_process={set_process} />
+                  <ProcessDateEnhanced process={process} set_process={set_process} />
                 </div>
               </div>
               <div className="group grid mt50">

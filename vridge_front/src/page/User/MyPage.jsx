@@ -202,7 +202,7 @@ export default function MyPage() {
           <div className="mypage-header">
             <h1>마이페이지</h1>
             <div className="header-info">
-              <span className="welcome-text">{myPageData?.profile?.nickname || nickname || '사용자'}님, 환영합니다!</span>
+              <span className="welcome-text">{myPageData?.profile?.nickname || nickname || '사용자'}님, 환영합니다</span>
             </div>
           </div>
 

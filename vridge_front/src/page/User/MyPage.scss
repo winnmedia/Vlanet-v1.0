@@ -6,7 +6,7 @@ $secondary-color: #EC4899; // 핑크 (포인트 색상)
 $success-color: #10B981;   // 민트 그린
 $warning-color: #F59E0B;   // 오렌지
 $danger-color: #EF4444;    // 레드
-$bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
 
 .mypage {
   padding: 20px;
@@ -43,32 +43,27 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   .mypage-header {
     background: white;
     border-radius: 16px;
-    padding: 32px;
+    padding: 24px 32px;
     margin-bottom: 24px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: $bg-gradient;
+    background: $primary-color;
     color: white;
 
     h1 {
-      font-size: 32px;
+      font-size: 26px;
       font-weight: 700;
       margin: 0;
       display: flex;
       align-items: center;
       
-      &::before {
-        content: '👤';
-        margin-right: 12px;
-        font-size: 36px;
-      }
     }
 
     .header-info {
       .welcome-text {
-        font-size: 18px;
+        font-size: 16px;
         opacity: 0.95;
         font-weight: 500;
       }
@@ -143,17 +138,13 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-bottom: 2px solid #f3f4f6;
 
         h2 {
-          font-size: 24px;
+          font-size: 22px;
           font-weight: 700;
           color: #1f2937;
           margin: 0;
           display: flex;
           align-items: center;
           
-          &::before {
-            content: '✏️';
-            margin-right: 8px;
-          }
         }
 
         .edit-btn {
@@ -176,9 +167,6 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             box-shadow: 0 4px 12px rgba($primary-color, 0.3);
           }
 
-          &::before {
-            content: '✏️';
-          }
         }
       }
 
@@ -213,7 +201,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           .profile-image-placeholder {
             width: 100%;
             height: 100%;
-            background: $bg-gradient;
+            background: $primary-color;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -249,7 +237,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           }
 
           .upload-confirm-btn {
-            background: $success-color;
+            background: $primary-color;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -260,9 +248,9 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             transition: all 0.3s;
 
             &:hover {
-              background: darken($success-color, 5%);
+              background: $primary-dark;
               transform: translateY(-1px);
-              box-shadow: 0 4px 12px rgba($success-color, 0.3);
+              box-shadow: 0 4px 12px rgba($primary-color, 0.3);
             }
 
             &:disabled {
@@ -292,7 +280,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           label {
             font-weight: 600;
             color: #4b5563;
-            font-size: 15px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -300,7 +288,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
           .info-value {
             color: #1f2937;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
           }
 
@@ -335,11 +323,11 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           justify-content: flex-end;
 
           .save-btn, .cancel-btn {
-            padding: 12px 32px;
+            padding: 10px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             transition: all 0.3s;
           }
@@ -382,7 +370,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         h3 {
-          font-size: 20px;
+          font-size: 18px;
           font-weight: 700;
           color: #1f2937;
           margin-bottom: 16px;
@@ -390,9 +378,6 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           align-items: center;
           gap: 12px;
 
-          &::before {
-            content: '📁';
-          }
         }
 
         .sub-stats {
@@ -432,7 +417,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             }
 
             .project-name {
-              font-size: 17px;
+              font-size: 15px;
               font-weight: 600;
               color: #1f2937;
             }
@@ -456,21 +441,21 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 }
 
                 &.status-progress {
-                  background: rgba($warning-color, 0.1);
-                  color: $warning-color;
+                  background: rgba($primary-color, 0.1);
+                  color: $primary-color;
                 }
 
                 &.status-completed {
-                  background: rgba($success-color, 0.1);
-                  color: $success-color;
+                  background: rgba($primary-dark, 0.1);
+                  color: $primary-dark;
                 }
               }
 
               .role {
                 padding: 6px 16px;
                 border-radius: 20px;
-                background: rgba($secondary-color, 0.1);
-                color: $secondary-color;
+                background: rgba($primary-color, 0.1);
+                color: $primary-color;
                 font-size: 13px;
                 font-weight: 600;
               }
@@ -499,7 +484,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
     .activity-section {
       h2, h3 {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 700;
         color: #1f2937;
         margin-bottom: 24px;
@@ -508,17 +493,11 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         gap: 8px;
       }
 
-      h2::before {
-        content: '📊';
-      }
 
       h3 {
-        font-size: 18px;
+        font-size: 16px;
         margin-top: 40px;
         
-        &::before {
-          content: '📝';
-        }
       }
 
       .activity-list {
@@ -576,7 +555,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           background: #f9fafb;
           padding: 20px;
           border-radius: 12px;
-          border-left: 4px solid $secondary-color;
+          border-left: 4px solid $primary-color;
           transition: all 0.3s;
 
           &:hover {
@@ -602,7 +581,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
     .stats-section {
       h2 {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 700;
         color: #1f2937;
         margin-bottom: 32px;
@@ -610,9 +589,6 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         align-items: center;
         gap: 8px;
 
-        &::before {
-          content: '📈';
-        }
       }
 
       .stats-grid {
@@ -621,7 +597,7 @@ $bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         gap: 24px;
 
         .stat-card {
-          background: $bg-gradient;
+          background: $primary-color;
           padding: 32px;
           border-radius: 16px;
           text-align: center;

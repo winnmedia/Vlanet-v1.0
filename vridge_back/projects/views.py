@@ -24,6 +24,7 @@ from django.db.models import F
 from django.db import transaction
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ProjectList(View):
     @user_validator
     def get(self, request):
@@ -257,6 +258,7 @@ class ProjectList(View):
 
 
 # 이미 초대를 보낸경우, 멤버에 있는 경우, 나 자신도 안됨
+@method_decorator(csrf_exempt, name='dispatch')
 class InviteMember(View):
     @user_validator
     def post(self, request, project_id):
@@ -319,6 +321,7 @@ class InviteMember(View):
 
 # 초대 받았을때 이미 멤버에 있거나 초대유효가 없으면 안됨, 나 자신도 안됨
 # 초대요청이 되면 해당 프로젝트에 멤버가 생성
+@method_decorator(csrf_exempt, name='dispatch')
 class AcceptInvite(View):
     @user_validator
     def get(self, request, uid, token):

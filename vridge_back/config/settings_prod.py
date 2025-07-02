@@ -64,6 +64,7 @@ CORS_ALLOWED_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'x-idempotency-key',
 ]
 CORS_ALLOWED_METHODS = [
     'DELETE',

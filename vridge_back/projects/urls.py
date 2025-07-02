@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from . import views_improved
 from . import views_fixed
+from . import views_safe
 
 app_name = "projects"
 
@@ -13,7 +14,7 @@ urlpatterns = [
     path(
         "invite/<str:uid>/<str:token>", views.AcceptInvite.as_view(), name="invite"
     ),  # 초대 받기
-    path("create", views_fixed.CreateProjectFixed.as_view()),  # 임시로 fixed 버전 사용
+    path("create", views_safe.CreateProjectSafe.as_view()),  # FeedBack 없이 안전하게 작동
     
     # 원본 버전 (백업)
     path("create_original", views.CreateProject.as_view()),

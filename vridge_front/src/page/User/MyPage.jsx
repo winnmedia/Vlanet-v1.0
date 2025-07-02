@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './MyPage.scss'
 import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
 import { checkSession } from 'util/util'
 import { getMyPageInfo, uploadProfileImage, updateProfile } from 'api/user'
 import { useSelector } from 'react-redux'
@@ -182,12 +181,9 @@ export default function MyPage() {
   if (loading) {
     return (
       <PageTemplate>
-        <div className="cms_wrap">
-          <SideBar />
-          <main className="mypage">
-            <div className="loading">마이페이지 불러오는 중...</div>
-          </main>
-        </div>
+        <main className="mypage-container">
+          <div className="loading">마이페이지 불러오는 중...</div>
+        </main>
       </PageTemplate>
     )
   }
@@ -196,9 +192,8 @@ export default function MyPage() {
 
   return (
     <PageTemplate>
-      <div className="cms_wrap">
-        <SideBar />
-        <main className="mypage">
+      <main className="mypage-container">
+        <div className="mypage">
           <div className="mypage-header">
             <h1>마이페이지</h1>
             <div className="header-info">
@@ -503,8 +498,8 @@ export default function MyPage() {
               </div>
             )}
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </PageTemplate>
   )
 }

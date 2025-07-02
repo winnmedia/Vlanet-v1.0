@@ -36,6 +36,7 @@ urlpatterns = [
     path("cors-test/", cors_test_view, name="cors_test"),  # CORS 테스트
     path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
     path("admin/", admin.site.urls),
+    path("admin-dashboard/", include("admin_dashboard.urls")),  # 관리자 대시보드
     path("users/", include("users.urls")),
     path("projects/", include("projects.urls")),
     path("feedbacks/", include("feedbacks.urls")),

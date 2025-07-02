@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from .create_users_endpoint import CreateTestUsers
 from . import views_signup_with_email
+from . import views_profile
 
 urlpatterns = [
     path("login", views.SignIn.as_view()),
@@ -23,4 +24,10 @@ urlpatterns = [
     path("memo", views.UserMemo.as_view()),  # create memo
     path("memo/<int:id>", views.UserMemo.as_view()),  # delete memo
     path("create-test-users", CreateTestUsers.as_view()),  # 테스트 사용자 생성
+    
+    # 프로필 관련 URL
+    path("profile", views_profile.UserProfile.as_view()),  # 프로필 조회/수정
+    path("profile/change-password", views_profile.ChangePassword.as_view()),  # 비밀번호 변경
+    path("profile/stats", views_profile.UserStats.as_view()),  # 사용자 통계
+    path("profile/delete-account", views_profile.DeleteAccount.as_view()),  # 계정 삭제
 ]

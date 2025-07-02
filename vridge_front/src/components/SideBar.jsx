@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
+import axios from '../api/axios'
 
 export default function SideBar({ tab, on_menu }) {
   const navigate = useNavigate()
@@ -12,6 +13,7 @@ export default function SideBar({ tab, on_menu }) {
   const [SubMenu, SetSubMenu] = useState(false)
   const [tab_name, set_tab_name] = useState('')
   const [SortProject, SetSortProject] = useState([])
+  const [isAdmin, setIsAdmin] = useState(false)
   const submenuRef = useRef(null)
   const sidebarRef = useRef(null)
 
@@ -27,6 +29,23 @@ export default function SideBar({ tab, on_menu }) {
       SetSortProject(projects)
     }
   }, [project_list])
+
+  // 관리자 권한 확인
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (checkSession()) {
+        try {
+          const response = await axios.get('/users/profile')
+          if (response.data.status === 'success' && response.data.profile.is_staff) {
+            setIsAdmin(true)
+          }
+        } catch (error) {
+          console.error('Failed to check admin status:', error)
+        }
+      }
+    }
+    checkAdminStatus()
+  }, [user])
 
   useEffect(() => {
     if (on_menu === true) {
@@ -133,8 +152,27 @@ export default function SideBar({ tab, on_menu }) {
             >
               콘텐츠
             </li>
+            {isAdmin && (
+              <li
+                className={cx({ active: path === '/AdminDashboard' && !SubMenu })}
+                onClick={() => {
+                  SetSubMenu(false)
+                  navigate('/AdminDashboard')
+                }}
+              >
+                관리자
+              </li>
+            )}
           </ul>
         </nav>
+        <div
+          className={cx('mypage', { active: path === '/MyPage' })}
+          onClick={() => {
+            navigate('/MyPage')
+          }}
+        >
+          마이페이지
+        </div>
         <div
           className="logout"
           onClick={() => {

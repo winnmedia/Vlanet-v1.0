@@ -315,6 +315,7 @@ $border-color: #e8e8e8;
           
           .date-picker-wrapper {
             position: relative;
+            width: 100%;
             
             svg {
               position: absolute;
@@ -325,11 +326,12 @@ $border-color: #e8e8e8;
               width: 14px;
               height: 14px;
               pointer-events: none;
+              z-index: 1;
             }
             
             .date-input {
               width: 100%;
-              padding: 8px 36px 8px 32px;
+              padding: 8px 40px 8px 32px;
               border: 1px solid $border-color;
               border-radius: 8px;
               font-size: 12px;
@@ -498,6 +500,7 @@ $border-color: #e8e8e8;
 // DatePicker 커스터마이즈 (컴팩트)
 .react-datepicker-wrapper {
   width: 100%;
+  position: relative;
 }
 
 .react-datepicker__input-container {
@@ -505,27 +508,53 @@ $border-color: #e8e8e8;
   position: relative;
   
   .react-datepicker__close-icon {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: absolute !important;
+    right: 10px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     cursor: pointer;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    z-index: 2;
     
     &::after {
-      content: '×';
-      font-size: 18px;
-      line-height: 1;
-      color: #999;
-      background: none;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      content: '×' !important;
+      font-size: 20px !important;
+      line-height: 1 !important;
+      color: #999 !important;
+      background: none !important;
+      width: 20px !important;
+      height: 20px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      position: relative !important;
+      top: 0 !important;
+      right: 0 !important;
+      transform: none !important;
     }
     
     &:hover::after {
-      color: $primary-color;
+      color: $primary-color !important;
+    }
+  }
+}
+
+// DatePicker 내부 스타일 오버라이드
+.date-picker-wrapper {
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+  
+  .react-datepicker__input-container {
+    width: 100%;
+    position: relative;
+    
+    input {
+      padding-right: 40px !important;
     }
   }
 }

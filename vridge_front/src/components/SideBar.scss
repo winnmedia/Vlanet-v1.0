@@ -148,6 +148,30 @@
       }
     }
   }
+  .mypage {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 120px;
+    width: calc(100% - 60px);
+    text-align: center;
+    line-height: 54px;
+    background: #f5f5f5;
+    color: #333;
+    border-radius: 15px;
+    height: 54px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    &:hover {
+      background: #e0e0e0;
+      color: #012fff;
+    }
+    &.active {
+      background: #012fff;
+      color: #fff;
+    }
+  }
   .logout {
     position: absolute;
     left: 50%;

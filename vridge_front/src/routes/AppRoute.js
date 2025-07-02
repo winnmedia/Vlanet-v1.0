@@ -7,6 +7,8 @@ const Home = lazy(() => import('page/Home'))
 const Login = lazy(() => import('page/User/Login'))
 const Signup = lazy(() => import('page/User/Signup'))
 const ResetPw = lazy(() => import('page/User/ResetPw'))
+const MyPage = lazy(() => import('page/User/MyPage'))
+const AdminDashboard = lazy(() => import('page/Admin/AdminDashboard'))
 const ProjectCreate = lazy(() => import('page/Cms/ProjectCreate'))
 const ProjectEdit = lazy(() => import('page/Cms/ProjectEdit'))
 const ProjectView = lazy(() => import('page/Cms/ProjectView'))
@@ -27,6 +29,8 @@ export default function AppRoute() {
     { path: '/Login', component: <LazyWrapper><Login /></LazyWrapper> },
     { path: '/Signup', component: <LazyWrapper><Signup /></LazyWrapper> },
     { path: '/ResetPw', component: <LazyWrapper><ResetPw /></LazyWrapper> },
+    { path: '/MyPage', component: <LazyWrapper><MyPage /></LazyWrapper> },
+    { path: '/AdminDashboard', component: <LazyWrapper><AdminDashboard /></LazyWrapper> },
     { path: '/Calendar', component: <LazyWrapper><Calendar /></LazyWrapper> },
     { path: '/ProjectCreate', component: <LazyWrapper><ProjectCreate /></LazyWrapper> },
     { path: '/ProjectEdit/:project_id', component: <LazyWrapper><ProjectEdit /></LazyWrapper> },

@@ -16,8 +16,11 @@ export function GetProject(project_id) {
   )
 }
 
-// 프로젝트 생성
+// 프로젝트 생성 (멱등성 키 포함)
 export function CreateProjectAPI(data) {
+  // 멱등성 키 생성 (타임스탬프 + 랜덤 문자열)
+  const idempotencyKey = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  
   return axiosCredentials(
     'post',
     `/projects/create`,
@@ -25,6 +28,7 @@ export function CreateProjectAPI(data) {
     {
       headers: {
         'Content-Type': 'multipart/form-data',
+        'X-Idempotency-Key': idempotencyKey,
       },
     },
   )

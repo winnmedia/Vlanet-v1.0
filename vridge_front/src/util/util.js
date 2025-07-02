@@ -39,12 +39,28 @@ export function axiosCredentials(method, url, data, config) {
     ...config,
   };
   
-  console.log('API Request:', method, url); // 디버깅용
+  console.log('[axiosCredentials] === REQUEST ===');
+  console.log('[axiosCredentials] Method:', method);
+  console.log('[axiosCredentials] URL:', url);
+  console.log('[axiosCredentials] Headers:', axiosConfig.headers);
+  console.log('[axiosCredentials] Timestamp:', new Date().toISOString());
   
-  return axios(axiosConfig).catch(error => {
-    console.error('API Error:', error.response?.data || error.message);
-    throw error;
-  });
+  return axios(axiosConfig)
+    .then(response => {
+      console.log('[axiosCredentials] === RESPONSE SUCCESS ===');
+      console.log('[axiosCredentials] URL:', url);
+      console.log('[axiosCredentials] Status:', response.status);
+      console.log('[axiosCredentials] Data:', response.data);
+      console.log('[axiosCredentials] Timestamp:', new Date().toISOString());
+      return response;
+    })
+    .catch(error => {
+      console.log('[axiosCredentials] === RESPONSE ERROR ===');
+      console.log('[axiosCredentials] URL:', url);
+      console.log('[axiosCredentials] Error:', error.response?.data || error.message);
+      console.log('[axiosCredentials] Timestamp:', new Date().toISOString());
+      throw error;
+    });
 }
 
 export function checkSession() {

@@ -21,6 +21,9 @@ export function CreateProjectAPI(data) {
   // 멱등성 키 생성 (타임스탬프 + 랜덤 문자열)
   const idempotencyKey = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   
+  console.log('[API] CreateProject called with idempotency key:', idempotencyKey)
+  console.log('[API] Request timestamp:', new Date().toISOString())
+  
   return axiosCredentials(
     'post',
     `/projects/create`,

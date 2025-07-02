@@ -37,6 +37,9 @@ class CreateProjectIdempotent(View):
                 # 클라이언트가 키를 제공하지 않은 경우, 요청 내용으로 생성
                 key_source = f"{user.id}_{inputs.get('name', '')}_{json.dumps(inputs, sort_keys=True)}"
                 idempotency_key = hashlib.md5(key_source.encode()).hexdigest()
+                logger.warning(f"No idempotency key provided, generated: {idempotency_key}")
+            else:
+                logger.info(f"Received idempotency key: {idempotency_key}")
             
             # 캐시 키
             cache_key = f"project_creation_{idempotency_key}"
@@ -44,19 +47,33 @@ class CreateProjectIdempotent(View):
             # 이미 처리된 요청인지 확인
             cached_response = cache.get(cache_key)
             if cached_response:
-                logger.info(f"Duplicate request detected for key: {idempotency_key}")
-                return JsonResponse(cached_response, status=200)
+                logger.warning(f"DUPLICATE REQUEST DETECTED! Key: {idempotency_key}")
+                logger.warning(f"Cached response: {cached_response}")
+                logger.warning(f"Request from user: {user.id} ({user.email})")
+                logger.warning(f"Project name: {inputs.get('name', 'Unknown')}")
+                
+                # 처리 중인 경우와 완료된 경우를 구분
+                if cached_response.get("message") == "processing":
+                    return JsonResponse({"message": "요청이 처리 중입니다. 잠시만 기다려주세요."}, status=202)
+                else:
+                    return JsonResponse(cached_response, status=200)
             
-            # 처리 중 표시 (5초 동안 유지)
-            cache.set(cache_key, {"message": "processing"}, 5)
+            # 처리 중 표시 (30초 동안 유지)
+            cache.set(cache_key, {"message": "processing"}, 30)
 
+            logger.info(f"=== NEW PROJECT CREATION START ===")
+            logger.info(f"User: {user.id} ({user.email})")
+            logger.info(f"Project name: {inputs.get('name', 'Unknown')}")
+            logger.info(f"Idempotency key: {idempotency_key}")
+            
             with transaction.atomic():
                 project = models.Project.objects.create(user=user)
                 for k, v in inputs.items():
                     setattr(project, k, v)
                 
-                logging.info(f"Creating project with inputs: {inputs}")
-                logging.info(f"Process data: {process}")
+                logger.info(f"Project created with ID: {project.id}")
+                logger.info(f"Creating project with inputs: {inputs}")
+                logger.info(f"Process data: {process}")
 
                 for i in process:
                     key = i.get("key")
@@ -146,6 +163,12 @@ class CreateProjectIdempotent(View):
                 "project_id": project.id
             }
             cache.set(cache_key, response_data, 300)
+            
+            logger.info(f"=== PROJECT CREATION SUCCESS ===")
+            logger.info(f"Project ID: {project.id}")
+            logger.info(f"Project name: {project.name}")
+            logger.info(f"Idempotency key: {idempotency_key}")
+            logger.info(f"Response cached for 5 minutes")
             
             return JsonResponse(response_data, status=200)
             

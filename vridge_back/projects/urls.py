@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import views_improved
+from . import views_fixed
 
 app_name = "projects"
 
@@ -12,7 +13,10 @@ urlpatterns = [
     path(
         "invite/<str:uid>/<str:token>", views.AcceptInvite.as_view(), name="invite"
     ),  # 초대 받기
-    path("create", views.CreateProject.as_view()),
+    path("create", views_fixed.CreateProjectFixed.as_view()),  # 임시로 fixed 버전 사용
+    
+    # 원본 버전 (백업)
+    path("create_original", views.CreateProject.as_view()),
     
     # 개선된 프로젝트 생성 엔드포인트 (디버깅용)
     path("create_improved", views_improved.CreateProjectImproved.as_view()),

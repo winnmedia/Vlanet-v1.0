@@ -204,7 +204,7 @@ export default function ProcessDateEnhanced({ process, set_process }) {
       {/* 자동 계산 안내 */}
       {autocalculate && (
         <div className="auto-calc-info">
-          <span>💡 시작일을 선택하면 다음 단계가 자동으로 설정됩니다</span>
+          <span>시작일을 선택하면 다음 단계가 자동으로 설정됩니다</span>
         </div>
       )}
       
@@ -227,7 +227,6 @@ export default function ProcessDateEnhanced({ process, set_process }) {
         </div>
       </div>
 
-      {/* 타임라인 뷰는 제거 (공간 절약) */}
 
       {/* 날짜 선택 리스트 */}
       <div className="date-list">
@@ -330,7 +329,7 @@ export default function ProcessDateEnhanced({ process, set_process }) {
           new Date(p.startDate) < new Date(process[idx - 1].endDate)
         ) && (
           <div className="warning-message">
-            ⚠️ 일부 작업의 일정이 겹쳐있습니다. 확인해주세요.
+            일부 작업의 일정이 겹쳐있습니다. 확인해주세요.
           </div>
         )}
       </div>

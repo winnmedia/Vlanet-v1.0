@@ -9,8 +9,8 @@ import { useSelector } from 'react-redux'
 
 export default function MyPage() {
   const navigate = useNavigate()
-  const user = useSelector((state) => state.project.user)
-  const nickname = useSelector((state) => state.project.nickname)
+  const user = useSelector((state) => state.ProjectStore.user)
+  const nickname = useSelector((state) => state.ProjectStore.nickname)
   
   const [loading, setLoading] = useState(true)
   const [myPageData, setMyPageData] = useState(null)
@@ -49,12 +49,47 @@ export default function MyPage() {
           position: response.data.data.profile.position || ''
         })
         if (response.data.data.profile.profile_image) {
-          setImagePreview(response.data.data.profile.profile_image)
+          const imageUrl = response.data.data.profile.profile_image
+          // 백엔드 URL이 상대 경로인 경우 처리
+          if (imageUrl.startsWith('/')) {
+            setImagePreview(`${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${imageUrl}`)
+          } else {
+            setImagePreview(imageUrl)
+          }
         }
+      } else {
+        console.error('마이페이지 데이터 형식 오류:', response)
+        setLoading(false)
       }
     } catch (error) {
       console.error('마이페이지 데이터 로드 실패:', error)
-    } finally {
+      console.error('Error response:', error.response)
+      // 에러가 발생해도 기본 데이터로 표시
+      setMyPageData({
+        profile: {
+          email: user || '',
+          nickname: nickname || '',
+          login_method: 'email',
+          date_joined: new Date().toISOString().split('T')[0],
+          bio: '',
+          phone: '',
+          company: '',
+          position: '',
+          profile_image: null
+        },
+        projects: {
+          owned: { total: 0, recent: [] },
+          member: { total: 0, as_manager: 0, as_member: 0, recent: [] },
+          recent_activity: []
+        },
+        stats: {
+          total_projects: 0,
+          active_projects: 0,
+          completed_projects: 0,
+          total_collaborators: 0
+        },
+        recent_memos: []
+      })
       setLoading(false)
     }
   }
@@ -145,18 +180,7 @@ export default function MyPage() {
     )
   }
 
-  if (!myPageData) {
-    return (
-      <PageTemplate>
-        <div className="cms_wrap">
-          <SideBar />
-          <main className="mypage">
-            <div className="error">데이터를 불러올 수 없습니다.</div>
-          </main>
-        </div>
-      </PageTemplate>
-    )
-  }
+  // myPageData가 없어도 기본 UI는 표시
 
   return (
     <PageTemplate>
@@ -166,7 +190,7 @@ export default function MyPage() {
           <div className="mypage-header">
             <h1>마이페이지</h1>
             <div className="header-info">
-              <span className="welcome-text">{myPageData.profile.nickname}님, 환영합니다!</span>
+              <span className="welcome-text">{myPageData?.profile?.nickname || nickname || '사용자'}님, 환영합니다!</span>
             </div>
           </div>
 
@@ -215,7 +239,7 @@ export default function MyPage() {
                       <img src={imagePreview} alt="프로필" className="profile-image" />
                     ) : (
                       <div className="profile-image-placeholder">
-                        <span>{myPageData.profile.nickname.charAt(0)}</span>
+                        <span>{(myPageData?.profile?.nickname || nickname || 'U').charAt(0)}</span>
                       </div>
                     )}
                   </div>
@@ -243,7 +267,7 @@ export default function MyPage() {
                 <div className="profile-info">
                   <div className="info-row">
                     <label>이메일</label>
-                    <div className="info-value">{myPageData.profile.email}</div>
+                    <div className="info-value">{myPageData?.profile?.email || user || '-'}</div>
                   </div>
 
                   <div className="info-row">
@@ -257,7 +281,7 @@ export default function MyPage() {
                         placeholder="닉네임"
                       />
                     ) : (
-                      <div className="info-value">{myPageData.profile.nickname}</div>
+                      <div className="info-value">{myPageData?.profile?.nickname || nickname || '-'}</div>
                     )}
                   </div>
 
@@ -272,7 +296,7 @@ export default function MyPage() {
                         rows="3"
                       />
                     ) : (
-                      <div className="info-value">{myPageData.profile.bio || '-'}</div>
+                      <div className="info-value">{myPageData?.profile?.bio || '-'}</div>
                     )}
                   </div>
 
@@ -287,7 +311,7 @@ export default function MyPage() {
                         placeholder="전화번호"
                       />
                     ) : (
-                      <div className="info-value">{myPageData.profile.phone || '-'}</div>
+                      <div className="info-value">{myPageData?.profile?.phone || '-'}</div>
                     )}
                   </div>
 
@@ -302,7 +326,7 @@ export default function MyPage() {
                         placeholder="회사/소속"
                       />
                     ) : (
-                      <div className="info-value">{myPageData.profile.company || '-'}</div>
+                      <div className="info-value">{myPageData?.profile?.company || '-'}</div>
                     )}
                   </div>
 
@@ -317,18 +341,18 @@ export default function MyPage() {
                         placeholder="직책"
                       />
                     ) : (
-                      <div className="info-value">{myPageData.profile.position || '-'}</div>
+                      <div className="info-value">{myPageData?.profile?.position || '-'}</div>
                     )}
                   </div>
 
                   <div className="info-row">
                     <label>로그인 방식</label>
-                    <div className="info-value">{myPageData.profile.login_method}</div>
+                    <div className="info-value">{myPageData?.profile?.login_method || 'email'}</div>
                   </div>
 
                   <div className="info-row">
                     <label>가입일</label>
-                    <div className="info-value">{myPageData.profile.date_joined}</div>
+                    <div className="info-value">{myPageData?.profile?.date_joined || '-'}</div>
                   </div>
 
                   {isEditing && (
@@ -339,11 +363,11 @@ export default function MyPage() {
                       <button onClick={() => {
                         setIsEditing(false)
                         setProfileForm({
-                          nickname: myPageData.profile.nickname || '',
-                          bio: myPageData.profile.bio || '',
-                          phone: myPageData.profile.phone || '',
-                          company: myPageData.profile.company || '',
-                          position: myPageData.profile.position || ''
+                          nickname: myPageData?.profile?.nickname || '',
+                          bio: myPageData?.profile?.bio || '',
+                          phone: myPageData?.profile?.phone || '',
+                          company: myPageData?.profile?.company || '',
+                          position: myPageData?.profile?.position || ''
                         })
                       }} className="cancel-btn">
                         취소
@@ -357,9 +381,9 @@ export default function MyPage() {
             {activeTab === 'projects' && (
               <div className="projects-section">
                 <div className="project-group">
-                  <h3>내가 소유한 프로젝트 ({myPageData.projects.owned.total}개)</h3>
+                  <h3>내가 소유한 프로젝트 ({myPageData?.projects?.owned?.total || 0}개)</h3>
                   <div className="project-list">
-                    {myPageData.projects.owned.recent.map(project => (
+                    {(myPageData?.projects?.owned?.recent || []).map(project => (
                       <div key={project.id} className="project-item">
                         <div className="project-name">{project.name}</div>
                         <div className="project-info">
@@ -380,13 +404,13 @@ export default function MyPage() {
                 </div>
 
                 <div className="project-group">
-                  <h3>참여 중인 프로젝트 ({myPageData.projects.member.total}개)</h3>
+                  <h3>참여 중인 프로젝트 ({myPageData?.projects?.member?.total || 0}개)</h3>
                   <div className="sub-stats">
-                    <span>관리자: {myPageData.projects.member.as_manager}개</span>
-                    <span>멤버: {myPageData.projects.member.as_member}개</span>
+                    <span>관리자: {myPageData?.projects?.member?.as_manager || 0}개</span>
+                    <span>멤버: {myPageData?.projects?.member?.as_member || 0}개</span>
                   </div>
                   <div className="project-list">
-                    {myPageData.projects.member.recent.map(project => (
+                    {(myPageData?.projects?.member?.recent || []).map(project => (
                       <div key={project.id} className="project-item">
                         <div className="project-name">{project.name}</div>
                         <div className="project-info">
@@ -410,7 +434,7 @@ export default function MyPage() {
               <div className="activity-section">
                 <h2>최근 활동</h2>
                 <div className="activity-list">
-                  {myPageData.projects.recent_activity.map((activity, index) => (
+                  {(myPageData?.projects?.recent_activity || []).map((activity, index) => (
                     <div key={index} className="activity-item">
                       <div className="activity-name">
                         {activity.name}
@@ -425,7 +449,7 @@ export default function MyPage() {
 
                 <h3>최근 메모</h3>
                 <div className="memo-list">
-                  {myPageData.recent_memos.map(memo => (
+                  {(myPageData?.recent_memos || []).map(memo => (
                     <div key={memo.id} className="memo-item">
                       <div className="memo-content">{memo.content}</div>
                       <div className="memo-date">{memo.created}</div>
@@ -441,19 +465,19 @@ export default function MyPage() {
                 <div className="stats-grid">
                   <div className="stat-card">
                     <div className="stat-label">전체 프로젝트</div>
-                    <div className="stat-value">{myPageData.stats.total_projects}</div>
+                    <div className="stat-value">{myPageData?.stats?.total_projects || 0}</div>
                   </div>
                   <div className="stat-card">
                     <div className="stat-label">진행 중인 프로젝트</div>
-                    <div className="stat-value">{myPageData.stats.active_projects}</div>
+                    <div className="stat-value">{myPageData?.stats?.active_projects || 0}</div>
                   </div>
                   <div className="stat-card">
                     <div className="stat-label">완료된 프로젝트</div>
-                    <div className="stat-value">{myPageData.stats.completed_projects}</div>
+                    <div className="stat-value">{myPageData?.stats?.completed_projects || 0}</div>
                   </div>
                   <div className="stat-card">
                     <div className="stat-label">협업자 수</div>
-                    <div className="stat-value">{myPageData.stats.total_collaborators}</div>
+                    <div className="stat-value">{myPageData?.stats?.total_collaborators || 0}</div>
                   </div>
                 </div>
               </div>

@@ -1,214 +1,239 @@
+// 대표 색상 변수
+$primary-color: #1890ff;
+$primary-light: #e6f7ff;
+$primary-dark: #096dd9;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$error-color: #ff4d4f;
+$text-color: #333;
+$text-secondary: #666;
+$border-color: #e8e8e8;
+
 .process-date-enhanced {
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 12px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid $border-color;
+  border-radius: 8px;
   
   .header-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid $border-color;
     
     h3 {
       margin: 0;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 600;
-      color: #333;
+      color: $text-color;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: $primary-color;
+        border-radius: 2px;
+      }
     }
     
     .header-actions {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       align-items: center;
       
       .timeline-toggle {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        border: 1px solid #ddd;
-        background: white;
-        border-radius: 6px;
+        gap: 6px;
+        padding: 6px 12px;
+        border: 1px solid transparent;
+        background: $primary-light;
+        color: $primary-color;
+        border-radius: 4px;
         cursor: pointer;
+        font-size: 13px;
         transition: all 0.2s;
         
         &:hover {
-          border-color: #1890ff;
-          color: #1890ff;
+          background: $primary-color;
+          color: white;
         }
         
         &.active {
-          background: #1890ff;
+          background: $primary-color;
           color: white;
-          border-color: #1890ff;
         }
         
         svg {
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
         }
       }
       
       .autocalc-toggle {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         cursor: pointer;
+        padding: 6px 12px;
+        background: $primary-light;
+        border-radius: 20px;
+        transition: all 0.2s;
+        
+        &:hover {
+          background: darken($primary-light, 5%);
+        }
         
         input[type="checkbox"] {
-          width: 16px;
-          height: 16px;
-          cursor: pointer;
+          width: 0;
+          height: 0;
+          opacity: 0;
+          position: absolute;
+          
+          &:checked + .toggle-switch {
+            background: $primary-color;
+            
+            &::after {
+              transform: translateX(16px);
+            }
+          }
+        }
+        
+        .toggle-switch {
+          position: relative;
+          width: 36px;
+          height: 20px;
+          background: #ddd;
+          border-radius: 20px;
+          transition: all 0.3s;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          }
         }
         
         span {
-          font-size: 14px;
-          color: #666;
+          font-size: 13px;
+          color: $text-color;
+          font-weight: 500;
         }
       }
     }
   }
   
-  .project-summary {
+  .auto-calc-info {
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba($primary-color, 0.1), rgba($primary-color, 0.05));
+    border-left: 3px solid $primary-color;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: $primary-dark;
     display: flex;
-    gap: 24px;
-    padding: 16px;
-    background: white;
-    border-radius: 8px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    align-items: center;
+    gap: 8px;
+    
+    span {
+      flex: 1;
+    }
+  }
+  
+  .project-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: linear-gradient(135deg, $primary-light 0%, rgba($primary-light, 0.5) 100%);
+    border-radius: 6px;
+    border: 1px solid rgba($primary-color, 0.1);
     
     .summary-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      text-align: center;
       
       .label {
-        font-size: 12px;
-        color: #999;
+        font-size: 11px;
+        color: $text-secondary;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        margin-bottom: 4px;
       }
       
       .value {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 600;
-        color: #333;
+        color: $primary-dark;
       }
     }
   }
   
   .template-section {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     
     h4 {
-      margin: 0 0 12px 0;
-      font-size: 16px;
+      margin: 0 0 8px 0;
+      font-size: 13px;
       font-weight: 600;
-      color: #333;
+      color: $text-secondary;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      
+      &::after {
+        content: '⚡';
+        color: $warning-color;
+      }
     }
     
     .template-buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
       
       .template-btn {
-        padding: 10px 20px;
-        border: 1px solid #ddd;
+        padding: 8px 12px;
+        border: 1px solid $border-color;
         background: white;
-        border-radius: 6px;
+        border-radius: 4px;
         cursor: pointer;
         transition: all 0.2s;
-        font-size: 14px;
+        font-size: 12px;
+        text-align: center;
         
         &:hover {
-          border-color: #1890ff;
-          color: #1890ff;
+          border-color: $primary-color;
+          color: $primary-color;
+          background: $primary-light;
         }
         
         &.active {
-          background: #1890ff;
+          background: $primary-color;
           color: white;
-          border-color: #1890ff;
+          border-color: $primary-color;
+          box-shadow: 0 2px 4px rgba($primary-color, 0.3);
         }
         
         &.clear {
-          border-color: #ff4d4f;
-          color: #ff4d4f;
+          border-color: $error-color;
+          color: $error-color;
           
           &:hover {
-            background: #ff4d4f;
+            background: $error-color;
             color: white;
-          }
-        }
-      }
-    }
-  }
-  
-  .timeline-view {
-    margin-bottom: 24px;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    overflow-x: auto;
-    
-    .timeline-header {
-      display: flex;
-      border-bottom: 2px solid #f0f0f0;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
-      
-      .process-label {
-        width: 150px;
-        font-weight: 600;
-        color: #333;
-      }
-      
-      .timeline-dates {
-        flex: 1;
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-        color: #666;
-      }
-    }
-    
-    .timeline-body {
-      .timeline-row {
-        display: flex;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid #f5f5f5;
-        
-        &:last-child {
-          border-bottom: none;
-        }
-        
-        .process-name {
-          width: 150px;
-          font-size: 14px;
-          color: #333;
-        }
-        
-        .timeline-bar {
-          flex: 1;
-          height: 32px;
-          background: #f0f0f0;
-          border-radius: 4px;
-          position: relative;
-          
-          .bar {
-            position: absolute;
-            height: 100%;
-            background: #52c41a;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: 500;
           }
         }
       }
@@ -216,89 +241,103 @@
   }
   
   .date-list {
+    display: grid;
+    gap: 8px;
+    
     .date-item {
       background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+      border: 1px solid $border-color;
+      border-radius: 6px;
+      padding: 12px;
+      transition: all 0.2s;
+      
+      &:hover {
+        border-color: $primary-color;
+        box-shadow: 0 2px 8px rgba($primary-color, 0.1);
+      }
+      
+      &:has(.date-input:focus) {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      }
       
       .process-info {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
+        gap: 8px;
+        margin-bottom: 8px;
         
         .process-number {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background: #1890ff;
+          width: 24px;
+          height: 24px;
+          border-radius: 4px;
+          background: linear-gradient(135deg, $primary-color, $primary-dark);
           color: white;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 600;
-          font-size: 14px;
+          font-size: 12px;
         }
         
         .process-name {
-          font-size: 16px;
+          font-size: 13px;
           font-weight: 500;
-          color: #333;
+          color: $text-color;
           flex: 1;
         }
         
         .duration-badge {
-          padding: 4px 12px;
-          background: #f0f0f0;
-          border-radius: 16px;
-          font-size: 12px;
-          color: #666;
+          padding: 2px 8px;
+          background: $success-color;
+          color: white;
+          border-radius: 12px;
+          font-size: 11px;
+          font-weight: 500;
         }
       }
       
       .date-inputs {
-        display: flex;
-        align-items: center;
-        gap: 16px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 8px;
+        align-items: end;
         
         .date-input-group {
-          flex: 1;
-          
           label {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: none; // 라벨 숨김 (공간 절약)
           }
           
           .date-picker-wrapper {
             position: relative;
-            display: flex;
-            align-items: center;
             
             svg {
               position: absolute;
-              left: 12px;
-              color: #999;
+              left: 10px;
+              top: 50%;
+              transform: translateY(-50%);
+              color: $primary-color;
+              width: 14px;
+              height: 14px;
               pointer-events: none;
             }
             
             .date-input {
               width: 100%;
-              padding: 10px 12px 10px 36px;
-              border: 1px solid #ddd;
-              border-radius: 6px;
-              font-size: 14px;
+              padding: 8px 8px 8px 32px;
+              border: 1px solid $border-color;
+              border-radius: 4px;
+              font-size: 12px;
               transition: all 0.2s;
+              
+              &::placeholder {
+                color: #999;
+                font-size: 11px;
+              }
               
               &:focus {
                 outline: none;
-                border-color: #1890ff;
-                box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+                border-color: $primary-color;
               }
               
               &:disabled {
@@ -310,28 +349,35 @@
         }
         
         .date-arrow {
-          font-size: 20px;
-          color: #999;
-          margin-top: 20px;
+          font-size: 16px;
+          color: $primary-color;
+          padding: 0 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
         .quick-duration {
+          grid-column: 1 / -1;
           display: flex;
-          gap: 8px;
-          margin-top: 20px;
+          gap: 6px;
+          margin-top: 6px;
           
           button {
-            padding: 6px 12px;
-            border: 1px solid #ddd;
-            background: white;
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid $primary-color;
+            background: $primary-light;
+            color: $primary-color;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             
             &:hover {
-              border-color: #1890ff;
-              color: #1890ff;
+              background: $primary-color;
+              color: white;
             }
           }
         }
@@ -340,18 +386,63 @@
   }
   
   .validation-messages {
-    margin-top: 16px;
+    margin-top: 12px;
     
     .warning-message {
-      padding: 12px 16px;
-      background: #fff7e6;
-      border: 1px solid #ffd591;
-      border-radius: 6px;
-      color: #fa8c16;
-      font-size: 14px;
+      padding: 8px 12px;
+      background: rgba($warning-color, 0.1);
+      border: 1px solid rgba($warning-color, 0.3);
+      border-radius: 4px;
+      color: darken($warning-color, 10%);
+      font-size: 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+    }
+  }
+  
+  // 타임라인 뷰 (컴팩트)
+  .timeline-view {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    overflow-x: auto;
+    
+    .timeline-header {
+      display: flex;
+      border-bottom: 1px solid $border-color;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      
+      .process-label {
+        width: 100px;
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-color;
+      }
+    }
+    
+    .timeline-body {
+      .timeline-row {
+        display: flex;
+        align-items: center;
+        padding: 4px 0;
+        
+        .process-name {
+          width: 100px;
+          font-size: 11px;
+          color: $text-color;
+        }
+        
+        .timeline-bar {
+          flex: 1;
+          height: 24px;
+          background: #f0f0f0;
+          border-radius: 4px;
+          position: relative;
+        }
+      }
     }
   }
 }
@@ -359,12 +450,12 @@
 // 반응형 디자인
 @media (max-width: 768px) {
   .process-date-enhanced {
-    padding: 16px;
+    padding: 12px;
     
     .header-section {
       flex-direction: column;
       align-items: flex-start;
-      gap: 16px;
+      gap: 12px;
       
       .header-actions {
         width: 100%;
@@ -373,28 +464,25 @@
     }
     
     .project-summary {
-      flex-direction: column;
-      gap: 16px;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+      }
     }
     
     .date-list {
       .date-item {
         .date-inputs {
-          flex-direction: column;
+          grid-template-columns: 1fr;
           
           .date-arrow {
             transform: rotate(90deg);
-            margin: 0;
-          }
-          
-          .date-input-group {
-            width: 100%;
-          }
-          
-          .quick-duration {
-            width: 100%;
-            justify-content: space-between;
-            margin-top: 12px;
+            margin: 4px 0;
           }
         }
       }
@@ -402,7 +490,7 @@
   }
 }
 
-// DatePicker 커스터마이즈
+// DatePicker 커스터마이즈 (컴팩트)
 .react-datepicker-wrapper {
   width: 100%;
 }
@@ -417,23 +505,34 @@
 
 .react-datepicker {
   font-family: inherit;
-  border: 1px solid #e8e8e8;
+  font-size: 12px;
+  border: 1px solid $border-color;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   
   .react-datepicker__header {
-    background: #f5f5f5;
-    border-bottom: 1px solid #e8e8e8;
+    background: $primary-light;
+    border-bottom: 1px solid $border-color;
+    padding: 8px;
   }
   
   .react-datepicker__day--selected {
-    background: #1890ff;
+    background: $primary-color;
+    
+    &:hover {
+      background: $primary-dark;
+    }
   }
   
   .react-datepicker__day:hover {
-    background: #e6f7ff;
+    background: $primary-light;
   }
   
   .react-datepicker__time-container {
-    border-left: 1px solid #e8e8e8;
+    border-left: 1px solid $border-color;
+    width: 70px;
+  }
+  
+  .react-datepicker__time-list {
+    height: 150px !important;
   }
 }

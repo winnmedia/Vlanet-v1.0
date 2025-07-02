@@ -69,8 +69,7 @@ const PROJECT_TEMPLATES = {
 
 export default function ProcessDateEnhanced({ process, set_process }) {
   const [selectedTemplate, setSelectedTemplate] = useState(null)
-  const [showTimeline, setShowTimeline] = useState(false)
-  const [autocalculate, setAutocalculate] = useState(false)
+  const [autocalculate, setAutocalculate] = useState(true) // 기본값 true로 변경
 
   // 날짜 변경 핸들러
   const handleDateChange = (index, key, value) => {
@@ -169,22 +168,16 @@ export default function ProcessDateEnhanced({ process, set_process }) {
     <div className="process-date-enhanced">
       {/* 헤더 섹션 */}
       <div className="header-section">
-        <h3>프로젝트 일정 설정</h3>
+        <h3>프로젝트 일정</h3>
         
         <div className="header-actions">
-          <button 
-            className={`timeline-toggle ${showTimeline ? 'active' : ''}`}
-            onClick={() => setShowTimeline(!showTimeline)}
-          >
-            <CalendarIcon /> 타임라인 보기
-          </button>
-          
           <label className="autocalc-toggle">
             <input
               type="checkbox"
               checked={autocalculate}
               onChange={(e) => setAutocalculate(e.target.checked)}
             />
+            <div className="toggle-switch"></div>
             <span>자동 일정 계산</span>
           </label>
         </div>
@@ -208,6 +201,13 @@ export default function ProcessDateEnhanced({ process, set_process }) {
         </div>
       )}
 
+      {/* 자동 계산 안내 */}
+      {autocalculate && (
+        <div className="auto-calc-info">
+          <span>💡 시작일을 선택하면 다음 단계가 자동으로 설정됩니다</span>
+        </div>
+      )}
+      
       {/* 템플릿 선택 */}
       <div className="template-section">
         <h4>빠른 설정</h4>
@@ -227,27 +227,7 @@ export default function ProcessDateEnhanced({ process, set_process }) {
         </div>
       </div>
 
-      {/* 타임라인 뷰 */}
-      {showTimeline && projectDuration && (
-        <div className="timeline-view">
-          <div className="timeline-header">
-            <div className="process-label">프로세스</div>
-            <div className="timeline-dates">
-              {/* 날짜 헤더 생성 로직 */}
-            </div>
-          </div>
-          <div className="timeline-body">
-            {process.map((item, index) => (
-              <div key={index} className="timeline-row">
-                <div className="process-name">{item.text}</div>
-                <div className="timeline-bar">
-                  {/* 타임라인 바 렌더링 */}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* 타임라인 뷰는 제거 (공간 절약) */}
 
       {/* 날짜 선택 리스트 */}
       <div className="date-list">
@@ -276,7 +256,7 @@ export default function ProcessDateEnhanced({ process, set_process }) {
                     timeFormat="HH:mm"
                     timeIntervals={10}
                     dateFormat="yyyy-MM-dd HH:mm"
-                    placeholderText="날짜 선택"
+                    placeholderText="시작일 (선택)"
                     className="date-input"
                     minDate={index > 0 && process[index - 1].endDate ? 
                       new Date(process[index - 1].endDate) : new Date()}
@@ -302,9 +282,9 @@ export default function ProcessDateEnhanced({ process, set_process }) {
                     timeFormat="HH:mm"
                     timeIntervals={10}
                     dateFormat="yyyy-MM-dd HH:mm"
-                    placeholderText="날짜 선택"
+                    placeholderText="종료일 (선택)"
                     className="date-input"
-                    disabled={!range.startDate}
+                    disabled={!range.startDate && !autocalculate}
                     minDate={range.startDate ? new Date(range.startDate) : null}
                     isClearable
                     showMonthDropdown

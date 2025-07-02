@@ -31,7 +31,11 @@ class CreateProjectIdempotentFinal(View):
             test_key = 'test_cache_availability'
             cache.set(test_key, 'test', 1)
             result = cache.get(test_key)
-            return result == 'test' and not isinstance(cache._cache, DummyCache)
+            # cache._cache 접근 대신 설정에서 확인
+            from django.conf import settings
+            cache_backend = settings.CACHES.get('default', {}).get('BACKEND', '')
+            is_dummy = 'DummyCache' in cache_backend
+            return result == 'test' and not is_dummy
         except:
             return False
     

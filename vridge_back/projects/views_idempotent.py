@@ -41,6 +41,22 @@ class CreateProjectIdempotent(View):
             else:
                 logger.info(f"Received idempotency key: {idempotency_key}")
             
+            # 추가: 같은 이름의 프로젝트가 최근 5초 내에 생성되었는지 확인
+            recent_project = models.Project.objects.filter(
+                user=user,
+                name=inputs.get('name', ''),
+                created__gte=datetime.now() - timedelta(seconds=5)
+            ).first()
+            
+            if recent_project:
+                logger.warning(f"[ProjectDetail.create] Duplicate project detected within 5 seconds")
+                logger.warning(f"Existing project: {recent_project.id} created at {recent_project.created}")
+                return JsonResponse({
+                    "message": "success",
+                    "project_id": recent_project.id,
+                    "duplicate_prevented": True
+                }, status=200)
+            
             # 캐시 키
             cache_key = f"project_creation_{idempotency_key}"
             
@@ -65,6 +81,8 @@ class CreateProjectIdempotent(View):
             logger.info(f"User: {user.id} ({user.email})")
             logger.info(f"Project name: {inputs.get('name', 'Unknown')}")
             logger.info(f"Idempotency key: {idempotency_key}")
+            logger.info(f"Origin: {request.META.get('HTTP_ORIGIN', 'Unknown')}")
+            logger.info(f"Referer: {request.META.get('HTTP_REFERER', 'Unknown')}")
             
             with transaction.atomic():
                 project = models.Project.objects.create(user=user)

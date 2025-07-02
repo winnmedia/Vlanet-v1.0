@@ -7,13 +7,14 @@ import useInput from 'hooks/UseInput'
 import useFile from 'hooks/Usefile'
 import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CreateProjectAPI } from 'api/project'
 import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { formatProcessDatesForBackend } from 'utils/dateUtils'
+import { checkDomain, detectDuplicateTabs } from 'utils/domainCheck'
 
 export default function ProjectCreate() {
   const dispatch = useDispatch()
@@ -22,12 +23,30 @@ export default function ProjectCreate() {
   const initial = project_initial()
   const [isCreating, setIsCreating] = useState(false)
   
+  // 중복 요청 방지를 위한 ref
+  const lastRequestRef = useRef({ name: '', timestamp: 0 })
+  const isMountedRef = useRef(true)
+  
   // 인증 체크 - 한 번만 실행
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       window.alert('로그인이 필요합니다.')
       navigate('/Login', { replace: true })
+    }
+    
+    // 도메인 체크
+    const currentDomain = checkDomain()
+    console.log('[ProjectCreate] Mounted on domain:', currentDomain)
+    
+    // 다른 도메인에 활성 탭이 있는지 확인
+    if (detectDuplicateTabs()) {
+      console.warn('[ProjectCreate] WARNING: Active tabs on other domains detected!')
+    }
+    
+    // cleanup function
+    return () => {
+      isMountedRef.current = false
     }
   }, [navigate])
 
@@ -64,6 +83,32 @@ export default function ProjectCreate() {
       return
     }
     
+    // 컴포넌트가 언마운트되었는지 확인
+    if (!isMountedRef.current) {
+      console.log('[ProjectCreate] Component unmounted, ignoring request')
+      return
+    }
+    
+    // 5초 이내에 같은 프로젝트명으로 요청이 있었는지 확인
+    const now = Date.now()
+    if (lastRequestRef.current.name === inputs.name && 
+        now - lastRequestRef.current.timestamp < 5000) {
+      console.log('[ProjectCreate] Duplicate request blocked - same project name within 5 seconds')
+      console.log('[ProjectCreate] Last request:', lastRequestRef.current)
+      window.alert('동일한 프로젝트를 짧은 시간 내에 중복 생성할 수 없습니다.')
+      return
+    }
+    
+    // 다른 도메인에 활성 탭이 있는지 다시 확인
+    if (detectDuplicateTabs()) {
+      console.warn('[ProjectCreate] Other domain tabs detected during submission!')
+      window.alert('다른 브라우저 탭이나 도메인에서 이미 작업 중입니다.\n하나의 탭에서만 작업해주세요.')
+      return
+    }
+    
+    // 요청 정보 저장
+    lastRequestRef.current = { name: inputs.name, timestamp: now }
+    
     setIsCreating(true)
     const formData = new FormData()
     formData.append('inputs', JSON.stringify(inputs))
@@ -84,24 +129,37 @@ export default function ProjectCreate() {
     console.log('[ProjectCreate] === API CALL START ===')
     console.log('[ProjectCreate] isCreating state:', isCreating)
     console.log('[ProjectCreate] Project name:', inputs.name)
+    console.log('[ProjectCreate] Current domain:', window.location.hostname)
+    console.log('[ProjectCreate] Full URL:', window.location.href)
     console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
     
     CreateProjectAPI(formData)
         .then((res) => {
+          // 컴포넌트가 언마운트되었으면 무시
+          if (!isMountedRef.current) {
+            console.log('[ProjectCreate] Component unmounted, ignoring response')
+            return
+          }
+          
           console.log('[ProjectCreate] === API RESPONSE SUCCESS ===')
           console.log('[ProjectCreate] Response:', res.data)
           console.log('[ProjectCreate] Project ID:', res.data.project_id)
           console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
           
+          // 성공 플래그 설정하여 중복 처리 방지
+          lastRequestRef.current.success = true
+          
           // navigate를 먼저 실행하여 컴포넌트 언마운트
           window.alert('프로젝트 생성 완료')
-          navigate('/Calendar')
+          navigate('/Calendar', { replace: true })  // replace 옵션 추가
           
           // refetchProject는 navigate 후에 실행 (비동기)
           setTimeout(() => {
-            refetchProject(dispatch, navigate).catch(err => {
-              console.error('[ProjectCreate] refetchProject error:', err)
-            })
+            if (isMountedRef.current) {
+              refetchProject(dispatch, navigate).catch(err => {
+                console.error('[ProjectCreate] refetchProject error:', err)
+              })
+            }
           }, 100)
         })
         .catch((err) => {
@@ -109,6 +167,12 @@ export default function ProjectCreate() {
           console.log('[ProjectCreate] Error:', err)
           console.log('[ProjectCreate] Error response:', err.response)
           console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
+          
+          // 컴포넌트가 언마운트되었으면 무시
+          if (!isMountedRef.current) {
+            console.log('[ProjectCreate] Component unmounted, ignoring error')
+            return
+          }
           
           setIsCreating(false)
           console.log(err)

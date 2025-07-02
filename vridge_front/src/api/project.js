@@ -2,6 +2,8 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 
 // 프로젝트 리스트
 export function ProjectList() {
+  console.log('[API] ProjectList called at:', new Date().toISOString())
+  console.trace('[API] Call stack:')
   return axiosCredentials(
     'get',
     `/projects/project_list`,

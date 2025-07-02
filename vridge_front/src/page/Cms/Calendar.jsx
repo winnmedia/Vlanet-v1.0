@@ -102,18 +102,16 @@ export default function Calendar() {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
-    } else {
-      // 프로젝트 목록이 비어있을 때만 새로 고침
-      if (!project_list || project_list.length === 0) {
-        console.log('[Calendar] Project list empty, refreshing...')
-        refetchProject(dispatch, navigate).catch(err => {
-          console.error('[Calendar] Failed to refresh project list:', err)
-        })
-      } else {
-        console.log('[Calendar] Using existing project list from store')
-      }
+      return
     }
-  }, [])
+    
+    // 이미 로드 중이거나 로드됨을 추적하는 플래그가 필요
+    // 현재는 주석 처리하여 Calendar에서는 프로젝트 목록을 가져오지 않음
+    console.log('[Calendar] Component mounted, project_list length:', project_list?.length || 0)
+    
+    // refetchProject 호출을 완전히 제거
+    // App.js에서만 호출하도록 함
+  }, []) // 빈 배열로 최초 마운트 시에만 실행
 
   useEffect(() => {
     ProjectChange('전체')

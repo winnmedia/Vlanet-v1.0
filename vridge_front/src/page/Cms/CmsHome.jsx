@@ -36,16 +36,14 @@ export default function CmsHome() {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
-    } else {
-      // 프로젝트 목록이 비어있을 때만 새로 고침
-      if (!project_list || project_list.length === 0) {
-        console.log('[CmsHome] Project list empty, refreshing...')
-        refetchProject(dispatch, navigate)
-      } else {
-        console.log('[CmsHome] Using existing project list from store')
-      }
+      return
     }
-  }, [])
+    
+    console.log('[CmsHome] Component mounted, project_list length:', project_list?.length || 0)
+    
+    // refetchProject 호출을 완전히 제거
+    // App.js에서만 호출하도록 함
+  }, []) // 빈 배열로 최초 마운트 시에만 실행
 
   useEffect(() => {
     setTime(moment(date).format('HH:mm:ss'))

@@ -46,6 +46,7 @@ export default function Login() {
     window.localStorage.setItem('VGID', JSON.stringify(jwt))
     
     // refetchProject를 기다린 후 navigate
+    console.log('[Login] Loading project list after successful login')
     await refetchProject(dispatch, navigate)
     
     if (uid && token) {

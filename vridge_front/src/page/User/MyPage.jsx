@@ -25,6 +25,8 @@ export default function MyPage() {
     position: ''
   })
   const [imagePreview, setImagePreview] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     const session = checkSession()
@@ -111,8 +113,9 @@ export default function MyPage() {
   }
 
   const handleImageUpload = async () => {
-    if (!profileImage) return
+    if (!profileImage || isUploading) return
 
+    setIsUploading(true)
     const formData = new FormData()
     formData.append('profile_image', profileImage)
 
@@ -124,11 +127,17 @@ export default function MyPage() {
         fetchMyPageData()
       }
     } catch (error) {
-      alert('이미지 업로드 실패: ' + (error.message || '알 수 없는 오류'))
+      console.error('Image upload error:', error)
+      alert('이미지 업로드 실패: ' + (error.response?.data?.message || error.message || '알 수 없는 오류'))
+    } finally {
+      setIsUploading(false)
     }
   }
 
   const handleProfileUpdate = async () => {
+    if (isSaving) return
+
+    setIsSaving(true)
     try {
       const response = await updateProfile(profileForm)
       if (response.data && response.data.status === 'success') {
@@ -137,7 +146,10 @@ export default function MyPage() {
         fetchMyPageData()
       }
     } catch (error) {
-      alert('프로필 업데이트 실패: ' + (error.message || '알 수 없는 오류'))
+      console.error('Profile update error:', error)
+      alert('프로필 업데이트 실패: ' + (error.response?.data?.message || error.message || '알 수 없는 오류'))
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -173,7 +185,7 @@ export default function MyPage() {
         <div className="cms_wrap">
           <SideBar />
           <main className="mypage">
-            <div className="loading">로딩 중...</div>
+            <div className="loading">마이페이지 불러오는 중...</div>
           </main>
         </div>
       </PageTemplate>
@@ -256,8 +268,12 @@ export default function MyPage() {
                         이미지 선택
                       </label>
                       {profileImage && (
-                        <button onClick={handleImageUpload} className="upload-confirm-btn">
-                          업로드
+                        <button 
+                          onClick={handleImageUpload} 
+                          className="upload-confirm-btn"
+                          disabled={isUploading}
+                        >
+                          {isUploading ? '업로드 중...' : '업로드'}
                         </button>
                       )}
                     </div>
@@ -357,8 +373,12 @@ export default function MyPage() {
 
                   {isEditing && (
                     <div className="profile-actions">
-                      <button onClick={handleProfileUpdate} className="save-btn">
-                        저장
+                      <button 
+                        onClick={handleProfileUpdate} 
+                        className="save-btn"
+                        disabled={isSaving}
+                      >
+                        {isSaving ? '저장 중...' : '저장'}
                       </button>
                       <button onClick={() => {
                         setIsEditing(false)

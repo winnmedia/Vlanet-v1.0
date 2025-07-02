@@ -48,6 +48,7 @@ if not CORS_ALLOWED_ORIGINS:
         'https://vridge-front-production.up.railway.app',
         'https://vlanet.net',
         'https://www.vlanet.net',
+        'https://vlanet-v1-0.vercel.app',
         'http://localhost:3000',
     ]
 
@@ -86,6 +87,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://vridge-front-production.up.railway.app',
     'https://vlanet.net',
     'https://www.vlanet.net',
+    'https://vlanet-v1-0.vercel.app',
 ]
 
 # Whitenoise for static files

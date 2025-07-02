@@ -447,6 +447,7 @@ class CreateProject(View):
                 return JsonResponse({"message": f"프로젝트 생성 중 오류가 발생했습니다: {str(e)}"}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ProjectDetail(View):
     @user_validator
     def get(self, request, project_id):
@@ -621,6 +622,7 @@ class ProjectDetail(View):
             return JsonResponse({"message": f"프로젝트 삭제 중 오류가 발생했습니다: {str(e)}"}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ProjectFile(View):
     @user_validator
     def delete(self, request, file_id):
@@ -646,6 +648,7 @@ class ProjectFile(View):
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ProjectMemo(View):
     @user_validator
     def post(self, request, id):
@@ -702,6 +705,7 @@ class ProjectMemo(View):
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ProjectDate(View):
     @user_validator
     def post(self, request, id):

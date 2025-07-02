@@ -25,7 +25,7 @@ export default function ProjectEdit() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { project_id } = useParams()
-  const { project_list, sample_files } = useSelector((s) => s.ProjectStore)
+  const { project_list } = useSelector((s) => s.ProjectStore)
   const [current_project, set_current_project] = useState(null)
 
   const noAt = (value) => value.length < 50
@@ -192,19 +192,7 @@ export default function ProjectEdit() {
                   <ProcessDateEnhanced process={process} set_process={set_process} />
                 </div>
               </div>
-              <div className="group grid mt50">
-                <div className="part file">
-                  <div className="s_title">문서 양식</div>
-                  <ul className="sample">
-                    <li>
-                      {sample_files.map((file, index) => (
-                        <span key={index} onClick={() => download(file.files)}>
-                          {filename(file.file_name)}
-                        </span>
-                      ))}
-                    </li>
-                  </ul>
-                </div>
+              <div className="group mt50">
                 <div className="part file">
                   <div className="s_title">파일 등록</div>
                   <ul className="sample">

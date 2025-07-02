@@ -17,10 +17,10 @@ import { formatProcessDatesForBackend } from 'utils/dateUtils'
 
 export default function ProjectCreate() {
   const dispatch = useDispatch()
-  const { sample_files } = useSelector((state) => state.ProjectStore)
 
   const navigate = useNavigate()
   const initial = project_initial()
+  const [isCreating, setIsCreating] = useState(false)
   
   // 인증 체크
   useEffect(() => {
@@ -57,7 +57,8 @@ export default function ProjectCreate() {
   const ValidForm = name && description && manager && consumer ? true : false
 
   function CreateBtn() {
-    if (ValidForm) {
+    if (ValidForm && !isCreating) {
+      setIsCreating(true)
       const formData = new FormData()
       formData.append('inputs', JSON.stringify(inputs))
       
@@ -81,6 +82,7 @@ export default function ProjectCreate() {
           navigate('/Calendar')
         })
         .catch((err) => {
+          setIsCreating(false)
           console.log(err)
           if (err.response) {
             if (err.response.status === 401) {
@@ -101,18 +103,6 @@ export default function ProjectCreate() {
       window.alert('입력란을 채워주세요.')
     }
   }
-  function filename(file) {
-    return file.split('/').pop().split('\\').pop()
-  }
-  function download(file) {
-    if (file) {
-      const link = document.createElement('a')
-      link.href = file
-      link.download = filename(file)
-      link.target = '_self'
-      link.click()
-    }
-  }
   return (
     <PageTemplate>
       <div className="cms_wrap">
@@ -129,19 +119,7 @@ export default function ProjectCreate() {
                 <ProcessDateEnhanced process={process} set_process={set_process} />
               </div>
             </div>
-            <div className="group grid mt50">
-              <div className="part file">
-                <div className="s_title">문서 양식</div>
-                <ul className="sample">
-                  <li>
-                    {sample_files.map((file, index) => (
-                      <span key={index} onClick={() => download(file.files)}>
-                        {filename(file.file_name)}
-                      </span>
-                    ))}
-                  </li>
-                </ul>
-              </div>
+            <div className="group mt50">
               <div className="part file">
                 <div className="s_title">파일 등록</div>
                 <ul className="upload">
@@ -169,8 +147,8 @@ export default function ProjectCreate() {
             </div>
 
             <div className="btn_wrap">
-              <button onClick={CreateBtn} className="submit">
-                등록
+              <button onClick={CreateBtn} className="submit" disabled={isCreating}>
+                {isCreating ? '등록 중...' : '등록'}
               </button>
             </div>
           </div>

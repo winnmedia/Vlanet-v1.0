@@ -24,6 +24,12 @@ class UserProfile(View):
         try:
             user = request.user
             
+            # UserProfile 가져오기 또는 생성
+            try:
+                profile = user.profile
+            except models.UserProfile.DoesNotExist:
+                profile = models.UserProfile.objects.create(user=user)
+            
             profile_data = {
                 "email": user.username,
                 "nickname": user.nickname if user.nickname else user.username,
@@ -33,11 +39,11 @@ class UserProfile(View):
                 "date_joined": user.date_joined.strftime("%Y-%m-%d"),
                 "projects_count": user.projects.count(),
                 "member_projects_count": user.members.count(),
-                "profile_image": user.profile_image.url if hasattr(user, 'profile_image') and user.profile_image else None,
-                "bio": getattr(user, 'bio', ''),
-                "phone": getattr(user, 'phone', ''),
-                "company": getattr(user, 'company', ''),
-                "position": getattr(user, 'position', ''),
+                "profile_image": profile.profile_image.url if profile.profile_image else None,
+                "bio": profile.bio,
+                "phone": profile.phone,
+                "company": profile.company,
+                "position": profile.position,
             }
             
             return JsonResponse({

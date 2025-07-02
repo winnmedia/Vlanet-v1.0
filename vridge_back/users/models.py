@@ -18,18 +18,38 @@ class User(AbstractUser):
     )
     email_secret = models.CharField(verbose_name="비밀번호 찾기(인증번호)", max_length=10, null=True, blank=True)
     
-    # 프로필 추가 필드
-    profile_image = models.ImageField(verbose_name="프로필 이미지", upload_to="profile_images/", null=True, blank=True)
-    bio = models.TextField(verbose_name="자기소개", max_length=500, blank=True)
-    phone = models.CharField(verbose_name="전화번호", max_length=20, blank=True)
-    company = models.CharField(verbose_name="회사/소속", max_length=100, blank=True)
-    position = models.CharField(verbose_name="직책", max_length=100, blank=True)
-    
     objects = managers.CustomUserManager()
 
     class Meta:
         verbose_name = "사용자"
         verbose_name_plural = "사용자"
+
+
+class UserProfile(core_model.TimeStampedModel):
+    """사용자 프로필 정보"""
+    user = models.OneToOneField(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='profile',
+        verbose_name="사용자"
+    )
+    profile_image = models.ImageField(
+        verbose_name="프로필 이미지", 
+        upload_to="profile_images/", 
+        null=True, 
+        blank=True
+    )
+    bio = models.TextField(verbose_name="자기소개", max_length=500, blank=True)
+    phone = models.CharField(verbose_name="전화번호", max_length=20, blank=True)
+    company = models.CharField(verbose_name="회사/소속", max_length=100, blank=True)
+    position = models.CharField(verbose_name="직책", max_length=100, blank=True)
+    
+    class Meta:
+        verbose_name = "사용자 프로필"
+        verbose_name_plural = "사용자 프로필"
+    
+    def __str__(self):
+        return f"{self.user.username}의 프로필"
 
 
 class EmailVerify(core_model.TimeStampedModel):

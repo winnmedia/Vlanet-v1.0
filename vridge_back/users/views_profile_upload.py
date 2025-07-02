@@ -53,21 +53,22 @@ class ProfileImageUpload(View):
                     "message": "JPG, PNG, GIF 형식의 이미지만 업로드 가능합니다."
                 }, status=400)
             
+            # UserProfile 가져오기 또는 생성
+            try:
+                profile = user.profile
+            except:
+                from . import models
+                profile = models.UserProfile.objects.create(user=user)
+            
             # 기존 프로필 이미지가 있다면 삭제
-            if hasattr(user, 'profile_image') and user.profile_image:
-                old_image_path = user.profile_image.path
+            if profile.profile_image:
+                old_image_path = profile.profile_image.path
                 if os.path.exists(old_image_path):
                     os.remove(old_image_path)
             
-            # 프로필 이미지 필드가 있는지 확인
-            if not hasattr(user, 'profile_image'):
-                return JsonResponse({
-                    "message": "프로필 이미지 기능이 활성화되지 않았습니다. 관리자에게 문의하세요."
-                }, status=503)
-            
             # 이미지 저장
-            user.profile_image = profile_image
-            user.save()
+            profile.profile_image = profile_image
+            profile.save()
             
             # 이미지 리사이징 (Pillow가 설치된 경우에만)
             if PIL_AVAILABLE:
@@ -76,7 +77,7 @@ class ProfileImageUpload(View):
             return JsonResponse({
                 "status": "success",
                 "message": "프로필 이미지가 성공적으로 업로드되었습니다.",
-                "profile_image_url": user.profile_image.url
+                "profile_image_url": profile.profile_image.url
             }, status=200)
             
         except Exception as e:
@@ -135,18 +136,26 @@ class ProfileImageUpload(View):
         try:
             user = request.user
             
-            if not hasattr(user, 'profile_image') or not user.profile_image:
+            # UserProfile 가져오기
+            try:
+                profile = user.profile
+            except:
+                return JsonResponse({
+                    "message": "프로필 정보가 없습니다."
+                }, status=404)
+            
+            if not profile.profile_image:
                 return JsonResponse({
                     "message": "삭제할 프로필 이미지가 없습니다."
                 }, status=400)
             
             # 이미지 파일 삭제
-            if os.path.exists(user.profile_image.path):
-                os.remove(user.profile_image.path)
+            if os.path.exists(profile.profile_image.path):
+                os.remove(profile.profile_image.path)
             
             # DB에서 이미지 필드 초기화
-            user.profile_image = None
-            user.save()
+            profile.profile_image = None
+            profile.save()
             
             return JsonResponse({
                 "status": "success",
@@ -210,25 +219,36 @@ class ProfileUpdate(View):
                                 "message": "올바른 전화번호 형식이 아닙니다."
                             }, status=400)
                     
-                    # 필드가 모델에 존재하는지 확인
-                    if hasattr(user, field):
+                    # UserProfile 가져오기 또는 생성
+                    try:
+                        profile = user.profile
+                    except:
+                        from . import models
+                        profile = models.UserProfile.objects.create(user=user)
+                    
+                    # 닉네임은 User 모델에, 나머지는 UserProfile에 저장
+                    if field == 'nickname':
                         setattr(user, field, value)
-                        updated_fields.append(field)
+                        user.save()
                     else:
-                        logger.warning(f"Field {field} does not exist on User model")
+                        setattr(profile, field, value)
+                    updated_fields.append(field)
             
             if updated_fields:
-                user.save()
+                if 'nickname' not in updated_fields:
+                    user.save()
+                if any(f in updated_fields for f in ['bio', 'phone', 'company', 'position']):
+                    profile.save()
                 
                 # 업데이트된 프로필 정보 반환
                 profile_data = {
                     "email": user.username,
                     "nickname": user.nickname,
-                    "bio": getattr(user, 'bio', ''),
-                    "phone": getattr(user, 'phone', ''),
-                    "company": getattr(user, 'company', ''),
-                    "position": getattr(user, 'position', ''),
-                    "profile_image": user.profile_image.url if hasattr(user, 'profile_image') and user.profile_image else None,
+                    "bio": profile.bio,
+                    "phone": profile.phone,
+                    "company": profile.company,
+                    "position": profile.position,
+                    "profile_image": profile.profile_image.url if profile.profile_image else None,
                 }
                 
                 return JsonResponse({

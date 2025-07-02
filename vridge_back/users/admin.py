@@ -130,3 +130,45 @@ class UserMemoAdmin(admin.ModelAdmin):
     )
 
     list_display_links = list_display
+
+
+@admin.register(models.UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "company",
+        "position",
+        "phone",
+        "has_profile_image",
+        "updated",
+    )
+    
+    list_display_links = ("id", "user")
+    
+    search_fields = ("user__username", "user__nickname", "company", "position")
+    
+    list_filter = ("company", "position", "updated")
+    
+    def has_profile_image(self, obj):
+        return format_html(
+            '<span style="color: {};">{}</span>',
+            "#27ae60" if obj.profile_image else "#e74c3c",
+            "✓" if obj.profile_image else "✗"
+        )
+    has_profile_image.short_description = "프로필 이미지"
+    
+    fieldsets = (
+        ("사용자", {
+            "fields": ("user",)
+        }),
+        ("프로필 정보", {
+            "fields": ("profile_image", "bio", "phone", "company", "position")
+        }),
+        ("시간 정보", {
+            "fields": ("created", "updated"),
+            "classes": ("collapse",)
+        }),
+    )
+    
+    readonly_fields = ("created", "updated")

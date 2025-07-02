@@ -11,7 +11,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from .utils import user_validator
-from PIL import Image
+# Pillow import - 선택적으로 처리
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("Pillow is not installed. Image resizing will be disabled.")
 
 logger = logging.getLogger(__name__)
 
@@ -47,17 +54,24 @@ class ProfileImageUpload(View):
                 }, status=400)
             
             # 기존 프로필 이미지가 있다면 삭제
-            if user.profile_image:
+            if hasattr(user, 'profile_image') and user.profile_image:
                 old_image_path = user.profile_image.path
                 if os.path.exists(old_image_path):
                     os.remove(old_image_path)
+            
+            # 프로필 이미지 필드가 있는지 확인
+            if not hasattr(user, 'profile_image'):
+                return JsonResponse({
+                    "message": "프로필 이미지 기능이 활성화되지 않았습니다. 관리자에게 문의하세요."
+                }, status=503)
             
             # 이미지 저장
             user.profile_image = profile_image
             user.save()
             
-            # 이미지 리사이징 (선택사항)
-            self._resize_image(user.profile_image.path)
+            # 이미지 리사이징 (Pillow가 설치된 경우에만)
+            if PIL_AVAILABLE:
+                self._resize_image(user.profile_image.path)
             
             return JsonResponse({
                 "status": "success",
@@ -73,6 +87,8 @@ class ProfileImageUpload(View):
     
     def _resize_image(self, image_path, max_size=(400, 400)):
         """이미지 리사이징"""
+        if not PIL_AVAILABLE:
+            return
         try:
             with Image.open(image_path) as img:
                 # EXIF 회전 정보 처리
@@ -119,7 +135,7 @@ class ProfileImageUpload(View):
         try:
             user = request.user
             
-            if not user.profile_image:
+            if not hasattr(user, 'profile_image') or not user.profile_image:
                 return JsonResponse({
                     "message": "삭제할 프로필 이미지가 없습니다."
                 }, status=400)
@@ -194,8 +210,12 @@ class ProfileUpdate(View):
                                 "message": "올바른 전화번호 형식이 아닙니다."
                             }, status=400)
                     
-                    setattr(user, field, value)
-                    updated_fields.append(field)
+                    # 필드가 모델에 존재하는지 확인
+                    if hasattr(user, field):
+                        setattr(user, field, value)
+                        updated_fields.append(field)
+                    else:
+                        logger.warning(f"Field {field} does not exist on User model")
             
             if updated_fields:
                 user.save()
@@ -204,11 +224,11 @@ class ProfileUpdate(View):
                 profile_data = {
                     "email": user.username,
                     "nickname": user.nickname,
-                    "bio": user.bio,
-                    "phone": user.phone,
-                    "company": user.company,
-                    "position": user.position,
-                    "profile_image": user.profile_image.url if user.profile_image else None,
+                    "bio": getattr(user, 'bio', ''),
+                    "phone": getattr(user, 'phone', ''),
+                    "company": getattr(user, 'company', ''),
+                    "position": getattr(user, 'position', ''),
+                    "profile_image": user.profile_image.url if hasattr(user, 'profile_image') and user.profile_image else None,
                 }
                 
                 return JsonResponse({

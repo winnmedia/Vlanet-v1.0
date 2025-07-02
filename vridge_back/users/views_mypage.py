@@ -26,7 +26,7 @@ class MyPageView(View):
         try:
             user = request.user
             
-            # 기본 프로필 정보
+            # 기본 프로필 정보 - 필드가 없을 경우를 대비한 안전한 접근
             profile_data = {
                 "email": user.username,
                 "nickname": user.nickname if user.nickname else user.username,
@@ -35,11 +35,11 @@ class MyPageView(View):
                 "is_superuser": user.is_superuser,
                 "date_joined": user.date_joined.strftime("%Y-%m-%d"),
                 "last_login": user.last_login.strftime("%Y-%m-%d %H:%M") if user.last_login else None,
-                "profile_image": user.profile_image.url if user.profile_image else None,
-                "bio": user.bio,
-                "phone": user.phone,
-                "company": user.company,
-                "position": user.position,
+                "profile_image": user.profile_image.url if hasattr(user, 'profile_image') and user.profile_image else None,
+                "bio": getattr(user, 'bio', ''),
+                "phone": getattr(user, 'phone', ''),
+                "company": getattr(user, 'company', ''),
+                "position": getattr(user, 'position', ''),
             }
             
             # 프로젝트 정보

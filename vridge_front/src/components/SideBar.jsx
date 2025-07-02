@@ -63,6 +63,16 @@ export default function SideBar({ tab, on_menu }) {
       set_tab_name('feedback')
     } else if (path.includes('/ProjectView') || path.includes('/ProjectEdit') || path.includes('/ProjectCreate')) {
       set_tab_name('project')
+    } else if (path === '/MyPage') {
+      // 마이페이지로 이동 시 서브메뉴 닫기
+      SetSubMenu(false)
+    }
+  }, [path])
+
+  // 경로 변경 시 서브메뉴 닫기 (홈, 전체 일정, 콘텐츠, 마이페이지로 이동 시)
+  useEffect(() => {
+    if (path === '/CmsHome' || path === '/Calendar' || path === '/Elearning' || path === '/MyPage') {
+      SetSubMenu(false)
     }
   }, [path])
 
@@ -169,6 +179,7 @@ export default function SideBar({ tab, on_menu }) {
         <div
           className={cx('mypage', { active: path === '/MyPage' })}
           onClick={() => {
+            SetSubMenu(false)
             navigate('/MyPage')
           }}
         >

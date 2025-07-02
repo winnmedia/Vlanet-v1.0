@@ -4,7 +4,6 @@ import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
-import axios from '../api/axios'
 
 export default function SideBar({ tab, on_menu }) {
   const navigate = useNavigate()
@@ -30,21 +29,23 @@ export default function SideBar({ tab, on_menu }) {
     }
   }, [project_list])
 
-  // 관리자 권한 확인
+  // 관리자 권한 확인 (임시 비활성화)
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (checkSession()) {
-        try {
-          const response = await axios.get('/users/profile')
-          if (response.data.status === 'success' && response.data.profile.is_staff) {
-            setIsAdmin(true)
-          }
-        } catch (error) {
-          console.error('Failed to check admin status:', error)
-        }
-      }
-    }
-    checkAdminStatus()
+    // TODO: 백엔드 API 연동 후 활성화
+    // const checkAdminStatus = async () => {
+    //   if (checkSession()) {
+    //     try {
+    //       const response = await axios.get('/users/profile')
+    //       if (response.data.status === 'success' && response.data.profile.is_staff) {
+    //         setIsAdmin(true)
+    //       }
+    //     } catch (error) {
+    //       console.error('Failed to check admin status:', error)
+    //     }
+    //   }
+    // }
+    // checkAdminStatus()
+    setIsAdmin(false) // 임시로 false 설정
   }, [user])
 
   useEffect(() => {

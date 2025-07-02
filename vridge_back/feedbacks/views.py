@@ -21,16 +21,19 @@ class FeedbackDetail(View):
             user = request.user
             email = user.username
             project = project_model.Project.objects.get_or_none(id=id)
-            feedback = project.feedback
             if not project:
                 return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
+            
+            feedback = project.feedback
+            if not feedback:
+                return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
                 return JsonResponse({"message": "권한이 없습니다."}, status=500)
 
             # print(feedback.files.name) path , url
-            if feedback.files:
+            if feedback and feedback.files:
                 # URL 그대로 사용 (인코딩 제거)
                 file_path = feedback.files.url
                 
@@ -71,7 +74,7 @@ class FeedbackDetail(View):
                         "nickname",
                         "created",
                     )
-                ),
+                ) if feedback else [],
             }
             return JsonResponse({"result": result}, status=200)
         except Exception as e:
@@ -101,6 +104,8 @@ class FeedbackDetail(View):
                 return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=500)
 
             feedback = project.feedback
+            if not feedback:
+                return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
@@ -158,6 +163,8 @@ class FeedbackDetail(View):
                 return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
             
             feedback = project.feedback
+            if not feedback:
+                return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
@@ -279,10 +286,12 @@ class FeedbackFileDelete(View):
             email = user.username
 
             project = project_model.Project.objects.get_or_none(id=id)
-            feedback = project.feedback
-
             if not project:
                 return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
+            
+            feedback = project.feedback
+            if not feedback:
+                return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
@@ -311,6 +320,8 @@ class VideoEncodingStatus(View):
                 return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
             
             feedback = project.feedback
+            if not feedback:
+                return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():

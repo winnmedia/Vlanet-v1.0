@@ -127,4 +127,6 @@ class FeedBackComment(core_model.TimeStampedModel):
         ordering = ("-created",)
 
     def __str__(self):
-        return f"프로젝트 명 : {self.feedback.projects.name}"
+        if self.feedback and hasattr(self.feedback, 'projects') and self.feedback.projects:
+            return f"프로젝트 명 : {self.feedback.projects.name}"
+        return f"피드백 댓글 #{self.id}"

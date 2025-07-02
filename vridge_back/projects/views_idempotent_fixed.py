@@ -38,9 +38,10 @@ class CreateProjectIdempotentFixed(View):
     def post(self, request):
         try:
             user = request.user
-            files = request.FILES.getlist("files")
-            inputs = json.loads(request.POST.get("inputs"))
-            process = json.loads(request.POST.get("process"))
+            # request.FILES가 None인 경우 처리
+            files = request.FILES.getlist("files") if request.FILES else []
+            inputs = json.loads(request.POST.get("inputs", "{}"))
+            process = json.loads(request.POST.get("process", "[]"))
             
             # 로깅
             logger.info(f"[CreateProjectFixed] Request from user {user.id} ({user.username})")

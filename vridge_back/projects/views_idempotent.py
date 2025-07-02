@@ -27,9 +27,10 @@ class CreateProjectIdempotent(View):
     def post(self, request):
         try:
             user = request.user
-            files = request.FILES.getlist("files")
-            inputs = json.loads(request.POST.get("inputs"))
-            process = json.loads(request.POST.get("process"))
+            # request.FILES가 None인 경우 처리
+            files = request.FILES.getlist("files") if request.FILES else []
+            inputs = json.loads(request.POST.get("inputs", "{}"))
+            process = json.loads(request.POST.get("process", "[]"))
             
             # 멱등성 키 생성 (사용자 ID + 프로젝트 이름 + 요청 시간)
             idempotency_key = request.META.get('HTTP_X_IDEMPOTENCY_KEY')

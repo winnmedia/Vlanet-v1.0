@@ -95,6 +95,12 @@ export default function ProjectCreate() {
       return
     }
     
+    // 이미 요청 중이면 무시
+    if (createRequestRef.current) {
+      console.warn('[ProjectCreate] Request already in progress, ignoring duplicate')
+      return
+    }
+    
     // 5초 이내에 같은 프로젝트명으로 요청이 있었는지 확인
     const now = Date.now()
     if (lastRequestRef.current.name === inputs.name && 
@@ -139,12 +145,6 @@ export default function ProjectCreate() {
     console.log('[ProjectCreate] Full URL:', window.location.href)
     console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
     
-    // 이미 요청 중이면 무시
-    if (createRequestRef.current) {
-      console.warn('[ProjectCreate] Request already in progress, ignoring duplicate')
-      return
-    }
-    
     // API 요청 추적
     const request = CreateProjectAPI(formData)
     createRequestRef.current = request
@@ -165,18 +165,20 @@ export default function ProjectCreate() {
           // 성공 플래그 설정하여 중복 처리 방지
           lastRequestRef.current.success = true
           
-          // 먼저 프로젝트 목록을 갱신
+          // 즉시 Calendar 페이지로 이동 (alert 전에 이동)
+          navigate('/Calendar', { replace: true })
+          
+          // 페이지 이동 후 프로젝트 목록 갱신
           refetchProject(dispatch, navigate).then(() => {
             console.log('[ProjectCreate] Project list refreshed')
-            // 성공 후 페이지 이동
-            window.alert('프로젝트 생성 완료')
-            navigate('/Calendar', { replace: true })
           }).catch(err => {
             console.error('[ProjectCreate] refetchProject error:', err)
-            // 에러가 발생해도 페이지는 이동
-            window.alert('프로젝트 생성 완료')
-            navigate('/Calendar', { replace: true })
           })
+          
+          // 페이지 이동 후 알림 표시
+          setTimeout(() => {
+            window.alert('프로젝트가 성공적으로 생성되었습니다.')
+          }, 100)
         })
         .catch((err) => {
           console.log('[ProjectCreate] === API ERROR ===')
@@ -210,7 +212,10 @@ export default function ProjectCreate() {
         .finally(() => {
           // 요청 완료 후 ref 초기화
           createRequestRef.current = null
-          setIsCreating(false)
+          // 컴포넌트가 언마운트되지 않았을 때만 상태 업데이트
+          if (isMountedRef.current) {
+            setIsCreating(false)
+          }
         })
   }
   return (
@@ -257,7 +262,15 @@ export default function ProjectCreate() {
             </div>
 
             <div className="btn_wrap">
-              <button onClick={CreateBtn} className="submit" disabled={isCreating}>
+              <button 
+                onClick={CreateBtn} 
+                className="submit" 
+                disabled={isCreating || !ValidForm}
+                style={{ 
+                  opacity: (isCreating || !ValidForm) ? 0.6 : 1,
+                  cursor: (isCreating || !ValidForm) ? 'not-allowed' : 'pointer'
+                }}
+              >
                 {isCreating ? '등록 중...' : '등록'}
               </button>
             </div>

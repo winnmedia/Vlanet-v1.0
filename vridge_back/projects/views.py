@@ -22,6 +22,7 @@ from django.utils.encoding import force_bytes, force_str
 
 from django.db.models import F
 from django.db import transaction
+from django.utils import timezone as django_timezone
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -361,14 +362,35 @@ class CreateProject(View):
             files = request.FILES.getlist("files")
             inputs = json.loads(request.POST.get("inputs"))
             process = json.loads(request.POST.get("process"))
+            
+            # 멱등성 키 확인
+            idempotency_key = request.headers.get('X-Idempotency-Key')
+            if idempotency_key:
+                logging.info(f"[CreateProject] Request with idempotency key: {idempotency_key}")
+            
+            # 프로젝트 이름 중복 체크 (5초 이내 동일한 이름의 프로젝트 생성 방지)
+            project_name = inputs.get('name')
+            if project_name:
+                recent_projects = models.Project.objects.filter(
+                    user=user,
+                    name=project_name,
+                    created__gte=django_timezone.now() - django_timezone.timedelta(seconds=5)
+                ).exists()
+                
+                if recent_projects:
+                    logging.warning(f"[CreateProject] Duplicate project creation attempt: {project_name}")
+                    return JsonResponse({
+                        "message": "동일한 프로젝트가 방금 생성되었습니다. 잠시 후 다시 시도해주세요."
+                    }, status=400)
 
             with transaction.atomic():
                 project = models.Project.objects.create(user=user)
                 for k, v in inputs.items():
                     setattr(project, k, v)
                 
-                logging.info(f"Creating project with inputs: {inputs}")
-                logging.info(f"Process data: {process}")
+                logging.info(f"[CreateProject] Creating project '{project_name}' for user {user.username}")
+                logging.info(f"[CreateProject] Inputs: {inputs}")
+                logging.info(f"[CreateProject] Process data: {process}")
 
                 for i in process:
                     key = i.get("key")
@@ -433,7 +455,8 @@ class CreateProject(View):
 
                 models.File.objects.bulk_create(file_obj)
 
-            return JsonResponse({"message": "success"}, status=200)
+            logging.info(f"[CreateProject] Successfully created project '{project_name}' with ID: {project.id}")
+            return JsonResponse({"message": "success", "project_id": project.id}, status=200)
         except Exception as e:
             print(e)
             logging.error(f"Project creation error: {str(e)}")

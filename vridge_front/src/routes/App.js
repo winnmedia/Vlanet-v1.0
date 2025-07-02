@@ -28,26 +28,30 @@ export default function App() {
       return
     }
     
-    // 최초 로드 시 프로젝트 목록이 없고, 로그인 상태이며, 로그인 페이지가 아닐 때만 로드
+    // 최초 로드 시 프로젝트 목록 로드
     const session = checkSession()
-    const hasProjectList = project_list && project_list.length > 0
     
-    if (session && pathname !== '/Login' && pathname !== '/' && !hasProjectList && !isProjectListLoaded.current) {
-      console.log('[App] Loading project list - no existing data')
-      isProjectListLoaded.current = true
-      refetchProject(dispatch, navigate).then(() => {
-        console.log('[App] Project list loaded successfully')
-      }).catch(err => {
-        console.error('[App] Failed to load project list:', err)
-        isProjectListLoaded.current = false // 실패 시 다시 시도할 수 있도록
-      })
+    if (session && pathname !== '/Login' && pathname !== '/') {
+      console.log('[App] Checking if project list needs loading')
+      // Redux store가 비어있거나 아직 로드하지 않은 경우
+      if (!project_list && !isProjectListLoaded.current) {
+        console.log('[App] Loading project list for the first time')
+        isProjectListLoaded.current = true
+        refetchProject(dispatch, navigate).then(() => {
+          console.log('[App] Project list loaded successfully')
+        }).catch(err => {
+          console.error('[App] Failed to load project list:', err)
+          isProjectListLoaded.current = false // 실패 시 다시 시도할 수 있도록
+        })
+      } else {
+        console.log('[App] Project list already exists or loading attempted:', {
+          hasProjectList: !!project_list,
+          projectListLength: project_list?.length || 0,
+          isLoaded: isProjectListLoaded.current
+        })
+      }
     } else {
-      console.log('[App] Skipping project list load:', {
-        session: !!session,
-        pathname,
-        hasProjectList,
-        isLoaded: isProjectListLoaded.current
-      })
+      console.log('[App] Skipping project list load - not logged in or on login page')
     }
   }, []) // 의도적으로 의존성 배열을 비워둠 (최초 1회만 실행)
   

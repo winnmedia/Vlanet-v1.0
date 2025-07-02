@@ -4,6 +4,9 @@ from . import views_improved
 from . import views_fixed
 from . import views_safe
 from . import views_idempotent
+from . import views_idempotent_fixed
+from . import views_ultra_safe
+from . import views_idempotent_final
 
 app_name = "projects"
 
@@ -15,11 +18,12 @@ urlpatterns = [
     path(
         "invite/<str:uid>/<str:token>", views.AcceptInvite.as_view(), name="invite"
     ),  # 초대 받기
-    path("create", views_idempotent.CreateProjectIdempotent.as_view()),  # 멱등성 보장 버전
+    path("create", views_idempotent_final.CreateProjectIdempotentFinal.as_view()),  # 날짜 검증 개선된 최종 버전
     
     # 이전 버전들 (백업)
     path("create_safe", views_safe.CreateProjectSafe.as_view()),  # FeedBack 없이 안전하게 작동
     path("create_original", views.CreateProject.as_view()),  # 원본 버전
+    path("create_ultra_safe", views_ultra_safe.CreateProjectUltraSafe.as_view()),  # 진단용 초안전 버전
     
     # 개선된 프로젝트 생성 엔드포인트 (디버깅용)
     path("create_improved", views_improved.CreateProjectImproved.as_view()),

@@ -318,6 +318,27 @@ X_FRAME_OPTIONS = 'DENY'
 # 기본 필드
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# 캐시 설정 - 항상 캐시 백엔드를 구성
+REDIS_URL = os.environ.get('REDIS_URL')
+if REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+        }
+    }
+    print(f"Redis cache configured: {REDIS_URL[:20]}...")
+else:
+    # Redis가 없을 경우 데이터베이스 캐시를 대체로 사용
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'django_cache_table',
+        }
+    }
+    print("WARNING: Redis not configured, using database cache as fallback")
+    print("Run: python manage.py createcachetable")
+
 # 로깅
 LOGGING = {
     'version': 1,

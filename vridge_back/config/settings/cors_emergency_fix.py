@@ -1,6 +1,12 @@
 # 긴급 CORS 수정 - 최소 설정
 from .railway import *
 
+# Railway 설정에서 캐시 설정이 상속되는지 확인
+if 'CACHES' in locals():
+    print(f"[CORS Emergency Fix] Cache backend: {CACHES.get('default', {}).get('BACKEND', 'Not configured')}")
+else:
+    print("[CORS Emergency Fix] WARNING: No cache configuration found!")
+
 # CORS 앱이 설치되어 있는지 확인
 if 'corsheaders' not in INSTALLED_APPS:
     INSTALLED_APPS.insert(0, 'corsheaders')

@@ -97,11 +97,17 @@ export default function Calendar() {
     })
   }, [month, project_list])
 
-  // 인증 체크
+  // 인증 체크 및 초기 데이터 로드
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
+    } else {
+      // 페이지 진입 시 프로젝트 목록 새로 고침
+      console.log('[Calendar] Refreshing project list on mount')
+      refetchProject(dispatch, navigate).catch(err => {
+        console.error('[Calendar] Failed to refresh project list:', err)
+      })
     }
   }, [])
 

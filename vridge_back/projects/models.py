@@ -260,3 +260,21 @@ class SampleFiles(core_model.TimeStampedModel):
 
     def __str__(self):
         return str(self.files.name)
+
+
+class IdempotencyRecord(models.Model):
+    """멱등성 체크를 위한 데이터베이스 모델"""
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    idempotency_key = models.CharField(max_length=255, db_index=True)
+    project_id = models.IntegerField(null=True, blank=True)
+    request_data = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='processing')
+    
+    class Meta:
+        unique_together = [['user', 'idempotency_key']]
+        indexes = [
+            models.Index(fields=['created_at']),
+        ]
+        verbose_name = "멱등성 레코드"
+        verbose_name_plural = "멱등성 레코드"

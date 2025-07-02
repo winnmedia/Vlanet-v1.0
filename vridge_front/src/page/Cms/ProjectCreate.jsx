@@ -22,6 +22,7 @@ export default function ProjectCreate() {
   const navigate = useNavigate()
   const initial = project_initial()
   const [isCreating, setIsCreating] = useState(false)
+  const createRequestRef = useRef(null) // API 요청 추적
   
   // 중복 요청 방지를 위한 ref
   const lastRequestRef = useRef({ name: '', timestamp: 0 })
@@ -47,6 +48,11 @@ export default function ProjectCreate() {
     // cleanup function
     return () => {
       isMountedRef.current = false
+      // 진행 중인 요청이 있으면 취소
+      if (createRequestRef.current) {
+        console.log('[ProjectCreate] Cancelling pending request on unmount')
+        // axios 요청 취소는 별도 처리 필요
+      }
     }
   }, [navigate])
 
@@ -133,7 +139,17 @@ export default function ProjectCreate() {
     console.log('[ProjectCreate] Full URL:', window.location.href)
     console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
     
-    CreateProjectAPI(formData)
+    // 이미 요청 중이면 무시
+    if (createRequestRef.current) {
+      console.warn('[ProjectCreate] Request already in progress, ignoring duplicate')
+      return
+    }
+    
+    // API 요청 추적
+    const request = CreateProjectAPI(formData)
+    createRequestRef.current = request
+    
+    request
         .then((res) => {
           // 컴포넌트가 언마운트되었으면 무시
           if (!isMountedRef.current) {
@@ -149,18 +165,18 @@ export default function ProjectCreate() {
           // 성공 플래그 설정하여 중복 처리 방지
           lastRequestRef.current.success = true
           
-          // navigate를 먼저 실행하여 컴포넌트 언마운트
-          window.alert('프로젝트 생성 완료')
-          navigate('/Calendar', { replace: true })  // replace 옵션 추가
-          
-          // refetchProject는 navigate 후에 실행 (비동기)
-          setTimeout(() => {
-            if (isMountedRef.current) {
-              refetchProject(dispatch, navigate).catch(err => {
-                console.error('[ProjectCreate] refetchProject error:', err)
-              })
-            }
-          }, 100)
+          // 먼저 프로젝트 목록을 갱신
+          refetchProject(dispatch, navigate).then(() => {
+            console.log('[ProjectCreate] Project list refreshed')
+            // 성공 후 페이지 이동
+            window.alert('프로젝트 생성 완료')
+            navigate('/Calendar', { replace: true })
+          }).catch(err => {
+            console.error('[ProjectCreate] refetchProject error:', err)
+            // 에러가 발생해도 페이지는 이동
+            window.alert('프로젝트 생성 완료')
+            navigate('/Calendar', { replace: true })
+          })
         })
         .catch((err) => {
           console.log('[ProjectCreate] === API ERROR ===')
@@ -190,6 +206,11 @@ export default function ProjectCreate() {
           } else {
             window.alert('프로젝트 생성 중 오류가 발생했습니다.')
           }
+        })
+        .finally(() => {
+          // 요청 완료 후 ref 초기화
+          createRequestRef.current = null
+          setIsCreating(false)
         })
   }
   return (

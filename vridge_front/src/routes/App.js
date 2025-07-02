@@ -14,6 +14,17 @@ export default function App() {
   const pathname = useLocation().pathname
   
   useEffect(() => {
+    // 프로덕션 도메인이 설정되어 있고, 현재 도메인이 다른 경우 리다이렉트
+    const productionDomain = process.env.REACT_APP_PRODUCTION_DOMAIN
+    if (productionDomain && 
+        window.location.hostname !== productionDomain && 
+        window.location.hostname !== `www.${productionDomain}` &&
+        window.location.hostname !== 'localhost') {
+      console.log(`[App] Redirecting to ${productionDomain}`)
+      window.location.replace(`https://${productionDomain}` + window.location.pathname + window.location.search)
+      return
+    }
+    
     // 최초 로드 시에만 프로젝트 데이터 로드
     const session = checkSession()
     if (session && pathname !== '/Login' && pathname !== '/') {

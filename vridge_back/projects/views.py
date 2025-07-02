@@ -590,21 +590,35 @@ class ProjectDetail(View):
     def delete(self, request, project_id):
         try:
             user = request.user
+            logging.info(f"[ProjectDetail.delete] Delete request for project {project_id} by user {user.id} ({user.username})")
 
             project = models.Project.objects.get_or_none(id=project_id)
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=500)
+                logging.warning(f"[ProjectDetail.delete] Project {project_id} not found")
+                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
-            is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
-            if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+            logging.info(f"[ProjectDetail.delete] Project owner: {project.user.id}, Requesting user: {user.id}")
+            
+            # 프로젝트 소유자이거나 매니저 권한이 있는 멤버인지 확인
+            is_owner = project.user == user
+            is_manager = models.Members.objects.filter(project=project, user=user, rating="manager").exists()
+            
+            if not is_owner and not is_manager:
+                logging.warning(f"[ProjectDetail.delete] Permission denied for user {user.id} on project {project_id}")
+                return JsonResponse({"message": "프로젝트 삭제 권한이 없습니다."}, status=403)
 
+            # 프로젝트 삭제
+            project_name = project.name
             project.delete()
+            logging.info(f"[ProjectDetail.delete] Successfully deleted project {project_id} ({project_name})")
+            
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
-            logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            logging.error(f"[ProjectDetail.delete] Error deleting project {project_id}: {str(e)}")
+            logging.error(f"[ProjectDetail.delete] Error type: {type(e).__name__}")
+            import traceback
+            logging.error(f"[ProjectDetail.delete] Traceback: {traceback.format_exc()}")
+            return JsonResponse({"message": f"프로젝트 삭제 중 오류가 발생했습니다: {str(e)}"}, status=500)
 
 
 class ProjectFile(View):

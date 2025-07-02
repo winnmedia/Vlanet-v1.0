@@ -96,18 +96,55 @@ export default function ProjectEdit() {
     }
   }
 
-  function DeleteBtn() {
-    if (window.confirm('삭제하시겠습니까?')) {
+  function DeleteBtn(e) {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    
+    console.log('[ProjectEdit] Delete button clicked')
+    console.log('[ProjectEdit] Project ID:', project_id)
+    console.log('[ProjectEdit] Current project:', current_project)
+    
+    if (!project_id) {
+      console.error('[ProjectEdit] No project ID found!')
+      window.alert('프로젝트 ID를 찾을 수 없습니다.')
+      return
+    }
+    
+    if (window.confirm('정말로 이 프로젝트를 삭제하시겠습니까?\n삭제된 프로젝트는 복구할 수 없습니다.')) {
+      console.log('[ProjectEdit] User confirmed deletion')
+      
       DeleteProjectAPI(project_id)
         .then((res) => {
-          refetchProject(dispatch, navigate)
+          console.log('[ProjectEdit] Delete API success:', res.data)
+          window.alert('프로젝트가 삭제되었습니다.')
           navigate('/Calendar')
+          
+          // navigate 후에 refetchProject 실행
+          setTimeout(() => {
+            refetchProject(dispatch, navigate).catch(err => {
+              console.error('[ProjectEdit] refetchProject error:', err)
+            })
+          }, 100)
         })
         .catch((err) => {
-          if (err.response && err.response.data) {
-            window.alert(err.response.data.message)
+          console.error('[ProjectEdit] Delete API error:', err)
+          if (err.response) {
+            if (err.response.status === 401) {
+              window.alert('인증이 만료되었습니다. 다시 로그인해주세요.')
+              navigate('/Login', { replace: true })
+            } else if (err.response.data && err.response.data.message) {
+              window.alert(err.response.data.message)
+            } else {
+              window.alert('프로젝트 삭제 중 오류가 발생했습니다.')
+            }
+          } else {
+            window.alert('서버에 연결할 수 없습니다.')
           }
         })
+    } else {
+      console.log('[ProjectEdit] User cancelled deletion')
     }
   }
 

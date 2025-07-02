@@ -28,9 +28,10 @@ export default function App() {
     // 최초 로드 시에만 프로젝트 데이터 로드
     const session = checkSession()
     if (session && pathname !== '/Login' && pathname !== '/') {
+      console.log('[App] Loading project list on initial mount')
       refetchProject(dispatch, navigate)
     }
-  }, [])
+  }, []) // 의도적으로 의존성 배열을 비워둠 (최초 1회만 실행)
   
   return (
     <div className="App">

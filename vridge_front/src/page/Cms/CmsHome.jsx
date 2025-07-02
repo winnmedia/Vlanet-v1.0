@@ -31,14 +31,19 @@ export default function CmsHome() {
   const [showRecentActivity, setShowRecentActivity] = useState(false)
   const [showDeadlineProjects, setShowDeadlineProjects] = useState(false)
 
-  // 인증 체크 및 프로젝트 데이터 로드
+  // 인증 체크만 수행 (프로젝트 목록은 App.js에서 이미 로드됨)
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
     } else {
-      // 프로젝트 데이터 가져오기
-      refetchProject(dispatch, navigate)
+      // 프로젝트 목록이 비어있을 때만 새로 고침
+      if (!project_list || project_list.length === 0) {
+        console.log('[CmsHome] Project list empty, refreshing...')
+        refetchProject(dispatch, navigate)
+      } else {
+        console.log('[CmsHome] Using existing project list from store')
+      }
     }
   }, [])
 

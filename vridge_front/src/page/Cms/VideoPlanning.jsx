@@ -26,15 +26,101 @@ export default function VideoPlanning() {
   const [selectedStoryIndex, setSelectedStoryIndex] = useState(0)
   const [selectedSceneIndex, setSelectedSceneIndex] = useState(0)
   const [selectedShotIndex, setSelectedShotIndex] = useState(0)
+  const [planningHistory, setPlanningHistory] = useState([])
+  const [showHistory, setShowHistory] = useState(false)
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState(null)
+  const [planningTitle, setPlanningTitle] = useState('')
 
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
+    } else {
+      fetchPlanningHistory()
     }
   }, [navigate])
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'
+
+  const fetchPlanningHistory = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/api/video-planning/library/`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access')}`,
+          },
+        }
+      )
+      if (response.data.status === 'success') {
+        setPlanningHistory(response.data.data.plannings || [])
+      }
+    } catch (err) {
+      console.error('히스토리 로드 실패:', err)
+    }
+  }
+
+  const loadHistoryItem = async (planningId) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/api/video-planning/library/${planningId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access')}`,
+          },
+        }
+      )
+      if (response.data.status === 'success') {
+        const planning = response.data.data.planning
+        setPlanningData({
+          planning: planning.planning_text,
+          stories: planning.stories || [],
+          scenes: planning.scenes || [],
+          shots: planning.shots || [],
+          storyboards: planning.storyboards || []
+        })
+        setPlanningTitle(planning.title)
+        setCurrentStep(1)
+        setShowHistory(false)
+      }
+    } catch (err) {
+      setError('기획안을 불러오는데 실패했습니다.')
+    }
+  }
+
+  const savePlanning = async () => {
+    if (!planningTitle.trim()) {
+      setError('기획안 제목을 입력해주세요.')
+      return
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/video-planning/library/`,
+        {
+          title: planningTitle,
+          planning_text: planningData.planning,
+          stories: planningData.stories,
+          scenes: planningData.scenes,
+          shots: planningData.shots,
+          storyboards: planningData.storyboards
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access')}`,
+          },
+        }
+      )
+
+      if (response.data.status === 'success') {
+        alert('기획안이 저장되었습니다.')
+        fetchPlanningHistory()
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || '저장에 실패했습니다.')
+    }
+  }
 
   const generateStories = async () => {
     if (!planningData.planning.trim()) {
@@ -305,13 +391,33 @@ export default function VideoPlanning() {
               placeholder="예시: 신제품 런칭을 위한 프로모션 영상을 제작하려고 합니다. 타겟은 20-30대 직장인이며, 제품의 혁신성과 실용성을 강조하고 싶습니다..."
               rows={10}
             />
-            <button
-              className="generate-btn"
-              onClick={generateStories}
-              disabled={loading || !planningData.planning.trim()}
-            >
-              {loading ? '생성 중...' : '스토리 생성'}
-            </button>
+            <div className="planning-actions">
+              <input
+                type="text"
+                className="planning-title-input"
+                placeholder="기획안 제목을 입력하세요"
+                value={planningTitle}
+                onChange={(e) => setPlanningTitle(e.target.value)}
+              />
+              <div className="button-group">
+                <button
+                  className="generate-btn"
+                  onClick={generateStories}
+                  disabled={loading || !planningData.planning.trim()}
+                >
+                  {loading ? '생성 중...' : '스토리 생성'}
+                </button>
+                {planningData.stories.length > 0 && (
+                  <button
+                    className="save-btn"
+                    onClick={savePlanning}
+                    disabled={loading || !planningTitle.trim()}
+                  >
+                    기획안 저장
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         )
 
@@ -452,9 +558,32 @@ export default function VideoPlanning() {
           <div className="title">영상 기획</div>
           <div className="content video-planning">
             <div className="planning-header">
-              <h2>AI 기반 영상 기획 자동화</h2>
-              <p>기획안을 입력하면 AI가 스토리, 씬, 숏, 콘티를 단계별로 생성합니다.</p>
+              <h2>영상의 씨앗을 심어보세요 🎬</h2>
+              <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다.</p>
             </div>
+
+            {planningHistory.length > 0 && (
+              <div className="planning-history-section">
+                <div className="history-header">
+                  <h3>나의 기획 보관함</h3>
+                  <span className="history-count">{planningHistory.length}/5</span>
+                </div>
+                <div className="history-list">
+                  {planningHistory.map((item) => (
+                    <div 
+                      key={item.id} 
+                      className="history-item"
+                      onClick={() => loadHistoryItem(item.id)}
+                    >
+                      <div className="history-title">{item.title}</div>
+                      <div className="history-date">
+                        {new Date(item.created_at).toLocaleDateString('ko-KR')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="planning-navigation">
               <div 

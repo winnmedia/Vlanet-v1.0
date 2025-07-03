@@ -20,6 +20,72 @@
     }
   }
 
+  .planning-history-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      
+      h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin: 0;
+      }
+      
+      .history-count {
+        font-size: 14px;
+        color: #666;
+        background: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+    }
+    
+    .history-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
+      
+      .history-item {
+        background: white;
+        padding: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid #e5e7eb;
+        
+        &:hover {
+          border-color: #3b82f6;
+          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+          transform: translateY(-1px);
+        }
+        
+        .history-title {
+          font-size: 15px;
+          font-weight: 500;
+          color: #1a1a1a;
+          margin-bottom: 8px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        
+        .history-date {
+          font-size: 13px;
+          color: #9ca3af;
+        }
+      }
+    }
+  }
+
   .planning-navigation {
     display: flex;
     justify-content: center;
@@ -196,9 +262,33 @@
         border-color: #012fff;
       }
     }
-
-    .generate-btn {
+    
+    .planning-actions {
       margin-top: 20px;
+      
+      .planning-title-input {
+        width: 100%;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: border-color 0.3s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: #012fff;
+        }
+      }
+      
+      .button-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+    }
+
+    .generate-btn, .save-btn {
       padding: 14px 32px;
       background: #012fff;
       color: white;
@@ -222,6 +312,14 @@
       &:disabled {
         background: #ccc;
         cursor: not-allowed;
+      }
+    }
+    
+    .save-btn {
+      background: #28a745;
+      
+      &:hover:not(:disabled) {
+        background: #218838;
       }
     }
   }

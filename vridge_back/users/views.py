@@ -15,6 +15,7 @@ from django.utils.html import strip_tags
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework_simplejwt.tokens import RefreshToken
+from .validators import InputValidator, validate_request_data
 
 # from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
 
@@ -28,8 +29,10 @@ class CheckEmail(View):
             data = json.loads(request.body)
             email = data.get("email")
             
-            if not email:
-                return JsonResponse({"message": "이메일을 입력해주세요."}, status=400)
+            # 이메일 유효성 검증
+            is_valid, error_msg = InputValidator.validate_email(email)
+            if not is_valid:
+                return JsonResponse({"message": error_msg}, status=400)
             
             user = models.User.objects.filter(username=email).first()
             if user:
@@ -83,18 +86,22 @@ class SignUp(View):
                 return JsonResponse({"message": "모든 필드를 입력해주세요."}, status=400)
             
             # 이메일 형식 검증
-            import re
-            email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
-            if not re.match(email_regex, email):
-                return JsonResponse({"message": "올바른 이메일 형식이 아닙니다."}, status=400)
+            is_valid, error_msg = InputValidator.validate_email(email)
+            if not is_valid:
+                return JsonResponse({"message": error_msg}, status=400)
             
-            # 닉네임 길이 검증
+            # 닉네임 검증
+            is_valid, error_msg = InputValidator.validate_text_input(nickname, "닉네임", max_length=50)
+            if not is_valid:
+                return JsonResponse({"message": error_msg}, status=400)
+            
             if len(nickname) < 2:
                 return JsonResponse({"message": "닉네임은 최소 2자 이상이어야 합니다."}, status=400)
             
-            # 비밀번호 길이 검증
-            if len(password) < 10:
-                return JsonResponse({"message": "비밀번호는 최소 10자 이상이어야 합니다."}, status=400)
+            # 비밀번호 검증
+            is_valid, error_msg = InputValidator.validate_password(password)
+            if not is_valid:
+                return JsonResponse({"message": error_msg}, status=400)
 
             print(f"회원가입 시도 - 이메일: {email}, 닉네임: {nickname}")
             

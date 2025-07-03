@@ -45,39 +45,43 @@ class ProjectList(View):
             )
             result = []
             for i in project_list:
-                if i.video_delivery.end_date:
+                if i.video_delivery and i.video_delivery.end_date:
                     end_date = i.video_delivery.end_date
-                elif i.confirmation.end_date:
+                elif i.confirmation and i.confirmation.end_date:
                     end_date = i.confirmation.end_date
-                elif i.video_preview.end_date:
+                elif i.video_preview and i.video_preview.end_date:
                     end_date = i.video_preview.end_date
-                elif i.post_work.end_date:
+                elif i.post_work and i.post_work.end_date:
                     end_date = i.post_work.end_date
-                elif i.video_edit.end_date:
+                elif i.video_edit and i.video_edit.end_date:
                     end_date = i.video_edit.end_date
-                elif i.filming.end_date:
+                elif i.filming and i.filming.end_date:
                     end_date = i.filming.end_date
-                elif i.story_board.end_date:
+                elif i.story_board and i.story_board.end_date:
                     end_date = i.story_board.end_date
-                else:
+                elif i.basic_plan and i.basic_plan.end_date:
                     end_date = i.basic_plan.end_date
-
-                if i.basic_plan.start_date:
-                    first_date = i.basic_plan.start_date
-                elif i.story_board.start_date:
-                    first_date = i.story_board.start_date
-                elif i.filming.start_date:
-                    first_date = i.filming.start_date
-                elif i.video_edit.start_date:
-                    first_date = i.video_edit.start_date
-                elif i.post_work.start_date:
-                    first_date = i.post_work.start_date
-                elif i.video_preview.start_date:
-                    first_date = i.video_preview.start_date
-                elif i.confirmation.start_date:
-                    first_date = i.confirmation.start_date
                 else:
+                    end_date = None
+
+                if i.basic_plan and i.basic_plan.start_date:
+                    first_date = i.basic_plan.start_date
+                elif i.story_board and i.story_board.start_date:
+                    first_date = i.story_board.start_date
+                elif i.filming and i.filming.start_date:
+                    first_date = i.filming.start_date
+                elif i.video_edit and i.video_edit.start_date:
+                    first_date = i.video_edit.start_date
+                elif i.post_work and i.post_work.start_date:
+                    first_date = i.post_work.start_date
+                elif i.video_preview and i.video_preview.start_date:
+                    first_date = i.video_preview.start_date
+                elif i.confirmation and i.confirmation.start_date:
+                    first_date = i.confirmation.start_date
+                elif i.video_delivery and i.video_delivery.start_date:
                     first_date = i.video_delivery.start_date
+                else:
+                    first_date = None
 
                 result.append(
                     {
@@ -88,36 +92,36 @@ class ProjectList(View):
                         "description": i.description,
                         "color": i.color,
                         "basic_plan": {
-                            "start_date": i.basic_plan.start_date,
-                            "end_date": i.basic_plan.end_date,
+                            "start_date": i.basic_plan.start_date if i.basic_plan else None,
+                            "end_date": i.basic_plan.end_date if i.basic_plan else None,
                         },
                         "story_board": {
-                            "start_date": i.story_board.start_date,
-                            "end_date": i.story_board.end_date,
+                            "start_date": i.story_board.start_date if i.story_board else None,
+                            "end_date": i.story_board.end_date if i.story_board else None,
                         },
                         "filming": {
-                            "start_date": i.filming.start_date,
-                            "end_date": i.filming.end_date,
+                            "start_date": i.filming.start_date if i.filming else None,
+                            "end_date": i.filming.end_date if i.filming else None,
                         },
                         "video_edit": {
-                            "start_date": i.video_edit.start_date,
-                            "end_date": i.video_edit.end_date,
+                            "start_date": i.video_edit.start_date if i.video_edit else None,
+                            "end_date": i.video_edit.end_date if i.video_edit else None,
                         },
                         "post_work": {
-                            "start_date": i.post_work.start_date,
-                            "end_date": i.post_work.end_date,
+                            "start_date": i.post_work.start_date if i.post_work else None,
+                            "end_date": i.post_work.end_date if i.post_work else None,
                         },
                         "video_preview": {
-                            "start_date": i.video_preview.start_date,
-                            "end_date": i.video_preview.end_date,
+                            "start_date": i.video_preview.start_date if i.video_preview else None,
+                            "end_date": i.video_preview.end_date if i.video_preview else None,
                         },
                         "confirmation": {
-                            "start_date": i.confirmation.start_date,
-                            "end_date": i.confirmation.end_date,
+                            "start_date": i.confirmation.start_date if i.confirmation else None,
+                            "end_date": i.confirmation.end_date if i.confirmation else None,
                         },
                         "video_delivery": {
-                            "start_date": i.video_delivery.start_date,
-                            "end_date": i.video_delivery.end_date,
+                            "start_date": i.video_delivery.start_date if i.video_delivery else None,
+                            "end_date": i.video_delivery.end_date if i.video_delivery else None,
                         },
                         "first_date": first_date,
                         "end_date": end_date,
@@ -136,42 +140,55 @@ class ProjectList(View):
                 )
 
             members = user.members.all().select_related(
-                "project", "project__basic_plan", "project__video_delivery"
+                "project", 
+                "project__basic_plan",
+                "project__story_board",
+                "project__filming",
+                "project__video_edit",
+                "project__post_work",
+                "project__video_preview",
+                "project__confirmation",
+                "project__video_delivery",
+                "project__user"
             )
             for i in members:
-                if i.project.video_delivery.end_date:
+                if i.project.video_delivery and i.project.video_delivery.end_date:
                     end_date = i.project.video_delivery.end_date
-                elif i.project.confirmation.end_date:
+                elif i.project.confirmation and i.project.confirmation.end_date:
                     end_date = i.project.confirmation.end_date
-                elif i.project.video_preview.end_date:
+                elif i.project.video_preview and i.project.video_preview.end_date:
                     end_date = i.project.video_preview.end_date
-                elif i.project.post_work.end_date:
+                elif i.project.post_work and i.project.post_work.end_date:
                     end_date = i.project.post_work.end_date
-                elif i.project.video_edit.end_date:
+                elif i.project.video_edit and i.project.video_edit.end_date:
                     end_date = i.project.video_edit.end_date
-                elif i.project.filming.end_date:
+                elif i.project.filming and i.project.filming.end_date:
                     end_date = i.project.filming.end_date
-                elif i.project.story_board.end_date:
+                elif i.project.story_board and i.project.story_board.end_date:
                     end_date = i.project.story_board.end_date
-                else:
+                elif i.project.basic_plan and i.project.basic_plan.end_date:
                     end_date = i.project.basic_plan.end_date
-
-                if i.project.basic_plan.start_date:
-                    first_date = i.project.basic_plan.start_date
-                elif i.project.story_board.start_date:
-                    first_date = i.project.story_board.start_date
-                elif i.project.filming.start_date:
-                    first_date = i.project.filming.start_date
-                elif i.project.video_edit.start_date:
-                    first_date = i.project.video_edit.start_date
-                elif i.project.post_work.start_date:
-                    first_date = i.project.post_work.start_date
-                elif i.project.video_preview.start_date:
-                    first_date = i.project.video_preview.start_date
-                elif i.project.confirmation.start_date:
-                    first_date = i.project.confirmation.start_date
                 else:
+                    end_date = None
+
+                if i.project.basic_plan and i.project.basic_plan.start_date:
+                    first_date = i.project.basic_plan.start_date
+                elif i.project.story_board and i.project.story_board.start_date:
+                    first_date = i.project.story_board.start_date
+                elif i.project.filming and i.project.filming.start_date:
+                    first_date = i.project.filming.start_date
+                elif i.project.video_edit and i.project.video_edit.start_date:
+                    first_date = i.project.video_edit.start_date
+                elif i.project.post_work and i.project.post_work.start_date:
+                    first_date = i.project.post_work.start_date
+                elif i.project.video_preview and i.project.video_preview.start_date:
+                    first_date = i.project.video_preview.start_date
+                elif i.project.confirmation and i.project.confirmation.start_date:
+                    first_date = i.project.confirmation.start_date
+                elif i.project.video_delivery and i.project.video_delivery.start_date:
                     first_date = i.project.video_delivery.start_date
+                else:
+                    first_date = None
                 result.append(
                     {
                         "id": i.project.id,
@@ -181,36 +198,36 @@ class ProjectList(View):
                         "description": i.project.description,
                         "color": i.project.color,
                         "basic_plan": {
-                            "start_date": i.project.basic_plan.start_date,
-                            "end_date": i.project.basic_plan.end_date,
+                            "start_date": i.project.basic_plan.start_date if i.project.basic_plan else None,
+                            "end_date": i.project.basic_plan.end_date if i.project.basic_plan else None,
                         },
                         "story_board": {
-                            "start_date": i.project.story_board.start_date,
-                            "end_date": i.project.story_board.end_date,
+                            "start_date": i.project.story_board.start_date if i.project.story_board else None,
+                            "end_date": i.project.story_board.end_date if i.project.story_board else None,
                         },
                         "filming": {
-                            "start_date": i.project.filming.start_date,
-                            "end_date": i.project.filming.end_date,
+                            "start_date": i.project.filming.start_date if i.project.filming else None,
+                            "end_date": i.project.filming.end_date if i.project.filming else None,
                         },
                         "video_edit": {
-                            "start_date": i.project.video_edit.start_date,
-                            "end_date": i.project.video_edit.end_date,
+                            "start_date": i.project.video_edit.start_date if i.project.video_edit else None,
+                            "end_date": i.project.video_edit.end_date if i.project.video_edit else None,
                         },
                         "post_work": {
-                            "start_date": i.project.post_work.start_date,
-                            "end_date": i.project.post_work.end_date,
+                            "start_date": i.project.post_work.start_date if i.project.post_work else None,
+                            "end_date": i.project.post_work.end_date if i.project.post_work else None,
                         },
                         "video_preview": {
-                            "start_date": i.project.video_preview.start_date,
-                            "end_date": i.project.video_preview.end_date,
+                            "start_date": i.project.video_preview.start_date if i.project.video_preview else None,
+                            "end_date": i.project.video_preview.end_date if i.project.video_preview else None,
                         },
                         "confirmation": {
-                            "start_date": i.project.confirmation.start_date,
-                            "end_date": i.project.confirmation.end_date,
+                            "start_date": i.project.confirmation.start_date if i.project.confirmation else None,
+                            "end_date": i.project.confirmation.end_date if i.project.confirmation else None,
                         },
                         "video_delivery": {
-                            "start_date": i.project.video_delivery.start_date,
-                            "end_date": i.project.video_delivery.end_date,
+                            "start_date": i.project.video_delivery.start_date if i.project.video_delivery else None,
+                            "end_date": i.project.video_delivery.end_date if i.project.video_delivery else None,
                         },
                         "first_date": first_date,
                         "end_date": end_date,
@@ -515,43 +532,43 @@ class ProjectDetail(View):
                 "color": project.color,
                 "basic_plan": {
                     "key": "basic_plan",
-                    "start_date": project.basic_plan.start_date,
-                    "end_date": project.basic_plan.end_date,
+                    "start_date": project.basic_plan.start_date if project.basic_plan else None,
+                    "end_date": project.basic_plan.end_date if project.basic_plan else None,
                 },
                 "story_board": {
                     "key": "story_board",
-                    "start_date": project.story_board.start_date,
-                    "end_date": project.story_board.end_date,
+                    "start_date": project.story_board.start_date if project.story_board else None,
+                    "end_date": project.story_board.end_date if project.story_board else None,
                 },
                 "filming": {
                     "key": "filming",
-                    "start_date": project.filming.start_date,
-                    "end_date": project.filming.end_date,
+                    "start_date": project.filming.start_date if project.filming else None,
+                    "end_date": project.filming.end_date if project.filming else None,
                 },
                 "video_edit": {
                     "key": "video_edit",
-                    "start_date": project.video_edit.start_date,
-                    "end_date": project.video_edit.end_date,
+                    "start_date": project.video_edit.start_date if project.video_edit else None,
+                    "end_date": project.video_edit.end_date if project.video_edit else None,
                 },
                 "post_work": {
                     "key": "post_work",
-                    "start_date": project.post_work.start_date,
-                    "end_date": project.post_work.end_date,
+                    "start_date": project.post_work.start_date if project.post_work else None,
+                    "end_date": project.post_work.end_date if project.post_work else None,
                 },
                 "video_preview": {
                     "key": "video_preview",
-                    "start_date": project.video_preview.start_date,
-                    "end_date": project.video_preview.end_date,
+                    "start_date": project.video_preview.start_date if project.video_preview else None,
+                    "end_date": project.video_preview.end_date if project.video_preview else None,
                 },
                 "confirmation": {
                     "key": "confirmation",
-                    "start_date": project.confirmation.start_date,
-                    "end_date": project.confirmation.end_date,
+                    "start_date": project.confirmation.start_date if project.confirmation else None,
+                    "end_date": project.confirmation.end_date if project.confirmation else None,
                 },
                 "video_delivery": {
                     "key": "video_delivery",
-                    "start_date": project.video_delivery.start_date,
-                    "end_date": project.video_delivery.end_date,
+                    "start_date": project.video_delivery.start_date if project.video_delivery else None,
+                    "end_date": project.video_delivery.end_date if project.video_delivery else None,
                 },
                 "owner_nickname": project.user.nickname,
                 "owner_email": project.user.username,

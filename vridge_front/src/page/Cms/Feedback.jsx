@@ -209,6 +209,8 @@ export default function Feedback() {
   }
 
   const [socketConnected, setSocketConnected] = useState(false)
+  const [connectionAttempts, setConnectionAttempts] = useState(0)
+  const [connectionStatus, setConnectionStatus] = useState('disconnected') // 'connecting', 'connected', 'disconnected', 'reconnecting'
   const [me, set_me] = useState({
     email: '',
     nickname: '',
@@ -219,6 +221,9 @@ export default function Feedback() {
   const wsHost = process.env.REACT_APP_WS_URL || process.env.REACT_APP_BACKEND_API_URL?.replace(/^https?:/, '').replace(/^\/\//, '') || window.location.host
   const webSocketUrl = project_id ? `${wsProtocol}//${wsHost}/ws/chat/${project_id}/` : null
   let ws = useRef(null)
+  const reconnectTimeoutRef = useRef(null)
+  const maxReconnectAttempts = 5
+  const baseReconnectDelay = 1000 // 1초
 
   const [items, setItems] = useState([])
 
@@ -246,45 +251,117 @@ export default function Feedback() {
     }
   }, [current_project, user])
 
-  useEffect(() => {
+  // WebSocket 연결 함수
+  const connectWebSocket = React.useCallback(() => {
     if (!webSocketUrl || !project_id) return;
     
-    // if (!ws.current) {
-    ws.current = new WebSocket(webSocketUrl)
+    // 이미 연결되어 있거나 연결 중이면 중복 연결 방지
+    if (ws.current && 
+        (ws.current.readyState === WebSocket.CONNECTING || 
+         ws.current.readyState === WebSocket.OPEN)) {
+      return;
+    }
 
-    ws.current.onopen = () => {
-      // console.log('connected to ' + webSocketUrl)
-      console.log('connected')
-      setSocketConnected(true)
-      const items = JSON.parse(window.sessionStorage.getItem('items'))
-      if (items && items.id == project_id) {
-        setItems(items.items)
-      } else {
-        setItems([])
+    console.log(`[WebSocket] 연결 시도... (${connectionAttempts + 1}/${maxReconnectAttempts})`)
+    setConnectionStatus('connecting')
+    
+    try {
+      ws.current = new WebSocket(webSocketUrl)
+
+      ws.current.onopen = () => {
+        console.log('[WebSocket] 연결 성공')
+        setSocketConnected(true)
+        setConnectionStatus('connected')
+        setConnectionAttempts(0) // 성공 시 재시도 횟수 리셋
+        
+        // 세션 스토리지에서 저장된 메시지 로드
+        const items = JSON.parse(window.sessionStorage.getItem('items'))
+        if (items && items.id == project_id) {
+          setItems(items.items)
+        } else {
+          setItems([])
+        }
       }
-    }
-    ws.current.onclose = (error) => {
-      // console.log('disconnect from ' + webSocketUrl)
-      console.log('disconnect')
-    }
-    ws.current.onerror = (error) => {
-      console.log('connection error')
-      console.log(error)
-    }
 
-    ws.current.onmessage = (evt) => {
-      const data = JSON.parse(evt.data)
-      setItems((prevItems) => [...prevItems, data.result])
-    }
-    // }
+      ws.current.onclose = (event) => {
+        console.log('[WebSocket] 연결 끊김:', event.code, event.reason)
+        setSocketConnected(false)
+        setConnectionStatus('disconnected')
+        
+        // 정상적인 종료가 아니고 최대 재시도 횟수를 초과하지 않았다면 재연결 시도
+        if (event.code !== 1000 && connectionAttempts < maxReconnectAttempts) {
+          setConnectionStatus('reconnecting')
+          const delay = Math.min(baseReconnectDelay * Math.pow(2, connectionAttempts), 30000) // 최대 30초
+          console.log(`[WebSocket] ${delay}ms 후 재연결 시도...`)
+          
+          reconnectTimeoutRef.current = setTimeout(() => {
+            setConnectionAttempts(prev => prev + 1)
+            connectWebSocket()
+          }, delay)
+        } else if (connectionAttempts >= maxReconnectAttempts) {
+          console.log('[WebSocket] 최대 재연결 시도 횟수 초과')
+          setConnectionStatus('disconnected')
+        }
+      }
 
-    // 컴포넌트 언마운트 시 웹소켓 연결 종료
+      ws.current.onerror = (error) => {
+        console.error('[WebSocket] 연결 오류:', error)
+        setConnectionStatus('disconnected')
+      }
+
+      ws.current.onmessage = (evt) => {
+        try {
+          const data = JSON.parse(evt.data)
+          setItems((prevItems) => [...prevItems, data.result])
+        } catch (err) {
+          console.error('[WebSocket] 메시지 파싱 오류:', err)
+        }
+      }
+    } catch (error) {
+      console.error('[WebSocket] 연결 생성 오류:', error)
+      setConnectionStatus('disconnected')
+    }
+  }, [webSocketUrl, project_id, connectionAttempts, maxReconnectAttempts, baseReconnectDelay])
+
+  // 수동 재연결 함수
+  const manualReconnect = React.useCallback(() => {
+    console.log('[WebSocket] 수동 재연결 시도')
+    setConnectionAttempts(0)
+    
+    // 기존 연결 정리
+    if (ws.current) {
+      ws.current.close(1000, 'Manual reconnect')
+      ws.current = null
+    }
+    
+    // 기존 재연결 타이머 정리
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current)
+      reconnectTimeoutRef.current = null
+    }
+    
+    connectWebSocket()
+  }, [connectWebSocket])
+
+  useEffect(() => {
+    connectWebSocket()
+
+    // 컴포넌트 언마운트 시 정리
     return () => {
-      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-        ws.current.close()
+      console.log('[WebSocket] 컴포넌트 언마운트 - 연결 정리')
+      
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current)
+        reconnectTimeoutRef.current = null
+      }
+      
+      if (ws.current) {
+        ws.current.close(1000, 'Component unmount')
         ws.current = null
       }
+      
       setSocketConnected(false)
+      setConnectionStatus('disconnected')
     }
   }, [project_id, webSocketUrl])
   useEffect(() => {
@@ -533,6 +610,65 @@ export default function Feedback() {
       <div className="cms_wrap">
         <SideBar tab="feedback" />
         <main>
+          {/* WebSocket 연결 상태 표시기 */}
+          <div style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            zIndex: 1000,
+            padding: '8px 16px',
+            borderRadius: '20px',
+            fontSize: '12px',
+            fontWeight: '500',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            ...(connectionStatus === 'connected' ? {
+              backgroundColor: 'rgba(34, 197, 94, 0.9)',
+              color: 'white'
+            } : connectionStatus === 'connecting' || connectionStatus === 'reconnecting' ? {
+              backgroundColor: 'rgba(251, 191, 36, 0.9)',
+              color: 'white'
+            } : {
+              backgroundColor: 'rgba(239, 68, 68, 0.9)',
+              color: 'white'
+            })
+          }}>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: 'currentColor',
+              ...(connectionStatus === 'connecting' || connectionStatus === 'reconnecting' ? {
+                animation: 'pulse 1s infinite'
+              } : {})
+            }} />
+            {connectionStatus === 'connected' && '실시간 연결됨'}
+            {connectionStatus === 'connecting' && '연결 중...'}
+            {connectionStatus === 'reconnecting' && `재연결 중... (${connectionAttempts}/${maxReconnectAttempts})`}
+            {connectionStatus === 'disconnected' && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                연결 끊김
+                <button
+                  onClick={manualReconnect}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  재연결
+                </button>
+              </span>
+            )}
+          </div>
+          
           {current_project && (
             <div className="content feedback feedback_page flex space_between">
               <div className="videobox video_section">

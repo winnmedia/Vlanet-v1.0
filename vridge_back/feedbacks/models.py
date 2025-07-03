@@ -73,9 +73,12 @@ class FeedBack(core_model.TimeStampedModel):
     @property
     def is_video(self):
         """Check if uploaded file is a video"""
-        if self.files:
-            video_extensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv']
-            return any(self.files.name.lower().endswith(ext) for ext in video_extensions)
+        try:
+            if self.files and hasattr(self.files, 'name'):
+                video_extensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv']
+                return any(self.files.name.lower().endswith(ext) for ext in video_extensions)
+        except Exception:
+            pass
         return False
 
 

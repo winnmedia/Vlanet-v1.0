@@ -20,62 +20,120 @@ class FeedbackDetail(View):
         try:
             user = request.user
             email = user.username
-            project = project_model.Project.objects.get_or_none(id=id)
-            if not project:
-                return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
             
-            feedback = project.feedback
-            if not feedback:
-                return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
-
-            members = project.members.all().filter(user__username=email)
-            if project.user.username != email and not members.exists():
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
-
-            # print(feedback.files.name) path , url
-            if feedback and feedback.files:
-                # URL 그대로 사용 (인코딩 제거)
-                file_path = feedback.files.url
+            # Raw SQL로 필요한 필드만 가져오기
+            from django.db import connection
+            with connection.cursor() as cursor:
+                # 프로젝트 정보 가져오기
+                cursor.execute("""
+                    SELECT p.id, p.name, p.manager, p.consumer, p.description,
+                           p.user_id, p.created, p.updated, p.feedback_id,
+                           u.username, u.nickname
+                    FROM projects_project p
+                    JOIN users_user u ON p.user_id = u.id
+                    WHERE p.id = %s
+                """, [id])
                 
-                if settings.DEBUG:
-                    file_url = f"http://127.0.0.1:8000{file_path}"
-                else:
-                    # 프로덕션 환경에서 요청의 호스트 사용
-                    file_url = request.build_absolute_uri(file_path)
-            else:
-                file_url = None
-
+                row = cursor.fetchone()
+                if not row:
+                    return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
+                
+                project_data = {
+                    'id': row[0],
+                    'name': row[1],
+                    'manager': row[2],
+                    'consumer': row[3],
+                    'description': row[4],
+                    'user_id': row[5],
+                    'created': row[6],
+                    'updated': row[7],
+                    'feedback_id': row[8],
+                    'owner_email': row[9],
+                    'owner_nickname': row[10]
+                }
+                
+                # 권한 확인
+                cursor.execute("""
+                    SELECT COUNT(*) FROM projects_members
+                    WHERE project_id = %s AND user_id = %s
+                """, [id, user.id])
+                
+                is_member = cursor.fetchone()[0] > 0
+                if project_data['user_id'] != user.id and not is_member:
+                    return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                
+                # 피드백 정보 가져오기 (기본 필드만)
+                feedback_file_url = None
+                if project_data['feedback_id']:
+                    cursor.execute("""
+                        SELECT id, files FROM feedbacks_feedback
+                        WHERE id = %s
+                    """, [project_data['feedback_id']])
+                    
+                    feedback_row = cursor.fetchone()
+                    if feedback_row and feedback_row[1]:
+                        file_path = f"/media/{feedback_row[1]}"
+                        if settings.DEBUG:
+                            feedback_file_url = f"http://127.0.0.1:8000{file_path}"
+                        else:
+                            feedback_file_url = request.build_absolute_uri(file_path)
+                
+                # 멤버 리스트 가져오기
+                cursor.execute("""
+                    SELECT m.id, m.rating, u.username, u.nickname
+                    FROM projects_members m
+                    JOIN users_user u ON m.user_id = u.id
+                    WHERE m.project_id = %s
+                """, [id])
+                
+                member_list = []
+                for member_row in cursor.fetchall():
+                    member_list.append({
+                        'id': member_row[0],
+                        'rating': member_row[1],
+                        'email': member_row[2],
+                        'nickname': member_row[3]
+                    })
+                
+                # 피드백 코멘트 가져오기
+                feedback_comments = []
+                if project_data['feedback_id']:
+                    cursor.execute("""
+                        SELECT c.id, c.security, c.title, c.section, c.text,
+                               u.username, u.nickname, c.created
+                        FROM feedbacks_feedbackcomment c
+                        JOIN users_user u ON c.user_id = u.id
+                        WHERE c.feedback_id = %s
+                        ORDER BY c.created DESC
+                    """, [project_data['feedback_id']])
+                    
+                    for comment_row in cursor.fetchall():
+                        feedback_comments.append({
+                            'id': comment_row[0],
+                            'security': comment_row[1],
+                            'title': comment_row[2],
+                            'section': comment_row[3],
+                            'text': comment_row[4],
+                            'email': comment_row[5],
+                            'nickname': comment_row[6],
+                            'created': comment_row[7]
+                        })
+            
             result = {
-                "id": project.id,
-                "name": project.name,
-                "manager": project.manager,
-                "consumer": project.consumer,
-                "description": project.description,
-                "owner_nickname": project.user.nickname,
-                "owner_email": project.user.username,
-                "created": project.created,
-                "updated": project.updated,
-                "member_list": list(
-                    project.members.all()
-                    .annotate(email=F("user__username"), nickname=F("user__nickname"))
-                    .values("id", "rating", "email", "nickname")
-                ),
-                "files": file_url,
-                "feedback": list(
-                    feedback.comments.all()
-                    .annotate(email=F("user__username"), nickname=F("user__nickname"))
-                    .values(
-                        "id",
-                        "security",
-                        "title",
-                        "section",
-                        "text",
-                        "email",
-                        "nickname",
-                        "created",
-                    )
-                ) if feedback else [],
+                "id": project_data['id'],
+                "name": project_data['name'],
+                "manager": project_data['manager'],
+                "consumer": project_data['consumer'],
+                "description": project_data['description'],
+                "owner_nickname": project_data['owner_nickname'],
+                "owner_email": project_data['owner_email'],
+                "created": project_data['created'],
+                "updated": project_data['updated'],
+                "member_list": member_list,
+                "files": feedback_file_url,
+                "feedback": feedback_comments
             }
+            
             return JsonResponse({"result": result}, status=200)
         except Exception as e:
             print(e)
@@ -226,14 +284,18 @@ class FeedbackDetail(View):
                 logging.info(f"File saved successfully at: {feedback.files.path}")
                 
                 # 비디오 파일인 경우 인코딩 작업 시작 (임시 비활성화)
-                if feedback.is_video:
-                    try:
-                        # Celery가 설치될 때까지 인코딩 비활성화
-                        logging.info(f"Video encoding disabled temporarily for feedback {feedback.id}")
-                        feedback.encoding_status = 'none'
-                        feedback.save()
-                    except Exception as meta_error:
-                        logging.error(f"Error processing video: {str(meta_error)}")
+                try:
+                    if hasattr(feedback, 'is_video') and feedback.is_video:
+                        try:
+                            # Celery가 설치될 때까지 인코딩 비활성화
+                            logging.info(f"Video encoding disabled temporarily for feedback {feedback.id}")
+                            if hasattr(feedback, 'encoding_status'):
+                                feedback.encoding_status = 'none'
+                                feedback.save()
+                        except Exception as meta_error:
+                            logging.error(f"Error processing video: {str(meta_error)}")
+                except AttributeError:
+                    pass
                 
                 # Get the file URL
                 file_url = None
@@ -256,16 +318,23 @@ class FeedbackDetail(View):
                 }
                 
                 # 비디오인 경우 인코딩 상태 추가
-                if feedback.is_video:
-                    response_data.update({
-                        "encoding_status": feedback.encoding_status,
-                        "video_metadata": {
-                            "duration": feedback.duration,
-                            "width": feedback.width,
-                            "height": feedback.height,
-                            "file_size": feedback.file_size
-                        }
-                    })
+                try:
+                    if hasattr(feedback, 'is_video') and feedback.is_video:
+                        video_data = {"encoding_status": getattr(feedback, 'encoding_status', 'none')}
+                        video_metadata = {}
+                        if hasattr(feedback, 'duration'):
+                            video_metadata["duration"] = feedback.duration
+                        if hasattr(feedback, 'width'):
+                            video_metadata["width"] = feedback.width
+                        if hasattr(feedback, 'height'):
+                            video_metadata["height"] = feedback.height
+                        if hasattr(feedback, 'file_size'):
+                            video_metadata["file_size"] = feedback.file_size
+                        if video_metadata:
+                            video_data["video_metadata"] = video_metadata
+                        response_data.update(video_data)
+                except AttributeError:
+                    pass
                 
                 return JsonResponse(response_data, status=200)
             except Exception as upload_error:
@@ -289,7 +358,16 @@ class FeedbackFileDelete(View):
             if not project:
                 return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
             
-            feedback = project.feedback
+            # 피드백 안전하게 가져오기
+            try:
+                # 필요한 필드만 선택
+                feedback = feedback_model.FeedBack.objects.filter(
+                    projects=project
+                ).only('id', 'files', 'created', 'updated').first()
+            except Exception:
+                # 실패 시 관계를 통해 가져오기
+                feedback = project.feedback
+            
             if not feedback:
                 return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
 
@@ -319,7 +397,16 @@ class VideoEncodingStatus(View):
             if not project:
                 return JsonResponse({"message": "잘못된 접근입니다."}, status=400)
             
-            feedback = project.feedback
+            # 피드백 안전하게 가져오기
+            try:
+                # 필요한 필드만 선택
+                feedback = feedback_model.FeedBack.objects.filter(
+                    projects=project
+                ).only('id', 'files', 'created', 'updated').first()
+            except Exception:
+                # 실패 시 관계를 통해 가져오기
+                feedback = project.feedback
+            
             if not feedback:
                 return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
 
@@ -328,28 +415,28 @@ class VideoEncodingStatus(View):
                 return JsonResponse({"message": "권한이 없습니다."}, status=500)
 
             response_data = {
-                "encoding_status": feedback.encoding_status or "none",
+                "encoding_status": getattr(feedback, 'encoding_status', 'none'),
                 "has_original": bool(feedback.files),
-                "has_web_version": bool(feedback.video_file_web),
-                "has_thumbnail": bool(feedback.thumbnail),
-                "has_hls": bool(feedback.hls_playlist_url),
+                "has_web_version": bool(getattr(feedback, 'video_file_web', None)),
+                "has_thumbnail": bool(getattr(feedback, 'thumbnail', None)),
+                "has_hls": bool(getattr(feedback, 'hls_playlist_url', None)),
             }
 
             # Add URLs for encoded versions if available
-            if feedback.video_file_web:
+            if hasattr(feedback, 'video_file_web') and feedback.video_file_web:
                 response_data["web_video_url"] = feedback.video_file_web.url
             
-            if feedback.thumbnail:
+            if hasattr(feedback, 'thumbnail') and feedback.thumbnail:
                 response_data["thumbnail_url"] = feedback.thumbnail.url
             
-            if feedback.hls_playlist_url:
+            if hasattr(feedback, 'hls_playlist_url') and feedback.hls_playlist_url:
                 response_data["hls_url"] = feedback.hls_playlist_url
 
             # Add quality versions if available
             quality_versions = []
             for quality in ['high', 'medium', 'low']:
                 field_name = f'video_file_{quality}'
-                if getattr(feedback, field_name):
+                if hasattr(feedback, field_name) and getattr(feedback, field_name):
                     quality_versions.append({
                         "quality": quality,
                         "path": getattr(feedback, field_name)

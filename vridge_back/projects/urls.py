@@ -13,7 +13,8 @@ from . import views_fixed_final
 app_name = "projects"
 
 urlpatterns = [
-    path("project_list", views.ProjectList.as_view()),
+    path("", views.ProjectList.as_view()),  # GET /api/projects/
+    path("project_list/", views.ProjectList.as_view()),  # 기존 경로 호환성
     path(
         "invite_project/<int:project_id>", views.InviteMember.as_view()
     ),  # 초대 보내기, 초대 취소
@@ -21,7 +22,7 @@ urlpatterns = [
         "invite/<str:uid>/<str:token>", views.AcceptInvite.as_view(), name="invite"
     ),  # 초대 받기
     # 최종 수정된 안전한 프로젝트 생성 (권장)
-    path("create", views_fixed_final.CreateProjectFixedFinal.as_view()),  # 최종 수정 버전 (권장)
+    path("create/", views_fixed_final.CreateProjectFixedFinal.as_view()),  # 최종 수정 버전 (권장)
     path("atomic-create", views_atomic.AtomicProjectCreate.as_view()),  # 원자적 생성 (백업)
     path("create_idempotent", views_idempotent_final.CreateProjectIdempotentFinal.as_view()),  # 기존 멱등성 버전 (백업)
     

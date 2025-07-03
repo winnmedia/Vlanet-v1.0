@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .permissions import AllowAnyTemporary
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.db.models import Q
@@ -25,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def generate_structure(request):
     try:
         planning_input = request.data.get('planning_input', '')
@@ -57,7 +58,7 @@ def generate_structure(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def generate_story(request):
     try:
         planning_text = request.data.get('planning_text', '')
@@ -89,7 +90,7 @@ def generate_story(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def generate_scenes(request):
     try:
         story_data = request.data.get('story_data', {})
@@ -121,7 +122,7 @@ def generate_scenes(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def generate_shots(request):
     try:
         scene_data = request.data.get('scene_data', {})
@@ -153,7 +154,7 @@ def generate_shots(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def generate_storyboards(request):
     try:
         shot_data = request.data.get('shot_data', {})
@@ -185,7 +186,7 @@ def generate_storyboards(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def regenerate_storyboard_image(request):
     try:
         frame_data = request.data.get('frame_data', {})
@@ -242,7 +243,7 @@ def regenerate_storyboard_image(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def download_storyboard_image(request):
     try:
         image_url = request.data.get('image_url', '')
@@ -292,7 +293,7 @@ def download_storyboard_image(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def save_planning(request):
     """기획을 저장합니다."""
     try:
@@ -338,7 +339,7 @@ def save_planning(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_planning_list(request):
     """사용자의 기획 목록을 조회합니다. (최대 5개)"""
     try:
@@ -365,7 +366,7 @@ def get_planning_list(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_planning_detail(request, planning_id):
     """특정 기획의 상세 정보를 조회합니다."""
     try:
@@ -398,7 +399,7 @@ def get_planning_detail(request, planning_id):
 
 
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def update_planning(request, planning_id):
     """기획 정보를 업데이트합니다."""
     try:
@@ -458,7 +459,7 @@ def update_planning(request, planning_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def delete_planning(request, planning_id):
     """기획을 삭제합니다."""
     try:
@@ -489,7 +490,7 @@ def delete_planning(request, planning_id):
 
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def planning_library_view(request):
     """라이브러리 뷰 - GET과 POST 모두 처리"""
     if request.method == 'GET':

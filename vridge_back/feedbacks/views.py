@@ -64,15 +64,42 @@ class FeedbackDetail(View):
                 
                 # 피드백 정보 가져오기 (기본 필드만)
                 feedback_file_url = None
-                if project_data['feedback_id']:
+                feedback_id = project_data['feedback_id']
+                
+                # 피드백이 없으면 생성
+                if not feedback_id:
+                    logging.info(f"Creating feedback for project {id}")
+                    cursor.execute("""
+                        INSERT INTO feedbacks_feedback (created, updated, files)
+                        VALUES (NOW(), NOW(), NULL)
+                        RETURNING id
+                    """)
+                    feedback_id = cursor.fetchone()[0]
+                    
+                    # 프로젝트에 피드백 연결
+                    cursor.execute("""
+                        UPDATE projects_project
+                        SET feedback_id = %s
+                        WHERE id = %s
+                    """, [feedback_id, id])
+                    logging.info(f"Created feedback {feedback_id} for project {id}")
+                
+                # 피드백 파일 정보 가져오기
+                if feedback_id:
                     cursor.execute("""
                         SELECT id, files FROM feedbacks_feedback
                         WHERE id = %s
-                    """, [project_data['feedback_id']])
+                    """, [feedback_id])
                     
                     feedback_row = cursor.fetchone()
                     if feedback_row and feedback_row[1]:
-                        file_path = f"/media/{feedback_row[1]}"
+                        # files 필드가 이미 전체 경로를 포함하고 있을 수 있음
+                        file_name = feedback_row[1]
+                        if file_name.startswith('feedback_file/'):
+                            file_path = f"/media/{file_name}"
+                        else:
+                            file_path = f"/media/feedback_file/{file_name}"
+                        
                         if settings.DEBUG:
                             feedback_file_url = f"http://127.0.0.1:8000{file_path}"
                         else:
@@ -279,8 +306,11 @@ class FeedbackDetail(View):
                 
                 # 파일 저장
                 logging.info(f"Saving file with safe name: {files.name} (original: {original_name}, size: {files.size} bytes)")
+                logging.info(f"Feedback object before save: id={feedback.id}, files={getattr(feedback, 'files', None)}")
                 feedback.files = files
                 feedback.save()
+                logging.info(f"Feedback object after save: id={feedback.id}, files={feedback.files}")
+                logging.info(f"File field value: {feedback.files.name}")
                 logging.info(f"File saved successfully at: {feedback.files.path}")
                 
                 # 비디오 파일인 경우 인코딩 작업 시작 (임시 비활성화)

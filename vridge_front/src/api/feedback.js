@@ -44,7 +44,7 @@ export function FeedbackFile(data, id, onUploadProgress) {
   
   const config = {
     method: 'post',
-    url: `http://localhost:8000/feedbacks/${id}`, // 로컬 개발 서버 사용
+    url: `${process.env.REACT_APP_BACKEND_API_URL}/feedbacks/${id}`,
     data: data,
     headers: {
       'Authorization': token ? `Bearer ${token}` : '',

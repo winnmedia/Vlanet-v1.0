@@ -18,6 +18,11 @@ class VideoPlanningListSerializer(serializers.ModelSerializer):
             'id', 'title', 'username', 'is_completed', 
             'current_step', 'created_at', 'updated_at'
         ]
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # 프론트엔드 호환성을 위해 plannings 배열로 래핑
+        return data
 
 
 class VideoPlanningSerializer(serializers.ModelSerializer):

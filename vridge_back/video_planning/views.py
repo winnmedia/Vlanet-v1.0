@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
 from .models import VideoPlanning, VideoPlanningImage
 from .serializers import VideoPlanningSerializer, VideoPlanningListSerializer
 from .gemini_service import GeminiService
@@ -349,7 +350,9 @@ def get_planning_list(request):
         
         return Response({
             'status': 'success',
-            'data': serializer.data,
+            'data': {
+                'plannings': serializer.data
+            },
             'count': len(serializer.data)
         }, status=status.HTTP_200_OK)
         
@@ -381,7 +384,9 @@ def get_planning_detail(request, planning_id):
         
         return Response({
             'status': 'success',
-            'data': serializer.data
+            'data': {
+                'planning': serializer.data
+            }
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -481,3 +486,13 @@ def delete_planning(request, planning_id):
             'status': 'error',
             'message': '기획 삭제 중 오류가 발생했습니다.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def planning_library_view(request):
+    """라이브러리 뷰 - GET과 POST 모두 처리"""
+    if request.method == 'GET':
+        return get_planning_list(request)
+    elif request.method == 'POST':
+        return save_planning(request)

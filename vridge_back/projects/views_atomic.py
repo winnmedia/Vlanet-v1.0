@@ -34,14 +34,18 @@ class AtomicProjectCreate(View):
                     "code": "MISSING_PROJECT_NAME"
                 }, status=400)
             
-            # 멱등성 키 검증
+            # 멱등성 키 검증 (캐시 사용 시)
             idempotency_key = request.headers.get('X-Idempotency-Key')
             if idempotency_key:
                 cache_key = f"project_create:{user.id}:{idempotency_key}"
-                cached_response = cache.get(cache_key)
-                if cached_response:
-                    logger.info(f"Returning cached response for idempotency key: {idempotency_key}")
-                    return JsonResponse(cached_response)
+                try:
+                    cached_response = cache.get(cache_key)
+                    if cached_response:
+                        logger.info(f"Returning cached response for idempotency key: {idempotency_key}")
+                        return JsonResponse(cached_response)
+                except Exception as e:
+                    logger.warning(f"Cache access failed, proceeding without cache: {e}")
+                    pass
             
             # 프로젝트 데이터 준비
             project_data = {
@@ -112,8 +116,12 @@ class AtomicProjectCreate(View):
                     
                     # 멱등성 키가 있으면 캐시에 저장 (10분)
                     if idempotency_key:
-                        cache.set(cache_key, response_data, 600)
-                        logger.info(f"Response cached for idempotency key: {idempotency_key}")
+                        try:
+                            cache.set(cache_key, response_data, 600)
+                            logger.info(f"Response cached for idempotency key: {idempotency_key}")
+                        except Exception as e:
+                            logger.warning(f"Cache storage failed, but operation succeeded: {e}")
+                            pass
                     
                     return JsonResponse(response_data, status=201)
                     

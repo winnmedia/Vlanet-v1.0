@@ -156,17 +156,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Custom User Model
 AUTH_USER_MODEL = "users.User"
 
-# Cache configuration
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-        'TIMEOUT': 300,  # 5 minutes
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000,
-        }
-    }
-}
+# Cache configuration (moved to line 241 for Redis)
 
 # REST Framework settings
 REST_FRAMEWORK = {

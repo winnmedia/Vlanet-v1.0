@@ -41,6 +41,7 @@ urlpatterns = [
     path("projects/", include("projects.urls")),
     path("feedbacks/", include("feedbacks.urls")),
     path("onlines/", include("onlines.urls")),
+    path("api/video-planning/", include("video_planning.urls")),
     # path("feedbacks/", include("feedbacks.routing")),
 ]
 

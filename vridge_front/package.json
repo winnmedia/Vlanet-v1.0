@@ -37,12 +37,13 @@
   },
   "overrides": {},
   "scripts": {
-    "start": "serve -s build -l 3000",
+    "start": "react-scripts start",
     "build": "CI=false react-scripts build",
     "build:analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "serveprod": "npm run build && npx http-server --proxy http://localhost:8080? ./build",
+    "serve": "node server.js",
+    "serve:build": "npm run build && node server.js",
     "dev": "react-scripts start",
     "preview": "npm run build && npx serve -s build"
   },

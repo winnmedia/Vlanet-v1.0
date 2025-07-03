@@ -12,9 +12,9 @@ const AdminDashboard = lazy(() => import('page/Admin/AdminDashboard'))
 const ProjectCreate = lazy(() => import('page/Cms/ProjectCreate'))
 const ProjectEdit = lazy(() => import('page/Cms/ProjectEdit'))
 const ProjectView = lazy(() => import('page/Cms/ProjectView'))
+const VideoPlanning = lazy(() => import('page/Cms/VideoPlanning'))
 const Calendar = lazy(() => import('page/Cms/Calendar'))
 const Feedback = lazy(() => import('page/Cms/Feedback'))
-const Elearning = lazy(() => import('page/Cms/Elearning'))
 const CmsHome = lazy(() => import('page/Cms/CmsHome'))
 const EmailCheck = lazy(() => import('page/User/EmailCheck'))
 const FeedbackAll = lazy(() => import('page/Cms/FeedbackAll'))
@@ -31,13 +31,13 @@ export default function AppRoute() {
     { path: '/ResetPw', component: <LazyWrapper><ResetPw /></LazyWrapper> },
     { path: '/MyPage', component: <LazyWrapper><MyPage /></LazyWrapper> },
     { path: '/AdminDashboard', component: <LazyWrapper><AdminDashboard /></LazyWrapper> },
+    { path: '/VideoPlanning', component: <LazyWrapper><VideoPlanning /></LazyWrapper> },
     { path: '/Calendar', component: <LazyWrapper><Calendar /></LazyWrapper> },
     { path: '/ProjectCreate', component: <LazyWrapper><ProjectCreate /></LazyWrapper> },
     { path: '/ProjectEdit/:project_id', component: <LazyWrapper><ProjectEdit /></LazyWrapper> },
     { path: '/ProjectView/:project_id', component: <LazyWrapper><ProjectView /></LazyWrapper> },
     { path: '/CmsHome', component: <LazyWrapper><CmsHome /></LazyWrapper> },
     { path: '/Feedback/:project_id', component: <LazyWrapper><Feedback /></LazyWrapper> },
-    { path: '/Elearning', component: <LazyWrapper><Elearning /></LazyWrapper> },
     { path: '/EmailCheck', component: <LazyWrapper><EmailCheck /></LazyWrapper> },
     { path: '/FeedbackAll', component: <LazyWrapper><FeedbackAll /></LazyWrapper> },
     {

@@ -69,9 +69,9 @@ export default function SideBar({ tab, on_menu }) {
     }
   }, [path])
 
-  // 경로 변경 시 서브메뉴 닫기 (홈, 전체 일정, 콘텐츠, 마이페이지로 이동 시)
+  // 경로 변경 시 서브메뉴 닫기 (홈, 전체 일정, 마이페이지로 이동 시)
   useEffect(() => {
-    if (path === '/CmsHome' || path === '/Calendar' || path === '/Elearning' || path === '/MyPage') {
+    if (path === '/CmsHome' || path === '/Calendar' || path === '/MyPage') {
       SetSubMenu(false)
     }
   }, [path])
@@ -107,6 +107,15 @@ export default function SideBar({ tab, on_menu }) {
               }}
             >
               홈
+            </li>
+            <li
+              className={cx({ active: path === '/VideoPlanning' && !SubMenu })}
+              onClick={() => {
+                SetSubMenu(false)
+                navigate('/VideoPlanning')
+              }}
+            >
+              영상 기획
             </li>
             <li
               className={cx({ active: path === '/Calendar' && !SubMenu })}
@@ -153,15 +162,6 @@ export default function SideBar({ tab, on_menu }) {
               }}
             >
               영상 피드백
-            </li>
-            <li
-              className={cx({ active: path === '/Elearning' && !SubMenu })}
-              onClick={() => {
-                SetSubMenu(false)
-                navigate('/Elearning')
-              }}
-            >
-              콘텐츠
             </li>
             {isAdmin && (
               <li

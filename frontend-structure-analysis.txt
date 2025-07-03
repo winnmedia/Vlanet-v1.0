@@ -1,0 +1,277 @@
+# VideoPlanet 프론트엔드 구조 분석
+
+## 1. 기술 스택 및 주요 라이브러리 (package.json 분석)
+
+### 핵심 프레임워크
+- **React**: v18.2.0
+- **React DOM**: v18.2.0
+- **React Scripts**: v5.0.1 (Create React App 기반)
+
+### 상태 관리
+- **Redux Toolkit**: v1.9.5
+- **React Redux**: v8.1.0
+- **Redux Logger**: v3.0.6 (개발 환경용)
+- **Immer**: v10.0.2 (불변성 관리)
+
+### 라우팅
+- **React Router DOM**: v6.11.2
+
+### UI 라이브러리 및 스타일링
+- **Ant Design**: v5.5.2 (UI 컴포넌트 라이브러리)
+- **Styled Components**: v6.1.0
+- **Sass**: v1.62.1
+- **Classnames**: v2.3.2
+- **Swiper**: v10.1.0 (슬라이더 컴포넌트)
+- **React Switch**: v7.0.0 (토글 스위치)
+- **React Datepicker**: v4.14.1
+
+### HTTP 통신
+- **Axios**: v1.4.0
+
+### 인증 및 소셜 로그인
+- **@react-oauth/google**: v0.11.0
+- **react-kakao-login**: v2.1.1
+
+### 유틸리티
+- **Moment**: v2.29.4 (날짜 처리)
+- **Query String**: v8.1.0 (URL 파라미터 파싱)
+- **Dotenv**: v16.0.3 (환경 변수 관리)
+
+### 테스트
+- **@testing-library/jest-dom**: v5.16.5
+- **@testing-library/react**: v13.4.0
+- **@testing-library/user-event**: v13.5.0
+
+### 배포
+- **Serve**: v14.2.0 (정적 파일 서빙)
+- **Express**: v4.18.2
+
+### 빌드 스크립트
+```json
+{
+  "start": "serve -s build -l 3000",
+  "build": "CI=false react-scripts build",
+  "dev": "react-scripts start",
+  "preview": "npm run build && npx serve -s build"
+}
+```
+
+## 2. 프로젝트 구조 및 디렉토리 구성
+
+```
+/home/winnmedia/VideoPlanet/vridge_front/src/
+├── api/                    # API 통신 모듈
+│   ├── auth.js            # 인증 관련 API
+│   ├── feedback.js        # 피드백 관련 API
+│   ├── online.js          # 온라인 상태 관련 API
+│   ├── project.js         # 프로젝트 관련 API
+│   └── user.js            # 사용자 관련 API
+├── components/            # 재사용 가능한 컴포넌트
+├── config/               # 설정 파일
+│   └── axios.js         # Axios 전역 설정
+├── css/                  # 스타일시트
+│   ├── Cms/             # CMS 관련 스타일
+│   ├── User/            # 사용자 관련 스타일
+│   └── 기타 전역 스타일
+├── font/                 # 폰트 파일
+├── hooks/                # 커스텀 훅
+├── images/               # 이미지 리소스
+├── page/                 # 페이지 컴포넌트
+│   ├── Admin/           # 관리자 페이지
+│   ├── Cms/             # CMS 페이지
+│   ├── Policy/          # 정책 페이지
+│   └── User/            # 사용자 페이지
+├── redux/                # Redux 상태 관리
+│   ├── project.js       # 프로젝트 리듀서
+│   └── store.js         # Redux 스토어 설정
+├── routes/               # 라우팅 설정
+│   ├── App.js           # 메인 앱 컴포넌트
+│   └── AppRoute.js      # 라우트 정의
+├── tasks/                # 작업 관련 컴포넌트
+├── tests/                # 테스트 파일
+├── util/                 # 유틸리티 함수
+└── utils/                # 추가 유틸리티
+```
+
+## 3. 라우팅 구조 (/home/winnmedia/VideoPlanet/vridge_front/src/routes/App.js & AppRoute.js)
+
+### 메인 App.js 기능
+- Google OAuth Provider 래핑
+- 프로덕션 도메인 리다이렉트 (vlanet.net)
+- 세션 체크 및 프로젝트 목록 초기 로드
+- Redux store 연동
+
+### 라우트 구조 (모든 컴포넌트는 Lazy Loading 적용)
+```
+/ - 홈페이지
+/privacy - 개인정보처리방침
+/terms - 이용약관
+/Login - 로그인
+/Signup - 회원가입
+/ResetPw - 비밀번호 재설정
+/MyPage - 마이페이지
+/AdminDashboard - 관리자 대시보드
+/Calendar - 캘린더
+/ProjectCreate - 프로젝트 생성
+/ProjectEdit/:project_id - 프로젝트 수정
+/ProjectView/:project_id - 프로젝트 보기
+/CmsHome - CMS 홈
+/Feedback/:project_id - 피드백 페이지
+/Elearning - 이러닝
+/EmailCheck - 이메일 확인
+/FeedbackAll - 전체 피드백
+```
+
+## 4. 주요 페이지 및 기능들
+
+### 인증 관련 페이지
+- **/page/User/Login.jsx**: 로그인 페이지 (소셜 로그인 포함)
+- **/page/User/Signup.jsx**: 회원가입 페이지
+- **/page/User/SignupWithEmail.jsx**: 이메일 회원가입
+- **/page/User/ResetPw.jsx**: 비밀번호 재설정
+- **/page/User/EmailCheck.jsx**: 이메일 인증
+
+### 프로젝트 관리 페이지
+- **/page/Cms/ProjectCreate.jsx**: 프로젝트 생성
+- **/page/Cms/ProjectEdit.jsx**: 프로젝트 수정
+- **/page/Cms/ProjectView.jsx**: 프로젝트 상세보기
+- **/page/Cms/CmsHome.jsx**: CMS 메인 대시보드
+- **/page/Cms/Calendar.jsx**: 프로젝트 캘린더
+
+### 피드백 시스템
+- **/page/Cms/Feedback.jsx**: 개별 프로젝트 피드백
+- **/page/Cms/FeedbackAll.jsx**: 전체 피드백 목록
+
+### 마이페이지
+- **/page/User/MyPage.jsx**: 사용자 정보 관리
+
+### 관리자 페이지
+- **/page/Admin/AdminDashboard.jsx**: 관리자 대시보드
+
+### 기타 페이지
+- **/page/Home.jsx**: 랜딩 페이지
+- **/page/Policy/PrivacyPolicy.jsx**: 개인정보처리방침
+- **/page/Policy/TermsOfService.jsx**: 이용약관
+
+## 5. 상태 관리 (Redux Store 구조)
+
+### Store 설정 (/redux/store.js)
+- Redux Toolkit의 legacy_createStore 사용
+- 개발 환경에서는 redux-logger 미들웨어 적용
+- 프로덕션 환경에서는 logger 제외
+
+### Project Store (/redux/project.js)
+Redux Toolkit createSlice 사용하여 구현:
+
+**State 구조:**
+```javascript
+{
+  user: null,              // 사용자 정보
+  nickname: null,          // 사용자 닉네임
+  sample_files: [],        // 샘플 파일 목록
+  project_list: [],        // 프로젝트 목록
+  this_month_project: [],  // 이번 달 프로젝트
+  next_month_project: []   // 다음 달 프로젝트
+}
+```
+
+**Actions:**
+- `updateProjectStore`: 스토어 업데이트
+- `resetProjectStore`: 스토어 초기화
+
+## 6. API 통신 방식 (Axios 설정)
+
+### Axios 전역 설정 (/config/axios.js)
+- **Base URL**: 환경에 따라 자동 설정
+  - 개발: http://localhost:8000
+  - 프로덕션: https://videoplanet.up.railway.app
+- **인증**: JWT 토큰 자동 추가 (localStorage의 VGID)
+- **타임아웃**: 30초
+- **CORS**: withCredentials 활성화
+- **인터셉터**:
+  - Request: 토큰 자동 추가, 요청 로깅
+  - Response: 응답 로깅, 401 에러 시 자동 로그아웃
+
+### API 모듈
+- **/api/auth.js**: 로그인, 로그아웃, 회원가입
+- **/api/user.js**: 사용자 정보 조회/수정
+- **/api/project.js**: 프로젝트 CRUD
+- **/api/feedback.js**: 피드백 관련
+- **/api/online.js**: 온라인 상태 관리
+
+## 7. 스타일링 방식
+
+### 멀티 스타일링 접근법
+1. **SCSS/Sass**: 주요 스타일링 도구
+   - 모듈별 SCSS 파일 분리
+   - 변수 및 믹스인 활용
+2. **Styled Components**: 동적 스타일링
+3. **Ant Design**: UI 컴포넌트의 기본 스타일
+4. **CSS Modules**: 일부 컴포넌트에서 사용
+
+### 스타일 구조
+- **/css/Cms/**: CMS 관련 스타일 (30개 이상의 SCSS 파일)
+- **/css/User/**: 사용자 인증 관련 스타일
+- **Common.scss**: 전역 공통 스타일
+- **DarkMode.scss**: 다크모드 지원
+
+### 폰트
+- Poppins (Bold, Light, Medium, Regular, SemiBold)
+- SUIT Variable
+
+## 8. 재사용 가능한 컴포넌트들
+
+### 레이아웃 컴포넌트
+- **PageTemplate.jsx**: 페이지 템플릿
+- **Header.jsx**: 헤더
+- **SideBar.jsx**: 사이드바
+- **LazyWrapper.jsx**: Lazy Loading 래퍼
+
+### UI 컴포넌트
+- **LoginIntro.jsx**: 로그인 인트로
+- **ResizablePanel.jsx**: 크기 조절 가능한 패널
+- **CalendarEnhanced.jsx**: 향상된 캘린더
+
+### 프로젝트 관련
+- **ProjectDashboard.jsx**: 프로젝트 대시보드
+- **ProjectForm.jsx**: 프로젝트 폼
+- **ProjectPhaseBoard.jsx**: 프로젝트 단계 보드
+
+### 비디오 관련
+- **VideoPlayer.jsx**: 비디오 플레이어
+- **FeedbackPlayer.jsx**: 피드백 비디오 플레이어
+- **VideoUploadGuide.jsx**: 비디오 업로드 가이드
+
+## 9. 환경 설정 및 빌드 설정
+
+### 환경 변수 (.env)
+**개발 환경:**
+- NODE_ENV=development
+- API URLs: localhost:8000
+- Socket URI: ws://localhost:8000
+- 소셜 로그인 API 키 (개발용)
+
+**프로덕션 환경 (.env.production):**
+- API URL: https://videoplanet.up.railway.app
+- Socket URI: wss://videoplanet.up.railway.app
+- Production Domain: vlanet.net
+- GENERATE_SOURCEMAP=false
+
+### 빌드 설정
+- **Create React App** 기반
+- **성능 최적화**:
+  - GENERATE_SOURCEMAP=false
+  - DISABLE_ESLINT_PLUGIN=true
+  - FAST_REFRESH=true
+- **빌드 명령어**: `CI=false react-scripts build`
+- **배포**: `serve -s build -l 3000`
+
+### 프록시 설정
+- 개발 환경에서 백엔드 프록시: http://localhost:8000
+
+### 테스트 파일
+- simple-test.js: 간단한 기능 테스트
+- user-scenario-test.js: 사용자 시나리오 테스트
+- final-verification.js: 최종 검증 테스트
+- integration-test.js: 통합 테스트
+- critical-fixes-test.js: 주요 수정사항 테스트

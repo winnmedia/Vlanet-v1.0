@@ -21,6 +21,12 @@ SECRET_KEY = env('SECRET_KEY')
 # JWT Algorithm for authentication
 ALGORITHM = env('JWT_ALGORITHM', default='HS256')
 
+# Google Gemini API Key
+GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
+
+# Hugging Face API Key (for Stable Diffusion image generation)
+HUGGINGFACE_API_KEY = env('HUGGINGFACE_API_KEY', default='')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
@@ -43,6 +49,7 @@ PROJECT_APPS = [
     "projects",
     "feedbacks",
     "onlines",
+    "video_planning",
 ]
 
 THIRD_PARTY_APPS = [

@@ -135,7 +135,8 @@ class SignUp(View):
             res.set_cookie(
                 "vridge_session",
                 vridge_session,
-                samesite="None",
+                httponly=True,
+                samesite="Lax",
                 secure=True,
                 max_age=2419200,
             )
@@ -196,7 +197,8 @@ class SignIn(View):
                 res.set_cookie(
                     "vridge_session",
                     vridge_session,
-                    samesite="None",
+                    httponly=True,
+                    samesite="Lax",
                     secure=True,
                     max_age=2419200,
                 )
@@ -378,7 +380,8 @@ class KakaoLogin(View):
             res.set_cookie(
                 "vridge_session",
                 vridge_session,
-                samesite="None",
+                httponly=True,
+                samesite="Lax",
                 secure=True,
                 max_age=2419200,
             )
@@ -460,7 +463,8 @@ class NaverLogin(View):
             res.set_cookie(
                 "vridge_session",
                 vridge_session,
-                samesite="None",
+                httponly=True,
+                samesite="Lax",
                 secure=True,
                 max_age=2419200,
             )
@@ -535,7 +539,8 @@ class GoogleLogin(View):
             res.set_cookie(
                 "vridge_session",
                 vridge_session,
-                samesite="None",
+                httponly=True,
+                samesite="Lax",
                 secure=True,
                 max_age=2419200,
             )

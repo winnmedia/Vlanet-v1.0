@@ -194,7 +194,10 @@ export default function Feedback() {
     nickname: '',
     rating: '',
   })
-  const webSocketUrl = project_id ? `ws://localhost:8000/ws/chat/${project_id}/` : null
+  // WebSocket URL 환경변수 사용
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const wsHost = process.env.REACT_APP_WS_URL || process.env.REACT_APP_BACKEND_API_URL?.replace(/^https?:/, '').replace(/^\/\//, '') || window.location.host
+  const webSocketUrl = project_id ? `${wsProtocol}//${wsHost}/ws/chat/${project_id}/` : null
   let ws = useRef(null)
 
   const [items, setItems] = useState([])

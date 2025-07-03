@@ -216,7 +216,8 @@ class SignUpComplete(View):
             res.set_cookie(
                 "vridge_session",
                 vridge_session,
-                samesite="None",
+                httponly=True,
+                samesite="Lax",
                 secure=True,
                 max_age=2419200,  # 28일
             )

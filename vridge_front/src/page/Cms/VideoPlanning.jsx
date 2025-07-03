@@ -4,7 +4,7 @@ import SideBar from 'components/SideBar'
 import LoadingAnimation from 'components/LoadingAnimation'
 import 'css/Cms/CmsCommon.scss'
 import './VideoPlanning.scss'
-import axios from 'axios'
+import axios from 'config/axios'
 import { checkSession } from 'util/util'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
@@ -23,6 +23,7 @@ export default function VideoPlanning() {
   const [loadingMessage, setLoadingMessage] = useState('')
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [error, setError] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const [selectedStoryIndex, setSelectedStoryIndex] = useState(0)
   const [selectedSceneIndex, setSelectedSceneIndex] = useState(0)
   const [selectedShotIndex, setSelectedShotIndex] = useState(0)
@@ -44,14 +45,7 @@ export default function VideoPlanning() {
 
   const fetchPlanningHistory = async () => {
     try {
-      const response = await axios.get(
-        `/api/video-planning/library/`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-          },
-        }
-      )
+      const response = await axios.get(`/api/video-planning/library/`)
       if (response.data.status === 'success') {
         setPlanningHistory(response.data.data.plannings || [])
       }
@@ -62,14 +56,7 @@ export default function VideoPlanning() {
 
   const loadHistoryItem = async (planningId) => {
     try {
-      const response = await axios.get(
-        `/api/video-planning/library/${planningId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-          },
-        }
-      )
+      const response = await axios.get(`/api/video-planning/library/${planningId}/`)
       if (response.data.status === 'success') {
         const planning = response.data.data.planning
         setPlanningData({
@@ -104,18 +91,13 @@ export default function VideoPlanning() {
           scenes: planningData.scenes,
           shots: planningData.shots,
           storyboards: planningData.storyboards
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-          },
         }
       )
 
       if (response.data.status === 'success') {
-        alert('기획안이 저장되었습니다.')
+        setSuccessMessage('기획안이 저장되었습니다.')
         fetchPlanningHistory()
+        setTimeout(() => setSuccessMessage(null), 3000)
       }
     } catch (err) {
       setError(err.response?.data?.message || '저장에 실패했습니다.')
@@ -134,13 +116,7 @@ export default function VideoPlanning() {
     try {
       const response = await axios.post(
         `/api/video-planning/generate/story/`,
-        { planning_text: planningData.planning },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-          },
-        }
+        { planning_text: planningData.planning }
       )
 
       if (response.data.status === 'success') {
@@ -180,13 +156,7 @@ export default function VideoPlanning() {
       for (let i = 0; i < planningData.stories.length; i++) {
         const response = await axios.post(
           `/api/video-planning/generate/scenes/`,
-          { story_data: planningData.stories[i] },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-            },
-          }
+          { story_data: planningData.stories[i] }
         )
         
         if (response.data.status === 'success') {
@@ -226,13 +196,7 @@ export default function VideoPlanning() {
       const selectedScene = planningData.scenes[selectedSceneIndex]
       const response = await axios.post(
         `/api/video-planning/generate/shots/`,
-        { scene_data: selectedScene },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-          },
-        }
+        { scene_data: selectedScene }
       )
 
       if (response.data.status === 'success') {
@@ -259,13 +223,7 @@ export default function VideoPlanning() {
       const selectedShot = planningData.shots[selectedShotIndex]
       const response = await axios.post(
         `/api/video-planning/generate/storyboards/`,
-        { shot_data: selectedShot },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-          },
-        }
+        { shot_data: selectedShot }
       )
 
       if (response.data.status === 'success') {
@@ -309,13 +267,7 @@ export default function VideoPlanning() {
       
       const response = await axios.post(
         `/api/video-planning/generate/storyboards/`,
-        { shot_data: shotData },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
-          },
-        }
+        { shot_data: shotData }
       )
 
       if (response.data.status === 'success') {
@@ -612,6 +564,26 @@ export default function VideoPlanning() {
             {error && (
               <div className="error-message">
                 <p>{error}</p>
+                <button 
+                  className="close-error" 
+                  onClick={() => setError(null)}
+                  aria-label="닫기"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            
+            {successMessage && (
+              <div className="success-message">
+                <p>{successMessage}</p>
+                <button 
+                  className="close-success" 
+                  onClick={() => setSuccessMessage(null)}
+                  aria-label="닫기"
+                >
+                  ×
+                </button>
               </div>
             )}
 

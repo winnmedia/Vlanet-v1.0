@@ -44,5 +44,10 @@ class VideoPlanningSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'username', 'created_at', 'updated_at']
     
     def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
+        request = self.context.get('request')
+        if request and hasattr(request, 'user') and request.user.is_authenticated:
+            validated_data['user'] = request.user
+        else:
+            # 인증되지 않은 경우 None으로 설정 (모델에서 null=True여야 함)
+            validated_data['user'] = None
         return super().create(validated_data)

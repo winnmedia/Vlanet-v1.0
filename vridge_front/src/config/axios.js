@@ -6,7 +6,8 @@ let API_BASE_URL;
 // 프로덕션 도메인 체크
 const isProduction = window.location.hostname === 'vlanet.net' || 
                      window.location.hostname === 'www.vlanet.net' ||
-                     window.location.hostname.includes('vercel.app');
+                     window.location.hostname.includes('vercel.app') ||
+                     window.location.hostname.includes('railway.app');
 
 if (isProduction) {
   API_BASE_URL = 'https://videoplanet.up.railway.app';
@@ -15,6 +16,21 @@ if (isProduction) {
 } else {
   API_BASE_URL = 'http://localhost:8000';
 }
+
+// 토큰 정리 헬퍼 함수
+const getCleanToken = () => {
+  const token = localStorage.getItem('VGID');
+  if (!token) return null;
+  
+  // JSON 문자열로 저장된 경우 파싱
+  try {
+    const parsed = JSON.parse(token);
+    return typeof parsed === 'string' ? parsed : token;
+  } catch {
+    // 파싱 실패시 따옴표만 제거
+    return token.replace(/^["']|["']$/g, '');
+  }
+};
 
 // API URL 설정
 axios.defaults.baseURL = API_BASE_URL;
@@ -32,14 +48,25 @@ axios.defaults.timeout = 30000;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Accept'] = 'application/json';
 
+// 토큰 처리 헬퍼 함수
+const getCleanToken = () => {
+  const token = localStorage.getItem('VGID');
+  if (!token) return null;
+  // JSON.parse를 시도하여 문자열인 경우 따옴표 제거
+  try {
+    return JSON.parse(token);
+  } catch {
+    // JSON 파싱 실패시 그대로 반환
+    return token.replace(/^["']|["']$/g, '');
+  }
+};
+
 // 요청 인터셉터
 axios.interceptors.request.use(
   (config) => {
     // 토큰 자동 추가
-    const token = localStorage.getItem('VGID');
-    if (token) {
-      // 토큰에서 따옴표 제거
-      const cleanToken = token.replace(/"/g, '');
+    const cleanToken = getCleanToken();
+    if (cleanToken) {
       config.headers.Authorization = `Bearer ${cleanToken}`;
     }
     
@@ -105,9 +132,8 @@ const axiosInstance = axios.create({
 // 인스턴스에도 동일한 인터셉터 적용
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('VGID');
-    if (token) {
-      const cleanToken = token.replace(/"/g, '');
+    const cleanToken = getCleanToken();
+    if (cleanToken) {
       config.headers.Authorization = `Bearer ${cleanToken}`;
     }
     

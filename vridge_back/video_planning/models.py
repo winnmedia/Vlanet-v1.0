@@ -7,7 +7,7 @@ class VideoPlanning(models.Model):
     """영상 기획 정보를 저장하는 모델"""
     
     # 기본 정보
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='video_plannings')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='video_plannings', null=True, blank=True)
     title = models.CharField(max_length=200)
     planning_text = models.TextField(help_text="초기 기획안 텍스트")
     
@@ -41,7 +41,8 @@ class VideoPlanning(models.Model):
         ]
     
     def __str__(self):
-        return f"{self.title} - {self.user.username}"
+        username = self.user.username if self.user else "Anonymous"
+        return f"{self.title} - {username}"
     
     def save(self, *args, **kwargs):
         # 제목이 없으면 기획안 텍스트의 일부를 제목으로 사용

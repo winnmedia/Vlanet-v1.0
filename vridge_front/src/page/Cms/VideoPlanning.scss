@@ -959,19 +959,72 @@
     }
   }
 
-  .error-message {
+  .error-message, .success-message {
     max-width: 900px;
     margin: 0 auto 20px;
-    padding: 16px 20px;
-    background: #fee;
-    border: 1px solid #fcc;
+    padding: 16px 40px 16px 20px;
     border-radius: 8px;
-    color: #c00;
     text-align: center;
+    position: relative;
+    animation: slideDown 0.3s ease;
 
     p {
       margin: 0;
       font-size: 15px;
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .error-message {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c00;
+
+    button {
+      color: #c00;
+    }
+  }
+
+  .success-message {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+
+    button {
+      color: #155724;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 }

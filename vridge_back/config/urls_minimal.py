@@ -33,4 +33,6 @@ urlpatterns = [
     path('api/video-planning/', include('video_planning.urls')),
     path('api/users/', include('users.urls')),
     path('api/projects/', include('projects.urls')),
+    path('api/feedbacks/', include('feedbacks.urls')),
+    path('users/', include('users.urls')),  # 기존 경로 호환성
 ]

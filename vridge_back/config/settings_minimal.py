@@ -10,8 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # 기본 설정
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-minimal-key-for-railway')
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # 최소 앱만 설치 (core 앱 먼저)
 INSTALLED_APPS = [

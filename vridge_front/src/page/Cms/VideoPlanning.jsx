@@ -40,12 +40,12 @@ export default function VideoPlanning() {
     }
   }, [navigate])
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'
+  // API_BASE_URL 제거 - axios 기본 설정 사용
 
   const fetchPlanningHistory = async () => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/api/video-planning/library/`,
+        `/api/video-planning/library/`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access')}`,
@@ -63,7 +63,7 @@ export default function VideoPlanning() {
   const loadHistoryItem = async (planningId) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/api/video-planning/library/${planningId}/`,
+        `/api/video-planning/library/${planningId}/`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access')}`,
@@ -96,7 +96,7 @@ export default function VideoPlanning() {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/api/video-planning/library/`,
+        `/api/video-planning/library/`,
         {
           title: planningTitle,
           planning_text: planningData.planning,
@@ -133,7 +133,7 @@ export default function VideoPlanning() {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/api/video-planning/generate/story/`,
+        `/api/video-planning/generate/story/`,
         { planning_text: planningData.planning },
         {
           headers: {
@@ -179,7 +179,7 @@ export default function VideoPlanning() {
       
       for (let i = 0; i < planningData.stories.length; i++) {
         const response = await axios.post(
-          `${API_BASE_URL}/api/video-planning/generate/scenes/`,
+          `/api/video-planning/generate/scenes/`,
           { story_data: planningData.stories[i] },
           {
             headers: {
@@ -225,7 +225,7 @@ export default function VideoPlanning() {
     try {
       const selectedScene = planningData.scenes[selectedSceneIndex]
       const response = await axios.post(
-        `${API_BASE_URL}/api/video-planning/generate/shots/`,
+        `/api/video-planning/generate/shots/`,
         { scene_data: selectedScene },
         {
           headers: {
@@ -258,7 +258,7 @@ export default function VideoPlanning() {
     try {
       const selectedShot = planningData.shots[selectedShotIndex]
       const response = await axios.post(
-        `${API_BASE_URL}/api/video-planning/generate/storyboards/`,
+        `/api/video-planning/generate/storyboards/`,
         { shot_data: selectedShot },
         {
           headers: {
@@ -308,7 +308,7 @@ export default function VideoPlanning() {
       setLoadingProgress(50)
       
       const response = await axios.post(
-        `${API_BASE_URL}/api/video-planning/generate/storyboards/`,
+        `/api/video-planning/generate/storyboards/`,
         { shot_data: shotData },
         {
           headers: {

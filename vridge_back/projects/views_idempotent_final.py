@@ -245,12 +245,33 @@ class CreateProjectIdempotentFinal(View):
             # FeedBack 생성 시도 (트랜잭션 밖)
             try:
                 from feedbacks import models as feedback_model
-                feedback = feedback_model.FeedBack.objects.create()
-                project.feedback = feedback
+                # 간단한 방법으로 생성 (새 필드 없이)
+                from django.db import connection
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        """
+                        INSERT INTO feedbacks_feedback (created, updated, files)
+                        VALUES (NOW(), NOW(), NULL)
+                        RETURNING id
+                        """
+                    )
+                    feedback_id = cursor.fetchone()[0]
+                    
+                # 프로젝트에 피드백 연결
+                project.feedback_id = feedback_id
                 project.save()
-                logger.info("[CreateProjectFinal] FeedBack created successfully")
+                logger.info(f"[CreateProjectFinal] FeedBack created successfully with ID: {feedback_id}")
             except Exception as e:
                 logger.warning(f"[CreateProjectFinal] Could not create FeedBack: {str(e)}")
+                # 대체 방법: 기본 필드만으로 생성
+                try:
+                    feedback = feedback_model.FeedBack(files=None)
+                    feedback.save()
+                    project.feedback = feedback
+                    project.save()
+                    logger.info("[CreateProjectFinal] FeedBack created with fallback method")
+                except Exception as e2:
+                    logger.error(f"[CreateProjectFinal] FeedBack creation failed completely: {str(e2)}")
             
             # 성공 응답
             response_data = {

@@ -1,0 +1,73 @@
+{
+  "vulnerabilities": [
+    {
+      "testName": "약한 비밀번호 허용",
+      "severity": "HIGH",
+      "details": "비밀번호 \"aaaaaaaaaaaaaaaaaaaa...\" 허용됨",
+      "timestamp": "2025-07-03T02:36:21.426Z"
+    },
+    {
+      "testName": "슬로우 로리스 방어 부재",
+      "severity": "MEDIUM",
+      "details": "모든 느린 연결이 유지됨",
+      "timestamp": "2025-07-03T02:36:24.462Z"
+    }
+  ],
+  "performance": [],
+  "dataIntegrity": [
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"notanemail\" 허용됨",
+      "timestamp": "2025-07-03T02:36:21.554Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"@example.com\" 허용됨",
+      "timestamp": "2025-07-03T02:36:21.730Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"user@\" 허용됨",
+      "timestamp": "2025-07-03T02:36:21.840Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"user@@example.com\" 허용됨",
+      "timestamp": "2025-07-03T02:36:22.017Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"user@example\" 허용됨",
+      "timestamp": "2025-07-03T02:36:22.128Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"user@.com\" 허용됨",
+      "timestamp": "2025-07-03T02:36:22.324Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"user@example..com\" 허용됨",
+      "timestamp": "2025-07-03T02:36:22.642Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"<script>alert(\"xss\")</script>@example.com\" 허용됨",
+      "timestamp": "2025-07-03T02:36:22.785Z"
+    },
+    {
+      "testName": "잘못된 이메일 형식 허용",
+      "severity": "MEDIUM",
+      "details": "이메일 \"user+tag@example.com\" 허용됨",
+      "timestamp": "2025-07-03T02:36:22.949Z"
+    }
+  ]
+}

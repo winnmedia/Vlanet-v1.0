@@ -75,116 +75,60 @@ export default function ProjectCreate() {
   //     : false
   const ValidForm = name && description && manager && consumer ? true : false
 
-  function CreateBtn(e) {
-    // 이벤트 전파 방지
-    e.preventDefault()
-    e.stopPropagation()
+  // 디바운스된 생성 함수
+  const createProjectWithDebounce = React.useCallback(() => {
+    // 이미 생성 중이거나 컴포넌트가 언마운트된 경우 중단
+    if (isCreating || !isMountedRef.current) {
+      return
+    }
     
-    // 더블 클릭 방지를 위한 추가 체크
+    // 입력값 검증
     if (!ValidForm) {
-      window.alert('입력란을 채워주세요.')
+      alert('입력란을 채워주세요.')
       return
     }
     
-    if (isCreating) {
-      console.log('[ProjectCreate] Already creating project, ignoring duplicate request')
-      return
-    }
-    
-    // 컴포넌트가 언마운트되었는지 확인
-    if (!isMountedRef.current) {
-      console.log('[ProjectCreate] Component unmounted, ignoring request')
-      return
-    }
-    
-    // 이미 요청 중이면 무시
-    if (createRequestRef.current) {
-      console.warn('[ProjectCreate] Request already in progress, ignoring duplicate')
-      return
-    }
-    
-    // 5초 이내에 같은 프로젝트명으로 요청이 있었는지 확인
-    const now = Date.now()
-    if (lastRequestRef.current.name === inputs.name && 
-        now - lastRequestRef.current.timestamp < 5000) {
-      console.log('[ProjectCreate] Duplicate request blocked - same project name within 5 seconds')
-      console.log('[ProjectCreate] Last request:', lastRequestRef.current)
-      window.alert('동일한 프로젝트를 짧은 시간 내에 중복 생성할 수 없습니다.')
-      return
-    }
-    
-    // 다른 도메인에 활성 탭이 있는지 다시 확인
-    if (detectDuplicateTabs()) {
-      console.warn('[ProjectCreate] Other domain tabs detected during submission!')
-      window.alert('다른 브라우저 탭이나 도메인에서 이미 작업 중입니다.\n하나의 탭에서만 작업해주세요.')
-      return
-    }
-    
-    // 요청 정보 저장
-    lastRequestRef.current = { name: inputs.name, timestamp: now }
-    
+    console.log('[ProjectCreate] Starting atomic project creation...')
     setIsCreating(true)
-    const formData = new FormData()
-    formData.append('inputs', JSON.stringify(inputs))
     
-    // process 데이터를 포맷팅하여 전송
-    const formattedProcess = formatProcessDatesForBackend(process)
+    // 버튼 즉시 비활성화
+    if (submitButtonRef.current) {
+      submitButtonRef.current.disabled = true
+    }
+    // 원자적 프로젝트 생성을 위한 JSON 데이터 구성
+    const projectData = {
+      name: inputs.name,
+      manager: inputs.manager,
+      consumer: inputs.consumer,
+      description: inputs.description,
+      color: inputs.color || '#1631F8',
+      process: formatProcessDatesForBackend(process)
+    }
     
-    // 디버깅: 전송되는 날짜 형식 확인
-    console.log('[ProjectCreate] Process data before format:', process)
-    console.log('[ProjectCreate] Process data after format:', formattedProcess)
+    console.log('[ProjectCreate] Atomic creation data:', projectData)
     
-    formData.append('process', JSON.stringify(formattedProcess))
-    
-    files.forEach((file, index) => {
-      formData.append('files', file)
-    })
-
-    console.log('[ProjectCreate] === API CALL START ===')
-    console.log('[ProjectCreate] isCreating state:', isCreating)
-    console.log('[ProjectCreate] Project name:', inputs.name)
-    console.log('[ProjectCreate] Current domain:', window.location.hostname)
-    console.log('[ProjectCreate] Full URL:', window.location.href)
-    console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
-    
-    // API 요청 추적
-    const request = CreateProjectAPI(formData)
+    // 원자적 API 호출 (FormData 대신 JSON)
+    const request = CreateProjectAPI(projectData)
     createRequestRef.current = request
     
     request
         .then((res) => {
-          // 컴포넌트가 언마운트되었으면 무시
           if (!isMountedRef.current) {
             console.log('[ProjectCreate] Component unmounted, ignoring response')
             return
           }
           
-          console.log('[ProjectCreate] === API RESPONSE SUCCESS ===')
-          console.log('[ProjectCreate] Response:', res.data)
-          console.log('[ProjectCreate] Project ID:', res.data.project_id)
-          console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
+          console.log('[ProjectCreate] Success:', res.data)
           
-          // 성공 플래그 설정하여 중복 처리 방지
-          lastRequestRef.current.success = true
-          
-          // 버튼 비활성화
-          if (submitButtonRef.current) {
-            submitButtonRef.current.disabled = true
-          }
-          
-          // 즉시 페이지 이동 (alert 없이, 성공 메시지와 함께)
-          console.log('[ProjectCreate] Navigating to Calendar...')
+          // 즉시 페이지 이동
           navigate('/Calendar', { 
             replace: true,
             state: { message: '프로젝트가 성공적으로 생성되었습니다.' }
           })
           
-          // 페이지 이동 후 프로젝트 목록 갱신
-          console.log('[ProjectCreate] Refreshing project list...')
+          // 프로젝트 목록 갱신
           setTimeout(() => {
-            refetchProject(dispatch, navigate).then(() => {
-              console.log('[ProjectCreate] Project list refreshed successfully')
-            }).catch(err => {
+            refetchProject(dispatch, navigate).catch(err => {
               console.error('[ProjectCreate] refetchProject error:', err)
               // 에러가 발생해도 재시도
               setTimeout(() => {
@@ -198,50 +142,51 @@ export default function ProjectCreate() {
           }, 100)
         })
         .catch((err) => {
-          console.log('[ProjectCreate] === API ERROR ===')
-          console.log('[ProjectCreate] Error:', err)
-          console.log('[ProjectCreate] Error response:', err.response)
-          console.log('[ProjectCreate] Timestamp:', new Date().toISOString())
+          if (!isMountedRef.current) return
           
-          // 컴포넌트가 언마운트되었으면 무시
-          if (!isMountedRef.current) {
-            console.log('[ProjectCreate] Component unmounted, ignoring error')
-            return
+          console.error('[ProjectCreate] Error:', err)
+          setIsCreating(false)
+          
+          // 버튼 다시 활성화
+          if (submitButtonRef.current) {
+            submitButtonRef.current.disabled = false
           }
           
-          setIsCreating(false)
-          console.log(err)
-          if (err.response) {
-            if (err.response.status === 401) {
-              window.alert('인증이 만료되었습니다. 다시 로그인해주세요.')
-              navigate('/Login', { replace: true })
-            } else if (err.response.data && err.response.data.message) {
-              window.alert(err.response.data.message)
-            } else {
-              window.alert('프로젝트 생성 중 오류가 발생했습니다.')
-            }
-          } else if (err.request) {
-            window.alert('서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.')
+          // 에러 타입별 처리
+          if (err.response?.status === 409) {
+            // 중복 프로젝트 에러
+            alert(err.response.data.error || '같은 이름의 프로젝트가 이미 존재합니다.')
+          } else if (err.response?.status === 401) {
+            alert('인증이 만료되었습니다. 다시 로그인해주세요.')
+            navigate('/Login', { replace: true })
+          } else if (err.response?.data?.error) {
+            alert(err.response.data.error)
           } else {
-            window.alert('프로젝트 생성 중 오류가 발생했습니다.')
+            alert('프로젝트 생성 중 오류가 발생했습니다.')
           }
         })
         .finally(() => {
-          // 요청 완료 후 ref 초기화
-          if (createRequestRef.current) {
-            createRequestRef.current = null
-          }
-          // 컴포넌트가 언마운트되지 않았을 때만 상태 업데이트
-          if (isMountedRef.current) {
-            // 약간의 지연 후 상태 업데이트 (페이지 이동 후)
-            setTimeout(() => {
-              if (isMountedRef.current) {
-                setIsCreating(false)
-              }
-            }, 100)
-          }
+          createRequestRef.current = null
         })
-  }
+  }, [isCreating, ValidForm, inputs, process, files, navigate, dispatch])
+  
+  // 디바운스된 버튼 클릭 핸들러
+  const CreateBtn = React.useCallback((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // 디바운스 적용 (500ms)
+    if (submitButtonRef.current) {
+      submitButtonRef.current.disabled = true
+      setTimeout(() => {
+        if (submitButtonRef.current && !isCreating) {
+          submitButtonRef.current.disabled = false
+        }
+      }, 500)
+    }
+    
+    createProjectWithDebounce()
+  }, [createProjectWithDebounce, isCreating])
   return (
     <PageTemplate>
       <div className="cms_wrap project-create">

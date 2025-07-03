@@ -1,0 +1,81 @@
+{
+  "passed": [
+    {
+      "testName": "이메일 중복 확인",
+      "timestamp": "2025-07-03T02:31:38.161Z"
+    },
+    {
+      "testName": "닉네임 중복 확인",
+      "timestamp": "2025-07-03T02:31:38.325Z"
+    },
+    {
+      "testName": "회원가입 (레거시 API)",
+      "timestamp": "2025-07-03T02:31:38.743Z"
+    },
+    {
+      "testName": "로그인",
+      "timestamp": "2025-07-03T02:31:39.010Z"
+    },
+    {
+      "testName": "google 로그인 엔드포인트",
+      "timestamp": "2025-07-03T02:31:39.286Z"
+    },
+    {
+      "testName": "SQL Injection 방어",
+      "timestamp": "2025-07-03T02:31:39.963Z"
+    },
+    {
+      "testName": "동시 요청 처리",
+      "timestamp": "2025-07-03T02:31:40.569Z"
+    }
+  ],
+  "failed": [
+    {
+      "testName": "kakao 로그인",
+      "timestamp": "2025-07-03T02:31:39.395Z",
+      "details": "Request failed with status code 403"
+    },
+    {
+      "testName": "naver 로그인",
+      "timestamp": "2025-07-03T02:31:39.490Z",
+      "details": "Request failed with status code 403"
+    },
+    {
+      "testName": "프로젝트 CRUD",
+      "timestamp": "2025-07-03T02:31:39.490Z",
+      "details": "인증 토큰 없음"
+    },
+    {
+      "testName": "피드백 시스템",
+      "timestamp": "2025-07-03T02:31:39.490Z",
+      "details": "인증 토큰 또는 프로젝트 ID 없음"
+    },
+    {
+      "testName": "권한 체크",
+      "timestamp": "2025-07-03T02:31:39.491Z",
+      "details": "프로젝트 ID 없음"
+    },
+    {
+      "testName": "로그아웃",
+      "timestamp": "2025-07-03T02:31:40.569Z",
+      "details": "인증 토큰 없음"
+    }
+  ],
+  "warnings": [
+    {
+      "testName": "비밀번호 재설정",
+      "timestamp": "2025-07-03T02:31:39.132Z",
+      "details": "이메일 서비스 설정 필요"
+    },
+    {
+      "testName": "빈 데이터 프로젝트 생성",
+      "timestamp": "2025-07-03T02:31:39.586Z",
+      "details": "Request failed with status code 401"
+    },
+    {
+      "testName": "초대형 데이터 처리",
+      "timestamp": "2025-07-03T02:31:39.852Z",
+      "details": "Request failed with status code 401"
+    }
+  ]
+}

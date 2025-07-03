@@ -682,40 +682,34 @@ export default function Feedback() {
                       ref={videoPlayerRef}
                       videoUrl={(() => {
                         const fileUrl = current_project.files;
-                        console.log('Original file URL:', fileUrl);
-                        console.log('Backend URL from env:', process.env.REACT_APP_BACKEND_API_URL);
-                        console.log('Backend URI from env:', process.env.REACT_APP_BACKEND_URI);
+                        console.log('[VideoPlayer] Original file URL:', fileUrl);
                         
-                        // 테스트용: 404 에러가 계속 발생하면 샘플 비디오 사용
-                        const USE_TEST_VIDEO = false; // true로 변경하면 테스트 비디오 사용
-                        if (USE_TEST_VIDEO) {
-                          return 'https://www.w3schools.com/html/mov_bbb.mp4';
+                        // 파일 URL이 없는 경우
+                        if (!fileUrl) {
+                          console.warn('[VideoPlayer] No file URL provided');
+                          return '';
                         }
                         
-                        // 이미 전체 URL인 경우
-                        if (fileUrl && fileUrl.startsWith('http')) {
-                          console.log('Using full URL:', fileUrl);
+                        // 이미 전체 URL인 경우 (백엔드에서 완전한 URL 반환)
+                        if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+                          console.log('[VideoPlayer] Using complete URL from backend:', fileUrl);
                           return fileUrl;
                         }
                         
-                        // 백엔드 URL 가져오기 - /api 제거
+                        // 상대 경로인 경우 백엔드 URL과 결합
                         const backendUrl = process.env.REACT_APP_BACKEND_URI || 'https://videoplanet.up.railway.app';
+                        let fullUrl;
                         
-                        // 상대 경로인 경우
-                        if (fileUrl && fileUrl.startsWith('/')) {
-                          // /media/로 시작하면 그대로 사용
-                          const fullUrl = `${backendUrl}${fileUrl}`;
-                          console.log('Constructed URL:', fullUrl);
-                          return fullUrl;
-                        } else if (fileUrl) {
-                          // 그 외의 경우 경로 그대로 사용 (백엔드에서 media/ 경로가 이미 포함되어 있을 수 있음)
-                          const fullUrl = `${backendUrl}/${fileUrl}`;
-                          console.log('Constructed URL with slash:', fullUrl);
-                          return fullUrl;
+                        if (fileUrl.startsWith('/')) {
+                          // /media/로 시작하는 절대 경로
+                          fullUrl = `${backendUrl}${fileUrl}`;
                         } else {
-                          console.error('File URL is null or undefined');
-                          return '';
+                          // 상대 경로
+                          fullUrl = `${backendUrl}/${fileUrl}`;
                         }
+                        
+                        console.log('[VideoPlayer] Constructed URL:', fullUrl);
+                        return fullUrl;
                       })()}
                       initialTime={currentVideoTime}
                       onFeedbackClick={(time) => {

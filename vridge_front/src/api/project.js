@@ -18,21 +18,22 @@ export function GetProject(project_id) {
   )
 }
 
-// 프로젝트 생성 (멱등성 키 포함)
+// 원자적 프로젝트 생성 (개선된 멱등성 키)
 export function CreateProjectAPI(data) {
-  // 멱등성 키 생성 (타임스탬프 + 랜덤 문자열)
-  const idempotencyKey = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  // 더 안전한 멱등성 키 생성 (사용자 데이터 기반)
+  const userKey = `${data.name}_${data.manager}_${Date.now()}`
+  const idempotencyKey = btoa(userKey).replace(/[/+=]/g, '').substring(0, 32)
   
-  console.log('[API] CreateProject called with idempotency key:', idempotencyKey)
-  console.log('[API] Request timestamp:', new Date().toISOString())
+  console.log('[API] Atomic CreateProject called:', data.name)
+  console.log('[API] Idempotency key:', idempotencyKey)
   
   return axiosCredentials(
     'post',
-    `/projects/create`,
+    `/projects/atomic-create`,
     data,
     {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
         'X-Idempotency-Key': idempotencyKey,
       },
     },

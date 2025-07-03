@@ -134,7 +134,7 @@ export default function SideBar({ tab, on_menu }) {
               }}
             >
               프로젝트 관리
-              <span>{project_list.length}</span>
+              <span>{project_list ? project_list.length : 0}</span>
             </li>
             <li
               className={cx({

@@ -13,13 +13,21 @@ echo "Railway Database URL available: ${RAILWAY_DATABASE_URL:+Yes}"
 # Create staticfiles directory to avoid warning
 mkdir -p /app/vridge_back/staticfiles
 
+# Show migration status before running
+echo "Current migration status:"
+python manage.py showmigrations feedbacks || echo "Failed to show migrations"
+
 # Run migrations
 echo "Running database migrations..."
-python manage.py migrate --no-input
+python manage.py migrate --no-input || echo "Migration failed, but continuing..."
 
 # Specifically migrate feedbacks app
 echo "Running feedbacks app migrations..."
-python manage.py migrate feedbacks --no-input
+python manage.py migrate feedbacks --no-input || echo "Feedbacks migration failed, but continuing..."
+
+# Show migration status after running
+echo "Migration status after running:"
+python manage.py showmigrations feedbacks || echo "Failed to show migrations"
 
 # Create cache table if using database cache
 echo "Creating cache table..."

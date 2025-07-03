@@ -1,5 +1,9 @@
 # Railway CORS 문제 해결을 위한 임시 설정
 from .railway import *
+import os
+
+# 임시로 DEBUG 활성화하여 에러 확인
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
 # CORS 설정
 CORS_ALLOW_ALL_ORIGINS = False  # 특정 origin만 허용

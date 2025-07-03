@@ -219,10 +219,19 @@ class AtomicProjectCreate(View):
         except Exception as e:
             logger.error(f"Unexpected error in project creation: {str(e)}")
             import traceback
-            traceback.print_exc()
+            tb_str = traceback.format_exc()
+            logger.error(f"Full traceback:\n{tb_str}")
+            
+            # 개발 환경에서는 더 자세한 에러 정보 제공
+            error_detail = str(e)
+            if hasattr(e, '__class__'):
+                error_detail = f"{e.__class__.__name__}: {str(e)}"
+            
             return JsonResponse({
                 "error": "프로젝트 생성 중 오류가 발생했습니다.",
-                "code": "INTERNAL_ERROR"
+                "code": "INTERNAL_ERROR",
+                "detail": error_detail if settings.DEBUG else None,
+                "type": e.__class__.__name__ if hasattr(e, '__class__') else "Unknown"
             }, status=500)
 
 

@@ -494,6 +494,12 @@ def delete_planning(request, planning_id):
 def planning_library_view(request):
     """라이브러리 뷰 - GET과 POST 모두 처리"""
     if request.method == 'GET':
-        return get_planning_list(request)
+        # 임시 응답 - 빈 목록 반환
+        return Response({
+            'status': 'success',
+            'data': {
+                'plannings': []
+            }
+        }, status=status.HTTP_200_OK)
     elif request.method == 'POST':
         return save_planning(request)

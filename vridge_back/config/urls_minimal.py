@@ -31,6 +31,6 @@ urlpatterns = [
     path('health/', minimal_health, name='health'),
     path('api/', api_root, name='api_root'),
     path('api/video-planning/', include('video_planning.urls')),
-    path('users/', include('users.urls')),
-    path('projects/', include('projects.urls')),
+    path('api/users/', include('users.urls')),
+    path('api/projects/', include('projects.urls')),
 ]

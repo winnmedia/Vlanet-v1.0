@@ -232,6 +232,14 @@ class Project(core_model.TimeStampedModel):
             models.Index(fields=['created']),
             models.Index(fields=['name']),
         ]
+        constraints = [
+            # 사용자별 프로젝트명 고유성 보장 (5분 내)
+            models.UniqueConstraint(
+                fields=['user', 'name'],
+                name='unique_user_project_name',
+                violation_error_message='이미 같은 이름의 프로젝트가 존재합니다.'
+            )
+        ]
 
     def __str__(self):
         return self.name

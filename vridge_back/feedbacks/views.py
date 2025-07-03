@@ -93,17 +93,32 @@ class FeedbackDetail(View):
                     
                     feedback_row = cursor.fetchone()
                     if feedback_row and feedback_row[1]:
-                        # files 필드가 이미 전체 경로를 포함하고 있을 수 있음
                         file_name = feedback_row[1]
-                        if file_name.startswith('feedback_file/'):
+                        
+                        # 파일 경로 정규화
+                        if file_name.startswith('/media/'):
+                            # 이미 /media/로 시작하는 경우
+                            file_path = file_name
+                        elif file_name.startswith('feedback_file/'):
+                            # feedback_file/로 시작하는 경우
                             file_path = f"/media/{file_name}"
+                        elif file_name.startswith('/'):
+                            # /로 시작하는 다른 경우
+                            file_path = file_name
                         else:
+                            # 상대 경로인 경우
                             file_path = f"/media/feedback_file/{file_name}"
                         
+                        # URL 생성
                         if settings.DEBUG:
                             feedback_file_url = f"http://127.0.0.1:8000{file_path}"
                         else:
-                            feedback_file_url = request.build_absolute_uri(file_path)
+                            # 프로덕션에서는 HTTPS로 강제
+                            host = request.get_host()
+                            scheme = 'https' if not host.startswith('localhost') and not host.startswith('127.0.0.1') else 'http'
+                            feedback_file_url = f"{scheme}://{host}{file_path}"
+                        
+                        logging.info(f"Feedback file URL constructed: {feedback_file_url}")
                 
                 # 멤버 리스트 가져오기
                 cursor.execute("""
@@ -330,15 +345,20 @@ class FeedbackDetail(View):
                 # Get the file URL
                 file_url = None
                 if feedback.files:
-                    # URL 그대로 사용 (인코딩 제거)
                     file_path = feedback.files.url
                     
+                    # URL 생성 (조회 시와 동일한 로직)
                     if settings.DEBUG:
                         file_url = f"http://127.0.0.1:8000{file_path}"
                     else:
-                        # 프로덕션 환경에서 요청의 호스트 사용
-                        file_url = request.build_absolute_uri(file_path)
-                    logging.info(f"File URL: {file_url}")
+                        # 프로덕션에서는 HTTPS로 강제
+                        host = request.get_host()
+                        scheme = 'https' if not host.startswith('localhost') and not host.startswith('127.0.0.1') else 'http'
+                        file_url = f"{scheme}://{host}{file_path}"
+                    
+                    logging.info(f"Upload - File URL: {file_url}")
+                    logging.info(f"Upload - File path: {file_path}")
+                    logging.info(f"Upload - File name: {feedback.files.name}")
                 
                 response_data = {
                     "message": "파일이 성공적으로 업로드되었습니다.",

@@ -157,7 +157,16 @@ class AtomicProjectCreate(View):
                         setattr(project, phase, phase_obj)
                     
                     # 3. 피드백 객체 생성
-                    feedback = feedback_model.FeedBack.objects.create()
+                    try:
+                        feedback = feedback_model.FeedBack.objects.create()
+                    except Exception as e:
+                        # 마이그레이션이 적용되지 않은 경우를 위한 대체 처리
+                        logger.error(f"FeedBack creation failed: {str(e)}")
+                        logger.error("Please run: python manage.py migrate feedbacks")
+                        # 기본 필드만으로 생성 시도
+                        feedback = feedback_model.FeedBack.objects.create(
+                            files=None  # 기본 필드만 지정
+                        )
                     project.feedback = feedback
                     
                     # 4. 프로젝트 저장

@@ -27,7 +27,7 @@ WORKDIR /app/vridge_back
 EXPOSE 8000
 
 # 환경변수 설정
-ENV DJANGO_SETTINGS_MODULE=config.settings.railway_simple
+ENV DJANGO_SETTINGS_MODULE=config.settings.railway_cors_fix
 ENV PYTHONUNBUFFERED=1
 
 # 실행

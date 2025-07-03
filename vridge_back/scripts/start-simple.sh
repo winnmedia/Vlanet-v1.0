@@ -2,8 +2,8 @@
 echo "Starting VideoPlanet Backend..."
 cd /app/vridge_back
 
-# Use environment variable if set, otherwise use railway_simple
-export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-config.settings.railway_simple}
+# Use environment variable if set, otherwise use railway_cors_fix
+export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-config.settings.railway_cors_fix}
 echo "Using Django settings: $DJANGO_SETTINGS_MODULE"
 
 # Database URL 확인
@@ -12,6 +12,22 @@ echo "Railway Database URL available: ${RAILWAY_DATABASE_URL:+Yes}"
 
 # Create staticfiles directory to avoid warning
 mkdir -p /app/vridge_back/staticfiles
+
+# Run migrations
+echo "Running database migrations..."
+python manage.py migrate --no-input
+
+# Specifically migrate feedbacks app
+echo "Running feedbacks app migrations..."
+python manage.py migrate feedbacks --no-input
+
+# Create cache table if using database cache
+echo "Creating cache table..."
+python manage.py createcachetable || echo "Cache table may already exist"
+
+# Collect static files
+echo "Collecting static files..."
+python manage.py collectstatic --no-input
 
 # Gunicorn 시작
 echo "Starting Gunicorn on port ${PORT:-8000}..."

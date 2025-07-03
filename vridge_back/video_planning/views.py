@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import AllowAnyTemporary
+from .debug_permissions import DebugAllowAny
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.db.models import Q
@@ -58,7 +59,7 @@ def generate_structure(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([DebugAllowAny])
 def generate_story(request):
     try:
         planning_text = request.data.get('planning_text', '')
@@ -343,9 +344,14 @@ def save_planning(request):
 def get_planning_list(request):
     """사용자의 기획 목록을 조회합니다. (최대 5개)"""
     try:
-        plannings = VideoPlanning.objects.filter(
-            user=request.user
-        ).order_by('-created_at')[:5]
+        # 인증된 사용자인 경우에만 필터링
+        if request.user.is_authenticated:
+            plannings = VideoPlanning.objects.filter(
+                user=request.user
+            ).order_by('-created_at')[:5]
+        else:
+            # 인증되지 않은 경우 빈 목록 반환
+            plannings = []
         
         serializer = VideoPlanningListSerializer(plannings, many=True)
         
@@ -490,7 +496,7 @@ def delete_planning(request, planning_id):
 
 
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+@permission_classes([DebugAllowAny])
 def planning_library_view(request):
     """라이브러리 뷰 - GET과 POST 모두 처리"""
     if request.method == 'GET':

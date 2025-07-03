@@ -48,7 +48,7 @@ export default function VideoPlanning() {
         `/api/video-planning/library/`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
+            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
           },
         }
       )
@@ -66,7 +66,7 @@ export default function VideoPlanning() {
         `/api/video-planning/library/${planningId}/`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
+            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
           },
         }
       )
@@ -108,7 +108,7 @@ export default function VideoPlanning() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
+            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
           },
         }
       )
@@ -138,7 +138,7 @@ export default function VideoPlanning() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
+            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
           },
         }
       )
@@ -184,7 +184,7 @@ export default function VideoPlanning() {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('access')}`,
+              Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
             },
           }
         )
@@ -230,7 +230,7 @@ export default function VideoPlanning() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
+            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
           },
         }
       )
@@ -263,7 +263,7 @@ export default function VideoPlanning() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
+            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
           },
         }
       )
@@ -313,7 +313,7 @@ export default function VideoPlanning() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
+            Authorization: `Bearer ${localStorage.getItem('VGID')?.replace(/"/g, '')}`,
           },
         }
       )

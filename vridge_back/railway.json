@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python manage.py migrate && python manage.py collectstatic --noinput && python manage.py createcachetable && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2",
+    "startCommand": "DJANGO_SETTINGS_MODULE=config.settings_minimal python manage.py migrate && DJANGO_SETTINGS_MODULE=config.settings_minimal python manage.py collectstatic --noinput && DJANGO_SETTINGS_MODULE=config.settings_minimal gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 1",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
     "healthcheckPath": "/api/health/",

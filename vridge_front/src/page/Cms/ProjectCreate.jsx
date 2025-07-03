@@ -1,4 +1,5 @@
 import 'css/Cms/CmsCommon.scss'
+import 'css/Cms/ProjectCreate.scss'
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -243,7 +244,7 @@ export default function ProjectCreate() {
   }
   return (
     <PageTemplate>
-      <div className="cms_wrap">
+      <div className="cms_wrap project-create">
         <SideBar />
         <main className="project edit">
           <div className="title">프로젝트 등록</div>

@@ -235,8 +235,7 @@ class ProfileUpdate(View):
                     updated_fields.append(field)
             
             if updated_fields:
-                if 'nickname' not in updated_fields:
-                    user.save()
+                # profile 모델의 필드가 업데이트된 경우에만 저장
                 if any(f in updated_fields for f in ['bio', 'phone', 'company', 'position']):
                     profile.save()
                 

@@ -23,6 +23,7 @@ export default function ProjectCreate() {
   const initial = project_initial()
   const [isCreating, setIsCreating] = useState(false)
   const createRequestRef = useRef(null) // API 요청 추적
+  const submitButtonRef = useRef(null) // 제출 버튼 ref
   
   // 중복 요청 방지를 위한 ref
   const lastRequestRef = useRef({ name: '', timestamp: 0 })
@@ -165,20 +166,27 @@ export default function ProjectCreate() {
           // 성공 플래그 설정하여 중복 처리 방지
           lastRequestRef.current.success = true
           
-          // 즉시 Calendar 페이지로 이동 (alert 전에 이동)
-          navigate('/Calendar', { replace: true })
+          // 버튼 비활성화
+          if (submitButtonRef.current) {
+            submitButtonRef.current.disabled = true
+          }
           
-          // 페이지 이동 후 프로젝트 목록 갱신
+          // 프로젝트 목록 갱신 후 페이지 이동
           refetchProject(dispatch, navigate).then(() => {
             console.log('[ProjectCreate] Project list refreshed')
+            // 성공 메시지와 함께 Calendar 페이지로 이동
+            navigate('/Calendar', { 
+              replace: true, 
+              state: { message: '프로젝트가 성공적으로 생성되었습니다.' }
+            })
           }).catch(err => {
             console.error('[ProjectCreate] refetchProject error:', err)
+            // 에러가 발생해도 페이지 이동
+            navigate('/Calendar', { 
+              replace: true,
+              state: { message: '프로젝트가 생성되었습니다.' }
+            })
           })
-          
-          // 페이지 이동 후 알림 표시
-          setTimeout(() => {
-            window.alert('프로젝트가 성공적으로 생성되었습니다.')
-          }, 100)
         })
         .catch((err) => {
           console.log('[ProjectCreate] === API ERROR ===')
@@ -263,6 +271,7 @@ export default function ProjectCreate() {
 
             <div className="btn_wrap">
               <button 
+                ref={submitButtonRef}
                 onClick={CreateBtn} 
                 className="submit" 
                 disabled={isCreating || !ValidForm}

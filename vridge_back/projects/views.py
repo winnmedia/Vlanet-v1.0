@@ -367,6 +367,16 @@ class CreateProject(View):
             idempotency_key = request.headers.get('X-Idempotency-Key')
             if idempotency_key:
                 logging.info(f"[CreateProject] Request with idempotency key: {idempotency_key}")
+                
+                # 캐시에서 멱등성 키 확인 (Django 캐시 사용)
+                from django.core.cache import cache
+                cache_key = f"create_project_{user.id}_{idempotency_key}"
+                
+                # 이미 처리된 요청인지 확인
+                cached_result = cache.get(cache_key)
+                if cached_result:
+                    logging.info(f"[CreateProject] Returning cached result for idempotency key: {idempotency_key}")
+                    return JsonResponse(cached_result, status=200)
             
             # 프로젝트 이름 중복 체크 (5초 이내 동일한 이름의 프로젝트 생성 방지)
             project_name = inputs.get('name')
@@ -455,8 +465,16 @@ class CreateProject(View):
 
                 models.File.objects.bulk_create(file_obj)
 
+            # 성공 결과를 캐시에 저장
+            result = {"message": "success", "project_id": project.id}
+            if idempotency_key:
+                from django.core.cache import cache
+                cache_key = f"create_project_{user.id}_{idempotency_key}"
+                # 5분간 캐시 저장
+                cache.set(cache_key, result, 300)
+            
             logging.info(f"[CreateProject] Successfully created project '{project_name}' with ID: {project.id}")
-            return JsonResponse({"message": "success", "project_id": project.id}, status=200)
+            return JsonResponse(result, status=200)
         except Exception as e:
             print(e)
             logging.error(f"Project creation error: {str(e)}")

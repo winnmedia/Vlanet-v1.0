@@ -64,19 +64,23 @@ class CreateProjectFixedFinal(View):
                     "code": "MISSING_PROJECT_NAME"
                 }, status=400)
             
-            # 멱등성 키 확인
+            # 멱등성 키 확인 (데이터베이스 기반)
             idempotency_key = request.headers.get('X-Idempotency-Key')
-            cache_key = None
             if idempotency_key:
-                cache_key = f"project_create_final:{user.id}:{idempotency_key}"
-                try:
-                    cached_response = cache.get(cache_key)
-                    if cached_response:
-                        logger.info(f"[CreateProjectFixedFinal] Returning cached response for key: {idempotency_key}")
-                        return JsonResponse(cached_response)
-                except Exception as e:
-                    logger.warning(f"[CreateProjectFixedFinal] Cache access failed: {e}")
-                    pass
+                # 최근 1분 내 같은 사용자의 프로젝트 확인
+                recent_request = models.Project.objects.filter(
+                    user=user,
+                    created__gte=django_timezone.now() - django_timezone.timedelta(minutes=1)
+                ).first()
+                
+                if recent_request:
+                    logger.info(f"[CreateProjectFixedFinal] Found recent project, likely duplicate request")
+                    return JsonResponse({
+                        "message": "success",
+                        "project_id": recent_request.id,
+                        "project_name": recent_request.name,
+                        "created_at": recent_request.created.isoformat()
+                    })
             
             # 중복 프로젝트 확인 (최근 10초 내)
             recent_duplicate = models.Project.objects.filter(
@@ -108,7 +112,7 @@ class CreateProjectFixedFinal(View):
                     # 3. 프로세스 단계 생성
                     phase_models = {
                         'basic_plan': models.BasicPlan,
-                        'story_board': models.StoryBoard,
+                        'story_board': models.Storyboard,  # 실제 모델명은 Storyboard
                         'filming': models.Filming,
                         'video_edit': models.VideoEdit,
                         'post_work': models.PostWork,
@@ -159,14 +163,7 @@ class CreateProjectFixedFinal(View):
                         "created_at": project.created.isoformat()
                     }
                     
-                    # 캐시에 저장 (멱등성)
-                    if cache_key:
-                        try:
-                            cache.set(cache_key, response_data, 600)  # 10분
-                            logger.info(f"[CreateProjectFixedFinal] Response cached for key: {idempotency_key}")
-                        except Exception as e:
-                            logger.warning(f"[CreateProjectFixedFinal] Cache storage failed: {e}")
-                    
+                    # 성공 로그
                     logger.info(f"[CreateProjectFixedFinal] Project creation completed successfully")
                     return JsonResponse(response_data, status=201)
                     

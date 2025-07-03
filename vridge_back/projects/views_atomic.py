@@ -65,18 +65,23 @@ class AtomicProjectCreate(View):
                     "code": "MISSING_PROJECT_NAME"
                 }, status=400)
             
-            # 멱등성 키 검증 (캐시 사용 시)
+            # 멱등성 키 검증 (데이터베이스 기반)
             idempotency_key = request.headers.get('X-Idempotency-Key')
             if idempotency_key:
-                cache_key = f"project_create:{user.id}:{idempotency_key}"
-                try:
-                    cached_response = cache.get(cache_key)
-                    if cached_response:
-                        logger.info(f"Returning cached response for idempotency key: {idempotency_key}")
-                        return JsonResponse(cached_response)
-                except Exception as e:
-                    logger.warning(f"Cache access failed, proceeding without cache: {e}")
-                    pass
+                # 최근 1분 내 같은 idempotency_key로 생성된 프로젝트 확인
+                recent_request = models.Project.objects.filter(
+                    user=user,
+                    created__gte=django_timezone.now() - django_timezone.timedelta(minutes=1)
+                ).first()
+                
+                if recent_request:
+                    logger.info(f"Found recent project for user, likely duplicate request")
+                    return JsonResponse({
+                        "message": "success",
+                        "project_id": recent_request.id,
+                        "project_name": recent_request.name,
+                        "created_at": recent_request.created.isoformat()
+                    })
             
             # 프로젝트 데이터 준비
             project_data = {
@@ -105,9 +110,32 @@ class AtomicProjectCreate(View):
                         'post_work', 'video_preview', 'confirmation', 'video_delivery'
                     ]
                     
+                    # process_data가 리스트인 경우 딕셔너리로 변환
+                    if isinstance(process_data, list):
+                        process_dict = {}
+                        for item in process_data:
+                            if isinstance(item, dict) and 'key' in item:
+                                process_dict[item['key']] = item
+                        process_data = process_dict
+                    
+                    # 모델명 매핑
+                    phase_model_map = {
+                        'basic_plan': 'BasicPlan',
+                        'story_board': 'Storyboard',
+                        'filming': 'Filming',
+                        'video_edit': 'VideoEdit',
+                        'post_work': 'PostWork',
+                        'video_preview': 'VideoPreview',
+                        'confirmation': 'Confirmation',
+                        'video_delivery': 'VideoDelivery',
+                    }
+                    
                     for phase in phases:
-                        phase_class = getattr(models, phase.title().replace('_', ''))
-                        phase_data = process_data.get(phase, {})
+                        if phase not in phase_model_map:
+                            continue
+                        
+                        phase_class = getattr(models, phase_model_map[phase])
+                        phase_data = process_data.get(phase, {}) if isinstance(process_data, dict) else {}
                         
                         # 날짜 처리
                         start_date = None
@@ -145,14 +173,8 @@ class AtomicProjectCreate(View):
                         "created_at": project.created.isoformat()
                     }
                     
-                    # 멱등성 키가 있으면 캐시에 저장 (10분)
-                    if idempotency_key:
-                        try:
-                            cache.set(cache_key, response_data, 600)
-                            logger.info(f"Response cached for idempotency key: {idempotency_key}")
-                        except Exception as e:
-                            logger.warning(f"Cache storage failed, but operation succeeded: {e}")
-                            pass
+                    # 성공 로그
+                    logger.info(f"Project creation completed successfully for user {user.username}")
                     
                     return JsonResponse(response_data, status=201)
                     

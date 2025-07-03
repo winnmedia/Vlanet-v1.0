@@ -103,6 +103,10 @@ class Members(core_model.TimeStampedModel):
     class Meta:
         verbose_name = "멤버"
         verbose_name_plural = "멤버"
+        indexes = [
+            models.Index(fields=['project', 'user']),
+            models.Index(fields=['user']),
+        ]
 
 
 class Memo(core_model.TimeStampedModel):
@@ -223,6 +227,11 @@ class Project(core_model.TimeStampedModel):
     class Meta:
         verbose_name = "1.프로젝트"
         verbose_name_plural = "1.프로젝트"
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['created']),
+            models.Index(fields=['name']),
+        ]
 
     def __str__(self):
         return self.name

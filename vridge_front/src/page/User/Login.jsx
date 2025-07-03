@@ -19,6 +19,16 @@ export default function Login() {
   const [login_message, SetLoginMessage] = useState('')
   const [param] = useSearchParams()
   const { uid, token } = queryString.parse(param.toString())
+  const [loginController, setLoginController] = useState(null)
+  
+  // Cleanup effect for any pending API requests
+  useEffect(() => {
+    return () => {
+      if (loginController && loginController.abort) {
+        loginController.abort()
+      }
+    }
+  }, [])
 
   const OnChange = (e) => {
     const { value, name } = e.target
@@ -45,17 +55,28 @@ export default function Login() {
     console.log('Login success, saving token:', jwt)
     window.localStorage.setItem('VGID', jwt)
     
-    // refetchProject를 기다린 후 navigate
-    console.log('[Login] Loading project list after successful login')
-    await refetchProject(dispatch, navigate)
+    // Create controller for refetchProject
+    const controller = new AbortController()
     
-    if (uid && token) {
-      // 초대 링크 처리 페이지
-      console.log('Navigating to EmailCheck with uid and token')
-      navigate(`/EmailCheck?uid=${uid}&token=${token}`)
-    } else {
-      console.log('Navigating to CmsHome')
-      navigate('/CmsHome', { replace: true })
+    try {
+      // refetchProject를 기다린 후 navigate
+      console.log('[Login] Loading project list after successful login')
+      await refetchProject(dispatch, navigate, { signal: controller.signal })
+      
+      if (uid && token) {
+        // 초대 링크 처리 페이지
+        console.log('Navigating to EmailCheck with uid and token')
+        navigate(`/EmailCheck?uid=${uid}&token=${token}`)
+      } else {
+        console.log('Navigating to CmsHome')
+        navigate('/CmsHome', { replace: true })
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('Failed to load projects after login:', err)
+        // Still navigate even if project loading fails
+        navigate('/CmsHome', { replace: true })
+      }
     }
   }
 
@@ -67,11 +88,25 @@ export default function Login() {
 
   function Login() {
     if (email.length > 0 && password.length > 0) {
-      SignIn(inputs)
+      // Cancel any previous login request
+      if (loginController && loginController.abort) {
+        loginController.abort()
+      }
+      
+      const controller = new AbortController()
+      setLoginController(controller)
+      
+      SignIn(inputs, { signal: controller.signal })
         .then((res) => {
+          setLoginController(null)
           CommonLoginSuccess(res.data.vridge_session)
         })
         .catch((err) => {
+          setLoginController(null)
+          if (err.name === 'AbortError') {
+            // Request was aborted, do nothing
+            return
+          }
           console.error('Login error:', err)
           console.error('Error response:', err.response)
           if (err.response && err.response.data && err.response.data.message) {

@@ -16,6 +16,7 @@ from users.utils import (
 from . import models
 from feedbacks import models as feedback_model
 from .utils_date import parse_date_flexible
+from common.exceptions import APIException
 
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -272,19 +273,19 @@ class InviteMember(View):
             project = models.Project.objects.get_or_none(id=project_id)
 
             if project.user.username == email:
-                return JsonResponse({"message": "프로젝트 소유자는 초대가 불가능합니다."}, status=500)
+                return JsonResponse({"message": "프로젝트 소유자는 초대가 불가능합니다."}, status=400)
             if not project:
-                return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=500)
+                return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=404)
 
             members = project.members.all().filter(user__username=email)
             if members.exists():
-                return JsonResponse({"message": "이미 초대 된 사용자입니다."}, status=500)
+                return JsonResponse({"message": "이미 초대 된 사용자입니다."}, status=409)
 
             with transaction.atomic():
                 invite, is_created = models.ProjectInvite.objects.get_or_create(project=project, email=email)
 
                 if not is_created:
-                    return JsonResponse({"message": "이미 초대한 사용자입니다."}, status=500)
+                    return JsonResponse({"message": "이미 초대한 사용자입니다."}, status=409)
 
                 uid = urlsafe_base64_encode(force_bytes(project_id)).encode().decode()
                 token = project_token_generator(project)
@@ -304,11 +305,11 @@ class InviteMember(View):
 
             project = models.Project.objects.get_or_none(id=project_id)
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=500)
+                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             invite = models.ProjectInvite.objects.get_or_none(pk=pk)
             if invite:
@@ -334,14 +335,14 @@ class AcceptInvite(View):
             is_member = project.members.filter(user=user)
 
             if not project and is_member.exists() and project.user == user:
-                return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=500)
+                return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=404)
 
             invite_obj = models.ProjectInvite.objects.get_or_none(project=project, email=user.username)
             if invite_obj is None:
-                return JsonResponse({"message": "잘못된 요청입니다."}, status=500)
+                return JsonResponse({"message": "잘못된 요청입니다."}, status=400)
 
             if not check_project_token(project, token):
-                return JsonResponse({"message": "잘못된 요청입니다."}, status=500)
+                return JsonResponse({"message": "잘못된 요청입니다."}, status=400)
 
             models.Members.objects.create(project=project, user=user)
             invite_obj.delete()
@@ -499,11 +500,11 @@ class ProjectDetail(View):
             user = request.user
             project = models.Project.objects.get_or_none(id=project_id)
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=500)
+                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user)
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             result = {
                 "id": project.id,
@@ -591,11 +592,11 @@ class ProjectDetail(View):
             project = models.Project.objects.get_or_none(id=project_id)
 
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=500)
+                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             with transaction.atomic():
                 for k, v in inputs.items():
@@ -682,7 +683,7 @@ class ProjectFile(View):
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             file_obj.delete()
             return JsonResponse({"message": "success"}, status=200)
@@ -701,11 +702,11 @@ class ProjectMemo(View):
 
             project = models.Project.objects.get_or_none(id=id)
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=500)
+                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             data = json.loads(request.body)
 
@@ -732,13 +733,13 @@ class ProjectMemo(View):
             memo_id = data.get("memo_id")
             memo = models.Memo.objects.get_or_none(id=memo_id)
             if memo is None:
-                return JsonResponse({"message": "메모를 찾을 수  없습니다."}, status=500)
+                return JsonResponse({"message": "메모를 찾을 수  없습니다."}, status=404)
             if project is None:
-                return JsonResponse({"message": "메모를 찾을 수  없습니다."}, status=500)
+                return JsonResponse({"message": "메모를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             memo.delete()
 
@@ -758,11 +759,11 @@ class ProjectDate(View):
 
             project = models.Project.objects.get_or_none(id=id)
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=500)
+                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             data = json.loads(request.body)
             key = data.get("key")

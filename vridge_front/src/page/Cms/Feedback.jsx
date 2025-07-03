@@ -47,6 +47,19 @@ import 'moment/locale/ko'
 export default function Feedback() {
   const navigate = useNavigate()
   const { user } = useSelector((s) => s.ProjectStore)
+  
+  // Cleanup effect for any pending timeouts
+  useEffect(() => {
+    return () => {
+      // Clear any pending upload timeouts
+      if (window.uploadTimeouts && window.uploadTimeouts.length > 0) {
+        window.uploadTimeouts.forEach(timeoutId => clearTimeout(timeoutId))
+        window.uploadTimeouts = []
+      }
+      // Clear lastProgressTime
+      delete window.lastProgressTime
+    }
+  }, [])
 
   const { project_id } = useParams()
 
@@ -142,7 +155,9 @@ export default function Feedback() {
   }, [])
 
   useEffect(() => {
-    GetFeedBack(project_id)
+    const abortController = new AbortController()
+    
+    GetFeedBack(project_id, { signal: abortController.signal })
       .then((res) => {
         console.log('Feedback data:', res.data.result)
         console.log('Files URL:', res.data.result?.files)
@@ -178,6 +193,11 @@ export default function Feedback() {
           window.alert(err.response.data.message)
         }
       })
+    
+    // Cleanup function
+    return () => {
+      abortController.abort()
+    }
   }, [project_id, trigger])
 
   function Rating(rating) {
@@ -260,11 +280,13 @@ export default function Feedback() {
 
     // 컴포넌트 언마운트 시 웹소켓 연결 종료
     return () => {
-      if (ws.current) {
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.close()
+        ws.current = null
       }
+      setSocketConnected(false)
     }
-  }, [project_id])
+  }, [project_id, webSocketUrl])
   useEffect(() => {
     if (items.length > 0) {
       const storage = { id: project_id, items: items }
@@ -412,12 +434,16 @@ export default function Feedback() {
           window.lastProgressTime = new Date().getTime()
           
           // 10초 후에도 진행이 없으면 경고
-          setTimeout(() => {
+          const timeoutId = setTimeout(() => {
             const timeSinceLastProgress = new Date().getTime() - window.lastProgressTime
             if (timeSinceLastProgress > 9000 && percentCompleted < 100) {
               console.error('Upload appears to be stalled. Last progress:', timeSinceLastProgress / 1000, 'seconds ago')
             }
           }, 10000)
+          
+          // 타임아웃 ID를 저장하여 나중에 정리할 수 있도록 함
+          if (!window.uploadTimeouts) window.uploadTimeouts = []
+          window.uploadTimeouts.push(timeoutId)
         }
       }
       
@@ -448,7 +474,11 @@ export default function Feedback() {
           
           refetch()
           e.target.value = '' // Reset file input
-          setTimeout(() => setUploadProgress(0), 1000)
+          const resetProgressTimeout = setTimeout(() => setUploadProgress(0), 1000)
+          
+          // Store timeout for cleanup
+          if (!window.uploadTimeouts) window.uploadTimeouts = []
+          window.uploadTimeouts.push(resetProgressTimeout)
         })
         .catch((err) => {
           console.error('Upload error:', err)

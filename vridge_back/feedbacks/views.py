@@ -60,7 +60,7 @@ class FeedbackDetail(View):
                 
                 is_member = cursor.fetchone()[0] > 0
                 if project_data['user_id'] != user.id and not is_member:
-                    return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                    return JsonResponse({"message": "권한이 없습니다."}, status=403)
                 
                 # 피드백 정보 가져오기 (기본 필드만)
                 feedback_file_url = None
@@ -186,7 +186,7 @@ class FeedbackDetail(View):
 
             project = project_model.Project.objects.get_or_none(id=id)
             if not project:
-                return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=500)
+                return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=404)
 
             feedback = project.feedback
             if not feedback:
@@ -194,7 +194,7 @@ class FeedbackDetail(View):
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             models.FeedBackComment.objects.create(
                 feedback=feedback,
@@ -218,10 +218,10 @@ class FeedbackDetail(View):
             feedback_comment = models.FeedBackComment.objects.get_or_none(id=id)
 
             if not feedback_comment:
-                return JsonResponse({"message": "잘못된 요청입니다."}, status=500)
+                return JsonResponse({"message": "잘못된 요청입니다."}, status=400)
 
             if feedback_comment.user != user:
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             feedback_comment.delete()
 
@@ -254,7 +254,7 @@ class FeedbackDetail(View):
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
                 logging.error(f"User {email} has no permission for project {id}")
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             if not request.FILES:
                 logging.error("No files in request")
@@ -403,7 +403,7 @@ class FeedbackFileDelete(View):
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             feedback.files = None
             feedback.save()
@@ -442,7 +442,7 @@ class VideoEncodingStatus(View):
 
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
-                return JsonResponse({"message": "권한이 없습니다."}, status=500)
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             response_data = {
                 "encoding_status": getattr(feedback, 'encoding_status', 'none'),

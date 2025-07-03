@@ -32,6 +32,18 @@ export default function Calendar() {
   const [project_filter, set_project_filter] = useState(project_list)
   const { Option } = Select
   const [message, setMessage] = useState(null)
+  const [activeControllers, setActiveControllers] = useState([])
+  
+  // Cleanup effect for any pending API requests
+  useEffect(() => {
+    return () => {
+      activeControllers.forEach(controller => {
+        if (controller && controller.abort) {
+          controller.abort()
+        }
+      })
+    }
+  }, [])
 
   const DateList = ['월', '주', '일']
   const [DateType, SetDateType] = useState('월')
@@ -74,23 +86,35 @@ export default function Calendar() {
       end_date: endDate,
       completed: completed !== undefined ? completed : false
     }
-    UpdateDate(data, projectId)
+    const controller = new AbortController()
+    
+    UpdateDate(data, projectId, { signal: controller.signal })
       .then(() => {
         refetch()
       })
       .catch(err => {
-        console.error('Failed to update phase:', err)
+        if (err.name !== 'AbortError') {
+          console.error('Failed to update phase:', err)
+        }
       })
+    
+    return controller
   }
   
   const handleMemoAdd = (date, memo) => {
-    WriteMemo({ date, memo }, 'user')
+    const controller = new AbortController()
+    
+    WriteMemo({ date, memo }, 'user', { signal: controller.signal })
       .then(() => {
         refetch()
       })
       .catch(err => {
-        console.error('Failed to add memo:', err)
+        if (err.name !== 'AbortError') {
+          console.error('Failed to add memo:', err)
+        }
       })
+    
+    return controller
   }
 
   const current_project_list = useMemo(() => {
@@ -122,6 +146,8 @@ export default function Calendar() {
       // 메시지를 3초 후에 자동으로 사라지게 함
       const timer = setTimeout(() => {
         setMessage(null)
+        // location state 클리어를 위해 navigate
+        navigate(location.pathname, { replace: true, state: {} })
       }, 3000)
       
       // cleanup function

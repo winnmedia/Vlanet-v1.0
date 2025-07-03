@@ -36,6 +36,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'middleware.force_cors.ForceCorsMiddleware',  # 강제 CORS 헤더 추가
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -44,7 +45,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'config.urls_minimal'
 
 # 템플릿
 TEMPLATES = [
@@ -97,9 +98,42 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# CORS 설정
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS 설정 - 특정 도메인 허용
+CORS_ALLOWED_ORIGINS = [
+    "https://vlanet.net",
+    "https://www.vlanet.net",
+    "http://vlanet.net",
+    "http://www.vlanet.net",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://videoplanet.up.railway.app",
+    "https://videoplanetready.vercel.app",
+    "https://vlanet-v1-0.vercel.app",
+]
+
+# 추가 CORS 설정
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-idempotency-key',
+]
+CORS_PREFLIGHT_MAX_AGE = 86400
+
+# CSRF도 비활성화 (최소 설정)
+CSRF_TRUSTED_ORIGINS = [
+    'https://vlanet.net',
+    'https://www.vlanet.net',
+    'https://*.railway.app',
+]
 
 # 국제화
 LANGUAGE_CODE = 'ko-kr'
@@ -113,11 +147,14 @@ AUTH_USER_MODEL = 'users.User'
 # 기본 필드
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST Framework
+# REST Framework - 최소 설정, 인증 비활성화
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-    )
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
 }
 
 print("Minimal Railway settings loaded successfully")

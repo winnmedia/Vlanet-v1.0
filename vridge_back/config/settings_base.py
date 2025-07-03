@@ -277,6 +277,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://vlanet-v1-0.vercel.app",
     "https://videoplanet.up.railway.app",
+    "https://vlanet.net",
+    "https://www.vlanet.net",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -305,6 +307,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://vlanet-v1-0.vercel.app",
     "https://videoplanet.up.railway.app",
+    "https://vlanet.net",
+    "https://www.vlanet.net",
 ]
 
 # Session and CSRF cookie settings

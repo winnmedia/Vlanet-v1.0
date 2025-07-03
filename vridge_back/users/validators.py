@@ -92,11 +92,11 @@ class InputValidator:
         if re.search(r'(.)\1{2,}', password):
             return False, "동일한 문자를 3회 이상 연속으로 사용할 수 없습니다."
         
-        # 순차적 패턴 검증
-        sequential_patterns = ['123', '234', '345', '456', '567', '678', '789', 'abc', 'bcd', 'cde']
+        # 순차적 패턴 검증 (3자리 이상 연속)
+        sequential_patterns = ['1234', '2345', '3456', '4567', '5678', '6789', 'abcd', 'bcde', 'cdef']
         for pattern in sequential_patterns:
             if pattern in password.lower():
-                return False, "순차적인 문자열을 사용할 수 없습니다."
+                return False, "4자리 이상 순차적인 문자열을 사용할 수 없습니다."
         
         return True, None
     

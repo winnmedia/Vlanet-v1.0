@@ -1,15 +1,28 @@
 import axios from 'axios';
 
 // 환경에 따라 API URL 설정
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://videoplanet.up.railway.app'
-  : (process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000');
+let API_BASE_URL;
+
+// 프로덕션 도메인 체크
+const isProduction = window.location.hostname === 'vlanet.net' || 
+                     window.location.hostname === 'www.vlanet.net' ||
+                     window.location.hostname.includes('vercel.app');
+
+if (isProduction) {
+  API_BASE_URL = 'https://videoplanet.up.railway.app';
+} else if (process.env.REACT_APP_API_BASE_URL) {
+  API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+} else {
+  API_BASE_URL = 'http://localhost:8000';
+}
 
 // API URL 설정
 axios.defaults.baseURL = API_BASE_URL;
 
 console.log('[Axios Configuration] API Base URL:', API_BASE_URL);
 console.log('[Axios Configuration] Environment:', process.env.NODE_ENV);
+console.log('[Axios Configuration] Is Production:', isProduction);
+console.log('[Axios Configuration] Hostname:', window.location.hostname);
 
 // 공통 설정
 axios.defaults.withCredentials = true;
@@ -70,6 +83,13 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// baseURL 변경 함수
+export const updateBaseURL = (url) => {
+  axios.defaults.baseURL = url;
+  axiosInstance.defaults.baseURL = url;
+  console.log('[Axios] BaseURL updated to:', url);
+};
 
 // 커스텀 axios 인스턴스 생성
 const axiosInstance = axios.create({

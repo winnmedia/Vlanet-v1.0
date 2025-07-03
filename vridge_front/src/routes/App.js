@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { refetchProject, checkSession } from 'util/util'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { updateBaseURL } from 'config/axios'
 
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
@@ -17,6 +18,16 @@ export default function App() {
   const { project_list } = useSelector((s) => s.ProjectStore || {})
   
   useEffect(() => {
+    // 프로덕션 환경에서 API URL 강제 설정
+    const isProduction = window.location.hostname === 'vlanet.net' || 
+                         window.location.hostname === 'www.vlanet.net' ||
+                         window.location.hostname.includes('vercel.app')
+    
+    if (isProduction) {
+      updateBaseURL('https://videoplanet.up.railway.app')
+      console.log('[App] Production environment detected, API URL set to:', 'https://videoplanet.up.railway.app')
+    }
+    
     // 프로덕션 도메인이 설정되어 있고, 현재 도메인이 다른 경우 리다이렉트
     const productionDomain = process.env.REACT_APP_PRODUCTION_DOMAIN
     if (productionDomain && 

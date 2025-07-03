@@ -9,7 +9,7 @@ const LazyWrapper = ({ children, fallback }) => {
       alignItems: 'center', 
       minHeight: '200px' 
     }}>
-      <Spin size="large" tip="Loading..." />
+      <Spin size="large" />
     </div>
   );
 

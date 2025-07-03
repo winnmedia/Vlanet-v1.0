@@ -171,29 +171,30 @@ export default function ProjectCreate() {
             submitButtonRef.current.disabled = true
           }
           
-          // 프로젝트 목록 갱신
-          console.log('[ProjectCreate] Refreshing project list...')
-          refetchProject(dispatch, navigate).then(() => {
-            console.log('[ProjectCreate] Project list refreshed successfully')
-            // 성공 메시지 표시
-            window.alert('프로젝트가 성공적으로 생성되었습니다.')
-            // Calendar 페이지로 이동
-            navigate('/Calendar', { replace: true })
-          }).catch(err => {
-            console.error('[ProjectCreate] refetchProject error:', err)
-            // 에러가 발생해도 재시도
-            console.log('[ProjectCreate] Retrying project list refresh...')
-            setTimeout(() => {
-              refetchProject(dispatch, navigate).then(() => {
-                console.log('[ProjectCreate] Project list refreshed on retry')
-              }).catch(retryErr => {
-                console.error('[ProjectCreate] Retry failed:', retryErr)
-              })
-            }, 1000)
-            // 알림 표시 후 페이지 이동
-            window.alert('프로젝트가 생성되었습니다.')
-            navigate('/Calendar', { replace: true })
+          // 즉시 페이지 이동 (alert 없이, 성공 메시지와 함께)
+          console.log('[ProjectCreate] Navigating to Calendar...')
+          navigate('/Calendar', { 
+            replace: true,
+            state: { message: '프로젝트가 성공적으로 생성되었습니다.' }
           })
+          
+          // 페이지 이동 후 프로젝트 목록 갱신
+          console.log('[ProjectCreate] Refreshing project list...')
+          setTimeout(() => {
+            refetchProject(dispatch, navigate).then(() => {
+              console.log('[ProjectCreate] Project list refreshed successfully')
+            }).catch(err => {
+              console.error('[ProjectCreate] refetchProject error:', err)
+              // 에러가 발생해도 재시도
+              setTimeout(() => {
+                refetchProject(dispatch, navigate).then(() => {
+                  console.log('[ProjectCreate] Project list refreshed on retry')
+                }).catch(retryErr => {
+                  console.error('[ProjectCreate] Retry failed:', retryErr)
+                })
+              }, 1000)
+            })
+          }, 100)
         })
         .catch((err) => {
           console.log('[ProjectCreate] === API ERROR ===')
@@ -226,10 +227,17 @@ export default function ProjectCreate() {
         })
         .finally(() => {
           // 요청 완료 후 ref 초기화
-          createRequestRef.current = null
+          if (createRequestRef.current) {
+            createRequestRef.current = null
+          }
           // 컴포넌트가 언마운트되지 않았을 때만 상태 업데이트
           if (isMountedRef.current) {
-            setIsCreating(false)
+            // 약간의 지연 후 상태 업데이트 (페이지 이동 후)
+            setTimeout(() => {
+              if (isMountedRef.current) {
+                setIsCreating(false)
+              }
+            }, 100)
           }
         })
   }

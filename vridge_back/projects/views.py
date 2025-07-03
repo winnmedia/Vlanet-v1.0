@@ -378,13 +378,13 @@ class CreateProject(View):
                     logging.info(f"[CreateProject] Returning cached result for idempotency key: {idempotency_key}")
                     return JsonResponse(cached_result, status=200)
             
-            # 프로젝트 이름 중복 체크 (5초 이내 동일한 이름의 프로젝트 생성 방지)
+            # 프로젝트 이름 중복 체크 (10초 이내 동일한 이름의 프로젝트 생성 방지)
             project_name = inputs.get('name')
             if project_name:
                 recent_projects = models.Project.objects.filter(
                     user=user,
                     name=project_name,
-                    created__gte=django_timezone.now() - django_timezone.timedelta(seconds=5)
+                    created__gte=django_timezone.now() - django_timezone.timedelta(seconds=10)
                 ).exists()
                 
                 if recent_projects:

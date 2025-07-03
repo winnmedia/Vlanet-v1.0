@@ -70,3 +70,15 @@
     display: none !important;
   }
 }
+
+// 메시지 표시 애니메이션
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

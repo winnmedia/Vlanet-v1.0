@@ -13,7 +13,7 @@ import CalendarEnhanced from 'components/CalendarEnhanced'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { Select, Space } from 'antd'
@@ -25,11 +25,13 @@ import { UpdateDate, WriteMemo } from 'api/project'
 
 export default function Calendar() {
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useDispatch()
   const { project_list, this_month_project, next_month_project, user_memos, user } =
     useSelector((s) => s.ProjectStore)
   const [project_filter, set_project_filter] = useState(project_list)
   const { Option } = Select
+  const [message, setMessage] = useState(null)
 
   const DateList = ['월', '주', '일']
   const [DateType, SetDateType] = useState('월')
@@ -113,6 +115,20 @@ export default function Calendar() {
     // App.js에서만 호출하도록 함
   }, []) // 빈 배열로 최초 마운트 시에만 실행
 
+  // navigate state로 전달된 메시지 처리
+  useEffect(() => {
+    if (location.state?.message) {
+      setMessage(location.state.message)
+      // 메시지를 3초 후에 자동으로 사라지게 함
+      const timer = setTimeout(() => {
+        setMessage(null)
+      }, 3000)
+      
+      // cleanup function
+      return () => clearTimeout(timer)
+    }
+  }, [location.state])
+
   useEffect(() => {
     ProjectChange('전체')
   }, [current_project_list])
@@ -192,6 +208,23 @@ export default function Calendar() {
       <div className="cms_wrap">
         <SideBar />
         <main>
+          {/* 메시지 표시 */}
+          {message && (
+            <div style={{
+              position: 'fixed',
+              top: '20px',
+              right: '20px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+              zIndex: 1000,
+              animation: 'slideIn 0.3s ease-out'
+            }}>
+              {message}
+            </div>
+          )}
           <div className="title" style={{ 
             display: 'flex', 
             alignItems: 'center', 

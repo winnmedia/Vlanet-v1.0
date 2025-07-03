@@ -23,8 +23,39 @@ class AtomicProjectCreate(View):
     @user_validator
     def post(self, request):
         try:
-            data = json.loads(request.body)
             user = request.user
+            
+            # FormData와 JSON 모두 지원
+            if hasattr(request, 'POST') and request.POST.get('inputs'):
+                # FormData 처리
+                inputs_raw = request.POST.get('inputs')
+                process_raw = request.POST.get('process')
+                
+                if not inputs_raw:
+                    return JsonResponse({
+                        "error": "입력 데이터가 누락되었습니다.",
+                        "code": "MISSING_INPUTS"
+                    }, status=400)
+                
+                try:
+                    data = json.loads(inputs_raw)
+                    if process_raw:
+                        process_data = json.loads(process_raw)
+                        data.update(process_data)
+                except json.JSONDecodeError:
+                    return JsonResponse({
+                        "error": "잘못된 JSON 형식입니다.",
+                        "code": "INVALID_JSON"
+                    }, status=400)
+            else:
+                # JSON body 처리
+                try:
+                    data = json.loads(request.body)
+                except json.JSONDecodeError:
+                    return JsonResponse({
+                        "error": "잘못된 JSON 형식입니다.",
+                        "code": "INVALID_JSON"
+                    }, status=400)
             
             # 입력 데이터 검증
             project_name = data.get('name', '').strip()

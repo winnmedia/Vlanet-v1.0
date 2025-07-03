@@ -378,8 +378,25 @@ class CreateProject(View):
         try:
             user = request.user
             files = request.FILES.getlist("files")
-            inputs = json.loads(request.POST.get("inputs"))
-            process = json.loads(request.POST.get("process"))
+            
+            # JSON 파싱 안전하게 처리
+            inputs_raw = request.POST.get("inputs")
+            process_raw = request.POST.get("process")
+            
+            if not inputs_raw or not process_raw:
+                return JsonResponse({
+                    "message": "프로젝트 생성 중 오류가 발생했습니다: 필수 데이터가 누락되었습니다.",
+                    "code": "MISSING_DATA"
+                }, status=400)
+            
+            try:
+                inputs = json.loads(inputs_raw)
+                process = json.loads(process_raw)
+            except json.JSONDecodeError as e:
+                return JsonResponse({
+                    "message": f"프로젝트 생성 중 오류가 발생했습니다: 잘못된 데이터 형식입니다.",
+                    "code": "INVALID_JSON"
+                }, status=400)
             
             # 멱등성 키 확인
             idempotency_key = request.headers.get('X-Idempotency-Key')

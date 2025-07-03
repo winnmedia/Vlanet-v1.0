@@ -8,6 +8,7 @@ from . import views_idempotent_fixed
 from . import views_ultra_safe
 from . import views_idempotent_final
 from . import views_atomic
+from . import views_fixed_final
 
 app_name = "projects"
 
@@ -19,9 +20,10 @@ urlpatterns = [
     path(
         "invite/<str:uid>/<str:token>", views.AcceptInvite.as_view(), name="invite"
     ),  # 초대 받기
-    # 원자적 프로젝트 생성 (DB 수준 중복 방지)
-    path("atomic-create", views_atomic.AtomicProjectCreate.as_view()),  # 원자적 생성 (권장)
-    path("create", views_idempotent_final.CreateProjectIdempotentFinal.as_view()),  # 기존 멱등성 버전 (백업)
+    # 최종 수정된 안전한 프로젝트 생성 (권장)
+    path("create", views_fixed_final.CreateProjectFixedFinal.as_view()),  # 최종 수정 버전 (권장)
+    path("atomic-create", views_atomic.AtomicProjectCreate.as_view()),  # 원자적 생성 (백업)
+    path("create_idempotent", views_idempotent_final.CreateProjectIdempotentFinal.as_view()),  # 기존 멱등성 버전 (백업)
     
     # 이전 버전들 (백업)
     path("create_safe", views_safe.CreateProjectSafe.as_view()),  # FeedBack 없이 안전하게 작동

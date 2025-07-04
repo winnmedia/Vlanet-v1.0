@@ -3,6 +3,9 @@ const axios = require('axios');
 const API_BASE_URL = 'https://videoplanet.up.railway.app';
 const FRONTEND_URL = 'https://vlanet.net';
 
+// axios 기본 헤더 설정
+axios.defaults.headers.common['Origin'] = FRONTEND_URL;
+
 const colors = {
   green: '\x1b[32m',
   red: '\x1b[31m',
@@ -154,18 +157,33 @@ async function testProjects() {
     const projects = await axios.get(`${API_BASE_URL}/api/projects/`, { headers });
     console.log(`✓ 프로젝트 목록 조회: ${colors.green}성공${colors.reset} (${projects.data.length || 0}개)`);
     
-    // 프로젝트 생성 테스트
+    // 프로젝트 생성 테스트 - FormData 형식으로 create_safe 엔드포인트 사용
+    const FormData = require('form-data');
     const formData = new FormData();
-    formData.append('project_name', `테스트 프로젝트 ${Date.now()}`);
-    formData.append('project_type', 'video');
+    
+    const inputs = {
+      name: `테스트 프로젝트 ${Date.now()}`,
+      manager: '테스트 매니저',
+      consumer: '테스트 고객사',
+      description: '테스트 프로젝트입니다',
+      color: '#1631F8'
+    };
+    
+    const process = [
+      { key: 'basic_plan', startDate: '2025-01-07', endDate: '2025-01-08' },
+      { key: 'story_board', startDate: '2025-01-09', endDate: '2025-01-10' }
+    ];
+    
+    formData.append('inputs', JSON.stringify(inputs));
+    formData.append('process', JSON.stringify(process));
     
     const createProject = await axios.post(
-      `${API_BASE_URL}/api/projects/create/`,
+      `${API_BASE_URL}/api/projects/create_safe`,
       formData,
       { 
         headers: {
           ...headers,
-          'Content-Type': 'multipart/form-data'
+          ...formData.getHeaders()
         }
       }
     );
@@ -174,6 +192,9 @@ async function testProjects() {
     return true;
   } catch (error) {
     console.log(`✗ 프로젝트 관리 테스트 실패: ${colors.red}${error.response?.data?.message || error.message}${colors.reset}`);
+    if (error.response?.data) {
+      console.log(`  에러 상세: ${JSON.stringify(error.response.data, null, 2)}`);
+    }
     return false;
   }
 }
@@ -221,17 +242,6 @@ async function runFullSystemTest() {
   }
 }
 
-// FormData polyfill for Node.js
-if (typeof FormData === 'undefined') {
-  global.FormData = class FormData {
-    constructor() {
-      this.data = {};
-    }
-    append(key, value) {
-      this.data[key] = value;
-    }
-  };
-}
 
 // 실행
 runFullSystemTest().catch(error => {

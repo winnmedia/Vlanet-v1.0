@@ -130,8 +130,21 @@ class GeminiService:
             
             return json.loads(response_text)
         except Exception as e:
+            error_msg = str(e)
+            if "429" in error_msg or "quota" in error_msg.lower():
+                return {
+                    "error": "Gemini API 일일 무료 할당량을 초과했습니다. 내일 다시 시도해주세요.",
+                    "error_type": "quota_exceeded",
+                    "fallback": {
+                        "story": "구성안을 바탕으로 한 기본 스토리입니다.",
+                        "genre": "정보/교육",
+                        "tone": "친근하고 전문적인",
+                        "key_message": structure_data.get('key_message', '핵심 메시지'),
+                        "emotional_arc": "관심 유발 → 정보 전달 → 감동 → 행동 유도"
+                    }
+                }
             return {
-                "error": str(e),
+                "error": error_msg,
                 "fallback": {
                     "story": "구성안을 바탕으로 한 기본 스토리입니다.",
                     "genre": "정보/교육",

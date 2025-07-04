@@ -159,6 +159,7 @@ def generate_shots(request):
 def generate_storyboards(request):
     try:
         shot_data = request.data.get('shot_data', {})
+        style = request.data.get('style', 'minimal')
         
         if not shot_data:
             return Response({
@@ -167,6 +168,7 @@ def generate_storyboards(request):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         gemini_service = GeminiService()
+        gemini_service.style = style  # 스타일 설정
         storyboard_data = gemini_service.generate_storyboards_from_shot(shot_data)
         
         if 'error' in storyboard_data:
@@ -217,6 +219,7 @@ def generate_storyboards(request):
 def regenerate_storyboard_image(request):
     try:
         frame_data = request.data.get('frame_data', {})
+        style = request.data.get('style', 'minimal')
         
         if not frame_data:
             return Response({
@@ -245,7 +248,7 @@ def regenerate_storyboard_image(request):
             }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         
         # 이미지 재생성
-        image_result = image_service.generate_storyboard_image(frame_data)
+        image_result = image_service.generate_storyboard_image(frame_data, style=style)
         
         if image_result['success']:
             return Response({

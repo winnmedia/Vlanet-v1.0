@@ -345,7 +345,10 @@ export default function VideoPlanning() {
 
       const response = await axios.post(
         `/api/video-planning/regenerate-image/`,
-        { frame_data: frameData }
+        { 
+          frame_data: frameData,
+          style: storyboardStyle
+        }
       )
 
       if (response.data.status === 'success') {

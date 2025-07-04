@@ -38,6 +38,7 @@ class GeminiService:
         self.image_service_available = False
         self.image_service = None
         self.placeholder_service = None
+        self.style = 'minimal'  # 기본 스타일
         
         logger.info(f"IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
         logger.info(f"PLACEHOLDER_SERVICE_AVAILABLE: {PLACEHOLDER_SERVICE_AVAILABLE}")
@@ -628,7 +629,7 @@ class GeminiService:
                 
                 # 1. DALL-E 시도
                 if self.image_service_available and self.image_service:
-                    image_result = self.image_service.generate_storyboard_image(frame)
+                    image_result = self.image_service.generate_storyboard_image(frame, style=getattr(self, 'style', 'minimal'))
                     if image_result['success']:
                         storyboard_data['storyboards'][i]['image_url'] = image_result['image_url']
                         storyboard_data['storyboards'][i]['prompt_used'] = image_result.get('prompt_used', '')

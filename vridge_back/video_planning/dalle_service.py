@@ -49,9 +49,13 @@ class DalleService:
                 logger.error(f"Failed to initialize OpenAI client: {e}")
                 self.available = False
     
-    def generate_storyboard_image(self, frame_data):
+    def generate_storyboard_image(self, frame_data, style='minimal'):
         """
         스토리보드 프레임 설명을 바탕으로 이미지를 생성합니다.
+        
+        Args:
+            frame_data: 프레임 정보
+            style: 이미지 스타일 ('minimal', 'realistic', 'sketch', 'cartoon', 'cinematic')
         """
         if not self.available:
             return {
@@ -61,7 +65,7 @@ class DalleService:
             }
         
         try:
-            prompt = self._create_storyboard_prompt(frame_data)
+            prompt = self._create_storyboard_prompt(frame_data, style)
             
             logger.info(f"Generating image with DALL-E 3, prompt: {prompt[:100]}...")
             
@@ -119,129 +123,192 @@ class DalleService:
                 "image_url": None
             }
     
-    def _create_storyboard_prompt(self, frame_data):
+    def _create_storyboard_prompt(self, frame_data, style='minimal'):
         """
         프레임 데이터를 바탕으로 DALL-E용 프롬프트를 생성합니다.
-        배경, 인물(묘사), 인물(행동) 세 가지만 사용하여 미니멀하게 구성합니다.
+        실제 장면이 일러스트로 시각화되도록 구체적인 시각적 요소를 포함합니다.
+        
+        Args:
+            frame_data: 프레임 정보
+            style: 이미지 스타일 ('minimal', 'realistic', 'sketch', 'cartoon', 'cinematic')
         """
         visual_desc = frame_data.get('visual_description', '')
+        composition = frame_data.get('composition', '')
+        lighting = frame_data.get('lighting', '')
+        title = frame_data.get('title', '')
         
-        # visual_description에서 배경, 인물 묘사, 인물 행동 추출
-        background = ""
-        character_desc = ""
-        character_action = ""
-        
-        # 간단한 패턴 매칭으로 요소 추출
-        if visual_desc:
-            # 배경 키워드
-            background_keywords = ['실내', '실외', '사무실', '거리', '집', '카페', '공원', '학교', '병원', '회의실', '방', '거실', '주방', '도로', '빌딩', '숲', '바다', '산', '하늘', '도시']
-            # 인물 묘사 키워드
-            character_keywords = ['남자', '여자', '아이', '노인', '청년', '중년', '소년', '소녀', '사람', '주인공', '인물']
-            # 행동 키워드
-            action_keywords = ['걷다', '앉다', '서다', '뛰다', '말하다', '듣다', '보다', '웃다', '울다', '생각하다', '쓰다', '읽다', '먹다', '마시다', '일하다', '놀다', '자다', '운전하다']
+        # 한국어 키워드를 더 구체적인 영어 시각 표현으로 변환
+        scene_translations = {
+            # 배경/장소
+            '실내': 'interior space with visible walls and ceiling',
+            '실외': 'outdoor environment with open sky',
+            '사무실': 'modern office interior with desks and computers',
+            '거리': 'urban street with buildings on both sides',
+            '집': 'cozy home interior with furniture',
+            '카페': 'coffee shop interior with tables and warm lighting',
+            '공원': 'park with trees and benches',
+            '학교': 'school classroom with desks and blackboard',
+            '병원': 'hospital corridor with clean white walls',
+            '회의실': 'conference room with large table and chairs',
+            '방': 'bedroom with bed and window',
+            '거실': 'living room with sofa and TV',
+            '주방': 'kitchen with cabinets and appliances',
+            '도로': 'road with cars and traffic',
+            '빌딩': 'tall buildings and urban skyline',
+            '숲': 'forest with tall trees and natural lighting',
+            '바다': 'ocean view with waves and horizon',
+            '산': 'mountain landscape with peaks',
+            '하늘': 'sky with clouds',
+            '도시': 'cityscape with buildings and streets',
             
-            # 각 요소 찾기
-            for keyword in background_keywords:
-                if keyword in visual_desc:
-                    background = keyword
-                    break
+            # 인물 묘사
+            '남자': 'man in casual clothing',
+            '여자': 'woman with medium-length hair',
+            '아이': 'young child around 8 years old',
+            '노인': 'elderly person with gray hair',
+            '청년': 'young adult in their 20s',
+            '중년': 'middle-aged person in business attire',
+            '소년': 'young boy',
+            '소녀': 'young girl with ponytail',
+            '사람': 'person in everyday clothes',
             
-            for keyword in character_keywords:
-                if keyword in visual_desc:
-                    character_desc = keyword
-                    break
-                    
-            for keyword in action_keywords:
-                if keyword in visual_desc:
-                    character_action = keyword
-                    break
-        
-        # 한국어를 영어로 변환하는 매핑
-        korean_to_english = {
-            # 배경
-            '실내': 'indoor',
-            '실외': 'outdoor',
-            '사무실': 'office',
-            '거리': 'street',
-            '집': 'house',
-            '카페': 'cafe',
-            '공원': 'park',
-            '학교': 'school',
-            '병원': 'hospital',
-            '회의실': 'meeting room',
-            '방': 'room',
-            '거실': 'living room',
-            '주방': 'kitchen',
-            '도로': 'road',
-            '빌딩': 'building',
-            '숲': 'forest',
-            '바다': 'ocean',
-            '산': 'mountain',
-            '하늘': 'sky',
-            '도시': 'city',
-            # 인물
-            '남자': 'man',
-            '여자': 'woman',
-            '아이': 'child',
-            '노인': 'elderly person',
-            '청년': 'young adult',
-            '중년': 'middle-aged person',
-            '소년': 'boy',
-            '소녀': 'girl',
-            '사람': 'person',
-            '주인공': 'main character',
-            '인물': 'character',
-            # 행동
-            '걷다': 'walking',
-            '앉다': 'sitting',
-            '서다': 'standing',
-            '뛰다': 'running',
-            '말하다': 'talking',
-            '듣다': 'listening',
-            '보다': 'looking',
-            '웃다': 'smiling',
-            '울다': 'crying',
-            '생각하다': 'thinking',
-            '쓰다': 'writing',
-            '읽다': 'reading',
-            '먹다': 'eating',
-            '마시다': 'drinking',
-            '일하다': 'working',
-            '놀다': 'playing',
-            '자다': 'sleeping',
-            '운전하다': 'driving'
+            # 행동/동작
+            '걷다': 'walking with natural stride',
+            '앉다': 'sitting on chair with relaxed posture',
+            '서다': 'standing upright',
+            '뛰다': 'running with dynamic motion',
+            '말하다': 'speaking with expressive gestures',
+            '듣다': 'listening attentively',
+            '보다': 'looking intently at something',
+            '웃다': 'smiling with warm expression',
+            '울다': 'crying with emotional expression',
+            '생각하다': 'deep in thought with hand on chin',
+            '쓰다': 'writing at desk',
+            '읽다': 'reading book or document',
+            '먹다': 'eating at table',
+            '마시다': 'drinking from cup',
+            '일하다': 'working at desk with focused expression',
+            '놀다': 'playing with joyful expression',
+            '자다': 'sleeping peacefully',
+            '운전하다': 'driving car with hands on wheel'
         }
         
-        # 영어로 변환
-        background_en = korean_to_english.get(background, background) if background else ""
-        character_en = korean_to_english.get(character_desc, character_desc) if character_desc else ""
-        action_en = korean_to_english.get(character_action, character_action) if character_action else ""
+        # 구도/카메라 앵글 매핑
+        camera_angles = {
+            '와이드샷': 'wide shot showing full environment',
+            '미디엄샷': 'medium shot from waist up',
+            '클로즈업': 'close-up shot of face showing emotion',
+            '오버숄더': 'over-the-shoulder perspective',
+            '하이앵글': 'high angle looking down',
+            '로우앵글': 'low angle looking up dramatically',
+            '익스트림 클로즈업': 'extreme close-up on facial features',
+            '풀샷': 'full body shot showing entire figure',
+            '투샷': 'two people in frame facing each other'
+        }
         
-        # 미니멀한 프롬프트 구성
+        # 조명 스타일 매핑
+        lighting_styles = {
+            '자연광': 'natural daylight coming through window',
+            '부드러운 조명': 'soft diffused lighting creating gentle shadows',
+            '드라마틱한 조명': 'dramatic lighting with strong contrast',
+            '역광': 'backlit creating silhouette effect',
+            '황금시간대': 'golden hour warm orange lighting',
+            '밤': 'nighttime with artificial lights',
+            '실내조명': 'indoor warm tungsten lighting'
+        }
+        
+        # 시각적 설명 변환
+        translated_desc = visual_desc
+        for korean, english in scene_translations.items():
+            if korean in visual_desc:
+                translated_desc = translated_desc.replace(korean, english)
+        
+        # 스타일별 프롬프트 설정
+        style_prompts = {
+            'minimal': {
+                'base': "Minimalist storyboard illustration",
+                'details': [
+                    "simple line art",
+                    "clean composition",
+                    "minimal details",
+                    "focus on essential elements"
+                ]
+            },
+            'realistic': {
+                'base': "Highly realistic storyboard illustration",
+                'details': [
+                    "photorealistic rendering",
+                    "detailed textures and materials",
+                    "realistic proportions",
+                    "natural lighting and shadows"
+                ]
+            },
+            'sketch': {
+                'base': "Professional storyboard sketch in pencil",
+                'details': [
+                    "rough pencil sketch style",
+                    "dynamic line work",
+                    "cross-hatching for shadows",
+                    "expressive and loose strokes"
+                ]
+            },
+            'cartoon': {
+                'base': "Cartoon-style storyboard illustration",
+                'details': [
+                    "animated cartoon style",
+                    "exaggerated expressions",
+                    "bold outlines",
+                    "simplified but expressive forms"
+                ]
+            },
+            'cinematic': {
+                'base': "Cinematic storyboard in film noir style",
+                'details': [
+                    "dramatic film noir lighting",
+                    "high contrast black and white",
+                    "cinematic framing",
+                    "professional movie storyboard quality"
+                ]
+            }
+        }
+        
+        # 선택된 스타일 가져오기 (기본값: sketch)
+        selected_style = style_prompts.get(style, style_prompts['sketch'])
+        
+        # 프롬프트 구성
         prompt_parts = []
         
-        # 0. 텍스트 제외 명시
-        prompt_parts.append("NO TEXT, NO LETTERS, NO WRITING")
+        # 1. 스타일 기본 설정
+        prompt_parts.append(selected_style['base'])
         
-        # 1. 핵심 요소만 포함 (배경, 인물, 행동)
-        if background_en:
-            prompt_parts.append(f"{background_en} setting")
-        if character_en and action_en:
-            prompt_parts.append(f"{character_en} {action_en}")
-        elif character_en:
-            prompt_parts.append(f"{character_en} present")
-        elif action_en:
-            prompt_parts.append(f"person {action_en}")
-            
-        # 2. 미니멀한 스타일 지정
-        prompt_parts.append("minimalist illustration")
-        prompt_parts.append("simple clean lines")
-        prompt_parts.append("basic shapes")
-        prompt_parts.append("monochrome sketch")
-        prompt_parts.append("minimal details")
+        # 2. 구체적인 장면 묘사
+        if translated_desc:
+            prompt_parts.append(f"Scene: {translated_desc}")
+        
+        # 3. 카메라 앵글 추가
+        if composition in camera_angles:
+            prompt_parts.append(camera_angles[composition])
+        
+        # 4. 조명 효과 추가
+        if lighting in lighting_styles:
+            prompt_parts.append(lighting_styles[lighting])
+        
+        # 5. 스타일별 세부사항 추가
+        prompt_parts.extend(selected_style['details'])
+        
+        # 6. 공통 시각적 요소
+        prompt_parts.extend([
+            "professional storyboard quality",
+            "clear visual storytelling",
+            "expressive character emotions",
+            "proper spatial composition"
+        ])
+        
+        # 7. 텍스트 제외 (마지막에 강조)
+        prompt_parts.append("NO TEXT OR LETTERS IN THE IMAGE")
         
         # 최종 프롬프트 조합
-        prompt = ", ".join(prompt_parts)
+        prompt = ". ".join(prompt_parts)
         
-        logger.info(f"Generated minimal DALL-E prompt: {prompt}")
+        logger.info(f"Generated cinematic DALL-E prompt: {prompt[:200]}...")
         return prompt

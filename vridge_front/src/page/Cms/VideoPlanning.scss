@@ -246,6 +246,97 @@
       line-height: 1.6;
     }
 
+    .recent-scenarios {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+
+      h4 {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 12px;
+        font-weight: 600;
+      }
+
+      .recent-scenarios-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+
+        .recent-scenario-item {
+          background: white;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          padding: 12px 16px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            border-color: #4a90e2;
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+          }
+
+          .scenario-title {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .scenario-date {
+            font-size: 12px;
+            color: #999;
+          }
+        }
+      }
+    }
+
+    .planning-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+
+      .option-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        select {
+          padding: 10px 12px;
+          border: 2px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 14px;
+          background: white;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            border-color: #4a90e2;
+          }
+
+          &:focus {
+            outline: none;
+            border-color: #012fff;
+            box-shadow: 0 0 0 3px rgba(1, 47, 255, 0.1);
+          }
+        }
+      }
+    }
+
     .planning-input {
       width: 100%;
       padding: 20px;
@@ -543,6 +634,49 @@
     }
   }
 
+  .storyboard-style-selector {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+
+    label {
+      display: block;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .style-options {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      .style-option {
+        padding: 10px 20px;
+        border: 2px solid #e0e0e0;
+        background: white;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: #4a90e2;
+          background: #f0f7ff;
+        }
+
+        &.active {
+          background: #012fff;
+          color: white;
+          border-color: #012fff;
+        }
+      }
+    }
+  }
+
   .scenes-with-storyboards-container {
     display: flex;
     flex-direction: column;
@@ -591,8 +725,14 @@
             line-height: 1.6;
             position: relative;
 
-            .download-storyboard-btn {
+            .storyboard-actions {
+              display: flex;
+              gap: 8px;
               margin-top: 12px;
+            }
+
+            .regenerate-storyboard-btn,
+            .download-storyboard-btn {
               padding: 8px 16px;
               background: #f0f0f0;
               color: #333;
@@ -610,6 +750,22 @@
 
               &:active {
                 transform: translateY(1px);
+              }
+
+              &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+              }
+            }
+
+            .regenerate-storyboard-btn {
+              background: #4CAF50;
+              color: white;
+              border-color: #4CAF50;
+              
+              &:hover {
+                background: #45a049;
+                border-color: #45a049;
               }
             }
           }

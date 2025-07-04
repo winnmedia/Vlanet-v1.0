@@ -31,6 +31,12 @@ export default function VideoPlanning() {
   const [showHistory, setShowHistory] = useState(false)
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null)
   const [planningTitle, setPlanningTitle] = useState('')
+  const [planningOptions, setPlanningOptions] = useState({
+    tone: '',
+    genre: '',
+    concept: ''
+  })
+  const [storyboardStyle, setStoryboardStyle] = useState('minimal')
 
   useEffect(() => {
     const session = checkSession()
@@ -110,13 +116,24 @@ export default function VideoPlanning() {
       return
     }
 
+    // 이미 스토리가 있으면 재생성하지 않고 단계만 이동
+    if (planningData.stories && planningData.stories.length > 0) {
+      setCurrentStep(2)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     try {
       const response = await axios.post(
         `/api/video-planning/generate/story/`,
-        { planning_text: planningData.planning }
+        { 
+          planning_text: planningData.planning,
+          tone: planningOptions.tone,
+          genre: planningOptions.genre,
+          concept: planningOptions.concept
+        }
       )
 
       if (response.data.status === 'success') {
@@ -146,6 +163,12 @@ export default function VideoPlanning() {
   }
 
   const generateScenes = async () => {
+    // 이미 씬이 있으면 재생성하지 않고 단계만 이동
+    if (planningData.scenes && planningData.scenes.length > 0) {
+      setCurrentStep(3)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -267,7 +290,10 @@ export default function VideoPlanning() {
       
       const response = await axios.post(
         `/api/video-planning/generate/storyboards/`,
-        { shot_data: shotData }
+        { 
+          shot_data: shotData,
+          style: storyboardStyle
+        }
       )
 
       if (response.data.status === 'success') {
@@ -299,6 +325,53 @@ export default function VideoPlanning() {
         setLoadingMessage('')
         setLoadingProgress(0)
       }, 600)
+    }
+  }
+
+  const regenerateStoryboardImage = async (sceneIndex) => {
+    setLoading(true)
+    setLoadingMessage('콘티 이미지를 재생성하고 있습니다...')
+    setError(null)
+
+    try {
+      const scene = planningData.scenes[sceneIndex]
+      const frameData = scene.storyboard || {
+        frame_number: 1,
+        visual_description: scene.action || scene.description,
+        title: scene.scene_title,
+        composition: "미디엄샷",
+        lighting: "자연광"
+      }
+
+      const response = await axios.post(
+        `/api/video-planning/regenerate-image/`,
+        { frame_data: frameData }
+      )
+
+      if (response.data.status === 'success') {
+        // 씬의 스토리보드 이미지 업데이트
+        const updatedScenes = [...planningData.scenes]
+        updatedScenes[sceneIndex] = {
+          ...updatedScenes[sceneIndex],
+          storyboard: {
+            ...updatedScenes[sceneIndex].storyboard,
+            image_url: response.data.data.image_url
+          }
+        }
+
+        setPlanningData(prev => ({
+          ...prev,
+          scenes: updatedScenes
+        }))
+        setSuccessMessage('콘티 이미지가 재생성되었습니다.')
+      } else {
+        setError(response.data.message || '이미지 재생성에 실패했습니다.')
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
+      setLoadingMessage('')
     }
   }
 
@@ -375,6 +448,80 @@ export default function VideoPlanning() {
             <p className="step-description">
               제작하고자 하는 영상의 기획안을 입력해주세요. AI가 이를 바탕으로 여러 개의 스토리를 생성합니다.
             </p>
+            
+            {/* 최근 시나리오 섹션 */}
+            {planningHistory.length > 0 && (
+              <div className="recent-scenarios">
+                <h4>최근 시나리오</h4>
+                <div className="recent-scenarios-list">
+                  {planningHistory.slice(0, 5).map((item) => (
+                    <div 
+                      key={item.id} 
+                      className="recent-scenario-item"
+                      onClick={() => loadHistoryItem(item.id)}
+                    >
+                      <div className="scenario-title">{item.title}</div>
+                      <div className="scenario-date">
+                        {new Date(item.created_at).toLocaleDateString('ko-KR')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* 톤앤매너/장르/콘셉트 선택 */}
+            <div className="planning-options">
+              <div className="option-group">
+                <label>톤앤매너</label>
+                <select 
+                  value={planningOptions.tone} 
+                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, tone: e.target.value }))}
+                >
+                  <option value="">선택하세요</option>
+                  <option value="professional">전문적이고 신뢰감 있는</option>
+                  <option value="friendly">친근하고 따뜻한</option>
+                  <option value="dynamic">역동적이고 에너지 넘치는</option>
+                  <option value="emotional">감성적이고 감동적인</option>
+                  <option value="humorous">유머러스하고 재미있는</option>
+                  <option value="minimal">미니멀하고 세련된</option>
+                </select>
+              </div>
+              
+              <div className="option-group">
+                <label>장르</label>
+                <select 
+                  value={planningOptions.genre} 
+                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, genre: e.target.value }))}
+                >
+                  <option value="">선택하세요</option>
+                  <option value="promotional">홍보/프로모션</option>
+                  <option value="documentary">다큐멘터리</option>
+                  <option value="educational">교육/설명</option>
+                  <option value="narrative">내러티브/스토리</option>
+                  <option value="interview">인터뷰/증언</option>
+                  <option value="product">제품 소개</option>
+                  <option value="corporate">기업 소개</option>
+                </select>
+              </div>
+              
+              <div className="option-group">
+                <label>콘셉트</label>
+                <select 
+                  value={planningOptions.concept} 
+                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, concept: e.target.value }))}
+                >
+                  <option value="">선택하세요</option>
+                  <option value="innovation">혁신과 변화</option>
+                  <option value="tradition">전통과 신뢰</option>
+                  <option value="lifestyle">라이프스타일</option>
+                  <option value="solution">문제 해결</option>
+                  <option value="experience">경험과 체험</option>
+                  <option value="community">커뮤니티와 소통</option>
+                </select>
+              </div>
+            </div>
+            
             <textarea
               className="planning-input"
               value={planningData.planning}
@@ -463,6 +610,44 @@ export default function VideoPlanning() {
             <p className="step-description">
               기승전결 4개 스토리에서 각각 3개씩 생성된 총 12개의 씬입니다. 각 씬마다 콘티를 생성할 수 있습니다.
             </p>
+            
+            {/* 콘티 스타일 선택 */}
+            <div className="storyboard-style-selector">
+              <label>콘티 그림 스타일</label>
+              <div className="style-options">
+                <button 
+                  className={`style-option ${storyboardStyle === 'minimal' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('minimal')}
+                >
+                  미니멀
+                </button>
+                <button 
+                  className={`style-option ${storyboardStyle === 'realistic' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('realistic')}
+                >
+                  사실적
+                </button>
+                <button 
+                  className={`style-option ${storyboardStyle === 'sketch' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('sketch')}
+                >
+                  스케치
+                </button>
+                <button 
+                  className={`style-option ${storyboardStyle === 'cartoon' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('cartoon')}
+                >
+                  만화풍
+                </button>
+                <button 
+                  className={`style-option ${storyboardStyle === 'cinematic' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('cinematic')}
+                >
+                  영화적
+                </button>
+              </div>
+            </div>
+            
             <div className="scenes-with-storyboards-container">
               {planningData.scenes.map((scene, index) => (
                 <div key={index} className="scene-with-storyboard">
@@ -484,15 +669,28 @@ export default function VideoPlanning() {
                         <div className="storyboard-info">
                           <p>{scene.storyboard.visual_description || scene.storyboard.description}</p>
                           {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' && (
-                            <button 
-                              className="download-storyboard-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                downloadStoryboardImage(scene.storyboard.image_url, `씬${index + 1}_콘티`);
-                              }}
-                            >
-                              다운로드
-                            </button>
+                            <div className="storyboard-actions">
+                              <button 
+                                className="regenerate-storyboard-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  regenerateStoryboardImage(index);
+                                }}
+                                disabled={loading}
+                                title="이미지 재생성"
+                              >
+                                🔄 재생성
+                              </button>
+                              <button 
+                                className="download-storyboard-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  downloadStoryboardImage(scene.storyboard.image_url, `씬${index + 1}_콘티`);
+                                }}
+                              >
+                                📥 다운로드
+                              </button>
+                            </div>
                           )}
                         </div>
                       </div>

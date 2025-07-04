@@ -24,6 +24,9 @@ ALGORITHM = env('JWT_ALGORITHM', default='HS256')
 # Google Gemini API Key
 GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
 
+# OpenAI API Key (for DALL-E image generation)
+OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
+
 # Hugging Face API Key (for Stable Diffusion image generation)
 HUGGINGFACE_API_KEY = env('HUGGINGFACE_API_KEY', default='')
 

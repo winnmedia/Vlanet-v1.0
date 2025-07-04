@@ -2,6 +2,8 @@ import logging, json, random
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -68,20 +70,27 @@ class AtomicProjectCreate(View):
             # 멱등성 키 검증 (데이터베이스 기반)
             idempotency_key = request.headers.get('X-Idempotency-Key')
             if idempotency_key:
-                # 최근 1분 내 같은 idempotency_key로 생성된 프로젝트 확인
-                recent_request = models.Project.objects.filter(
-                    user=user,
-                    created__gte=django_timezone.now() - django_timezone.timedelta(minutes=1)
-                ).first()
-                
-                if recent_request:
-                    logger.info(f"Found recent project for user, likely duplicate request")
-                    return JsonResponse({
-                        "message": "success",
-                        "project_id": recent_request.id,
-                        "project_name": recent_request.name,
-                        "created_at": recent_request.created.isoformat()
-                    })
+                # IdempotencyRecord를 사용하여 중복 요청 확인
+                try:
+                    existing_record = models.IdempotencyRecord.objects.filter(
+                        user=user,
+                        idempotency_key=idempotency_key,
+                        status='completed'
+                    ).first()
+                    
+                    if existing_record and existing_record.project_id:
+                        # 이미 처리된 요청이면 기존 프로젝트 정보 반환
+                        existing_project = models.Project.objects.filter(id=existing_record.project_id).first()
+                        if existing_project:
+                            logger.info(f"Found existing project with idempotency key: {idempotency_key}")
+                            return JsonResponse({
+                                "message": "success",
+                                "project_id": existing_project.id,
+                                "project_name": existing_project.name,
+                                "created_at": existing_project.created.isoformat()
+                            })
+                except Exception as e:
+                    logger.warning(f"Error checking idempotency: {str(e)}")
             
             # 프로젝트 데이터 준비
             project_data = {
@@ -97,11 +106,74 @@ class AtomicProjectCreate(View):
             process_data = data.get('process', {})
             
             try:
+                # 먼저 중복 체크 (SQLite constraint 문제 대응)
+                existing_project = models.Project.objects.filter(
+                    user=user,
+                    name=project_name
+                ).first()
+                
+                if existing_project:
+                    logger.warning(f"Duplicate project name found: {project_name} for user {user.email}")
+                    return JsonResponse({
+                        "error": "이미 같은 이름의 프로젝트가 존재합니다.",
+                        "existing_project": {
+                            "id": existing_project.id,
+                            "name": existing_project.name,
+                            "created_at": existing_project.created.isoformat()
+                        }
+                    }, status=409)
+                
                 # 원자적 트랜잭션으로 모든 작업 처리
                 with transaction.atomic():
+                    # 멱등성 레코드 생성 (있는 경우)
+                    idempotency_record = None
+                    if idempotency_key:
+                        try:
+                            idempotency_record = models.IdempotencyRecord.objects.create(
+                                user=user,
+                                idempotency_key=idempotency_key,
+                                request_data=json.dumps(data),
+                                status='processing'
+                            )
+                        except IntegrityError:
+                            # 이미 존재하는 키라면 기존 프로젝트 반환
+                            existing_record = models.IdempotencyRecord.objects.filter(
+                                user=user,
+                                idempotency_key=idempotency_key
+                            ).first()
+                            if existing_record and existing_record.project_id:
+                                existing_project = models.Project.objects.filter(id=existing_record.project_id).first()
+                                if existing_project:
+                                    return JsonResponse({
+                                        "message": "success",
+                                        "project_id": existing_project.id,
+                                        "project_name": existing_project.name,
+                                        "created_at": existing_project.created.isoformat()
+                                    })
+                    
                     # 1. 프로젝트 생성 (UniqueConstraint에 의해 중복 방지)
-                    project = models.Project.objects.create(**project_data)
-                    logger.info(f"Project created successfully: {project.id} - {project.name}")
+                    try:
+                        project = models.Project.objects.create(**project_data)
+                        logger.info(f"Project created successfully: {project.id} - {project.name}")
+                    except IntegrityError as e:
+                        logger.warning(f"Project creation failed due to duplicate name: {project_name}")
+                        # 중복된 프로젝트 조회
+                        existing_project = models.Project.objects.filter(
+                            user=user,
+                            name=project_name
+                        ).first()
+                        
+                        if existing_project:
+                            return JsonResponse({
+                                "error": "이미 같은 이름의 프로젝트가 존재합니다.",
+                                "existing_project": {
+                                    "id": existing_project.id,
+                                    "name": existing_project.name,
+                                    "created_at": existing_project.created.isoformat()
+                                }
+                            }, status=409)
+                        else:
+                            raise e
                     
                     # 2. 프로젝트 단계별 객체 생성
                     phase_objects = {}
@@ -171,6 +243,12 @@ class AtomicProjectCreate(View):
                     
                     # 4. 프로젝트 저장
                     project.save()
+                    
+                    # 5. 멱등성 레코드 업데이트
+                    if idempotency_record:
+                        idempotency_record.project_id = project.id
+                        idempotency_record.status = 'completed'
+                        idempotency_record.save()
                     
                     logger.info(f"All project components created successfully for project {project.id}")
                     

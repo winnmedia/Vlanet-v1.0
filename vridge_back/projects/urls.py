@@ -36,7 +36,7 @@ urlpatterns = [
     path("debug_info", views_improved.ProjectDebugInfo.as_view()),
     
     path(
-        "detail/<int:project_id>", views.ProjectDetail.as_view()
+        "detail/<int:project_id>/", views.ProjectDetail.as_view()
     ),  # get,update, delete
     path("file/delete/<int:file_id>", views.ProjectFile.as_view()),
     path("memo/<int:id>", views.ProjectMemo.as_view()),  # 프로젝트 메모

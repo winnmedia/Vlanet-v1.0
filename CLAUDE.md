@@ -114,6 +114,15 @@ node final-verification.js
 
 ## 배포 가이드
 
+### 배포 전 필수 체크리스트
+1. **로컬 테스트 완료**: 모든 기능을 MECE 방식으로 100% 테스트 통과
+   ```bash
+   cd /home/winnmedia/VideoPlanet/vridge_front/src/tests
+   node final-verification.js
+   ```
+2. **마이그레이션 확인**: 모든 앱의 마이그레이션이 최신 상태인지 확인
+3. **환경변수 점검**: Railway에 필요한 모든 환경변수가 설정되어 있는지 확인
+
 ### 환경 설정
 - **개발환경**: `DEBUG=True`, 로컬 데이터베이스
 - **운영환경**: `DEBUG=False`, PostgreSQL, Redis
@@ -139,6 +148,12 @@ python3 manage.py migrate
 # 정적 파일 수집
 python3 manage.py collectstatic
 ```
+
+### 배포 프로세스
+1. 로컬에서 모든 기능 테스트 (MECE 100% 통과 필수)
+2. 변경사항 커밋 및 푸시
+3. Railway 자동 배포 대기 (약 5-10분)
+4. 배포 완료 후 운영 환경 테스트
 
 ## 문제 해결 가이드
 

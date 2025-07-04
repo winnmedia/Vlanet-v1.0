@@ -15,6 +15,15 @@ except ImportError:
     StableDiffusionService = None
     IMAGE_SERVICE_AVAILABLE = False
 
+# 플레이스홀더 이미지 서비스
+try:
+    from .placeholder_image_service import PlaceholderImageService
+    PLACEHOLDER_SERVICE_AVAILABLE = True
+except ImportError:
+    logger.warning("Placeholder image service not available")
+    PlaceholderImageService = None
+    PLACEHOLDER_SERVICE_AVAILABLE = False
+
 
 class GeminiService:
     def __init__(self):
@@ -28,10 +37,12 @@ class GeminiService:
         # 이미지 생성 서비스 초기화 (선택적)
         self.image_service_available = False
         self.image_service = None
+        self.placeholder_service = None
         
         logger.info(f"IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
-        logger.info(f"StableDiffusionService: {StableDiffusionService}")
+        logger.info(f"PLACEHOLDER_SERVICE_AVAILABLE: {PLACEHOLDER_SERVICE_AVAILABLE}")
         
+        # 먼저 Stable Diffusion 시도
         if IMAGE_SERVICE_AVAILABLE and StableDiffusionService:
             try:
                 self.image_service = StableDiffusionService()
@@ -44,6 +55,15 @@ class GeminiService:
             except Exception as e:
                 logger.error(f"Image service initialization failed: {e}", exc_info=True)
                 self.image_service_available = False
+        
+        # 플레이스홀더 서비스 초기화
+        if PLACEHOLDER_SERVICE_AVAILABLE and PlaceholderImageService:
+            try:
+                self.placeholder_service = PlaceholderImageService()
+                logger.info("Placeholder image service initialized as fallback")
+            except Exception as e:
+                logger.error(f"Placeholder service initialization failed: {e}")
+                self.placeholder_service = None
     
     def generate_structure(self, planning_input):
         prompt = f"""
@@ -575,18 +595,34 @@ class GeminiService:
             
             storyboard_data = json.loads(response_text)
             
-            # Stable Diffusion으로 이미지 생성 (가능한 경우)
-            if self.image_service_available and self.image_service:
-                storyboards = storyboard_data.get('storyboards', [])
-                for i, frame in enumerate(storyboards):
-                    logger.info(f"Generating image for frame {i+1}")
+            # 이미지 생성 시도
+            storyboards = storyboard_data.get('storyboards', [])
+            for i, frame in enumerate(storyboards):
+                logger.info(f"Generating image for frame {i+1}")
+                image_generated = False
+                
+                # 1. Stable Diffusion 시도
+                if self.image_service_available and self.image_service:
                     image_result = self.image_service.generate_storyboard_image(frame)
                     if image_result['success']:
                         storyboard_data['storyboards'][i]['image_url'] = image_result['image_url']
                         storyboard_data['storyboards'][i]['prompt_used'] = image_result.get('prompt_used', '')
+                        storyboard_data['storyboards'][i]['model_used'] = image_result.get('model_used', 'stable-diffusion')
+                        image_generated = True
+                    else:
+                        logger.warning(f"Stable Diffusion failed for frame {i+1}: {image_result.get('error')}")
+                
+                # 2. 플레이스홀더 폴백
+                if not image_generated and self.placeholder_service:
+                    logger.info(f"Using placeholder for frame {i+1}")
+                    placeholder_result = self.placeholder_service.generate_storyboard_image(frame)
+                    if placeholder_result['success']:
+                        storyboard_data['storyboards'][i]['image_url'] = placeholder_result['image_url']
+                        storyboard_data['storyboards'][i]['is_placeholder'] = True
+                        storyboard_data['storyboards'][i]['image_note'] = "플레이스홀더 이미지 (실제 이미지는 나중에 생성됩니다)"
                     else:
                         storyboard_data['storyboards'][i]['image_url'] = None
-                        storyboard_data['storyboards'][i]['image_error'] = image_result.get('error', 'Unknown error')
+                        storyboard_data['storyboards'][i]['image_error'] = "이미지 생성 실패"
             
             return storyboard_data
         except Exception as e:

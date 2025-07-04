@@ -13,6 +13,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-minimal-key-for-railw
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+# Railway 헬스체크를 위한 호스트 추가
+if 'healthcheck.railway.app' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('healthcheck.railway.app')
+
 # 최소 앱만 설치 (core 앱 먼저)
 INSTALLED_APPS = [
     'core',

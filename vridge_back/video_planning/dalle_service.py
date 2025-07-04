@@ -75,13 +75,14 @@ class DalleService:
                     logger.error(f"Failed to reinitialize client: {e}")
                     raise Exception("OpenAI 클라이언트 초기화 실패")
             
-            # DALL-E 3 API 호출
+            # DALL-E 3 API 호출 - HD 품질로 업그레이드
             response = self.client.images.generate(
                 model="dall-e-3",
                 prompt=prompt,
-                size="1024x1024",
-                quality="standard",
+                size="1792x1024",  # 더 넓은 화면비 (16:9에 가까움)
+                quality="hd",      # HD 품질로 변경
                 n=1,
+                style="natural"    # 더 사실적인 스타일
             )
             image_url = response.data[0].url
             
@@ -121,6 +122,7 @@ class DalleService:
     def _create_storyboard_prompt(self, frame_data):
         """
         프레임 데이터를 바탕으로 DALL-E용 프롬프트를 생성합니다.
+        텍스트를 절대 포함하지 않도록 명시적으로 지시합니다.
         """
         visual_desc = frame_data.get('visual_description', '')
         title = frame_data.get('title', '')
@@ -130,45 +132,86 @@ class DalleService:
         # DALL-E 3에 최적화된 프롬프트 구성
         prompt_parts = []
         
-        # 1. 메인 설명
+        # 0. 텍스트 제외 명시 (가장 중요!)
+        prompt_parts.append("NO TEXT, NO LETTERS, NO WRITING, NO CAPTIONS")
+        
+        # 1. 메인 설명 (영어로 번역 필요한 경우 간단히 변환)
         if visual_desc:
-            prompt_parts.append(visual_desc)
+            # 한국어 키워드를 영어로 변환하는 간단한 매핑
+            visual_desc_en = visual_desc
+            korean_to_english = {
+                '사람': 'person',
+                '남자': 'man',
+                '여자': 'woman',
+                '아이': 'child',
+                '노인': 'elderly person',
+                '건물': 'building',
+                '나무': 'tree',
+                '하늘': 'sky',
+                '바다': 'ocean',
+                '산': 'mountain',
+                '도시': 'city',
+                '거리': 'street',
+                '실내': 'interior',
+                '실외': 'exterior',
+                '밤': 'night',
+                '낮': 'day',
+                '비': 'rain',
+                '눈': 'snow'
+            }
+            for k, v in korean_to_english.items():
+                visual_desc_en = visual_desc_en.replace(k, v)
+            prompt_parts.append(visual_desc_en)
         elif title:
-            prompt_parts.append(title)
+            prompt_parts.append(f"Scene depicting {title}")
         
-        # 2. 스토리보드 스타일 - 더 구체적으로
-        prompt_parts.append("in the style of a professional movie storyboard")
-        prompt_parts.append("black and white pencil sketch with clean lines")
-        prompt_parts.append("cinematic composition")
+        # 2. 스토리보드 스타일 - 더 명확하게
+        prompt_parts.append("Professional film storyboard illustration")
+        prompt_parts.append("Detailed pencil sketch on white paper")
+        prompt_parts.append("Hand-drawn artistic style with shading")
+        prompt_parts.append("Film production storyboard format")
         
-        # 3. 구도와 카메라 정보
+        # 3. 구도와 카메라 정보 (개선)
         if composition:
             camera_terms = {
-                '와이드샷': 'wide shot showing full environment',
-                '미디엄샷': 'medium shot framing subjects from waist up',
-                '클로즈업': 'close-up shot focusing on details',
-                '오버숄더': 'over-the-shoulder shot',
-                '하이앵글': 'high angle shot looking down',
-                '로우앵글': 'low angle shot looking up'
+                '와이드샷': 'WIDE SHOT: full environment and characters visible',
+                '미디엄샷': 'MEDIUM SHOT: characters from waist up',
+                '클로즈업': 'CLOSE-UP SHOT: face or detail focus',
+                '오버숄더': 'OVER-THE-SHOULDER SHOT: from behind character',
+                '하이앵글': 'HIGH ANGLE SHOT: camera looking down',
+                '로우앵글': 'LOW ANGLE SHOT: camera looking up',
+                '익스트림 클로즈업': 'EXTREME CLOSE-UP: very tight on detail',
+                '풀샷': 'FULL SHOT: entire character visible',
+                '투샷': 'TWO SHOT: two characters in frame'
             }
-            camera_desc = camera_terms.get(composition, f"{composition} shot")
+            camera_desc = camera_terms.get(composition, f"CAMERA: {composition}")
             prompt_parts.append(camera_desc)
         
-        # 4. 조명 정보
+        # 4. 조명 정보 (개선)
         if lighting:
             lighting_terms = {
-                '자연광': 'natural daylight illumination',
-                '부드러운 조명': 'soft diffused lighting',
-                '드라마틱한 조명': 'dramatic lighting with strong shadows',
-                '역광': 'backlit silhouette lighting',
-                '혼합 조명': 'mixed lighting sources'
+                '자연광': 'Natural daylight with soft shadows',
+                '부드러운 조명': 'Soft diffused lighting, even illumination',
+                '드라마틱한 조명': 'Dramatic lighting with strong contrast',
+                '역광': 'Backlit with rim lighting silhouette',
+                '혼합 조명': 'Mixed lighting from multiple sources',
+                '황금시간대': 'Golden hour warm lighting',
+                '블루아워': 'Blue hour twilight lighting',
+                '실내조명': 'Interior artificial lighting',
+                '촛불조명': 'Candlelight warm glow'
             }
-            lighting_desc = lighting_terms.get(lighting, f"{lighting}")
+            lighting_desc = lighting_terms.get(lighting, f"LIGHTING: {lighting}")
             prompt_parts.append(lighting_desc)
         
-        # 5. 품질 지시어
-        prompt_parts.append("professional storyboard artist quality")
-        prompt_parts.append("clear visual storytelling")
+        # 5. 품질 지시어 (개선)
+        prompt_parts.append("Professional storyboard artist quality")
+        prompt_parts.append("Clear visual composition")
+        prompt_parts.append("Cinematic framing")
+        prompt_parts.append("Detailed environment and characters")
+        prompt_parts.append("Dynamic perspective")
+        
+        # 6. 다시 한번 텍스트 제외 강조
+        prompt_parts.append("IMPORTANT: No text or letters in the image")
         
         prompt = ", ".join(prompt_parts)
         logger.info(f"Generated DALL-E prompt: {prompt[:200]}...")

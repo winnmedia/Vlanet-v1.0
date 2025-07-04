@@ -228,18 +228,38 @@ class AtomicProjectCreate(View):
                         # 프로젝트에 연결
                         setattr(project, phase, phase_obj)
                     
-                    # 3. 피드백 객체 생성
+                    # 3. 피드백 객체 생성 (안전하게 처리)
+                    feedback = None
                     try:
-                        feedback = feedback_model.FeedBack.objects.create()
+                        # Railway 환경에서 안전하게 처리
+                        from django.db import connection
+                        with connection.cursor() as cursor:
+                            # PostgreSQL과 SQLite 둘 다 지원
+                            if 'postgresql' in connection.vendor:
+                                cursor.execute("""
+                                    SELECT EXISTS (
+                                        SELECT 1 FROM information_schema.tables 
+                                        WHERE table_name = 'feedbacks_feedback'
+                                    )
+                                """)
+                            else:  # SQLite
+                                cursor.execute("""
+                                    SELECT COUNT(*) FROM sqlite_master 
+                                    WHERE type='table' AND name='feedbacks_feedback'
+                                """)
+                            table_exists = cursor.fetchone()[0]
+                            
+                        if table_exists:
+                            feedback = feedback_model.FeedBack.objects.create()
+                            project.feedback = feedback
+                            logger.info(f"FeedBack created for project {project.id}")
+                        else:
+                            logger.warning("FeedBack table does not exist, skipping feedback creation")
                     except Exception as e:
                         # 마이그레이션이 적용되지 않은 경우를 위한 대체 처리
                         logger.error(f"FeedBack creation failed: {str(e)}")
                         logger.error("Please run: python manage.py migrate feedbacks")
-                        # 기본 필드만으로 생성 시도
-                        feedback = feedback_model.FeedBack.objects.create(
-                            files=None  # 기본 필드만 지정
-                        )
-                    project.feedback = feedback
+                        # FeedBack 없이도 프로젝트는 정상 작동하도록 함
                     
                     # 4. 프로젝트 저장
                     project.save()

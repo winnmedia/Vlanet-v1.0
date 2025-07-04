@@ -123,6 +123,32 @@ class DalleService:
                 "image_url": None
             }
     
+    def _filter_forbidden_words(self, text):
+        """
+        이미지 생성 프롬프트에서 텍스트 중심 결과를 유발하는 금지 단어들을 제거합니다.
+        """
+        forbidden_words = [
+            'storyboard', 'frame', 'scene description',
+            'text box', 'textbox', 'caption', 'label',
+            'write', 'written', 'explained', 'annotated',
+            'comic panel with narration', 'comic panel',
+            'diagram', 'layout', 'template',
+            'slide', 'presentation', 'whiteboard'
+        ]
+        
+        # 대소문자 구분 없이 필터링
+        filtered_text = text
+        for word in forbidden_words:
+            import re
+            # 단어 경계를 포함한 정규표현식으로 정확한 단어만 제거
+            pattern = r'\b' + re.escape(word) + r'\b'
+            filtered_text = re.sub(pattern, '', filtered_text, flags=re.IGNORECASE)
+        
+        # 연속된 공백 제거
+        filtered_text = ' '.join(filtered_text.split())
+        
+        return filtered_text
+    
     def _create_storyboard_prompt(self, frame_data, style='minimal'):
         """
         프레임 데이터를 바탕으로 DALL-E용 프롬프트를 생성합니다.
@@ -226,7 +252,7 @@ class DalleService:
         # 스타일별 프롬프트 설정
         style_prompts = {
             'minimal': {
-                'base': "Minimalist storyboard illustration",
+                'base': "Minimalist illustration",
                 'details': [
                     "simple line art",
                     "clean composition",
@@ -235,7 +261,7 @@ class DalleService:
                 ]
             },
             'realistic': {
-                'base': "Highly realistic storyboard illustration",
+                'base': "Highly realistic scene illustration",
                 'details': [
                     "photorealistic rendering",
                     "detailed textures and materials",
@@ -244,7 +270,7 @@ class DalleService:
                 ]
             },
             'sketch': {
-                'base': "Professional storyboard sketch in pencil",
+                'base': "Professional sketch in pencil",
                 'details': [
                     "rough pencil sketch style",
                     "dynamic line work",
@@ -253,7 +279,7 @@ class DalleService:
                 ]
             },
             'cartoon': {
-                'base': "Cartoon-style storyboard illustration",
+                'base': "Cartoon-style illustration",
                 'details': [
                     "animated cartoon style",
                     "exaggerated expressions",
@@ -262,12 +288,12 @@ class DalleService:
                 ]
             },
             'cinematic': {
-                'base': "Cinematic storyboard in film noir style",
+                'base': "Cinematic scene in film noir style",
                 'details': [
                     "dramatic film noir lighting",
                     "high contrast black and white",
                     "cinematic framing",
-                    "professional movie storyboard quality"
+                    "professional movie scene quality"
                 ]
             }
         }
@@ -298,7 +324,7 @@ class DalleService:
         
         # 6. 공통 시각적 요소
         prompt_parts.extend([
-            "professional storyboard quality",
+            "professional illustration quality",
             "clear visual storytelling",
             "expressive character emotions",
             "proper spatial composition"
@@ -309,6 +335,9 @@ class DalleService:
         
         # 최종 프롬프트 조합
         prompt = ". ".join(prompt_parts)
+        
+        # 금지 단어 필터링 적용
+        prompt = self._filter_forbidden_words(prompt)
         
         logger.info(f"Generated cinematic DALL-E prompt: {prompt[:200]}...")
         return prompt

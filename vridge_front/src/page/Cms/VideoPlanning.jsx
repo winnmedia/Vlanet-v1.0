@@ -9,6 +9,27 @@ import { checkSession } from 'util/util'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
+// 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
+const filterForbiddenWords = (text) => {
+  const forbiddenWords = [
+    'storyboard', 'frame', 'scene description',
+    'text box', 'textbox', 'caption', 'label',
+    'write', 'written', 'explained', 'annotated',
+    'comic panel with narration', 'comic panel',
+    'diagram', 'layout', 'template',
+    'slide', 'presentation', 'whiteboard'
+  ];
+  
+  let filteredText = text;
+  forbiddenWords.forEach(word => {
+    const regex = new RegExp('\\b' + word + '\\b', 'gi');
+    filteredText = filteredText.replace(regex, '');
+  });
+  
+  // 연속된 공백 제거
+  return filteredText.replace(/\s+/g, ' ').trim();
+};
+
 export default function VideoPlanning() {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
@@ -616,39 +637,19 @@ export default function VideoPlanning() {
             
             {/* 콘티 스타일 선택 */}
             <div className="storyboard-style-selector">
-              <label>콘티 그림 스타일</label>
-              <div className="style-options">
-                <button 
-                  className={`style-option ${storyboardStyle === 'minimal' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('minimal')}
-                >
-                  미니멀
-                </button>
-                <button 
-                  className={`style-option ${storyboardStyle === 'realistic' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('realistic')}
-                >
-                  사실적
-                </button>
-                <button 
-                  className={`style-option ${storyboardStyle === 'sketch' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('sketch')}
-                >
-                  스케치
-                </button>
-                <button 
-                  className={`style-option ${storyboardStyle === 'cartoon' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('cartoon')}
-                >
-                  만화풍
-                </button>
-                <button 
-                  className={`style-option ${storyboardStyle === 'cinematic' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('cinematic')}
-                >
-                  영화적
-                </button>
-              </div>
+              <label htmlFor="storyboard-style">콘티 그림 스타일</label>
+              <select 
+                id="storyboard-style"
+                className="style-select"
+                value={storyboardStyle}
+                onChange={(e) => setStoryboardStyle(e.target.value)}
+              >
+                <option value="minimal">미니멀</option>
+                <option value="realistic">사실적</option>
+                <option value="sketch">스케치</option>
+                <option value="cartoon">만화풍</option>
+                <option value="cinematic">영화적</option>
+              </select>
             </div>
             
             <div className="scenes-with-storyboards-container">
@@ -682,7 +683,7 @@ export default function VideoPlanning() {
                                 disabled={loading}
                                 title="이미지 재생성"
                               >
-                                🔄 재생성
+                                재생성
                               </button>
                               <button 
                                 className="download-storyboard-btn"
@@ -691,7 +692,7 @@ export default function VideoPlanning() {
                                   downloadStoryboardImage(scene.storyboard.image_url, `씬${index + 1}_콘티`);
                                 }}
                               >
-                                📥 다운로드
+                                다운로드
                               </button>
                             </div>
                           )}
@@ -761,7 +762,7 @@ export default function VideoPlanning() {
           <div className="title">영상 기획</div>
           <div className="content video-planning">
             <div className="planning-header">
-              <h2>영상의 씨앗을 심어보세요 🎬</h2>
+              <h2>영상의 씨앗을 심어보세요</h2>
               <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다.</p>
             </div>
 

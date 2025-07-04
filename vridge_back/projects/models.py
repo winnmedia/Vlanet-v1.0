@@ -149,6 +149,10 @@ class Project(core_model.TimeStampedModel):
     consumer = models.CharField(verbose_name="고객사", max_length=50, blank=False)
     description = models.TextField(verbose_name="프로젝트 설명", blank=True)
     color = models.CharField(verbose_name="색상", max_length=100, null=True, blank=True)
+    
+    tone_manner = models.CharField(verbose_name="톤앤매너", max_length=50, null=True, blank=True)
+    genre = models.CharField(verbose_name="장르", max_length=50, null=True, blank=True)
+    concept = models.CharField(verbose_name="콘셉트", max_length=50, null=True, blank=True)
 
     basic_plan = models.ForeignKey(
         "BasicPlan",

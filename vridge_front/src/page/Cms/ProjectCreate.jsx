@@ -62,7 +62,7 @@ export default function ProjectCreate() {
 
   const noAt = (value) => value.length < 50
   const { inputs, onChange } = useInput(initial, noAt)
-  const { name, description, manager, consumer } = inputs
+  const { name, description, manager, consumer, tone_manner, genre, concept } = inputs
   const [process, set_process] = useState(initialDateRanges)
   const null_date = process.filter(
     (i, index) => i.startDate == null || i.endDate == null,
@@ -102,6 +102,9 @@ export default function ProjectCreate() {
       consumer: inputs.consumer,
       description: inputs.description,
       color: inputs.color || '#1631F8',
+      tone_manner: inputs.tone_manner || '',
+      genre: inputs.genre || '',
+      concept: inputs.concept || '',
       process: formatProcessDatesForBackend(process)
     }
     

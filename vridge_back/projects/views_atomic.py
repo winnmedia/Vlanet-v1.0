@@ -99,7 +99,10 @@ class AtomicProjectCreate(View):
                 'manager': data.get('manager', ''),
                 'consumer': data.get('consumer', ''),
                 'description': data.get('description', ''),
-                'color': data.get('color', '#1631F8')
+                'color': data.get('color', '#1631F8'),
+                'tone_manner': data.get('tone_manner', ''),
+                'genre': data.get('genre', ''),
+                'concept': data.get('concept', '')
             }
             
             # 프로세스 데이터 처리

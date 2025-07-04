@@ -127,31 +127,50 @@ class DalleService:
         composition = frame_data.get('composition', '')
         lighting = frame_data.get('lighting', '')
         
-        # DALL-E 3는 더 자세한 프롬프트를 잘 이해함
+        # DALL-E 3에 최적화된 프롬프트 구성
         prompt_parts = []
         
+        # 1. 메인 설명
         if visual_desc:
             prompt_parts.append(visual_desc)
         elif title:
             prompt_parts.append(title)
         
-        # 스토리보드 스타일 추가
-        prompt_parts.append("storyboard illustration style")
-        prompt_parts.append("professional movie storyboard")
-        prompt_parts.append("clean sketch")
+        # 2. 스토리보드 스타일 - 더 구체적으로
+        prompt_parts.append("in the style of a professional movie storyboard")
+        prompt_parts.append("black and white pencil sketch with clean lines")
+        prompt_parts.append("cinematic composition")
         
+        # 3. 구도와 카메라 정보
         if composition:
-            prompt_parts.append(f"composition: {composition}")
+            camera_terms = {
+                '와이드샷': 'wide shot showing full environment',
+                '미디엄샷': 'medium shot framing subjects from waist up',
+                '클로즈업': 'close-up shot focusing on details',
+                '오버숄더': 'over-the-shoulder shot',
+                '하이앵글': 'high angle shot looking down',
+                '로우앵글': 'low angle shot looking up'
+            }
+            camera_desc = camera_terms.get(composition, f"{composition} shot")
+            prompt_parts.append(camera_desc)
         
+        # 4. 조명 정보
         if lighting:
-            prompt_parts.append(f"lighting: {lighting}")
+            lighting_terms = {
+                '자연광': 'natural daylight illumination',
+                '부드러운 조명': 'soft diffused lighting',
+                '드라마틱한 조명': 'dramatic lighting with strong shadows',
+                '역광': 'backlit silhouette lighting',
+                '혼합 조명': 'mixed lighting sources'
+            }
+            lighting_desc = lighting_terms.get(lighting, f"{lighting}")
+            prompt_parts.append(lighting_desc)
         
-        # DALL-E 3는 부정적 프롬프트를 직접 지원하지 않으므로 긍정적으로 표현
-        prompt_parts.append("high quality")
-        prompt_parts.append("professional artwork")
-        prompt_parts.append("clear and detailed")
+        # 5. 품질 지시어
+        prompt_parts.append("professional storyboard artist quality")
+        prompt_parts.append("clear visual storytelling")
         
         prompt = ", ".join(prompt_parts)
-        logger.debug(f"Generated prompt: {prompt}")
+        logger.info(f"Generated DALL-E prompt: {prompt[:200]}...")
         
         return prompt

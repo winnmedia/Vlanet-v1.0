@@ -3,7 +3,7 @@ import logging
 import requests
 import base64
 from django.conf import settings
-import openai
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,12 @@ class DalleService:
             logger.warning("OPENAI_API_KEY not found. DALL-E image generation will not be available.")
         else:
             logger.info("DALL-E service initialized with API key")
-            # 구버전 호환 방식
-            openai.api_key = self.api_key
+            try:
+                # 새 버전 API 방식
+                self.client = OpenAI(api_key=self.api_key)
+            except Exception as e:
+                logger.error(f"Failed to initialize OpenAI client: {e}")
+                self.available = False
     
     def generate_storyboard_image(self, frame_data):
         """
@@ -40,8 +44,8 @@ class DalleService:
             
             logger.info(f"Generating image with DALL-E 3, prompt: {prompt[:100]}...")
             
-            # DALL-E 3 API 호출 (구버전 방식)
-            response = openai.Image.create(
+            # DALL-E 3 API 호출 (새 버전 방식)
+            response = self.client.images.generate(
                 model="dall-e-3",
                 prompt=prompt,
                 size="1024x1024",  # DALL-E 3는 1024x1024, 1024x1792, 1792x1024 지원
@@ -50,7 +54,7 @@ class DalleService:
             )
             
             # 이미지 URL 가져오기
-            image_url = response['data'][0]['url']
+            image_url = response.data[0].url
             
             # URL에서 이미지 다운로드하여 base64로 변환
             image_response = requests.get(image_url, timeout=30)

@@ -1,97 +1,72 @@
 # VideoPlanet 배포 체크리스트
 
-## 배포 전 필수 확인 사항
+## 🚀 Railway 배포 상태
 
-### 1. 환경 변수 설정
-#### Frontend (.env.production)
-```bash
-REACT_APP_BACKEND_URI=https://your-domain.com
-REACT_APP_BACKEND_API_URL=https://your-domain.com
-REACT_APP_SOCKET_URI=wss://your-domain.com
-```
+### 필수 환경 변수
+- [ ] `SECRET_KEY` - Django 시크릿 키
+- [ ] `DEBUG` - False (프로덕션)
+- [ ] `ALLOWED_HOSTS` - videoplanet.up.railway.app,vlanet.net,www.vlanet.net
+- [ ] `DATABASE_URL` - PostgreSQL 연결 정보 (Railway 자동 설정)
+- [ ] `GOOGLE_API_KEY` - Gemini API 키
+- [ ] `HUGGINGFACE_API_KEY` - 이미지 생성 API 키
 
-#### Backend (환경변수)
-```bash
-DJANGO_SETTINGS_MODULE=config.settings.production
-DATABASE_URL=postgresql://...
-SECRET_KEY=your-production-secret-key
-DEBUG=False
-ALLOWED_HOSTS=your-domain.com
-```
+### 서비스 상태
+- [ ] 백엔드: https://videoplanet.up.railway.app
+- [ ] 프론트엔드: https://vlanet.net
+- [ ] 헬스체크: https://videoplanet.up.railway.app/health/
 
-### 2. 필수 패키지 설치
-```bash
-# Backend
-pip install -r requirements.txt
+## ✅ 기능 테스트 (100% 목표)
 
-# Frontend
-npm install
-```
+### 1. 인프라 (3/3) ✅
+- [x] 서버 헬스체크
+- [x] CORS 설정
+- [x] API 루트 접근
 
-### 3. 데이터베이스 마이그레이션
-```bash
-python manage.py migrate
-python manage.py collectstatic --noinput
-```
+### 2. 인증 시스템 (0/4) ⏳
+- [ ] 이메일 중복 확인 `/api/users/check-email/`
+- [ ] 닉네임 중복 확인 `/api/users/check-nickname/`
+- [ ] 회원가입 `/api/users/signup/`
+- [ ] 로그인 `/api/users/login/`
 
-### 4. 코드 수정 사항
-- [ ] `vridge_back/config/__init__.py` - Celery import 주석 해제
-- [ ] `vridge_back/config/settings_base.py` - daphne, channels 주석 해제
-- [ ] `vridge_back/feedbacks/models.py` - ImageField로 복원 (Pillow 설치 후)
+### 3. 영상 기획 (5/5) ✅
+- [x] 기획 라이브러리 조회
+- [x] 스토리 생성
+- [x] 씬 생성
+- [x] 숏 생성
+- [x] 스토리보드 생성
 
-### 5. CORS 설정 확인
-- [ ] 프로덕션 도메인이 CORS_ALLOWED_ORIGINS에 포함되어 있는지 확인
+### 4. 프로젝트 관리 (0/2) ⏳
+- [ ] 프로젝트 목록 조회
+- [ ] 프로젝트 생성
 
-### 6. WebSocket 설정
-- [ ] ASGI 설정에서 WebSocket origin 확인
-- [ ] Redis 서버 실행 확인
+### 5. 프론트엔드 (2/2) ✅
+- [x] 메인 페이지 접근
+- [x] 정적 파일 서빙
 
-### 7. 파일 업로드 설정
-- [ ] Media 파일 경로 설정
-- [ ] 파일 권한 설정
-- [ ] nginx 설정에서 client_max_body_size 확인
+### 6. 보안 (3/3) ✅
+- [x] XSS 방지
+- [x] SQL 인젝션 방지
+- [x] 인증 시스템
 
-### 8. 보안 설정
-- [ ] SECRET_KEY 변경
-- [ ] DEBUG=False
-- [ ] ALLOWED_HOSTS 설정
-- [ ] HTTPS 설정
+## 🔍 트러블슈팅
 
-## 배포 명령어
+### 502 Bad Gateway 에러
+1. Railway 로그 확인
+2. 환경 변수 설정 확인
+3. 빌드 성공 여부 확인
+4. 포트 바인딩 확인 ($PORT)
 
-### Railway 배포
-```bash
-git add .
-git commit -m "Deploy: 배포 준비 완료"
-git push origin main
-```
+### 404 Not Found 에러
+1. URL 패턴 확인 (trailing slash)
+2. urls.py 파일 확인
+3. INSTALLED_APPS 확인
 
-### Docker 배포
-```bash
-docker-compose -f docker-compose.production.yml up -d
-```
+### CORS 에러
+1. CORS_ALLOWED_ORIGINS 확인
+2. 미들웨어 순서 확인
+3. 프론트엔드 도메인 추가
 
-## 배포 후 확인 사항
-1. [ ] 홈페이지 접속 확인
-2. [ ] 로그인 기능 테스트
-3. [ ] 영상 업로드 테스트
-4. [ ] 영상 재생 테스트
-5. [ ] WebSocket 연결 테스트
-6. [ ] 에러 로그 확인
-
-## 트러블슈팅
-
-### 연결 거부 에러
-- CORS 설정 확인
-- 환경변수 확인
-- 서버 실행 상태 확인
-
-### 404 에러
-- URL 라우팅 확인
-- nginx 설정 확인
-- API 엔드포인트 확인
-
-### WebSocket 연결 실패
-- Redis 서버 확인
-- Daphne 실행 확인
-- WebSocket origin 설정 확인
+## 📞 지원
+- Railway 상태: https://railway.app/project/[your-project-id]
+- Vercel 상태: https://vercel.com/[your-team]/videoplanet
+- GitHub: https://github.com/winnmedia/Vlanet-v1.0

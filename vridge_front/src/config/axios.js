@@ -48,18 +48,6 @@ axios.defaults.timeout = 30000;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Accept'] = 'application/json';
 
-// 토큰 처리 헬퍼 함수
-const getCleanToken = () => {
-  const token = localStorage.getItem('VGID');
-  if (!token) return null;
-  // JSON.parse를 시도하여 문자열인 경우 따옴표 제거
-  try {
-    return JSON.parse(token);
-  } catch {
-    // JSON 파싱 실패시 그대로 반환
-    return token.replace(/^["']|["']$/g, '');
-  }
-};
 
 // 요청 인터셉터
 axios.interceptors.request.use(

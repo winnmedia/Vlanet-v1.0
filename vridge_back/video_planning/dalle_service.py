@@ -22,8 +22,28 @@ class DalleService:
         else:
             logger.info("DALL-E service initialized with API key")
             try:
-                # 새 버전 API 방식
+                # OpenAI 클라이언트 초기화 - 기본 인자만 사용
+                import openai
+                # 버전 확인
+                openai_version = getattr(openai, '__version__', '0.0.0')
+                logger.info(f"OpenAI library version: {openai_version}")
+                
+                # 간단한 초기화
                 self.client = OpenAI(api_key=self.api_key)
+                self.available = True
+            except TypeError as e:
+                # proxies 인자 문제 등 - 구버전 방식으로 폴백
+                logger.warning(f"Failed with new client, trying legacy mode: {e}")
+                try:
+                    import openai
+                    openai.api_key = self.api_key
+                    self.client = None  # 구버전 모드
+                    self.available = True
+                    self.legacy_mode = True
+                    logger.info("Using legacy OpenAI API mode")
+                except Exception as legacy_e:
+                    logger.error(f"Failed to initialize OpenAI in legacy mode: {legacy_e}")
+                    self.available = False
             except Exception as e:
                 logger.error(f"Failed to initialize OpenAI client: {e}")
                 self.available = False
@@ -44,17 +64,28 @@ class DalleService:
             
             logger.info(f"Generating image with DALL-E 3, prompt: {prompt[:100]}...")
             
-            # DALL-E 3 API 호출 (새 버전 방식)
-            response = self.client.images.generate(
-                model="dall-e-3",
-                prompt=prompt,
-                size="1024x1024",  # DALL-E 3는 1024x1024, 1024x1792, 1792x1024 지원
-                quality="standard",  # "standard" 또는 "hd"
-                n=1,
-            )
-            
-            # 이미지 URL 가져오기
-            image_url = response.data[0].url
+            # Legacy 모드 체크
+            if hasattr(self, 'legacy_mode') and self.legacy_mode:
+                # 구버전 API 사용
+                import openai
+                response = openai.Image.create(
+                    model="dall-e-3",
+                    prompt=prompt,
+                    size="1024x1024",
+                    quality="standard",
+                    n=1,
+                )
+                image_url = response['data'][0]['url']
+            else:
+                # 새 버전 API 사용
+                response = self.client.images.generate(
+                    model="dall-e-3",
+                    prompt=prompt,
+                    size="1024x1024",
+                    quality="standard",
+                    n=1,
+                )
+                image_url = response.data[0].url
             
             # URL에서 이미지 다운로드하여 base64로 변환
             image_response = requests.get(image_url, timeout=30)

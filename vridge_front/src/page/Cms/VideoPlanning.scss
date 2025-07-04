@@ -589,6 +589,29 @@
             font-size: 14px;
             color: #666;
             line-height: 1.6;
+            position: relative;
+
+            .download-storyboard-btn {
+              margin-top: 12px;
+              padding: 8px 16px;
+              background: #f0f0f0;
+              color: #333;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              font-size: 13px;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              display: inline-block;
+
+              &:hover {
+                background: #e0e0e0;
+                border-color: #ccc;
+              }
+
+              &:active {
+                transform: translateY(1px);
+              }
+            }
           }
         }
 

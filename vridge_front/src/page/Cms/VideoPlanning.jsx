@@ -302,6 +302,45 @@ export default function VideoPlanning() {
     }
   }
 
+  const downloadStoryboardImage = async (imageUrl, fileName) => {
+    try {
+      // Base64 이미지인 경우 직접 다운로드
+      if (imageUrl.startsWith('data:image')) {
+        const link = document.createElement('a')
+        link.href = imageUrl
+        link.download = `${fileName}.png`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } else {
+        // URL 이미지인 경우 서버를 통해 다운로드
+        const response = await axios.post(
+          `/api/video-planning/download/storyboard-image/`,
+          { 
+            image_url: imageUrl,
+            frame_title: fileName
+          },
+          {
+            responseType: 'blob'
+          }
+        )
+        
+        const blob = new Blob([response.data], { type: 'image/png' })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `${fileName}.png`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+      }
+    } catch (err) {
+      console.error('이미지 다운로드 실패:', err)
+      alert('이미지 다운로드에 실패했습니다.')
+    }
+  }
+
   const resetPlanning = () => {
     setCurrentStep(1)
     setPlanningData({
@@ -444,6 +483,17 @@ export default function VideoPlanning() {
                         )}
                         <div className="storyboard-info">
                           <p>{scene.storyboard.visual_description || scene.storyboard.description}</p>
+                          {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' && (
+                            <button 
+                              className="download-storyboard-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                downloadStoryboardImage(scene.storyboard.image_url, `씬${index + 1}_콘티`);
+                              }}
+                            >
+                              다운로드
+                            </button>
+                          )}
                         </div>
                       </div>
                     ) : (

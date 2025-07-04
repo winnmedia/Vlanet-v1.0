@@ -29,7 +29,7 @@ export function CreateProjectAPI(data) {
   
   return axiosCredentials(
     'post',
-    `/projects/atomic-create`,
+    `/projects/atomic-create/`,
     data,
     {
       headers: {

@@ -19,6 +19,7 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.models import Group
+from django.shortcuts import redirect
 from .views import health_check, root_view
 from .views_cors_test import cors_test_view, PublicProjectListView
 from .views_spa import SPAView
@@ -40,17 +41,23 @@ urlpatterns = [
     path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
     path("admin/", admin.site.urls),
     path("admin-dashboard/", include("admin_dashboard.urls")),  # 관리자 대시보드
+    
+    # API 경로 (권장) - /api/ 프리픽스를 사용하는 표준 경로
     path("api/users/", include("users.urls")),
-    path("users/", include("users.urls")),  # 하위 호환성
-    path("users/csrf-token/", csrf_token_view, name="csrf_token"),
     path("api/projects/", include("projects.urls")),
-    path("projects/", include("projects.urls")),  # 하위 호환성
     path("api/feedbacks/", include("feedbacks.urls")),
-    path("feedbacks/", include("feedbacks.urls")),  # 하위 호환성
     path("api/onlines/", include("onlines.urls")),
-    path("onlines/", include("onlines.urls")),  # 하위 호환성
     path("api/video-planning/", include("video_planning.urls")),
-    # path("feedbacks/", include("feedbacks.routing")),
+    
+    # 레거시 경로 (하위 호환성) - /api/ 프리픽스가 없는 구 경로
+    # 새로운 개발에서는 위의 /api/ 경로를 사용할 것을 권장
+    path("users/", include("users.urls")),
+    path("projects/", include("projects.urls")),
+    path("feedbacks/", include("feedbacks.urls")),
+    path("onlines/", include("onlines.urls")),
+    
+    # CSRF 토큰 (특별 경로)
+    path("users/csrf-token/", csrf_token_view, name="csrf_token"),
 ]
 
 # Always serve media files
@@ -62,7 +69,7 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if not settings.DEBUG:
     # 프로덕션에서만 활성화
     urlpatterns += [
-        re_path(r'^(?!api|admin|media|static|health).*$', SPAView.as_view(), name='spa'),
+        re_path(r'^(?!api|admin|media|static|health|users|projects|feedbacks|onlines).*$', SPAView.as_view(), name='spa'),
     ]
 
 # token_blacklist가 있을 때만 unregister

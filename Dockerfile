@@ -40,9 +40,9 @@ RUN mkdir -p /app/vridge_back/staticfiles
 EXPOSE 8000
 
 # Copy start scripts
-COPY vridge_back/scripts/start-server-no-migrate.sh /app/start-server-no-migrate.sh
-RUN chmod +x /app/start-server-no-migrate.sh
+COPY vridge_back/scripts/start-server.sh /app/start-server.sh
+RUN chmod +x /app/start-server.sh
 
-# Run the application WITHOUT migrations
+# Run the application with migrations
 WORKDIR /app/vridge_back
-CMD ["/app/start-server-no-migrate.sh"]
+CMD ["/app/start-server.sh"]

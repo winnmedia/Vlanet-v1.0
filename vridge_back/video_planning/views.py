@@ -14,7 +14,7 @@ import logging
 
 # 이미지 생성 서비스 import
 try:
-    from .imagen_service import StableDiffusionService
+    from .stable_diffusion_service import StableDiffusionService
     IMAGE_SERVICE_AVAILABLE = True
 except ImportError:
     StableDiffusionService = None

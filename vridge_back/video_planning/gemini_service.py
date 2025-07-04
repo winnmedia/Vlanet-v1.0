@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 # 이미지 생성 서비스 import
 try:
-    from .imagen_service import StableDiffusionService
+    from .stable_diffusion_service import StableDiffusionService
     IMAGE_SERVICE_AVAILABLE = True
 except ImportError:
     logger.warning("Image generation service not available")
@@ -29,16 +29,20 @@ class GeminiService:
         self.image_service_available = False
         self.image_service = None
         
+        logger.info(f"IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
+        logger.info(f"StableDiffusionService: {StableDiffusionService}")
+        
         if IMAGE_SERVICE_AVAILABLE and StableDiffusionService:
             try:
                 self.image_service = StableDiffusionService()
                 self.image_service_available = self.image_service.available
+                logger.info(f"Image service available: {self.image_service_available}")
                 if self.image_service_available:
                     logger.info("Stable Diffusion service initialized successfully")
                 else:
                     logger.warning("Stable Diffusion service initialized but API key not found")
             except Exception as e:
-                logger.warning(f"Image service initialization failed: {e}")
+                logger.error(f"Image service initialization failed: {e}", exc_info=True)
                 self.image_service_available = False
     
     def generate_structure(self, planning_input):

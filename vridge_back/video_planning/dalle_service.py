@@ -31,18 +31,19 @@ class DalleService:
                 # 간단한 초기화
                 self.client = OpenAI(api_key=self.api_key)
                 self.available = True
+                logger.info("OpenAI client initialized successfully")
             except TypeError as e:
-                # proxies 인자 문제 등 - 구버전 방식으로 폴백
-                logger.warning(f"Failed with new client, trying legacy mode: {e}")
+                # Railway 환경에서 proxies 문제 - 환경변수로 우회
+                logger.warning(f"TypeError during client init: {e}")
                 try:
-                    import openai
-                    openai.api_key = self.api_key
-                    self.client = None  # 구버전 모드
+                    # 환경변수 설정 후 재시도
+                    os.environ['OPENAI_API_KEY'] = self.api_key
+                    from openai import OpenAI
+                    self.client = OpenAI()
                     self.available = True
-                    self.legacy_mode = True
-                    logger.info("Using legacy OpenAI API mode")
-                except Exception as legacy_e:
-                    logger.error(f"Failed to initialize OpenAI in legacy mode: {legacy_e}")
+                    logger.info("OpenAI client initialized via environment variable")
+                except Exception as env_e:
+                    logger.error(f"Failed to initialize with env var: {env_e}")
                     self.available = False
             except Exception as e:
                 logger.error(f"Failed to initialize OpenAI client: {e}")
@@ -64,28 +65,25 @@ class DalleService:
             
             logger.info(f"Generating image with DALL-E 3, prompt: {prompt[:100]}...")
             
-            # Legacy 모드 체크
-            if hasattr(self, 'legacy_mode') and self.legacy_mode:
-                # 구버전 API 사용
-                import openai
-                response = openai.Image.create(
-                    model="dall-e-3",
-                    prompt=prompt,
-                    size="1024x1024",
-                    quality="standard",
-                    n=1,
-                )
-                image_url = response['data'][0]['url']
-            else:
-                # 새 버전 API 사용
-                response = self.client.images.generate(
-                    model="dall-e-3",
-                    prompt=prompt,
-                    size="1024x1024",
-                    quality="standard",
-                    n=1,
-                )
-                image_url = response.data[0].url
+            # OpenAI 1.3.7 버전에서는 client를 통해서만 이미지 생성 가능
+            if not hasattr(self, 'client') or self.client is None:
+                # 클라이언트 재초기화 시도
+                try:
+                    from openai import OpenAI
+                    self.client = OpenAI(api_key=self.api_key)
+                except Exception as e:
+                    logger.error(f"Failed to reinitialize client: {e}")
+                    raise Exception("OpenAI 클라이언트 초기화 실패")
+            
+            # DALL-E 3 API 호출
+            response = self.client.images.generate(
+                model="dall-e-3",
+                prompt=prompt,
+                size="1024x1024",
+                quality="standard",
+                n=1,
+            )
+            image_url = response.data[0].url
             
             # URL에서 이미지 다운로드하여 base64로 변환
             image_response = requests.get(image_url, timeout=30)

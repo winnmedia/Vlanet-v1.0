@@ -8,11 +8,11 @@ logger = logging.getLogger(__name__)
 
 # 이미지 생성 서비스 import
 try:
-    from .stable_diffusion_service import StableDiffusionService
+    from .dalle_service import DalleService
     IMAGE_SERVICE_AVAILABLE = True
 except ImportError:
-    logger.warning("Image generation service not available")
-    StableDiffusionService = None
+    logger.warning("DALL-E service not available")
+    DalleService = None
     IMAGE_SERVICE_AVAILABLE = False
 
 # 플레이스홀더 이미지 서비스
@@ -42,16 +42,16 @@ class GeminiService:
         logger.info(f"IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
         logger.info(f"PLACEHOLDER_SERVICE_AVAILABLE: {PLACEHOLDER_SERVICE_AVAILABLE}")
         
-        # 먼저 Stable Diffusion 시도
-        if IMAGE_SERVICE_AVAILABLE and StableDiffusionService:
+        # 먼저 DALL-E 시도
+        if IMAGE_SERVICE_AVAILABLE and DalleService:
             try:
-                self.image_service = StableDiffusionService()
+                self.image_service = DalleService()
                 self.image_service_available = self.image_service.available
                 logger.info(f"Image service available: {self.image_service_available}")
                 if self.image_service_available:
-                    logger.info("Stable Diffusion service initialized successfully")
+                    logger.info("DALL-E service initialized successfully")
                 else:
-                    logger.warning("Stable Diffusion service initialized but API key not found")
+                    logger.warning("DALL-E service initialized but API key not found")
             except Exception as e:
                 logger.error(f"Image service initialization failed: {e}", exc_info=True)
                 self.image_service_available = False
@@ -601,16 +601,16 @@ class GeminiService:
                 logger.info(f"Generating image for frame {i+1}")
                 image_generated = False
                 
-                # 1. Stable Diffusion 시도
+                # 1. DALL-E 시도
                 if self.image_service_available and self.image_service:
                     image_result = self.image_service.generate_storyboard_image(frame)
                     if image_result['success']:
                         storyboard_data['storyboards'][i]['image_url'] = image_result['image_url']
                         storyboard_data['storyboards'][i]['prompt_used'] = image_result.get('prompt_used', '')
-                        storyboard_data['storyboards'][i]['model_used'] = image_result.get('model_used', 'stable-diffusion')
+                        storyboard_data['storyboards'][i]['model_used'] = image_result.get('model_used', 'dall-e')
                         image_generated = True
                     else:
-                        logger.warning(f"Stable Diffusion failed for frame {i+1}: {image_result.get('error')}")
+                        logger.warning(f"DALL-E failed for frame {i+1}: {image_result.get('error')}")
                 
                 # 2. 플레이스홀더 폴백
                 if not image_generated and self.placeholder_service:

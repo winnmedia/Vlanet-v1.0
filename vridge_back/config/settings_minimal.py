@@ -230,7 +230,7 @@ LOGGING = {
 # Google API 설정 (Gemini)
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', 'test-key-for-development')
 
-# HuggingFace API 설정 (이미지 생성)
-HUGGINGFACE_API_KEY = os.environ.get('HUGGINGFACE_API_KEY', 'test-key-for-development')
+# OpenAI API 설정 (DALL-E 이미지 생성)
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', 'test-key-for-development')
 
 print("Minimal Railway settings loaded successfully")

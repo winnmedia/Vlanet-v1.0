@@ -77,6 +77,12 @@ async function testStoryboardGeneration() {
         console.log(`  시각적 설명: ${frame.visual_description}`);
         console.log(`  이미지 URL 존재: ${frame.image_url ? 'O' : 'X'}`);
         
+        if (frame.image_url) {
+          console.log(`  이미지 타입: ${frame.image_url.substring(0, 30)}...`);
+          console.log(`  플레이스홀더: ${frame.is_placeholder ? 'O' : 'X'}`);
+          console.log(`  사용된 모델: ${frame.model_used || 'N/A'}`);
+        }
+        
         if (frame.image_error) {
           console.log(`  이미지 생성 에러: ${frame.image_error}`);
         }

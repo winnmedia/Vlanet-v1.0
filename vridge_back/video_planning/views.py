@@ -14,10 +14,10 @@ import logging
 
 # 이미지 생성 서비스 import
 try:
-    from .stable_diffusion_service import StableDiffusionService
+    from .dalle_service import DalleService
     IMAGE_SERVICE_AVAILABLE = True
 except ImportError:
-    StableDiffusionService = None
+    DalleService = None
     IMAGE_SERVICE_AVAILABLE = False
 import requests
 from urllib.parse import urlparse
@@ -174,14 +174,14 @@ def generate_storyboards(request):
             storyboard_data = storyboard_data.get('fallback', {})
             
             # 폴백 데이터에도 이미지 생성 시도
-            if IMAGE_SERVICE_AVAILABLE and StableDiffusionService:
+            if IMAGE_SERVICE_AVAILABLE and DalleService:
                 try:
-                    sd_service = StableDiffusionService()
-                    if sd_service.available:
+                    dalle_service = DalleService()
+                    if dalle_service.available:
                         storyboards = storyboard_data.get('storyboards', [])
                         for i, frame in enumerate(storyboards):
                             logger.info(f"Generating image for fallback frame {i+1}")
-                            image_result = sd_service.generate_storyboard_image(frame)
+                            image_result = dalle_service.generate_storyboard_image(frame)
                             if image_result['success']:
                                 storyboard_data['storyboards'][i]['image_url'] = image_result['image_url']
                                 storyboard_data['storyboards'][i]['model_used'] = image_result.get('model_used')
@@ -232,11 +232,11 @@ def regenerate_storyboard_image(request):
             }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
             
         try:
-            image_service = StableDiffusionService()
+            image_service = DalleService()
             if not image_service.available:
                 return Response({
                     'status': 'error',
-                    'message': 'Stable Diffusion 서비스를 사용할 수 없습니다. HUGGINGFACE_API_KEY를 확인해주세요.'
+                    'message': 'DALL-E 서비스를 사용할 수 없습니다. OPENAI_API_KEY를 확인해주세요.'
                 }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except Exception as e:
             return Response({

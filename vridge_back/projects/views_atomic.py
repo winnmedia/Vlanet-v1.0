@@ -125,31 +125,54 @@ class AtomicProjectCreate(View):
                 
                 # 원자적 트랜잭션으로 모든 작업 처리
                 with transaction.atomic():
-                    # 멱등성 레코드 생성 (있는 경우)
+                    # 멱등성 레코드 생성 (있는 경우) - 테이블 존재 여부 확인
                     idempotency_record = None
                     if idempotency_key:
                         try:
-                            idempotency_record = models.IdempotencyRecord.objects.create(
-                                user=user,
-                                idempotency_key=idempotency_key,
-                                request_data=json.dumps(data),
-                                status='processing'
-                            )
-                        except IntegrityError:
-                            # 이미 존재하는 키라면 기존 프로젝트 반환
-                            existing_record = models.IdempotencyRecord.objects.filter(
-                                user=user,
-                                idempotency_key=idempotency_key
-                            ).first()
-                            if existing_record and existing_record.project_id:
-                                existing_project = models.Project.objects.filter(id=existing_record.project_id).first()
-                                if existing_project:
-                                    return JsonResponse({
-                                        "message": "success",
-                                        "project_id": existing_project.id,
-                                        "project_name": existing_project.name,
-                                        "created_at": existing_project.created.isoformat()
-                                    })
+                            # 테이블 존재 여부 확인
+                            from django.db import connection
+                            with connection.cursor() as cursor:
+                                if 'postgresql' in connection.vendor:
+                                    cursor.execute("""
+                                        SELECT EXISTS (
+                                            SELECT 1 FROM information_schema.tables 
+                                            WHERE table_name = 'projects_idempotencyrecord'
+                                        )
+                                    """)
+                                else:  # SQLite
+                                    cursor.execute("""
+                                        SELECT COUNT(*) FROM sqlite_master 
+                                        WHERE type='table' AND name='projects_idempotencyrecord'
+                                    """)
+                                table_exists = cursor.fetchone()[0]
+                            
+                            if not table_exists:
+                                logger.warning("IdempotencyRecord table does not exist, skipping idempotency check")
+                            else:
+                                try:
+                                    idempotency_record = models.IdempotencyRecord.objects.create(
+                                        user=user,
+                                        idempotency_key=idempotency_key,
+                                        request_data=json.dumps(data),
+                                        status='processing'
+                                    )
+                                except IntegrityError:
+                                    # 이미 존재하는 키라면 기존 프로젝트 반환
+                                    existing_record = models.IdempotencyRecord.objects.filter(
+                                        user=user,
+                                        idempotency_key=idempotency_key
+                                    ).first()
+                                    if existing_record and existing_record.project_id:
+                                        existing_project = models.Project.objects.filter(id=existing_record.project_id).first()
+                                        if existing_project:
+                                            return JsonResponse({
+                                                "message": "success",
+                                                "project_id": existing_project.id,
+                                                "project_name": existing_project.name,
+                                                "created_at": existing_project.created.isoformat()
+                                            })
+                        except Exception as e:
+                            logger.warning(f"Error handling idempotency: {str(e)}")
                     
                     # 1. 프로젝트 생성 (UniqueConstraint에 의해 중복 방지)
                     try:

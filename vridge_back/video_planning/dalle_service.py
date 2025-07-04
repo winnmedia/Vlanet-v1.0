@@ -122,98 +122,126 @@ class DalleService:
     def _create_storyboard_prompt(self, frame_data):
         """
         프레임 데이터를 바탕으로 DALL-E용 프롬프트를 생성합니다.
-        텍스트를 절대 포함하지 않도록 명시적으로 지시합니다.
+        배경, 인물(묘사), 인물(행동) 세 가지만 사용하여 미니멀하게 구성합니다.
         """
         visual_desc = frame_data.get('visual_description', '')
-        title = frame_data.get('title', '')
-        composition = frame_data.get('composition', '')
-        lighting = frame_data.get('lighting', '')
         
-        # DALL-E 3에 최적화된 프롬프트 구성
+        # visual_description에서 배경, 인물 묘사, 인물 행동 추출
+        background = ""
+        character_desc = ""
+        character_action = ""
+        
+        # 간단한 패턴 매칭으로 요소 추출
+        if visual_desc:
+            # 배경 키워드
+            background_keywords = ['실내', '실외', '사무실', '거리', '집', '카페', '공원', '학교', '병원', '회의실', '방', '거실', '주방', '도로', '빌딩', '숲', '바다', '산', '하늘', '도시']
+            # 인물 묘사 키워드
+            character_keywords = ['남자', '여자', '아이', '노인', '청년', '중년', '소년', '소녀', '사람', '주인공', '인물']
+            # 행동 키워드
+            action_keywords = ['걷다', '앉다', '서다', '뛰다', '말하다', '듣다', '보다', '웃다', '울다', '생각하다', '쓰다', '읽다', '먹다', '마시다', '일하다', '놀다', '자다', '운전하다']
+            
+            # 각 요소 찾기
+            for keyword in background_keywords:
+                if keyword in visual_desc:
+                    background = keyword
+                    break
+            
+            for keyword in character_keywords:
+                if keyword in visual_desc:
+                    character_desc = keyword
+                    break
+                    
+            for keyword in action_keywords:
+                if keyword in visual_desc:
+                    character_action = keyword
+                    break
+        
+        # 한국어를 영어로 변환하는 매핑
+        korean_to_english = {
+            # 배경
+            '실내': 'indoor',
+            '실외': 'outdoor',
+            '사무실': 'office',
+            '거리': 'street',
+            '집': 'house',
+            '카페': 'cafe',
+            '공원': 'park',
+            '학교': 'school',
+            '병원': 'hospital',
+            '회의실': 'meeting room',
+            '방': 'room',
+            '거실': 'living room',
+            '주방': 'kitchen',
+            '도로': 'road',
+            '빌딩': 'building',
+            '숲': 'forest',
+            '바다': 'ocean',
+            '산': 'mountain',
+            '하늘': 'sky',
+            '도시': 'city',
+            # 인물
+            '남자': 'man',
+            '여자': 'woman',
+            '아이': 'child',
+            '노인': 'elderly person',
+            '청년': 'young adult',
+            '중년': 'middle-aged person',
+            '소년': 'boy',
+            '소녀': 'girl',
+            '사람': 'person',
+            '주인공': 'main character',
+            '인물': 'character',
+            # 행동
+            '걷다': 'walking',
+            '앉다': 'sitting',
+            '서다': 'standing',
+            '뛰다': 'running',
+            '말하다': 'talking',
+            '듣다': 'listening',
+            '보다': 'looking',
+            '웃다': 'smiling',
+            '울다': 'crying',
+            '생각하다': 'thinking',
+            '쓰다': 'writing',
+            '읽다': 'reading',
+            '먹다': 'eating',
+            '마시다': 'drinking',
+            '일하다': 'working',
+            '놀다': 'playing',
+            '자다': 'sleeping',
+            '운전하다': 'driving'
+        }
+        
+        # 영어로 변환
+        background_en = korean_to_english.get(background, background) if background else ""
+        character_en = korean_to_english.get(character_desc, character_desc) if character_desc else ""
+        action_en = korean_to_english.get(character_action, character_action) if character_action else ""
+        
+        # 미니멀한 프롬프트 구성
         prompt_parts = []
         
-        # 0. 텍스트 제외 명시 (가장 중요!)
-        prompt_parts.append("NO TEXT, NO LETTERS, NO WRITING, NO CAPTIONS")
+        # 0. 텍스트 제외 명시
+        prompt_parts.append("NO TEXT, NO LETTERS, NO WRITING")
         
-        # 1. 메인 설명 (영어로 번역 필요한 경우 간단히 변환)
-        if visual_desc:
-            # 한국어 키워드를 영어로 변환하는 간단한 매핑
-            visual_desc_en = visual_desc
-            korean_to_english = {
-                '사람': 'person',
-                '남자': 'man',
-                '여자': 'woman',
-                '아이': 'child',
-                '노인': 'elderly person',
-                '건물': 'building',
-                '나무': 'tree',
-                '하늘': 'sky',
-                '바다': 'ocean',
-                '산': 'mountain',
-                '도시': 'city',
-                '거리': 'street',
-                '실내': 'interior',
-                '실외': 'exterior',
-                '밤': 'night',
-                '낮': 'day',
-                '비': 'rain',
-                '눈': 'snow'
-            }
-            for k, v in korean_to_english.items():
-                visual_desc_en = visual_desc_en.replace(k, v)
-            prompt_parts.append(visual_desc_en)
-        elif title:
-            prompt_parts.append(f"Scene depicting {title}")
+        # 1. 핵심 요소만 포함 (배경, 인물, 행동)
+        if background_en:
+            prompt_parts.append(f"{background_en} setting")
+        if character_en and action_en:
+            prompt_parts.append(f"{character_en} {action_en}")
+        elif character_en:
+            prompt_parts.append(f"{character_en} present")
+        elif action_en:
+            prompt_parts.append(f"person {action_en}")
+            
+        # 2. 미니멀한 스타일 지정
+        prompt_parts.append("minimalist illustration")
+        prompt_parts.append("simple clean lines")
+        prompt_parts.append("basic shapes")
+        prompt_parts.append("monochrome sketch")
+        prompt_parts.append("minimal details")
         
-        # 2. 스토리보드 스타일 - 더 명확하게
-        prompt_parts.append("Professional film storyboard illustration")
-        prompt_parts.append("Detailed pencil sketch on white paper")
-        prompt_parts.append("Hand-drawn artistic style with shading")
-        prompt_parts.append("Film production storyboard format")
-        
-        # 3. 구도와 카메라 정보 (개선)
-        if composition:
-            camera_terms = {
-                '와이드샷': 'WIDE SHOT: full environment and characters visible',
-                '미디엄샷': 'MEDIUM SHOT: characters from waist up',
-                '클로즈업': 'CLOSE-UP SHOT: face or detail focus',
-                '오버숄더': 'OVER-THE-SHOULDER SHOT: from behind character',
-                '하이앵글': 'HIGH ANGLE SHOT: camera looking down',
-                '로우앵글': 'LOW ANGLE SHOT: camera looking up',
-                '익스트림 클로즈업': 'EXTREME CLOSE-UP: very tight on detail',
-                '풀샷': 'FULL SHOT: entire character visible',
-                '투샷': 'TWO SHOT: two characters in frame'
-            }
-            camera_desc = camera_terms.get(composition, f"CAMERA: {composition}")
-            prompt_parts.append(camera_desc)
-        
-        # 4. 조명 정보 (개선)
-        if lighting:
-            lighting_terms = {
-                '자연광': 'Natural daylight with soft shadows',
-                '부드러운 조명': 'Soft diffused lighting, even illumination',
-                '드라마틱한 조명': 'Dramatic lighting with strong contrast',
-                '역광': 'Backlit with rim lighting silhouette',
-                '혼합 조명': 'Mixed lighting from multiple sources',
-                '황금시간대': 'Golden hour warm lighting',
-                '블루아워': 'Blue hour twilight lighting',
-                '실내조명': 'Interior artificial lighting',
-                '촛불조명': 'Candlelight warm glow'
-            }
-            lighting_desc = lighting_terms.get(lighting, f"LIGHTING: {lighting}")
-            prompt_parts.append(lighting_desc)
-        
-        # 5. 품질 지시어 (개선)
-        prompt_parts.append("Professional storyboard artist quality")
-        prompt_parts.append("Clear visual composition")
-        prompt_parts.append("Cinematic framing")
-        prompt_parts.append("Detailed environment and characters")
-        prompt_parts.append("Dynamic perspective")
-        
-        # 6. 다시 한번 텍스트 제외 강조
-        prompt_parts.append("IMPORTANT: No text or letters in the image")
-        
+        # 최종 프롬프트 조합
         prompt = ", ".join(prompt_parts)
-        logger.info(f"Generated DALL-E prompt: {prompt[:200]}...")
         
+        logger.info(f"Generated minimal DALL-E prompt: {prompt}")
         return prompt

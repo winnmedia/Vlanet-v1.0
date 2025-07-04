@@ -172,6 +172,32 @@ def generate_storyboards(request):
         if 'error' in storyboard_data:
             logger.error(f"Gemini API error: {storyboard_data['error']}")
             storyboard_data = storyboard_data.get('fallback', {})
+            
+            # 폴백 데이터에도 이미지 생성 시도
+            if IMAGE_SERVICE_AVAILABLE and StableDiffusionService:
+                try:
+                    sd_service = StableDiffusionService()
+                    if sd_service.available:
+                        storyboards = storyboard_data.get('storyboards', [])
+                        for i, frame in enumerate(storyboards):
+                            logger.info(f"Generating image for fallback frame {i+1}")
+                            image_result = sd_service.generate_storyboard_image(frame)
+                            if image_result['success']:
+                                storyboard_data['storyboards'][i]['image_url'] = image_result['image_url']
+                                storyboard_data['storyboards'][i]['model_used'] = image_result.get('model_used')
+                            else:
+                                # 플레이스홀더 시도
+                                try:
+                                    from .placeholder_image_service import PlaceholderImageService
+                                    ph_service = PlaceholderImageService()
+                                    ph_result = ph_service.generate_storyboard_image(frame)
+                                    if ph_result['success']:
+                                        storyboard_data['storyboards'][i]['image_url'] = ph_result['image_url']
+                                        storyboard_data['storyboards'][i]['is_placeholder'] = True
+                                except Exception as e:
+                                    logger.error(f"Placeholder generation failed: {e}")
+                except Exception as e:
+                    logger.error(f"Image generation for fallback failed: {e}")
         
         return Response({
             'status': 'success',

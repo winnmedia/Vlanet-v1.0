@@ -626,8 +626,14 @@ class GeminiService:
             
             return storyboard_data
         except Exception as e:
+            error_msg = str(e)
+            if "429" in error_msg or "quota" in error_msg.lower():
+                logger.warning("Gemini API quota exceeded, using fallback data with images")
+            else:
+                logger.error(f"Gemini API error: {error_msg}")
+            
             return {
-                "error": str(e),
+                "error": error_msg,
                 "fallback": {
                     "storyboards": [
                         {

@@ -236,10 +236,10 @@ def regenerate_storyboard_image(request):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     except Exception as e:
-        logger.error(f"Error in regenerate_storyboard_image: {str(e)}")
+        logger.error(f"Error in regenerate_storyboard_image: {str(e)}", exc_info=True)
         return Response({
             'status': 'error',
-            'message': '이미지 재생성 중 오류가 발생했습니다.'
+            'message': f'이미지 생성 중 오류가 발생했습니다: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

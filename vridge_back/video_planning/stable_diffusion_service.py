@@ -89,7 +89,11 @@ class StableDiffusionService:
                         "model_used": current_model
                     }
                 else:
-                    error_msg = response.json().get('error', '알 수 없는 오류')
+                    try:
+                        error_data = response.json()
+                        error_msg = error_data.get('error', '알 수 없는 오류')
+                    except:
+                        error_msg = f"Status {response.status_code}: {response.text[:200]}"
                     logger.warning(f"Model {current_model} failed: {error_msg}")
                     
                     # 다음 모델 시도

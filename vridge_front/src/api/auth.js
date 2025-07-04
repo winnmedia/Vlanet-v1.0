@@ -4,7 +4,7 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 export function SignUp(data) {
   return axiosOpts(
     'post',
-    `/users/signup`,
+    `/users/signup/`,
     data,
   )
 }
@@ -13,7 +13,7 @@ export function SignUp(data) {
 export function CheckNickname(nickname) {
   return axiosOpts(
     'post',
-    `/users/check_nickname`,
+    `/users/check-nickname/`,
     { nickname },
   )
 }
@@ -22,7 +22,7 @@ export function CheckNickname(nickname) {
 export function CheckEmail(email) {
   return axiosOpts(
     'post',
-    `/users/check_email`,
+    `/users/check-email/`,
     { email },
   )
 }
@@ -31,7 +31,7 @@ export function CheckEmail(email) {
 export function SignIn(data) {
   return axiosOpts(
     'post',
-    `/users/login`,
+    `/users/login/`,
     data,
   )
 }
@@ -40,7 +40,7 @@ export function SignIn(data) {
 export function SendAuthNumber(data, types) {
   return axiosOpts(
     'post',
-    `/users/send_authnumber/${types}`,
+    `/users/send_authnumber/${types}/`,
     data,
   )
 }
@@ -49,7 +49,7 @@ export function SendAuthNumber(data, types) {
 export function EmailAuth(data, types) {
   return axiosOpts(
     'post',
-    `/users/signup_emailauth/${types}`,
+    `/users/signup_emailauth/${types}/`,
     data,
   )
 }
@@ -58,7 +58,7 @@ export function EmailAuth(data, types) {
 export function ResetPassword(data) {
   return axiosOpts(
     'post',
-    `/users/password_reset`,
+    `/users/password_reset/`,
     data,
   )
 }
@@ -67,7 +67,7 @@ export function ResetPassword(data) {
 export function KakaoLoginAPI(data) {
   return axiosOpts(
     'post',
-    `/users/login/kakao`,
+    `/users/login/kakao/`,
     data,
   )
 }
@@ -76,7 +76,7 @@ export function KakaoLoginAPI(data) {
 export function NaverLoginAPI(data) {
   return axiosOpts(
     'post',
-    `/users/login/naver`,
+    `/users/login/naver/`,
     data,
   )
 }
@@ -85,7 +85,7 @@ export function NaverLoginAPI(data) {
 export function GoogleLoginAPI(data) {
   return axiosOpts(
     'post',
-    `/users/login/google`,
+    `/users/login/google/`,
     data,
   )
 }
@@ -94,7 +94,7 @@ export function GoogleLoginAPI(data) {
 export function WriteUserMemo(data) {
   return axiosCredentials(
     'post',
-    `/users/memo`,
+    `/users/memo/`,
     data,
   )
 }
@@ -103,7 +103,7 @@ export function WriteUserMemo(data) {
 export function DeleteUserMemo(id) {
   return axiosCredentials(
     'delete',
-    `/users/memo/${id}`,
+    `/users/memo/${id}/`,
   )
 }
 
@@ -113,7 +113,7 @@ export function DeleteUserMemo(id) {
 export function SignUpRequest(email) {
   return axiosOpts(
     'post',
-    `/users/signup/request`,
+    `/users/signup/request/`,
     { email },
   )
 }
@@ -122,7 +122,7 @@ export function SignUpRequest(email) {
 export function SignUpVerify(data) {
   return axiosOpts(
     'post',
-    `/users/signup/verify`,
+    `/users/signup/verify/`,
     data,
   )
 }
@@ -131,7 +131,7 @@ export function SignUpVerify(data) {
 export function SignUpComplete(data) {
   return axiosOpts(
     'post',
-    `/users/signup/complete`,
+    `/users/signup/complete/`,
     data,
   )
 }

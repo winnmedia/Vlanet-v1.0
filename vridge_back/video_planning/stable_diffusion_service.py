@@ -23,13 +23,9 @@ class StableDiffusionService:
         else:
             logger.info("Stable Diffusion service initialized with API key")
         
-        # Hugging Face Inference API endpoints - 여러 모델 시도
+        # Hugging Face Inference API endpoints - v1.5를 기본으로
         self.models = [
-            "runwayml/stable-diffusion-v1-5",  # 가장 안정적이고 빠른 모델
-            "CompVis/stable-diffusion-v1-4",   # 클래식 모델
-            "prompthero/openjourney",           # 예술적 스타일
-            "stabilityai/stable-diffusion-2-1", # SD 2.1
-            "stabilityai/stable-diffusion-xl-base-1.0"  # SDXL (무거움)
+            "runwayml/stable-diffusion-v1-5",  # 가장 안정적이고 빠른 모델 (기본)
         ]
         self.current_model_index = 0
         self.api_url = f"https://api-inference.huggingface.co/models/{self.models[self.current_model_index]}"
@@ -58,13 +54,9 @@ class StableDiffusionService:
                 
                 logger.info(f"Trying model: {current_model}")
                 
-                # 모델에 따라 다른 파라미터 설정
-                if "xl" in current_model:
-                    width, height = 1024, 576
-                    steps = 30
-                else:
-                    width, height = 768, 432
-                    steps = 20
+                # v1.5에 최적화된 파라미터
+                width, height = 512, 512  # v1.5는 512x512가 기본
+                steps = 25  # 적절한 품질과 속도의 균형
                 
                 # Hugging Face API 호출
                 response = requests.post(
@@ -73,7 +65,7 @@ class StableDiffusionService:
                     json={
                         "inputs": prompt,
                         "parameters": {
-                            "negative_prompt": "low quality, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry",
+                            "negative_prompt": "ugly, blurry, low quality, distorted, disfigured",
                             "num_inference_steps": steps,
                             "guidance_scale": 7.5,
                             "width": width,
@@ -129,34 +121,37 @@ class StableDiffusionService:
     def _create_storyboard_prompt(self, frame_data):
         """
         프레임 데이터를 이미지 생성 프롬프트로 변환합니다.
+        v1.5 모델에 최적화
         """
         visual_desc = frame_data.get('visual_description', '')
         shot_type = frame_data.get('shot_type', '')
         action = frame_data.get('action', '')
         
-        # 간단하고 명확한 프롬프트 생성
+        # v1.5에서 잘 작동하는 프롬프트 구조
         prompt_parts = []
         
-        # 핵심 내용만 포함
+        # 메인 설명
         if visual_desc:
+            # 한국어를 영어로 간단히 설명
             prompt_parts.append(visual_desc)
         
         if action:
             prompt_parts.append(action)
-            
-        if shot_type:
-            prompt_parts.append(f"{shot_type} shot")
         
-        # 최소한의 스타일 지시
+        # 스타일 키워드 (v1.5에서 효과적)
         prompt_parts.extend([
-            "storyboard sketch",
-            "simple",
-            "clear"
+            "storyboard",
+            "professional",
+            "clean lines",
+            "sketch style",
+            "movie storyboard"
         ])
         
         prompt = ", ".join(filter(None, prompt_parts))
-        # 프롬프트 길이 제한
-        if len(prompt) > 200:
-            prompt = prompt[:200]
+        
+        # v1.5는 75 토큰 제한이 있으므로 간결하게
+        if len(prompt) > 150:
+            prompt = prompt[:150]
             
+        logger.debug(f"Generated prompt: {prompt}")
         return prompt

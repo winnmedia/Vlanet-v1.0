@@ -6,7 +6,7 @@ export function ProjectList() {
   console.trace('[API] Call stack:')
   return axiosCredentials(
     'get',
-    `/projects/project_list`,
+    `/api/projects/project_list/`,
   )
 }
 
@@ -14,7 +14,7 @@ export function ProjectList() {
 export function GetProject(project_id) {
   return axiosCredentials(
     'get',
-    `/projects/detail/${project_id}`,
+    `/api/projects/detail/${project_id}/`,
   )
 }
 
@@ -29,7 +29,7 @@ export function CreateProjectAPI(data) {
   
   return axiosCredentials(
     'post',
-    `/projects/atomic-create/`,
+    `/api/projects/atomic-create/`,
     data,
     {
       headers: {
@@ -44,7 +44,7 @@ export function CreateProjectAPI(data) {
 export function UpdateProjectAPI(data, project_id) {
   return axiosCredentials(
     'post',
-    `/projects/detail/${project_id}`,
+    `/api/projects/detail/${project_id}/`,
     data,
     {
       headers: {
@@ -58,7 +58,7 @@ export function UpdateProjectAPI(data, project_id) {
 export function DeleteProjectAPI(project_id) {
   return axiosCredentials(
     'delete',
-    `/projects/detail/${project_id}`,
+    `/api/projects/detail/${project_id}/`,
   )
 }
 

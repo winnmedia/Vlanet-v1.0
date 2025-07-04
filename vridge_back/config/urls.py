@@ -15,12 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.models import Group
 from .views import health_check, root_view
 from .views_cors_test import cors_test_view, PublicProjectListView
+from .views_spa import SPAView
 from api_health import csrf_token_view
 
 # token_blacklist import를 보호
@@ -39,11 +40,15 @@ urlpatterns = [
     path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
     path("admin/", admin.site.urls),
     path("admin-dashboard/", include("admin_dashboard.urls")),  # 관리자 대시보드
-    path("users/", include("users.urls")),
+    path("api/users/", include("users.urls")),
+    path("users/", include("users.urls")),  # 하위 호환성
     path("users/csrf-token/", csrf_token_view, name="csrf_token"),
-    path("projects/", include("projects.urls")),
-    path("feedbacks/", include("feedbacks.urls")),
-    path("onlines/", include("onlines.urls")),
+    path("api/projects/", include("projects.urls")),
+    path("projects/", include("projects.urls")),  # 하위 호환성
+    path("api/feedbacks/", include("feedbacks.urls")),
+    path("feedbacks/", include("feedbacks.urls")),  # 하위 호환성
+    path("api/onlines/", include("onlines.urls")),
+    path("onlines/", include("onlines.urls")),  # 하위 호환성
     path("api/video-planning/", include("video_planning.urls")),
     # path("feedbacks/", include("feedbacks.routing")),
 ]
@@ -51,6 +56,14 @@ urlpatterns = [
 # Always serve media files
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# SPA catch-all route - API 경로가 아닌 모든 요청을 React로 전달
+# 이것은 반드시 맨 마지막에 와야 함
+if not settings.DEBUG:
+    # 프로덕션에서만 활성화
+    urlpatterns += [
+        re_path(r'^(?!api|admin|media|static|health).*$', SPAView.as_view(), name='spa'),
+    ]
 
 # token_blacklist가 있을 때만 unregister
 if HAS_TOKEN_BLACKLIST and token_blacklist:

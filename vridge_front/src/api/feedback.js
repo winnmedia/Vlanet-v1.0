@@ -5,7 +5,7 @@ import axios from 'axios'
 export function GetFeedBack(id) {
   return axiosCredentials(
     'get',
-    `/feedbacks/${id}`,
+    `/api/feedbacks/${id}`,
   )
 }
 
@@ -13,7 +13,7 @@ export function GetFeedBack(id) {
 export function CreateFeedback(data, id) {
   return axiosCredentials(
     'put',
-    `/feedbacks/${id}`,
+    `/api/feedbacks/${id}`,
     data,
   )
 }
@@ -22,7 +22,7 @@ export function CreateFeedback(data, id) {
 export function UpdateFeedback(id, data) {
   return axiosCredentials(
     'patch',
-    `/feedbacks/${id}`,
+    `/api/feedbacks/${id}`,
     data,
   )
 }
@@ -31,7 +31,7 @@ export function UpdateFeedback(id, data) {
 export function DeleteFeedback(id) {
   return axiosCredentials(
     'delete',
-    `/feedbacks/${id}`,
+    `/api/feedbacks/${id}`,
   )
 }
 
@@ -44,7 +44,7 @@ export function FeedbackFile(data, id, onUploadProgress) {
   
   const config = {
     method: 'post',
-    url: `${process.env.REACT_APP_BACKEND_API_URL}/feedbacks/${id}`,
+    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/feedbacks/${id}/`,
     data: data,
     headers: {
       'Authorization': token ? `Bearer ${token}` : '',

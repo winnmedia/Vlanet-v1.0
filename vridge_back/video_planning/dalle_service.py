@@ -137,6 +137,7 @@ class DalleService:
     def _create_visual_prompt(self, frame_data, style='minimal'):
         """
         프레임 데이터를 바탕으로 순수한 시각적 프롬프트를 생성합니다.
+        DALL-E가 텍스트 박스를 그리지 않도록 영화의 한 장면처럼 묘사합니다.
         
         Args:
             frame_data: 프레임 정보
@@ -152,58 +153,66 @@ class DalleService:
         lighting = frame_data.get('lighting', '')
         
         # 구성과 조명도 영어로 변환
-        composition_en = ''
-        lighting_en = ''
+        composition_desc = ''
+        lighting_desc = ''
         if composition:
-            composition_en = self._translate_composition(composition)
+            comp_en = self._translate_composition(composition)
+            # shot이라는 단어를 피하고 다른 표현 사용
+            if 'closeup' in comp_en:
+                composition_desc = 'close-up perspective'
+            elif 'medium' in comp_en:
+                composition_desc = 'mid-distance view'
+            elif 'wide' in comp_en:
+                composition_desc = 'wide angle'
+            elif 'full' in comp_en:
+                composition_desc = 'full body view'
+            else:
+                composition_desc = comp_en
+                
         if lighting:
-            lighting_en = self._translate_lighting(lighting)
+            lighting_desc = self._translate_lighting(lighting)
         
-        # 스타일에 따라 다른 전략 사용 - Midjourney 스타일로 극도로 단순화
-        if style == 'minimal':
-            # 가장 단순한 형태
-            prompt = translated_desc
-            if composition_en:
-                prompt = f"{translated_desc}, {composition_en}"
-        
-        elif style == 'sketch':
-            # 스케치 스타일
-            prompt = f"pencil sketch {translated_desc}"
-            if lighting_en:
-                prompt = f"{prompt}, {lighting_en}"
+        # 영화의 한 장면처럼 묘사 - 콘티/스토리보드 언급 절대 금지
+        if style == 'minimal' or style == 'sketch':
+            # 연필 스케치 스타일
+            prompt = f"A black-and-white pencil drawing of {translated_desc}"
+            if composition_desc:
+                prompt = f"{prompt}, {composition_desc}"
+            if lighting_desc:
+                prompt = f"{prompt}. The lighting is {lighting_desc}"
+            prompt = f"{prompt}. Drawn in realistic pencil sketch style. No words, no labels, no boxes. Only the visual."
         
         elif style == 'realistic':
-            # 사실적인 스타일
-            prompt = f"photo {translated_desc}"
-            if composition_en:
-                prompt = f"{prompt}, {composition_en}"
+            # 사실적인 사진 스타일
+            prompt = f"A photorealistic image of {translated_desc}"
+            if composition_desc:
+                prompt = f"{prompt}, captured from {composition_desc}"
+            if lighting_desc:
+                prompt = f"{prompt}. {lighting_desc.capitalize()} illuminates everything"
+            prompt = f"{prompt}. Photography style, no words or labels."
         
         elif style == 'watercolor':
             # 수채화 스타일
-            prompt = f"watercolor {translated_desc}"
+            prompt = f"A soft watercolor painting depicting {translated_desc}"
+            if lighting_desc:
+                prompt = f"{prompt}. The atmosphere has {lighting_desc}"
+            prompt = f"{prompt}. Artistic watercolor style with no words."
         
         elif style == 'cinematic':
-            # 영화적 스타일 - 가장 시각적
-            prompt = translated_desc
-            if composition_en:
-                prompt = f"{prompt}, {composition_en}"
-            if lighting_en:
-                prompt = f"{prompt}, {lighting_en}"
-            prompt = f"{prompt}, cinematic"
+            # 영화적 스타일
+            prompt = f"A cinematic photograph of {translated_desc}"
+            if composition_desc:
+                prompt = f"{prompt}, filmed from {composition_desc}"
+            if lighting_desc:
+                prompt = f"{prompt}. Dramatic {lighting_desc} creates atmosphere"
+            prompt = f"{prompt}. Movie still style, no words or graphics."
         
         else:
-            # 기본 스타일 - 매우 단순
-            prompt = translated_desc
+            # 기본 스타일 - 단순한 일러스트
+            prompt = f"An illustration of {translated_desc}. Simple artistic style. No words, only the visual image."
         
-        # 금지 단어 최종 제거
-        prompt = self._remove_forbidden_words(prompt)
-        
-        # 프롬프트 최종 정리
+        # 프롬프트 최종 정리 (금지 단어 제거는 이미 피해서 작성했으므로 생략)
         prompt = ' '.join(prompt.split())
-        
-        # 너무 길면 앞부분만 사용 (DALL-E는 짧은 프롬프트에 더 잘 반응)
-        if len(prompt) > 100:
-            prompt = prompt[:100].rsplit(' ', 1)[0]
         
         logger.info(f"Final DALL-E prompt: {prompt}")
         return prompt
@@ -290,11 +299,11 @@ class DalleService:
         """
         comp_dict = {
             '클로즈업': 'closeup',
-            '미디엄샷': 'medium shot',
-            '와이드샷': 'wide shot',
-            '풀샷': 'full shot',
-            '롱샷': 'long shot',
-            '버드아이뷰': 'aerial view',
+            '미디엄샷': 'medium',
+            '와이드샷': 'wide',
+            '풀샷': 'full',
+            '롱샷': 'long',
+            '버드아이뷰': 'aerial',
             '로우앵글': 'low angle',
             '하이앵글': 'high angle'
         }
@@ -334,9 +343,14 @@ class DalleService:
             r'annotated',
             r'panel',
             r'slide',
+            r'script',
+            r'title',
+            r'heading',
             r'프레임',
             r'장면',
-            r'설명'
+            r'설명',
+            r'콘티',
+            r'스토리보드'
         ]
         
         result = prompt

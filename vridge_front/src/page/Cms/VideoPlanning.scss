@@ -2,6 +2,173 @@
   padding: 30px;
   background: #f8f9fa;
   min-height: calc(100vh - 120px);
+  
+  .step-content-with-sidebar {
+    display: flex;
+    gap: 24px;
+    
+    .step-content {
+      flex: 1;
+    }
+    
+    .recent-plannings-sidebar {
+      width: 350px;
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      height: fit-content;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      
+      h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      
+      .recent-plannings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      .recent-planning-item {
+        display: flex;
+        gap: 12px;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+          background: #f0f2f5;
+          transform: translateX(4px);
+        }
+        
+        .planning-number {
+          width: 32px;
+          height: 32px;
+          background: #4318FF;
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: 14px;
+          flex-shrink: 0;
+        }
+        
+        .planning-info {
+          flex: 1;
+          
+          .planning-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+          
+          .planning-meta {
+            .planning-date {
+              font-size: 12px;
+              color: #666;
+              display: block;
+              margin-bottom: 8px;
+            }
+            
+            .planning-tags {
+              display: flex;
+              gap: 6px;
+              flex-wrap: wrap;
+              
+              .tag {
+                font-size: 11px;
+                padding: 3px 8px;
+                border-radius: 12px;
+                font-weight: 500;
+                
+                &.tone {
+                  background: #e3f2fd;
+                  color: #1976d2;
+                }
+                
+                &.genre {
+                  background: #f3e5f5;
+                  color: #7b1fa2;
+                }
+                
+                &.target {
+                  background: #e8f5e9;
+                  color: #388e3c;
+                }
+              }
+            }
+          }
+          
+          .planning-status {
+            margin-top: 8px;
+            
+            .step-indicator {
+              font-size: 11px;
+              padding: 4px 10px;
+              border-radius: 6px;
+              font-weight: 600;
+              display: inline-block;
+              
+              &.step-1 {
+                background: #fff3e0;
+                color: #e65100;
+              }
+              
+              &.step-2 {
+                background: #e8f5e9;
+                color: #2e7d32;
+              }
+              
+              &.step-3 {
+                background: #e3f2fd;
+                color: #1565c0;
+              }
+              
+              &.step-4 {
+                background: #f3e5f5;
+                color: #6a1b9a;
+              }
+              
+              &.step-5 {
+                background: #e0f2f1;
+                color: #00695c;
+              }
+            }
+          }
+        }
+      }
+      
+      .no-recent-plannings {
+        text-align: center;
+        padding: 40px 20px;
+        
+        p {
+          color: #666;
+          margin-bottom: 8px;
+          font-size: 14px;
+          
+          &.hint {
+            color: #999;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  }
 
   .planning-header {
     text-align: center;

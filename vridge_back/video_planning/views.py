@@ -26,6 +26,58 @@ import os
 logger = logging.getLogger(__name__)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_recent_plannings(request):
+    """
+    사용자의 최근 비디오 기획 로그를 가져옵니다.
+    """
+    try:
+        # 최근 5개의 기획 로그 가져오기
+        recent_plannings = VideoPlanning.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:5]
+        
+        # 응답 데이터 구성
+        planning_logs = []
+        for planning in recent_plannings:
+            # planning_options 가져오기
+            planning_options = {}
+            if planning.selected_story and isinstance(planning.selected_story, dict):
+                planning_options = planning.selected_story.get('planning_options', {})
+            
+            planning_logs.append({
+                'id': planning.id,
+                'title': planning.title,
+                'created_at': planning.created_at.strftime('%Y-%m-%d %H:%M'),
+                'planning_options': {
+                    'tone': planning_options.get('tone', ''),
+                    'genre': planning_options.get('genre', ''),
+                    'concept': planning_options.get('concept', ''),
+                    'target': planning_options.get('target', ''),
+                    'purpose': planning_options.get('purpose', ''),
+                    'duration': planning_options.get('duration', '')
+                },
+                'current_step': planning.current_step,
+                'is_completed': planning.is_completed
+            })
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'planning_logs': planning_logs,
+                'total_count': VideoPlanning.objects.filter(user=request.user).count()
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error in get_recent_plannings: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '최근 기획 로그를 가져오는 중 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def generate_structure(request):
@@ -96,6 +148,42 @@ def generate_story(request):
         if 'error' in stories_data:
             logger.error(f"Gemini API error: {stories_data['error']}")
             stories_data = stories_data.get('fallback', {})
+        
+        # 로그인한 사용자인 경우 VideoPanning 로그 저장
+        if request.user.is_authenticated:
+            try:
+                # 제목 생성 (스토리 제목 또는 기획안의 첫 부분)
+                title = stories_data.get('stories', [{}])[0].get('title', '')
+                if not title:
+                    title = planning_text[:50] + "..." if len(planning_text) > 50 else planning_text[:50]
+                
+                # VideoPanning 생성
+                video_planning = VideoPlanning.objects.create(
+                    user=request.user,
+                    title=title,
+                    planning_text=planning_text,
+                    stories=stories_data.get('stories', []),
+                    current_step=1
+                )
+                
+                # planning_data에 옵션 정보 저장
+                planning_data = {
+                    'tone': tone,
+                    'genre': genre,
+                    'concept': concept,
+                    'target': target,
+                    'purpose': purpose,
+                    'duration': duration,
+                    'story_framework': story_framework,
+                    'development_level': development_level
+                }
+                # JSON 필드에 추가 데이터 저장 (모델 확장 없이)
+                video_planning.selected_story = {'planning_options': planning_data}
+                video_planning.save()
+                
+                logger.info(f"VideoPanning log created for user {request.user.email}")
+            except Exception as e:
+                logger.error(f"Failed to create VideoPanning log: {e}")
         
         return Response({
             'status': 'success',

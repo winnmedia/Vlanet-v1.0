@@ -52,6 +52,7 @@ export default function VideoPlanning() {
   const [showHistory, setShowHistory] = useState(false)
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null)
   const [planningTitle, setPlanningTitle] = useState('')
+  const [recentPlannings, setRecentPlannings] = useState([])
   const [planningOptions, setPlanningOptions] = useState({
     tone: '',
     genre: '',
@@ -82,6 +83,7 @@ export default function VideoPlanning() {
       navigate('/Login', { replace: true })
     } else {
       fetchPlanningHistory()
+      fetchRecentPlannings()
     }
   }, [navigate])
 
@@ -95,6 +97,17 @@ export default function VideoPlanning() {
       }
     } catch (err) {
       console.error('히스토리 로드 실패:', err)
+    }
+  }
+
+  const fetchRecentPlannings = async () => {
+    try {
+      const response = await axios.get(`/api/video-planning/recent/`)
+      if (response.data.status === 'success') {
+        setRecentPlannings(response.data.data.planning_logs || [])
+      }
+    } catch (err) {
+      console.error('최근 기획 로드 실패:', err)
     }
   }
 
@@ -190,6 +203,9 @@ export default function VideoPlanning() {
           }))
           setCurrentStep(2)
           setLoadingProgress(100)
+          
+          // 최근 기획 로그 업데이트
+          fetchRecentPlannings()
         }, 500)
       } else {
         setError(response.data.message || '스토리 생성에 실패했습니다.')
@@ -489,32 +505,12 @@ export default function VideoPlanning() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="step-content">
-            <h3>1단계: 기획안 입력</h3>
-            <p className="step-description">
-              제작하고자 하는 영상의 기획안을 입력해주세요. AI가 이를 바탕으로 여러 개의 스토리를 생성합니다.
-            </p>
-            
-            {/* 최근 시나리오 섹션 */}
-            {planningHistory.length > 0 && (
-              <div className="recent-scenarios">
-                <h4>최근 시나리오</h4>
-                <div className="recent-scenarios-list">
-                  {planningHistory.slice(0, 5).map((item) => (
-                    <div 
-                      key={item.id} 
-                      className="recent-scenario-item"
-                      onClick={() => loadHistoryItem(item.id)}
-                    >
-                      <div className="scenario-title">{item.title}</div>
-                      <div className="scenario-date">
-                        {new Date(item.created_at).toLocaleDateString('ko-KR')}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="step-content-with-sidebar">
+            <div className="step-content">
+              <h3>1단계: 기획안 입력</h3>
+              <p className="step-description">
+                제작하고자 하는 영상의 기획안을 입력해주세요. AI가 이를 바탕으로 여러 개의 스토리를 생성합니다.
+              </p>
             
             {/* 톤앤매너/장르/콘셉트 선택 */}
             <div className="planning-options">
@@ -1056,6 +1052,54 @@ export default function VideoPlanning() {
               </div>
             </div>
           </div>
+          
+          {/* 최근 기획 로그 사이드바 */}
+          <div className="recent-plannings-sidebar">
+            <h4>최근 생성한 기획</h4>
+            {recentPlannings.length > 0 ? (
+              <div className="recent-plannings-list">
+                {recentPlannings.map((planning, index) => (
+                  <div key={planning.id} className="recent-planning-item">
+                    <div className="planning-number">{index + 1}</div>
+                    <div className="planning-info">
+                      <div className="planning-title">{planning.title}</div>
+                      <div className="planning-meta">
+                        <span className="planning-date">{planning.created_at}</span>
+                        {planning.planning_options && (
+                          <div className="planning-tags">
+                            {planning.planning_options.tone && (
+                              <span className="tag tone">{planning.planning_options.tone}</span>
+                            )}
+                            {planning.planning_options.genre && (
+                              <span className="tag genre">{planning.planning_options.genre}</span>
+                            )}
+                            {planning.planning_options.target && (
+                              <span className="tag target">{planning.planning_options.target}</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="planning-status">
+                        <span className={`step-indicator step-${planning.current_step}`}>
+                          {planning.current_step === 1 && '스토리'}
+                          {planning.current_step === 2 && '씬'}
+                          {planning.current_step === 3 && '숏'}
+                          {planning.current_step === 4 && '콘티'}
+                          {planning.current_step === 5 && '완료'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-recent-plannings">
+                <p>아직 생성한 기획이 없습니다.</p>
+                <p className="hint">새로운 기획을 시작해보세요!</p>
+              </div>
+            )}
+          </div>
+        </div>
         )
 
       case 2:

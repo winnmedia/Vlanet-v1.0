@@ -26,6 +26,9 @@ urlpatterns = [
     path('update/<int:planning_id>/', views.update_planning, name='update_planning'),
     path('delete/<int:planning_id>/', views.delete_planning, name='delete_planning'),
     
+    # 최근 기획 로그 API
+    path('recent/', views.get_recent_plannings, name='get_recent_plannings'),
+    
     # 라이브러리 API (프론트엔드에서 사용하는 경로)
     path('library/', views.planning_library_view, name='planning_library'),
     path('library/<int:planning_id>/', views.get_planning_detail, name='get_planning_detail_library'),

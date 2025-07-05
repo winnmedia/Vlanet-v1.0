@@ -138,12 +138,15 @@ class DalleService:
         이미지 생성 프롬프트에서 텍스트 중심 결과를 유발하는 금지 단어들을 제거합니다.
         """
         forbidden_words = [
-            'storyboard', 'frame', 'scene description',
+            'storyboard', 'frame', 'scene description', 'scene',
             'text box', 'textbox', 'caption', 'label',
             'write', 'written', 'explained', 'annotated',
             'comic panel with narration', 'comic panel',
             'diagram', 'layout', 'template',
-            'slide', 'presentation', 'whiteboard'
+            'slide', 'presentation', 'whiteboard',
+            'panel', 'box', 'description', 'narration',
+            'subtitle', 'title card', 'text overlay',
+            'document', 'paper', 'poster', 'sign'
         ]
         
         # 대소문자 구분 없이 필터링
@@ -229,28 +232,28 @@ class DalleService:
             '운전하다': 'driving car with hands on wheel'
         }
         
-        # 구도/카메라 앵글 매핑
+        # 구도/카메라 앵글 매핑 - 더 시각적이고 구체적으로
         camera_angles = {
-            '와이드샷': 'wide shot showing full environment',
-            '미디엄샷': 'medium shot from waist up',
-            '클로즈업': 'close-up shot of face showing emotion',
-            '오버숄더': 'over-the-shoulder perspective',
-            '하이앵글': 'high angle looking down',
-            '로우앵글': 'low angle looking up dramatically',
-            '익스트림 클로즈업': 'extreme close-up on facial features',
-            '풀샷': 'full body shot showing entire figure',
-            '투샷': 'two people in frame facing each other'
+            '와이드샷': 'extremely wide landscape view',
+            '미디엄샷': 'person framed from waist up',
+            '클로즈업': 'tight shot on face filling frame',
+            '오버숄더': 'view over someone shoulder',
+            '하이앵글': 'camera high above looking down',
+            '로우앵글': 'camera near ground looking up',
+            '익스트림 클로즈업': 'macro shot of eyes only',
+            '풀샷': 'full figure head to toe',
+            '투샷': 'two people together in frame'
         }
         
-        # 조명 스타일 매핑
+        # 조명 스타일 매핑 - 더 시각적이고 구체적으로
         lighting_styles = {
-            '자연광': 'natural daylight coming through window',
-            '부드러운 조명': 'soft diffused lighting creating gentle shadows',
-            '드라마틱한 조명': 'dramatic lighting with strong contrast',
-            '역광': 'backlit creating silhouette effect',
-            '황금시간대': 'golden hour warm orange lighting',
-            '밤': 'nighttime with artificial lights',
-            '실내조명': 'indoor warm tungsten lighting'
+            '자연광': 'bright sunny daylight',
+            '부드러운 조명': 'soft even lighting no shadows',
+            '드라마틱한 조명': 'stark light and shadow contrast',
+            '역광': 'strong backlight silhouette',
+            '황금시간대': 'warm orange sunset glow',
+            '밤': 'dark night blue hour lighting',
+            '실내조명': 'cozy warm indoor lamps'
         }
         
         # 시각적 설명 변환
@@ -259,96 +262,96 @@ class DalleService:
             if korean in visual_desc:
                 translated_desc = translated_desc.replace(korean, english)
         
-        # 스타일별 프롬프트 설정
+        # 스타일별 프롬프트 설정 - 더 시각적이고 구체적으로
         style_prompts = {
             'minimal': {
-                'base': "Minimalist illustration",
+                'base': "Minimalist line drawing",
                 'details': [
-                    "simple line art",
-                    "clean composition",
-                    "minimal details",
-                    "focus on essential elements"
+                    "simple clean lines",
+                    "empty negative space",
+                    "essential shapes only",
+                    "monochromatic"
                 ]
             },
             'realistic': {
-                'base': "Highly realistic scene illustration",
+                'base': "Photorealistic cinematic shot",
                 'details': [
-                    "photorealistic rendering",
-                    "detailed textures and materials",
-                    "realistic proportions",
-                    "natural lighting and shadows"
+                    "hyperrealistic details",
+                    "natural textures",
+                    "volumetric lighting",
+                    "depth of field"
                 ]
             },
             'sketch': {
-                'base': "Professional sketch in pencil",
+                'base': "Rough pencil sketch artwork",
                 'details': [
-                    "rough pencil sketch style",
-                    "dynamic line work",
-                    "cross-hatching for shadows",
-                    "expressive and loose strokes"
+                    "hand-drawn pencil strokes",
+                    "sketchy lines",
+                    "shading with crosshatching",
+                    "artistic pencil drawing"
                 ]
             },
             'cartoon': {
-                'base': "Cartoon-style illustration",
+                'base': "Vibrant cartoon artwork",
                 'details': [
-                    "animated cartoon style",
-                    "exaggerated expressions",
-                    "bold outlines",
-                    "simplified but expressive forms"
+                    "bright cartoon colors",
+                    "thick black outlines",
+                    "cel-shaded style",
+                    "animated character design"
                 ]
             },
             'cinematic': {
-                'base': "Cinematic scene in film noir style",
+                'base': "Dramatic cinematic shot",
                 'details': [
-                    "dramatic film noir lighting",
-                    "high contrast black and white",
-                    "cinematic framing",
-                    "professional movie scene quality"
+                    "film noir atmosphere",
+                    "chiaroscuro lighting",
+                    "wide aspect ratio",
+                    "movie still quality"
                 ]
             },
             'watercolor': {
-                'base': "Watercolor painting illustration",
+                'base': "Soft watercolor painting",
                 'details': [
-                    "soft watercolor painting",
-                    "flowing color blends",
-                    "translucent washes",
-                    "artistic brush strokes"
+                    "watercolor paint on paper",
+                    "wet-on-wet technique",
+                    "flowing paint bleeds",
+                    "transparent color layers"
                 ]
             },
             'digital': {
-                'base': "Modern digital art illustration",
+                'base': "Digital artwork rendering",
                 'details': [
-                    "digital art style",
-                    "vibrant colors",
-                    "crisp digital rendering",
-                    "contemporary aesthetic"
+                    "glossy digital painting",
+                    "vibrant neon colors",
+                    "smooth gradients",
+                    "futuristic aesthetic"
                 ]
             },
             'noir': {
-                'base': "Film noir black and white illustration",
+                'base': "Black and white film noir",
                 'details': [
-                    "stark black and white contrast",
-                    "dramatic shadows",
-                    "vintage noir atmosphere",
-                    "moody lighting"
+                    "high contrast monochrome",
+                    "deep shadows",
+                    "1940s noir style",
+                    "venetian blind shadows"
                 ]
             },
             'pastel': {
-                'base': "Soft pastel illustration",
+                'base': "Soft pastel artwork",
                 'details': [
-                    "soft pastel colors",
-                    "gentle color palette",
-                    "dreamy atmosphere",
-                    "delicate rendering"
+                    "chalk pastel on paper",
+                    "muted pastel tones",
+                    "soft edges",
+                    "dreamy soft focus"
                 ]
             },
             'comic': {
-                'base': "Comic book style illustration",
+                'base': "Comic book artwork",
                 'details': [
-                    "comic book art style",
-                    "dynamic action poses",
-                    "speech bubble areas avoided",
-                    "bold comic book colors"
+                    "comic book art",
+                    "dynamic action shot",
+                    "ben day dots",
+                    "vibrant pop art colors"
                 ]
             }
         }
@@ -356,15 +359,16 @@ class DalleService:
         # 선택된 스타일 가져오기 (기본값: sketch)
         selected_style = style_prompts.get(style, style_prompts['sketch'])
         
-        # 프롬프트 구성
+        # 프롬프트 구성 - 시각적 묘사 중심으로
         prompt_parts = []
         
         # 1. 스타일 기본 설정
         prompt_parts.append(selected_style['base'])
         
-        # 2. 구체적인 장면 묘사
+        # 2. 구체적인 장면 묘사 (Scene: 제거)
         if translated_desc:
-            prompt_parts.append(f"Scene: {translated_desc}")
+            # "Scene:" 같은 텍스트 지향적 단어 제거
+            prompt_parts.append(translated_desc)
         
         # 3. 카메라 앵글 추가
         if composition in camera_angles:
@@ -377,16 +381,13 @@ class DalleService:
         # 5. 스타일별 세부사항 추가
         prompt_parts.extend(selected_style['details'])
         
-        # 6. 공통 시각적 요소
+        # 6. 시각적 요소만 강조 (설명적 표현 제거)
         prompt_parts.extend([
-            "professional illustration quality",
-            "clear visual storytelling",
-            "expressive character emotions",
-            "proper spatial composition"
+            "cinematic composition",
+            "vivid illustration",
+            "NO text, NO labels, NO captions, NO writing",
+            "pure visual art without any text elements"
         ])
-        
-        # 7. 텍스트 제외 (마지막에 강조)
-        prompt_parts.append("NO TEXT OR LETTERS IN THE IMAGE")
         
         # 최종 프롬프트 조합
         prompt = ". ".join(prompt_parts)

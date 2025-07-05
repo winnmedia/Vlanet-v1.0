@@ -592,22 +592,29 @@ export default function VideoPlanning() {
               <div className="development-level">
                 <label>스토리 전개 강도</label>
                 <div className="level-slider">
+                  <div 
+                    className="slider-progress" 
+                    style={{
+                      width: `${((planningOptions.developmentLevel === 'minimal' ? 1 : 
+                                  planningOptions.developmentLevel === 'light' ? 2 :
+                                  planningOptions.developmentLevel === 'balanced' ? 3 : 4) - 1) * 33.33}%`
+                    }}
+                  />
                   <input
                     type="range"
                     min="1"
-                    max="5"
+                    max="4"
+                    step="1"
                     value={planningOptions.developmentLevel === 'minimal' ? 1 : 
                            planningOptions.developmentLevel === 'light' ? 2 :
-                           planningOptions.developmentLevel === 'balanced' ? 3 :
-                           planningOptions.developmentLevel === 'detailed' ? 4 : 5}
+                           planningOptions.developmentLevel === 'balanced' ? 3 : 4}
                     onChange={(e) => {
                       const level = parseInt(e.target.value);
                       const levelMap = {
                         1: 'minimal',
                         2: 'light',
                         3: 'balanced',
-                        4: 'detailed',
-                        5: 'comprehensive'
+                        4: 'detailed'
                       };
                       setPlanningOptions(prev => ({ ...prev, developmentLevel: levelMap[level] }));
                     }}
@@ -617,7 +624,6 @@ export default function VideoPlanning() {
                     <span className={planningOptions.developmentLevel === 'light' ? 'active' : ''}>가벼움</span>
                     <span className={planningOptions.developmentLevel === 'balanced' ? 'active' : ''}>균형</span>
                     <span className={planningOptions.developmentLevel === 'detailed' ? 'active' : ''}>상세</span>
-                    <span className={planningOptions.developmentLevel === 'comprehensive' ? 'active' : ''}>종합적</span>
                   </div>
                 </div>
               </div>

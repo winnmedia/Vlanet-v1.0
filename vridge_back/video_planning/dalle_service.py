@@ -40,16 +40,33 @@ class DalleService:
                     self.client = OpenAI(api_key=self.api_key)
                     logger.info("✅ Method 1: OpenAI client initialized with direct API key")
                 except Exception as e1:
-                    logger.warning(f"❌ Method 1 failed: {e1}")
+                    logger.warning(f"❌ Method 1 failed (proxy issue?): {e1}")
                     
                     try:
-                        # 방법 2: 환경변수 설정 후 초기화
+                        # 방법 2: 환경변수 설정 후 초기화 (프록시 이슈 회피)
                         os.environ['OPENAI_API_KEY'] = self.api_key
+                        # 프록시 관련 환경변수 제거
+                        for proxy_var in ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']:
+                            if proxy_var in os.environ:
+                                logger.info(f"Removing proxy env var: {proxy_var}")
+                                del os.environ[proxy_var]
+                        
                         self.client = OpenAI()
                         logger.info("✅ Method 2: OpenAI client initialized via environment variable")
                     except Exception as e2:
                         logger.error(f"❌ Method 2 failed: {e2}")
-                        raise e2
+                        
+                        try:
+                            # 방법 3: 최소한의 설정으로 초기화
+                            import httpx
+                            self.client = OpenAI(
+                                api_key=self.api_key,
+                                http_client=httpx.Client()
+                            )
+                            logger.info("✅ Method 3: OpenAI client initialized with custom HTTP client")
+                        except Exception as e3:
+                            logger.error(f"❌ Method 3 failed: {e3}")
+                            raise e3
                 
                 # 클라이언트가 성공적으로 초기화되면 사용 가능으로 설정
                 if self.client:

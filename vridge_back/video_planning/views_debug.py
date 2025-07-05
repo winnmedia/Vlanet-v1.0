@@ -28,9 +28,36 @@ def test_openai_direct(request):
         from openai import OpenAI
         logger.info("✅ OpenAI library imported")
         
-        # 클라이언트 초기화
-        client = OpenAI(api_key=api_key)
-        logger.info("✅ OpenAI client initialized")
+        # 클라이언트 초기화 - 프록시 관련 이슈 해결
+        try:
+            client = OpenAI(api_key=api_key)
+            logger.info("✅ OpenAI client initialized (method 1)")
+        except Exception as e1:
+            logger.warning(f"Method 1 failed (proxy issue?): {e1}")
+            try:
+                # 프록시 환경변수 제거
+                for proxy_var in ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']:
+                    if proxy_var in os.environ:
+                        logger.info(f"Removing proxy env var: {proxy_var}")
+                        del os.environ[proxy_var]
+                
+                # 환경변수 설정 후 재시도
+                os.environ['OPENAI_API_KEY'] = api_key
+                client = OpenAI()
+                logger.info("✅ OpenAI client initialized (method 2)")
+            except Exception as e2:
+                logger.error(f"Method 2 failed: {e2}")
+                try:
+                    # 방법 3: httpx 클라이언트 사용
+                    import httpx
+                    client = OpenAI(
+                        api_key=api_key,
+                        http_client=httpx.Client()
+                    )
+                    logger.info("✅ OpenAI client initialized (method 3)")
+                except Exception as e3:
+                    logger.error(f"All methods failed: {e3}")
+                    raise e3
         
         # 이미지 생성 테스트
         logger.info("🎨 Testing DALL-E 3 image generation...")

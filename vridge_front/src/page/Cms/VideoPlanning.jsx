@@ -56,9 +56,15 @@ export default function VideoPlanning() {
     tone: '',
     genre: '',
     concept: '',
+    toneCustom: '',
+    genreCustom: '',
+    conceptCustom: '',
     storyFramework: 'classic',  // 기본값: 클래식 기승전결
     developmentLevel: 'balanced' // 기본값: 균형잡힌 전개
   })
+  const [showCustomTone, setShowCustomTone] = useState(false)
+  const [showCustomGenre, setShowCustomGenre] = useState(false)
+  const [showCustomConcept, setShowCustomConcept] = useState(false)
   const [storyboardStyle, setStoryboardStyle] = useState('minimal')
 
   useEffect(() => {
@@ -153,9 +159,9 @@ export default function VideoPlanning() {
         `/api/video-planning/generate/story/`,
         { 
           planning_text: planningData.planning,
-          tone: planningOptions.tone,
-          genre: planningOptions.genre,
-          concept: planningOptions.concept,
+          tone: planningOptions.tone === 'custom' ? planningOptions.toneCustom : planningOptions.tone,
+          genre: planningOptions.genre === 'custom' ? planningOptions.genreCustom : planningOptions.genre,
+          concept: planningOptions.concept === 'custom' ? planningOptions.conceptCustom : planningOptions.concept,
           story_framework: planningOptions.storyFramework,
           development_level: planningOptions.developmentLevel
         }
@@ -502,51 +508,217 @@ export default function VideoPlanning() {
             <div className="planning-options">
               <div className="option-group">
                 <label>톤앤매너</label>
-                <select 
-                  value={planningOptions.tone} 
-                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, tone: e.target.value }))}
-                >
-                  <option value="">선택하세요</option>
-                  <option value="professional">전문적이고 신뢰감 있는</option>
-                  <option value="friendly">친근하고 따뜻한</option>
-                  <option value="dynamic">역동적이고 에너지 넘치는</option>
-                  <option value="emotional">감성적이고 감동적인</option>
-                  <option value="humorous">유머러스하고 재미있는</option>
-                  <option value="minimal">미니멀하고 세련된</option>
-                </select>
+                <div className="custom-select-wrapper">
+                  {!showCustomTone ? (
+                    <select 
+                      value={planningOptions.tone} 
+                      onChange={(e) => {
+                        if (e.target.value === '직접입력') {
+                          setShowCustomTone(true)
+                          setPlanningOptions(prev => ({ ...prev, tone: '' }))
+                        } else {
+                          setPlanningOptions(prev => ({ ...prev, tone: e.target.value }))
+                        }
+                      }}
+                    >
+                      <option value="">선택하세요</option>
+                      <optgroup label="기본 톤">
+                        <option value="밝고 경쾌한">밝고 경쾌한</option>
+                        <option value="진중하고 차분한">진중하고 차분한</option>
+                        <option value="감성적이고 따뜻한">감성적이고 따뜻한</option>
+                        <option value="역동적이고 활기찬">역동적이고 활기찬</option>
+                        <option value="모던하고 세련된">모던하고 세련된</option>
+                      </optgroup>
+                      <optgroup label="정서적 톤">
+                        <option value="웅장하고 장대한">웅장하고 장대한</option>
+                        <option value="서정적이고 아름다운">서정적이고 아름다운</option>
+                        <option value="신비롭고 몽환적인">신비롭고 몽환적인</option>
+                        <option value="친근하고 편안한">친근하고 편안한</option>
+                        <option value="향수를 불러일으키는">향수를 불러일으키는</option>
+                      </optgroup>
+                      <optgroup label="스타일리시 톤">
+                        <option value="미니멀하고 깔끔한">미니멀하고 깔끔한</option>
+                        <option value="럭셔리하고 고급스러운">럭셔리하고 고급스러운</option>
+                        <option value="아티스틱하고 예술적인">아티스틱하고 예술적인</option>
+                        <option value="솔직하고 진정성 있는">솔직하고 진정성 있는</option>
+                        <option value="레트로하고 빈티지한">레트로하고 빈티지한</option>
+                      </optgroup>
+                      <optgroup label="특별한 톤">
+                        <option value="재미있고 유쾌한">재미있고 유쾌한</option>
+                        <option value="긴장감 있고 스릴 넘치는">긴장감 있고 스릴 넘치는</option>
+                        <option value="차분하고 명상적인">차분하고 명상적인</option>
+                        <option value="테크놀로지컬하고 미래적인">테크놀로지컬하고 미래적인</option>
+                        <option value="자연친화적이고 에코">자연친화적이고 에코</option>
+                      </optgroup>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                    </select>
+                  ) : (
+                    <div className="custom-input-wrapper">
+                      <input
+                        type="text"
+                        placeholder="원하시는 톤앤매너를 자유롭게 입력해주세요"
+                        value={planningOptions.toneCustom}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, toneCustom: e.target.value, tone: 'custom' }))}
+                        className="ty01"
+                      />
+                      <button 
+                        className="cancel-custom-btn"
+                        onClick={() => {
+                          setShowCustomTone(false)
+                          setPlanningOptions(prev => ({ ...prev, tone: '', toneCustom: '' }))
+                        }}
+                      >
+                        선택목록으로
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               
               <div className="option-group">
                 <label>장르</label>
-                <select 
-                  value={planningOptions.genre} 
-                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, genre: e.target.value }))}
-                >
-                  <option value="">선택하세요</option>
-                  <option value="promotional">홍보/프로모션</option>
-                  <option value="documentary">다큐멘터리</option>
-                  <option value="educational">교육/설명</option>
-                  <option value="narrative">내러티브/스토리</option>
-                  <option value="interview">인터뷰/증언</option>
-                  <option value="product">제품 소개</option>
-                  <option value="corporate">기업 소개</option>
-                </select>
+                <div className="custom-select-wrapper">
+                  {!showCustomGenre ? (
+                    <select 
+                      value={planningOptions.genre} 
+                      onChange={(e) => {
+                        if (e.target.value === '직접입력') {
+                          setShowCustomGenre(true)
+                          setPlanningOptions(prev => ({ ...prev, genre: '' }))
+                        } else {
+                          setPlanningOptions(prev => ({ ...prev, genre: e.target.value }))
+                        }
+                      }}
+                    >
+                      <option value="">선택하세요</option>
+                      <optgroup label="기업/비즈니스">
+                        <option value="기업 홍보">기업 홍보</option>
+                        <option value="제품 소개">제품 소개</option>
+                        <option value="브랜드 필름">브랜드 필름</option>
+                        <option value="브랜드 스토리">브랜드 스토리</option>
+                        <option value="IR/투자 설명">IR/투자 설명</option>
+                        <option value="채용 홍보">채용 홍보</option>
+                      </optgroup>
+                      <optgroup label="다큐/교육">
+                        <option value="다큐멘터리">다큐멘터리</option>
+                        <option value="교육/강의">교육/강의</option>
+                        <option value="튜토리얼">튜토리얼</option>
+                        <option value="하우투(How-to)">하우투(How-to)</option>
+                        <option value="온라인 코스">온라인 코스</option>
+                      </optgroup>
+                      <optgroup label="엔터테인먼트">
+                        <option value="뮤직비디오">뮤직비디오</option>
+                        <option value="웹드라마">웹드라마</option>
+                        <option value="예능/방송">예능/방송</option>
+                        <option value="트레일러">트레일러</option>
+                        <option value="티저">티저</option>
+                      </optgroup>
+                      <optgroup label="마케팅/광고">
+                        <option value="광고 CF">광고 CF</option>
+                        <option value="소셜 미디어 콘텐츠">소셜 미디어 콘텐츠</option>
+                        <option value="리뷰/언박싱">리뷰/언박싱</option>
+                        <option value="이벤트 프로모션">이벤트 프로모션</option>
+                        <option value="캠페인 영상">캠페인 영상</option>
+                      </optgroup>
+                      <optgroup label="기타">
+                        <option value="예술 작품">예술 작품</option>
+                        <option value="개인 브이로그">개인 브이로그</option>
+                        <option value="여행 브이로그">여행 브이로그</option>
+                        <option value="푸드 콘텐츠">푸드 콘텐츠</option>
+                        <option value="부동산 투어">부동산 투어</option>
+                      </optgroup>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                    </select>
+                  ) : (
+                    <div className="custom-input-wrapper">
+                      <input
+                        type="text"
+                        placeholder="원하시는 장르를 자유롭게 입력해주세요"
+                        value={planningOptions.genreCustom}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, genreCustom: e.target.value, genre: 'custom' }))}
+                        className="ty01"
+                      />
+                      <button 
+                        className="cancel-custom-btn"
+                        onClick={() => {
+                          setShowCustomGenre(false)
+                          setPlanningOptions(prev => ({ ...prev, genre: '', genreCustom: '' }))
+                        }}
+                      >
+                        선택목록으로
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               
               <div className="option-group">
                 <label>콘셉트</label>
-                <select 
-                  value={planningOptions.concept} 
-                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, concept: e.target.value }))}
-                >
-                  <option value="">선택하세요</option>
-                  <option value="innovation">혁신과 변화</option>
-                  <option value="tradition">전통과 신뢰</option>
-                  <option value="lifestyle">라이프스타일</option>
-                  <option value="solution">문제 해결</option>
-                  <option value="experience">경험과 체험</option>
-                  <option value="community">커뮤니티와 소통</option>
-                </select>
+                <div className="custom-select-wrapper">
+                  {!showCustomConcept ? (
+                    <select 
+                      value={planningOptions.concept} 
+                      onChange={(e) => {
+                        if (e.target.value === '직접입력') {
+                          setShowCustomConcept(true)
+                          setPlanningOptions(prev => ({ ...prev, concept: '' }))
+                        } else {
+                          setPlanningOptions(prev => ({ ...prev, concept: e.target.value }))
+                        }
+                      }}
+                    >
+                      <option value="">선택하세요</option>
+                      <optgroup label="스토리텔링 방식">
+                        <option value="스토리텔링">스토리텔링</option>
+                        <option value="인터뷰/대담">인터뷰/대담</option>
+                        <option value="모큐멘터리">모큐멘터리</option>
+                        <option value="내레이션">내레이션</option>
+                        <option value="다큐멘터리">다큐멘터리</option>
+                      </optgroup>
+                      <optgroup label="시각적 스타일">
+                        <option value="모션그래픽">모션그래픽</option>
+                        <option value="2D 애니메이션">2D 애니메이션</option>
+                        <option value="3D 애니메이션">3D 애니메이션</option>
+                        <option value="실사 촬영">실사 촬영</option>
+                        <option value="혼합 기법">혼합 기법</option>
+                      </optgroup>
+                      <optgroup label="표현 방식">
+                        <option value="캐릭터 중심">캐릭터 중심</option>
+                        <option value="타입아웃">타입아웃</option>
+                        <option value="인포그래픽">인포그래픽</option>
+                        <option value="타임랩스">타임랩스</option>
+                        <option value="브이로그 스타일">브이로그 스타일</option>
+                      </optgroup>
+                      <optgroup label="특수 기법">
+                        <option value="드론 촬영">드론 촬영</option>
+                        <option value="VR/360도">VR/360도</option>
+                        <option value="원테이크">원테이크</option>
+                        <option value="타임라인">타임라인</option>
+                        <option value="페이크 다큐">페이크 다큐</option>
+                      </optgroup>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                    </select>
+                  ) : (
+                    <div className="custom-input-wrapper">
+                      <input
+                        type="text"
+                        placeholder="원하시는 콘셉트를 자유롭게 입력해주세요"
+                        value={planningOptions.conceptCustom}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, conceptCustom: e.target.value, concept: 'custom' }))}
+                        className="ty01"
+                      />
+                      <button 
+                        className="cancel-custom-btn"
+                        onClick={() => {
+                          setShowCustomConcept(false)
+                          setPlanningOptions(prev => ({ ...prev, concept: '', conceptCustom: '' }))
+                        }}
+                      >
+                        선택목록으로
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -591,40 +763,39 @@ export default function VideoPlanning() {
               {/* 디벨롭 레벨 선택 */}
               <div className="development-level">
                 <label>스토리 전개 강도</label>
-                <div className="level-slider">
-                  <div 
-                    className="slider-progress" 
-                    style={{
-                      width: `${((planningOptions.developmentLevel === 'minimal' ? 1 : 
-                                  planningOptions.developmentLevel === 'light' ? 2 :
-                                  planningOptions.developmentLevel === 'balanced' ? 3 : 4) - 1) * 33.33}%`
-                    }}
-                  />
-                  <input
-                    type="range"
-                    min="1"
-                    max="4"
-                    step="1"
-                    value={planningOptions.developmentLevel === 'minimal' ? 1 : 
-                           planningOptions.developmentLevel === 'light' ? 2 :
-                           planningOptions.developmentLevel === 'balanced' ? 3 : 4}
-                    onChange={(e) => {
-                      const level = parseInt(e.target.value);
-                      const levelMap = {
-                        1: 'minimal',
-                        2: 'light',
-                        3: 'balanced',
-                        4: 'detailed'
-                      };
-                      setPlanningOptions(prev => ({ ...prev, developmentLevel: levelMap[level] }));
-                    }}
-                  />
-                  <div className="level-labels">
-                    <span className={planningOptions.developmentLevel === 'minimal' ? 'active' : ''}>간결</span>
-                    <span className={planningOptions.developmentLevel === 'light' ? 'active' : ''}>가벼움</span>
-                    <span className={planningOptions.developmentLevel === 'balanced' ? 'active' : ''}>균형</span>
-                    <span className={planningOptions.developmentLevel === 'detailed' ? 'active' : ''}>상세</span>
-                  </div>
+                <div className="level-buttons">
+                  <button
+                    className={`level-btn ${planningOptions.developmentLevel === 'minimal' ? 'active' : ''}`}
+                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal' }))}
+                  >
+                    <span className="level-icon">📝</span>
+                    <span className="level-name">간결</span>
+                    <span className="level-desc">핵심만 간단히</span>
+                  </button>
+                  <button
+                    className={`level-btn ${planningOptions.developmentLevel === 'light' ? 'active' : ''}`}
+                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light' }))}
+                  >
+                    <span className="level-icon">📄</span>
+                    <span className="level-name">가벼움</span>
+                    <span className="level-desc">적당한 설명</span>
+                  </button>
+                  <button
+                    className={`level-btn ${planningOptions.developmentLevel === 'balanced' ? 'active' : ''}`}
+                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced' }))}
+                  >
+                    <span className="level-icon">📚</span>
+                    <span className="level-name">균형</span>
+                    <span className="level-desc">균형잡힌 전개</span>
+                  </button>
+                  <button
+                    className={`level-btn ${planningOptions.developmentLevel === 'detailed' ? 'active' : ''}`}
+                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed' }))}
+                  >
+                    <span className="level-icon">📖</span>
+                    <span className="level-name">상세</span>
+                    <span className="level-desc">풍부한 묘사</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -721,88 +892,23 @@ export default function VideoPlanning() {
             {/* 콘티 스타일 선택 */}
             <div className="storyboard-style-selector">
               <label htmlFor="storyboard-style">콘티 그림 스타일</label>
-              <div className="style-options-grid">
-                <div 
-                  className={`style-option ${storyboardStyle === 'minimal' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('minimal')}
-                  style={{borderColor: '#2196F3', backgroundColor: storyboardStyle === 'minimal' ? '#2196F3' : 'transparent'}}
-                >
-                  <span className="style-name">미니멀</span>
-                  <span className="style-desc">깔끔한 라인아트</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'realistic' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('realistic')}
-                  style={{borderColor: '#FF5722', backgroundColor: storyboardStyle === 'realistic' ? '#FF5722' : 'transparent'}}
-                >
-                  <span className="style-name">사실적</span>
-                  <span className="style-desc">포토리얼리스틱</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'sketch' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('sketch')}
-                  style={{borderColor: '#795548', backgroundColor: storyboardStyle === 'sketch' ? '#795548' : 'transparent'}}
-                >
-                  <span className="style-name">스케치</span>
-                  <span className="style-desc">연필 드로잉</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'cartoon' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('cartoon')}
-                  style={{borderColor: '#E91E63', backgroundColor: storyboardStyle === 'cartoon' ? '#E91E63' : 'transparent'}}
-                >
-                  <span className="style-name">만화풍</span>
-                  <span className="style-desc">애니메이션 스타일</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'cinematic' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('cinematic')}
-                  style={{borderColor: '#673AB7', backgroundColor: storyboardStyle === 'cinematic' ? '#673AB7' : 'transparent'}}
-                >
-                  <span className="style-name">영화적</span>
-                  <span className="style-desc">시네마틱 느와르</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'watercolor' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('watercolor')}
-                  style={{borderColor: '#00BCD4', backgroundColor: storyboardStyle === 'watercolor' ? '#00BCD4' : 'transparent'}}
-                >
-                  <span className="style-name">수채화</span>
-                  <span className="style-desc">부드러운 수채화</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'digital' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('digital')}
-                  style={{borderColor: '#4CAF50', backgroundColor: storyboardStyle === 'digital' ? '#4CAF50' : 'transparent'}}
-                >
-                  <span className="style-name">디지털아트</span>
-                  <span className="style-desc">모던 디지털</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'noir' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('noir')}
-                  style={{borderColor: '#212121', backgroundColor: storyboardStyle === 'noir' ? '#212121' : 'transparent'}}
-                >
-                  <span className="style-name">느와르</span>
-                  <span className="style-desc">흑백 대비</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'pastel' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('pastel')}
-                  style={{borderColor: '#F8BBD0', backgroundColor: storyboardStyle === 'pastel' ? '#F8BBD0' : 'transparent'}}
-                >
-                  <span className="style-name">파스텔</span>
-                  <span className="style-desc">부드러운 색감</span>
-                </div>
-                <div 
-                  className={`style-option ${storyboardStyle === 'comic' ? 'active' : ''}`}
-                  onClick={() => setStoryboardStyle('comic')}
-                  style={{borderColor: '#FFC107', backgroundColor: storyboardStyle === 'comic' ? '#FFC107' : 'transparent'}}
-                >
-                  <span className="style-name">코믹북</span>
-                  <span className="style-desc">미국 만화 스타일</span>
-                </div>
-              </div>
+              <select 
+                id="storyboard-style"
+                className="style-select"
+                value={storyboardStyle}
+                onChange={(e) => setStoryboardStyle(e.target.value)}
+              >
+                <option value="minimal">미니멀 - 깔끔한 라인아트</option>
+                <option value="realistic">사실적 - 포토리얼리스틱</option>
+                <option value="sketch">스케치 - 연필 드로잉</option>
+                <option value="cartoon">만화풍 - 애니메이션 스타일</option>
+                <option value="cinematic">영화적 - 시네마틱 느와르</option>
+                <option value="watercolor">수채화 - 부드러운 수채화</option>
+                <option value="digital">디지털아트 - 모던 디지털</option>
+                <option value="noir">느와르 - 흑백 대비</option>
+                <option value="pastel">파스텔 - 부드러운 색감</option>
+                <option value="comic">코믹북 - 미국 만화 스타일</option>
+              </select>
             </div>
             
             <div className="scenes-with-storyboards-container">

@@ -726,175 +726,57 @@
         font-size: 16px;
         font-weight: 600;
         color: #333;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
       }
 
-      .level-slider {
-        position: relative;
-        padding: 0 12px;
-        margin-top: 20px;
-        
-        input[type="range"] {
-          width: 100%;
-          height: 6px;
-          background: #e0e0e0;
-          border-radius: 3px;
-          outline: none;
-          -webkit-appearance: none;
-          appearance: none;
-          margin: 0;
+      .level-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+
+        .level-btn {
+          padding: 16px 12px;
+          background: white;
+          border: 2px solid #e0e0e0;
+          border-radius: 10px;
           cursor: pointer;
-          position: relative;
-          z-index: 2;
-
-          &::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #012fff;
-            border: 2px solid white;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            z-index: 3;
-
-            &:hover {
-              transform: scale(1.1);
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
-            }
-          }
-
-          &::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #012fff;
-            border: 2px solid white;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            z-index: 3;
-            border: 0;
-
-            &:hover {
-              transform: scale(1.1);
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
-            }
-          }
-
-          &::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 6px;
-            cursor: pointer;
-            background: transparent;
-            border-radius: 3px;
-          }
-
-          &::-moz-range-track {
-            width: 100%;
-            height: 6px;
-            cursor: pointer;
-            background: transparent;
-            border-radius: 3px;
-          }
-        }
-
-        .level-labels {
+          transition: all 0.3s ease;
+          text-align: center;
           display: flex;
-          justify-content: space-between;
-          position: relative;
-          margin-top: 20px;
-          padding: 0 8px;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
 
-          span {
-            position: relative;
-            font-size: 13px;
-            color: #666;
-            transition: all 0.2s ease;
-            white-space: nowrap;
+          &:hover {
+            border-color: #4a90e2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
+
+          &.active {
+            border-color: #012fff;
+            background: #f0f7ff;
             
-            // 점 표시기를 span 위에 배치
-            &::before {
-              content: '';
-              position: absolute;
-              top: -32px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 6px;
-              height: 6px;
-              background: #ddd;
-              border-radius: 50%;
-              transition: all 0.2s ease;
-            }
-
-            &.active {
+            .level-name {
               color: #012fff;
               font-weight: 600;
-
-              &::before {
-                width: 10px;
-                height: 10px;
-                background: #012fff;
-                top: -34px;
-              }
-            }
-
-            // 첫 번째 레이블 - 왼쪽 정렬
-            &:first-child {
-              position: absolute;
-              left: 0;
-              transform: translateX(0);
-              
-              &::before {
-                left: 50%;
-                transform: translateX(-50%);
-              }
-            }
-
-            // 두 번째 레이블 - 33.33% 위치
-            &:nth-child(2) {
-              position: absolute;
-              left: 33.33%;
-              transform: translateX(-50%);
-            }
-
-            // 세 번째 레이블 - 66.66% 위치
-            &:nth-child(3) {
-              position: absolute;
-              left: 66.66%;
-              transform: translateX(-50%);
-            }
-
-            // 마지막 레이블 - 오른쪽 정렬
-            &:last-child {
-              position: absolute;
-              right: 0;
-              left: auto;
-              transform: translateX(0);
-              
-              &::before {
-                left: 50%;
-                transform: translateX(-50%);
-              }
             }
           }
-        }
 
-        // 슬라이더 진행률 표시 (동적으로 JavaScript에서 제어)
-        .slider-progress {
-          position: absolute;
-          top: 7px;
-          left: 12px;
-          height: 6px;
-          background: linear-gradient(to right, #4a90e2, #012fff);
-          border-radius: 3px;
-          pointer-events: none;
-          transition: width 0.2s ease;
-          z-index: 1;
+          .level-icon {
+            font-size: 24px;
+          }
+
+          .level-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+          }
+
+          .level-desc {
+            font-size: 12px;
+            color: #666;
+          }
         }
       }
     }

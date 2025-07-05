@@ -148,79 +148,36 @@ class DalleService:
         # 한국어를 영어로 변환
         translated_desc = self._translate_korean_to_english(visual_desc)
         
-        # 구성과 조명 정보 추가 (있을 경우)
-        composition = frame_data.get('composition', '')
-        lighting = frame_data.get('lighting', '')
+        # 극도로 단순한 프롬프트 - DALL-E가 절대 텍스트를 그리지 못하도록
+        # 스타일에 관계없이 모두 단순하게
+        prompt = f"{translated_desc}"
         
-        # 구성과 조명도 영어로 변환
-        composition_desc = ''
-        lighting_desc = ''
-        if composition:
-            comp_en = self._translate_composition(composition)
-            # shot이라는 단어를 피하고 다른 표현 사용
-            if 'closeup' in comp_en:
-                composition_desc = 'close-up perspective'
-            elif 'medium' in comp_en:
-                composition_desc = 'mid-distance view'
-            elif 'wide' in comp_en:
-                composition_desc = 'wide angle'
-            elif 'full' in comp_en:
-                composition_desc = 'full body view'
-            else:
-                composition_desc = comp_en
-                
-        if lighting:
-            lighting_desc = self._translate_lighting(lighting)
-        
-        # 영화의 한 장면처럼 묘사 - 콘티/스토리보드 언급 절대 금지
+        # 스타일 키워드만 추가 (아주 짧게)
         if style == 'minimal' or style == 'sketch':
-            # 연필 스케치 스타일
-            prompt = f"A black-and-white pencil drawing of {translated_desc}"
-            if composition_desc:
-                prompt = f"{prompt}, {composition_desc}"
-            if lighting_desc:
-                prompt = f"{prompt}. The lighting is {lighting_desc}"
-            prompt = f"{prompt}. Drawn in realistic pencil sketch style. No words, no labels, no boxes. Only the visual."
-        
+            prompt = f"pencil sketch {prompt}"
         elif style == 'realistic':
-            # 사실적인 사진 스타일
-            prompt = f"A photorealistic image of {translated_desc}"
-            if composition_desc:
-                prompt = f"{prompt}, captured from {composition_desc}"
-            if lighting_desc:
-                prompt = f"{prompt}. {lighting_desc.capitalize()} illuminates everything"
-            prompt = f"{prompt}. Photography style, no words or labels."
-        
+            prompt = f"photo {prompt}"
         elif style == 'watercolor':
-            # 수채화 스타일
-            prompt = f"A soft watercolor painting depicting {translated_desc}"
-            if lighting_desc:
-                prompt = f"{prompt}. The atmosphere has {lighting_desc}"
-            prompt = f"{prompt}. Artistic watercolor style with no words."
-        
+            prompt = f"watercolor {prompt}"
         elif style == 'cinematic':
-            # 영화적 스타일
-            prompt = f"A cinematic photograph of {translated_desc}"
-            if composition_desc:
-                prompt = f"{prompt}, filmed from {composition_desc}"
-            if lighting_desc:
-                prompt = f"{prompt}. Dramatic {lighting_desc} creates atmosphere"
-            prompt = f"{prompt}. Movie still style, no words or graphics."
+            prompt = f"cinematic {prompt}"
         
-        else:
-            # 기본 스타일 - 단순한 일러스트
-            prompt = f"An illustration of {translated_desc}. Simple artistic style. No words, only the visual image."
+        # 마지막에 반드시 추가
+        prompt = f"{prompt}, no text"
         
-        # 프롬프트 최종 정리 (금지 단어 제거는 이미 피해서 작성했으므로 생략)
+        # 프롬프트 최종 정리
         prompt = ' '.join(prompt.split())
         
-        logger.info(f"Final DALL-E prompt: {prompt}")
+        logger.info(f"Final DALL-E prompt (극도로 단순화): {prompt}")
         return prompt
     
     def _translate_korean_to_english(self, text):
         """
         한국어 텍스트를 영어로 간단히 변환합니다.
         """
+        # 먼저 텍스트 트리거 패턴 제거
+        text = self._clean_text_triggers(text)
+        
         # 복합 표현 먼저 처리 (순서 중요!)
         translations = [
             # 복합 동작 (가장 긴 패턴부터)
@@ -228,6 +185,11 @@ class DalleService:
             ('카페에 들어가는 남자', 'man walks into cafe'),
             ('회의실에서 프레젠테이션하는 여성', 'woman giving presentation in meeting room'),
             ('공원에서 뛰어노는 아이들', 'children running in park playground'),
+            ('남자가 걸어가는 모습', 'man walking'),
+            ('회의실에서 프레젠테이션', 'presentation in meeting room'),
+            ('공원에서 뛰는 아이들', 'children running in park'),
+            ('카페 입구 장면', 'cafe entrance'),
+            ('카페 입구', 'cafe entrance'),
             ('사무실에서 일하는', 'working in office'),
             ('카페에 들어가는', 'entering cafe'),
             ('회의실에서 프레젠테이션하는', 'presenting in meeting room'),
@@ -270,6 +232,8 @@ class DalleService:
             ('일하는', 'working'),
             ('놀고있는', 'playing'),
             ('뛰어노는', 'playing'),
+            ('걸어가는', 'walking'),
+            ('프레젠테이션', 'presentation'),
             
             # 조사 (마지막에 처리)
             ('에서', ' in '),
@@ -292,6 +256,49 @@ class DalleService:
         result = ' '.join(result.split())
         
         return result
+    
+    def _clean_text_triggers(self, text):
+        """
+        텍스트에서 스토리보드/프레임 관련 트리거 단어를 제거합니다.
+        """
+        import re
+        
+        # 먼저 콜론(:) 앞의 모든 레이블 제거
+        if ':' in text:
+            # 콜론 이후의 내용만 가져오기
+            parts = text.split(':', 1)
+            if len(parts) > 1:
+                text = parts[1].strip()
+        
+        # 제거할 패턴들
+        patterns_to_remove = [
+            r'프레임\s*#?\s*\d*',
+            r'Frame\s*#?\s*\d*',
+            r'장면\s*\d*',
+            r'Scene\s*\d*',
+            r'장면\s*설명',
+            r'Scene\s*description',
+            r'씬\s*\d*',
+            r'컷\s*\d*',
+            r'Cut\s*\d*',
+            r'샷\s*\d*',
+            r'Shot\s*\d*',
+            r'설명\s*:',
+            r'description\s*:',
+            r'^\d+\.\s*',  # 숫자로 시작하는 리스트
+            r'^\-\s*',     # 대시로 시작하는 리스트
+            r'^\*\s*',     # 별표로 시작하는 리스트
+            r'#\d+',       # #1, #2 등
+        ]
+        
+        cleaned_text = text
+        for pattern in patterns_to_remove:
+            cleaned_text = re.sub(pattern, '', cleaned_text, flags=re.IGNORECASE)
+        
+        # 여러 공백을 하나로
+        cleaned_text = ' '.join(cleaned_text.split())
+        
+        return cleaned_text.strip()
     
     def _translate_composition(self, composition):
         """

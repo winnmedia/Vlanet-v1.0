@@ -9,6 +9,68 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny]) 
+def test_openai_direct(request):
+    """OpenAI API 직접 테스트"""
+    try:
+        # API 키 확인
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            return Response({
+                'status': 'error',
+                'message': 'OPENAI_API_KEY not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        logger.info(f"Direct test - API Key: {api_key[:10]}... (length: {len(api_key)})")
+        
+        # OpenAI 라이브러리 import
+        from openai import OpenAI
+        logger.info("✅ OpenAI library imported")
+        
+        # 클라이언트 초기화
+        client = OpenAI(api_key=api_key)
+        logger.info("✅ OpenAI client initialized")
+        
+        # 이미지 생성 테스트
+        logger.info("🎨 Testing DALL-E 3 image generation...")
+        
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt="pencil sketch man walks into cafe, no text",
+            size="1792x1024",
+            quality="standard",
+            n=1,
+            style="vivid"
+        )
+        
+        if response.data and len(response.data) > 0:
+            image_url = response.data[0].url
+            logger.info(f"✅ Image generated: {image_url[:50]}...")
+            
+            return Response({
+                'status': 'success',
+                'message': 'OpenAI API test PASSED!',
+                'data': {
+                    'image_url': image_url,
+                    'api_key_length': len(api_key),
+                    'client_initialized': True
+                }
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'status': 'error',
+                'message': 'No image data received'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    except Exception as e:
+        logger.error(f"❌ Direct OpenAI test failed: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'OpenAI test failed: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def check_services_status(request):

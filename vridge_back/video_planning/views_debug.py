@@ -101,8 +101,42 @@ def check_services_status(request):
                     logger.info("Forcing image generation despite availability status...")
                     result = dalle.generate_storyboard_image(test_frame, style=test_style)
                 else:
-                    logger.error("No OpenAI client available")
-                    result = {'success': False, 'error': 'No OpenAI client available'}
+                    logger.error("No OpenAI client available - attempting manual initialization")
+                    # 수동으로 클라이언트 초기화 시도
+                    try:
+                        from openai import OpenAI
+                        import os
+                        
+                        # API 키 직접 설정
+                        api_key = os.environ.get('OPENAI_API_KEY')
+                        if api_key:
+                            logger.info(f"Manual initialization with key: {api_key[:10]}...")
+                            client = OpenAI(api_key=api_key)
+                            
+                            # 테스트 API 호출
+                            response = client.images.generate(
+                                model="dall-e-3",
+                                prompt=generated_prompt,
+                                size="1792x1024",
+                                quality="standard",
+                                n=1,
+                                style="vivid"
+                            )
+                            
+                            if response.data and len(response.data) > 0:
+                                image_url = response.data[0].url
+                                result = {
+                                    'success': True,
+                                    'image_url': image_url,
+                                    'manual_init': True
+                                }
+                            else:
+                                result = {'success': False, 'error': 'No image data received'}
+                        else:
+                            result = {'success': False, 'error': 'No API key found in environment'}
+                    except Exception as manual_e:
+                        logger.error(f"Manual initialization failed: {str(manual_e)}", exc_info=True)
+                        result = {'success': False, 'error': f'Manual init failed: {str(manual_e)}'}
                 
                 test_result['image_generation'] = {
                     'success': result['success'],

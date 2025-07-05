@@ -24,31 +24,39 @@ class DalleService:
         logger.info(f"  - os.environ.get('OPENAI_API_KEY'): {env_key[:10] + '...' if env_key else 'None'}")
         
         self.api_key = settings_key or env_key
-        self.available = bool(self.api_key)
         self.client = None
         
-        if not self.available:
+        if not self.api_key:
             logger.warning("❌ OPENAI_API_KEY not found. DALL-E image generation will not be available.")
             logger.warning("  - Railway에서 환경변수를 설정했는지 확인하세요")
             logger.warning("  - 설정 후 재배포가 필요합니다")
+            self.available = False
         else:
-            logger.info(f"✅ DALL-E service initialized with API key: {self.api_key[:10]}...")
+            logger.info(f"✅ API Key found: {self.api_key[:10]}...")
             try:
                 # OpenAI 클라이언트 초기화 - 여러 방법 시도
                 try:
                     # 방법 1: 직접 API 키 전달
                     self.client = OpenAI(api_key=self.api_key)
-                    logger.info("Method 1: OpenAI client initialized with direct API key")
+                    logger.info("✅ Method 1: OpenAI client initialized with direct API key")
                 except Exception as e1:
-                    logger.warning(f"Method 1 failed: {e1}")
+                    logger.warning(f"❌ Method 1 failed: {e1}")
                     
-                    # 방법 2: 환경변수 설정 후 초기화
-                    os.environ['OPENAI_API_KEY'] = self.api_key
-                    self.client = OpenAI()
-                    logger.info("Method 2: OpenAI client initialized via environment variable")
+                    try:
+                        # 방법 2: 환경변수 설정 후 초기화
+                        os.environ['OPENAI_API_KEY'] = self.api_key
+                        self.client = OpenAI()
+                        logger.info("✅ Method 2: OpenAI client initialized via environment variable")
+                    except Exception as e2:
+                        logger.error(f"❌ Method 2 failed: {e2}")
+                        raise e2
                 
-                self.available = True
-                logger.info("✅ OpenAI client successfully initialized")
+                # 클라이언트가 성공적으로 초기화되면 사용 가능으로 설정
+                if self.client:
+                    self.available = True
+                    logger.info("✅ DALL-E service ready for image generation")
+                else:
+                    self.available = False
                 
             except Exception as e:
                 logger.error(f"❌ Failed to initialize OpenAI client: {e}")

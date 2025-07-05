@@ -76,6 +76,8 @@ export default function VideoPlanning() {
   const [showCustomPurpose, setShowCustomPurpose] = useState(false)
   const [showCustomDuration, setShowCustomDuration] = useState(false)
   const [storyboardStyle, setStoryboardStyle] = useState('minimal')
+  const [showDebugInfo, setShowDebugInfo] = useState(false)
+  const [debugInfo, setDebugInfo] = useState(null)
 
   useEffect(() => {
     const session = checkSession()
@@ -108,6 +110,40 @@ export default function VideoPlanning() {
       }
     } catch (err) {
       console.error('최근 기획 로드 실패:', err)
+    }
+  }
+
+  const checkDebugInfo = async () => {
+    try {
+      const response = await axios.get('/api/video-planning/debug/services/')
+      setDebugInfo(response.data)
+    } catch (err) {
+      console.error('디버그 정보 로드 실패:', err)
+    }
+  }
+
+  const testImageGeneration = async () => {
+    try {
+      setLoading(true)
+      setLoadingMessage('이미지 생성 테스트 중...')
+      
+      const response = await axios.post('/api/video-planning/debug/services/', {
+        test_prompt: '카페에 들어가는 남자',
+        test_style: storyboardStyle
+      })
+      
+      setDebugInfo(response.data)
+      
+      if (response.data.services?.test_result?.image_generation?.success) {
+        setSuccessMessage('이미지 생성 테스트 성공!')
+      } else {
+        setError('이미지 생성 테스트 실패: ' + response.data.services?.test_result?.image_generation?.error)
+      }
+    } catch (err) {
+      setError('테스트 중 오류 발생: ' + err.message)
+    } finally {
+      setLoading(false)
+      setLoadingMessage('')
     }
   }
 
@@ -403,7 +439,7 @@ export default function VideoPlanning() {
       }
 
       const response = await axios.post(
-        `/api/video-planning/regenerate-image/`,
+        `/api/video-planning/regenerate/storyboard-image/`,
         { 
           frame_data: frameData,
           style: storyboardStyle
@@ -1188,12 +1224,18 @@ export default function VideoPlanning() {
                             src={scene.storyboard.image_url} 
                             alt={`씬 ${index + 1} 콘티`}
                             className="storyboard-image"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
                           />
-                        ) : (
-                          <div className="storyboard-placeholder">
-                            <span>콘티 이미지</span>
-                          </div>
-                        )}
+                        ) : null}
+                        <div className="storyboard-placeholder" style={{display: scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' ? 'none' : 'flex'}}>
+                          <span>콘티 이미지 생성 중...</span>
+                          {scene.storyboard.image_error && (
+                            <p className="error-message">{scene.storyboard.image_error}</p>
+                          )}
+                        </div>
                         <div className="storyboard-info">
                           <p>{scene.storyboard.visual_description || scene.storyboard.description}</p>
                           {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' && (
@@ -1268,7 +1310,89 @@ export default function VideoPlanning() {
               <button className="new-btn" onClick={resetPlanning}>
                 새로운 기획 시작
               </button>
+              <button 
+                className="debug-btn" 
+                onClick={() => {
+                  setShowDebugInfo(!showDebugInfo)
+                  if (!showDebugInfo) checkDebugInfo()
+                }}
+              >
+                디버그 정보
+              </button>
             </div>
+            
+            {/* 디버그 정보 패널 */}
+            {showDebugInfo && (
+              <div className="debug-panel">
+                <div className="debug-header">
+                  <h4>🔧 시스템 상태 확인</h4>
+                  <button className="test-btn" onClick={testImageGeneration} disabled={loading}>
+                    이미지 생성 테스트
+                  </button>
+                </div>
+                
+                {debugInfo && (
+                  <div className="debug-content">
+                    <div className="debug-section">
+                      <h5>API 키 상태</h5>
+                      <div className="debug-item">
+                        <span>OpenAI (DALL-E):</span>
+                        <span className={debugInfo.services?.openai_api_key_exists ? 'status-ok' : 'status-error'}>
+                          {debugInfo.services?.openai_api_key_exists ? '✅ 설정됨' : '❌ 없음'}
+                          {debugInfo.services?.openai_api_key_prefix && ` (${debugInfo.services.openai_api_key_prefix})`}
+                        </span>
+                      </div>
+                      <div className="debug-item">
+                        <span>Google (Gemini):</span>
+                        <span className={debugInfo.services?.google_api_key_exists ? 'status-ok' : 'status-error'}>
+                          {debugInfo.services?.google_api_key_exists ? '✅ 설정됨' : '❌ 없음'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="debug-section">
+                      <h5>서비스 상태</h5>
+                      <div className="debug-item">
+                        <span>DALL-E 서비스:</span>
+                        <span className={debugInfo.services?.dalle?.available ? 'status-ok' : 'status-error'}>
+                          {debugInfo.services?.dalle?.available ? '✅ 사용 가능' : '❌ 사용 불가'}
+                        </span>
+                      </div>
+                      <div className="debug-item">
+                        <span>Gemini 서비스:</span>
+                        <span className={debugInfo.services?.gemini_service === 'initialized' ? 'status-ok' : 'status-error'}>
+                          {debugInfo.services?.gemini_service === 'initialized' ? '✅ 사용 가능' : '❌ 사용 불가'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {debugInfo.services?.test_result && (
+                      <div className="debug-section">
+                        <h5>테스트 결과</h5>
+                        <div className="debug-item">
+                          <span>이미지 생성:</span>
+                          <span className={debugInfo.services.test_result.image_generation?.success ? 'status-ok' : 'status-error'}>
+                            {debugInfo.services.test_result.image_generation?.success ? '✅ 성공' : '❌ 실패'}
+                          </span>
+                        </div>
+                        {debugInfo.services.test_result.image_generation?.generated_prompt && (
+                          <div className="debug-item">
+                            <span>생성된 프롬프트:</span>
+                            <span className="debug-prompt">{debugInfo.services.test_result.image_generation.generated_prompt}</span>
+                          </div>
+                        )}
+                        {debugInfo.services.test_result.image_generation?.error && (
+                          <div className="debug-item">
+                            <span>오류:</span>
+                            <span className="status-error">{debugInfo.services.test_result.image_generation.error}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )
 

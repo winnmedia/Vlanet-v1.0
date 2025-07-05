@@ -71,27 +71,48 @@ def check_services_status(request):
     # POST 요청일 경우 이미지 생성 테스트
     if request.method == 'POST':
         test_result = {}
+        
+        # 요청에서 테스트 프롬프트 가져오기
+        test_prompt = request.data.get('test_prompt', '카페에 들어가는 남자')
+        test_style = request.data.get('test_style', 'minimal')
+        
         if service_status.get('dalle', {}).get('available'):
             try:
                 from .dalle_service import DalleService
                 dalle = DalleService()
+                
+                # 실제 프롬프트 생성 과정 테스트
                 test_frame = {
                     'frame_number': 1,
-                    'visual_description': 'simple test image',
-                    'title': 'Test'
+                    'visual_description': test_prompt,
+                    'title': 'Test',
+                    'composition': '미디엄샷',
+                    'lighting': '자연광'
                 }
-                result = dalle.generate_storyboard_image(test_frame)
-                test_result['image_generation'] = result
+                
+                # 프롬프트 생성 과정 로깅
+                generated_prompt = dalle._create_visual_prompt(test_frame, test_style)
+                logger.info(f"Generated prompt: {generated_prompt}")
+                
+                result = dalle.generate_storyboard_image(test_frame, style=test_style)
+                test_result['image_generation'] = {
+                    'success': result['success'],
+                    'generated_prompt': generated_prompt,
+                    'has_image_url': bool(result.get('image_url')),
+                    'error': result.get('error') if not result['success'] else None
+                }
                 
                 # API 키 확인 (키는 숨김)
                 test_result['api_key_info'] = {
                     'key_exists': bool(dalle.api_key),
-                    'key_format': dalle.api_key[:10] + '...' if dalle.api_key and len(dalle.api_key) > 10 else None
+                    'key_format': dalle.api_key[:10] + '...' if dalle.api_key and len(dalle.api_key) > 10 else None,
+                    'client_initialized': dalle.client is not None
                 }
             except Exception as e:
                 test_result['image_generation'] = {'error': str(e)}
+                logger.error(f"Image generation test failed: {str(e)}", exc_info=True)
         else:
-            test_result['image_generation'] = {'error': 'Service not available'}
+            test_result['image_generation'] = {'error': 'DALL-E service not available'}
         
         service_status['test_result'] = test_result
     

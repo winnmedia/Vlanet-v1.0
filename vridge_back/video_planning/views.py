@@ -332,9 +332,17 @@ def generate_storyboards(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def regenerate_storyboard_image(request):
+    """
+    스토리보드 이미지를 재생성합니다.
+    """
     try:
         frame_data = request.data.get('frame_data', {})
         style = request.data.get('style', 'minimal')
+        
+        logger.info("=" * 50)
+        logger.info("🎨 스토리보드 이미지 재생성 요청")
+        logger.info(f"  - 스타일: {style}")
+        logger.info(f"  - 프레임 데이터: {frame_data}")
         
         if not frame_data:
             return Response({

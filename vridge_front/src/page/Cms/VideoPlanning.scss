@@ -169,6 +169,119 @@
       }
     }
   }
+  
+  .debug-panel {
+    margin-top: 24px;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      h4 {
+        color: #333;
+        margin: 0;
+        font-size: 16px;
+      }
+      
+      .test-btn {
+        background: #4318FF;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        
+        &:hover {
+          background: #3311CC;
+        }
+        
+        &:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+    
+    .debug-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .debug-section {
+      background: white;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      
+      h5 {
+        margin: 0 0 12px 0;
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      
+      .debug-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+        font-size: 13px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        span:first-child {
+          color: #666;
+          font-weight: 500;
+          min-width: 120px;
+        }
+        
+        .status-ok {
+          color: #22c55e;
+          font-weight: 500;
+        }
+        
+        .status-error {
+          color: #ef4444;
+          font-weight: 500;
+        }
+        
+        .debug-prompt {
+          color: #4318FF;
+          font-family: monospace;
+          font-size: 12px;
+          background: #f0f0f0;
+          padding: 4px 8px;
+          border-radius: 4px;
+          max-width: 300px;
+          word-break: break-word;
+        }
+      }
+    }
+  }
+  
+  .debug-btn {
+    background: #666;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    
+    &:hover {
+      background: #555;
+    }
+  }
 
   .planning-header {
     text-align: center;

@@ -25,6 +25,7 @@ class DalleService:
         
         self.api_key = settings_key or env_key
         self.available = bool(self.api_key)
+        self.client = None
         
         if not self.available:
             logger.warning("❌ OPENAI_API_KEY not found. DALL-E image generation will not be available.")
@@ -33,32 +34,26 @@ class DalleService:
         else:
             logger.info(f"✅ DALL-E service initialized with API key: {self.api_key[:10]}...")
             try:
-                # OpenAI 클라이언트 초기화 - 기본 인자만 사용
-                import openai
-                # 버전 확인
-                openai_version = getattr(openai, '__version__', '0.0.0')
-                logger.info(f"OpenAI library version: {openai_version}")
-                
-                # 간단한 초기화
-                self.client = OpenAI(api_key=self.api_key)
-                self.available = True
-                logger.info("OpenAI client initialized successfully")
-            except TypeError as e:
-                # Railway 환경에서 proxies 문제 - 환경변수로 우회
-                logger.warning(f"TypeError during client init: {e}")
+                # OpenAI 클라이언트 초기화 - 여러 방법 시도
                 try:
-                    # 환경변수 설정 후 재시도
+                    # 방법 1: 직접 API 키 전달
+                    self.client = OpenAI(api_key=self.api_key)
+                    logger.info("Method 1: OpenAI client initialized with direct API key")
+                except Exception as e1:
+                    logger.warning(f"Method 1 failed: {e1}")
+                    
+                    # 방법 2: 환경변수 설정 후 초기화
                     os.environ['OPENAI_API_KEY'] = self.api_key
-                    from openai import OpenAI
                     self.client = OpenAI()
-                    self.available = True
-                    logger.info("OpenAI client initialized via environment variable")
-                except Exception as env_e:
-                    logger.error(f"Failed to initialize with env var: {env_e}")
-                    self.available = False
+                    logger.info("Method 2: OpenAI client initialized via environment variable")
+                
+                self.available = True
+                logger.info("✅ OpenAI client successfully initialized")
+                
             except Exception as e:
-                logger.error(f"Failed to initialize OpenAI client: {e}")
+                logger.error(f"❌ Failed to initialize OpenAI client: {e}")
                 self.available = False
+                self.client = None
     
     def generate_storyboard_image(self, frame_data, style='minimal'):
         """

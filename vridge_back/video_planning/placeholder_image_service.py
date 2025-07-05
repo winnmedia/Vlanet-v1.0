@@ -45,7 +45,7 @@ class PlaceholderImageService:
             # 프레임 번호 (상단 왼쪽)
             try:
                 # 기본 폰트 사용
-                draw.text((20, 20), f"Frame #{frame_number}", fill=text_color)
+                # Frame # 텍스트 제거 - 순수한 시각적 표현만
                 
                 # 제목 (중앙 상단)
                 draw.text((20, 60), title, fill=text_color)

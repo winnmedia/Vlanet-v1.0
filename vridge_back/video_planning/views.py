@@ -63,6 +63,12 @@ def generate_structure(request):
 def generate_story(request):
     try:
         planning_text = request.data.get('planning_text', '')
+        tone = request.data.get('tone', '')
+        genre = request.data.get('genre', '')
+        concept = request.data.get('concept', '')
+        target = request.data.get('target', '')
+        story_framework = request.data.get('story_framework', 'classic')
+        development_level = request.data.get('development_level', 'balanced')
         
         if not planning_text:
             return Response({
@@ -70,8 +76,18 @@ def generate_story(request):
                 'message': '기획안 텍스트가 필요합니다.'
             }, status=status.HTTP_400_BAD_REQUEST)
         
+        # 모든 옵션을 포함한 컨텍스트 생성
+        context = {
+            'tone': tone,
+            'genre': genre,
+            'concept': concept,
+            'target': target,
+            'story_framework': story_framework,
+            'development_level': development_level
+        }
+        
         gemini_service = GeminiService()
-        stories_data = gemini_service.generate_stories_from_planning(planning_text)
+        stories_data = gemini_service.generate_stories_from_planning(planning_text, context)
         
         if 'error' in stories_data:
             logger.error(f"Gemini API error: {stories_data['error']}")

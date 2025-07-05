@@ -56,15 +56,18 @@ export default function VideoPlanning() {
     tone: '',
     genre: '',
     concept: '',
+    target: '',
     toneCustom: '',
     genreCustom: '',
     conceptCustom: '',
+    targetCustom: '',
     storyFramework: 'classic',  // 기본값: 클래식 기승전결
     developmentLevel: 'balanced' // 기본값: 균형잡힌 전개
   })
   const [showCustomTone, setShowCustomTone] = useState(false)
   const [showCustomGenre, setShowCustomGenre] = useState(false)
   const [showCustomConcept, setShowCustomConcept] = useState(false)
+  const [showCustomTarget, setShowCustomTarget] = useState(false)
   const [storyboardStyle, setStoryboardStyle] = useState('minimal')
 
   useEffect(() => {
@@ -162,6 +165,7 @@ export default function VideoPlanning() {
           tone: planningOptions.tone === 'custom' ? planningOptions.toneCustom : planningOptions.tone,
           genre: planningOptions.genre === 'custom' ? planningOptions.genreCustom : planningOptions.genre,
           concept: planningOptions.concept === 'custom' ? planningOptions.conceptCustom : planningOptions.concept,
+          target: planningOptions.target === 'custom' ? planningOptions.targetCustom : planningOptions.target,
           story_framework: planningOptions.storyFramework,
           development_level: planningOptions.developmentLevel
         }
@@ -712,6 +716,75 @@ export default function VideoPlanning() {
                         onClick={() => {
                           setShowCustomConcept(false)
                           setPlanningOptions(prev => ({ ...prev, concept: '', conceptCustom: '' }))
+                        }}
+                      >
+                        선택목록으로
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="option-group">
+                <label>타겟</label>
+                <div className="custom-select-wrapper">
+                  {!showCustomTarget ? (
+                    <select 
+                      value={planningOptions.target} 
+                      onChange={(e) => {
+                        if (e.target.value === '직접입력') {
+                          setShowCustomTarget(true)
+                          setPlanningOptions(prev => ({ ...prev, target: '' }))
+                        } else {
+                          setPlanningOptions(prev => ({ ...prev, target: e.target.value }))
+                        }
+                      }}
+                    >
+                      <option value="">선택하세요</option>
+                      <optgroup label="연령대별">
+                        <option value="10대 청소년">10대 청소년</option>
+                        <option value="20대 청년">20대 청년</option>
+                        <option value="30대 직장인">30대 직장인</option>
+                        <option value="40대 중년">40대 중년</option>
+                        <option value="50대 이상">50대 이상</option>
+                        <option value="전 연령">전 연령</option>
+                      </optgroup>
+                      <optgroup label="성별">
+                        <option value="남성">남성</option>
+                        <option value="여성">여성</option>
+                        <option value="성별무관">성별무관</option>
+                      </optgroup>
+                      <optgroup label="특정 그룹">
+                        <option value="학생">학생</option>
+                        <option value="직장인">직장인</option>
+                        <option value="주부">주부</option>
+                        <option value="부모">부모</option>
+                        <option value="기업 담당자">기업 담당자</option>
+                        <option value="투자자">투자자</option>
+                      </optgroup>
+                      <optgroup label="관심사별">
+                        <option value="테크 얼리어답터">테크 얼리어답터</option>
+                        <option value="라이프스타일 관심층">라이프스타일 관심층</option>
+                        <option value="교육 관심층">교육 관심층</option>
+                        <option value="건강/웰빙 관심층">건강/웰빙 관심층</option>
+                        <option value="문화예술 관심층">문화예술 관심층</option>
+                      </optgroup>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                    </select>
+                  ) : (
+                    <div className="custom-input-wrapper">
+                      <input
+                        type="text"
+                        placeholder="타겟 오디언스를 자유롭게 입력해주세요"
+                        value={planningOptions.targetCustom}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, targetCustom: e.target.value, target: 'custom' }))}
+                        className="ty01"
+                      />
+                      <button 
+                        className="cancel-custom-btn"
+                        onClick={() => {
+                          setShowCustomTarget(false)
+                          setPlanningOptions(prev => ({ ...prev, target: '', targetCustom: '' }))
                         }}
                       >
                         선택목록으로

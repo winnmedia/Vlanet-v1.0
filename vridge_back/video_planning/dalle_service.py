@@ -165,7 +165,7 @@ class DalleService:
     def _create_storyboard_prompt(self, frame_data, style='minimal'):
         """
         프레임 데이터를 바탕으로 DALL-E용 프롬프트를 생성합니다.
-        실제 장면이 일러스트로 시각화되도록 구체적인 시각적 요소를 포함합니다.
+        설명문이 아닌 순수한 그림 묘사로 변환합니다.
         
         Args:
             frame_data: 프레임 정보
@@ -174,7 +174,7 @@ class DalleService:
         visual_desc = frame_data.get('visual_description', '')
         composition = frame_data.get('composition', '')
         lighting = frame_data.get('lighting', '')
-        title = frame_data.get('title', '')
+        # title과 frame_number는 프롬프트에서 완전히 제외
         
         # 한국어 키워드를 더 구체적인 영어 시각 표현으로 변환
         scene_translations = {
@@ -200,16 +200,29 @@ class DalleService:
             '하늘': 'sky with clouds',
             '도시': 'cityscape with buildings and streets',
             
-            # 인물 묘사
-            '남자': 'man in casual clothing',
-            '여자': 'woman with medium-length hair',
-            '아이': 'young child around 8 years old',
-            '노인': 'elderly person with gray hair',
-            '청년': 'young adult in their 20s',
-            '중년': 'middle-aged person in business attire',
-            '소년': 'young boy',
-            '소녀': 'young girl with ponytail',
-            '사람': 'person in everyday clothes',
+            # 인물 묘사 - 더 자연스럽고 시각적으로
+            '남자': 'man',
+            '여자': 'woman',
+            '아이': 'child',
+            '노인': 'elderly person',
+            '청년': 'young person',
+            '중년': 'middle-aged person',
+            '소년': 'boy',
+            '소녀': 'girl',
+            '사람': 'person',
+            '여성': 'woman',
+            '남성': 'man',
+            '아버지': 'father figure',
+            '어머니': 'mother figure',
+            '학생': 'student',
+            '선생님': 'teacher',
+            '의사': 'doctor in white coat',
+            '간호사': 'nurse',
+            '회사원': 'office worker',
+            '20대': 'young adult',
+            '30대': 'person in thirties',
+            '40대': 'middle-aged person',
+            '50대': 'mature person',
             
             # 행동/동작
             '걷다': 'walking with natural stride',
@@ -359,38 +372,44 @@ class DalleService:
         # 선택된 스타일 가져오기 (기본값: sketch)
         selected_style = style_prompts.get(style, style_prompts['sketch'])
         
-        # 프롬프트 구성 - 시각적 묘사 중심으로
+        # 프롬프트 구성 - 완전한 그림 묘사로
         prompt_parts = []
         
-        # 1. 스타일 기본 설정
+        # 1. 메인 스타일을 시작으로
         prompt_parts.append(selected_style['base'])
         
-        # 2. 구체적인 장면 묘사 (Scene: 제거)
+        # 2. 장면의 시각적 요소를 자연스럽게 묘사
         if translated_desc:
-            # "Scene:" 같은 텍스트 지향적 단어 제거
-            prompt_parts.append(translated_desc)
+            # 숫자나 설명문 형식 제거
+            clean_desc = translated_desc
+            # "40대 여성" → "middle-aged woman"으로 이미 변환되었지만, 더 자연스럽게
+            clean_desc = clean_desc.replace('around ', '')
+            clean_desc = clean_desc.replace(' years old', '')
+            prompt_parts.append(clean_desc)
         
-        # 3. 카메라 앵글 추가
+        # 3. 카메라 구도를 자연스럽게 통합
         if composition in camera_angles:
-            prompt_parts.append(camera_angles[composition])
+            # "shot" 같은 기술적 용어 최소화
+            angle_desc = camera_angles[composition].replace(' shot', '').replace('camera ', '')
+            prompt_parts.append(angle_desc)
         
-        # 4. 조명 효과 추가
+        # 4. 조명을 분위기로 표현
         if lighting in lighting_styles:
             prompt_parts.append(lighting_styles[lighting])
         
-        # 5. 스타일별 세부사항 추가
+        # 5. 스타일 세부사항 추가
         prompt_parts.extend(selected_style['details'])
         
-        # 6. 시각적 요소만 강조 (설명적 표현 제거)
+        # 6. 텍스트 완전 배제 강조
         prompt_parts.extend([
-            "cinematic composition",
-            "vivid illustration",
-            "NO text, NO labels, NO captions, NO writing",
-            "pure visual art without any text elements"
+            "artwork without any text",
+            "no words or letters visible",
+            "pure visual illustration"
         ])
         
-        # 최종 프롬프트 조합
-        prompt = ". ".join(prompt_parts)
+        # 최종 프롬프트를 자연스러운 문장으로 조합
+        # 마침표 대신 쉼표로 연결하여 하나의 통합된 묘사로
+        prompt = ", ".join(prompt_parts)
         
         # 금지 단어 필터링 적용
         prompt = self._filter_forbidden_words(prompt)

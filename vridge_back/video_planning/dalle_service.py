@@ -295,6 +295,51 @@ class DalleService:
                     "cinematic framing",
                     "professional movie scene quality"
                 ]
+            },
+            'watercolor': {
+                'base': "Watercolor painting illustration",
+                'details': [
+                    "soft watercolor painting",
+                    "flowing color blends",
+                    "translucent washes",
+                    "artistic brush strokes"
+                ]
+            },
+            'digital': {
+                'base': "Modern digital art illustration",
+                'details': [
+                    "digital art style",
+                    "vibrant colors",
+                    "crisp digital rendering",
+                    "contemporary aesthetic"
+                ]
+            },
+            'noir': {
+                'base': "Film noir black and white illustration",
+                'details': [
+                    "stark black and white contrast",
+                    "dramatic shadows",
+                    "vintage noir atmosphere",
+                    "moody lighting"
+                ]
+            },
+            'pastel': {
+                'base': "Soft pastel illustration",
+                'details': [
+                    "soft pastel colors",
+                    "gentle color palette",
+                    "dreamy atmosphere",
+                    "delicate rendering"
+                ]
+            },
+            'comic': {
+                'base': "Comic book style illustration",
+                'details': [
+                    "comic book art style",
+                    "dynamic action poses",
+                    "speech bubble areas avoided",
+                    "bold comic book colors"
+                ]
             }
         }
         

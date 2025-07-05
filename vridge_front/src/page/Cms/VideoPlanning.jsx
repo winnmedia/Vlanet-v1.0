@@ -55,7 +55,9 @@ export default function VideoPlanning() {
   const [planningOptions, setPlanningOptions] = useState({
     tone: '',
     genre: '',
-    concept: ''
+    concept: '',
+    storyFramework: 'classic',  // 기본값: 클래식 기승전결
+    developmentLevel: 'balanced' // 기본값: 균형잡힌 전개
   })
   const [storyboardStyle, setStoryboardStyle] = useState('minimal')
 
@@ -153,7 +155,9 @@ export default function VideoPlanning() {
           planning_text: planningData.planning,
           tone: planningOptions.tone,
           genre: planningOptions.genre,
-          concept: planningOptions.concept
+          concept: planningOptions.concept,
+          story_framework: planningOptions.storyFramework,
+          development_level: planningOptions.developmentLevel
         }
       )
 
@@ -546,6 +550,79 @@ export default function VideoPlanning() {
               </div>
             </div>
             
+            {/* 스토리 프레임워크 선택 */}
+            <div className="story-framework-section">
+              <h4>스토리 전개 방식</h4>
+              <div className="framework-options">
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'classic' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' }))}
+                >
+                  <h5>클래식 기승전결</h5>
+                  <p>전통적인 4단계 구성으로 안정적이고 균형잡힌 전개</p>
+                  <span className="framework-stages">기 → 승 → 전 → 결</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'hero' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hero' }))}
+                >
+                  <h5>히어로의 여정</h5>
+                  <p>주인공의 성장과 변화를 중심으로 한 감동적인 스토리</p>
+                  <span className="framework-stages">평범한 세계 → 모험의 소명 → 시련 → 보상</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'problem' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'problem' }))}
+                >
+                  <h5>문제-해결 구조</h5>
+                  <p>명확한 문제 제시와 해결책을 통한 실용적 접근</p>
+                  <span className="framework-stages">문제 인식 → 원인 분석 → 해결책 제시 → 결과</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'emotional' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'emotional' }))}
+                >
+                  <h5>감정 곡선</h5>
+                  <p>감정의 기복을 활용한 몰입도 높은 스토리텔링</p>
+                  <span className="framework-stages">평온 → 긴장 → 절정 → 해소</span>
+                </div>
+              </div>
+              
+              {/* 디벨롭 레벨 선택 */}
+              <div className="development-level">
+                <label>스토리 전개 강도</label>
+                <div className="level-slider">
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    value={planningOptions.developmentLevel === 'minimal' ? 1 : 
+                           planningOptions.developmentLevel === 'light' ? 2 :
+                           planningOptions.developmentLevel === 'balanced' ? 3 :
+                           planningOptions.developmentLevel === 'detailed' ? 4 : 5}
+                    onChange={(e) => {
+                      const level = parseInt(e.target.value);
+                      const levelMap = {
+                        1: 'minimal',
+                        2: 'light',
+                        3: 'balanced',
+                        4: 'detailed',
+                        5: 'comprehensive'
+                      };
+                      setPlanningOptions(prev => ({ ...prev, developmentLevel: levelMap[level] }));
+                    }}
+                  />
+                  <div className="level-labels">
+                    <span className={planningOptions.developmentLevel === 'minimal' ? 'active' : ''}>간결</span>
+                    <span className={planningOptions.developmentLevel === 'light' ? 'active' : ''}>가벼움</span>
+                    <span className={planningOptions.developmentLevel === 'balanced' ? 'active' : ''}>균형</span>
+                    <span className={planningOptions.developmentLevel === 'detailed' ? 'active' : ''}>상세</span>
+                    <span className={planningOptions.developmentLevel === 'comprehensive' ? 'active' : ''}>종합적</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <textarea
               className="planning-input"
               value={planningData.planning}
@@ -638,18 +715,88 @@ export default function VideoPlanning() {
             {/* 콘티 스타일 선택 */}
             <div className="storyboard-style-selector">
               <label htmlFor="storyboard-style">콘티 그림 스타일</label>
-              <select 
-                id="storyboard-style"
-                className="style-select"
-                value={storyboardStyle}
-                onChange={(e) => setStoryboardStyle(e.target.value)}
-              >
-                <option value="minimal">미니멀</option>
-                <option value="realistic">사실적</option>
-                <option value="sketch">스케치</option>
-                <option value="cartoon">만화풍</option>
-                <option value="cinematic">영화적</option>
-              </select>
+              <div className="style-options-grid">
+                <div 
+                  className={`style-option ${storyboardStyle === 'minimal' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('minimal')}
+                  style={{borderColor: '#2196F3', backgroundColor: storyboardStyle === 'minimal' ? '#2196F3' : 'transparent'}}
+                >
+                  <span className="style-name">미니멀</span>
+                  <span className="style-desc">깔끔한 라인아트</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'realistic' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('realistic')}
+                  style={{borderColor: '#FF5722', backgroundColor: storyboardStyle === 'realistic' ? '#FF5722' : 'transparent'}}
+                >
+                  <span className="style-name">사실적</span>
+                  <span className="style-desc">포토리얼리스틱</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'sketch' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('sketch')}
+                  style={{borderColor: '#795548', backgroundColor: storyboardStyle === 'sketch' ? '#795548' : 'transparent'}}
+                >
+                  <span className="style-name">스케치</span>
+                  <span className="style-desc">연필 드로잉</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'cartoon' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('cartoon')}
+                  style={{borderColor: '#E91E63', backgroundColor: storyboardStyle === 'cartoon' ? '#E91E63' : 'transparent'}}
+                >
+                  <span className="style-name">만화풍</span>
+                  <span className="style-desc">애니메이션 스타일</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'cinematic' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('cinematic')}
+                  style={{borderColor: '#673AB7', backgroundColor: storyboardStyle === 'cinematic' ? '#673AB7' : 'transparent'}}
+                >
+                  <span className="style-name">영화적</span>
+                  <span className="style-desc">시네마틱 느와르</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'watercolor' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('watercolor')}
+                  style={{borderColor: '#00BCD4', backgroundColor: storyboardStyle === 'watercolor' ? '#00BCD4' : 'transparent'}}
+                >
+                  <span className="style-name">수채화</span>
+                  <span className="style-desc">부드러운 수채화</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'digital' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('digital')}
+                  style={{borderColor: '#4CAF50', backgroundColor: storyboardStyle === 'digital' ? '#4CAF50' : 'transparent'}}
+                >
+                  <span className="style-name">디지털아트</span>
+                  <span className="style-desc">모던 디지털</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'noir' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('noir')}
+                  style={{borderColor: '#212121', backgroundColor: storyboardStyle === 'noir' ? '#212121' : 'transparent'}}
+                >
+                  <span className="style-name">느와르</span>
+                  <span className="style-desc">흑백 대비</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'pastel' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('pastel')}
+                  style={{borderColor: '#F8BBD0', backgroundColor: storyboardStyle === 'pastel' ? '#F8BBD0' : 'transparent'}}
+                >
+                  <span className="style-name">파스텔</span>
+                  <span className="style-desc">부드러운 색감</span>
+                </div>
+                <div 
+                  className={`style-option ${storyboardStyle === 'comic' ? 'active' : ''}`}
+                  onClick={() => setStoryboardStyle('comic')}
+                  style={{borderColor: '#FFC107', backgroundColor: storyboardStyle === 'comic' ? '#FFC107' : 'transparent'}}
+                >
+                  <span className="style-name">코믹북</span>
+                  <span className="style-desc">미국 만화 스타일</span>
+                </div>
+              </div>
             </div>
             
             <div className="scenes-with-storyboards-container">

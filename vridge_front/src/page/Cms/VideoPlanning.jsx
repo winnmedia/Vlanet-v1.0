@@ -57,10 +57,14 @@ export default function VideoPlanning() {
     genre: '',
     concept: '',
     target: '',
+    purpose: '',
+    duration: '',
     toneCustom: '',
     genreCustom: '',
     conceptCustom: '',
     targetCustom: '',
+    purposeCustom: '',
+    durationCustom: '',
     storyFramework: 'classic',  // 기본값: 클래식 기승전결
     developmentLevel: 'balanced' // 기본값: 균형잡힌 전개
   })
@@ -68,6 +72,8 @@ export default function VideoPlanning() {
   const [showCustomGenre, setShowCustomGenre] = useState(false)
   const [showCustomConcept, setShowCustomConcept] = useState(false)
   const [showCustomTarget, setShowCustomTarget] = useState(false)
+  const [showCustomPurpose, setShowCustomPurpose] = useState(false)
+  const [showCustomDuration, setShowCustomDuration] = useState(false)
   const [storyboardStyle, setStoryboardStyle] = useState('minimal')
 
   useEffect(() => {
@@ -166,6 +172,8 @@ export default function VideoPlanning() {
           genre: planningOptions.genre === 'custom' ? planningOptions.genreCustom : planningOptions.genre,
           concept: planningOptions.concept === 'custom' ? planningOptions.conceptCustom : planningOptions.concept,
           target: planningOptions.target === 'custom' ? planningOptions.targetCustom : planningOptions.target,
+          purpose: planningOptions.purpose === 'custom' ? planningOptions.purposeCustom : planningOptions.purpose,
+          duration: planningOptions.duration === 'custom' ? planningOptions.durationCustom : planningOptions.duration,
           story_framework: planningOptions.storyFramework,
           development_level: planningOptions.developmentLevel
         }
@@ -565,16 +573,18 @@ export default function VideoPlanning() {
                         onChange={(e) => setPlanningOptions(prev => ({ ...prev, toneCustom: e.target.value, tone: 'custom' }))}
                         className="ty01"
                       />
-                      <button 
-                        className="cancel-custom-btn"
-                        onClick={() => {
-                          setShowCustomTone(false)
-                          setPlanningOptions(prev => ({ ...prev, tone: '', toneCustom: '' }))
-                        }}
-                      >
-                        선택목록으로
-                      </button>
                     </div>
+                  )}
+                  {showCustomTone && (
+                    <button 
+                      className="cancel-custom-btn"
+                      onClick={() => {
+                        setShowCustomTone(false)
+                        setPlanningOptions(prev => ({ ...prev, tone: '', toneCustom: '' }))
+                      }}
+                    >
+                      선택목록으로
+                    </button>
                   )}
                 </div>
               </div>
@@ -642,16 +652,18 @@ export default function VideoPlanning() {
                         onChange={(e) => setPlanningOptions(prev => ({ ...prev, genreCustom: e.target.value, genre: 'custom' }))}
                         className="ty01"
                       />
-                      <button 
-                        className="cancel-custom-btn"
-                        onClick={() => {
-                          setShowCustomGenre(false)
-                          setPlanningOptions(prev => ({ ...prev, genre: '', genreCustom: '' }))
-                        }}
-                      >
-                        선택목록으로
-                      </button>
                     </div>
+                  )}
+                  {showCustomGenre && (
+                    <button 
+                      className="cancel-custom-btn"
+                      onClick={() => {
+                        setShowCustomGenre(false)
+                        setPlanningOptions(prev => ({ ...prev, genre: '', genreCustom: '' }))
+                      }}
+                    >
+                      선택목록으로
+                    </button>
                   )}
                 </div>
               </div>
@@ -711,16 +723,18 @@ export default function VideoPlanning() {
                         onChange={(e) => setPlanningOptions(prev => ({ ...prev, conceptCustom: e.target.value, concept: 'custom' }))}
                         className="ty01"
                       />
-                      <button 
-                        className="cancel-custom-btn"
-                        onClick={() => {
-                          setShowCustomConcept(false)
-                          setPlanningOptions(prev => ({ ...prev, concept: '', conceptCustom: '' }))
-                        }}
-                      >
-                        선택목록으로
-                      </button>
                     </div>
+                  )}
+                  {showCustomConcept && (
+                    <button 
+                      className="cancel-custom-btn"
+                      onClick={() => {
+                        setShowCustomConcept(false)
+                        setPlanningOptions(prev => ({ ...prev, concept: '', conceptCustom: '' }))
+                      }}
+                    >
+                      선택목록으로
+                    </button>
                   )}
                 </div>
               </div>
@@ -780,16 +794,150 @@ export default function VideoPlanning() {
                         onChange={(e) => setPlanningOptions(prev => ({ ...prev, targetCustom: e.target.value, target: 'custom' }))}
                         className="ty01"
                       />
-                      <button 
-                        className="cancel-custom-btn"
-                        onClick={() => {
-                          setShowCustomTarget(false)
-                          setPlanningOptions(prev => ({ ...prev, target: '', targetCustom: '' }))
-                        }}
-                      >
-                        선택목록으로
-                      </button>
                     </div>
+                  )}
+                  {showCustomTarget && (
+                    <button 
+                      className="cancel-custom-btn"
+                      onClick={() => {
+                        setShowCustomTarget(false)
+                        setPlanningOptions(prev => ({ ...prev, target: '', targetCustom: '' }))
+                      }}
+                    >
+                      선택목록으로
+                    </button>
+                  )}
+                </div>
+              </div>
+              
+              <div className="option-group">
+                <label>영상 목적</label>
+                <div className="custom-select-wrapper">
+                  {!showCustomPurpose ? (
+                    <select 
+                      value={planningOptions.purpose} 
+                      onChange={(e) => {
+                        if (e.target.value === '직접입력') {
+                          setShowCustomPurpose(true)
+                          setPlanningOptions(prev => ({ ...prev, purpose: '' }))
+                        } else {
+                          setPlanningOptions(prev => ({ ...prev, purpose: e.target.value }))
+                        }
+                      }}
+                    >
+                      <option value="">선택하세요</option>
+                      <optgroup label="비즈니스 목적">
+                        <option value="브랜드 인지도 향상">브랜드 인지도 향상</option>
+                        <option value="제품 판매 촉진">제품 판매 촉진</option>
+                        <option value="서비스 홍보">서비스 홍보</option>
+                        <option value="기업 이미지 개선">기업 이미지 개선</option>
+                        <option value="투자 유치">투자 유치</option>
+                        <option value="인재 채용">인재 채용</option>
+                      </optgroup>
+                      <optgroup label="마케팅 목적">
+                        <option value="신제품 런칭">신제품 런칭</option>
+                        <option value="이벤트 프로모션">이벤트 프로모션</option>
+                        <option value="캠페인 확산">캠페인 확산</option>
+                        <option value="바이럴 마케팅">바이럴 마케팅</option>
+                        <option value="SNS 콘텐츠">SNS 콘텐츠</option>
+                      </optgroup>
+                      <optgroup label="교육/정보 목적">
+                        <option value="정보 전달">정보 전달</option>
+                        <option value="교육 및 훈련">교육 및 훈련</option>
+                        <option value="사용법 안내">사용법 안내</option>
+                        <option value="인식 개선">인식 개선</option>
+                        <option value="사회 공헌">사회 공헌</option>
+                      </optgroup>
+                      <optgroup label="엔터테인먼트 목적">
+                        <option value="재미와 감동">재미와 감동</option>
+                        <option value="예술적 표현">예술적 표현</option>
+                        <option value="팬 소통">팬 소통</option>
+                        <option value="이야기 전달">이야기 전달</option>
+                      </optgroup>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                    </select>
+                  ) : (
+                    <div className="custom-input-wrapper">
+                      <input
+                        type="text"
+                        placeholder="영상의 목적을 자유롭게 입력해주세요"
+                        value={planningOptions.purposeCustom}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, purposeCustom: e.target.value, purpose: 'custom' }))}
+                        className="ty01"
+                      />
+                    </div>
+                  )}
+                  {showCustomPurpose && (
+                    <button 
+                      className="cancel-custom-btn"
+                      onClick={() => {
+                        setShowCustomPurpose(false)
+                        setPlanningOptions(prev => ({ ...prev, purpose: '', purposeCustom: '' }))
+                      }}
+                    >
+                      선택목록으로
+                    </button>
+                  )}
+                </div>
+              </div>
+              
+              <div className="option-group">
+                <label>영상 길이</label>
+                <div className="custom-select-wrapper">
+                  {!showCustomDuration ? (
+                    <select 
+                      value={planningOptions.duration} 
+                      onChange={(e) => {
+                        if (e.target.value === '직접입력') {
+                          setShowCustomDuration(true)
+                          setPlanningOptions(prev => ({ ...prev, duration: '' }))
+                        } else {
+                          setPlanningOptions(prev => ({ ...prev, duration: e.target.value }))
+                        }
+                      }}
+                    >
+                      <option value="">선택하세요</option>
+                      <optgroup label="숏폼 콘텐츠">
+                        <option value="15초 이하">15초 이하</option>
+                        <option value="30초">30초</option>
+                        <option value="1분">1분</option>
+                        <option value="1-3분">1-3분</option>
+                      </optgroup>
+                      <optgroup label="일반 콘텐츠">
+                        <option value="3-5분">3-5분</option>
+                        <option value="5-10분">5-10분</option>
+                        <option value="10-15분">10-15분</option>
+                        <option value="15-20분">15-20분</option>
+                      </optgroup>
+                      <optgroup label="롱폼 콘텐츠">
+                        <option value="20-30분">20-30분</option>
+                        <option value="30-45분">30-45분</option>
+                        <option value="45-60분">45-60분</option>
+                        <option value="60분 이상">60분 이상</option>
+                      </optgroup>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                    </select>
+                  ) : (
+                    <div className="custom-input-wrapper">
+                      <input
+                        type="text"
+                        placeholder="원하시는 영상 길이를 입력해주세요 (예: 2분 30초)"
+                        value={planningOptions.durationCustom}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, durationCustom: e.target.value, duration: 'custom' }))}
+                        className="ty01"
+                      />
+                    </div>
+                  )}
+                  {showCustomDuration && (
+                    <button 
+                      className="cancel-custom-btn"
+                      onClick={() => {
+                        setShowCustomDuration(false)
+                        setPlanningOptions(prev => ({ ...prev, duration: '', durationCustom: '' }))
+                      }}
+                    >
+                      선택목록으로
+                    </button>
                   )}
                 </div>
               </div>

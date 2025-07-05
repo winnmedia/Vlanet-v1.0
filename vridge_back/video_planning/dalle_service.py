@@ -4,6 +4,7 @@ import requests
 import base64
 from django.conf import settings
 from openai import OpenAI
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ class DalleService:
             }
         
         try:
-            prompt = self._create_storyboard_prompt(frame_data, style)
+            prompt = self._create_visual_prompt(frame_data, style)
             
             logger.info(f"Generating image with DALL-E 3, prompt: {prompt[:100]}...")
             
@@ -89,14 +90,14 @@ class DalleService:
                     logger.error(f"Failed to reinitialize client: {e}")
                     raise Exception("OpenAI 클라이언트 초기화 실패")
             
-            # DALL-E 3 API 호출 - HD 품질로 업그레이드
+            # DALL-E 3 API 호출 - 일러스트레이션에 최적화
             response = self.client.images.generate(
                 model="dall-e-3",
                 prompt=prompt,
-                size="1792x1024",  # 더 넓은 화면비 (16:9에 가까움)
-                quality="hd",      # HD 품질로 변경
+                size="1792x1024",  # 16:9 화면비
+                quality="standard", # 표준 품질 (더 빠른 생성)
                 n=1,
-                style="natural"    # 더 사실적인 스타일
+                style="vivid"      # 더 예술적이고 생동감 있는 스타일
             )
             image_url = response.data[0].url
             
@@ -133,286 +134,218 @@ class DalleService:
                 "image_url": None
             }
     
-    def _filter_forbidden_words(self, text):
+    def _create_visual_prompt(self, frame_data, style='minimal'):
         """
-        이미지 생성 프롬프트에서 텍스트 중심 결과를 유발하는 금지 단어들을 제거합니다.
-        """
-        forbidden_words = [
-            'storyboard', 'frame', 'scene description', 'scene',
-            'text box', 'textbox', 'caption', 'label',
-            'write', 'written', 'explained', 'annotated',
-            'comic panel with narration', 'comic panel',
-            'diagram', 'layout', 'template',
-            'slide', 'presentation', 'whiteboard',
-            'panel', 'box', 'description', 'narration',
-            'subtitle', 'title card', 'text overlay',
-            'document', 'paper', 'poster', 'sign'
-        ]
-        
-        # 대소문자 구분 없이 필터링
-        filtered_text = text
-        for word in forbidden_words:
-            import re
-            # 단어 경계를 포함한 정규표현식으로 정확한 단어만 제거
-            pattern = r'\b' + re.escape(word) + r'\b'
-            filtered_text = re.sub(pattern, '', filtered_text, flags=re.IGNORECASE)
-        
-        # 연속된 공백 제거
-        filtered_text = ' '.join(filtered_text.split())
-        
-        return filtered_text
-    
-    def _create_storyboard_prompt(self, frame_data, style='minimal'):
-        """
-        프레임 데이터를 바탕으로 DALL-E용 프롬프트를 생성합니다.
-        설명문이 아닌 순수한 그림 묘사로 변환합니다.
+        프레임 데이터를 바탕으로 순수한 시각적 프롬프트를 생성합니다.
         
         Args:
             frame_data: 프레임 정보
-            style: 이미지 스타일 ('minimal', 'realistic', 'sketch', 'cartoon', 'cinematic')
+            style: 이미지 스타일
         """
         visual_desc = frame_data.get('visual_description', '')
+        
+        # 한국어를 영어로 변환
+        translated_desc = self._translate_korean_to_english(visual_desc)
+        
+        # 구성과 조명 정보 추가 (있을 경우)
         composition = frame_data.get('composition', '')
         lighting = frame_data.get('lighting', '')
-        # title과 frame_number는 프롬프트에서 완전히 제외
         
-        # 한국어 키워드를 더 구체적인 영어 시각 표현으로 변환
-        scene_translations = {
-            # 배경/장소
-            '실내': 'interior space with visible walls and ceiling',
-            '실외': 'outdoor environment with open sky',
-            '사무실': 'modern office interior with desks and computers',
-            '거리': 'urban street with buildings on both sides',
-            '집': 'cozy home interior with furniture',
-            '카페': 'coffee shop interior with tables and warm lighting',
-            '공원': 'park with trees and benches',
-            '학교': 'school classroom with desks and blackboard',
-            '병원': 'hospital corridor with clean white walls',
-            '회의실': 'conference room with large table and chairs',
-            '방': 'bedroom with bed and window',
-            '거실': 'living room with sofa and TV',
-            '주방': 'kitchen with cabinets and appliances',
-            '도로': 'road with cars and traffic',
-            '빌딩': 'tall buildings and urban skyline',
-            '숲': 'forest with tall trees and natural lighting',
-            '바다': 'ocean view with waves and horizon',
-            '산': 'mountain landscape with peaks',
-            '하늘': 'sky with clouds',
-            '도시': 'cityscape with buildings and streets',
-            
-            # 인물 묘사 - 더 자연스럽고 시각적으로
-            '남자': 'man',
-            '여자': 'woman',
-            '아이': 'child',
-            '노인': 'elderly person',
-            '청년': 'young person',
-            '중년': 'middle-aged person',
-            '소년': 'boy',
-            '소녀': 'girl',
-            '사람': 'person',
-            '여성': 'woman',
-            '남성': 'man',
-            '아버지': 'father figure',
-            '어머니': 'mother figure',
-            '학생': 'student',
-            '선생님': 'teacher',
-            '의사': 'doctor in white coat',
-            '간호사': 'nurse',
-            '회사원': 'office worker',
-            '20대': 'young adult',
-            '30대': 'person in thirties',
-            '40대': 'middle-aged person',
-            '50대': 'mature person',
-            
-            # 행동/동작
-            '걷다': 'walking with natural stride',
-            '앉다': 'sitting on chair with relaxed posture',
-            '서다': 'standing upright',
-            '뛰다': 'running with dynamic motion',
-            '말하다': 'speaking with expressive gestures',
-            '듣다': 'listening attentively',
-            '보다': 'looking intently at something',
-            '웃다': 'smiling with warm expression',
-            '울다': 'crying with emotional expression',
-            '생각하다': 'deep in thought with hand on chin',
-            '쓰다': 'writing at desk',
-            '읽다': 'reading book or document',
-            '먹다': 'eating at table',
-            '마시다': 'drinking from cup',
-            '일하다': 'working at desk with focused expression',
-            '놀다': 'playing with joyful expression',
-            '자다': 'sleeping peacefully',
-            '운전하다': 'driving car with hands on wheel'
-        }
+        # 구성과 조명도 영어로 변환
+        composition_en = ''
+        lighting_en = ''
+        if composition:
+            composition_en = self._translate_composition(composition)
+        if lighting:
+            lighting_en = self._translate_lighting(lighting)
         
-        # 구도/카메라 앵글 매핑 - 더 시각적이고 구체적으로
-        camera_angles = {
-            '와이드샷': 'extremely wide landscape view',
-            '미디엄샷': 'person framed from waist up',
-            '클로즈업': 'tight shot on face filling frame',
-            '오버숄더': 'view over someone shoulder',
-            '하이앵글': 'camera high above looking down',
-            '로우앵글': 'camera near ground looking up',
-            '익스트림 클로즈업': 'macro shot of eyes only',
-            '풀샷': 'full figure head to toe',
-            '투샷': 'two people together in frame'
-        }
+        # 스타일에 따라 다른 전략 사용 - Midjourney 스타일로 극도로 단순화
+        if style == 'minimal':
+            # 가장 단순한 형태
+            prompt = translated_desc
+            if composition_en:
+                prompt = f"{translated_desc}, {composition_en}"
         
-        # 조명 스타일 매핑 - 더 시각적이고 구체적으로
-        lighting_styles = {
-            '자연광': 'bright sunny daylight',
-            '부드러운 조명': 'soft even lighting no shadows',
-            '드라마틱한 조명': 'stark light and shadow contrast',
-            '역광': 'strong backlight silhouette',
-            '황금시간대': 'warm orange sunset glow',
-            '밤': 'dark night blue hour lighting',
-            '실내조명': 'cozy warm indoor lamps'
-        }
+        elif style == 'sketch':
+            # 스케치 스타일
+            prompt = f"pencil sketch {translated_desc}"
+            if lighting_en:
+                prompt = f"{prompt}, {lighting_en}"
         
-        # 시각적 설명 변환
-        translated_desc = visual_desc
-        for korean, english in scene_translations.items():
-            if korean in visual_desc:
-                translated_desc = translated_desc.replace(korean, english)
+        elif style == 'realistic':
+            # 사실적인 스타일
+            prompt = f"photo {translated_desc}"
+            if composition_en:
+                prompt = f"{prompt}, {composition_en}"
         
-        # 스타일별 프롬프트 설정 - 더 시각적이고 구체적으로
-        style_prompts = {
-            'minimal': {
-                'base': "Minimalist line drawing",
-                'details': [
-                    "simple clean lines",
-                    "empty negative space",
-                    "essential shapes only",
-                    "monochromatic"
-                ]
-            },
-            'realistic': {
-                'base': "Photorealistic cinematic shot",
-                'details': [
-                    "hyperrealistic details",
-                    "natural textures",
-                    "volumetric lighting",
-                    "depth of field"
-                ]
-            },
-            'sketch': {
-                'base': "Rough pencil sketch artwork",
-                'details': [
-                    "hand-drawn pencil strokes",
-                    "sketchy lines",
-                    "shading with crosshatching",
-                    "artistic pencil drawing"
-                ]
-            },
-            'cartoon': {
-                'base': "Vibrant cartoon artwork",
-                'details': [
-                    "bright cartoon colors",
-                    "thick black outlines",
-                    "cel-shaded style",
-                    "animated character design"
-                ]
-            },
-            'cinematic': {
-                'base': "Dramatic cinematic shot",
-                'details': [
-                    "film noir atmosphere",
-                    "chiaroscuro lighting",
-                    "wide aspect ratio",
-                    "movie still quality"
-                ]
-            },
-            'watercolor': {
-                'base': "Soft watercolor painting",
-                'details': [
-                    "watercolor paint on paper",
-                    "wet-on-wet technique",
-                    "flowing paint bleeds",
-                    "transparent color layers"
-                ]
-            },
-            'digital': {
-                'base': "Digital artwork rendering",
-                'details': [
-                    "glossy digital painting",
-                    "vibrant neon colors",
-                    "smooth gradients",
-                    "futuristic aesthetic"
-                ]
-            },
-            'noir': {
-                'base': "Black and white film noir",
-                'details': [
-                    "high contrast monochrome",
-                    "deep shadows",
-                    "1940s noir style",
-                    "venetian blind shadows"
-                ]
-            },
-            'pastel': {
-                'base': "Soft pastel artwork",
-                'details': [
-                    "chalk pastel on paper",
-                    "muted pastel tones",
-                    "soft edges",
-                    "dreamy soft focus"
-                ]
-            },
-            'comic': {
-                'base': "Comic book artwork",
-                'details': [
-                    "comic book art",
-                    "dynamic action shot",
-                    "ben day dots",
-                    "vibrant pop art colors"
-                ]
-            }
-        }
+        elif style == 'watercolor':
+            # 수채화 스타일
+            prompt = f"watercolor {translated_desc}"
         
-        # 선택된 스타일 가져오기 (기본값: sketch)
-        selected_style = style_prompts.get(style, style_prompts['sketch'])
+        elif style == 'cinematic':
+            # 영화적 스타일 - 가장 시각적
+            prompt = translated_desc
+            if composition_en:
+                prompt = f"{prompt}, {composition_en}"
+            if lighting_en:
+                prompt = f"{prompt}, {lighting_en}"
+            prompt = f"{prompt}, cinematic"
         
-        # 프롬프트 구성 - 완전한 그림 묘사로
-        prompt_parts = []
+        else:
+            # 기본 스타일 - 매우 단순
+            prompt = translated_desc
         
-        # 1. 메인 스타일을 시작으로
-        prompt_parts.append(selected_style['base'])
+        # 금지 단어 최종 제거
+        prompt = self._remove_forbidden_words(prompt)
         
-        # 2. 장면의 시각적 요소를 자연스럽게 묘사
-        if translated_desc:
-            # 숫자나 설명문 형식 제거
-            clean_desc = translated_desc
-            # "40대 여성" → "middle-aged woman"으로 이미 변환되었지만, 더 자연스럽게
-            clean_desc = clean_desc.replace('around ', '')
-            clean_desc = clean_desc.replace(' years old', '')
-            prompt_parts.append(clean_desc)
+        # 프롬프트 최종 정리
+        prompt = ' '.join(prompt.split())
         
-        # 3. 카메라 구도를 자연스럽게 통합
-        if composition in camera_angles:
-            # "shot" 같은 기술적 용어 최소화
-            angle_desc = camera_angles[composition].replace(' shot', '').replace('camera ', '')
-            prompt_parts.append(angle_desc)
+        # 너무 길면 앞부분만 사용 (DALL-E는 짧은 프롬프트에 더 잘 반응)
+        if len(prompt) > 100:
+            prompt = prompt[:100].rsplit(' ', 1)[0]
         
-        # 4. 조명을 분위기로 표현
-        if lighting in lighting_styles:
-            prompt_parts.append(lighting_styles[lighting])
-        
-        # 5. 스타일 세부사항 추가
-        prompt_parts.extend(selected_style['details'])
-        
-        # 6. 텍스트 완전 배제 강조
-        prompt_parts.extend([
-            "artwork without any text",
-            "no words or letters visible",
-            "pure visual illustration"
-        ])
-        
-        # 최종 프롬프트를 자연스러운 문장으로 조합
-        # 마침표 대신 쉼표로 연결하여 하나의 통합된 묘사로
-        prompt = ", ".join(prompt_parts)
-        
-        # 금지 단어 필터링 적용
-        prompt = self._filter_forbidden_words(prompt)
-        
-        logger.info(f"Generated cinematic DALL-E prompt: {prompt[:200]}...")
+        logger.info(f"Final DALL-E prompt: {prompt}")
         return prompt
+    
+    def _translate_korean_to_english(self, text):
+        """
+        한국어 텍스트를 영어로 간단히 변환합니다.
+        """
+        # 복합 표현 먼저 처리 (순서 중요!)
+        translations = [
+            # 복합 동작 (가장 긴 패턴부터)
+            ('사무실에서 일하는 사람들', 'people working in office'),
+            ('카페에 들어가는 남자', 'man walks into cafe'),
+            ('회의실에서 프레젠테이션하는 여성', 'woman giving presentation in meeting room'),
+            ('공원에서 뛰어노는 아이들', 'children running in park playground'),
+            ('사무실에서 일하는', 'working in office'),
+            ('카페에 들어가는', 'entering cafe'),
+            ('회의실에서 프레젠테이션하는', 'presenting in meeting room'),
+            ('공원에서 뛰어노는', 'playing in park'),
+            
+            # 장소
+            ('카페', 'cafe'),
+            ('커피숍', 'coffee shop'),
+            ('회의실', 'meeting room'),
+            ('공원', 'park'),
+            ('사무실', 'office'),
+            ('거리', 'street'),
+            ('도로', 'road'),
+            ('집', 'home'),
+            ('학교', 'school'),
+            ('병원', 'hospital'),
+            ('상점', 'shop'),
+            ('레스토랑', 'restaurant'),
+            
+            # 인물
+            ('아이들', 'children'),
+            ('남자', 'man'),
+            ('여자', 'woman'),
+            ('여성', 'woman'),
+            ('남성', 'man'),
+            ('아이', 'child'),
+            ('사람', 'person'),
+            ('사람들', 'people'),
+            
+            # 동작
+            ('들어가는', 'entering'),
+            ('나오는', 'exiting'),
+            ('걷는', 'walking'),
+            ('뛰는', 'running'),
+            ('앉아있는', 'sitting'),
+            ('서있는', 'standing'),
+            ('말하는', 'speaking'),
+            ('듣는', 'listening'),
+            ('웃는', 'smiling'),
+            ('일하는', 'working'),
+            ('놀고있는', 'playing'),
+            ('뛰어노는', 'playing'),
+            
+            # 조사 (마지막에 처리)
+            ('에서', ' in '),
+            ('에', ' at '),
+            ('을', ''),
+            ('를', ''),
+            ('이', ''),
+            ('가', ''),
+            ('는', ''),
+            ('은', ''),
+            ('들', '')
+        ]
+        
+        result = text
+        # 순서대로 치환 (긴 패턴이 먼저 처리되도록 정렬됨)
+        for korean, english in translations:
+            result = result.replace(korean, english)
+        
+        # 연속된 공백 정리
+        result = ' '.join(result.split())
+        
+        return result
+    
+    def _translate_composition(self, composition):
+        """
+        구성 용어를 영어로 변환
+        """
+        comp_dict = {
+            '클로즈업': 'closeup',
+            '미디엄샷': 'medium shot',
+            '와이드샷': 'wide shot',
+            '풀샷': 'full shot',
+            '롱샷': 'long shot',
+            '버드아이뷰': 'aerial view',
+            '로우앵글': 'low angle',
+            '하이앵글': 'high angle'
+        }
+        return comp_dict.get(composition, composition)
+    
+    def _translate_lighting(self, lighting):
+        """
+        조명 용어를 영어로 변환
+        """
+        light_dict = {
+            '자연광': 'natural light',
+            '실내조명': 'indoor lighting',
+            '황금시간대': 'golden hour',
+            '역광': 'backlight',
+            '부드러운조명': 'soft light',
+            '강한조명': 'harsh light',
+            '어두운': 'dark',
+            '밝은': 'bright'
+        }
+        return light_dict.get(lighting, lighting)
+    
+    def _remove_forbidden_words(self, prompt):
+        """
+        텍스트 생성을 유발하는 금지 단어들을 제거합니다.
+        """
+        forbidden_patterns = [
+            r'frame\s*#?\s*\d*',
+            r'scene\s*:?\s*\d*',
+            r'shot\s*#?\s*\d*',
+            r'storyboard',
+            r'description',
+            r'text\s*box',
+            r'caption',
+            r'label',
+            r'written',
+            r'explained',
+            r'annotated',
+            r'panel',
+            r'slide',
+            r'프레임',
+            r'장면',
+            r'설명'
+        ]
+        
+        result = prompt
+        for pattern in forbidden_patterns:
+            result = re.sub(pattern, '', result, flags=re.IGNORECASE)
+        
+        # 연속된 공백과 쉼표 정리
+        result = re.sub(r'\s+', ' ', result)
+        result = re.sub(r',\s*,', ',', result)
+        result = result.strip(' ,')
+        
+        return result

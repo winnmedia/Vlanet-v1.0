@@ -188,6 +188,8 @@ class GeminiService:
         genre = context.get('genre', '')
         concept = context.get('concept', '')
         target = context.get('target', '')
+        purpose = context.get('purpose', '')
+        duration = context.get('duration', '')
         story_framework = context.get('story_framework', 'classic')
         development_level = context.get('development_level', 'balanced')
         
@@ -215,6 +217,8 @@ class GeminiService:
         - 장르: {genre if genre else '일반'}
         - 톤앤매너: {tone if tone else '중립적'}
         - 콘셉트: {concept if concept else '기본'}
+        - 영상 목적: {purpose if purpose else '정보 전달'}
+        - 영상 길이: {duration if duration else '3-5분'}
         - 스토리 프레임워크: {framework_guides.get(story_framework, framework_guides['classic'])}
         - 전개 강도: {development_guides.get(development_level, development_guides['balanced'])}
         
@@ -229,6 +233,8 @@ class GeminiService:
         - 장르가 '로맨스'라면: 감정선, 만남과 이별, 설렘의 순간 등을 포함
         - 톤이 '유머러스'라면: 재치있는 대사, 코믹한 상황, 밝은 분위기
         - 콘셉트가 '혁신'이라면: 새로운 시도, 변화, 도전정신을 강조
+        - 목적이 '브랜드 인지도 향상'이라면: 브랜드 가치를 자연스럽게 녹여내기
+        - 길이가 '1분'이라면: 핵심만 간결하게, 임팩트 있는 전개
         
         4개 파트 구성:
         1. 기(起) - 설정 [전체의 10-20%]

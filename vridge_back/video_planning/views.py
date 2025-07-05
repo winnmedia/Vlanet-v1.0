@@ -67,6 +67,8 @@ def generate_story(request):
         genre = request.data.get('genre', '')
         concept = request.data.get('concept', '')
         target = request.data.get('target', '')
+        purpose = request.data.get('purpose', '')
+        duration = request.data.get('duration', '')
         story_framework = request.data.get('story_framework', 'classic')
         development_level = request.data.get('development_level', 'balanced')
         
@@ -82,6 +84,8 @@ def generate_story(request):
             'genre': genre,
             'concept': concept,
             'target': target,
+            'purpose': purpose,
+            'duration': duration,
             'story_framework': story_framework,
             'development_level': development_level
         }

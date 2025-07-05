@@ -42,13 +42,11 @@ class PlaceholderImageService:
             # 텍스트 색상
             text_color = (50, 50, 50)
             
-            # 프레임 번호 (상단 왼쪽)
+            # 텍스트 표시
             try:
                 # 기본 폰트 사용
-                # Frame # 텍스트 제거 - 순수한 시각적 표현만
-                
-                # 제목 (중앙 상단)
-                draw.text((20, 60), title, fill=text_color)
+                # 제목 (상단)
+                draw.text((20, 40), title, fill=text_color)
                 
                 # 설명 (중앙)
                 # 긴 텍스트를 여러 줄로 나누기

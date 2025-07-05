@@ -1,0 +1,35 @@
+[
+  {
+    "frame_number": 1,
+    "original_description": "카페에 들어가는 남자",
+    "prompts": {
+      "sketch": "black-and-white pencil sketch, coffee shop interior with tables and warm lighting에 들어가는 man, person d from waist up, sunny daylight, hand-drawn style, soft shading",
+      "realistic": "photorealistic cinematic , coffee shop interior with tables and warm lighting에 들어가는 man, person d from waist up, sunny daylight, cinematic lighting, shallow depth of field",
+      "cartoon": "Vibrant cartoon artwork, coffee shop interior with tables and warm lighting에 들어가는 man, person d from waist up, sunny daylight, bright cartoon colors, thick black outlines",
+      "watercolor": "Soft watercolor painting, coffee shop interior with tables and warm lighting에 들어가는 man, person d from waist up, sunny daylight, watercolor paint on , wet-on-wet technique",
+      "cinematic": "Dramatic cinematic , coffee shop interior with tables and warm lighting에 들어가는 man, person d from waist up, sunny daylight, film noir atmosphere, chiaroscuro lighting"
+    }
+  },
+  {
+    "frame_number": 2,
+    "original_description": "회의실에서 프레젠테이션하는 여성",
+    "prompts": {
+      "sketch": "black-and-white pencil sketch, conference room with large table and chairs에서 프레젠테이션하는 woman, extremely wide landscape, cozy warm indoor lamps, hand-drawn style, soft shading",
+      "realistic": "photorealistic cinematic , conference room with large table and chairs에서 프레젠테이션하는 woman, extremely wide landscape, cozy warm indoor lamps, cinematic lighting, shallow depth of field",
+      "cartoon": "Vibrant cartoon artwork, conference room with large table and chairs에서 프레젠테이션하는 woman, extremely wide landscape, cozy warm indoor lamps, bright cartoon colors, thick black outlines",
+      "watercolor": "Soft watercolor painting, conference room with large table and chairs에서 프레젠테이션하는 woman, extremely wide landscape, cozy warm indoor lamps, watercolor paint on , wet-on-wet technique",
+      "cinematic": "Dramatic cinematic , conference room with large table and chairs에서 프레젠테이션하는 woman, extremely wide landscape, cozy warm indoor lamps, film noir atmosphere, chiaroscuro lighting"
+    }
+  },
+  {
+    "frame_number": 3,
+    "original_description": "공원에서 뛰어노는 아이들",
+    "prompts": {
+      "sketch": "black-and-white pencil sketch, park with trees and benches에서 뛰어노는 child들, full figure head to toe, warm orange sunset glow, hand-drawn style, soft shading",
+      "realistic": "photorealistic cinematic , park with trees and benches에서 뛰어노는 child들, full figure head to toe, warm orange sunset glow, cinematic lighting, shallow depth of field",
+      "cartoon": "Vibrant cartoon artwork, park with trees and benches에서 뛰어노는 child들, full figure head to toe, warm orange sunset glow, bright cartoon colors, thick black outlines",
+      "watercolor": "Soft watercolor painting, park with trees and benches에서 뛰어노는 child들, full figure head to toe, warm orange sunset glow, watercolor paint on , wet-on-wet technique",
+      "cinematic": "Dramatic cinematic , park with trees and benches에서 뛰어노는 child들, full figure head to toe, warm orange sunset glow, film noir atmosphere, chiaroscuro lighting"
+    }
+  }
+]

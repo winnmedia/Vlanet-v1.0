@@ -167,6 +167,13 @@ def generate_storyboards(request):
                 'message': '숏 데이터가 필요합니다.'
             }, status=status.HTTP_400_BAD_REQUEST)
         
+        # API 키 상태 확인 로그
+        logger.info("=" * 50)
+        logger.info("🎨 스토리보드 생성 시작")
+        logger.info(f"  - 스타일: {style}")
+        logger.info(f"  - IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
+        logger.info(f"  - DalleService 모듈: {'있음' if DalleService else '없음'}")
+        
         gemini_service = GeminiService()
         gemini_service.style = style  # 스타일 설정
         storyboard_data = gemini_service.generate_storyboards_from_shot(shot_data)

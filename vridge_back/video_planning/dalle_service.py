@@ -14,13 +14,23 @@ class DalleService:
     """
     
     def __init__(self):
-        self.api_key = getattr(settings, 'OPENAI_API_KEY', None) or os.environ.get('OPENAI_API_KEY')
+        # 디버깅을 위한 상세 로그
+        settings_key = getattr(settings, 'OPENAI_API_KEY', None)
+        env_key = os.environ.get('OPENAI_API_KEY')
+        
+        logger.info(f"🔍 OPENAI_API_KEY 체크:")
+        logger.info(f"  - settings.OPENAI_API_KEY: {settings_key[:10] + '...' if settings_key else 'None'}")
+        logger.info(f"  - os.environ.get('OPENAI_API_KEY'): {env_key[:10] + '...' if env_key else 'None'}")
+        
+        self.api_key = settings_key or env_key
         self.available = bool(self.api_key)
         
         if not self.available:
-            logger.warning("OPENAI_API_KEY not found. DALL-E image generation will not be available.")
+            logger.warning("❌ OPENAI_API_KEY not found. DALL-E image generation will not be available.")
+            logger.warning("  - Railway에서 환경변수를 설정했는지 확인하세요")
+            logger.warning("  - 설정 후 재배포가 필요합니다")
         else:
-            logger.info("DALL-E service initialized with API key")
+            logger.info(f"✅ DALL-E service initialized with API key: {self.api_key[:10]}...")
             try:
                 # OpenAI 클라이언트 초기화 - 기본 인자만 사용
                 import openai

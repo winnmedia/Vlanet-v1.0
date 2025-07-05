@@ -71,12 +71,27 @@ class DalleService:
             frame_data: 프레임 정보
             style: 이미지 스타일 ('minimal', 'realistic', 'sketch', 'cartoon', 'cinematic')
         """
-        if not self.available:
+        # API 키와 클라이언트가 있으면 available 상태와 관계없이 시도
+        if not self.api_key:
             return {
                 "success": False,
-                "error": "이미지 생성 서비스를 사용할 수 없습니다. OPENAI_API_KEY를 확인해주세요.",
+                "error": "OPENAI_API_KEY가 설정되지 않았습니다.",
                 "image_url": None
             }
+        
+        if not self.client:
+            # 클라이언트 재초기화 시도
+            try:
+                logger.info("Attempting to reinitialize OpenAI client...")
+                self.client = OpenAI(api_key=self.api_key)
+                logger.info("✅ OpenAI client reinitialized successfully")
+            except Exception as e:
+                logger.error(f"❌ Failed to reinitialize client: {e}")
+                return {
+                    "success": False,
+                    "error": f"OpenAI 클라이언트 초기화 실패: {str(e)}",
+                    "image_url": None
+                }
         
         try:
             prompt = self._create_visual_prompt(frame_data, style)

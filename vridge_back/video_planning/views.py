@@ -32,6 +32,10 @@ def get_recent_plannings(request):
     """
     사용자의 최근 비디오 기획 로그를 가져옵니다.
     """
+    # 디버깅 로그 추가
+    logger.info(f"[get_recent_plannings] User: {request.user}, Authenticated: {request.user.is_authenticated}")
+    logger.info(f"[get_recent_plannings] Auth Header: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
+    
     try:
         # 최근 5개의 기획 로그 가져오기
         recent_plannings = VideoPlanning.objects.filter(
@@ -113,6 +117,10 @@ def generate_structure(request):
 @api_view(['POST'])
 @permission_classes([DebugAllowAny])
 def generate_story(request):
+    # 디버깅 로그 추가
+    logger.info(f"[generate_story] User: {request.user}, Authenticated: {request.user.is_authenticated}")
+    logger.info(f"[generate_story] Auth Header: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
+    
     try:
         planning_text = request.data.get('planning_text', '')
         tone = request.data.get('tone', '')

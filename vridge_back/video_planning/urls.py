@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import views_debug
+from . import views_jwt_test
 
 app_name = 'video_planning'
 
@@ -9,6 +10,8 @@ urlpatterns = [
     path('debug/services/', views_debug.check_services_status, name='check_services_status'),
     path('debug/test-openai/', views_debug.test_openai_direct, name='test_openai_direct'),
     path('debug/test-prompt/', views_debug.test_prompt_generation, name='test_prompt_generation'),
+    path('debug/test-jwt/', views_jwt_test.test_jwt_auth, name='test_jwt_auth'),
+    path('debug/test-jwt-protected/', views_jwt_test.test_jwt_protected, name='test_jwt_protected'),
     path('test-improved-prompts/', views_debug.test_improved_prompts, name='test_improved_prompts'),
     
     # 생성 관련 API

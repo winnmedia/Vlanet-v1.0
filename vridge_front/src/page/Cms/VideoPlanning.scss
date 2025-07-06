@@ -1,5 +1,5 @@
 .video-planning {
-  padding: 30px;
+  padding: 20px 30px; // 상하 20px, 좌우 30px로 조정
   background: #f8f9fa;
   min-height: calc(100vh - 120px);
   
@@ -13,16 +13,16 @@
     }
     
     .recent-plannings-sidebar {
-      width: 280px; // 350px에서 280px로 축소
+      width: 260px; // 280px에서 260px로 추가 축소
       flex-shrink: 0; // 축소 방지
       background: white;
       border-radius: 12px;
-      padding: 20px; // 24px에서 20px로 축소
+      padding: 16px; // 20px에서 16px로 축소
       height: fit-content;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       
       // 화면이 좁을 때 숨김
-      @media (max-width: 1400px) {
+      @media (max-width: 1500px) {
         display: none;
       }
       
@@ -512,7 +512,7 @@
   }
 
   .step-content {
-    max-width: 1200px; // 900px에서 1200px로 확대
+    max-width: 1400px; // 1200px에서 1400px로 확대
     margin: 0 auto;
     background: white;
     border-radius: 12px;
@@ -520,7 +520,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     
     // 사이드바가 없을 때는 더 넓게
-    @media (max-width: 1400px) {
+    @media (max-width: 1600px) {
       max-width: 100%;
     }
 

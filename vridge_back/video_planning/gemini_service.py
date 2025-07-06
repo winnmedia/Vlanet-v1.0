@@ -668,6 +668,7 @@ class GeminiService:
                     "frame_number": 1,
                     "title": "프레임 제목 (한국어 가능)",
                     "visual_description": "DALL-E용 영어 시각적 묘사 (위 가이드라인 준수)",
+                    "description_kr": "한국어 한 줄 설명 (50자 이내로 장면의 핵심을 요약)",
                     "composition": "구도 (예: wide shot, close-up, medium shot)",
                     "camera_info": {{
                         "angle": "카메라 앵글",
@@ -745,6 +746,7 @@ class GeminiService:
                             "frame_number": 1,
                             "title": "오프닝 프레임",
                             "visual_description": "넓은 공간에서 제품이 중앙에 위치",
+                            "description_kr": "제품의 전체 모습을 보여주는 오프닝 샷",
                             "composition": "중앙 구도",
                             "camera_info": {
                                 "angle": "아이레벨",
@@ -764,6 +766,7 @@ class GeminiService:
                             "frame_number": 2,
                             "title": "디테일 프레임",
                             "visual_description": "제품의 주요 기능 클로즈업",
+                            "description_kr": "혁신적인 기능을 클로즈업으로 강조하는 장면",
                             "composition": "3분할 구도",
                             "camera_info": {
                                 "angle": "하이앵글",

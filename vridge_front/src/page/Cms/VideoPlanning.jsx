@@ -1257,7 +1257,13 @@ export default function VideoPlanning() {
                           )}
                         </div>
                         <div className="storyboard-info">
-                          <p>{scene.storyboard.visual_description || scene.storyboard.description}</p>
+                          <p className="storyboard-description-kr">
+                            {scene.storyboard.description_kr ? 
+                              (scene.storyboard.description_kr.length > 50 ? 
+                                scene.storyboard.description_kr.substring(0, 50) + '...' : 
+                                scene.storyboard.description_kr) :
+                              (scene.storyboard.visual_description || scene.storyboard.description || '').substring(0, 50) + '...'}
+                          </p>
                           {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' && (
                             <div className="storyboard-actions">
                               <button 
@@ -1524,6 +1530,69 @@ export default function VideoPlanning() {
                 <span className="step-name">씬 & 콘티</span>
               </div>
             </div>
+
+            {/* 단계별 내용 미리보기 */}
+            {(planningData.planning || planningData.stories.length > 0 || planningData.scenes.length > 0) && (
+              <div className="step-preview-section">
+                {/* 기획안 미리보기 */}
+                {planningData.planning && (
+                  <div className={`step-preview ${currentStep === 1 ? 'active' : ''}`}>
+                    <h4>📝 기획안</h4>
+                    <div className="preview-content">
+                      <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
+                      {currentStep !== 1 && (
+                        <button className="view-detail-btn" onClick={() => goToStep(1)}>
+                          자세히 보기 →
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {/* 스토리 미리보기 */}
+                {planningData.stories.length > 0 && selectedStoryIndex !== null && planningData.stories[selectedStoryIndex] && (
+                  <div className={`step-preview ${currentStep === 2 ? 'active' : ''}`}>
+                    <h4>📖 선택된 스토리</h4>
+                    <div className="preview-content">
+                      <h5>{planningData.stories[selectedStoryIndex].title}</h5>
+                      <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
+                      <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
+                      {currentStep !== 2 && (
+                        <button className="view-detail-btn" onClick={() => goToStep(2)}>
+                          자세히 보기 →
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {/* 씬 미리보기 */}
+                {planningData.scenes.length > 0 && (
+                  <div className={`step-preview ${currentStep === 3 ? 'active' : ''}`}>
+                    <h4>🎬 씬 & 콘티 ({planningData.scenes.length}개)</h4>
+                    <div className="preview-content scenes-preview">
+                      {planningData.scenes.slice(0, 3).map((scene, index) => (
+                        <div key={index} className="scene-preview-item">
+                          <span className="scene-number">씬 {index + 1}</span>
+                          <span className="scene-location">{scene.location}</span>
+                          {scene.storyboard?.image_url && (
+                            <span className="has-storyboard">✓ 콘티</span>
+                          )}
+                        </div>
+                      ))}
+                      {planningData.scenes.length > 3 && (
+                        <div className="more-scenes">+{planningData.scenes.length - 3}개 더...</div>
+                      )}
+                      {currentStep !== 3 && (
+                        <button className="view-detail-btn" onClick={() => goToStep(3)}>
+                          자세히 보기 →
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {error && (
               <div className="error-message">

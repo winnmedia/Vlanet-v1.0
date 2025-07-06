@@ -171,8 +171,7 @@ class DalleService:
     
     def _create_visual_prompt(self, frame_data, style='minimal'):
         """
-        프레임 데이터를 바탕으로 순수한 시각적 프롬프트를 생성합니다.
-        DALL-E가 텍스트 박스를 그리지 않도록 영화의 한 장면처럼 묘사합니다.
+        프레임 데이터를 바탕으로 DALL-E 3에 최적화된 시각적 프롬프트를 생성합니다.
         
         Args:
             frame_data: 프레임 정보
@@ -180,31 +179,72 @@ class DalleService:
         """
         visual_desc = frame_data.get('visual_description', '')
         
-        # 한국어를 영어로 변환
-        translated_desc = self._translate_korean_to_english(visual_desc)
+        # visual_description이 이미 영어로 된 경우 그대로 사용
+        if self._is_english(visual_desc):
+            # 이미 영어로 잘 작성된 경우
+            base_prompt = visual_desc
+        else:
+            # 한국어인 경우 번역
+            base_prompt = self._translate_korean_to_english(visual_desc)
         
-        # 극도로 단순한 프롬프트 - DALL-E가 절대 텍스트를 그리지 못하도록
-        # 스타일에 관계없이 모두 단순하게
-        prompt = f"{translated_desc}"
+        # 구도 정보 추가 (있는 경우)
+        composition = frame_data.get('composition', '')
+        if composition and not any(term in base_prompt.lower() for term in ['wide shot', 'close-up', 'medium shot']):
+            # 한국어 구도를 영어로 변환
+            comp_map = {
+                '와이드샷': 'wide shot',
+                '클로즈업': 'close-up',
+                '미디엄샷': 'medium shot',
+                '풀샷': 'full shot',
+                '오버숄더': 'over-the-shoulder shot'
+            }
+            for kr, en in comp_map.items():
+                if kr in composition:
+                    base_prompt = f"{en} of {base_prompt}"
+                    break
         
-        # 스타일 키워드만 추가 (아주 짧게)
-        if style == 'minimal' or style == 'sketch':
-            prompt = f"pencil sketch {prompt}"
-        elif style == 'realistic':
-            prompt = f"photo {prompt}"
-        elif style == 'watercolor':
-            prompt = f"watercolor {prompt}"
-        elif style == 'cinematic':
-            prompt = f"cinematic {prompt}"
+        # 스타일 적용
+        style_prompts = {
+            'minimal': 'minimalist pencil sketch',
+            'sketch': 'detailed pencil sketch',
+            'realistic': 'photorealistic',
+            'watercolor': 'watercolor painting',
+            'cinematic': 'cinematic dramatic lighting',
+            'black-and-white': 'black and white photograph',
+            'oil-painting': 'oil painting',
+            'digital-art': 'digital art illustration'
+        }
         
-        # 마지막에 반드시 추가
-        prompt = f"{prompt}, no text"
+        style_prefix = style_prompts.get(style, 'cinematic')
+        prompt = f"{style_prefix}, {base_prompt}"
         
-        # 프롬프트 최종 정리
+        # 추가 디테일 (조명 정보가 있으면 추가)
+        lighting = frame_data.get('lighting', '')
+        if lighting and '조명' not in prompt:
+            lighting_trans = self._translate_lighting(lighting)
+            if lighting_trans and lighting_trans != lighting:
+                prompt += f", {lighting_trans}"
+        
+        # 텍스트 방지 강화
+        prompt += ", no text, no words, no letters, without any text"
+        
+        # 금지 단어 최종 제거
+        prompt = self._remove_forbidden_words(prompt)
+        
+        # 프롬프트 정리
         prompt = ' '.join(prompt.split())
         
-        logger.info(f"Final DALL-E prompt (극도로 단순화): {prompt}")
+        logger.info(f"Final DALL-E prompt: {prompt}")
         return prompt
+    
+    def _is_english(self, text):
+        """텍스트가 주로 영어인지 확인"""
+        # 알파벳 비율 확인
+        if not text:
+            return False
+        alpha_count = sum(1 for c in text if c.isalpha() and ord(c) < 128)
+        total_alpha = sum(1 for c in text if c.isalpha())
+        return total_alpha > 0 and alpha_count / total_alpha > 0.8
     
     def _translate_korean_to_english(self, text):
         """

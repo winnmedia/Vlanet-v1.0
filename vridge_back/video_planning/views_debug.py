@@ -9,6 +9,61 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def test_prompt_generation(request):
+    """DALL-E 프롬프트 생성 테스트"""
+    try:
+        # 테스트용 프레임 데이터
+        test_frame = request.data.get('frame_data', {
+            'frame_number': 1,
+            'title': '테스트 프레임',
+            'visual_description': request.data.get('description', '카페에 들어가는 남자'),
+            'composition': request.data.get('composition', '미디엄샷'),
+            'lighting': request.data.get('lighting', '자연광')
+        })
+        
+        style = request.data.get('style', 'minimal')
+        
+        # DALL-E 서비스로 프롬프트 생성
+        from .dalle_service import DalleService
+        dalle = DalleService()
+        
+        # 프롬프트 생성 과정 추적
+        original_desc = test_frame.get('visual_description', '')
+        
+        # 영어 체크
+        is_english = dalle._is_english(original_desc)
+        
+        # 한국어 번역 (필요한 경우)
+        if not is_english:
+            translated = dalle._translate_korean_to_english(original_desc)
+        else:
+            translated = original_desc
+        
+        # 최종 프롬프트 생성
+        final_prompt = dalle._create_visual_prompt(test_frame, style)
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'original_description': original_desc,
+                'is_english': is_english,
+                'translated_description': translated if not is_english else None,
+                'final_prompt': final_prompt,
+                'style': style,
+                'frame_data': test_frame
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Prompt generation test failed: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'프롬프트 생성 테스트 실패: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['GET'])
 @permission_classes([AllowAny]) 
 def test_openai_direct(request):

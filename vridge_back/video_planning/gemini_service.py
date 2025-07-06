@@ -626,25 +626,42 @@ class GeminiService:
     
     def generate_storyboards_from_shot(self, shot_data):
         prompt = f"""
-        당신은 전문 스토리보드 아티스트입니다. 아래 숏 정보를 바탕으로 상세한 콘티(스토리보드)를 작성해주세요.
+        당신은 전문 스토리보드 아티스트입니다. 아래 숏 정보를 바탕으로 DALL-E 3가 생성할 수 있는 상세한 시각적 콘티를 작성해주세요.
 
         숏 정보:
         {json.dumps(shot_data, ensure_ascii=False, indent=2)}
 
-        각 프레임은 구도, 동작, 카메라 워크, 조명, 음향 등을 포함해야 합니다.
+        ⚠️ 중요: visual_description은 DALL-E 3가 이미지를 생성할 때 사용됩니다. 다음 가이드라인을 반드시 따라주세요:
+        
+        ✅ visual_description 작성 규칙:
+        1. 시각적 묘사 중심으로 작성 (장면, 인물 외형, 배경, 감정, 행동 등 구체적으로)
+        2. 인물 묘사시: 성별, 나이대, 표정, 옷차림, 제스처, 위치 포함
+        3. 카메라 뷰 포함: "wide shot", "close-up", "medium shot", "over-the-shoulder" 등
+        4. 설명문이 아닌 회화적 묘사: "A man in a dark coat walks into a quiet room" 형식
+        5. 환경 묘사: 조명, 분위기, 주변 사물들
+        
+        ❌ 절대 사용하지 말아야 할 단어:
+        - "Storyboard", "Frame", "Scene", "프레임", "장면", "씬"
+        - "Description", "Caption", "Text", "설명"
+        - "Write", "Written", "Label"
+        - 시나리오 문장 스타일 ("다음 장면은~" 같은 표현)
+        
+        예시:
+        나쁜 묘사: "김부자가 신당에 들어온다"
+        좋은 묘사: "A middle-aged woman in traditional Korean hanbok enters a dimly lit shaman shrine. She looks nervous, clutching a small bag. Incense smoke fills the room, creating mysterious shadows on the walls adorned with talismans."
         
         다음 형식의 JSON으로 응답해주세요:
         {{
             "storyboards": [
                 {{
                     "frame_number": 1,
-                    "title": "프레임 제목",
-                    "visual_description": "시각적 구성 설명",
-                    "composition": "구도 (예: 3분할 구도, 중앙 구도 등)",
+                    "title": "프레임 제목 (한국어 가능)",
+                    "visual_description": "DALL-E용 영어 시각적 묘사 (위 가이드라인 준수)",
+                    "composition": "구도 (예: wide shot, close-up, medium shot)",
                     "camera_info": {{
                         "angle": "카메라 앵글",
                         "movement": "카메라 움직임",
-                        "lens": "렌즈 타입 (예: 광각, 표준, 망원)"
+                        "lens": "렌즈 타입"
                     }},
                     "lighting": "조명 설정",
                     "audio": {{

@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])  # 임시로 AllowAny로 변경
 def get_recent_plannings(request):
     """
     사용자의 최근 비디오 기획 로그를 가져옵니다.
@@ -37,10 +37,15 @@ def get_recent_plannings(request):
     logger.info(f"[get_recent_plannings] Auth Header: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
     
     try:
-        # 최근 5개의 기획 로그 가져오기
-        recent_plannings = VideoPlanning.objects.filter(
-            user=request.user
-        ).order_by('-created_at')[:5]
+        # 인증된 사용자인 경우에만 필터링
+        if request.user.is_authenticated:
+            # 최근 5개의 기획 로그 가져오기
+            recent_plannings = VideoPlanning.objects.filter(
+                user=request.user
+            ).order_by('-created_at')[:5]
+        else:
+            # 인증되지 않은 경우 빈 쿼리셋
+            recent_plannings = VideoPlanning.objects.none()
         
         # 응답 데이터 구성
         planning_logs = []
@@ -70,15 +75,15 @@ def get_recent_plannings(request):
             'status': 'success',
             'data': {
                 'planning_logs': planning_logs,
-                'total_count': VideoPlanning.objects.filter(user=request.user).count()
+                'total_count': VideoPlanning.objects.filter(user=request.user).count() if request.user.is_authenticated else 0
             }
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
-        logger.error(f"Error in get_recent_plannings: {str(e)}")
+        logger.error(f"Error in get_recent_plannings: {str(e)}", exc_info=True)
         return Response({
             'status': 'error',
-            'message': '최근 기획 로그를 가져오는 중 오류가 발생했습니다.'
+            'message': f'최근 기획 로그를 가져오는 중 오류가 발생했습니다: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -330,10 +335,10 @@ def generate_storyboards(request):
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
-        logger.error(f"Error in generate_storyboards: {str(e)}")
+        logger.error(f"Error in generate_storyboards: {str(e)}", exc_info=True)
         return Response({
             'status': 'error',
-            'message': '콘티 생성 중 오류가 발생했습니다.'
+            'message': f'콘티 생성 중 오류가 발생했습니다: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

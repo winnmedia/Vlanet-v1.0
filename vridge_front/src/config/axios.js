@@ -42,7 +42,7 @@ console.log('[Axios Configuration] Hostname:', window.location.hostname);
 
 // 공통 설정
 axios.defaults.withCredentials = true;
-axios.defaults.timeout = 30000;
+axios.defaults.timeout = 60000; // 30초에서 60초로 증가
 
 // CORS를 위한 기본 헤더 설정
 axios.defaults.headers.common['Content-Type'] = 'application/json';
@@ -110,7 +110,7 @@ export const updateBaseURL = (url) => {
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  timeout: 30000,
+  timeout: 60000, // 30초에서 60초로 증가
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'

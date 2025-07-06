@@ -111,6 +111,13 @@ export default function VideoPlanning() {
       }
     } catch (err) {
       console.error('최근 기획 로드 실패:', err)
+      // 에러가 발생해도 빈 배열로 설정하여 UI가 깨지지 않도록 함
+      setRecentPlannings([])
+      
+      // 500 에러인 경우 구체적인 메시지 표시
+      if (err.response?.status === 500) {
+        console.error('서버 내부 오류:', err.response.data?.message)
+      }
     }
   }
 
@@ -414,7 +421,17 @@ export default function VideoPlanning() {
         setError(response.data.message || '콘티 생성에 실패했습니다.')
       }
     } catch (err) {
-      setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
+      console.error('스토리보드 생성 오류:', err)
+      
+      if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
+        setError('이미지 생성에 시간이 오래 걸리고 있습니다. 잠시 후 다시 시도해주세요.')
+      } else if (err.response?.status === 500) {
+        setError(`서버 오류: ${err.response.data?.message || '콘티 생성 중 문제가 발생했습니다.'}`)
+      } else if (!err.response) {
+        setError('네트워크 연결을 확인해주세요.')
+      } else {
+        setError(err.response?.data?.message || '콘티 생성에 실패했습니다.')
+      }
     } finally {
       setTimeout(() => {
         setLoading(false)

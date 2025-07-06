@@ -1,0 +1,95 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block content_title %}
+    {% if planning_stats %}
+    <div style="background: #f8f9fa; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+        <h2 style="margin-top: 0; color: #333;">📊 영상 기획 통계</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div style="background: white; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #1976d2;">{{ planning_stats.total }}</div>
+                <div style="color: #666; font-size: 14px;">전체 기획</div>
+            </div>
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #4caf50;">{{ planning_stats.completed }}</div>
+                <div style="color: #666; font-size: 14px;">완료된 기획</div>
+                <div style="color: #999; font-size: 12px;">({{ planning_stats.completion_rate }}%)</div>
+            </div>
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #ff9800;">{{ planning_stats.today }}</div>
+                <div style="color: #666; font-size: 14px;">오늘 생성</div>
+            </div>
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #9c27b0;">{{ planning_stats.week }}</div>
+                <div style="color: #666; font-size: 14px;">최근 7일</div>
+            </div>
+            
+            <div style="background: white; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 24px; font-weight: bold; color: #e91e63;">{{ planning_stats.month }}</div>
+                <div style="color: #666; font-size: 14px;">최근 30일</div>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h4 style="margin-top: 0; color: #333;">🎬 단계별 현황</h4>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>1단계 (기획)</span>
+                        <span style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 12px;">{{ planning_stats.step_stats.step_1 }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>2단계 (스토리)</span>
+                        <span style="background: #e8f5e9; color: #388e3c; padding: 2px 8px; border-radius: 12px;">{{ planning_stats.step_stats.step_2 }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>3단계 (씬)</span>
+                        <span style="background: #fff3e0; color: #f57c00; padding: 2px 8px; border-radius: 12px;">{{ planning_stats.step_stats.step_3 }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>4단계 (샷)</span>
+                        <span style="background: #f3e5f5; color: #7b1fa2; padding: 2px 8px; border-radius: 12px;">{{ planning_stats.step_stats.step_4 }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>5단계 (콘티)</span>
+                        <span style="background: #fce4ec; color: #c2185b; padding: 2px 8px; border-radius: 12px;">{{ planning_stats.step_stats.step_5 }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            {% if planning_stats.top_tones %}
+            <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h4 style="margin-top: 0; color: #333;">🎨 인기 톤 TOP 3</h4>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    {% for tone, count in planning_stats.top_tones %}
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>{{ tone }}</span>
+                        <span style="background: #e8eaf6; color: #3f51b5; padding: 2px 8px; border-radius: 12px;">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if planning_stats.top_genres %}
+            <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h4 style="margin-top: 0; color: #333;">📚 인기 장르 TOP 3</h4>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    {% for genre, count in planning_stats.top_genres %}
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>{{ genre }}</span>
+                        <span style="background: #e0f2f1; color: #00796b; padding: 2px 8px; border-radius: 12px;">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

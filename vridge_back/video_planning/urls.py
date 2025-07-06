@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from . import views_debug
 from . import views_jwt_test
+from . import views_proxy
 
 app_name = 'video_planning'
 
@@ -24,6 +25,8 @@ urlpatterns = [
     # 이미지 관련 API
     path('regenerate/storyboard-image/', views.regenerate_storyboard_image, name='regenerate_storyboard_image'),
     path('download/storyboard-image/', views.download_storyboard_image, name='download_storyboard_image'),
+    path('proxy/image/', views_proxy.proxy_image, name='proxy_image'),
+    path('convert/base64/', views_proxy.convert_to_base64, name='convert_to_base64'),
     
     # 기획 저장/조회 API
     path('save/', views.save_planning, name='save_planning'),

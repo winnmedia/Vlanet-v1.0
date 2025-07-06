@@ -8,6 +8,7 @@ import axios from 'config/axios'
 import { checkSession } from 'util/util'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { getProxyImageUrl, handleImageError } from 'utils/imageProxy'
 
 // 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
 const filterForbiddenWords = (text) => {
@@ -1221,13 +1222,15 @@ export default function VideoPlanning() {
                       <div className="storyboard-content">
                         {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' ? (
                           <img 
-                            src={scene.storyboard.image_url} 
+                            src={getProxyImageUrl(scene.storyboard.image_url)} 
                             alt={`씬 ${index + 1} 콘티`}
                             className="storyboard-image"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
-                            }}
+                            onError={(e) => handleImageError(e, scene.storyboard.image_url, (newUrl) => {
+                              // 이미지 URL 업데이트
+                              const updatedScenes = [...planningData.scenes]
+                              updatedScenes[index].storyboard.image_url = newUrl
+                              setPlanningData(prev => ({ ...prev, scenes: updatedScenes }))
+                            })}
                           />
                         ) : null}
                         <div className="storyboard-placeholder" style={{display: scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' ? 'none' : 'flex'}}>
@@ -1413,6 +1416,50 @@ export default function VideoPlanning() {
               <h2>영상의 씨앗을 심어보세요</h2>
               <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다.</p>
             </div>
+
+            {/* 최근 기획안 기록 표시 */}
+            {recentPlannings.length > 0 && (
+              <div className="recent-plannings-section">
+                <div className="recent-header">
+                  <h3>📋 최근 기획안</h3>
+                  <span className="recent-count">최근 {recentPlannings.length}개</span>
+                </div>
+                <div className="recent-list">
+                  {recentPlannings.map((planning, index) => (
+                    <div 
+                      key={planning.id} 
+                      className="recent-item"
+                      onClick={() => loadHistoryItem(planning.id)}
+                    >
+                      <div className="recent-number">{index + 1}</div>
+                      <div className="recent-info">
+                        <div className="recent-title">{planning.title}</div>
+                        <div className="recent-meta">
+                          <span className="recent-date">{planning.created_at}</span>
+                          {planning.planning_options && (
+                            <div className="recent-tags">
+                              {planning.planning_options.tone && (
+                                <span className="tag tone">{planning.planning_options.tone}</span>
+                              )}
+                              {planning.planning_options.genre && (
+                                <span className="tag genre">{planning.planning_options.genre}</span>
+                              )}
+                              <span className={`tag step step-${planning.current_step}`}>
+                                {planning.current_step === 1 ? '기획' : 
+                                 planning.current_step === 2 ? '스토리' : 
+                                 planning.current_step === 3 ? '씬' : 
+                                 planning.current_step === 4 ? '숏' : 
+                                 planning.current_step === 5 ? '콘티' : '진행중'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {planningHistory.length > 0 && (
               <div className="planning-history-section">

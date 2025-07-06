@@ -637,18 +637,29 @@ class GeminiService:
         1. 시각적 묘사 중심으로 작성 (장면, 인물 외형, 배경, 감정, 행동 등 구체적으로)
         2. 인물 묘사시: 성별, 나이대, 표정, 옷차림, 제스처, 위치 포함
         3. 카메라 뷰 포함: "wide shot", "close-up", "medium shot", "over-the-shoulder" 등
-        4. 설명문이 아닌 회화적 묘사: "A man in a dark coat walks into a quiet room" 형식
-        5. 환경 묘사: 조명, 분위기, 주변 사물들
+        4. 구체적이고 생생한 영어로 작성
+        5. 환경과 분위기를 자세히 묘사
         
         ❌ 절대 사용하지 말아야 할 단어:
         - "Storyboard", "Frame", "Scene", "프레임", "장면", "씬"
         - "Description", "Caption", "Text", "설명"
-        - "Write", "Written", "Label"
-        - 시나리오 문장 스타일 ("다음 장면은~" 같은 표현)
+        - "Panel", "Script", "Title", "Heading"
+        - 번호나 라벨 ("Frame 1:", "Scene 1:" 등)
         
-        예시:
-        나쁜 묘사: "김부자가 신당에 들어온다"
-        좋은 묘사: "A middle-aged woman in traditional Korean hanbok enters a dimly lit shaman shrine. She looks nervous, clutching a small bag. Incense smoke fills the room, creating mysterious shadows on the walls adorned with talismans."
+        ✅ 좋은 예시들:
+        1. "Medium shot of a nervous middle-aged woman in colorful traditional Korean hanbok entering a dimly lit shaman shrine filled with incense smoke, wooden talismans hanging on dark walls, candlelight flickering"
+        
+        2. "Wide shot of a modern glass-walled office at sunset, young professionals in business casual attire working at computers, city skyline visible through windows, warm golden light streaming in"
+        
+        3. "Close-up of weathered hands holding prayer beads, soft natural light from side window, blurred traditional Korean interior in background"
+        
+        4. "Over-the-shoulder shot of a man in his 30s wearing a navy suit looking at laptop screen in busy coffee shop, other customers blurred in background, steam rising from coffee cup"
+        
+        ❌ 나쁜 예시들:
+        - "Frame 1: 주인공이 들어온다"
+        - "신당 입구 장면"
+        - "Scene showing entrance"
+        - "Storyboard panel of cafe"
         
         다음 형식의 JSON으로 응답해주세요:
         {{

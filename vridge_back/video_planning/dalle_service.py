@@ -259,42 +259,67 @@ class DalleService:
         
         if total_char_count > 0 and korean_char_count / total_char_count > 0.5:
             # 한국어가 50% 이상인 경우 기본 장면 설명으로 대체
-            logger.info(f"Korean text detected ({korean_char_count}/{total_char_count}), using default scene")
+            logger.info(f"Korean text detected ({korean_char_count}/{total_char_count}), using enhanced scene description")
             logger.info(f"Original Korean text: {text}")
             
-            # 키워드 기반 간단한 장면 추출
+            # 키워드 기반 풍부한 장면 설명 생성
             result = None
+            
+            # 신당/무당 관련 장면
             if '신당' in text or '무당' in text or '무속' in text:
                 if '손' in text and '잡' in text:
-                    result = "shaman holding hands with client in shrine"
+                    result = "elderly female shaman in colorful traditional Korean dress holding hands with worried middle-aged woman client, sitting on floor cushions in dimly lit shrine room filled with hanging paper talismans and burning incense"
                 elif '앉' in text:
-                    result = "shaman and client sitting in traditional shrine"
+                    result = "shaman in vibrant hanbok and client sitting face to face on traditional floor cushions in mystical shrine interior, candlelight flickering on walls covered with spiritual paintings and talismans"
+                elif '촛불' in text or '향' in text:
+                    result = "atmospheric shaman shrine interior with burning incense creating smoke patterns, multiple candles casting warm light on wooden walls decorated with colorful spiritual paintings and paper charms"
                 else:
-                    result = "shaman shrine interior with people"
+                    result = "traditional Korean shaman shrine interior with elderly female shaman in ceremonial dress, wooden walls covered in talismans, altar with offerings, incense smoke drifting through dim candlelit space"
+            
+            # 카페 관련 장면
             elif '카페' in text:
                 if '들어가' in text or '입구' in text:
-                    result = "person entering cafe"
+                    result = "man in casual business attire pushing glass door to enter modern coffee shop, warm interior lights visible through windows, other customers visible inside"
+                elif '앉' in text:
+                    result = "people sitting at wooden table in cozy coffee shop, laptops open, coffee cups steaming, large windows showing street view, warm ambient lighting"
                 else:
-                    result = "people in cafe"
-            elif '회의' in text:
-                result = "business meeting room"
-            elif '공원' in text:
-                result = "people in park"
-            elif '사무실' in text:
-                result = "office workspace"
-            elif '손' in text and ('잡' in text or '클로즈업' in text):
-                result = "close up of hands holding"
-            elif '얼굴' in text or '표정' in text:
-                result = "close up of person's face"
-            elif '클로즈업' in text:
-                result = "close up shot"
-            elif '와이드' in text:
-                result = "wide shot of interior"
-            else:
-                # 기본 실내 장면
-                result = "interior scene with people"
+                    result = "bustling modern coffee shop interior with customers at various tables, barista behind counter, exposed brick walls, industrial lighting, plants by windows"
             
-            logger.info(f"Korean to English result: {result}")
+            # 회의실 관련 장면
+            elif '회의' in text:
+                if '프레젠테이션' in text:
+                    result = "professional woman in business suit presenting to seated colleagues in modern conference room, projector screen showing charts, city view through floor-to-ceiling windows"
+                else:
+                    result = "group of business professionals around polished conference table in modern meeting room, laptops open, large monitor on wall, minimalist decor"
+            
+            # 공원 관련 장면
+            elif '공원' in text:
+                if '아이' in text or '어린이' in text:
+                    result = "children playing on colorful playground equipment in sunny park, parents watching from benches, trees providing shade, blue sky with fluffy clouds"
+                else:
+                    result = "peaceful urban park with walking paths, green grass, mature trees, people strolling, benches along pathways, city buildings visible in distance"
+            
+            # 사무실 관련 장면
+            elif '사무실' in text:
+                result = "modern open office space with rows of desks, computer monitors, employees working, glass partition walls, fluorescent lighting, potted plants"
+            
+            # 클로즈업 장면
+            elif '손' in text and ('잡' in text or '클로즈업' in text):
+                result = "extreme close-up of two people's hands clasped together showing emotional connection, soft natural lighting, blurred background"
+            elif '얼굴' in text or '표정' in text:
+                if '진지' in text:
+                    result = "close-up portrait of person with serious thoughtful expression, eyes focused, natural window light on face, shallow depth of field"
+                else:
+                    result = "close-up of person's face showing genuine emotion, natural lighting, detailed facial features visible, blurred background"
+            elif '클로즈업' in text:
+                result = "detailed close-up shot showing texture and detail, shallow depth of field, professional lighting"
+            elif '와이드' in text:
+                result = "expansive wide shot showing full interior space with architectural details, people as small figures in larger environment"
+            else:
+                # 기본 실내 장면 (더 구체적으로)
+                result = "well-lit interior space with people engaged in activity, modern furnishings, natural light from windows, comfortable atmosphere"
+            
+            logger.info(f"Enhanced Korean to English result: {result}")
             return result
         
         # 복합 표현 먼저 처리 (순서 중요!)

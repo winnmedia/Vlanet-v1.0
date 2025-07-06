@@ -315,3 +315,65 @@ def check_services_status(request):
             'settings_module': os.environ.get('DJANGO_SETTINGS_MODULE', 'not set')
         }
     }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def test_improved_prompts(request):
+    """개선된 DALL-E 프롬프트 생성을 간단하게 테스트하는 엔드포인트"""
+    try:
+        description = request.data.get('description', '')
+        style = request.data.get('style', 'minimal')
+        
+        if not description:
+            return Response({
+                'status': 'error',
+                'message': '설명(description)을 입력해주세요.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        from .dalle_service import DalleService
+        dalle = DalleService()
+        
+        is_english = dalle._is_english(description)
+        
+        if not is_english:
+            translated = dalle._translate_korean_to_english(description)
+        else:
+            translated = description
+        
+        test_frame = {
+            'visual_description': translated,
+            'composition': '미디엄샷',
+            'lighting': '자연광'
+        }
+        
+        improved_prompt = dalle._create_visual_prompt(test_frame, style)
+        
+        style_params = dalle.STYLE_PARAMS.get(style, dalle.STYLE_PARAMS['minimal'])
+        
+        return Response({
+            'status': 'success',
+            'input': {
+                'original': description,
+                'style': style
+            },
+            'processing': {
+                'is_english': is_english,
+                'translated': translated if not is_english else None
+            },
+            'output': {
+                'improved_prompt': improved_prompt,
+                'style_parameters': {
+                    'quality': style_params['quality'],
+                    'style': style_params['style'],
+                    'additional_prompt': style_params['additional_prompt']
+                }
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Improved prompt test failed: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'프롬프트 생성 실패: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

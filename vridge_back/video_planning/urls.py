@@ -9,6 +9,7 @@ urlpatterns = [
     path('debug/services/', views_debug.check_services_status, name='check_services_status'),
     path('debug/test-openai/', views_debug.test_openai_direct, name='test_openai_direct'),
     path('debug/test-prompt/', views_debug.test_prompt_generation, name='test_prompt_generation'),
+    path('test-improved-prompts/', views_debug.test_improved_prompts, name='test_improved_prompts'),
     
     # 생성 관련 API
     path('generate/structure/', views.generate_structure, name='generate_structure'),

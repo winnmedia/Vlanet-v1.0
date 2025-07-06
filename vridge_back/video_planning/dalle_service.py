@@ -213,6 +213,45 @@ class DalleService:
         # 먼저 텍스트 트리거 패턴 제거
         text = self._clean_text_triggers(text)
         
+        # 문장이 대부분 한국어인 경우 기본 영어 설명으로 대체
+        korean_char_count = sum(1 for char in text if '\uac00' <= char <= '\ud7a3')
+        total_char_count = len(text.replace(' ', ''))
+        
+        if total_char_count > 0 and korean_char_count / total_char_count > 0.5:
+            # 한국어가 50% 이상인 경우 기본 장면 설명으로 대체
+            logger.info(f"Korean text detected ({korean_char_count}/{total_char_count}), using default scene")
+            
+            # 키워드 기반 간단한 장면 추출
+            if '신당' in text or '무당' in text or '무속' in text:
+                if '손' in text and '잡' in text:
+                    return "shaman holding hands with client in shrine"
+                elif '앉' in text:
+                    return "shaman and client sitting in traditional shrine"
+                else:
+                    return "shaman shrine interior with people"
+            elif '카페' in text:
+                if '들어가' in text or '입구' in text:
+                    return "person entering cafe"
+                else:
+                    return "people in cafe"
+            elif '회의' in text:
+                return "business meeting room"
+            elif '공원' in text:
+                return "people in park"
+            elif '사무실' in text:
+                return "office workspace"
+            elif '손' in text and ('잡' in text or '클로즈업' in text):
+                return "close up of hands holding"
+            elif '얼굴' in text or '표정' in text:
+                return "close up of person's face"
+            elif '클로즈업' in text:
+                return "close up shot"
+            elif '와이드' in text:
+                return "wide shot of interior"
+            else:
+                # 기본 실내 장면
+                return "interior scene with people"
+        
         # 복합 표현 먼저 처리 (순서 중요!)
         translations = [
             # 복합 동작 (가장 긴 패턴부터)
@@ -231,6 +270,9 @@ class DalleService:
             ('공원에서 뛰어노는', 'playing in park'),
             
             # 장소
+            ('신당', 'shaman shrine'),
+            ('무당집', 'shaman house'),
+            ('와드', 'ward'),
             ('카페', 'cafe'),
             ('커피숍', 'coffee shop'),
             ('회의실', 'meeting room'),
@@ -243,8 +285,17 @@ class DalleService:
             ('병원', 'hospital'),
             ('상점', 'shop'),
             ('레스토랑', 'restaurant'),
+            ('창', 'window'),
+            ('문', 'door'),
+            ('벽', 'wall'),
+            ('바닥', 'floor'),
+            ('천장', 'ceiling'),
             
             # 인물
+            ('소영', 'young woman'),
+            ('김부자', 'middle aged woman'),
+            ('백눈', 'white cat'),
+            ('무당', 'shaman'),
             ('아이들', 'children'),
             ('남자', 'man'),
             ('여자', 'woman'),
@@ -253,8 +304,12 @@ class DalleService:
             ('아이', 'child'),
             ('사람', 'person'),
             ('사람들', 'people'),
+            ('손님', 'client'),
+            ('고객', 'customer'),
             
             # 동작
+            ('앉아있고', 'sitting'),
+            ('앉아있다', 'sitting'),
             ('들어가는', 'entering'),
             ('나오는', 'exiting'),
             ('걷는', 'walking'),
@@ -269,6 +324,28 @@ class DalleService:
             ('뛰어노는', 'playing'),
             ('걸어가는', 'walking'),
             ('프레젠테이션', 'presentation'),
+            ('잡고', 'holding'),
+            ('잡는', 'holding'),
+            ('비추', 'shining'),
+            ('걸려있다', 'hanging'),
+            ('귀 기울고', 'listening'),
+            
+            # 기타 표현
+            ('내부', 'interior'),
+            ('햇살', 'sunlight'),
+            ('근처', 'near'),
+            ('앞', 'front'),
+            ('옆', 'beside'),
+            ('조용히', 'quietly'),
+            ('정갈하고', 'neat'),
+            ('아늑한', 'cozy'),
+            ('분위기', 'atmosphere'),
+            ('부적', 'talisman'),
+            ('그림', 'painting'),
+            ('표정', 'expression'),
+            ('진지하고', 'serious'),
+            ('온화하다', 'gentle'),
+            ('클로즈업', 'close up'),
             
             # 조사 (마지막에 처리)
             ('에서', ' in '),

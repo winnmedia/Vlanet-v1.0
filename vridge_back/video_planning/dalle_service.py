@@ -220,37 +220,42 @@ class DalleService:
         if total_char_count > 0 and korean_char_count / total_char_count > 0.5:
             # 한국어가 50% 이상인 경우 기본 장면 설명으로 대체
             logger.info(f"Korean text detected ({korean_char_count}/{total_char_count}), using default scene")
+            logger.info(f"Original Korean text: {text}")
             
             # 키워드 기반 간단한 장면 추출
+            result = None
             if '신당' in text or '무당' in text or '무속' in text:
                 if '손' in text and '잡' in text:
-                    return "shaman holding hands with client in shrine"
+                    result = "shaman holding hands with client in shrine"
                 elif '앉' in text:
-                    return "shaman and client sitting in traditional shrine"
+                    result = "shaman and client sitting in traditional shrine"
                 else:
-                    return "shaman shrine interior with people"
+                    result = "shaman shrine interior with people"
             elif '카페' in text:
                 if '들어가' in text or '입구' in text:
-                    return "person entering cafe"
+                    result = "person entering cafe"
                 else:
-                    return "people in cafe"
+                    result = "people in cafe"
             elif '회의' in text:
-                return "business meeting room"
+                result = "business meeting room"
             elif '공원' in text:
-                return "people in park"
+                result = "people in park"
             elif '사무실' in text:
-                return "office workspace"
+                result = "office workspace"
             elif '손' in text and ('잡' in text or '클로즈업' in text):
-                return "close up of hands holding"
+                result = "close up of hands holding"
             elif '얼굴' in text or '표정' in text:
-                return "close up of person's face"
+                result = "close up of person's face"
             elif '클로즈업' in text:
-                return "close up shot"
+                result = "close up shot"
             elif '와이드' in text:
-                return "wide shot of interior"
+                result = "wide shot of interior"
             else:
                 # 기본 실내 장면
-                return "interior scene with people"
+                result = "interior scene with people"
+            
+            logger.info(f"Korean to English result: {result}")
+            return result
         
         # 복합 표현 먼저 처리 (순서 중요!)
         translations = [

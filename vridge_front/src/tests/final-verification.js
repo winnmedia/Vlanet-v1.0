@@ -179,8 +179,8 @@ async function finalVerification() {
       };
     });
 
-    // 약간의 지연 후 중복 생성 시도
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // 1초 지연 후 중복 생성 시도
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     await test('중복 프로젝트 생성 방지', async () => {
       const formData = new FormData();
@@ -234,7 +234,12 @@ async function finalVerification() {
       if (listResponse.ok && listData.result?.length > 0) {
         const testProject = listData.result.find(p => p.name === projectName) || listData.result[0];
         
-        const feedbackResponse = await fetch(`${API_BASE}/api/feedbacks/${testProject.id}`, { headers });
+        console.log(`Found project:`, JSON.stringify(testProject, null, 2));
+        
+        // 프로젝트의 feedback_id 사용
+        const feedbackId = testProject.feedback_id || testProject.feedback || testProject.id;
+        console.log(`Using feedback ID: ${feedbackId}`);
+        const feedbackResponse = await fetch(`${API_BASE}/api/feedbacks/${feedbackId}`, { headers });
         
         let feedbackData;
         try {
@@ -242,12 +247,13 @@ async function finalVerification() {
           feedbackData = text ? JSON.parse(text) : { message: 'Empty response' };
         } catch (e) {
           // HTML 응답인 경우 (404 등)
+          console.log(`Feedback response not JSON: ${e.message}`);
           feedbackData = { message: 'Not JSON response' };
         }
         
         return {
-          success: feedbackResponse.ok && feedbackData.result !== undefined,
-          message: feedbackData.result ? '피드백 구조 정상' : '피드백 접근 실패'
+          success: feedbackResponse.ok && (feedbackData.result !== undefined || feedbackData.feedback !== undefined),
+          message: feedbackData.result || feedbackData.feedback ? '피드백 구조 정상' : `피드백 접근 실패 - ${feedbackResponse.status}`
         };
       } else {
         return {

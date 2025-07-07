@@ -179,6 +179,75 @@ def emergency_migrate(request):
             "type": type(e).__name__
         }, status=500)
 
+@csrf_exempt
+def check_db_status(request):
+    """DB 상태 실시간 확인"""
+    try:
+        result = {
+            "database": connection.vendor,
+            "tables": {},
+            "columns": {},
+            "migrations": {}
+        }
+        
+        with connection.cursor() as cursor:
+            # 테이블 확인
+            if 'postgresql' in connection.vendor:
+                cursor.execute("""
+                    SELECT table_name FROM information_schema.tables 
+                    WHERE table_schema = 'public' 
+                    AND table_name IN ('video_planning', 'projects_project', 'projects_idempotencyrecord')
+                """)
+                tables = [row[0] for row in cursor.fetchall()]
+                
+                # 컬럼 확인
+                cursor.execute("""
+                    SELECT column_name FROM information_schema.columns 
+                    WHERE table_name = 'projects_project' 
+                    AND column_name IN ('tone_manner', 'genre', 'concept')
+                """)
+                columns = [row[0] for row in cursor.fetchall()]
+            else:
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                all_tables = [row[0] for row in cursor.fetchall()]
+                tables = [t for t in all_tables if t in ['video_planning', 'projects_project', 'projects_idempotencyrecord']]
+                
+                cursor.execute("PRAGMA table_info(projects_project)")
+                all_columns = [row[1] for row in cursor.fetchall()]
+                columns = [c for c in all_columns if c in ['tone_manner', 'genre', 'concept']]
+        
+        # 결과 정리
+        result["tables"] = {
+            "video_planning": "video_planning" in tables,
+            "projects_project": "projects_project" in tables,
+            "projects_idempotencyrecord": "projects_idempotencyrecord" in tables
+        }
+        
+        result["columns"] = {
+            "tone_manner": "tone_manner" in columns,
+            "genre": "genre" in columns,
+            "concept": "concept" in columns
+        }
+        
+        # 마이그레이션 상태
+        output = io.StringIO()
+        with redirect_stdout(output):
+            call_command('showmigrations', 'projects', 'video_planning', '--plan')
+        result["migrations"]["output"] = output.getvalue()
+        
+        # 전체 상태
+        all_ok = all(result["tables"].values()) and all(result["columns"].values())
+        result["status"] = "OK" if all_ok else "MISSING"
+        result["message"] = "All tables and columns exist" if all_ok else "Some tables or columns are missing"
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        return JsonResponse({
+            "status": "ERROR",
+            "error": str(e)
+        }, status=500)
+
 urlpatterns = [
     path('', minimal_health, name='home'),
     path('health/', minimal_health, name='health'),
@@ -187,6 +256,7 @@ urlpatterns = [
     
     # 긴급 마이그레이션 엔드포인트
     path('emergency-migrate/', emergency_migrate, name='emergency_migrate'),
+    path('check-db/', check_db_status, name='check_db_status'),
     
     path('api/video-planning/', include('video_planning.urls')),
     path('api/users/', include('users.urls')),

@@ -429,8 +429,8 @@ function FeedbackStable() {
                     <button className="action-button outline" onClick={() => setShowProjectInfo(!showProjectInfo)}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="16" x2="12" y2="12" />
-                        <line x1="12" y1="8" x2="12" y2="8" />
+                        <path d="M12 16v-4" />
+                        <circle cx="12" cy="8" r="1" />
                       </svg>
                       프로젝트 정보
                     </button>
@@ -441,17 +441,6 @@ function FeedbackStable() {
                       </svg>
                       프로젝트 보기
                     </button>
-                    {is_admin && (
-                      <div className="more-menu">
-                        <button className="more-button">
-                          <div className="dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                          </div>
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -546,7 +535,7 @@ function FeedbackStable() {
                         <div className="control-group">
                           <button onClick={() => {
                             if (videoPlayerRef.current) {
-                              videoPlayerRef.current.seekTo(Math.max(0, currentVideoTime - 10));
+                              videoPlayerRef.current.seekTo(Math.max(0, currentVideoTime - 3));
                             }
                           }}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -554,14 +543,14 @@ function FeedbackStable() {
                               <polyline points="12 8 8 12 12 16" />
                               <polyline points="16 8 12 12 16 16" />
                             </svg>
-                            10초 뒤로
+                            3초 뒤로
                           </button>
                           <button onClick={() => {
                             if (videoPlayerRef.current) {
-                              videoPlayerRef.current.seekTo(currentVideoTime + 10);
+                              videoPlayerRef.current.seekTo(currentVideoTime + 3);
                             }
                           }}>
-                            10초 앞으로
+                            3초 앞으로
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <circle cx="12" cy="12" r="10" />
                               <polyline points="8 8 12 12 8 16" />
@@ -569,11 +558,46 @@ function FeedbackStable() {
                             </svg>
                           </button>
                         </div>
+                        <div className="control-group">
+                          <button 
+                            onClick={() => {
+                              // 현재 페이지 URL 복사
+                              const shareUrl = window.location.href;
+                              navigator.clipboard.writeText(shareUrl).then(() => {
+                                window.alert('피드백 페이지 링크가 복사되었습니다.');
+                              }).catch(() => {
+                                window.alert('링크 복사에 실패했습니다.');
+                              });
+                            }}
+                            style={{
+                              backgroundColor: '#0058da',
+                              color: 'white',
+                              border: 'none',
+                              padding: '10px 20px',
+                              borderRadius: '8px',
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              transition: 'all 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#0047b8'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#0058da'}
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '16px', height: '16px' }}>
+                              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                            </svg>
+                            페이지 공유
+                          </button>
+                        </div>
                       </div>
                     </div>
                     
                     {/* 오른쪽 - 폼 섹션 */}
-                    <div className="forms-section" style={{ width: activeFormTab === 'comment' ? '500px' : '400px', transition: 'width 0.3s ease' }}>
+                    <div className="forms-section" style={{ width: activeFormTab === 'comment' ? '650px' : '400px', transition: 'width 0.3s ease' }}>
                       <div className="form-tabs">
                         <button 
                           className={`tab-button ${activeFormTab === 'feedback' ? 'active' : ''}`}

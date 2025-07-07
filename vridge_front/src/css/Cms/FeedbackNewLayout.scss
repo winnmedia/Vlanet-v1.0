@@ -103,6 +103,10 @@ $white: #fff;
     overflow: hidden;
     transition: width 0.3s ease;
     
+    &.comment-active {
+      width: 650px;
+    }
+    
     // 탭 스위처
     .form-tabs {
       display: flex;
@@ -352,14 +356,24 @@ $white: #fff;
 }
 
 // 반응형 디자인
+@media (max-width: 1400px) {
+  .feedback_write {
+    .forms-section {
+      &.comment-active {
+        width: 550px;
+      }
+    }
+  }
+}
+
 @media (max-width: 1200px) {
   .feedback_write {
     flex-direction: column;
     height: auto;
     
     .forms-section {
-      width: 100%;
-      max-width: 600px;
+      width: 100% !important;
+      max-width: 700px;
       margin: 0 auto;
     }
   }

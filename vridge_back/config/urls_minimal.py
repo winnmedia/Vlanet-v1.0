@@ -57,6 +57,9 @@ def emergency_migrate(request):
     if secret != 'migrate2024':
         return JsonResponse({"error": "Unauthorized. Use ?secret=migrate2024"}, status=401)
     
+    # 강제 모드 확인
+    force_mode = request.GET.get('force', 'false').lower() == 'true'
+    
     try:
         output = io.StringIO()
         result = {"status": "running", "steps": []}
@@ -127,6 +130,43 @@ def emergency_migrate(request):
             
         if missing:
             result["warning"] = f"Missing: {', '.join(missing)}"
+            
+            # 강제 모드에서는 수동으로 생성 시도
+            if force_mode and 'postgresql' in connection.vendor:
+                result["force_mode"] = True
+                result["manual_fixes"] = []
+                
+                # tone_manner 컬럼 누락 시 수동 추가
+                if 'projects_project.tone_manner column' in missing:
+                    try:
+                        cursor.execute("""
+                            ALTER TABLE projects_project 
+                            ADD COLUMN IF NOT EXISTS tone_manner VARCHAR(50) NULL,
+                            ADD COLUMN IF NOT EXISTS genre VARCHAR(50) NULL,
+                            ADD COLUMN IF NOT EXISTS concept VARCHAR(50) NULL
+                        """)
+                        result["manual_fixes"].append("Added missing columns to projects_project")
+                    except Exception as e:
+                        result["manual_fixes"].append(f"Failed to add columns: {str(e)}")
+                
+                # IdempotencyRecord 테이블 누락 시 수동 생성
+                if 'projects_idempotencyrecord table' in missing:
+                    try:
+                        cursor.execute("""
+                            CREATE TABLE IF NOT EXISTS projects_idempotencyrecord (
+                                id BIGSERIAL PRIMARY KEY,
+                                user_id BIGINT NOT NULL,
+                                idempotency_key VARCHAR(255) NOT NULL,
+                                project_id INTEGER NULL,
+                                request_data TEXT NOT NULL,
+                                created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                status VARCHAR(20) NOT NULL DEFAULT 'processing',
+                                UNIQUE(user_id, idempotency_key)
+                            )
+                        """)
+                        result["manual_fixes"].append("Created projects_idempotencyrecord table")
+                    except Exception as e:
+                        result["manual_fixes"].append(f"Failed to create table: {str(e)}")
         else:
             result["message"] = "All migrations applied successfully!"
         

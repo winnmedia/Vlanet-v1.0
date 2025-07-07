@@ -2,10 +2,16 @@
 
 ## **가장 빠른 방법: 웹 브라우저에서 바로 실행**
 
-### 1️⃣ **브라우저 열고 아래 URL 접속:**
+### 1️⃣ **일반 마이그레이션 (먼저 시도):**
 ```
 https://videoplanet.up.railway.app/emergency-migrate/?secret=migrate2024
 ```
+
+### 2️⃣ **강제 마이그레이션 (위가 실패하면):**
+```
+https://videoplanet.up.railway.app/emergency-migrate/?secret=migrate2024&force=true
+```
+강제 모드는 수동으로 테이블/컬럼을 생성합니다.
 
 ### 2️⃣ **결과 확인**
 - ✅ "All migrations applied successfully!" → 성공!

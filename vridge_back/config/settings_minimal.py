@@ -131,8 +131,17 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'x-idempotency-key',
+    'sec-fetch-dest',
+    'sec-fetch-mode',
+    'sec-fetch-site',
+    'cache-control',
+    'pragma',
 ]
 CORS_PREFLIGHT_MAX_AGE = 86400
+
+# 모바일 접속을 위한 추가 설정
+CORS_ALLOW_ALL_ORIGINS = False  # 보안을 위해 특정 도메인만 허용
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # 모바일 브라우저 호환성
 
 # CSRF도 비활성화 (최소 설정)
 CSRF_TRUSTED_ORIGINS = [

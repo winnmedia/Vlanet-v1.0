@@ -20,6 +20,7 @@ const EmailCheck = lazy(() => import('page/User/EmailCheck'))
 const FeedbackAll = lazy(() => import('page/Cms/FeedbackAll'))
 const PrivacyPolicy = lazy(() => import('page/Policy/PrivacyPolicy'))
 const TermsOfService = lazy(() => import('page/Policy/TermsOfService'))
+const MobileDebug = lazy(() => import('page/MobileDebug'))
 
 export default function AppRoute() {
   const routes = [
@@ -40,6 +41,7 @@ export default function AppRoute() {
     { path: '/Feedback/:project_id', component: <LazyWrapper><Feedback /></LazyWrapper> },
     { path: '/EmailCheck', component: <LazyWrapper><EmailCheck /></LazyWrapper> },
     { path: '/FeedbackAll', component: <LazyWrapper><FeedbackAll /></LazyWrapper> },
+    { path: '/mobile-debug', component: <LazyWrapper><MobileDebug /></LazyWrapper> },
     {
       path: '*',
       component: (

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { refetchProject, checkSession } from 'util/util'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { updateBaseURL } from 'config/axios'
+import { setupMobileConfig } from 'config/mobile-config'
 
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
@@ -18,6 +19,9 @@ export default function App() {
   const { project_list } = useSelector((s) => s.ProjectStore || {})
   
   useEffect(() => {
+    // 모바일 환경 설정
+    setupMobileConfig()
+    
     // 프로덕션 환경에서 API URL 강제 설정
     const isProduction = window.location.hostname === 'vlanet.net' || 
                          window.location.hostname === 'www.vlanet.net' ||

@@ -5,10 +5,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
-    help = 'Fix missing columns in projects_project table'
+    help = 'Fix missing columns in projects_project and feedbacks_feedback tables'
 
     def handle(self, *args, **options):
-        self.stdout.write('Fixing missing columns in projects_project table...')
+        self.stdout.write('Fixing missing columns in database tables...')
         
         with connection.cursor() as cursor:
             # Check which columns exist
@@ -91,5 +91,58 @@ class Command(BaseCommand):
                     self.stdout.write('Unique constraint already exists')
             except Exception as e:
                 self.stdout.write(self.style.WARNING(f'Could not add unique constraint: {e}'))
+            
+            # Fix feedbacks_feedback table
+            self.stdout.write('\nFixing feedbacks_feedback table...')
+            
+            # Check existing columns in feedbacks_feedback
+            cursor.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = 'feedbacks_feedback'
+            """)
+            feedback_columns = [row[0] for row in cursor.fetchall()]
+            
+            self.stdout.write(f'Existing feedback columns: {feedback_columns}')
+            
+            # Add missing feedback columns
+            feedback_columns_to_add = [
+                ('video_file_web', 'VARCHAR(100)'),
+                ('video_file_high', 'VARCHAR(500)'),
+                ('video_file_medium', 'VARCHAR(500)'),
+                ('video_file_low', 'VARCHAR(500)'),
+                ('thumbnail', 'VARCHAR(100)'),
+                ('hls_playlist_url', 'VARCHAR(500)'),
+                ('encoding_status', 'VARCHAR(20)'),
+                ('duration', 'DOUBLE PRECISION'),
+                ('width', 'INTEGER'),
+                ('height', 'INTEGER'),
+                ('file_size', 'BIGINT')
+            ]
+            
+            for column_name, column_type in feedback_columns_to_add:
+                if column_name not in feedback_columns:
+                    try:
+                        cursor.execute(f"""
+                            ALTER TABLE feedbacks_feedback 
+                            ADD COLUMN {column_name} {column_type} NULL
+                        """)
+                        self.stdout.write(self.style.SUCCESS(f'Added column: {column_name}'))
+                    except Exception as e:
+                        self.stdout.write(self.style.ERROR(f'Failed to add column {column_name}: {e}'))
+                else:
+                    self.stdout.write(f'Column {column_name} already exists')
+            
+            # Set default for encoding_status if column was just added
+            if 'encoding_status' not in feedback_columns:
+                try:
+                    cursor.execute("""
+                        UPDATE feedbacks_feedback 
+                        SET encoding_status = 'pending' 
+                        WHERE encoding_status IS NULL
+                    """)
+                    self.stdout.write(self.style.SUCCESS('Set default encoding_status'))
+                except Exception as e:
+                    self.stdout.write(self.style.WARNING(f'Could not set default encoding_status: {e}'))
         
-        self.stdout.write(self.style.SUCCESS('Column fix complete!'))
+        self.stdout.write(self.style.SUCCESS('\nAll column fixes complete!'))

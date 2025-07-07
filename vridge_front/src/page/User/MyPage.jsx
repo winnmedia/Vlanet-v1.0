@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './MyPage.scss'
 import PageTemplate from 'components/PageTemplate'
 import { checkSession } from 'util/util'
 import { getMyPageInfo, uploadProfileImage, updateProfile } from 'api/user'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateProjectStore } from 'redux/project'
+import ImageCropper from 'components/ImageCropper'
 
 export default function MyPage() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const user = useSelector((state) => state.ProjectStore.user)
   const nickname = useSelector((state) => state.ProjectStore.nickname)
   
@@ -26,6 +29,10 @@ export default function MyPage() {
   const [imagePreview, setImagePreview] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [showCropper, setShowCropper] = useState(false)
+  const [tempImageSrc, setTempImageSrc] = useState(null)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     const session = checkSession()
@@ -52,12 +59,17 @@ export default function MyPage() {
         if (response.data.data.profile.profile_image) {
           const imageUrl = response.data.data.profile.profile_image
           // 백엔드 URL이 상대 경로인 경우 처리
+          let fullImageUrl
           if (imageUrl.startsWith('/')) {
-            setImagePreview(`${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${imageUrl}`)
+            fullImageUrl = `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${imageUrl}`
           } else {
-            setImagePreview(imageUrl)
+            fullImageUrl = imageUrl
           }
+          setImagePreview(fullImageUrl)
+          // Redux store에 프로필 이미지 저장
+          dispatch(updateProjectStore({ profileImage: fullImageUrl }))
         }
+        setLoading(false) // 성공 시에도 로딩 종료
       } else {
         console.error('마이페이지 데이터 형식 오류:', response)
         setLoading(false)
@@ -98,17 +110,69 @@ export default function MyPage() {
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('이미지 크기는 5MB를 초과할 수 없습니다.')
-        return
-      }
-      setProfileImage(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result)
-      }
-      reader.readAsDataURL(file)
+      processImageFile(file)
     }
+  }
+  
+  const processImageFile = (file) => {
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.')
+      return
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert('이미지 크기는 5MB를 초과할 수 없습니다.')
+      return
+    }
+    
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setTempImageSrc(reader.result)
+      setShowCropper(true)
+    }
+    reader.readAsDataURL(file)
+  }
+  
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }
+  
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+  
+  const handleDrop = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+    
+    const files = e.dataTransfer.files
+    if (files && files[0]) {
+      processImageFile(files[0])
+    }
+  }
+
+  const handleCroppedImage = (croppedBlob) => {
+    const croppedFile = new File([croppedBlob], 'profile.jpg', { type: 'image/jpeg' })
+    setProfileImage(croppedFile)
+    
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setImagePreview(reader.result)
+    }
+    reader.readAsDataURL(croppedBlob)
+    
+    setShowCropper(false)
+    setTempImageSrc(null)
+  }
+
+  const handleCropCancel = () => {
+    setShowCropper(false)
+    setTempImageSrc(null)
   }
 
   const handleImageUpload = async () => {
@@ -120,13 +184,28 @@ export default function MyPage() {
 
     try {
       const response = await uploadProfileImage(formData)
+      console.log('Upload response:', response)
       if (response.data && response.data.status === 'success') {
         alert('프로필 이미지가 업로드되었습니다.')
         setProfileImage(null)
+        // 업로드된 이미지 URL 즉시 반영
+        if (response.data.profile_image_url) {
+          const imageUrl = response.data.profile_image_url
+          let fullImageUrl
+          if (imageUrl.startsWith('/')) {
+            fullImageUrl = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${imageUrl}`
+          } else {
+            fullImageUrl = imageUrl
+          }
+          setImagePreview(fullImageUrl)
+          // Redux store에 프로필 이미지 저장
+          dispatch(updateProjectStore({ profileImage: fullImageUrl }))
+        }
         fetchMyPageData()
       }
     } catch (error) {
       console.error('Image upload error:', error)
+      console.error('Error response:', error.response)
       alert('이미지 업로드 실패: ' + (error.response?.data?.message || error.message || '알 수 없는 오류'))
     } finally {
       setIsUploading(false)
@@ -192,6 +271,13 @@ export default function MyPage() {
 
   return (
     <PageTemplate>
+      {showCropper && tempImageSrc && (
+        <ImageCropper
+          imageSrc={tempImageSrc}
+          onCropComplete={handleCroppedImage}
+          onCancel={handleCropCancel}
+        />
+      )}
       <main className="mypage-container">
         <div className="mypage">
           <div className="mypage-header">
@@ -241,35 +327,94 @@ export default function MyPage() {
                 </div>
 
                 <div className="profile-image-section">
-                  <div className="profile-image-container">
-                    {imagePreview ? (
-                      <img src={imagePreview} alt="프로필" className="profile-image" />
-                    ) : (
-                      <div className="profile-image-placeholder">
-                        <span>{(myPageData?.profile?.nickname || nickname || 'U').charAt(0)}</span>
-                      </div>
-                    )}
+                  <div className="profile-image-wrapper">
+                    <div className="profile-image-container">
+                      {imagePreview ? (
+                        <img src={imagePreview} alt="프로필" className="profile-image" />
+                      ) : (
+                        <div className="profile-image-placeholder">
+                          <span>{(myPageData?.profile?.nickname || nickname || 'U').charAt(0)}</span>
+                        </div>
+                      )}
+                      {isEditing && (
+                        <div className="image-overlay">
+                          <svg className="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                            <circle cx="12" cy="13" r="4" />
+                          </svg>
+                          <span>사진 변경</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="profile-info-summary">
+                      <h3>{myPageData?.profile?.nickname || nickname || '사용자'}</h3>
+                      <p>{myPageData?.profile?.email || user}</p>
+                      {myPageData?.profile?.company && (
+                        <p className="company-info">
+                          {myPageData.profile.company}
+                          {myPageData.profile.position && ` · ${myPageData.profile.position}`}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   {isEditing && (
                     <div className="image-upload">
+                      <div 
+                        className={`upload-area ${isDragging ? 'drag-over' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <svg className="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="17 8 12 3 7 8" />
+                          <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        <p>클릭하거나 이미지를 드래그하여 업로드</p>
+                        <p className="upload-hint">JPG, PNG, GIF (최대 5MB)</p>
+                      </div>
                       <input 
+                        ref={fileInputRef}
                         type="file" 
-                        id="profile-image-input"
                         accept="image/*"
                         onChange={handleImageChange}
                         style={{ display: 'none' }}
                       />
-                      <label htmlFor="profile-image-input" className="upload-btn">
-                        이미지 선택
-                      </label>
                       {profileImage && (
-                        <button 
-                          onClick={handleImageUpload} 
-                          className="upload-confirm-btn"
-                          disabled={isUploading}
-                        >
-                          {isUploading ? '업로드 중...' : '업로드'}
-                        </button>
+                        <div className="upload-actions">
+                          <button 
+                            onClick={handleImageUpload} 
+                            className="upload-confirm-btn"
+                            disabled={isUploading}
+                          >
+                            {isUploading ? (
+                              <>
+                                <svg className="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                                  <path d="M12 2a10 10 0 0 1 0 20" strokeLinecap="round" />
+                                </svg>
+                                업로드 중...
+                              </>
+                            ) : (
+                              '이미지 업로드'
+                            )}
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setProfileImage(null)
+                              setImagePreview(myPageData?.profile?.profile_image ? 
+                                (myPageData.profile.profile_image.startsWith('/') ? 
+                                  `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${myPageData.profile.profile_image}` : 
+                                  myPageData.profile.profile_image
+                                ) : null
+                              )
+                            }}
+                            className="cancel-upload-btn"
+                          >
+                            취소
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}
@@ -277,12 +422,24 @@ export default function MyPage() {
 
                 <div className="profile-info">
                   <div className="info-row">
-                    <label>이메일</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                      이메일
+                    </label>
                     <div className="info-value">{myPageData?.profile?.email || user || '-'}</div>
                   </div>
 
                   <div className="info-row">
-                    <label>닉네임</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      닉네임
+                    </label>
                     {isEditing ? (
                       <input 
                         type="text" 
@@ -297,7 +454,16 @@ export default function MyPage() {
                   </div>
 
                   <div className="info-row">
-                    <label>자기소개</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                      </svg>
+                      자기소개
+                    </label>
                     {isEditing ? (
                       <textarea 
                         name="bio"
@@ -312,7 +478,12 @@ export default function MyPage() {
                   </div>
 
                   <div className="info-row">
-                    <label>전화번호</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      전화번호
+                    </label>
                     {isEditing ? (
                       <input 
                         type="tel" 
@@ -327,7 +498,16 @@ export default function MyPage() {
                   </div>
 
                   <div className="info-row">
-                    <label>회사/소속</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 21h18" />
+                        <path d="M5 21V7l8-4v18" />
+                        <path d="M19 21V11l-6-3" />
+                        <rect x="9" y="9" width="4" height="4" />
+                        <rect x="9" y="14" width="4" height="4" />
+                      </svg>
+                      회사/소속
+                    </label>
                     {isEditing ? (
                       <input 
                         type="text" 
@@ -342,7 +522,13 @@ export default function MyPage() {
                   </div>
 
                   <div className="info-row">
-                    <label>직책</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                      </svg>
+                      직책
+                    </label>
                     {isEditing ? (
                       <input 
                         type="text" 
@@ -357,12 +543,27 @@ export default function MyPage() {
                   </div>
 
                   <div className="info-row">
-                    <label>로그인 방식</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                      </svg>
+                      로그인 방식
+                    </label>
                     <div className="info-value">{myPageData?.profile?.login_method || 'email'}</div>
                   </div>
 
                   <div className="info-row">
-                    <label>가입일</label>
+                    <label>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                      가입일
+                    </label>
                     <div className="info-value">{myPageData?.profile?.date_joined || '-'}</div>
                   </div>
 
@@ -400,12 +601,16 @@ export default function MyPage() {
                   <div className="project-list">
                     {(myPageData?.projects?.owned?.recent || []).map(project => (
                       <div key={project.id} className="project-item">
-                        <div className="project-name">{project.name}</div>
-                        <div className="project-info">
-                          <span className="created-date">생성일: {project.created}</span>
-                          <span className={`project-status ${getProjectStatusClass(project.status)}`}>
-                            {getProjectStatus(project.status)}
-                          </span>
+                        <div className="project-details">
+                          <div className="project-name">{project.name}</div>
+                          <div className="project-meta">
+                            <span className="meta-item created-date">
+                              생성일: {new Date(project.created).toLocaleDateString('ko-KR')}
+                            </span>
+                            <span className={`project-status ${getProjectStatusClass(project.status)}`}>
+                              {getProjectStatus(project.status)}
+                            </span>
+                          </div>
                         </div>
                         <button 
                           className="view-project-btn"
@@ -427,10 +632,14 @@ export default function MyPage() {
                   <div className="project-list">
                     {(myPageData?.projects?.member?.recent || []).map(project => (
                       <div key={project.id} className="project-item">
-                        <div className="project-name">{project.name}</div>
-                        <div className="project-info">
-                          <span className="role">{project.role === 'manager' ? '관리자' : '멤버'}</span>
-                          <span className="joined-date">참여일: {project.joined}</span>
+                        <div className="project-details">
+                          <div className="project-name">{project.name}</div>
+                          <div className="project-meta">
+                            <span className="role">{project.role === 'manager' ? '관리자' : '멤버'}</span>
+                            <span className="meta-item joined-date">
+                              참여일: {new Date(project.joined).toLocaleDateString('ko-KR')}
+                            </span>
+                          </div>
                         </div>
                         <button 
                           className="view-project-btn"

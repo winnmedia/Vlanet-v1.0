@@ -1,14 +1,19 @@
-// VLANET 브랜드 색상
-$primary-color: #6366F1;  // 인디고 (메인 색상)
-$primary-dark: #4F46E5;   // 진한 인디고
-$primary-light: #818CF8;  // 연한 인디고
-$secondary-color: #EC4899; // 핑크 (포인트 색상)
-$success-color: #10B981;   // 민트 그린
-$warning-color: #F59E0B;   // 오렌지
-$danger-color: #EF4444;    // 레드
-$bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
-
 .mypage-container {
+  // MyPage 전용 색상 변수 (다른 페이지에 영향 주지 않도록 로컬 스코프)
+  $mypage-primary: #0058da;   // 메인 블루
+  $mypage-primary-dark: #0047b8;    // 진한 블루
+  $mypage-primary-light: #1a6fff;   // 연한 블루
+  $mypage-primary-hover: #0047b8;   // 호버 블루
+  $mypage-secondary: #ff6b6b; // 포인트 레드
+  $mypage-success: #28a745;   // 성공 그린
+  $mypage-warning: #ffc107;   // 경고 옐로우
+  $mypage-danger: #dc3545;    // 위험 레드
+  $mypage-gradient: linear-gradient(135deg, $mypage-primary 0%, $mypage-primary-dark 100%);
+  $mypage-text-dark: #000;
+  $mypage-text-gray: #707175;
+  $mypage-background-light: #f8f8f8;
+  $mypage-border-color: #efefef;
+  $mypage-white: #fff;
   width: 100%;
   background-color: #f8f9fa;
   min-height: 100vh;
@@ -33,8 +38,8 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
         width: 40px;
         height: 40px;
         margin-right: 12px;
-        border: 3px solid $primary-light;
-        border-top-color: $primary-color;
+        border: 3px solid $mypage-primary-light;
+        border-top-color: $mypage-primary;
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
@@ -53,8 +58,25 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: $primary-color;
+      background: linear-gradient(135deg, $mypage-primary 0%, $mypage-primary-dark 100%);
       color: white;
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+      }
+      
+      @keyframes rotate {
+        to { transform: rotate(360deg); }
+      }
 
       h1 {
         font-size: 26px;
@@ -82,30 +104,31 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
       padding: 8px;
       border-radius: 12px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      width: fit-content;
 
       button {
-        flex: 1;
         background: transparent;
         border: none;
-        padding: 12px 24px;
-        font-size: 16px;
+        padding: 10px 20px;
+        font-size: 15px;
         font-weight: 500;
         color: #6b7280;
         cursor: pointer;
         transition: all 0.3s ease;
         border-radius: 8px;
         position: relative;
+        white-space: nowrap;
 
         &:hover {
-          color: $primary-color;
-          background: rgba($primary-color, 0.05);
+          color: $mypage-primary;
+          background: rgba($mypage-primary, 0.05);
         }
 
         &.active {
           color: white;
-          background: $primary-color;
+          background: $mypage-primary;
           font-weight: 600;
-          box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+          box-shadow: 0 2px 8px rgba($mypage-primary, 0.3);
 
           &::after {
             display: none;
@@ -140,6 +163,7 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
           margin-bottom: 32px;
           padding-bottom: 20px;
           border-bottom: 2px solid #f3f4f6;
+          width: 100%;
 
           h2 {
             font-size: 22px;
@@ -148,49 +172,67 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
             margin: 0;
             display: flex;
             align-items: center;
-            
+            flex: 0 1 auto;
           }
 
           .edit-btn {
-            background: $primary-color;
+            background: $mypage-primary;
             color: white;
             border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
+            padding: 6px 16px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            white-space: nowrap;
+            width: 60px !important;
+            min-width: 60px !important;
+            max-width: 60px !important;
+            flex: none;
 
             &:hover {
-              background: $primary-dark;
+              background: $mypage-primary-dark;
               transform: translateY(-1px);
-              box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+              box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
             }
-
           }
         }
 
         .profile-image-section {
-          display: flex;
-          align-items: center;
-          gap: 40px;
           margin-bottom: 40px;
-          padding: 24px;
-          background: #f9fafb;
-          border-radius: 12px;
+          
+          .profile-image-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            padding: 32px;
+            background: linear-gradient(135deg, rgba($mypage-primary, 0.05), rgba($mypage-primary-light, 0.02));
+            border-radius: 16px;
+            border: 1px solid rgba($mypage-primary, 0.1);
+            margin-bottom: 24px;
+          }
 
           .profile-image-container {
+            position: relative;
+            cursor: pointer;
             width: 150px;
             height: 150px;
             border-radius: 50%;
             overflow: hidden;
-            border: 4px solid $primary-color;
-            box-shadow: 0 4px 12px rgba($primary-color, 0.2);
-            transition: transform 0.3s;
+            border: 4px solid $mypage-white;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            
+            &::after {
+              content: '';
+              position: absolute;
+              inset: -4px;
+              background: linear-gradient(135deg, $mypage-primary, $mypage-primary-light);
+              border-radius: 50%;
+              z-index: -1;
+            }
 
             &:hover {
               transform: scale(1.05);
@@ -205,10 +247,18 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
             .profile-image-placeholder {
               width: 100%;
               height: 100%;
-              background: $primary-color;
+              background: linear-gradient(135deg, $mypage-primary 0%, $mypage-primary-dark 100%);
               display: flex;
               align-items: center;
               justify-content: center;
+              position: relative;
+              
+              &::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><defs><pattern id="pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23pattern)"/></svg>');
+              }
 
               span {
                 font-size: 60px;
@@ -217,12 +267,163 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
                 text-transform: uppercase;
               }
             }
+            
+            .image-overlay {
+              position: absolute;
+              inset: 0;
+              background: rgba(0, 0, 0, 0.7);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+              color: white;
+              
+              .camera-icon {
+                width: 32px;
+                height: 32px;
+                margin-bottom: 8px;
+              }
+              
+              span {
+                font-size: 14px;
+                font-weight: 500;
+              }
+            }
+            
+            &:hover .image-overlay {
+              opacity: 1;
+            }
+          }
+          
+          .profile-info-summary {
+            flex: 1;
+            
+            h3 {
+              font-size: 28px;
+              font-weight: 700;
+              color: $mypage-text-dark;
+              margin: 0 0 8px 0;
+            }
+            
+            p {
+              font-size: 16px;
+              color: $mypage-text-gray;
+              margin: 0 0 4px 0;
+              
+              &.company-info {
+                font-size: 15px;
+                color: $mypage-primary;
+                font-weight: 500;
+                margin-top: 8px;
+              }
+            }
           }
 
           .image-upload {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
+            
+            .upload-area {
+              border: 2px dashed $mypage-primary;
+              border-radius: 12px;
+              padding: 32px;
+              text-align: center;
+              background: rgba($mypage-primary, 0.02);
+              transition: all 0.3s ease;
+              position: relative;
+              cursor: pointer;
+              
+              &.drag-over {
+                background: rgba($mypage-primary, 0.1);
+                border-color: $mypage-primary-dark;
+                transform: scale(1.02);
+              }
+              
+              &:hover {
+                background: rgba($mypage-primary, 0.05);
+                border-color: $mypage-primary-dark;
+              }
+              
+              .upload-icon {
+                width: 48px;
+                height: 48px;
+                margin: 0 auto 16px;
+                opacity: 0.4;
+                color: $mypage-primary;
+              }
+              
+              p {
+                color: $mypage-text-gray;
+                font-size: 15px;
+                margin: 0 0 8px 0;
+                font-weight: 500;
+                
+                &.upload-hint {
+                  font-size: 13px;
+                  color: lighten($mypage-text-gray, 20%);
+                  font-weight: 400;
+                }
+              }
+            }
+            
+            .upload-actions {
+              display: flex;
+              gap: 12px;
+              
+              button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                white-space: nowrap;
+                
+                .spinner {
+                  width: 16px;
+                  height: 16px;
+                  animation: spin 1s linear infinite;
+                }
+              }
+              
+              .upload-confirm-btn {
+                background: $mypage-primary;
+                color: white;
+                min-width: 120px;
+                
+                &:hover:not(:disabled) {
+                  background: $mypage-primary-dark;
+                  transform: translateY(-2px);
+                  box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
+                }
+                
+                &:disabled {
+                  background: lighten($mypage-primary, 20%);
+                  cursor: not-allowed;
+                  opacity: 0.7;
+                }
+              }
+              
+              .cancel-upload-btn {
+                background: $mypage-white;
+                color: $mypage-text-gray;
+                border: 2px solid $mypage-border-color;
+                min-width: 80px;
+                
+                &:hover {
+                  background: $mypage-background-light;
+                  border-color: darken($mypage-border-color, 10%);
+                }
+              }
+            }
 
             .upload-btn {
               background: #f3f4f6;
@@ -236,12 +437,12 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
 
               &:hover {
                 background: #e5e7eb;
-                color: $primary-color;
+                color: $mypage-primary;
               }
             }
 
             .upload-confirm-btn {
-              background: $primary-color;
+              background: $mypage-primary;
               color: white;
               border: none;
               padding: 10px 20px;
@@ -252,9 +453,9 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
               transition: all 0.3s;
 
               &:hover {
-                background: $primary-dark;
+                background: $mypage-primary-dark;
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+                box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
               }
 
               &:disabled {
@@ -288,6 +489,13 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
               display: flex;
               align-items: center;
               gap: 8px;
+              
+              svg {
+                width: 18px;
+                height: 18px;
+                color: $mypage-primary;
+                opacity: 0.7;
+              }
             }
 
             .info-value {
@@ -307,9 +515,9 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
 
               &:focus {
                 outline: none;
-                border-color: $primary-color;
+                border-color: $mypage-primary;
                 background: white;
-                box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+                box-shadow: 0 0 0 3px rgba($mypage-primary, 0.1);
               }
             }
 
@@ -327,23 +535,24 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
             justify-content: flex-end;
 
             .save-btn, .cancel-btn {
-              padding: 10px 24px;
+              padding: 8px 20px;
               border: none;
               border-radius: 8px;
               cursor: pointer;
-              font-size: 15px;
+              font-size: 14px;
               font-weight: 500;
               transition: all 0.3s;
+              white-space: nowrap;
             }
 
             .save-btn {
-              background: $primary-color;
+              background: $mypage-primary;
               color: white;
 
               &:hover:not(:disabled) {
-                background: $primary-dark;
+                background: $mypage-primary-dark;
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+                box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
               }
 
               &:disabled {
@@ -405,79 +614,127 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
 
             .project-item {
               background: #f9fafb;
-              padding: 24px;
+              padding: 20px;
               border-radius: 12px;
-              display: flex;
-              justify-content: space-between;
+              display: grid;
+              grid-template-columns: 1fr auto;
+              gap: 20px;
               align-items: center;
               transition: all 0.3s;
               border: 2px solid transparent;
+              position: relative;
+              overflow: hidden;
+
+              &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 4px;
+                background: $mypage-primary;
+                transform: scaleY(0);
+                transition: transform 0.3s ease;
+              }
 
               &:hover {
                 background: white;
-                border-color: $primary-light;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                border-color: rgba($mypage-primary, 0.2);
+                transform: translateX(4px);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+                &::before {
+                  transform: scaleY(1);
+                }
               }
 
-              .project-name {
-                font-size: 15px;
+              .project-details {
+                display: grid;
+                gap: 8px;
+
+                .project-name {
+                  font-size: 16px;
+                  font-weight: 600;
+                  color: $mypage-text-dark;
+                  margin-bottom: 4px;
+                }
+
+                .project-meta {
+                  display: flex;
+                  gap: 20px;
+                  align-items: center;
+                  flex-wrap: wrap;
+
+                  .meta-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 13px;
+                    color: $mypage-text-gray;
+
+                    &.created-date {
+                      &::before {
+                        content: '';
+                        width: 16px;
+                        height: 16px;
+                        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23707175" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>') center/contain no-repeat;
+                      }
+                    }
+                  }
+
+                }
+              }
+
+              .project-status {
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 12px;
                 font-weight: 600;
-                color: #1f2937;
+
+                &.status-planned {
+                  background: linear-gradient(135deg, rgba($mypage-warning, 0.1), rgba($mypage-warning, 0.05));
+                  color: darken($mypage-warning, 10%);
+                  border: 1px solid rgba($mypage-warning, 0.2);
+                }
+
+                &.status-progress {
+                  background: linear-gradient(135deg, rgba($mypage-primary, 0.1), rgba($mypage-primary, 0.05));
+                  color: $mypage-primary;
+                  border: 1px solid rgba($mypage-primary, 0.2);
+                }
+
+                &.status-completed {
+                  background: linear-gradient(135deg, rgba($mypage-success, 0.1), rgba($mypage-success, 0.05));
+                  color: $mypage-success;
+                  border: 1px solid rgba($mypage-success, 0.2);
+                }
               }
 
-              .project-info {
-                display: flex;
-                gap: 16px;
-                align-items: center;
-                font-size: 14px;
-                color: #6b7280;
-
-                .project-status {
-                  padding: 6px 16px;
-                  border-radius: 20px;
-                  font-size: 13px;
-                  font-weight: 600;
-
-                  &.status-planned {
-                    background: rgba($primary-color, 0.1);
-                    color: $primary-color;
-                  }
-
-                  &.status-progress {
-                    background: rgba($primary-color, 0.1);
-                    color: $primary-color;
-                  }
-
-                  &.status-completed {
-                    background: rgba($primary-dark, 0.1);
-                    color: $primary-dark;
-                  }
-                }
-
-                .role {
-                  padding: 6px 16px;
-                  border-radius: 20px;
-                  background: rgba($primary-color, 0.1);
-                  color: $primary-color;
-                  font-size: 13px;
-                  font-weight: 600;
-                }
+              .role {
+                padding: 5px 12px;
+                border-radius: 20px;
+                background: rgba($mypage-primary, 0.1);
+                color: $mypage-primary;
+                font-size: 12px;
+                font-weight: 600;
               }
 
               .view-project-btn {
-                background: $primary-color;
+                background: $mypage-primary;
                 color: white;
                 border: none;
-                padding: 8px 20px;
-                border-radius: 8px;
+                padding: 6px 16px;
+                border-radius: 6px;
                 cursor: pointer;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 500;
                 transition: all 0.3s;
+                white-space: nowrap;
+                margin-left: auto;
+                flex-shrink: 0;
 
                 &:hover {
-                  background: $primary-dark;
+                  background: $mypage-primary-dark;
                   transform: translateX(2px);
                 }
               }
@@ -516,7 +773,7 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s;
-            border-left: 4px solid $primary-color;
+            border-left: 4px solid $mypage-primary;
 
             &:hover {
               background: white;
@@ -533,7 +790,7 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
               font-weight: 500;
 
               .owner-badge {
-                background: $primary-color;
+                background: $mypage-primary;
                 color: white;
                 padding: 4px 12px;
                 border-radius: 16px;
@@ -558,7 +815,7 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
             background: #f9fafb;
             padding: 20px;
             border-radius: 12px;
-            border-left: 4px solid $primary-color;
+            border-left: 4px solid $mypage-primary;
             transition: all 0.3s;
 
             &:hover {
@@ -600,7 +857,7 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
           gap: 24px;
 
           .stat-card {
-            background: $primary-color;
+            background: linear-gradient(135deg, $mypage-primary, $mypage-primary-dark);
             padding: 32px;
             border-radius: 16px;
             text-align: center;
@@ -608,6 +865,18 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
             color: white;
             position: relative;
             overflow: hidden;
+            
+            &:nth-child(2) {
+              background: linear-gradient(135deg, $mypage-primary-light, $mypage-primary);
+            }
+            
+            &:nth-child(3) {
+              background: linear-gradient(135deg, $mypage-success, darken($mypage-success, 10%));
+            }
+            
+            &:nth-child(4) {
+              background: linear-gradient(135deg, darken($mypage-primary, 5%), darken($mypage-primary, 15%));
+            }
 
             &::before {
               content: '';
@@ -622,7 +891,7 @@ $bg-gradient: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
 
             &:hover {
               transform: translateY(-4px);
-              box-shadow: 0 8px 24px rgba($primary-color, 0.3);
+              box-shadow: 0 8px 24px rgba($mypage-primary, 0.3);
             }
 
             .stat-label {

@@ -262,12 +262,21 @@ class ProjectList(View):
             ]
 
             user_memos = list(user.memos.all().values("id", "date", "memo"))
+            
+            # 프로필 이미지 URL 가져오기
+            profile_image = None
+            try:
+                if hasattr(user, 'profile') and user.profile.profile_image:
+                    profile_image = user.profile.profile_image.url
+            except:
+                pass
 
             return JsonResponse(
                 {
                     "result": result,
                     "user": user.username,
                     "nickname": nickname,
+                    "profile_image": profile_image,
                     "sample_files": sample_files,
                     "user_memos": user_memos,
                 },

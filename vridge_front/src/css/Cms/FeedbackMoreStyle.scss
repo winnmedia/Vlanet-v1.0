@@ -177,6 +177,78 @@ $warning-color: #ffc107;
               font-weight: 600;
             }
           }
+          
+          .detail-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid $border-color;
+            
+            .reaction-btn {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              padding: 6px 14px;
+              border: 1px solid #e9ecef;
+              border-radius: 20px;
+              background: white;
+              color: #6c757d;
+              font-size: 13px;
+              font-weight: 500;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              
+              svg {
+                width: 16px;
+                height: 16px;
+                stroke-width: 2;
+              }
+              
+              &:hover {
+                border-color: #ced4da;
+                background: #f8f9fa;
+              }
+              
+              &.like {
+                &.active {
+                  background: rgba($primary-color, 0.1);
+                  border-color: $primary-color;
+                  color: $primary-color;
+                  
+                  svg {
+                    fill: $primary-color;
+                  }
+                }
+                
+                &:hover:not(.active) {
+                  border-color: $primary-color;
+                  color: $primary-color;
+                }
+              }
+              
+              &.dislike {
+                &.active {
+                  background: #fff5f5;
+                  border-color: #dc3545;
+                  color: #dc3545;
+                  
+                  svg {
+                    fill: #dc3545;
+                  }
+                }
+                
+                &:hover:not(.active) {
+                  border-color: #dc3545;
+                  color: #dc3545;
+                }
+              }
+              
+              .count {
+                font-weight: 600;
+              }
+            }
+          }
         }
       }
     }

@@ -37,7 +37,7 @@ export function updateUserPreferences(data) {
 export function uploadProfileImage(formData) {
   return axiosFormData(
     'post',
-    `/api/users/profile/upload-image`,
+    `/api/users/profile/upload-image/`,
     formData
   )
 }
@@ -46,7 +46,7 @@ export function uploadProfileImage(formData) {
 export function deleteProfileImage() {
   return axiosCredentials(
     'delete',
-    `/api/users/profile/upload-image`
+    `/api/users/profile/upload-image/`
   )
 }
 
@@ -54,7 +54,7 @@ export function deleteProfileImage() {
 export function updateProfile(data) {
   return axiosCredentials(
     'post',
-    `/api/users/profile/update`,
+    `/api/users/profile/update/`,
     data
   )
 }
@@ -71,7 +71,7 @@ export function getProfile() {
 export function changePassword(data) {
   return axiosCredentials(
     'post',
-    `/api/users/profile/change-password`,
+    `/api/users/profile/change-password/`,
     data
   )
 }
@@ -80,7 +80,7 @@ export function changePassword(data) {
 export function deleteAccount(data) {
   return axiosCredentials(
     'post',
-    `/api/users/profile/delete-account`,
+    `/api/users/profile/delete-account/`,
     data
   )
 }

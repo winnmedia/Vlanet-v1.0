@@ -23,7 +23,7 @@ export default function PageTemplate({
   noLogin,
 }) {
   const navigate = useNavigate()
-  const { nickname, user } = useSelector((s) => s.ProjectStore)
+  const { nickname, user, profileImage } = useSelector((s) => s.ProjectStore)
 
   // 인증 체크를 각 페이지에서 처리하도록 변경
   // useEffect(() => {
@@ -53,7 +53,11 @@ export default function PageTemplate({
     ]
   if (nickname) {
     rightItems = [
-      {
+      profileImage ? {
+        type: 'img',
+        src: profileImage,
+        className: 'profile-photo',
+      } : {
         type: 'string',
         className: 'nick',
         text: nickname.substr(0, 1),

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { CreateFeedback } from 'api/feedback'
 import 'css/Cms/OpinionInputSimple.scss'
@@ -8,6 +8,7 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
   const [opinion, setOpinion] = useState('')
   const [commentType, setCommentType] = useState('general') // 기본값: 일반
   const [submitting, setSubmitting] = useState(false)
+  const [commentReactions, setCommentReactions] = useState({}) // 코멘트별 리액션 상태
   
   // 현재 사용자 정보 가져오기
   const userInfo = current_project?.member_list?.find(m => m.email === user) || 
@@ -75,6 +76,47 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
   const opinions = current_project?.feedback?.filter(
     comment => comment.section?.includes('코멘트') || comment.type === 'opinion'
   ) || []
+  
+  console.log('OpinionInput - opinions:', opinions)
+  console.log('OpinionInput - current_project:', current_project)
+
+  // 로컬 스토리지에서 리액션 데이터 불러오기
+  useEffect(() => {
+    const savedReactions = localStorage.getItem(`reactions_${project_id}`)
+    if (savedReactions) {
+      setCommentReactions(JSON.parse(savedReactions))
+    }
+  }, [project_id])
+
+  // 리액션 핸들러
+  const handleReaction = (commentId, type) => {
+    const key = `${commentId}_${type}`
+    const userReactionKey = `user_reaction_${commentId}_${user}`
+    const currentUserReaction = localStorage.getItem(userReactionKey)
+    
+    setCommentReactions(prev => {
+      const newReactions = { ...prev }
+      
+      // 이미 같은 리액션을 클릭한 경우 취소
+      if (currentUserReaction === type) {
+        newReactions[key] = Math.max(0, (newReactions[key] || 0) - 1)
+        localStorage.removeItem(userReactionKey)
+      } else {
+        // 기존 리액션이 있으면 제거
+        if (currentUserReaction) {
+          const oldKey = `${commentId}_${currentUserReaction}`
+          newReactions[oldKey] = Math.max(0, (newReactions[oldKey] || 0) - 1)
+        }
+        // 새 리액션 추가
+        newReactions[key] = (newReactions[key] || 0) + 1
+        localStorage.setItem(userReactionKey, type)
+      }
+      
+      // 로컬 스토리지에 저장
+      localStorage.setItem(`reactions_${project_id}`, JSON.stringify(newReactions))
+      return newReactions
+    })
+  }
 
   return (
     <div className="opinion-input-container">

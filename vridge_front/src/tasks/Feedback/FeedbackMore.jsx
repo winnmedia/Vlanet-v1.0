@@ -1,13 +1,16 @@
 import useInput from 'hooks/UseInput'
 import React, { useState, useEffect, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import 'css/Cms/FeedbackMoreStyle.scss'
 
 import moment from 'moment'
 import 'moment/locale/ko'
 
 export default function FeedbackMore({ current_project, onTimeClick }) {
+  const { user } = useSelector((s) => s.ProjectStore)
   const [feedback, setFeedback] = useState([])
   const [expandedId, setExpandedId] = useState(null)
+  const [feedbackReactions, setFeedbackReactions] = useState({}) // 피드백별 리액션 상태
 
   useEffect(() => {
     let groupedObjects = {}
@@ -30,6 +33,50 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
     })
     setFeedback(Object.entries(groupedObjects))
   }, [current_project])
+  
+  // 로컬 스토리지에서 리액션 데이터 불러오기
+  useEffect(() => {
+    const projectId = current_project?.id
+    if (projectId) {
+      const savedReactions = localStorage.getItem(`feedback_reactions_${projectId}`)
+      if (savedReactions) {
+        setFeedbackReactions(JSON.parse(savedReactions))
+      }
+    }
+  }, [current_project])
+
+  // 리액션 핸들러
+  const handleReaction = (feedbackId, type) => {
+    const key = `${feedbackId}_${type}`
+    const userReactionKey = `user_feedback_reaction_${feedbackId}_${user}`
+    const currentUserReaction = localStorage.getItem(userReactionKey)
+    const projectId = current_project?.id
+    
+    setFeedbackReactions(prev => {
+      const newReactions = { ...prev }
+      
+      // 이미 같은 리액션을 클릭한 경우 취소
+      if (currentUserReaction === type) {
+        newReactions[key] = Math.max(0, (newReactions[key] || 0) - 1)
+        localStorage.removeItem(userReactionKey)
+      } else {
+        // 기존 리액션이 있으면 제거
+        if (currentUserReaction) {
+          const oldKey = `${feedbackId}_${currentUserReaction}`
+          newReactions[oldKey] = Math.max(0, (newReactions[oldKey] || 0) - 1)
+        }
+        // 새 리액션 추가
+        newReactions[key] = (newReactions[key] || 0) + 1
+        localStorage.setItem(userReactionKey, type)
+      }
+      
+      // 로컬 스토리지에 저장
+      if (projectId) {
+        localStorage.setItem(`feedback_reactions_${projectId}`, JSON.stringify(newReactions))
+      }
+      return newReactions
+    })
+  }
 
   const handleFeedbackClick = (data) => {
     // 시간 이동
@@ -95,6 +142,32 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
                         <strong>제목:</strong> {data.title}
                       </div>
                     )}
+                    <div className="detail-actions">
+                      <button 
+                        className={`reaction-btn like ${localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReaction(data.id, 'like');
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                        </svg>
+                        <span className="count">{feedbackReactions[`${data.id}_like`] || 0}</span>
+                      </button>
+                      <button 
+                        className={`reaction-btn dislike ${localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReaction(data.id, 'dislike');
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" />
+                        </svg>
+                        <span className="count">{feedbackReactions[`${data.id}_dislike`] || 0}</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </li>

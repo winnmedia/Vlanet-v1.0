@@ -33,6 +33,7 @@ export default function Header({
   const right = makeHtml(rightItems, navigate, () => setShowDropdown(!showDropdown))
 
   const handleLogout = () => {
+    localStorage.removeItem('VGID')
     localStorage.removeItem('token')
     navigate('/Login', { replace: true })
   }
@@ -50,19 +51,16 @@ export default function Header({
               setShowDropdown(false)
               navigate('/MyPage')
             }}>
-              <span className="dropdown-icon">👤</span>
               마이페이지
             </div>
             <div className="dropdown-item" onClick={() => {
               setShowDropdown(false)
               navigate('/CmsHome')
             }}>
-              <span className="dropdown-icon">🏠</span>
               홈으로
             </div>
             <div className="dropdown-divider"></div>
             <div className="dropdown-item logout" onClick={handleLogout}>
-              <span className="dropdown-icon">🚪</span>
               로그아웃
             </div>
           </div>

@@ -409,6 +409,7 @@ export default function Feedback() {
       content: current_project && (
         <OpinionInput
           project_id={project_id}
+          current_project={current_project}
           refetch={refetch}
         />
       ),

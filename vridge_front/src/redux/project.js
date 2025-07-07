@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const initialState = {
   user: null,
   nickname: null,
+  profileImage: null,
   sample_files: [],
   project_list: [],
   this_month_project: [],

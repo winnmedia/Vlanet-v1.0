@@ -18,9 +18,143 @@ $white: #fff;
     display: none; // 헤더 제거하여 공간 확보
   }
   
-  // 기존 의견 목록 제거 - 하단 피드백 목록에서 통합 표시
+  // 의견 목록 스타일
   .opinion-list {
-    display: none;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid $border-color;
+    
+    .list-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-dark;
+      margin-bottom: 16px;
+    }
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      .opinion-item {
+        background: $white;
+        border: 1px solid $border-color;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          border-color: rgba($primary-color, 0.3);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .opinion-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 12px;
+          
+          .author {
+            font-size: 14px;
+            font-weight: 600;
+            color: $text-dark;
+          }
+          
+          .date {
+            font-size: 12px;
+            color: $text-gray;
+          }
+          
+          .comment-type-badge {
+            background: rgba($primary-color, 0.1);
+            color: $primary-color;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: auto;
+          }
+        }
+        
+        .opinion-content {
+          font-size: 14px;
+          line-height: 1.6;
+          color: $text-dark;
+          word-break: break-word;
+          margin-bottom: 12px;
+        }
+        
+        .opinion-actions {
+          display: flex;
+          gap: 16px;
+          
+          .reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            background: white;
+            color: #6c757d;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            svg {
+              width: 16px;
+              height: 16px;
+              stroke-width: 2;
+            }
+            
+            &:hover {
+              border-color: #ced4da;
+              background: #f8f9fa;
+            }
+            
+            &.like {
+              &.active {
+                background: rgba($primary-color, 0.1);
+                border-color: $primary-color;
+                color: $primary-color;
+                
+                svg {
+                  fill: $primary-color;
+                }
+              }
+              
+              &:hover:not(.active) {
+                border-color: $primary-color;
+                color: $primary-color;
+              }
+            }
+            
+            &.dislike {
+              &.active {
+                background: #fff5f5;
+                border-color: #dc3545;
+                color: #dc3545;
+                
+                svg {
+                  fill: #dc3545;
+                }
+              }
+              
+              &:hover:not(.active) {
+                border-color: #dc3545;
+                color: #dc3545;
+              }
+            }
+            
+            .count {
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
   }
   
   .opinion-input-area {

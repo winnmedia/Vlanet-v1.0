@@ -126,10 +126,21 @@ export function refetchProject(dispatch, navigate) {
             moment(i.first_date).format('M') == current_month + 1 ||
             moment(i.end_date).format('M') == current_month + 1,
         )
+        // 프로필 이미지 URL 처리
+        let profileImage = null
+        if (res.data.profile_image) {
+          if (res.data.profile_image.startsWith('/')) {
+            profileImage = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${res.data.profile_image}`
+          } else {
+            profileImage = res.data.profile_image
+          }
+        }
+        
         dispatch(
           updateProjectStore({
             user: res.data.user,
             nickname: res.data.nickname,
+            profileImage: profileImage,
             sample_files: res.data.sample_files,
             project_list: result,
             this_month_project: this_month_project,

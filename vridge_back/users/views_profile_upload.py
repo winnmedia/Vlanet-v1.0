@@ -72,7 +72,7 @@ class ProfileImageUpload(View):
             
             # 이미지 리사이징 (Pillow가 설치된 경우에만)
             if PIL_AVAILABLE:
-                self._resize_image(user.profile_image.path)
+                self._resize_image(profile.profile_image.path)
             
             return JsonResponse({
                 "status": "success",

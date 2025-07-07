@@ -136,8 +136,9 @@ async function finalVerification() {
     await test('프로젝트 목록 조회', async () => {
       const response = await fetch(`${API_BASE}/api/projects/project_list`, { headers });
       const data = await response.json();
+      // 프로젝트가 0개여도 성공으로 처리 (새 사용자는 프로젝트가 없음)
       return {
-        success: response.ok && data.result && data.result.length >= 0,
+        success: response.ok && data.result !== undefined && Array.isArray(data.result),
         message: `${data.result?.length || 0}개 프로젝트 조회됨`
       };
     });

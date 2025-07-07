@@ -19,6 +19,10 @@ if [ $? -ne 0 ]; then
     python3 force_migrate.py || echo "Force migration also failed"
 fi
 
+# 누락된 컬럼 수정
+echo "Fixing missing columns..."
+python3 manage.py fix_missing_columns || echo "Column fix failed"
+
 echo "---"
 echo "Checking database tables..."
 python3 manage.py shell -c "from django.db import connection; cursor = connection.cursor(); cursor.execute(\"SELECT table_name FROM information_schema.tables WHERE table_schema='public'\"); print('Tables:', [t[0] for t in cursor.fetchall()])"

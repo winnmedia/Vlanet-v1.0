@@ -155,29 +155,36 @@ function FeedbackStable() {
       .then((res) => {
         console.log('[Feedback] Data loaded successfully:', res.data)
         
-        // 새로운 API 구조: /api/projects/{id}/feedback/
-        if (res.data && res.data.feedback) {
-          // 피드백 데이터를 프로젝트 형식으로 변환
-          const feedbackData = res.data.feedback
-          const projectData = {
-            id: feedbackData.project_id,
-            name: feedbackData.project_name,
-            files: feedbackData.files,
-            feedback: feedbackData.comments || [],
-            // 기타 필요한 필드들
-          }
-          set_current_project(projectData)
+        // API 응답 처리
+        let projectData = null
+        
+        if (res.data && res.data.result) {
+          // 표준 형식
+          projectData = res.data.result
+        } else if (res.data && res.data.project) {
+          // 대체 형식
+          projectData = res.data.project
+        } else if (res.data) {
+          // 직접 데이터
+          projectData = res.data
         } else {
-          // 기존 API 형식 지원 (하위 호환성)
-          if (res.data && res.data.result) {
-            set_current_project(res.data.result)
-          } else if (res.data && res.data.project) {
-            set_current_project(res.data.project)
-          } else if (res.data) {
-            set_current_project(res.data)
-          } else {
-            throw new Error('프로젝트 데이터가 없습니다.')
+          throw new Error('프로젝트 데이터가 없습니다.')
+        }
+        
+        // 데이터 검증 및 기본값 설정
+        if (projectData) {
+          // feedback이 배열이 아닌 경우 빈 배열로 설정
+          if (!Array.isArray(projectData.feedback)) {
+            console.warn('[Feedback] feedback is not an array, setting to empty array')
+            projectData.feedback = []
           }
+          
+          // member_list가 없는 경우 빈 배열로 설정
+          if (!Array.isArray(projectData.member_list)) {
+            projectData.member_list = []
+          }
+          
+          set_current_project(projectData)
         }
         
         setLoading(false)

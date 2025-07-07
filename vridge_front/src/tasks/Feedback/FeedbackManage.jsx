@@ -10,7 +10,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   
   // 기존 반응 상태 초기화 및 카운트 계산
   useEffect(() => {
-    if (current_project && current_project.feedback) {
+    if (current_project && Array.isArray(current_project.feedback)) {
       const initialReactions = {}
       const counts = {}
       
@@ -34,6 +34,11 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       
       setReactions(initialReactions)
       setReactionCounts(counts)
+    } else {
+      // feedback이 없거나 배열이 아닌 경우
+      console.warn('[FeedbackManage] feedback is not an array:', current_project?.feedback)
+      setReactions({})
+      setReactionCounts({})
     }
   }, [current_project])
   

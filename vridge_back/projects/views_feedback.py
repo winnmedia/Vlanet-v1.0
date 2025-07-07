@@ -53,44 +53,64 @@ class ProjectFeedback(View):
                     project.save()
                     logger.info(f"Created feedback {feedback.id} for project {project_id}")
             
-            # 피드백 정보 구성
-            feedback_data = {
-                "id": project.feedback.id,
-                "project_id": project.id,
-                "project_name": project.name,
+            # 프로젝트 데이터 구성 (프론트엔드가 기대하는 형식)
+            project_data = {
+                "id": project.id,
+                "name": project.name,
+                "manager": project.manager,
+                "consumer": project.consumer,
+                "description": project.description,
+                "owner_email": project.user.username,
+                "owner_nickname": project.user.nickname or project.user.username,
+                "created": project.created.isoformat(),
+                "updated": project.updated.isoformat(),
+                "member_list": [],
                 "files": None,
-                "comments": []
+                "feedback": []  # 프론트엔드가 기대하는 배열
             }
             
-            # 파일 정보
-            if project.feedback.files:
-                file_path = project.feedback.files.name
-                if settings.DEBUG:
-                    feedback_data["files"] = f"http://127.0.0.1:8000/media/{file_path}"
-                else:
-                    feedback_data["files"] = f"https://videoplanet.up.railway.app/media/{file_path}"
-            
-            # 피드백 코멘트
-            comments = feedback_model.FeedBackComment.objects.filter(
-                feedback=project.feedback
-            ).select_related('user').order_by('-created')
-            
-            feedback_data["comments"] = [
+            # 멤버 리스트
+            members = project.members.select_related('user').all()
+            project_data["member_list"] = [
                 {
-                    "id": comment.id,
-                    "user": comment.user.nickname or comment.user.username,
-                    "security": comment.security,
-                    "title": comment.title,
-                    "section": comment.section,
-                    "text": comment.text,
-                    "created": comment.created.isoformat()
+                    "id": member.id,
+                    "email": member.user.username,
+                    "nickname": member.user.nickname or member.user.username,
+                    "rating": member.rating
                 }
-                for comment in comments
+                for member in members
             ]
             
+            # 파일 정보
+            if project.feedback and project.feedback.files:
+                file_path = project.feedback.files.name
+                if settings.DEBUG:
+                    project_data["files"] = f"http://127.0.0.1:8000/media/{file_path}"
+                else:
+                    project_data["files"] = f"https://videoplanet.up.railway.app/media/{file_path}"
+            
+            # 피드백 코멘트 (프론트엔드가 'feedback' 배열로 기대)
+            if project.feedback:
+                comments = feedback_model.FeedBackComment.objects.filter(
+                    feedback=project.feedback
+                ).select_related('user').order_by('-created')
+                
+                project_data["feedback"] = [
+                    {
+                        "id": comment.id,
+                        "nickname": comment.user.nickname or comment.user.username,
+                        "user_email": comment.user.username,
+                        "security": comment.security,
+                        "title": comment.title,
+                        "section": comment.section,
+                        "text": comment.text,
+                        "created": comment.created.isoformat()
+                    }
+                    for comment in comments
+                ]
+            
             return JsonResponse({
-                "status": "success",
-                "feedback": feedback_data
+                "result": project_data  # 기존 API와 동일한 구조
             })
             
         except Exception as e:

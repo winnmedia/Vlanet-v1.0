@@ -10,7 +10,15 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
 
   useEffect(() => {
     let groupedObjects = {}
-    const feedback_data = current_project.feedback
+    // 방어 로직: feedback이 없거나 배열이 아닌 경우 처리
+    const feedback_data = current_project?.feedback || []
+    
+    if (!Array.isArray(feedback_data)) {
+      console.warn('[FeedbackMore] feedback is not an array:', feedback_data)
+      setFeedback([])
+      return
+    }
+    
     feedback_data.forEach((obj) => {
       const createdDate = moment(obj.created).format('YYYY.MM.DD.dd')
       if (groupedObjects.hasOwnProperty(createdDate)) {

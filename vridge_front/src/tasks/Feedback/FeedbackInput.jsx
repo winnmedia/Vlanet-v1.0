@@ -3,17 +3,27 @@ import React, { useState, useEffect } from 'react'
 
 import { CreateFeedback } from 'api/feedback'
 
-export default function FeedbackInput({ project_id, refetch }) {
+export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange }) {
   const initial = {
     secret: 'true',
     title: '',
-    section: '',
+    section: initialTime || '',
     contents: '',
   }
 
   const { inputs, onChange, set_inputs } = useInput(initial)
   const { secret, section, contents } = inputs
   const [isAnonymousChecked, setIsAnonymousChecked] = useState(true)
+  
+  // initialTime이 변경될 때 section 값 업데이트
+  useEffect(() => {
+    if (initialTime) {
+      set_inputs(prevInputs => ({
+        ...prevInputs,
+        section: initialTime
+      }))
+    }
+  }, [initialTime, set_inputs])
 
   function SendFeedback() {
     if (secret && section && contents) {
@@ -27,6 +37,10 @@ export default function FeedbackInput({ project_id, refetch }) {
             contents: '',
           })
           setIsAnonymousChecked(true)
+          // 시간 초기화 콜백 호출
+          if (onTimeChange) {
+            onTimeChange('')
+          }
           refetch()
         })
         .catch((err) => {

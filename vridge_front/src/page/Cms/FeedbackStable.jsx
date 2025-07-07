@@ -45,6 +45,13 @@ import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from
 import moment from 'moment'
 import 'moment/locale/ko'
 
+// 시간 포맷 함수
+const formatTime = (seconds) => {
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+}
+
 function FeedbackStable() {
   console.log('[FeedbackStable] Component mounted')
   const navigate = useNavigate()
@@ -63,6 +70,7 @@ function FeedbackStable() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [encodingStatus, setEncodingStatus] = useState(null)
   const [encodingCheckInterval, setEncodingCheckInterval] = useState(null)
+  const [feedbackTime, setFeedbackTime] = useState('')
   const [showProjectInfo, setShowProjectInfo] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [activeFormTab, setActiveFormTab] = useState('feedback') // 'feedback' or 'comment'
@@ -338,13 +346,6 @@ function FeedbackStable() {
     }
   }
 
-  // 시간 포맷 함수
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
-
   // 로딩 상태
   if (loading) {
     return (
@@ -494,6 +495,13 @@ function FeedbackStable() {
                                   ref={videoPlayerRef}
                                   videoUrl={current_project.files}
                                   onTimeUpdate={setCurrentVideoTime}
+                                  onFeedbackClick={(time) => {
+                                    // 현재 시간을 MM:SS 형식으로 변환
+                                    const formattedTime = formatTime(time);
+                                    setFeedbackTime(formattedTime);
+                                    // 피드백 탭으로 전환
+                                    setActiveFormTab('feedback');
+                                  }}
                                 />
                                 {encodingStatus && encodingStatus !== 'completed' && (
                                   <div className="encoding-status">
@@ -593,6 +601,8 @@ function FeedbackStable() {
                                 <FeedbackInput
                                   project_id={project_id}
                                   current_project={current_project}
+                                  initialTime={feedbackTime}
+                                  onTimeChange={setFeedbackTime}
                                   refetch={refetch}
                                 />
                               </div>

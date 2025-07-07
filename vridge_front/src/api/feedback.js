@@ -5,15 +5,15 @@ import axios from 'axios'
 export function GetFeedBack(projectId) {
   return axiosCredentials(
     'get',
-    `/api/projects/${projectId}/feedbacks`,
+    `/api/projects/${projectId}/feedback/`,
   )
 }
 
 // 피드백 create
 export function CreateFeedback(data, projectId) {
   return axiosCredentials(
-    'post',
-    `/api/projects/${projectId}/feedbacks`,
+    'put',
+    `/api/feedbacks/${projectId}`,
     data,
   )
 }
@@ -44,7 +44,7 @@ export function FeedbackFile(data, projectId, onUploadProgress) {
   
   const config = {
     method: 'post',
-    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/projects/${projectId}/feedbacks/file`,
+    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/projects/${projectId}/feedback/upload/`,
     data: data,
     headers: {
       'Authorization': token ? `Bearer ${token}` : '',

@@ -1,1 +1,6 @@
+# API 프록시 규칙 - API 요청은 백엔드로 전달
+/api/*  https://videoplanet.up.railway.app/api/:splat  200!
+/health  https://videoplanet.up.railway.app/health  200!
+
+# SPA 라우팅 - 나머지 모든 요청은 index.html로
 /*    /index.html   200

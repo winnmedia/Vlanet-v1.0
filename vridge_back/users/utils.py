@@ -15,37 +15,43 @@ def user_validator(function):
     def wrapper(self, request, *args, **kwargs):
         try:
             # Debug logging
-            print(f"Request method: {request.method}")
-            print(f"Request headers: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
-            print(f"Content-Type: {request.content_type}")
+            print(f"[Auth Debug] Request method: {request.method}")
+            print(f"[Auth Debug] Auth header: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
+            print(f"[Auth Debug] Content-Type: {request.content_type}")
+            print(f"[Auth Debug] User before auth: {request.user}")
             
             # Use Django REST Framework's JWT authentication
             jwt_auth = JWTAuthentication()
             
             try:
                 # This will validate the token and return (user, token)
-                user, token = jwt_auth.authenticate(request)
-                if user:
-                    request.user = user
-                    print("request.user", request.user)
-                    return function(self, request, *args, **kwargs)
-                else:
-                    # Fallback to cookie if header auth fails
-                    vridge_session = request.COOKIES.get("vridge_session", None)
-                    if vridge_session:
-                        # Create a fake request with the token in header
-                        class FakeRequest:
-                            def __init__(self, token):
-                                self.META = {'HTTP_AUTHORIZATION': f'Bearer {token}'}
-                        
-                        fake_request = FakeRequest(vridge_session)
-                        user, token = jwt_auth.authenticate(fake_request)
+                auth_result = jwt_auth.authenticate(request)
+                print(f"[Auth Debug] JWT auth result: {auth_result}")
+                if auth_result is not None:
+                    user, token = auth_result
+                    if user:
+                        request.user = user
+                        print(f"[Auth Debug] Authenticated user: {request.user}")
+                        return function(self, request, *args, **kwargs)
+                
+                # Fallback to cookie if header auth fails
+                vridge_session = request.COOKIES.get("vridge_session", None)
+                if vridge_session:
+                    # Create a fake request with the token in header
+                    class FakeRequest:
+                        def __init__(self, token):
+                            self.META = {'HTTP_AUTHORIZATION': f'Bearer {token}'}
+                    
+                    fake_request = FakeRequest(vridge_session)
+                    auth_result = jwt_auth.authenticate(fake_request)
+                    if auth_result is not None:
+                        user, token = auth_result
                         if user:
                             request.user = user
                             print("request.user", request.user)
                             return function(self, request, *args, **kwargs)
-                    
-                    return JsonResponse({"message": "NEED_ACCESS_TOKEN"}, status=401)
+                
+                return JsonResponse({"message": "NEED_ACCESS_TOKEN"}, status=401)
                     
             except (InvalidToken, TokenError) as e:
                 print(f"Token validation error: {e}")

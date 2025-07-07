@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import 'css/User/Auth.scss'
 import PageTemplate from 'components/PageTemplate'
 import { SignUp, CheckNickname, CheckEmail } from 'api/auth'
+import { safeStorage } from 'utils/mobile-utils'
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -231,7 +232,13 @@ export default function Signup() {
         // 토큰 저장
         const token = res.data.vridge_session;
         if (token) {
-          window.localStorage.setItem('VGID', JSON.stringify(token));
+          // 모바일 환경을 고려한 안전한 토큰 저장
+          try {
+            window.localStorage.setItem('VGID', JSON.stringify(token));
+          } catch (e) {
+            // localStorage 접근 실패 시 safeStorage 사용
+            safeStorage.setItem('VGID', JSON.stringify(token));
+          }
           
           // 사용자 정보 저장
           const userInfo = {

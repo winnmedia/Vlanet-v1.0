@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { addMobileHeaders, safeStorage } from 'utils/mobile-utils';
 
 // 환경에 따라 API URL 설정
 let API_BASE_URL;
@@ -19,7 +20,16 @@ if (isProduction) {
 
 // 토큰 정리 헬퍼 함수
 const getCleanToken = () => {
-  const token = localStorage.getItem('VGID');
+  let token = null;
+  
+  // 모바일 환경을 고려한 안전한 스토리지 접근
+  try {
+    token = localStorage.getItem('VGID');
+  } catch (e) {
+    // localStorage 접근 실패 시 safeStorage 사용
+    token = safeStorage.getItem('VGID');
+  }
+  
   if (!token) return null;
   
   // JSON 문자열로 저장된 경우 파싱
@@ -66,6 +76,9 @@ axios.interceptors.request.use(
     // CORS 관련 헤더 확인
     config.headers['Accept'] = 'application/json';
     
+    // 모바일 헤더 추가 (기존 기능에 영향 없음)
+    config = addMobileHeaders(config);
+    
     console.log(`[Axios Request] ${config.method?.toUpperCase()} ${config.url}`);
     console.log(`[Axios BaseURL] ${axios.defaults.baseURL}`);
     return config;
@@ -89,7 +102,11 @@ axios.interceptors.response.use(
     if (error.response?.status === 401) {
       // 로그인 페이지가 아닌 경우에만 리다이렉트
       if (!window.location.pathname.includes('/Login')) {
-        localStorage.removeItem('VGID');
+        try {
+          localStorage.removeItem('VGID');
+        } catch (e) {
+          safeStorage.removeItem('VGID');
+        }
         window.alert('인증이 만료되었습니다. 다시 로그인해주세요.');
         window.location.href = '/Login';
       }
@@ -131,6 +148,9 @@ axiosInstance.interceptors.request.use(
     
     config.headers['Accept'] = 'application/json';
     
+    // 모바일 헤더 추가 (기존 기능에 영향 없음)
+    config = addMobileHeaders(config);
+    
     return config;
   },
   (error) => {
@@ -143,7 +163,11 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       if (!window.location.pathname.includes('/Login')) {
-        localStorage.removeItem('VGID');
+        try {
+          localStorage.removeItem('VGID');
+        } catch (e) {
+          safeStorage.removeItem('VGID');
+        }
         window.alert('인증이 만료되었습니다. 다시 로그인해주세요.');
         window.location.href = '/Login';
       }

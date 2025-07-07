@@ -3,6 +3,7 @@ import { updateProjectStore } from 'redux/project'
 import { ProjectList } from 'api/project'
 import moment from 'moment'
 import 'moment/locale/ko'
+import { safeStorage } from 'utils/mobile-utils'
 
 export function axiosOpts(method, url, data, config) {
   // 인증이 필요없는 요청 (로그인, 회원가입 등)
@@ -75,7 +76,16 @@ export function axiosFormData(method, url, formData, config) {
 }
 
 export function checkSession() {
-  let session = window.localStorage.getItem('VGID')
+  let session = null;
+  
+  // 모바일 환경을 고려한 안전한 스토리지 접근
+  try {
+    session = window.localStorage.getItem('VGID')
+  } catch (e) {
+    // localStorage 접근 실패 시 safeStorage 사용
+    session = safeStorage.getItem('VGID')
+  }
+  
   if (session) {
     try {
       // Try to parse if it's JSON (for backward compatibility)

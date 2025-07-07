@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { SignIn, GoogleLoginAPI } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
+import { safeStorage } from 'utils/mobile-utils'
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -53,7 +54,13 @@ export default function Login() {
 
   const CommonLoginSuccess = async (jwt) => {
     console.log('Login success, saving token:', jwt)
-    window.localStorage.setItem('VGID', jwt)
+    // 모바일 환경을 고려한 안전한 토큰 저장
+    try {
+      window.localStorage.setItem('VGID', jwt)
+    } catch (e) {
+      // localStorage 접근 실패 시 safeStorage 사용
+      safeStorage.setItem('VGID', jwt)
+    }
     
     // Create controller for refetchProject
     const controller = new AbortController()

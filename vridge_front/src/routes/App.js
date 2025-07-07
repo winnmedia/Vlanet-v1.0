@@ -7,6 +7,7 @@ import { refetchProject, checkSession } from 'util/util'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { updateBaseURL } from 'config/axios'
 import { setupMobileConfig } from 'config/mobile-config'
+import { enhanceMobileExperience } from 'utils/mobile-utils'
 
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
@@ -24,6 +25,9 @@ export default function App() {
   useEffect(() => {
     // 모바일 환경 설정
     setupMobileConfig()
+    
+    // 모바일 최적화 (기존 기능에 영향 없음)
+    enhanceMobileExperience()
     
     // 프로덕션 환경에서 API URL 강제 설정
     const isProduction = window.location.hostname === 'vlanet.net' || 
@@ -46,32 +50,30 @@ export default function App() {
       return
     }
     
-    // 최초 로드 시 프로젝트 목록 로드
+    // 프로젝트 목록 로드
     const session = checkSession()
     
-    if (session && pathname !== '/Login' && pathname !== '/') {
+    // 로그인 페이지나 랜딩 페이지가 아니고, 세션이 있는 경우
+    if (session && pathname !== '/Login' && pathname !== '/' && pathname !== '/Signup') {
       console.log('[App] Checking if project list needs loading')
       // Redux store가 비어있거나 아직 로드하지 않은 경우
-      if (!project_list && !isProjectListLoaded.current) {
-        console.log('[App] Loading project list for the first time')
-        isProjectListLoaded.current = true
+      if (!project_list) {
+        console.log('[App] Loading project list')
         refetchProject(dispatch, navigate).then(() => {
           console.log('[App] Project list loaded successfully')
         }).catch(err => {
           console.error('[App] Failed to load project list:', err)
-          isProjectListLoaded.current = false // 실패 시 다시 시도할 수 있도록
+          // 에러가 발생해도 페이지는 표시
         })
       } else {
-        console.log('[App] Project list already exists or loading attempted:', {
-          hasProjectList: !!project_list,
-          projectListLength: project_list?.length || 0,
-          isLoaded: isProjectListLoaded.current
+        console.log('[App] Project list already exists:', {
+          projectListLength: project_list?.length || 0
         })
       }
     } else {
-      console.log('[App] Skipping project list load - not logged in or on login page')
+      console.log('[App] Skipping project list load - not logged in or on auth page')
     }
-  }, []) // 의도적으로 의존성 배열을 비워둠 (최초 1회만 실행)
+  }, [pathname, dispatch, navigate]) // 경로 변경 시 프로젝트 목록 확인
   
   return (
     <div className="App">

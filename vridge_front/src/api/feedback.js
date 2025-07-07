@@ -27,7 +27,7 @@ export function UpdateFeedback(id, data) {
   )
 }
 
-// 피드백 create
+// 피드백 delete
 export function DeleteFeedback(id) {
   return axiosCredentials(
     'delete',
@@ -44,7 +44,7 @@ export function FeedbackFile(data, id, onUploadProgress) {
   
   const config = {
     method: 'post',
-    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/feedbacks/${id}/`,
+    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/feedbacks/${id}`,
     data: data,
     headers: {
       'Authorization': token ? `Bearer ${token}` : '',
@@ -65,7 +65,7 @@ export function FeedbackFile(data, id, onUploadProgress) {
 export function DeleteFeedbackFile(id) {
   return axiosCredentials(
     'delete',
-    `${process.env.REACT_APP_BACKEND_API_URL}/feedbacks/file/${id}`,
+    `/api/feedbacks/file/${id}`,
   )
 }
 
@@ -73,6 +73,6 @@ export function DeleteFeedbackFile(id) {
 export function GetEncodingStatus(id) {
   return axiosCredentials(
     'get',
-    `${process.env.REACT_APP_BACKEND_API_URL}/feedbacks/encoding-status/${id}`,
+    `/api/feedbacks/encoding-status/${id}`,
   )
 }

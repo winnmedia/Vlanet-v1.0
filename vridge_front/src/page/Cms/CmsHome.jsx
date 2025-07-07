@@ -31,7 +31,7 @@ export default function CmsHome() {
   const [showRecentActivity, setShowRecentActivity] = useState(false)
   const [showDeadlineProjects, setShowDeadlineProjects] = useState(false)
 
-  // 인증 체크만 수행 (프로젝트 목록은 App.js에서 이미 로드됨)
+  // 인증 체크 및 프로젝트 목록 확인
   useEffect(() => {
     const session = checkSession()
     if (!session) {
@@ -41,9 +41,16 @@ export default function CmsHome() {
     
     console.log('[CmsHome] Component mounted, project_list length:', project_list?.length || 0)
     
-    // refetchProject 호출을 완전히 제거
-    // App.js에서만 호출하도록 함
-  }, []) // 빈 배열로 최초 마운트 시에만 실행
+    // 프로젝트 목록이 없으면 로드
+    if (!project_list) {
+      console.log('[CmsHome] Project list not found, loading...')
+      refetchProject(dispatch, navigate).then(() => {
+        console.log('[CmsHome] Project list loaded')
+      }).catch(err => {
+        console.error('[CmsHome] Failed to load project list:', err)
+      })
+    }
+  }, [dispatch, navigate]) // 의존성 추가
 
   useEffect(() => {
     setTime(moment(date).format('HH:mm:ss'))

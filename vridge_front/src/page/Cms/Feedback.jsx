@@ -30,7 +30,7 @@ import 'css/Cms/SubmenuFeedbackFix.scss'
 import FeedbackInput from 'tasks/Feedback/FeedbackInput'
 import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
-import FeedbackMessage from 'tasks/Feedback/FeedbackMessage'
+import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from 'tasks/Feedback/OpinionInput'
 import VideoPlayer from 'components/VideoPlayer'
 import VideoUploadGuide from 'components/VideoUploadGuide'
@@ -42,6 +42,7 @@ import down from 'images/Cms/down_icon.svg'
 import { useSelector } from 'react-redux'
 
 import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from 'api/feedback'
+import { GetChatMessages, SendChatMessage } from 'api/chat'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -246,21 +247,16 @@ export default function Feedback() {
   }
 
   const [socketConnected, setSocketConnected] = useState(false)
-  const [connectionAttempts, setConnectionAttempts] = useState(0)
-  const [connectionStatus, setConnectionStatus] = useState('disconnected') // 'connecting', 'connected', 'disconnected', 'reconnecting'
+  const [connectionStatus, setConnectionStatus] = useState('disconnected') // 'polling', 'connected', 'disconnected', 'error'
   const [me, set_me] = useState({
     email: '',
     nickname: '',
     rating: '',
   })
-  // WebSocket URL 환경변수 사용
-  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const wsHost = process.env.REACT_APP_WS_URL || process.env.REACT_APP_BACKEND_API_URL?.replace(/^https?:/, '').replace(/^\/\//, '') || window.location.host
-  const webSocketUrl = project_id ? `${wsProtocol}//${wsHost}/ws/chat/${project_id}/` : null
-  let ws = useRef(null)
-  const reconnectTimeoutRef = useRef(null)
-  const maxReconnectAttempts = 5
-  const baseReconnectDelay = 1000 // 1초
+  // Polling 설정
+  const pollingIntervalRef = useRef(null)
+  const pollingInterval = 3000 // 3초마다 polling
+  const lastMessageIdRef = useRef(null)
 
   const [items, setItems] = useState([])
 

@@ -383,7 +383,7 @@ export default function VideoPlanning() {
 
   const generateSceneStoryboard = async (sceneIndex) => {
     setLoading(true)
-    setLoadingMessage(`씬 ${sceneIndex + 1}의 콘티를 생성하고 있습니다...`)
+    setLoadingMessage(`씬 ${sceneIndex + 1}의 콘티를 생성하고 있습니다... (약 1-2분 소요)`)
     setLoadingProgress(30)
     setError(null)
 
@@ -402,14 +402,37 @@ export default function VideoPlanning() {
         planning_options: planningOptions  // planning_options 추가
       }
       
-      setLoadingMessage('스토리보드 프레임 생성 중...')
+      setLoadingMessage('AI 이미지 생성 중... 잠시만 기다려주세요')
       setLoadingProgress(50)
+      
+      // 10초 후 추가 안내 메시지
+      setTimeout(() => {
+        if (loading) {
+          setLoadingMessage('고품질 이미지 생성을 위해 시간이 걸립니다... (최대 2분)')
+          setLoadingProgress(60)
+        }
+      }, 10000)
+      
+      // 30초 후 추가 안내
+      setTimeout(() => {
+        if (loading) {
+          setLoadingMessage('거의 완료되었습니다... 조금만 더 기다려주세요')
+          setLoadingProgress(70)
+        }
+      }, 30000)
       
       const response = await axios.post(
         `/api/video-planning/generate/storyboards/`,
         { 
           shot_data: shotData,
           style: storyboardStyle
+        },
+        {
+          timeout: 120000, // 2분 타임아웃
+          onUploadProgress: (progressEvent) => {
+            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setLoadingProgress(Math.min(50 + progress * 0.3, 70));
+          }
         }
       )
 
@@ -1306,103 +1329,54 @@ export default function VideoPlanning() {
       case 2:
         return (
           <div className="step-content">
-            <h3>2단계: 스토리 확인 (기승전결)</h3>
+            <h3>2단계: 스토리 확인</h3>
             <p className="step-description">
               기획안을 기승전결 4개의 스토리로 나누었습니다. 각 스토리마다 3개의 씬이 생성됩니다.
             </p>
             
-            {/* 기획안 및 선택된 옵션 표시 섹션 */}
-            <div className="planning-summary-section">
-              <div className="planning-header">
-                <h4>작성한 기획안</h4>
-                <button 
-                  className="toggle-detail-btn"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setShowPlanningDetail(!showPlanningDetail)
-                  }}
-                >
-                  {showPlanningDetail ? '접기' : '자세히 보기'}
-                </button>
-              </div>
-              <div className={`planning-content ${showPlanningDetail ? 'expanded' : 'collapsed'}`}>
-                <div className="planning-text">
-                  {planningData.planning}
-                </div>
-                {showPlanningDetail && (
-                  <div className="planning-options-detail">
-                    <h5>선택한 옵션</h5>
-                    <div className="options-grid">
-                      {planningOptions.tone && (
-                        <div className="option-item">
-                          <span className="option-label">톤앤매너:</span>
-                          <span className="option-value">{planningOptions.tone === 'custom' ? planningOptions.toneCustom : planningOptions.tone}</span>
-                        </div>
-                      )}
-                      {planningOptions.genre && (
-                        <div className="option-item">
-                          <span className="option-label">장르:</span>
-                          <span className="option-value">{planningOptions.genre === 'custom' ? planningOptions.genreCustom : planningOptions.genre}</span>
-                        </div>
-                      )}
-                      {planningOptions.concept && (
-                        <div className="option-item">
-                          <span className="option-label">콘셉트:</span>
-                          <span className="option-value">{planningOptions.concept === 'custom' ? planningOptions.conceptCustom : planningOptions.concept}</span>
-                        </div>
-                      )}
-                      {planningOptions.target && (
-                        <div className="option-item">
-                          <span className="option-label">타겟:</span>
-                          <span className="option-value">{planningOptions.target === 'custom' ? planningOptions.targetCustom : planningOptions.target}</span>
-                        </div>
-                      )}
-                      {planningOptions.purpose && (
-                        <div className="option-item">
-                          <span className="option-label">목적:</span>
-                          <span className="option-value">{planningOptions.purpose === 'custom' ? planningOptions.purposeCustom : planningOptions.purpose}</span>
-                        </div>
-                      )}
-                      {planningOptions.duration && (
-                        <div className="option-item">
-                          <span className="option-label">길이:</span>
-                          <span className="option-value">{planningOptions.duration === 'custom' ? planningOptions.durationCustom : planningOptions.duration}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
             
             <div className="stories-container">
               {planningData.stories.map((story, index) => (
                 <div 
                   key={index} 
                   className={`story-card ${expandedStoryIndex === index ? 'expanded' : ''}`}
-                  onClick={() => setExpandedStoryIndex(expandedStoryIndex === index ? null : index)}
-                  style={{ cursor: 'pointer' }}
                 >
                   <div className="story-stage-badge">
                     <span className="stage-label">{story.stage}</span>
                     <span className="stage-name">{story.stage_name}</span>
                   </div>
                   <p className="story-title">{story.title}</p>
-                  <p className="story-summary">
-                    {expandedStoryIndex === index ? story.summary : 
-                      (story.summary.length > 100 ? story.summary.substring(0, 100) + '...' : story.summary)
-                    }
-                  </p>
+                  <div className="story-summary">
+                    {expandedStoryIndex === index ? (
+                      <div className="full-summary">
+                        <p>{story.summary}</p>
+                        {story.detailed_content && (
+                          <div className="detailed-content">
+                            <h5>상세 내용:</h5>
+                            <p>{story.detailed_content}</p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p>{story.summary.length > 100 ? story.summary.substring(0, 100) + '...' : story.summary}</p>
+                    )}
+                  </div>
                   <div className="story-meta">
                     <span>핵심: {story.key_content || story.message}</span>
                   </div>
                   <div className="story-characters">
                     <small>등장인물: {story.characters?.join(', ')}</small>
                   </div>
-                  <div className="expand-indicator">
-                    {expandedStoryIndex === index ? '▲ 접기' : '▼ 자세히'}
-                  </div>
+                  <button 
+                    className="expand-toggle-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setExpandedStoryIndex(expandedStoryIndex === index ? null : index);
+                    }}
+                  >
+                    {expandedStoryIndex === index ? '▲ 접기' : '▼ 자세히보기'}
+                  </button>
                 </div>
               ))}
             </div>

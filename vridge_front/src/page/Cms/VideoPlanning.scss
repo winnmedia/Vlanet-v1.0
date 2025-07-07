@@ -1195,6 +1195,50 @@
         color: #4a90e2;
         font-weight: 600;
       }
+      
+      .expand-toggle-btn {
+        width: 100%;
+        margin-top: 16px;
+        padding: 10px 16px;
+        background: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #357abd;
+          transform: translateY(-1px);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+      }
+      
+      .full-summary {
+        .detailed-content {
+          margin-top: 16px;
+          padding: 16px;
+          background: rgba(255, 255, 255, 0.7);
+          border-radius: 8px;
+          
+          h5 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+          }
+          
+          p {
+            margin: 0;
+            line-height: 1.5;
+          }
+        }
+      }
     }
   }
 

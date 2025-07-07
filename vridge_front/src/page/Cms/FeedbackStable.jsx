@@ -43,9 +43,9 @@ import 'moment/locale/ko'
 function FeedbackStable() {
   console.log('[FeedbackStable] Component mounted')
   const navigate = useNavigate()
-  const { user } = useSelector((s) => s.ProjectStore)
+  const { user, project_list } = useSelector((s) => s.ProjectStore)
   const { project_id } = useParams()
-  console.log('[FeedbackStable] project_id:', project_id, 'user:', user)
+  console.log('[FeedbackStable] project_id:', project_id, 'user:', user, 'project_list:', project_list?.length || 0)
 
   // 상태 관리
   const [loading, setLoading] = useState(true)
@@ -180,10 +180,18 @@ function FeedbackStable() {
         console.error('[Feedback] Load error:', err)
         console.error('[Feedback] Error response:', err.response)
         
-        if (err.response?.status === 404) {
-          // 404는 피드백이 아직 생성되지 않았거나 프로젝트가 없는 경우
-          console.log('[Feedback] 404 error - Project or feedback not found')
-          setError('프로젝트를 찾을 수 없습니다. 프로젝트 목록으로 돌아갑니다.')
+        if (err.response?.status === 404 || err.response?.status === 400) {
+          // 404 또는 400은 프로젝트가 없는 경우
+          console.log('[Feedback] Project not found error:', err.response?.status)
+          
+          // Redux store에서 프로젝트 존재 여부 확인
+          const projectExists = project_list?.some(p => p.id === parseInt(project_id))
+          if (!projectExists) {
+            console.log('[Feedback] Project ID', project_id, 'not found in Redux store')
+            setError(`프로젝트 ID ${project_id}를 찾을 수 없습니다. 프로젝트 목록으로 돌아갑니다.`)
+          } else {
+            setError('프로젝트 정보를 불러오는 중 오류가 발생했습니다.')
+          }
           setTimeout(() => navigate('/CmsHome'), 2000)
         } else if (err.response?.status === 401) {
           setError('인증이 필요합니다. 다시 로그인해주세요.')

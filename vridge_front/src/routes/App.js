@@ -57,7 +57,7 @@ export default function App() {
     if (session && pathname !== '/Login' && pathname !== '/' && pathname !== '/Signup') {
       console.log('[App] Checking if project list needs loading')
       // Redux store가 비어있거나 아직 로드하지 않은 경우
-      if (!project_list) {
+      if (!project_list || project_list.length === 0) {
         console.log('[App] Loading project list')
         refetchProject(dispatch, navigate).then(() => {
           console.log('[App] Project list loaded successfully')
@@ -67,8 +67,17 @@ export default function App() {
         })
       } else {
         console.log('[App] Project list already exists:', {
-          projectListLength: project_list?.length || 0
+          projectListLength: project_list?.length || 0,
+          projectIds: project_list.map(p => p.id).slice(0, 10)
         })
+        
+        // 페이지 이동 시마다 프로젝트 목록 갱신 (필요한 경우)
+        if (pathname.includes('/Feedback/') || pathname.includes('/ProjectView/')) {
+          console.log('[App] Refreshing project list for detail page')
+          refetchProject(dispatch, navigate).catch(err => {
+            console.error('[App] Background refresh failed:', err)
+          })
+        }
       }
     } else {
       console.log('[App] Skipping project list load - not logged in or on auth page')

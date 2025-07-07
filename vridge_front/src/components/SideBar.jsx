@@ -246,9 +246,17 @@ export default function SideBar({ tab, on_menu }) {
               <li
                 onClick={(e) => {
                   e.stopPropagation();
+                  
+                  // 프로젝트 ID 유효성 검사
+                  if (!item.id) {
+                    console.warn('[SideBar] Invalid project ID:', item)
+                    return
+                  }
+                  
                   if (tab_name === 'project') {
                     navigate(`/ProjectView/${item.id}`)
                   } else {
+                    console.log('[SideBar] Navigating to feedback:', item.id, item.name)
                     navigate(`/Feedback/${item.id}`)
                   }
                   SetSubMenu(false);

@@ -93,6 +93,30 @@ export default function CmsHome() {
             <div className="part project-progress-enhanced" style={{ display: 'none' }}>
               <div className="s_title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 프로젝트 진행사항
+                <button
+                  onClick={() => {
+                    console.log('[CmsHome] Manual refresh triggered')
+                    refetchProject(dispatch, navigate).then(() => {
+                      console.log('[CmsHome] Project list refreshed manually')
+                      alert('프로젝트 목록이 새로고침 되었습니다.')
+                    }).catch(err => {
+                      console.error('[CmsHome] Manual refresh failed:', err)
+                      alert('프로젝트 목록 새로고침에 실패했습니다.')
+                    })
+                  }}
+                  style={{
+                    marginLeft: 'auto',
+                    padding: '4px 12px',
+                    fontSize: '12px',
+                    background: '#1631F8',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  새로고침
+                </button>
                 <button 
                   className={`collapse-btn ${showDashboard ? '' : 'collapsed'}`}
                   onClick={() => setShowDashboard(!showDashboard)}

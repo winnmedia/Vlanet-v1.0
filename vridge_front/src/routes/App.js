@@ -18,6 +18,9 @@ export default function App() {
   const isProjectListLoaded = useRef(false)
   const { project_list } = useSelector((s) => s.ProjectStore || {})
   
+  // 프론트엔드 확인용 콘솔
+  console.log('[VideoPlanet Frontend] App loaded at:', new Date().toISOString())
+  
   useEffect(() => {
     // 모바일 환경 설정
     setupMobileConfig()

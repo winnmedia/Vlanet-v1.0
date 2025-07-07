@@ -26,6 +26,13 @@ export default function SideBar({ tab, on_menu }) {
       //   return new Date(b.created) - new Date(a.created)
       // })
       SetSortProject(projects)
+      
+      console.log('[SideBar] Project list updated:', {
+        totalProjects: projects.length,
+        projectNames: projects.slice(0, 5).map(p => p.name)
+      })
+    } else {
+      SetSortProject([])
     }
   }, [project_list])
 

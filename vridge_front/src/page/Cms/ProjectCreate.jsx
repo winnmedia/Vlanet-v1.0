@@ -123,26 +123,41 @@ export default function ProjectCreate() {
           
           console.log('[ProjectCreate] Success:', res.data)
           
-          // 즉시 페이지 이동
-          navigate('/Calendar', { 
-            replace: true,
-            state: { message: '프로젝트가 성공적으로 생성되었습니다.' }
-          })
-          
-          // 프로젝트 목록 갱신
-          setTimeout(() => {
-            refetchProject(dispatch, navigate).catch(err => {
-              console.error('[ProjectCreate] refetchProject error:', err)
-              // 에러가 발생해도 재시도
-              setTimeout(() => {
-                refetchProject(dispatch, navigate).then(() => {
-                  console.log('[ProjectCreate] Project list refreshed on retry')
-                }).catch(retryErr => {
-                  console.error('[ProjectCreate] Retry failed:', retryErr)
-                })
-              }, 1000)
+          // 프로젝트 목록을 먼저 갱신
+          refetchProject(dispatch, navigate)
+            .then(() => {
+              console.log('[ProjectCreate] Project list refreshed successfully')
+              
+              // 갱신 완료 후 페이지 이동
+              navigate('/Calendar', { 
+                replace: true,
+                state: { 
+                  message: '프로젝트가 성공적으로 생성되었습니다.',
+                  newProjectId: res.data.project_id,
+                  newProjectName: res.data.project_name
+                }
+              })
             })
-          }, 100)
+            .catch(err => {
+              console.error('[ProjectCreate] refetchProject error:', err)
+              
+              // 에러가 발생해도 페이지 이동은 수행
+              navigate('/Calendar', { 
+                replace: true,
+                state: { 
+                  message: '프로젝트가 성공적으로 생성되었습니다.',
+                  newProjectId: res.data.project_id,
+                  newProjectName: res.data.project_name
+                }
+              })
+              
+              // 백그라운드에서 재시도
+              setTimeout(() => {
+                refetchProject(dispatch, navigate).catch(retryErr => {
+                  console.error('[ProjectCreate] Background retry failed:', retryErr)
+                })
+              }, 2000)
+            })
         })
         .catch((err) => {
           if (!isMountedRef.current) return

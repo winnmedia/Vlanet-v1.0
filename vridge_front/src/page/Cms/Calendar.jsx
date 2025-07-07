@@ -143,6 +143,20 @@ export default function Calendar() {
   useEffect(() => {
     if (location.state?.message) {
       setMessage(location.state.message)
+      
+      // 새로 생성된 프로젝트 정보가 있으면 로그
+      if (location.state.newProjectId) {
+        console.log('[Calendar] New project created:', {
+          id: location.state.newProjectId,
+          name: location.state.newProjectName
+        })
+        
+        // 프로젝트 목록 강제 새로고침
+        refetchProject(dispatch, navigate).then(() => {
+          console.log('[Calendar] Project list refreshed after new project creation')
+        })
+      }
+      
       // 메시지를 3초 후에 자동으로 사라지게 함
       const timer = setTimeout(() => {
         setMessage(null)

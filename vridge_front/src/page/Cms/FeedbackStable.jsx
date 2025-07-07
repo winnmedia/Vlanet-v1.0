@@ -155,18 +155,29 @@ function FeedbackStable() {
       .then((res) => {
         console.log('[Feedback] Data loaded successfully:', res.data)
         
-        // 백엔드 응답 구조 확인
-        if (res.data && res.data.result) {
-          // result 속성이 있는 경우
-          set_current_project(res.data.result)
-        } else if (res.data && res.data.project) {
-          // project 속성이 있는 경우 (백엔드 코드 분석 결과)
-          set_current_project(res.data.project)
-        } else if (res.data) {
-          // 직접 데이터인 경우
-          set_current_project(res.data)
+        // 새로운 API 구조: /api/projects/{id}/feedback/
+        if (res.data && res.data.feedback) {
+          // 피드백 데이터를 프로젝트 형식으로 변환
+          const feedbackData = res.data.feedback
+          const projectData = {
+            id: feedbackData.project_id,
+            name: feedbackData.project_name,
+            files: feedbackData.files,
+            feedback: feedbackData.comments || [],
+            // 기타 필요한 필드들
+          }
+          set_current_project(projectData)
         } else {
-          throw new Error('프로젝트 데이터가 없습니다.')
+          // 기존 API 형식 지원 (하위 호환성)
+          if (res.data && res.data.result) {
+            set_current_project(res.data.result)
+          } else if (res.data && res.data.project) {
+            set_current_project(res.data.project)
+          } else if (res.data) {
+            set_current_project(res.data)
+          } else {
+            throw new Error('프로젝트 데이터가 없습니다.')
+          }
         }
         
         setLoading(false)

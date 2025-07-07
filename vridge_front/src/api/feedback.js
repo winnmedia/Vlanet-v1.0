@@ -1,19 +1,19 @@
 import { axiosOpts, axiosCredentials } from 'util/util'
 import axios from 'axios'
 
-// 피드백 detail
-export function GetFeedBack(id) {
+// 피드백 detail - 프로젝트 하위 리소스로 변경
+export function GetFeedBack(projectId) {
   return axiosCredentials(
     'get',
-    `/api/feedbacks/${id}`,
+    `/api/projects/${projectId}/feedback/`,
   )
 }
 
-// 피드백 create
-export function CreateFeedback(data, id) {
+// 피드백 create - 코멘트 작성으로 변경
+export function CreateFeedback(data, projectId) {
   return axiosCredentials(
-    'put',
-    `/api/feedbacks/${id}`,
+    'post',
+    `/api/projects/${projectId}/feedback/comments/`,
     data,
   )
 }
@@ -35,8 +35,8 @@ export function DeleteFeedback(id) {
   )
 }
 
-// 피드백 file uploads
-export function FeedbackFile(data, id, onUploadProgress) {
+// 피드백 file uploads - 프로젝트 하위 리소스로 변경
+export function FeedbackFile(data, projectId, onUploadProgress) {
   // 직접 axios 사용하여 업로드
   const token = localStorage.getItem('VGID')?.replace(/"/g, '');
   
@@ -44,7 +44,7 @@ export function FeedbackFile(data, id, onUploadProgress) {
   
   const config = {
     method: 'post',
-    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/feedbacks/${id}`,
+    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/projects/${projectId}/feedback/upload/`,
     data: data,
     headers: {
       'Authorization': token ? `Bearer ${token}` : '',

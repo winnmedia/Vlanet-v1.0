@@ -213,12 +213,15 @@ async function finalVerification() {
       const isDuplicateBlocked = !response.ok && (
         data.message?.includes('이미') || 
         data.message?.includes('중복') ||
-        data.message?.includes('존재')
+        data.message?.includes('존재') ||
+        data.message?.includes('같은')
       );
+      
+      console.log(`Duplicate test - Status: ${response.status}, Message: ${data.message}`);
       
       return {
         success: isDuplicateBlocked,
-        message: isDuplicateBlocked ? '중복 차단됨' : '중복 차단 실패'
+        message: isDuplicateBlocked ? '중복 차단됨' : `중복 차단 실패 - ${data.message}`
       };
     });
 
@@ -232,10 +235,18 @@ async function finalVerification() {
         const testProject = listData.result.find(p => p.name === projectName) || listData.result[0];
         
         const feedbackResponse = await fetch(`${API_BASE}/api/feedbacks/${testProject.id}`, { headers });
-        const feedbackData = await feedbackResponse.json();
+        
+        let feedbackData;
+        try {
+          const text = await feedbackResponse.text();
+          feedbackData = text ? JSON.parse(text) : { message: 'Empty response' };
+        } catch (e) {
+          // HTML 응답인 경우 (404 등)
+          feedbackData = { message: 'Not JSON response' };
+        }
         
         return {
-          success: feedbackResponse.ok,
+          success: feedbackResponse.ok && feedbackData.result !== undefined,
           message: feedbackData.result ? '피드백 구조 정상' : '피드백 접근 실패'
         };
       } else {

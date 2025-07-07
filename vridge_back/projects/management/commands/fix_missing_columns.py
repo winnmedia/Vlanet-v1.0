@@ -71,5 +71,25 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(f'Failed to create IdempotencyRecord table: {e}'))
             else:
                 self.stdout.write('IdempotencyRecord table already exists')
+            
+            # Add unique constraint if it doesn't exist
+            try:
+                cursor.execute("""
+                    SELECT conname FROM pg_constraint 
+                    WHERE conname = 'unique_user_project_name'
+                """)
+                constraint_exists = cursor.fetchone()
+                
+                if not constraint_exists:
+                    cursor.execute("""
+                        ALTER TABLE projects_project 
+                        ADD CONSTRAINT unique_user_project_name 
+                        UNIQUE (user_id, name)
+                    """)
+                    self.stdout.write(self.style.SUCCESS('Added unique constraint for user-project name'))
+                else:
+                    self.stdout.write('Unique constraint already exists')
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f'Could not add unique constraint: {e}'))
         
         self.stdout.write(self.style.SUCCESS('Column fix complete!'))

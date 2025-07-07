@@ -1328,7 +1328,7 @@
           }
 
           .level-icon {
-            font-size: 24px;
+            display: none; /* 이모지 아이콘 숨김 */
           }
 
           .level-name {
@@ -2273,6 +2273,166 @@
     
     &:hover {
       background: #5a6268;
+    }
+  }
+
+  // 단계별 미리보기 섹션
+  .step-preview-section {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .step-preview {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border-left: 4px solid #e0e0e0;
+      transition: all 0.3s ease;
+
+      &.active {
+        border-left-color: #1631F8;
+        box-shadow: 0 4px 16px rgba(22, 49, 248, 0.1);
+      }
+
+      h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &::before {
+          content: '';
+          width: 6px;
+          height: 6px;
+          background: #1631F8;
+          border-radius: 50%;
+        }
+      }
+
+      .preview-content {
+        p {
+          font-size: 15px;
+          color: #666;
+          line-height: 1.6;
+          margin-bottom: 16px;
+        }
+
+        h5 {
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 8px;
+        }
+
+        .story-stage {
+          font-size: 13px;
+          color: #1631F8;
+          background: #f0f4ff;
+          padding: 4px 8px;
+          border-radius: 4px;
+          display: inline-block;
+          margin-bottom: 12px;
+        }
+
+        .view-detail-btn {
+          background: #1631F8;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+
+          &:hover {
+            background: #0F23C9;
+            transform: translateX(4px);
+          }
+
+          &:active {
+            transform: translateX(2px);
+          }
+        }
+
+        // 씬 미리보기 스타일
+        &.scenes-preview {
+          .scene-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+
+            .scene-number {
+              font-size: 13px;
+              font-weight: 600;
+              color: #1631F8;
+              background: white;
+              padding: 4px 8px;
+              border-radius: 4px;
+              min-width: 60px;
+              text-align: center;
+            }
+
+            .scene-location {
+              font-size: 14px;
+              color: #333;
+              flex: 1;
+            }
+
+            .has-storyboard {
+              font-size: 12px;
+              color: #22c55e;
+              background: #f0fdf4;
+              padding: 2px 6px;
+              border-radius: 4px;
+              font-weight: 500;
+            }
+          }
+
+          .more-scenes {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            padding: 8px;
+            font-style: italic;
+          }
+        }
+      }
+    }
+  }
+
+  // 네비게이션 스타일 개선
+  .planning-navigation {
+    .nav-step {
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover:not(.disabled) {
+        opacity: 0.8;
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
+      }
+
+      &.current {
+        .step-number {
+          box-shadow: 0 0 0 3px rgba(1, 47, 255, 0.2);
+        }
+      }
     }
   }
 }

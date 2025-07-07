@@ -603,12 +603,41 @@ export default function VideoPlanning() {
   }
 
   const goToStep = (step) => {
+    // 스텝 1은 항상 접근 가능
     if (step === 1) {
       setCurrentStep(1)
-    } else if (step === 2 && planningData.stories.length > 0) {
-      setCurrentStep(2)
-    } else if (step === 3 && planningData.scenes.length > 0) {
-      setCurrentStep(3)
+      return
+    }
+    
+    // 스텝 2는 스토리가 있을 때만 접근 가능
+    if (step === 2) {
+      if (planningData.stories.length > 0) {
+        setCurrentStep(2)
+      } else {
+        // 스토리가 없으면 스텝 1로 이동하고 사용자에게 알림
+        setCurrentStep(1)
+        setError('먼저 스토리를 생성해주세요.')
+        setTimeout(() => setError(null), 3000)
+      }
+      return
+    }
+    
+    // 스텝 3은 씬이 있을 때만 접근 가능
+    if (step === 3) {
+      if (planningData.scenes.length > 0) {
+        setCurrentStep(3)
+      } else if (planningData.stories.length > 0) {
+        // 씬이 없지만 스토리가 있으면 스텝 2로 이동
+        setCurrentStep(2)
+        setError('먼저 씬을 생성해주세요.')
+        setTimeout(() => setError(null), 3000)
+      } else {
+        // 스토리와 씬이 모두 없으면 스텝 1로 이동
+        setCurrentStep(1)
+        setError('먼저 기획안과 스토리를 생성해주세요.')
+        setTimeout(() => setError(null), 3000)
+      }
+      return
     }
   }
 
@@ -1096,7 +1125,6 @@ export default function VideoPlanning() {
                     className={`level-btn ${planningOptions.developmentLevel === 'minimal' ? 'active' : ''}`}
                     onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal' }))}
                   >
-                    <span className="level-icon">📝</span>
                     <span className="level-name">간결</span>
                     <span className="level-desc">핵심만 간단히</span>
                   </button>
@@ -1104,7 +1132,6 @@ export default function VideoPlanning() {
                     className={`level-btn ${planningOptions.developmentLevel === 'light' ? 'active' : ''}`}
                     onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light' }))}
                   >
-                    <span className="level-icon">📄</span>
                     <span className="level-name">가벼움</span>
                     <span className="level-desc">적당한 설명</span>
                   </button>
@@ -1112,7 +1139,6 @@ export default function VideoPlanning() {
                     className={`level-btn ${planningOptions.developmentLevel === 'balanced' ? 'active' : ''}`}
                     onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced' }))}
                   >
-                    <span className="level-icon">📚</span>
                     <span className="level-name">균형</span>
                     <span className="level-desc">균형잡힌 전개</span>
                   </button>
@@ -1120,7 +1146,6 @@ export default function VideoPlanning() {
                     className={`level-btn ${planningOptions.developmentLevel === 'detailed' ? 'active' : ''}`}
                     onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed' }))}
                   >
-                    <span className="level-icon">📖</span>
                     <span className="level-name">상세</span>
                     <span className="level-desc">풍부한 묘사</span>
                   </button>
@@ -1175,7 +1200,6 @@ export default function VideoPlanning() {
                           </div>
                         ) : (
                           <>
-                            <span className="upload-icon">📷</span>
                             <span className="upload-text">캐릭터 이미지 업로드</span>
                           </>
                         )}
@@ -1293,7 +1317,11 @@ export default function VideoPlanning() {
                 <h4>작성한 기획안</h4>
                 <button 
                   className="toggle-detail-btn"
-                  onClick={() => setShowPlanningDetail(!showPlanningDetail)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setShowPlanningDetail(!showPlanningDetail)
+                  }}
                 >
                   {showPlanningDetail ? '접기' : '자세히 보기'}
                 </button>
@@ -1747,21 +1775,50 @@ export default function VideoPlanning() {
             <div className="planning-navigation">
               <div 
                 className={`nav-step ${currentStep >= 1 ? 'active' : ''} ${currentStep === 1 ? 'current' : ''}`}
-                onClick={() => goToStep(1)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  goToStep(1)
+                }}
+                style={{ cursor: 'pointer' }}
               >
                 <span className="step-number">1</span>
                 <span className="step-name">기획안</span>
               </div>
               <div 
                 className={`nav-step ${currentStep >= 2 ? 'active' : ''} ${currentStep === 2 ? 'current' : ''} ${planningData.stories.length === 0 ? 'disabled' : ''}`}
-                onClick={() => goToStep(2)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (planningData.stories.length === 0) {
+                    setError('먼저 스토리를 생성해주세요.')
+                    setTimeout(() => setError(null), 3000)
+                    return
+                  }
+                  goToStep(2)
+                }}
+                style={{ cursor: planningData.stories.length === 0 ? 'not-allowed' : 'pointer' }}
               >
                 <span className="step-number">2</span>
                 <span className="step-name">스토리</span>
               </div>
               <div 
                 className={`nav-step ${currentStep >= 3 ? 'active' : ''} ${currentStep === 3 ? 'current' : ''} ${planningData.scenes.length === 0 ? 'disabled' : ''}`}
-                onClick={() => goToStep(3)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (planningData.scenes.length === 0) {
+                    if (planningData.stories.length === 0) {
+                      setError('먼저 기획안과 스토리를 생성해주세요.')
+                    } else {
+                      setError('먼저 씬을 생성해주세요.')
+                    }
+                    setTimeout(() => setError(null), 3000)
+                    return
+                  }
+                  goToStep(3)
+                }}
+                style={{ cursor: planningData.scenes.length === 0 ? 'not-allowed' : 'pointer' }}
               >
                 <span className="step-number">3</span>
                 <span className="step-name">씬 & 콘티</span>
@@ -1774,11 +1831,18 @@ export default function VideoPlanning() {
                 {/* 기획안 미리보기 */}
                 {planningData.planning && (
                   <div className={`step-preview ${currentStep === 1 ? 'active' : ''}`}>
-                    <h4>📝 기획안</h4>
+                    <h4>기획안</h4>
                     <div className="preview-content">
                       <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
                       {currentStep !== 1 && (
-                        <button className="view-detail-btn" onClick={() => goToStep(1)}>
+                        <button 
+                          className="view-detail-btn" 
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            goToStep(1)
+                          }}
+                        >
                           자세히 보기 →
                         </button>
                       )}
@@ -1787,15 +1851,34 @@ export default function VideoPlanning() {
                 )}
                 
                 {/* 스토리 미리보기 */}
-                {planningData.stories.length > 0 && selectedStoryIndex !== null && planningData.stories[selectedStoryIndex] && (
+                {planningData.stories.length > 0 && (
                   <div className={`step-preview ${currentStep === 2 ? 'active' : ''}`}>
-                    <h4>📖 선택된 스토리</h4>
+                    <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
                     <div className="preview-content">
-                      <h5>{planningData.stories[selectedStoryIndex].title}</h5>
-                      <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
-                      <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
+                      {selectedStoryIndex !== null && 
+                       selectedStoryIndex >= 0 && selectedStoryIndex < planningData.stories.length && 
+                       planningData.stories[selectedStoryIndex] ? (
+                        <>
+                          <h5>{planningData.stories[selectedStoryIndex].title}</h5>
+                          <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
+                          <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
+                        </>
+                      ) : (
+                        <>
+                          <h5>{planningData.stories[0]?.title || '스토리 1'}</h5>
+                          <p className="story-stage">{planningData.stories[0]?.stage} - {planningData.stories[0]?.stage_name}</p>
+                          <p>{planningData.stories[0]?.summary?.substring(0, 100)}...</p>
+                        </>
+                      )}
                       {currentStep !== 2 && (
-                        <button className="view-detail-btn" onClick={() => goToStep(2)}>
+                        <button 
+                          className="view-detail-btn" 
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            goToStep(2)
+                          }}
+                        >
                           자세히 보기 →
                         </button>
                       )}
@@ -1821,7 +1904,14 @@ export default function VideoPlanning() {
                         <div className="more-scenes">+{planningData.scenes.length - 3}개 더...</div>
                       )}
                       {currentStep !== 3 && (
-                        <button className="view-detail-btn" onClick={() => goToStep(3)}>
+                        <button 
+                          className="view-detail-btn" 
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            goToStep(3)
+                          }}
+                        >
                           자세히 보기 →
                         </button>
                       )}

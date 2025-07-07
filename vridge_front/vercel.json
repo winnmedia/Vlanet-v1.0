@@ -12,14 +12,6 @@
   },
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://videoplanet.up.railway.app/api/:path*"
-    },
-    {
-      "source": "/health",
-      "destination": "https://videoplanet.up.railway.app/health"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

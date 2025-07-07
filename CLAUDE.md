@@ -112,6 +112,67 @@ node final-verification.js
 4. **프로젝트 생성** 및 **중복 방지** 테스트
 5. **피드백 시스템** 접근성 테스트
 
+## 마이그레이션 관리 가이드
+
+### 마이그레이션 개발 프로세스
+1. **모델 변경 전 확인사항**
+   ```bash
+   # 현재 마이그레이션 상태 확인
+   python3 manage.py showmigrations
+   
+   # 특정 앱의 마이그레이션 상태
+   python3 manage.py showmigrations [app_name]
+   ```
+
+2. **모델 변경 시 필수 절차**
+   - 기존 데이터 백업
+   - 변경사항이 기존 데이터에 미치는 영향 분석
+   - NULL/DEFAULT 값 설정으로 데이터 손실 방지
+
+3. **마이그레이션 생성 및 검토**
+   ```bash
+   # 마이그레이션 생성
+   python3 manage.py makemigrations [app_name]
+   
+   # 생성된 SQL 검토 (실행하지 않고 확인만)
+   python3 manage.py sqlmigrate [app_name] [migration_number]
+   
+   # 드라이런 (실제 적용 전 테스트)
+   python3 manage.py migrate --fake [app_name]
+   ```
+
+4. **마이그레이션 충돌 해결**
+   - 병렬 개발 시 마이그레이션 번호 충돌 확인
+   - `python3 manage.py showmigrations --plan` 으로 순서 확인
+   - 필요시 마이그레이션 merge 또는 rebase
+
+5. **운영 환경 마이그레이션**
+   - Railway는 Procfile에서 자동 실행
+   - 수동 실행 필요 시: `python3 manage.py migrate --settings=config.settings.railway`
+   - 롤백 계획 수립 (migrate [app_name] [previous_migration])
+
+### 마이그레이션 모범 사례
+- **원자적 마이그레이션**: 하나의 마이그레이션에 하나의 변경사항
+- **데이터 마이그레이션**: RunPython을 사용한 데이터 변환
+- **역방향 마이그레이션**: 항상 롤백 가능하도록 reverse 메서드 구현
+- **대용량 테이블**: 인덱스 추가/삭제는 별도 마이그레이션으로 분리
+
+### Django 모델 자동 생성 도구 활용
+프로젝트에 포함된 모델 자동 생성 스크립트를 활용하여 API 스펙 기반 모델 생성 가능:
+
+```bash
+# API 트래픽 기반 모델 생성
+python3 generate_models_from_api.py
+
+# HAR 파일 기반 모델 생성
+python3 enhanced_model_generator.py
+
+# 템플릿 기반 모델 생성
+python3 template_model_generator.py
+```
+
+생성된 모델은 검토 후 필요에 따라 수정하여 사용
+
 ## 배포 가이드
 
 ### 배포 전 필수 체크리스트
@@ -120,7 +181,10 @@ node final-verification.js
    cd /home/winnmedia/VideoPlanet/vridge_front/src/tests
    node final-verification.js
    ```
-2. **마이그레이션 확인**: 모든 앱의 마이그레이션이 최신 상태인지 확인
+2. **마이그레이션 확인**: 
+   - `python3 manage.py showmigrations` 로 모든 마이그레이션 적용 확인
+   - 운영 DB와 로컬 DB의 마이그레이션 상태 동기화 확인
+   - 신규 마이그레이션이 있다면 운영 환경 영향도 분석
 3. **환경변수 점검**: Railway에 필요한 모든 환경변수가 설정되어 있는지 확인
 
 ### 환경 설정
@@ -162,6 +226,11 @@ python3 manage.py collectstatic
 2. **캐시 테이블 오류**: `createcachetable` 명령 실행
 3. **프로젝트 중복 생성**: 데이터베이스 제약조건 확인
 4. **피드백 파일 접근 불가**: URL 경로 및 HTTPS 설정 확인
+5. **마이그레이션 오류**:
+   - `relation does not exist`: 마이그레이션 누락, `python3 manage.py migrate` 실행
+   - `column does not exist`: 모델 변경 후 마이그레이션 미생성, `makemigrations` 실행
+   - 충돌 발생: `python3 manage.py migrate --fake` 로 상태 동기화
+   - 롤백 필요: `python3 manage.py migrate [app_name] [previous_migration_number]`
 
 ### 디버깅 팁
 - Django 로그에서 상세 에러 정보 확인
@@ -177,6 +246,11 @@ python3 manage.py collectstatic
 - [ ] **성능 최적화**: 쿼리 최적화, 캐시 활용 등 성능 개선
 - [ ] **기존 코드 스타일**: 프로젝트 전체의 일관된 스타일 준수
 - [ ] **테스트 커버리지**: 수정된 기능에 대한 테스트 실행 및 확인
+- [ ] **마이그레이션 검토**: 
+  - [ ] 모델 변경 시 마이그레이션 파일 생성 확인
+  - [ ] 기존 데이터와의 호환성 검토
+  - [ ] 롤백 가능 여부 확인
+  - [ ] 운영 환경 영향도 분석
 
 ## 연락처 및 리소스
 - **API 베이스 URL**: https://videoplanet.up.railway.app

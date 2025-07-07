@@ -11,10 +11,19 @@ import json
 from feedbacks.models import FeedBack
 from .models import VideoAnalysisResult, AIFeedbackItem
 from .serializers import VideoAnalysisResultSerializer, AIFeedbackItemSerializer
-from .twelve_labs_service import TwelveLabsService
-from .ai_teacher_service import AITeacherService
 
 logger = logging.getLogger(__name__)
+
+# Graceful import handling for development environment
+try:
+    from .twelve_labs_service import TwelveLabsService
+    from .ai_teacher_service import AITeacherService
+    SERVICES_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"AI services not available in development: {e}")
+    TwelveLabsService = None
+    AITeacherService = None
+    SERVICES_AVAILABLE = False
 
 
 @api_view(['POST'])
@@ -23,6 +32,12 @@ def analyze_feedback_video(request, feedback_id):
     """
     피드백 비디오 분석 시작
     """
+    if not SERVICES_AVAILABLE:
+        return Response({
+            'status': 'error',
+            'message': 'AI 분석 서비스가 현재 사용할 수 없습니다.'
+        }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    
     try:
         # 피드백 객체 확인
         feedback = get_object_or_404(FeedBack, id=feedback_id)

@@ -48,6 +48,7 @@ urlpatterns = [
     path("api/feedbacks/", include("feedbacks.urls")),
     path("api/onlines/", include("onlines.urls")),
     path("api/video-planning/", include("video_planning.urls")),
+    path("api/video-analysis/", include("video_analysis.urls")),
     
     # 레거시 경로 (하위 호환성) - /api/ 프리픽스가 없는 구 경로
     # 새로운 개발에서는 위의 /api/ 경로를 사용할 것을 권장

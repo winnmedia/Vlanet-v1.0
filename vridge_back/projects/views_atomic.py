@@ -92,17 +92,14 @@ class AtomicProjectCreate(View):
                 except Exception as e:
                     logger.warning(f"Error checking idempotency: {str(e)}")
             
-            # 프로젝트 데이터 준비
+            # 프로젝트 데이터 준비 (tone_manner, genre, concept 제외)
             project_data = {
                 'user': user,
                 'name': project_name,
                 'manager': data.get('manager', ''),
                 'consumer': data.get('consumer', ''),
                 'description': data.get('description', ''),
-                'color': data.get('color', '#1631F8'),
-                'tone_manner': data.get('tone_manner', ''),
-                'genre': data.get('genre', ''),
-                'concept': data.get('concept', '')
+                'color': data.get('color', '#1631F8')
             }
             
             # 프로세스 데이터 처리

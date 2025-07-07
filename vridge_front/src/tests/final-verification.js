@@ -37,7 +37,7 @@ async function finalVerification() {
     const response = await fetch(`${API_BASE}/health/`);
     const data = await response.json();
     return {
-      success: response.ok,
+      success: response.ok && (data.status === 'ok' || data.status === 'healthy'),
       message: data.message || data.service || 'Connected'
     };
   });

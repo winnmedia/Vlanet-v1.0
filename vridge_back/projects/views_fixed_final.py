@@ -104,10 +104,14 @@ class CreateProjectFixedFinal(View):
                     logger.info(f"[CreateProjectFixedFinal] Created project with ID: {project.id}")
                     
                     # 2. 프로젝트 정보 설정
+                    # 안전한 필드 목록 (tone_manner 제외)
+                    safe_fields = ['name', 'manager', 'consumer', 'description', 'color']
                     for key, value in project_inputs.items():
-                        if hasattr(project, key):
+                        if key in safe_fields and hasattr(project, key):
                             setattr(project, key, value)
                             logger.debug(f"[CreateProjectFixedFinal] Set {key} = {value}")
+                        elif key not in safe_fields:
+                            logger.warning(f"[CreateProjectFixedFinal] Skipping field {key} to avoid column errors")
                     
                     # 3. 프로세스 단계 생성
                     phase_models = {

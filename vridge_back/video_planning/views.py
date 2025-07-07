@@ -136,6 +136,9 @@ def generate_story(request):
         duration = request.data.get('duration', '')
         story_framework = request.data.get('story_framework', 'classic')
         development_level = request.data.get('development_level', 'balanced')
+        character_name = request.data.get('character_name', '')
+        character_description = request.data.get('character_description', '')
+        character_image = request.data.get('character_image', '')
         
         if not planning_text:
             return Response({
@@ -152,7 +155,10 @@ def generate_story(request):
             'purpose': purpose,
             'duration': duration,
             'story_framework': story_framework,
-            'development_level': development_level
+            'development_level': development_level,
+            'character_name': character_name,
+            'character_description': character_description,
+            'character_image': character_image
         }
         
         gemini_service = GeminiService()
@@ -188,7 +194,10 @@ def generate_story(request):
                     'purpose': purpose,
                     'duration': duration,
                     'story_framework': story_framework,
-                    'development_level': development_level
+                    'development_level': development_level,
+                    'character_name': character_name,
+                    'character_description': character_description,
+                    'character_image': character_image
                 }
                 # JSON 필드에 추가 데이터 저장 (모델 확장 없이)
                 video_planning.selected_story = {'planning_options': planning_data}
@@ -216,6 +225,7 @@ def generate_story(request):
 def generate_scenes(request):
     try:
         story_data = request.data.get('story_data', {})
+        planning_options = request.data.get('planning_options', {})
         
         if not story_data:
             return Response({
@@ -224,6 +234,9 @@ def generate_scenes(request):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         gemini_service = GeminiService()
+        # 스토리 데이터에 planning_options 추가
+        if planning_options:
+            story_data['planning_options'] = planning_options
         scenes_data = gemini_service.generate_scenes_from_story(story_data)
         
         if 'error' in scenes_data:
@@ -292,9 +305,11 @@ def generate_storyboards(request):
         logger.info("=" * 50)
         logger.info("🎨 스토리보드 생성 시작")
         logger.info(f"  - 스타일: {style}")
+        logger.info(f"  - 숏 데이터: {shot_data}")
         logger.info(f"  - IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
         logger.info(f"  - DalleService 모듈: {'있음' if DalleService else '없음'}")
         
+        # 각 요청마다 새로운 GeminiService 인스턴스 생성
         gemini_service = GeminiService()
         gemini_service.style = style  # 스타일 설정
         storyboard_data = gemini_service.generate_storyboards_from_shot(shot_data)
@@ -463,6 +478,7 @@ def download_storyboard_image(request):
 def save_planning(request):
     """기획을 저장합니다."""
     try:
+        # DRF Request 타입을 처리하기 위해 이미 api_view 데코레이터가 적용되어 있음
         serializer = VideoPlanningSerializer(
             data=request.data,
             context={'request': request}

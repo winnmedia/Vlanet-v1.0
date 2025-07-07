@@ -53,6 +53,7 @@ PROJECT_APPS = [
     "feedbacks",
     "onlines",
     "video_planning",
+    "video_analysis",
 ]
 
 THIRD_PARTY_APPS = [

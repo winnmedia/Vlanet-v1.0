@@ -7,15 +7,15 @@ from . import views
 app_name = 'video_analysis'
 
 urlpatterns = [
-    # 영상 분석 실행
-    path('analyze/', views.analyze_video_api, name='analyze_video'),
+    # Twelve Labs 비디오 분석
+    path('analyze/<int:feedback_id>/', views.analyze_feedback_video, name='analyze_video'),
+    path('result/<int:feedback_id>/', views.get_analysis_result, name='get_result'),
+    path('delete/<int:feedback_id>/', views.delete_analysis, name='delete_analysis'),
     
-    # 분석 결과 조회
-    path('result/<int:analysis_id>/', views.get_analysis_result, name='get_analysis_result'),
+    # AI 선생님 피드백
+    path('teacher/<int:feedback_id>/', views.get_teacher_feedback, name='teacher_feedback'),
+    path('teachers/', views.get_all_teachers, name='all_teachers'),
     
-    # AI 시스템 상태
-    path('status/', views.ai_status, name='ai_status'),
-    
-    # 사용자 분석 히스토리
-    path('history/', views.user_analysis_history, name='user_analysis_history'),
+    # 비디오 검색
+    path('search/', views.search_in_videos, name='search_videos'),
 ]

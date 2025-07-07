@@ -68,7 +68,10 @@ export default function VideoPlanning() {
     purposeCustom: '',
     durationCustom: '',
     storyFramework: 'classic',  // 기본값: 클래식 기승전결
-    developmentLevel: 'balanced' // 기본값: 균형잡힌 전개
+    developmentLevel: 'balanced', // 기본값: 균형잡힌 전개
+    characterName: '',
+    characterDescription: '',
+    characterImage: null
   })
   const [showCustomTone, setShowCustomTone] = useState(false)
   const [showCustomGenre, setShowCustomGenre] = useState(false)
@@ -79,6 +82,10 @@ export default function VideoPlanning() {
   const [storyboardStyle, setStoryboardStyle] = useState('minimal')
   const [showDebugInfo, setShowDebugInfo] = useState(false)
   const [debugInfo, setDebugInfo] = useState(null)
+  const [editingStoryboardIndex, setEditingStoryboardIndex] = useState(null)
+  const [editingStoryboardText, setEditingStoryboardText] = useState('')
+  const [expandedStoryIndex, setExpandedStoryIndex] = useState(null)
+  const [showPlanningDetail, setShowPlanningDetail] = useState(false)
 
   useEffect(() => {
     const session = checkSession()
@@ -232,7 +239,10 @@ export default function VideoPlanning() {
           purpose: planningOptions.purpose === 'custom' ? planningOptions.purposeCustom : planningOptions.purpose,
           duration: planningOptions.duration === 'custom' ? planningOptions.durationCustom : planningOptions.duration,
           story_framework: planningOptions.storyFramework,
-          development_level: planningOptions.developmentLevel
+          development_level: planningOptions.developmentLevel,
+          character_name: planningOptions.characterName,
+          character_description: planningOptions.characterDescription,
+          character_image: planningOptions.characterImage
         }
       )
 
@@ -282,7 +292,10 @@ export default function VideoPlanning() {
       for (let i = 0; i < planningData.stories.length; i++) {
         const response = await axios.post(
           `/api/video-planning/generate/scenes/`,
-          { story_data: planningData.stories[i] }
+          { 
+            story_data: planningData.stories[i],
+            planning_options: planningOptions
+          }
         )
         
         if (response.data.status === 'success') {
@@ -385,7 +398,8 @@ export default function VideoPlanning() {
         camera_angle: "아이레벨",
         camera_movement: "고정",
         duration: "5초",
-        scene_info: scene
+        scene_info: scene,
+        planning_options: planningOptions  // planning_options 추가
       }
       
       setLoadingMessage('스토리보드 프레임 생성 중...')
@@ -528,6 +542,49 @@ export default function VideoPlanning() {
       console.error('이미지 다운로드 실패:', err)
       alert('이미지 다운로드에 실패했습니다.')
     }
+  }
+
+  const startEditingStoryboard = (sceneIndex) => {
+    const scene = planningData.scenes[sceneIndex]
+    if (scene && scene.storyboard) {
+      setEditingStoryboardIndex(sceneIndex)
+      setEditingStoryboardText(scene.storyboard.description_kr || scene.storyboard.visual_description || '')
+    }
+  }
+
+  const saveEditedStoryboard = async (sceneIndex) => {
+    try {
+      const updatedScenes = [...planningData.scenes]
+      updatedScenes[sceneIndex] = {
+        ...updatedScenes[sceneIndex],
+        storyboard: {
+          ...updatedScenes[sceneIndex].storyboard,
+          description_kr: editingStoryboardText,
+          visual_description: editingStoryboardText // visual_description도 업데이트
+        }
+      }
+      
+      setPlanningData(prev => ({
+        ...prev,
+        scenes: updatedScenes
+      }))
+      
+      setEditingStoryboardIndex(null)
+      setEditingStoryboardText('')
+      setSuccessMessage('콘티 설명이 수정되었습니다.')
+      
+      // 3초 후 성공 메시지 제거
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 3000)
+    } catch (err) {
+      setError('콘티 수정에 실패했습니다.')
+    }
+  }
+
+  const cancelEditingStoryboard = () => {
+    setEditingStoryboardIndex(null)
+    setEditingStoryboardText('')
   }
 
   const resetPlanning = () => {
@@ -1069,6 +1126,72 @@ export default function VideoPlanning() {
                   </button>
                 </div>
               </div>
+              
+              {/* 주인공 설정 섹션 */}
+              <div className="character-settings">
+                <label>주인공 설정</label>
+                <div className="character-settings-content">
+                  <div className="character-input-group">
+                    <input
+                      type="text"
+                      placeholder="주인공 이름 (예: 김철수, 영희)"
+                      value={planningOptions.characterName}
+                      onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterName: e.target.value }))}
+                      className="character-name-input"
+                    />
+                    <textarea
+                      placeholder="주인공 묘사 (예: 30대 초반의 프리랜서 디자이너, 긍정적이고 창의적인 성격)"
+                      value={planningOptions.characterDescription}
+                      onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterDescription: e.target.value }))}
+                      className="character-description-input"
+                      rows={3}
+                    />
+                  </div>
+                  <div className="character-image-upload">
+                    <label className="image-upload-label">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0]
+                          if (file) {
+                            const reader = new FileReader()
+                            reader.onloadend = () => {
+                              setPlanningOptions(prev => ({ 
+                                ...prev, 
+                                characterImage: reader.result 
+                              }))
+                            }
+                            reader.readAsDataURL(file)
+                          }
+                        }}
+                        style={{ display: 'none' }}
+                      />
+                      <div className="upload-button">
+                        {planningOptions.characterImage ? (
+                          <div className="image-preview">
+                            <img src={planningOptions.characterImage} alt="Character" />
+                            <span className="change-image">이미지 변경</span>
+                          </div>
+                        ) : (
+                          <>
+                            <span className="upload-icon">📷</span>
+                            <span className="upload-text">캐릭터 이미지 업로드</span>
+                          </>
+                        )}
+                      </div>
+                    </label>
+                    {planningOptions.characterImage && (
+                      <button
+                        className="remove-image-btn"
+                        onClick={() => setPlanningOptions(prev => ({ ...prev, characterImage: null }))}
+                      >
+                        이미지 제거
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
             
             <textarea
@@ -1163,24 +1286,94 @@ export default function VideoPlanning() {
             <p className="step-description">
               기획안을 기승전결 4개의 스토리로 나누었습니다. 각 스토리마다 3개의 씬이 생성됩니다.
             </p>
+            
+            {/* 기획안 및 선택된 옵션 표시 섹션 */}
+            <div className="planning-summary-section">
+              <div className="planning-header">
+                <h4>작성한 기획안</h4>
+                <button 
+                  className="toggle-detail-btn"
+                  onClick={() => setShowPlanningDetail(!showPlanningDetail)}
+                >
+                  {showPlanningDetail ? '접기' : '자세히 보기'}
+                </button>
+              </div>
+              <div className={`planning-content ${showPlanningDetail ? 'expanded' : 'collapsed'}`}>
+                <div className="planning-text">
+                  {planningData.planning}
+                </div>
+                {showPlanningDetail && (
+                  <div className="planning-options-detail">
+                    <h5>선택한 옵션</h5>
+                    <div className="options-grid">
+                      {planningOptions.tone && (
+                        <div className="option-item">
+                          <span className="option-label">톤앤매너:</span>
+                          <span className="option-value">{planningOptions.tone === 'custom' ? planningOptions.toneCustom : planningOptions.tone}</span>
+                        </div>
+                      )}
+                      {planningOptions.genre && (
+                        <div className="option-item">
+                          <span className="option-label">장르:</span>
+                          <span className="option-value">{planningOptions.genre === 'custom' ? planningOptions.genreCustom : planningOptions.genre}</span>
+                        </div>
+                      )}
+                      {planningOptions.concept && (
+                        <div className="option-item">
+                          <span className="option-label">콘셉트:</span>
+                          <span className="option-value">{planningOptions.concept === 'custom' ? planningOptions.conceptCustom : planningOptions.concept}</span>
+                        </div>
+                      )}
+                      {planningOptions.target && (
+                        <div className="option-item">
+                          <span className="option-label">타겟:</span>
+                          <span className="option-value">{planningOptions.target === 'custom' ? planningOptions.targetCustom : planningOptions.target}</span>
+                        </div>
+                      )}
+                      {planningOptions.purpose && (
+                        <div className="option-item">
+                          <span className="option-label">목적:</span>
+                          <span className="option-value">{planningOptions.purpose === 'custom' ? planningOptions.purposeCustom : planningOptions.purpose}</span>
+                        </div>
+                      )}
+                      {planningOptions.duration && (
+                        <div className="option-item">
+                          <span className="option-label">길이:</span>
+                          <span className="option-value">{planningOptions.duration === 'custom' ? planningOptions.durationCustom : planningOptions.duration}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             <div className="stories-container">
               {planningData.stories.map((story, index) => (
                 <div 
                   key={index} 
-                  className="story-card"
-                  style={{ cursor: 'default' }}
+                  className={`story-card ${expandedStoryIndex === index ? 'expanded' : ''}`}
+                  onClick={() => setExpandedStoryIndex(expandedStoryIndex === index ? null : index)}
+                  style={{ cursor: 'pointer' }}
                 >
                   <div className="story-stage-badge">
                     <span className="stage-label">{story.stage}</span>
                     <span className="stage-name">{story.stage_name}</span>
                   </div>
                   <p className="story-title">{story.title}</p>
-                  <p className="story-summary">{story.summary}</p>
+                  <p className="story-summary">
+                    {expandedStoryIndex === index ? story.summary : 
+                      (story.summary.length > 100 ? story.summary.substring(0, 100) + '...' : story.summary)
+                    }
+                  </p>
                   <div className="story-meta">
                     <span>핵심: {story.key_content || story.message}</span>
                   </div>
                   <div className="story-characters">
                     <small>등장인물: {story.characters?.join(', ')}</small>
+                  </div>
+                  <div className="expand-indicator">
+                    {expandedStoryIndex === index ? '▲ 접기' : '▼ 자세히'}
                   </div>
                 </div>
               ))}
@@ -1257,36 +1450,80 @@ export default function VideoPlanning() {
                           )}
                         </div>
                         <div className="storyboard-info">
-                          <p className="storyboard-description-kr">
-                            {scene.storyboard.description_kr ? 
-                              (scene.storyboard.description_kr.length > 50 ? 
-                                scene.storyboard.description_kr.substring(0, 50) + '...' : 
-                                scene.storyboard.description_kr) :
-                              (scene.storyboard.visual_description || scene.storyboard.description || '').substring(0, 50) + '...'}
-                          </p>
-                          {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' && (
-                            <div className="storyboard-actions">
-                              <button 
-                                className="regenerate-storyboard-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  regenerateStoryboardImage(index);
-                                }}
-                                disabled={loading}
-                                title="이미지 재생성"
-                              >
-                                재생성
-                              </button>
-                              <button 
-                                className="download-storyboard-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  downloadStoryboardImage(scene.storyboard.image_url, `씬${index + 1}_콘티`);
-                                }}
-                              >
-                                다운로드
-                              </button>
+                          {editingStoryboardIndex === index ? (
+                            <div className="storyboard-edit-mode">
+                              <textarea
+                                className="storyboard-edit-input"
+                                value={editingStoryboardText}
+                                onChange={(e) => setEditingStoryboardText(e.target.value)}
+                                placeholder="콘티 설명을 입력하세요"
+                                rows="3"
+                              />
+                              <div className="edit-actions">
+                                <button 
+                                  className="save-edit-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    saveEditedStoryboard(index);
+                                  }}
+                                >
+                                  저장
+                                </button>
+                                <button 
+                                  className="cancel-edit-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    cancelEditingStoryboard();
+                                  }}
+                                >
+                                  취소
+                                </button>
+                              </div>
                             </div>
+                          ) : (
+                            <>
+                              <p className="storyboard-description-kr">
+                                {scene.storyboard.description_kr ? 
+                                  (scene.storyboard.description_kr.length > 50 ? 
+                                    scene.storyboard.description_kr.substring(0, 50) + '...' : 
+                                    scene.storyboard.description_kr) :
+                                  (scene.storyboard.visual_description || scene.storyboard.description || '').substring(0, 50) + '...'}
+                              </p>
+                              {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' && (
+                                <div className="storyboard-actions">
+                                  <button 
+                                    className="edit-storyboard-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      startEditingStoryboard(index);
+                                    }}
+                                    title="설명 수정"
+                                  >
+                                    수정
+                                  </button>
+                                  <button 
+                                    className="regenerate-storyboard-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      regenerateStoryboardImage(index);
+                                    }}
+                                    disabled={loading}
+                                    title="이미지 재생성"
+                                  >
+                                    재생성
+                                  </button>
+                                  <button 
+                                    className="download-storyboard-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      downloadStoryboardImage(scene.storyboard.image_url, `씬${index + 1}_콘티`);
+                                    }}
+                                  >
+                                    다운로드
+                                  </button>
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>

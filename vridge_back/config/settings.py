@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'feedbacks',
     'onlines',
     'video_planning',
+    'video_analysis',
 ]
 
 # 미들웨어

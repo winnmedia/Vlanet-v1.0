@@ -192,6 +192,9 @@ class GeminiService:
         duration = context.get('duration', '')
         story_framework = context.get('story_framework', 'classic')
         development_level = context.get('development_level', 'balanced')
+        character_name = context.get('character_name', '')
+        character_description = context.get('character_description', '')
+        character_image = context.get('character_image', '')
         
         # 스토리 프레임워크별 구성
         framework_guides = {
@@ -221,12 +224,15 @@ class GeminiService:
         - 영상 길이: {duration if duration else '3-5분'}
         - 스토리 프레임워크: {framework_guides.get(story_framework, framework_guides['classic'])}
         - 전개 강도: {development_guides.get(development_level, development_guides['balanced'])}
+        {f'''- 주인공 이름: {character_name}
+        - 주인공 설정: {character_description}''' if character_name or character_description else ''}
         
         ⚠️ 매우 중요: 
         - 타겟 오디언스의 연령, 관심사, 라이프스타일을 정확히 반영하세요
         - 장르의 특징적인 요소들(설정, 캐릭터, 사건)을 포함하세요
         - 톤앤매너에 맞는 대사, 분위기, 표현을 사용하세요
         - 콘셉트가 스토리 전체에 일관되게 녹아들도록 하세요
+        {f'- 주인공 "{character_name}"의 설정({character_description})을 스토리 전체에 일관되게 반영하세요' if character_name else ''}
         
         예시:
         - 타겟이 '10대'라면: 학교생활, 친구관계, 성장통, SNS 등을 포함
@@ -372,16 +378,33 @@ class GeminiService:
             }
     
     def generate_scenes_from_story(self, story_data):
+        # planning_options 추출
+        planning_options = story_data.get('planning_options', {})
+        tone = planning_options.get('tone', '')
+        genre = planning_options.get('genre', '')
+        concept = planning_options.get('concept', '')
+        target = planning_options.get('target', '')
+        purpose = planning_options.get('purpose', '')
+        duration = planning_options.get('duration', '')
+        
         prompt = f"""
         당신은 전문 영상 씬 구성 작가입니다. 아래 스토리를 정확히 3개의 씬으로 나누어주세요.
         스토리의 흐름에 맞게 시작, 중간, 끝 부분으로 구성하세요.
         
+        [작성 조건] - 반드시 다음 조건들을 반영하세요:
+        - 타겟 오디언스: {target if target else '일반 시청자'}
+        - 장르: {genre if genre else '일반'}
+        - 톤앤매너: {tone if tone else '중립적'}
+        - 콘셉트: {concept if concept else '기본'}
+        - 영상 목적: {purpose if purpose else '정보 전달'}
+        - 영상 길이: {duration if duration else '3-5분'}
+        
         각 씬은 다음 정보를 포함해야 합니다:
         1. 씬 번호 (1, 2, 3)
-        2. 장소
+        2. 장소 (타겟과 장르에 어울리는 공간)
         3. 시간대
-        4. 주요 액션
-        5. 대사 또는 나레이션
+        4. 주요 액션 (톤앤매너와 콘셉트를 반영한 동작)
+        5. 대사 또는 나레이션 (타겟의 언어로 작성)
         6. 씬의 목적 (이 씬이 전체 스토리에서 하는 역할)
         
         스토리:
@@ -471,9 +494,20 @@ class GeminiService:
         """
         씬으로부터 정확히 3개의 샷을 생성합니다.
         """
+        # planning_options 추출
+        planning_options = scene_data.get('planning_options', {})
+        tone = planning_options.get('tone', '')
+        genre = planning_options.get('genre', '')
+        concept = planning_options.get('concept', '')
+        
         prompt = f"""
         당신은 전문 영상 감독입니다. 아래 씬을 정확히 3개의 샷으로 나누어주세요.
         다양한 샷 타입을 사용하여 시각적으로 흥미로운 구성을 만드세요.
+        
+        [연출 가이드라인]:
+        - 톤앤매너: {tone if tone else '중립적'}
+        - 장르: {genre if genre else '일반'}
+        - 콘셉트: {concept if concept else '기본'}
         
         각 샷은 다음 정보를 포함해야 합니다:
         1. 샷 번호 (1, 2, 3)
@@ -625,8 +659,24 @@ class GeminiService:
             }
     
     def generate_storyboards_from_shot(self, shot_data):
+        # planning_options 추출 (shot_data나 scene_info에서)
+        planning_options = shot_data.get('planning_options', {})
+        if not planning_options and 'scene_info' in shot_data:
+            planning_options = shot_data['scene_info'].get('planning_options', {})
+        
+        tone = planning_options.get('tone', '')
+        genre = planning_options.get('genre', '')
+        concept = planning_options.get('concept', '')
+        target = planning_options.get('target', '')
+        
         prompt = f"""
         당신은 전문 스토리보드 아티스트입니다. 아래 숏 정보를 바탕으로 DALL-E 3가 생성할 수 있는 상세한 시각적 콘티를 작성해주세요.
+        
+        [시각적 연출 가이드]:
+        - 타겟 오디언스: {target if target else '일반 시청자'}
+        - 장르: {genre if genre else '일반'}
+        - 톤앤매너: {tone if tone else '중립적'}
+        - 콘셉트: {concept if concept else '기본'}
 
         숏 정보:
         {json.dumps(shot_data, ensure_ascii=False, indent=2)}

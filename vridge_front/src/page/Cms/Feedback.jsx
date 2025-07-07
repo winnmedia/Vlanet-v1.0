@@ -19,6 +19,8 @@ import 'css/Cms/FeedbackPageSpacing.scss'
 import 'css/Cms/EncodingStatus.scss'
 import 'css/Cms/FeedbackPopup.scss'
 import 'css/Cms/OpinionInput.scss'
+import 'css/Cms/AITeacherModal.scss'
+import 'css/Cms/AIAnalyzeButton.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
@@ -75,6 +77,14 @@ export default function Feedback() {
   const [feedbackTime, setFeedbackTime] = useState('') // 피드백 시간 상태 추가
   const [showProjectInfo, setShowProjectInfo] = useState(false) // 프로젝트 정보 표시 상태
   const [selectedFeedback, setSelectedFeedback] = useState(null) // 선택된 피드백
+  
+  // AI 선생님 관련 상태
+  const [showTeacherModal, setShowTeacherModal] = useState(false)
+  const [selectedTeacher, setSelectedTeacher] = useState(null)
+  const [analysisStatus, setAnalysisStatus] = useState(null) // 'idle', 'analyzing', 'completed', 'error'
+  const [analysisResult, setAnalysisResult] = useState(null)
+  const [teacherFeedback, setTeacherFeedback] = useState(null)
+  const [teachers, setTeachers] = useState([])
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -199,6 +209,33 @@ export default function Feedback() {
       abortController.abort()
     }
   }, [project_id, trigger])
+
+  // AI 선생님 목록 가져오기
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/teachers/`, {
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
+          }
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          if (data.status === 'success' && data.data?.teachers) {
+            setTeachers(Object.entries(data.data.teachers).map(([key, teacher]) => ({
+              id: key,
+              ...teacher
+            })))
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch teachers:', error)
+      }
+    }
+    
+    fetchTeachers()
+  }, [])
 
   function Rating(rating) {
     if (rating === 'manager') {
@@ -605,6 +642,151 @@ export default function Feedback() {
     window.alert('링크가 복사되었습니다.')
   }
 
+  // AI 분석 시작 함수
+  const handleVideoAnalysis = () => {
+    if (!current_project || !current_project.files) {
+      window.alert('분석할 비디오가 없습니다.')
+      return
+    }
+    
+    setShowTeacherModal(true)
+    setSelectedTeacher(null)
+    setAnalysisStatus('idle')
+    setAnalysisResult(null)
+    setTeacherFeedback(null)
+  }
+
+  // 비디오 분석 실행
+  const startVideoAnalysis = async () => {
+    if (!selectedTeacher) {
+      window.alert('선생님을 선택해주세요.')
+      return
+    }
+    
+    setAnalysisStatus('analyzing')
+    
+    try {
+      // 가장 최근 피드백 ID 찾기
+      const feedbacks = current_project.feedbacks || []
+      if (feedbacks.length === 0) {
+        window.alert('피드백이 없습니다. 먼저 피드백을 생성해주세요.')
+        setAnalysisStatus('error')
+        return
+      }
+      
+      const latestFeedback = feedbacks[feedbacks.length - 1]
+      const feedbackId = latestFeedback.id
+      
+      // 1. 비디오 분석 시작
+      const analysisResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/analyze/${feedbackId}/`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      
+      if (!analysisResponse.ok) {
+        const errorData = await analysisResponse.json()
+        throw new Error(errorData.message || '분석 시작 실패')
+      }
+      
+      const analysisData = await analysisResponse.json()
+      
+      // 분석이 이미 완료된 경우
+      if (analysisData.data?.status === 'completed') {
+        setAnalysisResult(analysisData.data)
+        
+        // 2. 선생님 피드백 받기
+        const teacherResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/teacher/${feedbackId}/`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              teacher_type: selectedTeacher.id
+            })
+          }
+        )
+        
+        if (!teacherResponse.ok) {
+          throw new Error('선생님 피드백 생성 실패')
+        }
+        
+        const teacherData = await teacherResponse.json()
+        setTeacherFeedback(teacherData.data)
+        setAnalysisStatus('completed')
+      } else {
+        // 분석 중인 경우 - 폴링으로 상태 확인
+        const checkAnalysisStatus = async () => {
+          const statusResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/result/${feedbackId}/`,
+            {
+              headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
+              }
+            }
+          )
+          
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json()
+            
+            if (statusData.data?.analysis?.status === 'completed') {
+              setAnalysisResult(statusData.data.analysis)
+              
+              // 선생님 피드백 받기
+              const teacherResponse = await fetch(
+                `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/teacher/${feedbackId}/`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    teacher_type: selectedTeacher.id
+                  })
+                }
+              )
+              
+              if (teacherResponse.ok) {
+                const teacherData = await teacherResponse.json()
+                setTeacherFeedback(teacherData.data)
+                setAnalysisStatus('completed')
+              }
+            } else if (statusData.data?.analysis?.status === 'failed') {
+              throw new Error(statusData.data.analysis.error_message || '분석 실패')
+            } else {
+              // 계속 폴링
+              setTimeout(checkAnalysisStatus, 3000)
+            }
+          }
+        }
+        
+        // 3초 후 첫 폴링 시작
+        setTimeout(checkAnalysisStatus, 3000)
+      }
+    } catch (error) {
+      console.error('Analysis error:', error)
+      window.alert(error.message || '분석 중 오류가 발생했습니다.')
+      setAnalysisStatus('error')
+    }
+  }
+
+  // 타임스탬프 클릭 핸들러
+  const handleTimestampClick = (timestamp) => {
+    if (videoPlayerRef.current && videoPlayerRef.current.seekTo) {
+      videoPlayerRef.current.seekTo(timestamp)
+    }
+    setShowTeacherModal(false)
+  }
+
   return (
     <PageTemplate>
       <div className="cms_wrap">
@@ -858,6 +1040,19 @@ export default function Feedback() {
                     >
                       공유
                     </div>
+                    
+                    {/* 비디오 분석 버튼 */}
+                    <div
+                      onClick={() => handleVideoAnalysis()}
+                      className="analyze-video"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                        <path d="M11 8v6M8 11h6"/>
+                      </svg>
+                      AI 분석
+                    </div>
                   </div>
                   {/* 선택된 피드백 내용 표시 - 피드백 전체 보기 버튼 바로 아래 */}
                   {selectedFeedback && (
@@ -1110,6 +1305,175 @@ export default function Feedback() {
       </div>
       {showUploadGuide && (
         <VideoUploadGuide onClose={() => setShowUploadGuide(false)} />
+      )}
+      
+      {/* AI 선생님 모달 */}
+      {showTeacherModal && (
+        <div className="ai-teacher-modal-overlay" onClick={(e) => {
+          if (e.target.classList.contains('ai-teacher-modal-overlay')) {
+            setShowTeacherModal(false)
+          }
+        }}>
+          <div className="ai-teacher-modal">
+            {analysisStatus === 'idle' && (
+              <>
+                <div className="ai-teacher-header">
+                  <h2>AI 영상 선생님을 선택해주세요</h2>
+                  <p>각 선생님마다 다른 스타일의 피드백을 제공합니다</p>
+                </div>
+                <div className="ai-teacher-content">
+                  <div className="teacher-grid">
+                    {teachers.map((teacher) => (
+                      <div
+                        key={teacher.id}
+                        className={`teacher-card ${selectedTeacher?.id === teacher.id ? 'selected' : ''}`}
+                        onClick={() => setSelectedTeacher(teacher)}
+                      >
+                        <span className="teacher-emoji">{teacher.emoji}</span>
+                        <div className="teacher-info">
+                          <h3>{teacher.name}</h3>
+                          <p className="teacher-personality">{teacher.personality}</p>
+                          <p className="teacher-style">{teacher.style}</p>
+                        </div>
+                        <div className="teacher-greeting">
+                          "{teacher.greeting}"
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="ai-teacher-footer">
+                  <div className="selected-teacher-info">
+                    {selectedTeacher ? (
+                      <>
+                        <span className="emoji">{selectedTeacher.emoji}</span>
+                        <span className="text"><strong>{selectedTeacher.name}</strong>를 선택하셨습니다</span>
+                      </>
+                    ) : (
+                      <span className="text">선생님을 선택해주세요</span>
+                    )}
+                  </div>
+                  <div className="footer-buttons">
+                    <button className="btn-cancel" onClick={() => setShowTeacherModal(false)}>
+                      취소
+                    </button>
+                    <button 
+                      className="btn-analyze" 
+                      onClick={startVideoAnalysis}
+                      disabled={!selectedTeacher}
+                    >
+                      분석 시작
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {analysisStatus === 'analyzing' && (
+              <div className="analysis-progress">
+                <div className="spinner"></div>
+                <h3>영상을 분석하고 있습니다</h3>
+                <p>잠시만 기다려주세요...</p>
+              </div>
+            )}
+            
+            {analysisStatus === 'completed' && teacherFeedback && (
+              <div className="analysis-result">
+                <div className="ai-teacher-header">
+                  <h2>AI 영상 선생님의 피드백</h2>
+                </div>
+                <div className="ai-teacher-content">
+                  <div className="result-header">
+                    <span className="teacher-avatar">{teacherFeedback.teacher.emoji}</span>
+                    <div className="teacher-title">
+                      <h3>{teacherFeedback.teacher.name}</h3>
+                      <p>{teacherFeedback.teacher.personality}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="score-section">
+                    <div className="score-label">종합 점수</div>
+                    <div className="score-value">{teacherFeedback.feedback.score}점</div>
+                    <div className="emoji-reaction">{teacherFeedback.feedback.emoji_reaction}</div>
+                  </div>
+                  
+                  <div className="feedback-section">
+                    <h4>종합 평가</h4>
+                    <div className="overall-feedback">
+                      {teacherFeedback.feedback.overall_feedback}
+                    </div>
+                  </div>
+                  
+                  {teacherFeedback.feedback.strengths?.length > 0 && (
+                    <div className="feedback-section">
+                      <h4>잘한 점</h4>
+                      <ul className="feedback-list strengths">
+                        {teacherFeedback.feedback.strengths.map((strength, index) => (
+                          <li key={index}>{strength}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {teacherFeedback.feedback.improvements?.length > 0 && (
+                    <div className="feedback-section">
+                      <h4>개선할 점</h4>
+                      <ul className="feedback-list improvements">
+                        {teacherFeedback.feedback.improvements.map((improvement, index) => (
+                          <li key={index}>{improvement}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {teacherFeedback.feedback.specific_comments?.length > 0 && (
+                    <div className="feedback-section">
+                      <h4>구체적 코멘트</h4>
+                      <div className="timestamp-comments">
+                        {teacherFeedback.feedback.specific_comments.map((comment, index) => (
+                          <div key={index} className="comment-item">
+                            <span 
+                              className="timestamp"
+                              onClick={() => handleTimestampClick(comment.timestamp)}
+                            >
+                              {Math.floor(comment.timestamp / 60)}:{Math.floor(comment.timestamp % 60).toString().padStart(2, '0')}
+                            </span>
+                            <span className="comment">{comment.comment}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="feedback-section">
+                    <div className="final-message">
+                      {teacherFeedback.feedback.final_message}
+                    </div>
+                  </div>
+                </div>
+                <div className="ai-teacher-footer">
+                  <div></div>
+                  <button className="btn-analyze" onClick={() => setShowTeacherModal(false)}>
+                    닫기
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {analysisStatus === 'error' && (
+              <div className="analysis-progress">
+                <h3>분석 중 오류가 발생했습니다</h3>
+                <p>다시 시도해주세요</p>
+                <button className="btn-analyze" onClick={() => {
+                  setAnalysisStatus('idle')
+                  setSelectedTeacher(null)
+                }}>
+                  다시 시도
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </PageTemplate>
   )

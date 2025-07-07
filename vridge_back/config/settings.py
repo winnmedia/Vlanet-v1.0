@@ -15,6 +15,7 @@ ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '0.0.0.0']
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', '')
 HUGGINGFACE_API_KEY = os.environ.get('HUGGINGFACE_API_KEY', '')
+TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY', '')
 
 # JWT Settings (for authentication)
 JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS256')

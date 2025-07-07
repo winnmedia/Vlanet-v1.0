@@ -1392,10 +1392,43 @@ export default function Feedback() {
                   </div>
                   
                   <div className="score-section">
-                    <div className="score-label">종합 점수</div>
+                    <div className="score-label">영상 제작 기술 점수</div>
                     <div className="score-value">{teacherFeedback.feedback.score}점</div>
                     <div className="emoji-reaction">{teacherFeedback.feedback.emoji_reaction}</div>
+                    <div style={{fontSize: '13px', color: '#666', marginTop: '8px'}}>
+                      수평, 아이레벨, 하이라이트, 구도, 기술품질 종합평가
+                    </div>
                   </div>
+                  
+                  {/* 기술적 분석 섹션 */}
+                  {teacherFeedback.technical_analysis && (
+                    <div className="feedback-section">
+                      <h4>기술적 분석 결과</h4>
+                      <div className="technical-summary" style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '16px',
+                        marginBottom: '20px'
+                      }}>
+                        {Object.entries(teacherFeedback.technical_analysis.category_scores || {}).map(([key, data]) => (
+                          <div key={key} style={{
+                            background: data.score >= 80 ? '#f0f9ff' : data.score >= 60 ? '#fffbeb' : '#fef2f2',
+                            border: `1px solid ${data.score >= 80 ? '#bfdbfe' : data.score >= 60 ? '#fed7aa' : '#fecaca'}`,
+                            borderRadius: '8px',
+                            padding: '12px',
+                            textAlign: 'center'
+                          }}>
+                            <div style={{fontSize: '12px', color: '#666', marginBottom: '4px'}}>
+                              {data.name}
+                            </div>
+                            <div style={{fontSize: '18px', fontWeight: '600', color: '#1a1a1a'}}>
+                              {data.score}점
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="feedback-section">
                     <h4>종합 평가</h4>
@@ -1406,7 +1439,7 @@ export default function Feedback() {
                   
                   {teacherFeedback.feedback.strengths?.length > 0 && (
                     <div className="feedback-section">
-                      <h4>잘한 점</h4>
+                      <h4>기술적으로 잘된 점</h4>
                       <ul className="feedback-list strengths">
                         {teacherFeedback.feedback.strengths.map((strength, index) => (
                           <li key={index}>{strength}</li>
@@ -1417,7 +1450,7 @@ export default function Feedback() {
                   
                   {teacherFeedback.feedback.improvements?.length > 0 && (
                     <div className="feedback-section">
-                      <h4>개선할 점</h4>
+                      <h4>기술적 개선점</h4>
                       <ul className="feedback-list improvements">
                         {teacherFeedback.feedback.improvements.map((improvement, index) => (
                           <li key={index}>{improvement}</li>
@@ -1428,7 +1461,7 @@ export default function Feedback() {
                   
                   {teacherFeedback.feedback.specific_comments?.length > 0 && (
                     <div className="feedback-section">
-                      <h4>구체적 코멘트</h4>
+                      <h4>타임라인별 기술 코멘트</h4>
                       <div className="timestamp-comments">
                         {teacherFeedback.feedback.specific_comments.map((comment, index) => (
                           <div key={index} className="comment-item">

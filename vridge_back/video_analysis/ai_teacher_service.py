@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 from django.conf import settings
 import google.generativeai as genai
 import json
+from .video_technical_analyzer import VideoTechnicalAnalyzer, TechnicalIssue
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,9 @@ class AITeacherService:
         else:
             logger.warning("Google API key not found")
             self.model = None
+        
+        # 기술적 분석기 초기화
+        self.technical_analyzer = VideoTechnicalAnalyzer()
     
     def transform_feedback(self, analysis_data: Dict, teacher_type: str) -> Dict:
         """
@@ -83,24 +87,28 @@ class AITeacherService:
         teacher = self.TEACHERS[teacher_type]
         
         try:
+            # 먼저 기술적 분석 수행
+            technical_analysis = self.technical_analyzer.analyze_twelve_labs_data(analysis_data)
+            
             # Gemini를 사용하여 피드백 생성
             if self.model:
-                feedback = self._generate_teacher_feedback(analysis_data, teacher)
+                feedback = self._generate_teacher_feedback(analysis_data, teacher, technical_analysis)
             else:
                 # 폴백: 기본 템플릿 사용
-                feedback = self._generate_fallback_feedback(analysis_data, teacher)
+                feedback = self._generate_fallback_feedback(analysis_data, teacher, technical_analysis)
             
             return {
                 'teacher': teacher,
                 'feedback': feedback,
-                'analysis_summary': self._create_analysis_summary(analysis_data)
+                'analysis_summary': self._create_analysis_summary(analysis_data),
+                'technical_analysis': technical_analysis
             }
             
         except Exception as e:
             logger.error(f"Error transforming feedback: {e}")
             return self._generate_error_feedback(teacher)
     
-    def _generate_teacher_feedback(self, analysis_data: Dict, teacher: Dict) -> Dict:
+    def _generate_teacher_feedback(self, analysis_data: Dict, teacher: Dict, technical_analysis: Dict) -> Dict:
         """Gemini를 사용하여 선생님 스타일의 피드백 생성"""
         
         # 분석 데이터 요약
@@ -109,45 +117,63 @@ class AITeacherService:
         conversations = analysis_data.get('conversations', [])
         texts_in_video = analysis_data.get('text_in_video', [])
         
+        # 기술적 분석 결과
+        tech_score = technical_analysis.get('overall_score', 70)
+        tech_issues = technical_analysis.get('issues', [])
+        tech_recommendations = technical_analysis.get('recommendations', [])
+        
         prompt = f"""
         당신은 '{teacher['name']}'입니다.
         성격: {teacher['personality']}
         피드백 스타일: {teacher['style']}
         말투: {teacher['tone']}
         
-        다음 영상 분석 결과를 바탕으로 당신의 캐릭터에 맞는 피드백을 작성해주세요:
+        다음은 전문적인 영상 제작 관점에서 분석한 결과입니다:
         
-        [영상 요약]
+        [기술적 점수]
+        전체 점수: {tech_score}/100점
+        
+        [발견된 기술적 문제들]
+        {self._format_technical_issues(tech_issues)}
+        
+        [카테고리별 점수]
+        {self._format_category_scores(technical_analysis.get('category_scores', {}))}
+        
+        [영상 내용 요약]
         {summary if summary else '영상 요약 정보가 없습니다.'}
         
         [주요 순간]
         {self._format_key_moments(key_moments)}
         
-        [대화 내용]
-        {self._format_conversations(conversations)}
-        
-        [화면 텍스트]
-        {self._format_texts(texts_in_video)}
+        당신은 영상 제작 전문가로서 다음 기술적 요소들을 중심으로 피드백해야 합니다:
+        1. 수평 및 뒤틀림 (카메라 기울기, 수평선 정렬)
+        2. 아이레벨 일관성 (컷 간 인물 시선 높이 일치)
+        3. 하이라이트 배치 (첫 5초 내 임팩트)
+        4. 구도 및 프레이밍 (3분할 법칙, 헤드룸)
+        5. 기술적 품질 (초점, 노출, 손떨림)
         
         다음 형식으로 JSON 응답해주세요:
         {{
-            "overall_feedback": "전체적인 피드백 (2-3문장)",
-            "strengths": ["장점1", "장점2", "장점3"],
-            "improvements": ["개선점1", "개선점2", "개선점3"],
+            "overall_feedback": "기술적 관점에서의 전체 평가 (2-3문장)",
+            "strengths": ["기술적으로 잘된 점1", "잘된 점2", "잘된 점3"],
+            "improvements": ["기술적 개선점1", "개선점2", "개선점3"],
             "specific_comments": [
-                {{"timestamp": 10.5, "comment": "이 부분의 구체적인 코멘트"}},
-                {{"timestamp": 25.3, "comment": "다른 부분의 구체적인 코멘트"}}
+                {{"timestamp": 10.5, "comment": "수평/아이레벨/구도 관련 구체적 코멘트"}},
+                {{"timestamp": 25.3, "comment": "기술적 문제에 대한 구체적 코멘트"}}
             ],
-            "final_message": "마무리 메시지 (격려 또는 도전적인 메시지)",
-            "score": 85,
+            "final_message": "영상 제작 기술 향상을 위한 마무리 메시지",
+            "score": {tech_score},
             "emoji_reaction": "😊"
         }}
         
-        중요: 캐릭터의 개성을 확실히 드러내세요!
-        - 호랑이 선생님: 직설적이고 강렬하게
-        - 부엉이 선생님: 따뜻하고 격려하며
-        - 여우 선생님: 재치있고 약간은 까칠하게
-        - 곰 선생님: 든든하고 실용적으로
+        중요: 
+        1. 반드시 영상 제작의 기술적 측면(수평, 아이레벨, 하이라이트, 구도 등)을 중심으로 피드백하세요
+        2. 전문 용어를 사용하되, 이해하기 쉽게 설명하세요
+        3. 캐릭터의 개성을 유지하면서도 전문성을 보여주세요:
+        - 호랑이 선생님: "수평이 2도 틀어졌다! 이런 기본도 못 지키면 어떻게 프로가 되겠나!"
+        - 부엉이 선생님: "아이레벨이 조금 어긋났지만, 연습하면 충분히 개선할 수 있어요"
+        - 여우 선생님: "오호~ 3분할 법칙은 들어본 적이 없나보네? 구도가 아마추어티가 나는군"
+        - 곰 선생님: "수평계를 사용하면 이런 문제를 쉽게 해결할 수 있습니다"
         """
         
         try:
@@ -165,85 +191,106 @@ class AITeacherService:
             
         except Exception as e:
             logger.error(f"Gemini generation error: {e}")
-            return self._generate_fallback_feedback(analysis_data, teacher)
+            return self._generate_fallback_feedback(analysis_data, teacher, technical_analysis)
     
-    def _generate_fallback_feedback(self, analysis_data: Dict, teacher: Dict) -> Dict:
+    def _generate_fallback_feedback(self, analysis_data: Dict, teacher: Dict, technical_analysis: Dict) -> Dict:
         """폴백 피드백 생성"""
         
-        # 선생님별 기본 피드백 템플릿
+        tech_score = technical_analysis.get('overall_score', 70)
+        tech_issues = technical_analysis.get('issues', [])
+        
+        # 선생님별 기술적 피드백 템플릿
         templates = {
             'tiger': {
-                'overall_feedback': '이런! 아직 많이 부족하군! 하지만 열정만큼은 인정하지. 더 노력해서 최고의 영상을 만들어보자!',
+                'overall_feedback': f'기술 점수 {tech_score}점? 이런 기초적인 실수들을 하다니! 수평도 못 맞추고, 아이레벨도 엉망이군!',
                 'strengths': [
-                    '영상의 기본 구성은 갖춰져 있다',
-                    '주제 전달 의도는 명확하다',
-                    '최소한의 노력은 보인다'
+                    '최소한 카메라는 켰군',
+                    '영상이 재생은 된다',
+                    '시도는 했다는 점은 인정하지'
                 ],
                 'improvements': [
-                    '전체적인 완성도가 떨어진다! 더 신경써라!',
-                    '디테일이 부족하다. 프로다운 마무리가 필요해!',
-                    '임팩트가 약하다. 더 강렬하게 만들어라!'
+                    '수평계 좀 사용해라! 기울어진 화면 보기 힘들다!',
+                    '아이레벨이 컷마다 다르다! 일관성을 지켜라!',
+                    '첫 5초가 지루하다! 하이라이트를 앞에 배치해라!'
                 ],
-                'final_message': '다음엔 진짜 제대로 된 작품을 보여줘라! 기대하고 있겠다!',
+                'final_message': '기본기부터 다시 연습해서 돌아와라! 프로가 되려면 멀었다!',
                 'emoji_reaction': '😤'
             },
             'owl': {
-                'overall_feedback': '참 좋은 시도였어요. 조금만 더 다듬으면 훌륭한 작품이 될 거예요.',
+                'overall_feedback': f'기술 점수 {tech_score}점이네요. 몇 가지 기술적인 부분만 개선하면 훨씬 좋아질 거예요.',
                 'strengths': [
-                    '창의적인 접근이 돋보여요',
-                    '메시지가 잘 전달되고 있어요',
-                    '노력한 흔적이 곳곳에 보여요'
+                    '영상 제작에 대한 열정이 느껴져요',
+                    '기본적인 편집은 잘 되어있어요',
+                    '메시지 전달력이 있어요'
                 ],
                 'improvements': [
-                    '조금 더 세심한 편집이 필요해 보여요',
-                    '음향 부분을 개선하면 더 좋을 것 같아요',
-                    '전체적인 흐름을 다듬어보면 어떨까요?'
+                    '수평을 맞추는 연습을 해보세요. 수평계 앱을 활용하면 도움이 될 거예요',
+                    '인물을 찍을 때는 아이레벨을 일정하게 유지해보세요',
+                    '첫 장면에 더 임팩트 있는 컷을 넣어보면 어떨까요?'
                 ],
-                'final_message': '충분히 잘하고 있어요. 계속 이렇게 발전해나가면 멋진 크리에이터가 될 거예요!',
+                'final_message': '기술적인 부분은 연습으로 충분히 극복할 수 있어요. 포기하지 마세요!',
                 'emoji_reaction': '🤗'
             },
             'fox': {
-                'overall_feedback': '오호~ 나름 볼만하네? 하지만 아직 나를 감동시키기엔 2% 부족해 보이는군.',
+                'overall_feedback': f'오호~ {tech_score}점? 기술적으로 구멍이 숭숭 뚫려있네? 특히 수평이랑 아이레벨은 영상 제작의 기본 중의 기본인데?',
                 'strengths': [
-                    '기본기는 어느 정도 있는 것 같네',
-                    '시도는 신선했어, 인정할게',
-                    '노력은 했구나, 그건 알겠어'
+                    '용기는 가상하네, 이런 상태로 업로드하다니',
+                    '최소한 렌즈캡은 벗겼구나',
+                    '편집 프로그램은 켤 줄 아는군'
                 ],
                 'improvements': [
-                    '좀 더 세련되게 만들 수 없었을까?',
-                    '디테일이 아쉽네. 프로와 아마추어의 차이야',
-                    '임팩트가 부족해. 좀 더 과감해져봐'
+                    '3분할 법칙이라고 들어봤나? 구도가 너무 평범해',
+                    '아이레벨이 들쭉날쭉한데, 삼각대라는 걸 써봤어?',
+                    '첫 5초에 졸려서 나갔다가 다시 들어왔어'
                 ],
-                'final_message': '다음엔 나를 놀라게 할 작품을 기대할게. 할 수 있겠지?',
+                'final_message': '프로 흉내는 내지 말고, 기본기부터 제대로 익혀서 와. 기대할게~',
                 'emoji_reaction': '😏'
             },
             'bear': {
-                'overall_feedback': '전체적으로 안정적인 영상이네요. 차근차근 개선해나가면 좋은 결과가 있을 거예요.',
+                'overall_feedback': f'기술 점수 {tech_score}점으로 개선할 부분이 있네요. 하나씩 차근차근 해결해봅시다.',
                 'strengths': [
-                    '기본 구성이 탄탄합니다',
-                    '메시지 전달이 명확해요',
-                    '안정적인 진행이 좋습니다'
+                    '영상의 기본 구조는 갖춰져 있습니다',
+                    '스토리 전달은 잘 되고 있어요',
+                    '편집의 기초는 이해하고 있는 것 같습니다'
                 ],
                 'improvements': [
-                    '조금 더 역동적인 편집을 시도해보세요',
-                    '색감 보정에 신경쓰면 좋겠어요',
-                    '음향 밸런스를 조정해보세요'
+                    '수평계를 사용해서 카메라 수평을 맞춰보세요. 작은 도구가 큰 차이를 만듭니다',
+                    '컷 전환 시 인물의 아이레벨을 일정하게 유지하는 연습을 해보세요',
+                    '오프닝 5초에 가장 인상적인 장면을 배치해서 시청자를 사로잡아보세요'
                 ],
-                'final_message': '꾸준히 노력하면 반드시 좋은 결과가 있을 거예요. 응원합니다!',
+                'final_message': '기술적인 부분들은 연습과 경험으로 개선됩니다. 꾸준히 노력하세요!',
                 'emoji_reaction': '😊'
             }
         }
         
         template = templates.get(teacher['name'].split()[0].lower(), templates['owl'])
         
-        # 타임스탬프 기반 코멘트 생성
+        # 기술적 이슈 기반 타임스탬프 코멘트 생성
         specific_comments = []
-        key_moments = analysis_data.get('key_moments', [])
-        for i, moment in enumerate(key_moments[:3]):
-            specific_comments.append({
-                'timestamp': moment.get('start_time', i * 10),
-                'comment': f"이 부분은 {teacher['style']}의 관점에서 주목할 만해요."
-            })
+        
+        # 기술적 이슈에서 타임스탬프가 있는 것들 추출
+        for issue in tech_issues[:3]:
+            if issue.timestamp is not None:
+                comment_templates = {
+                    'tiger': f"여기! {issue.timestamp:.1f}초 부분 {issue.description} 이런 실수는 용납 못한다!",
+                    'owl': f"{issue.timestamp:.1f}초 부분을 보면 {issue.description} 개선하면 더 좋을 거예요.",
+                    'fox': f"오호, {issue.timestamp:.1f}초에 {issue.description} 아마추어티가 확 드러나는군.",
+                    'bear': f"{issue.timestamp:.1f}초 지점에서 {issue.description} 이 부분을 수정해보세요."
+                }
+                
+                teacher_key = teacher['name'].split()[0].lower()
+                specific_comments.append({
+                    'timestamp': issue.timestamp,
+                    'comment': comment_templates.get(teacher_key, comment_templates['owl'])
+                })
+        
+        # 타임스탬프가 없으면 key_moments 활용
+        if not specific_comments and analysis_data.get('key_moments'):
+            for i, moment in enumerate(analysis_data['key_moments'][:2]):
+                specific_comments.append({
+                    'timestamp': moment.get('start_time', i * 10),
+                    'comment': f"이 부분의 구도와 수평을 다시 확인해보세요."
+                })
         
         return {
             'overall_feedback': template['overall_feedback'],
@@ -251,7 +298,7 @@ class AITeacherService:
             'improvements': template['improvements'],
             'specific_comments': specific_comments,
             'final_message': template['final_message'],
-            'score': 75,
+            'score': tech_score,
             'emoji_reaction': template['emoji_reaction']
         }
     
@@ -313,3 +360,35 @@ class AITeacherService:
     def get_all_teachers(self) -> Dict:
         """모든 선생님 정보 반환"""
         return self.TEACHERS
+    
+    def _format_technical_issues(self, issues: List) -> str:
+        """기술적 문제 포맷팅"""
+        if not issues:
+            return "발견된 주요 기술적 문제가 없습니다."
+        
+        formatted = []
+        for issue in issues[:5]:  # 상위 5개만
+            severity_emoji = {
+                'critical': '🚨',
+                'major': '⚠️',
+                'minor': 'ℹ️',
+                'info': '💡'
+            }.get(issue.severity, '•')
+            
+            formatted.append(f"{severity_emoji} [{issue.category}] {issue.description}")
+        
+        return '\n'.join(formatted)
+    
+    def _format_category_scores(self, category_scores: Dict) -> str:
+        """카테고리별 점수 포맷팅"""
+        if not category_scores:
+            return "카테고리별 점수 정보 없음"
+        
+        formatted = []
+        for cat_key, cat_data in category_scores.items():
+            score = cat_data.get('score', 0)
+            name = cat_data.get('name', cat_key)
+            emoji = '✅' if score >= 80 else '⚠️' if score >= 60 else '❌'
+            formatted.append(f"{emoji} {name}: {score}/100점")
+        
+        return '\n'.join(formatted)

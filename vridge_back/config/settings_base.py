@@ -30,6 +30,9 @@ OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
 # Hugging Face API Key (for Stable Diffusion image generation)
 HUGGINGFACE_API_KEY = env('HUGGINGFACE_API_KEY', default='')
 
+# Twelve Labs API Key (for video understanding)
+TWELVE_LABS_API_KEY = env('TWELVE_LABS_API_KEY', default='')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 

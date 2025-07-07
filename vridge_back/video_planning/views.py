@@ -91,7 +91,8 @@ def get_recent_plannings(request):
 @permission_classes([AllowAny])
 def generate_structure(request):
     try:
-        planning_input = request.data.get('planning_input', '')
+        # planning_text 또는 planning_input 둘 다 받을 수 있도록 수정
+        planning_input = request.data.get('planning_text', '') or request.data.get('planning_input', '')
         
         if not planning_input:
             return Response({

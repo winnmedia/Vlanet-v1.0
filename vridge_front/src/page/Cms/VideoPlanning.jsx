@@ -1817,7 +1817,7 @@ export default function VideoPlanning() {
                             goToStep(1)
                           }}
                         >
-                          자세히 보기 →
+                          이 단계로 이동 →
                         </button>
                       )}
                     </div>
@@ -1853,7 +1853,7 @@ export default function VideoPlanning() {
                             goToStep(2)
                           }}
                         >
-                          자세히 보기 →
+                          이 단계로 이동 →
                         </button>
                       )}
                     </div>
@@ -1886,7 +1886,7 @@ export default function VideoPlanning() {
                             goToStep(3)
                           }}
                         >
-                          자세히 보기 →
+                          이 단계로 이동 →
                         </button>
                       )}
                     </div>

@@ -150,11 +150,12 @@ class CreateProjectColumnSafe(View):
                     project.save()
                     logger.info(f"[CreateProjectColumnSafe] Project saved successfully: {project.name}")
                     
-                    # 성공 응답
+                    # 성공 응답 (feedback_id 포함)
                     return JsonResponse({
                         "message": "success",
                         "project_id": project.id,
-                        "project_name": project.name
+                        "project_name": project.name,
+                        "feedback_id": project.feedback.id if project.feedback else None
                     }, status=201)
                     
             except IntegrityError as e:

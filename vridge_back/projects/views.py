@@ -42,6 +42,7 @@ class ProjectList(View):
                 "video_preview",
                 "confirmation",
                 "video_delivery",
+                "feedback",
             )
             result = []
             for i in project_list:
@@ -129,6 +130,7 @@ class ProjectList(View):
                         "updated": i.updated,
                         "owner_nickname": i.user.nickname,
                         "owner_email": i.user.username,
+                        "feedback_id": i.feedback.id if i.feedback else None,
                         # "pending_list": list(i.invites.all().values("id", "email")),
                         "member_list": list(
                             i.members.all()

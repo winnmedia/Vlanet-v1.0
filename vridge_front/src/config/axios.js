@@ -98,6 +98,20 @@ axios.interceptors.response.use(
   (error) => {
     console.error(`[Axios Response Error] ${error.config?.method?.toUpperCase()} ${error.config?.url} - ${error.response?.status || 'Network Error'}`);
     
+    // 응답 데이터 로깅 (디버깅용)
+    if (error.response?.data) {
+      console.error('[Axios Response Data]', error.response.data);
+      
+      // HTML 응답인 경우 (백엔드 에러 페이지)
+      if (typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE')) {
+        console.error('[Axios] Received HTML instead of JSON - Backend error page');
+        error.response.data = {
+          message: 'Server error - received HTML response',
+          detail: 'The server returned an error page instead of JSON data'
+        };
+      }
+    }
+    
     // 401 에러 처리
     if (error.response?.status === 401) {
       // 로그인 페이지가 아닌 경우에만 리다이렉트
@@ -159,8 +173,27 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`[Axios Instance Response] ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
+    return response;
+  },
   (error) => {
+    console.error(`[Axios Instance Response Error] ${error.config?.method?.toUpperCase()} ${error.config?.url} - ${error.response?.status || 'Network Error'}`);
+    
+    // 응답 데이터 로깅 (디버깅용)
+    if (error.response?.data) {
+      console.error('[Axios Instance Response Data]', error.response.data);
+      
+      // HTML 응답인 경우 (백엔드 에러 페이지)
+      if (typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE')) {
+        console.error('[Axios Instance] Received HTML instead of JSON - Backend error page');
+        error.response.data = {
+          message: 'Server error - received HTML response',
+          detail: 'The server returned an error page instead of JSON data'
+        };
+      }
+    }
+    
     if (error.response?.status === 401) {
       if (!window.location.pathname.includes('/Login')) {
         try {

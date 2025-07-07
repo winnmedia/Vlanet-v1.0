@@ -155,15 +155,21 @@ function FeedbackStable() {
       .then((res) => {
         console.log('[Feedback] Data loaded successfully:', res.data)
         
-        // 백엔드 응답 구조에 따라 처리
-        const projectData = res.data.result || res.data
-        
-        if (projectData) {
-          set_current_project(projectData)
-          setLoading(false)
+        // 백엔드 응답 구조 확인
+        if (res.data && res.data.result) {
+          // result 속성이 있는 경우
+          set_current_project(res.data.result)
+        } else if (res.data && res.data.project) {
+          // project 속성이 있는 경우 (백엔드 코드 분석 결과)
+          set_current_project(res.data.project)
+        } else if (res.data) {
+          // 직접 데이터인 경우
+          set_current_project(res.data)
         } else {
           throw new Error('프로젝트 데이터가 없습니다.')
         }
+        
+        setLoading(false)
       })
       .catch((err) => {
         if (err.name === 'AbortError') {
@@ -172,14 +178,23 @@ function FeedbackStable() {
         }
         
         console.error('[Feedback] Load error:', err)
+        console.error('[Feedback] Error response:', err.response)
         
         if (err.response?.status === 404) {
-          setError('피드백을 찾을 수 없습니다. 프로젝트가 존재하는지 확인해주세요.')
+          // 404는 피드백이 아직 생성되지 않았거나 프로젝트가 없는 경우
+          console.log('[Feedback] 404 error - Project or feedback not found')
+          setError('프로젝트를 찾을 수 없습니다. 프로젝트 목록으로 돌아갑니다.')
+          setTimeout(() => navigate('/CmsHome'), 2000)
         } else if (err.response?.status === 401) {
           setError('인증이 필요합니다. 다시 로그인해주세요.')
           navigate('/Login', { replace: true })
+        } else if (err.response?.status === 403) {
+          setError('이 프로젝트에 접근할 권한이 없습니다.')
+          setTimeout(() => navigate('/CmsHome'), 2000)
         } else if (err.response?.data?.message) {
           setError(err.response.data.message)
+        } else if (err.message === 'Network Error') {
+          setError('네트워크 연결을 확인해주세요.')
         } else {
           setError('피드백을 불러오는데 실패했습니다.')
         }

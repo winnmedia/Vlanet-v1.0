@@ -34,17 +34,17 @@ async function finalVerification() {
 
   // 1. API 서버 상태 확인
   await test('API 서버 연결', async () => {
-    const response = await fetch(`${API_BASE}/`);
+    const response = await fetch(`${API_BASE}/health/`);
     const data = await response.json();
     return {
-      success: response.ok && data.message === 'VRidge Backend API',
-      message: data.message
+      success: response.ok,
+      message: data.message || data.service || 'Connected'
     };
   });
 
   // 2. 이메일 검증 시스템 테스트
   await test('이메일 검증 - 유효한 이메일', async () => {
-    const response = await fetch(`${API_BASE}/users/check_email`, {
+    const response = await fetch(`${API_BASE}/api/users/check-email/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: `valid${Date.now()}@test.com` })
@@ -57,7 +57,7 @@ async function finalVerification() {
   });
 
   await test('이메일 검증 - 잘못된 형식 차단', async () => {
-    const response = await fetch(`${API_BASE}/users/check_email`, {
+    const response = await fetch(`${API_BASE}/api/users/check-email/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'invalid.email' })
@@ -70,7 +70,7 @@ async function finalVerification() {
   });
 
   await test('XSS 패턴 차단', async () => {
-    const response = await fetch(`${API_BASE}/users/check_email`, {
+    const response = await fetch(`${API_BASE}/api/users/check-email/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: '<script>alert("xss")</script>@test.com' })
@@ -91,7 +91,7 @@ async function finalVerification() {
   };
 
   const signupResult = await test('회원가입', async () => {
-    const response = await fetch(`${API_BASE}/users/signup`, {
+    const response = await fetch(`${API_BASE}/api/users/signup/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(testUser)
@@ -107,7 +107,7 @@ async function finalVerification() {
   let authToken = null;
   if (signupResult.success) {
     const loginResult = await test('로그인', async () => {
-      const response = await fetch(`${API_BASE}/users/signin`, {
+      const response = await fetch(`${API_BASE}/api/users/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -134,10 +134,10 @@ async function finalVerification() {
     };
 
     await test('프로젝트 목록 조회', async () => {
-      const response = await fetch(`${API_BASE}/projects/project_list`, { headers });
+      const response = await fetch(`${API_BASE}/api/projects/project_list`, { headers });
       const data = await response.json();
       return {
-        success: response.ok,
+        success: response.ok && data.result && data.result.length >= 0,
         message: `${data.result?.length || 0}개 프로젝트 조회됨`
       };
     });
@@ -158,12 +158,20 @@ async function finalVerification() {
         basic_plan: { start_date: '2024-01-01', end_date: '2024-01-05' }
       }));
 
-      const response = await fetch(`${API_BASE}/projects/create`, {
+      const response = await fetch(`${API_BASE}/api/projects/create/`, {
         method: 'POST',
         headers,
         body: formData
       });
-      const data = await response.json();
+      
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : { message: 'Empty response' };
+      } catch (e) {
+        data = { message: 'Failed to parse response' };
+      }
+      
       return {
         success: response.ok,
         message: data.message || '생성 완료'
@@ -186,12 +194,19 @@ async function finalVerification() {
         basic_plan: { start_date: '2024-01-01', end_date: '2024-01-05' }
       }));
 
-      const response = await fetch(`${API_BASE}/projects/create`, {
+      const response = await fetch(`${API_BASE}/api/projects/create/`, {
         method: 'POST',
         headers,
         body: formData
       });
-      const data = await response.json();
+      
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : { message: 'Empty response' };
+      } catch (e) {
+        data = { message: 'Failed to parse response' };
+      }
       
       // 중복이 차단되어야 함
       const isDuplicateBlocked = !response.ok && (
@@ -209,13 +224,13 @@ async function finalVerification() {
     // 7. 피드백 시스템 접근 테스트
     await test('피드백 시스템 접근', async () => {
       // 생성된 프로젝트의 ID를 찾기 위해 목록 재조회
-      const listResponse = await fetch(`${API_BASE}/projects/project_list`, { headers });
+      const listResponse = await fetch(`${API_BASE}/api/projects/project_list`, { headers });
       const listData = await listResponse.json();
       
       if (listResponse.ok && listData.result?.length > 0) {
         const testProject = listData.result.find(p => p.name === projectName) || listData.result[0];
         
-        const feedbackResponse = await fetch(`${API_BASE}/feedbacks/${testProject.id}`, { headers });
+        const feedbackResponse = await fetch(`${API_BASE}/api/feedbacks/${testProject.id}`, { headers });
         const feedbackData = await feedbackResponse.json();
         
         return {

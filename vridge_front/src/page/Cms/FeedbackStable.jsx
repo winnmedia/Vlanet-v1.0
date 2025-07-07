@@ -40,10 +40,12 @@ import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from
 import moment from 'moment'
 import 'moment/locale/ko'
 
-export default function FeedbackStable() {
+function FeedbackStable() {
+  console.log('[FeedbackStable] Component mounted')
   const navigate = useNavigate()
   const { user } = useSelector((s) => s.ProjectStore)
   const { project_id } = useParams()
+  console.log('[FeedbackStable] project_id:', project_id, 'user:', user)
 
   // 상태 관리
   const [loading, setLoading] = useState(true)
@@ -127,7 +129,9 @@ export default function FeedbackStable() {
   // 인증 체크
   useEffect(() => {
     const session = checkSession()
+    console.log('[FeedbackStable] Session check:', session)
     if (!session) {
+      console.log('[FeedbackStable] No session, redirecting to login')
       navigate('/Login', { replace: true })
     }
   }, [navigate])
@@ -483,3 +487,5 @@ export default function FeedbackStable() {
     </PageTemplate>
   )
 }
+
+export default FeedbackStable

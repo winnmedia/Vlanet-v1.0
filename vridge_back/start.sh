@@ -12,6 +12,13 @@ echo "Running migrations..."
 python3 manage.py showmigrations
 echo "---"
 python3 manage.py migrate --noinput --verbosity 2 || echo "Migration failed, continuing..."
+
+# 마이그레이션 실패 시 강제 실행
+if [ $? -ne 0 ]; then
+    echo "Standard migration failed. Trying force migration..."
+    python3 force_migrate.py || echo "Force migration also failed"
+fi
+
 echo "---"
 echo "Checking database tables..."
 python3 manage.py shell -c "from django.db import connection; cursor = connection.cursor(); cursor.execute(\"SELECT table_name FROM information_schema.tables WHERE table_schema='public'\"); print('Tables:', [t[0] for t in cursor.fetchall()])"

@@ -11,6 +11,32 @@ $text-gray: #707175;
 $white: #fff;
 
 // 기존 스타일 유지하면서 개선
+.content {
+  .feedback {
+    .tab_content {
+      .feedback_write {
+        display: flex;
+        gap: 20px;
+        height: 100%;
+        
+        .left {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+        
+        .right {
+          width: 400px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+      }
+    }
+  }
+}
+
 .content.feedback {
   &.feedback_page {
     height: calc(100% - 50px);
@@ -20,13 +46,14 @@ $white: #fff;
     
     // Video Section (기존 스타일 유지)
     .videobox {
-      width: calc(100% - 490px);
+      width: 100%;
       background: transparent;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       padding: 15px;
-      height: 100%; // 부모 요소 높이를 100% 사용
+      height: 500px; // 고정 높이 설정
+      max-height: 70vh; // 최대 높이 제한
       
       &.video_section {
         // 기존 스타일 유지

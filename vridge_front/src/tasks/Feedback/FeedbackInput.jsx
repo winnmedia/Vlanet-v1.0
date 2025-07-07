@@ -3,26 +3,17 @@ import React, { useState, useEffect } from 'react'
 
 import { CreateFeedback } from 'api/feedback'
 
-export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange }) {
+export default function FeedbackInput({ project_id, refetch }) {
   const initial = {
-    secret: '',
+    secret: 'true',
     title: '',
-    section: initialTime || '',
+    section: '',
     contents: '',
   }
 
   const { inputs, onChange, set_inputs } = useInput(initial)
   const { secret, section, contents } = inputs
-  
-  // initialTime이 변경될 때 section 값 업데이트
-  useEffect(() => {
-    if (initialTime) {
-      set_inputs(prevInputs => ({
-        ...prevInputs,
-        section: initialTime
-      }))
-    }
-  }, [initialTime, set_inputs])
+  const [isAnonymousChecked, setIsAnonymousChecked] = useState(true)
 
   function SendFeedback() {
     if (secret && section && contents) {
@@ -30,19 +21,12 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
         .then((res) => {
           window.alert('피드백 등록이 되었습니다.')
           set_inputs({
-            secret: '',
+            secret: 'true',
             title: '',
             section: '',
             contents: '',
           })
-          const secret = document.getElementsByName("secret")
-          secret.forEach((checkbox) => {
-            checkbox.checked = false
-          })
-          // 시간 초기화 콜백 호출
-          if (onTimeChange) {
-            onTimeChange('')
-          }
+          setIsAnonymousChecked(true)
           refetch()
         })
         .catch((err) => {
@@ -57,14 +41,18 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
 
   return (
     <div className="form">
-      <div className="flex align_center">
+      <div className="flex align_center" style={{ gap: '20px' }}>
         <div>
           <input
             type="radio"
             id="user_type"
             name="secret"
             value={true}
-            onChange={onChange}
+            onChange={(e) => {
+              onChange(e)
+              setIsAnonymousChecked(true)
+            }}
+            checked={isAnonymousChecked}
             className="ty02"
           />
           <label htmlFor="user_type">익명</label>
@@ -75,7 +63,11 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
             id="user_type2"
             name="secret"
             value={false}
-            onChange={onChange}
+            onChange={(e) => {
+              onChange(e)
+              setIsAnonymousChecked(false)
+            }}
+            checked={!isAnonymousChecked}
             className="ty02"
           />
           <label htmlFor="user_type2">일반</label>

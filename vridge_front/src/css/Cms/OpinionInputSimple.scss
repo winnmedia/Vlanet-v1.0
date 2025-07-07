@@ -1,0 +1,140 @@
+// Opinion Input Simple Design
+
+// Color Variables
+$primary-color: #0058da;
+$primary-hover: #0047b8;
+$background-light: #f8f8f8;
+$border-color: #efefef;
+$text-dark: #000;
+$text-gray: #707175;
+$white: #fff;
+
+.opinion-input-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  .opinion-header {
+    display: none; // 헤더 제거하여 공간 확보
+  }
+  
+  // 기존 의견 목록 제거 - 하단 피드백 목록에서 통합 표시
+  .opinion-list {
+    display: none;
+  }
+  
+  .opinion-input-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    .comment-type-selector {
+      .comment-type-select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid $border-color;
+        border-radius: 8px;
+        font-size: 14px;
+        color: $text-dark;
+        background: $white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+        
+        option {
+          padding: 8px;
+        }
+      }
+    }
+    
+    .opinion-textarea {
+      flex: 1;
+      min-height: 200px;
+      padding: 16px;
+      border: 2px solid $border-color;
+      border-radius: 8px;
+      font-size: 15px;
+      line-height: 1.6;
+      resize: vertical;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      }
+      
+      &::placeholder {
+        color: #aaa;
+      }
+    }
+    
+    .button-area {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      .char-count {
+        font-size: 13px;
+        color: $text-gray;
+        
+        &.warning {
+          color: #ff6b6b;
+        }
+      }
+      
+      .submit-button {
+        padding: 12px 32px;
+        background: $primary-color;
+        color: $white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover:not(:disabled) {
+          background: $primary-hover;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+        }
+        
+        &:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+    }
+  }
+}
+
+// 반응형
+@media (max-width: 768px) {
+  .opinion-input-container {
+    .opinion-input-area {
+      gap: 12px;
+      
+      .opinion-textarea {
+        min-height: 150px;
+        font-size: 14px;
+        padding: 12px;
+      }
+      
+      .button-area {
+        .submit-button {
+          padding: 10px 24px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

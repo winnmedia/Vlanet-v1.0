@@ -19,6 +19,11 @@ import 'css/Cms/FeedbackPageSpacing.scss'
 import 'css/Cms/EncodingStatus.scss'
 import 'css/Cms/FeedbackPopup.scss'
 import 'css/Cms/OpinionInput.scss'
+import 'css/Cms/FeedbackHeader.scss'
+import 'css/Cms/ProjectInfoModal.scss'
+import 'css/Cms/FolderManagement.scss'
+import 'css/Cms/PostManagement.scss'
+import 'css/Cms/FeedbackNewLayout.scss'
 
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -58,9 +63,9 @@ function FeedbackStable() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [encodingStatus, setEncodingStatus] = useState(null)
   const [encodingCheckInterval, setEncodingCheckInterval] = useState(null)
-  const [selectedFeedback, setSelectedFeedback] = useState(null)
-  const [feedbackTime, setFeedbackTime] = useState('')
   const [showProjectInfo, setShowProjectInfo] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [activeFormTab, setActiveFormTab] = useState('feedback') // 'feedback' or 'comment'
 
   // 권한 체크
   const is_admin = useMemo(() => {
@@ -154,6 +159,8 @@ function FeedbackStable() {
     GetFeedBack(project_id, { signal: abortController.signal })
       .then((res) => {
         console.log('[Feedback] Data loaded successfully:', res.data)
+        console.log('[Feedback] Files URL:', res.data?.result?.files)
+        console.log('[Feedback] Feedback comments:', res.data?.result?.feedback)
         
         // API 응답 처리
         let projectData = null
@@ -183,6 +190,9 @@ function FeedbackStable() {
           if (!Array.isArray(projectData.member_list)) {
             projectData.member_list = []
           }
+          
+          // files URL 로깅
+          console.log('[Feedback] Final project data files:', projectData.files)
           
           set_current_project(projectData)
         }
@@ -250,29 +260,69 @@ function FeedbackStable() {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const formData = new FormData();
-      formData.append('files', file);
-      
-      FeedbackFile(formData, project_id, onUploadProgress)
-        .then((res) => {
-          window.alert('파일 업로드가 완료되었습니다.');
-          onUploadComplete();
-          e.target.value = ''; // input 초기화
-        })
-        .catch((err) => {
-          console.error('Upload error:', err);
-          if (err.response?.status === 413) {
-            window.alert('파일 크기가 너무 큽니다. 더 작은 파일을 선택해주세요.');
-          } else if (err.response?.status === 401) {
-            window.alert('인증이 필요합니다. 다시 로그인해주세요.');
-            navigate('/Login', { replace: true });
-          } else {
-            window.alert('파일 업로드에 실패했습니다.');
-          }
-        })
-        .finally(() => {
-          setUploadProgress(0);
-        });
+      uploadFile(file);
+    }
+  }
+
+  const uploadFile = (file) => {
+    const formData = new FormData();
+    formData.append('files', file);
+    
+    FeedbackFile(formData, project_id, onUploadProgress)
+      .then((res) => {
+        window.alert('파일 업로드가 완료되었습니다.');
+        onUploadComplete();
+        // input 초기화
+        const input = document.getElementById('video-upload');
+        if (input) input.value = '';
+      })
+      .catch((err) => {
+        console.error('Upload error:', err);
+        if (err.response?.status === 413) {
+          window.alert('파일 크기가 너무 큽니다. 더 작은 파일을 선택해주세요.');
+        } else if (err.response?.status === 401) {
+          window.alert('인증이 필요합니다. 다시 로그인해주세요.');
+          navigate('/Login', { replace: true });
+        } else {
+          window.alert('파일 업로드에 실패했습니다.');
+        }
+      })
+      .finally(() => {
+        setUploadProgress(0);
+      });
+  }
+
+  // 드래그 앤 드롭 핸들러
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('video/')) {
+        uploadFile(file);
+      } else {
+        window.alert('동영상 파일만 업로드 가능합니다.');
+      }
     }
   }
 
@@ -286,6 +336,13 @@ function FeedbackStable() {
     if (videoPlayerRef.current && videoPlayerRef.current.seekTo) {
       videoPlayerRef.current.seekTo(totalSeconds)
     }
+  }
+
+  // 시간 포맷 함수
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
   // 로딩 상태
@@ -350,7 +407,54 @@ function FeedbackStable() {
         <main>
           <div className="content">
             <div className="feedback">
-              <div className="title">{current_project.name || '프로젝트 이름 없음'}</div>
+              <div className="feedback-header">
+                <div className="header-content">
+                  <div className="header-left">
+                    <button className="back-button" onClick={() => navigate('/CmsHome')}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M15 18l-6-6 6-6" />
+                      </svg>
+                    </button>
+                    <div className="project-info">
+                      <h1 className="project-name">{current_project.name || '프로젝트 이름 없음'}</h1>
+                      <div className="project-meta">
+                        <span className="meta-item">담당자: {current_project.manager || '미지정'}</span>
+                        <span className="meta-item">의뢰사: {current_project.consumer || '미지정'}</span>
+                        <span className="meta-item">멤버: {current_project.member_list?.length || 0}명</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="header-right">
+                    <button className="action-button outline" onClick={() => setShowProjectInfo(!showProjectInfo)}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="16" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12" y2="8" />
+                      </svg>
+                      프로젝트 정보
+                    </button>
+                    <button className="action-button primary" onClick={() => navigate(`/ProjectView/${project_id}`)}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      프로젝트 보기
+                    </button>
+                    {is_admin && (
+                      <div className="more-menu">
+                        <button className="more-button">
+                          <div className="dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
               <div className="tab_wrap">
                 <ul>
                   <li
@@ -374,127 +478,289 @@ function FeedbackStable() {
                     </li>
                   )}
                 </ul>
-                <ul className="tab_btn">
-                  <li onClick={() => navigate(`/ProjectView/${project_id}`)}>
-                    프로젝트 보기
-                  </li>
-                </ul>
               </div>
 
               <div className="tab_content">
                 {currentTab === 0 && (
                   <div className="feedback_write">
-                    <div className="left">
-                      <div className="video_wrap">
-                        {current_project.files ? (
-                          <>
-                            <VideoPlayer
-                              ref={videoPlayerRef}
-                              src={current_project.files}
-                              onTimeUpdate={setCurrentVideoTime}
-                            />
-                            {encodingStatus && encodingStatus !== 'completed' && (
-                              <div className="encoding-status">
-                                <div className="encoding-message">
-                                  {encodingStatus === 'processing' && '영상을 인코딩 중입니다...'}
-                                  {encodingStatus === 'failed' && '인코딩에 실패했습니다.'}
-                                </div>
-                                {encodingStatus === 'processing' && (
-                                  <div className="encoding-progress">
-                                    <div className="progress-bar">
-                                      <div className="progress-fill" style={{ width: '50%' }}></div>
+                    {/* 왼쪽 - 플레이어 섹션 */}
+                    <div className="player-section">
+                      <div className="player-wrapper">
+                        <div className="videobox">
+                          <div className={`video_inner ${current_project.files ? 'active' : ''}`}>
+                            {current_project.files ? (
+                              <>
+                                <VideoPlayer
+                                  ref={videoPlayerRef}
+                                  videoUrl={current_project.files}
+                                  onTimeUpdate={setCurrentVideoTime}
+                                />
+                                {encodingStatus && encodingStatus !== 'completed' && (
+                                  <div className="encoding-status">
+                                    <div className="encoding-message">
+                                      {encodingStatus === 'processing' && '영상을 인코딩 중입니다...'}
+                                      {encodingStatus === 'failed' && '인코딩에 실패했습니다.'}
                                     </div>
+                                    {encodingStatus === 'processing' && (
+                                      <div className="encoding-progress">
+                                        <div className="progress-bar">
+                                          <div className="progress-fill" style={{ width: '50%' }}></div>
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
+                              </>
+                            ) : (
+                              <div className="upload_area">
+                                <div className="upload_btn_wrap">
+                                  <input
+                                    id="video_upload"
+                                    type="file"
+                                    accept="video/*"
+                                    onChange={handleFileUpload}
+                                    className="video_upload"
+                                  />
+                                  <label htmlFor="video_upload" className="video_upload_label">
+                                    <div>영상 업로드</div>
+                                  </label>
+                                </div>
+                                <button className="guide_btn" onClick={() => setShowUploadGuide(true)}>
+                                  업로드 가이드
+                                </button>
                               </div>
                             )}
-                          </>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="player-controls">
+                        <div className="control-group">
+                          <button onClick={() => {
+                            if (videoPlayerRef.current) {
+                              videoPlayerRef.current.seekTo(Math.max(0, currentVideoTime - 10));
+                            }
+                          }}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 8 8 12 12 16" />
+                              <polyline points="16 8 12 12 16 16" />
+                            </svg>
+                            10초 뒤로
+                          </button>
+                          <button onClick={() => {
+                            if (videoPlayerRef.current) {
+                              videoPlayerRef.current.seekTo(currentVideoTime + 10);
+                            }
+                          }}>
+                            10초 앞으로
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="8 8 12 12 8 16" />
+                              <polyline points="12 8 16 12 12 16" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* 오른쪽 - 폼 섹션 */}
+                    <div className="forms-section" style={{ width: activeFormTab === 'comment' ? '500px' : '400px', transition: 'width 0.3s ease' }}>
+                      <div className="form-tabs">
+                        <button 
+                          className={`tab-button ${activeFormTab === 'feedback' ? 'active' : ''}`}
+                          onClick={() => setActiveFormTab('feedback')}
+                        >
+                          피드백 등록
+                        </button>
+                        <button 
+                          className={`tab-button ${activeFormTab === 'comment' ? 'active' : ''}`}
+                          onClick={() => setActiveFormTab('comment')}
+                        >
+                          코멘트 작성
+                        </button>
+                      </div>
+                      
+                      <div className="form-content">
+                        {activeFormTab === 'feedback' ? (
+                          <div className="tab-wrapper">
+                            <div className="form-area">
+                              <div className="feedback-form">
+                                <div className="form-header">
+                                  <h3>피드백 등록</h3>
+                                  <p>영상의 특정 구간에 대한 피드백을 남겨주세요</p>
+                                </div>
+                                <FeedbackInput
+                                  project_id={project_id}
+                                  current_project={current_project}
+                                  refetch={refetch}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="feedback-list-area">
+                              <h4>피드백 목록</h4>
+                              <div className="list">
+                                <FeedbackMore 
+                                  current_project={current_project} 
+                                  onTimeClick={handleTimestampClick}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         ) : (
-                          <div className="no_data">
-                            <p>등록된 영상이 없습니다.</p>
-                            <button onClick={() => setShowUploadGuide(true)}>
-                              영상 업로드 가이드
-                            </button>
+                          <div className="tab-wrapper">
+                            <div className="form-area">
+                              <div className="comment-section">
+                                <div className="section-header">
+                                  <h3>코멘트 작성</h3>
+                                  <p>프로젝트에 대한 전반적인 의견을 작성해주세요</p>
+                                </div>
+                                <OpinionInput
+                                  project_id={project_id}
+                                  current_project={current_project}
+                                  is_admin={is_admin}
+                                  refetch={refetch}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="feedback-list-area">
+                              <h4>최근 코멘트</h4>
+                              <div className="list">
+                                <FeedbackMore 
+                                  current_project={current_project} 
+                                  onTimeClick={handleTimestampClick}
+                                />
+                              </div>
+                            </div>
                           </div>
                         )}
                       </div>
-                      <FeedbackInput
-                        current_project={current_project}
-                        currentVideoTime={currentVideoTime}
-                        is_admin={is_admin}
-                        refetch={refetch}
-                        feedbackTime={feedbackTime}
-                        setFeedbackTime={setFeedbackTime}
-                      />
                     </div>
-                    <div className="right">
-                      {selectedFeedback && (
-                        <div className="selected-feedback-popup">
-                          <div className="popup-header">
-                            <h3>피드백 상세</h3>
-                            <button onClick={() => setSelectedFeedback(null)}>×</button>
-                          </div>
-                          <div className="popup-content">
-                            <div className="feedback-meta">
-                              <span className="author">{selectedFeedback.nickname}</span>
-                              <span className="date">{moment(selectedFeedback.created).format('YYYY.MM.DD HH:mm')}</span>
-                            </div>
-                            <div className="feedback-text">{selectedFeedback.text}</div>
-                          </div>
-                        </div>
-                      )}
-                      <OpinionInput
-                        current_project={current_project}
-                        is_admin={is_admin}
-                        refetch={refetch}
-                      />
-                      <div className="list">
-                        <FeedbackMore 
-                          current_project={current_project} 
-                          onTimeClick={handleTimestampClick}
-                          onFeedbackSelect={setSelectedFeedback}
-                        />
-                      </div>
-                    </div>
+                    
                   </div>
                 )}
 
                 {currentTab === 1 && (
                   <div className="folder_manage">
-                    <div className="upload_wrap">
-                      <div className="upload-section">
-                        <h3>영상 파일 업로드</h3>
-                        <p className="upload-info">
-                          지원 형식: MP4, AVI, MOV, WMV 등<br/>
-                          최대 크기: 2GB
-                        </p>
-                        <div className="upload-button-wrap">
-                          <label htmlFor="video-upload" className="upload-button">
-                            파일 선택
-                          </label>
-                          <input
-                            id="video-upload"
-                            type="file"
-                            accept="video/*"
-                            onChange={handleFileUpload}
-                            style={{ display: 'none' }}
-                          />
+                    <div className="upload_section">
+                      <div className="section-header">
+                        <h3>파일 업로드</h3>
+                        <p>프로젝트에 필요한 영상 파일을 업로드하세요</p>
+                      </div>
+                      
+                      <div 
+                        className={`upload-dropzone ${isDragging ? 'active' : ''}`}
+                        id="dropzone"
+                        onDragEnter={handleDragEnter}
+                        onDragLeave={handleDragLeave}
+                        onDragOver={handleDragOver}
+                        onDrop={handleDrop}
+                      >
+                        <div className="dropzone-icon">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                          </svg>
                         </div>
-                        {uploadProgress > 0 && (
-                          <div className="upload-progress">
-                            <div className="progress-bar">
-                              <div 
-                                className="progress-fill" 
-                                style={{ width: `${uploadProgress}%` }}
-                              ></div>
+                        <h4>파일을 여기에 드래그하거나</h4>
+                        <p>아래 버튼을 클릭하여 선택하세요</p>
+                        <label htmlFor="video-upload" className="upload-button">
+                          파일 선택
+                        </label>
+                        <input
+                          id="video-upload"
+                          type="file"
+                          accept="video/*"
+                          onChange={handleFileUpload}
+                          multiple
+                        />
+                      </div>
+                      
+                      {uploadProgress > 0 && (
+                        <div className="upload-status">
+                          <div className="status-item">
+                            <div className="file-icon">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                              </svg>
                             </div>
-                            <span className="progress-text">{uploadProgress}%</span>
+                            <div className="file-info">
+                              <div className="file-name">동영상 파일 업로드 중...</div>
+                              <div className="file-size">진행률: {uploadProgress}%</div>
+                              <div className="progress-wrapper">
+                                <div className="progress-bar" style={{ width: `${uploadProgress}%` }}></div>
+                              </div>
+                            </div>
                           </div>
-                        )}
-                        {current_project.files && (
-                          <div className="current-file">
-                            <h4>현재 업로드된 파일</h4>
-                            <p>{current_project.files.split('/').pop()}</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="files_section">
+                      <div className="section-header">
+                        <h3>업로드된 파일</h3>
+                        <span className="file-count">{current_project.files ? '1개' : '0개'}</span>
+                      </div>
+                      
+                      <div className="file-list">
+                        {current_project.files ? (
+                          <div className="file-item active">
+                            <div className="file-thumbnail">
+                              <div className="file-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <polygon points="23 7 16 12 23 17 23 7" />
+                                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="file-details">
+                              <div className="file-name">{current_project.files.split('/').pop()}</div>
+                              <div className="file-meta">
+                                <span>동영상</span>
+                                <span>•</span>
+                                <span>업로드됨</span>
+                              </div>
+                            </div>
+                            <div className="file-actions">
+                              <button title="다운로드">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                  <polyline points="7 10 12 15 17 10" />
+                                  <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                              </button>
+                              {is_admin && (
+                                <button className="delete-btn" title="삭제" onClick={() => {
+                                  if (window.confirm('파일을 삭제하시겠습니까?')) {
+                                    DeleteFeedbackFile(project_id)
+                                      .then(() => {
+                                        window.alert('파일이 삭제되었습니다.')
+                                        refetch()
+                                      })
+                                      .catch(() => {
+                                        window.alert('파일 삭제에 실패했습니다.')
+                                      })
+                                  }
+                                }}>
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                              <polyline points="13 2 13 9 20 9" />
+                            </svg>
+                            <p>아직 업로드된 파일이 없습니다</p>
                           </div>
                         )}
                       </div>
@@ -504,15 +770,104 @@ function FeedbackStable() {
 
                 {currentTab === 2 && is_admin && (
                   <div className="manage">
-                    <FeedbackManage
-                      Rating={(rating) => rating === 'manager' ? '관리자' : '일반'}
-                      project_id={project_id}
-                      FeedbackID={current_project.id}
-                      refetch={refetch}
-                    />
-                    <div className="notice">
-                      <p>실시간 채팅 기능은 현재 지원되지 않습니다.</p>
-                      <p>피드백 탭에서 의견을 남겨주세요.</p>
+                    <div className="feedback-manage-section">
+                      <div className="section-header">
+                        <h3>피드백 관리</h3>
+                        <div className="filter-controls">
+                          <select className="filter-select">
+                            <option value="all">전체 보기</option>
+                            <option value="public">공개 피드백</option>
+                            <option value="private">비공개 피드백</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className="feedback-list">
+                        {current_project.feedback && current_project.feedback.length > 0 ? (
+                          current_project.feedback.map((item, idx) => (
+                            <div key={idx} className="feedback-item">
+                              <div className="feedback-header">
+                                <div className="feedback-info">
+                                  <span className="feedback-time">{item.section || '시간 미지정'}</span>
+                                  <div className="feedback-author">
+                                    by <span className="author-name">{item.nickname || item.email || '익명'}</span>
+                                  </div>
+                                </div>
+                                <div className="feedback-actions">
+                                  <button title="수정">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                    </svg>
+                                  </button>
+                                  <button className="delete-btn" title="삭제">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="feedback-content">
+                                {item.text || item.contents || '내용 없음'}
+                              </div>
+                              <div className="feedback-footer">
+                                <div className="feedback-status">
+                                  <span className={`status-badge ${item.security ? 'private' : 'public'}`}>
+                                    {item.security ? '비공개' : '공개'}
+                                  </span>
+                                </div>
+                                <span className="feedback-date">
+                                  {moment(item.created).format('YYYY.MM.DD HH:mm')}
+                                </span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M9 11H3v10h10v-6h4l2-2-6-6-2 2v4z" />
+                              <path d="M17 3l4 4-4 4" />
+                            </svg>
+                            <h4>피드백이 없습니다</h4>
+                            <p>아직 등록된 피드백이 없습니다</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="management-sidebar">
+                      <div className="stats-card">
+                        <h4>프로젝트 통계</h4>
+                        <div className="stat-item">
+                          <span className="stat-label">전체 피드백</span>
+                          <span className="stat-value">{current_project.feedback?.length || 0}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">프로젝트 멤버</span>
+                          <span className="stat-value">{current_project.member_list?.length || 0}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">업로드된 파일</span>
+                          <span className="stat-value">{current_project.files ? 1 : 0}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="notice-section">
+                        <div className="notice-header">
+                          <h4>공지사항</h4>
+                          <button className="add-notice-btn" title="공지 추가">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <line x1="12" y1="5" x2="12" y2="19" />
+                              <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                          </button>
+                        </div>
+                        <div className="notice-empty">
+                          <p>실시간 채팅 기능은 현재 지원되지 않습니다.</p>
+                          <p>피드백 탭에서 의견을 남겨주세요.</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -522,6 +877,55 @@ function FeedbackStable() {
 
           {showUploadGuide && (
             <VideoUploadGuide onClose={() => setShowUploadGuide(false)} />
+          )}
+          
+          {showProjectInfo && (
+            <div className="modal-backdrop" onClick={() => setShowProjectInfo(false)}>
+              <div className="modal-content project-info-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3>프로젝트 정보</h3>
+                  <button className="close-button" onClick={() => setShowProjectInfo(false)}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <div className="info-group">
+                    <label>프로젝트명</label>
+                    <p>{current_project.name}</p>
+                  </div>
+                  <div className="info-group">
+                    <label>담당자</label>
+                    <p>{current_project.manager || '미지정'}</p>
+                  </div>
+                  <div className="info-group">
+                    <label>의뢰사</label>
+                    <p>{current_project.consumer || '미지정'}</p>
+                  </div>
+                  <div className="info-group">
+                    <label>설명</label>
+                    <p>{current_project.description || '설명이 없습니다.'}</p>
+                  </div>
+                  <div className="info-group">
+                    <label>생성일</label>
+                    <p>{moment(current_project.created).format('YYYY년 MM월 DD일')}</p>
+                  </div>
+                  <div className="info-group">
+                    <label>멤버 ({current_project.member_list?.length || 0}명)</label>
+                    <div className="member-list">
+                      {current_project.member_list?.map((member, idx) => (
+                        <div key={idx} className="member-item">
+                          <span className="member-name">{member.nickname || member.email}</span>
+                          <span className="member-role">{member.rating === 'manager' ? '관리자' : '일반'}</span>
+                        </div>
+                      )) || <p>멤버가 없습니다.</p>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </main>
       </div>

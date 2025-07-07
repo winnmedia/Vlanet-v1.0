@@ -236,10 +236,10 @@ async function finalVerification() {
         
         console.log(`Found project:`, JSON.stringify(testProject, null, 2));
         
-        // 프로젝트의 feedback_id 사용
-        const feedbackId = testProject.feedback_id || testProject.feedback || testProject.id;
-        console.log(`Using feedback ID: ${feedbackId}`);
-        const feedbackResponse = await fetch(`${API_BASE}/api/feedbacks/${feedbackId}`, { headers });
+        // 프로젝트 ID를 사용하여 피드백 조회
+        const projectId = testProject.id;
+        console.log(`Using project ID: ${projectId}`);
+        const feedbackResponse = await fetch(`${API_BASE}/api/projects/${projectId}/feedbacks`, { headers });
         
         let feedbackData;
         try {

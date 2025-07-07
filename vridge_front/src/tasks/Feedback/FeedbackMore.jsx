@@ -1,12 +1,13 @@
 import useInput from 'hooks/UseInput'
 import React, { useState, useEffect, useMemo } from 'react'
+import 'css/Cms/FeedbackMoreStyle.scss'
 
 import moment from 'moment'
 import 'moment/locale/ko'
 
-export default function FeedbackMore({ current_project, onTimeClick, onFeedbackSelect }) {
+export default function FeedbackMore({ current_project, onTimeClick }) {
   const [feedback, setFeedback] = useState([])
-  const [selectedFeedbackId, setSelectedFeedbackId] = useState(null)
+  const [expandedId, setExpandedId] = useState(null)
 
   useEffect(() => {
     let groupedObjects = {}
@@ -31,16 +32,16 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
   }, [current_project])
 
   const handleFeedbackClick = (data) => {
-    if (selectedFeedbackId === data.id) {
-      setSelectedFeedbackId(null)
-      if (onFeedbackSelect) {
-        onFeedbackSelect(null)
-      }
+    // 시간 이동
+    if (onTimeClick && data.section) {
+      onTimeClick(data.section)
+    }
+    
+    // 내용 확장/축소
+    if (expandedId === data.id) {
+      setExpandedId(null)
     } else {
-      setSelectedFeedbackId(data.id)
-      if (onFeedbackSelect) {
-        onFeedbackSelect(data)
-      }
+      setExpandedId(data.id)
     }
   }
 
@@ -51,50 +52,51 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
           <div className="day">{item[0]}</div>
           <ul>
             {item[1].map((data, i) => (
-              <li 
-                key={i} 
-                style={{
-                  padding: '8px',
-                  borderRadius: '8px',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <span 
-                  className="feedback-time-marker"
-                  style={{ 
-                    cursor: 'pointer', 
-                    backgroundColor: selectedFeedbackId === data.id ? '#1E3A8A' : '#2B56D1',
-                    color: '#ffffff',
-                    padding: '6px 12px',
-                    borderRadius: '20px',
-                    fontSize: '13px',
-                    fontWeight: '500',
-                    display: 'inline-block',
-                    transition: 'all 0.2s ease',
-                    position: 'relative',
-                    border: 'none'
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleFeedbackClick(data)
-                  }}
-                  onMouseEnter={(e) => {
-                    if (selectedFeedbackId !== data.id) {
-                      e.target.style.backgroundColor = '#1E3A8A'
-                    }
-                    e.target.style.transform = 'scale(1.05)'
-                  }}
-                  onMouseLeave={(e) => {
-                    if (selectedFeedbackId !== data.id) {
-                      e.target.style.backgroundColor = '#2B56D1'
-                    } else {
-                      e.target.style.backgroundColor = '#1E3A8A'
-                    }
-                    e.target.style.transform = 'scale(1)'
-                  }}
+              <li key={i} className="feedback-item-wrapper">
+                <div 
+                  className={`feedback-item ${expandedId === data.id ? 'expanded' : ''}`}
+                  onClick={() => handleFeedbackClick(data)}
                 >
-                  {data.section}
-                </span>
+                  <div className="feedback-summary">
+                    <span className="feedback-time-marker">
+                      {data.section || '시간 미지정'}
+                    </span>
+                    <span className="feedback-preview">
+                      {data.text?.substring(0, 50) || data.contents?.substring(0, 50) || '내용 없음'}
+                      {(data.text?.length > 50 || data.contents?.length > 50) && '...'}
+                    </span>
+                    <svg 
+                      className="expand-icon"
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </div>
+                </div>
+                {expandedId === data.id && (
+                  <div className="feedback-detail">
+                    <div className="detail-header">
+                      <div className="author-info">
+                        <span className="author-name">{data.nickname || data.email || '익명'}</span>
+                        <span className="created-date">{moment(data.created).format('YYYY.MM.DD HH:mm')}</span>
+                      </div>
+                      <div className={`feedback-type ${data.security ? 'private' : 'public'}`}>
+                        {data.security ? '비공개' : '공개'}
+                      </div>
+                    </div>
+                    <div className="detail-content">
+                      <p>{data.text || data.contents || '내용 없음'}</p>
+                    </div>
+                    {data.title && (
+                      <div className="detail-title">
+                        <strong>제목:</strong> {data.title}
+                      </div>
+                    )}
+                  </div>
+                )}
               </li>
             ))}
           </ul>

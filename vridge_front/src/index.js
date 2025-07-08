@@ -6,6 +6,9 @@ import { BrowserRouter } from 'react-router-dom'
 import store from 'redux/store'
 import './config/axios' // axios 설정 초기화
 
+// 빌드 버전 표시
+console.log('VideoPlanet Build Version: 2025.01.08.01')
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   // <React.StrictMode>

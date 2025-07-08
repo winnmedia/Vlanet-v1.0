@@ -37,6 +37,10 @@
         {
           "key": "Cache-Control",
           "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-Build-Version",
+          "value": "2025.01.08.01"
         }
       ]
     },

@@ -3,6 +3,7 @@ from . import views
 from . import views_debug
 from . import views_jwt_test
 from . import views_proxy
+from . import views_proposal
 
 app_name = 'video_planning'
 
@@ -47,4 +48,11 @@ urlpatterns = [
     path('export/pdf/', views.export_to_pdf, name='export_to_pdf'),
     path('export/google-slides/', views.export_to_google_slides, name='export_to_google_slides'),
     path('export/formats/', views.get_export_formats, name='get_export_formats'),
+    
+    # 기획안 내보내기 API (새로운 AI 기반)
+    path('proposals/export/', views_proposal.export_proposal, name='export_proposal'),
+    path('proposals/preview/', views_proposal.preview_structure, name='preview_structure'),
+    path('proposals/create-slides/', views_proposal.create_slides_from_structure, name='create_slides_from_structure'),
+    path('proposals/templates/', views_proposal.get_available_templates, name='get_available_templates'),
+    path('proposals/status/', views_proposal.get_service_status, name='get_service_status'),
 ]

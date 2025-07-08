@@ -44,8 +44,11 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
           refetch()
         })
         .catch((err) => {
+          console.error('Feedback creation error:', err)
           if (err.response && err.response.data) {
             window.alert(err.response.data.message)
+          } else {
+            window.alert('피드백 등록 중 오류가 발생했습니다.')
           }
         })
     } else {

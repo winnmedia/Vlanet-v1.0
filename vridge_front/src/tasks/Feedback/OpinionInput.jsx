@@ -59,7 +59,28 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
       window.alert('코멘트가 등록되었습니다.')
     } catch (error) {
       console.error('코멘트 등록 실패:', error)
-      window.alert('코멘트 등록에 실패했습니다. 다시 시도해주세요.')
+      let errorMessage = '코멘트 등록에 실패했습니다. 다시 시도해주세요.'
+      
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message
+      } else if (error.response && error.response.status) {
+        switch (error.response.status) {
+          case 401:
+            errorMessage = '로그인이 필요합니다.'
+            break
+          case 403:
+            errorMessage = '권한이 없습니다.'
+            break
+          case 404:
+            errorMessage = '프로젝트를 찾을 수 없습니다.'
+            break
+          case 500:
+            errorMessage = '서버 오류가 발생했습니다.'
+            break
+        }
+      }
+      
+      window.alert(errorMessage)
     } finally {
       setSubmitting(false)
     }

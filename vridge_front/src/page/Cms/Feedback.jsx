@@ -260,6 +260,14 @@ export default function Feedback() {
   const lastMessageIdRef = useRef(null)
 
   const [items, setItems] = useState([])
+  
+  // WebSocket 관련 상태 및 설정
+  const ws = useRef(null)
+  const reconnectTimeoutRef = useRef(null)
+  const [connectionAttempts, setConnectionAttempts] = useState(0)
+  const maxReconnectAttempts = 5
+  const baseReconnectDelay = 1000
+  const webSocketUrl = process.env.REACT_APP_WS_URL ? `${process.env.REACT_APP_WS_URL}/ws/feedback/${project_id}/` : null
 
   useEffect(() => {
     if (current_project && user) {
@@ -988,14 +996,28 @@ export default function Feedback() {
                           alignItems: 'center',
                           gap: '8px',
                           padding: '12px 24px',
-                          background: 'white',
-                          color: '#6c757d',
-                          border: '1px solid #dee2e6',
-                          borderRadius: '10px',
+                          background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                          color: '#1631F8',
+                          border: '2px solid #1631F8',
+                          borderRadius: '12px',
                           fontSize: '14px',
-                          fontWeight: '500',
+                          fontWeight: '600',
                           cursor: 'pointer',
-                          zIndex: 1
+                          zIndex: 1,
+                          transition: 'all 0.3s ease',
+                          boxShadow: '0 4px 12px rgba(22, 49, 248, 0.15)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)'
+                          e.currentTarget.style.color = 'white'
+                          e.currentTarget.style.transform = 'translateY(-2px)'
+                          e.currentTarget.style.boxShadow = '0 8px 24px rgba(22, 49, 248, 0.3)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'
+                          e.currentTarget.style.color = '#1631F8'
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.15)'
                         }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1068,93 +1090,168 @@ export default function Feedback() {
                     >
                       피드백 전체 보기
                     </button>
-                    {IsAdmin(current_project) && current_project.files && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <button
-                          onClick={DeleteFile}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '8px 14px',
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            fontWeight: '500',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          <span>영상 삭제</span>
-                        </button>
-                        <div style={{ position: 'relative' }}>
-                          <input
-                            type="file"
-                            accept="video/*"
-                            onChange={FileChange}
-                            name="files"
-                            id="video-change-input"
-                            style={{
-                              position: 'absolute',
-                              width: '1px',
-                              height: '1px',
-                              padding: '0',
-                              margin: '-1px',
-                              overflow: 'hidden',
-                              clip: 'rect(0, 0, 0, 0)',
-                              whiteSpace: 'nowrap',
-                              borderWidth: '0'
-                            }}
-                          />
-                          <label 
-                            htmlFor="video-change-input" 
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {IsAdmin(current_project) && current_project.files && (
+                        <>
+                          <button
+                            onClick={DeleteFile}
                             style={{
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '6px',
-                              padding: '8px 14px',
-                              backgroundColor: '#007bff',
+                              padding: '10px 16px',
+                              background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
                               color: 'white',
                               border: 'none',
-                              borderRadius: '6px',
+                              borderRadius: '8px',
                               fontSize: '13px',
-                              fontWeight: '500',
-                              cursor: 'pointer'
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              boxShadow: '0 4px 12px rgba(220, 53, 69, 0.25)'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-2px)'
+                              e.currentTarget.style.boxShadow = '0 6px 20px rgba(220, 53, 69, 0.4)'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)'
+                              e.currentTarget.style.boxShadow = '0 4px 12px rgba(220, 53, 69, 0.25)'
                             }}
                           >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9.5M13.5 3L19 9M13.5 3V9H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M9 17V11L12 14L15 11V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
-                            <span>영상 교체</span>
-                          </label>
-                        </div>
-                      </div>
-                    )}
-
-                    <div
-                      onClick={() => CopyFileUrl(current_project.files)}
-                      className="share"
-                    >
-                      공유
+                            <span>영상 삭제</span>
+                          </button>
+                          <div style={{ position: 'relative' }}>
+                            <input
+                              type="file"
+                              accept="video/*"
+                              onChange={FileChange}
+                              name="files"
+                              id="video-change-input"
+                              style={{
+                                position: 'absolute',
+                                width: '1px',
+                                height: '1px',
+                                padding: '0',
+                                margin: '-1px',
+                                overflow: 'hidden',
+                                clip: 'rect(0, 0, 0, 0)',
+                                whiteSpace: 'nowrap',
+                                borderWidth: '0'
+                              }}
+                            />
+                            <label 
+                              htmlFor="video-change-input" 
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '10px 16px',
+                                background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-2px)'
+                                e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)'
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)'
+                              }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9.5M13.5 3L19 9M13.5 3V9H19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M9 17V11L12 14L15 11V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              <span>영상 교체</span>
+                            </label>
+                          </div>
+                        </>
+                      )}
+                      
+                      {current_project.files && (
+                        <button
+                          onClick={() => CopyFileUrl(current_project.files)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '10px 16px',
+                            background: 'linear-gradient(135deg, #6c757d 0%, #5a6268 100%)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 4px 12px rgba(108, 117, 125, 0.25)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)'
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(108, 117, 125, 0.4)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)'
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 117, 125, 0.25)'
+                          }}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span>공유</span>
+                        </button>
+                      )}
                     </div>
+
                     
                     {/* 비디오 분석 버튼 */}
-                    <div
-                      onClick={() => handleVideoAnalysis()}
-                      className="analyze-video"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                        <path d="M11 8v6M8 11h6"/>
-                      </svg>
-                      AI 분석
-                    </div>
+                    {current_project.files && (
+                      <button
+                        onClick={() => handleVideoAnalysis()}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '10px 16px',
+                          background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          boxShadow: '0 4px 12px rgba(40, 167, 69, 0.25)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)'
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(40, 167, 69, 0.4)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(40, 167, 69, 0.25)'
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <circle cx="11" cy="11" r="8"/>
+                          <path d="m21 21-4.35-4.35"/>
+                          <path d="M11 8v6M8 11h6"/>
+                        </svg>
+                        <span>AI 분석</span>
+                      </button>
+                    )}
                   </div>
                   {/* 선택된 피드백 내용 표시 - 피드백 전체 보기 버튼 바로 아래 */}
                   {selectedFeedback && (
@@ -1362,18 +1459,25 @@ export default function Feedback() {
                           style={{
                             width: '100%',
                             marginTop: '10px',
-                            padding: '8px',
-                            background: '#0058da',
+                            padding: '10px 16px',
+                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '6px',
+                            borderRadius: '8px',
                             fontSize: '14px',
-                            fontWeight: '500',
+                            fontWeight: '600',
                             cursor: 'pointer',
-                            transition: 'background 0.3s ease'
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
                           }}
-                          onMouseOver={(e) => e.target.style.background = '#0047b8'}
-                          onMouseOut={(e) => e.target.style.background = '#0058da'}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-1px)'
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)'
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)'
+                          }}
                           onClick={() => navigate(`/ProjectEdit/${project_id}`)}
                         >
                           프로젝트 관리

@@ -1015,13 +1015,10 @@
       }
 
       .story-stage-badge {
-        position: absolute;
-        top: 0;
-        right: 0;
         background: #2c5aa0;
         color: white;
         padding: 8px 16px;
-        border-bottom-left-radius: 12px;
+        border-radius: 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1125,6 +1122,100 @@
           p {
             margin: 0;
             line-height: 1.5;
+          }
+        }
+      }
+
+      .story-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        
+        .edit-story-btn {
+          background: #4318FF;
+          color: white;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          
+          &:hover {
+            background: #3311dd;
+            transform: translateY(-1px);
+          }
+          
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .edit-story-form {
+        .edit-story-textarea {
+          width: 100%;
+          min-height: 120px;
+          padding: 12px 16px;
+          border: 2px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 14px;
+          line-height: 1.6;
+          resize: vertical;
+          transition: all 0.2s ease;
+          
+          &:focus {
+            outline: none;
+            border-color: #4318FF;
+            box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1);
+          }
+          
+          &::placeholder {
+            color: #999;
+          }
+        }
+        
+        .edit-story-buttons {
+          display: flex;
+          gap: 12px;
+          margin-top: 12px;
+          
+          .save-story-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              background: #45a049;
+            }
+          }
+          
+          .cancel-story-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              background: #da190b;
+            }
           }
         }
       }
@@ -1245,18 +1336,87 @@
           gap: 8px;
 
           &:hover {
-            border-color: #4a90e2;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           }
 
-          &.active {
-            border-color: #012fff;
-            background: #f0f7ff;
+          // 그대로 버튼 - 회색 계열
+          &:nth-child(1) {
+            border-color: #9e9e9e;
             
-            .level-name {
-              color: #012fff;
-              font-weight: 600;
+            &:hover {
+              border-color: #757575;
+              background: #f5f5f5;
+            }
+            
+            &.active {
+              border-color: #9e9e9e;
+              background: #f5f5f5;
+              
+              .level-name {
+                color: #616161;
+                font-weight: 600;
+              }
+            }
+          }
+
+          // 가벼움 버튼 - 파란색 계열
+          &:nth-child(2) {
+            border-color: #42a5f5;
+            
+            &:hover {
+              border-color: #1e88e5;
+              background: #e3f2fd;
+            }
+            
+            &.active {
+              border-color: #42a5f5;
+              background: #e3f2fd;
+              
+              .level-name {
+                color: #1565c0;
+                font-weight: 600;
+              }
+            }
+          }
+
+          // 균형 버튼 - 보라색 계열 (기본 브랜드 컬러)
+          &:nth-child(3) {
+            border-color: #4318FF;
+            
+            &:hover {
+              border-color: #3311dd;
+              background: #f0f4ff;
+            }
+            
+            &.active {
+              border-color: #4318FF;
+              background: #f0f4ff;
+              
+              .level-name {
+                color: #4318FF;
+                font-weight: 600;
+              }
+            }
+          }
+
+          // 상세 버튼 - 주황색 계열
+          &:nth-child(4) {
+            border-color: #ff8a50;
+            
+            &:hover {
+              border-color: #ff6f00;
+              background: #fff3e0;
+            }
+            
+            &.active {
+              border-color: #ff8a50;
+              background: #fff3e0;
+              
+              .level-name {
+                color: #e65100;
+                font-weight: 600;
+              }
             }
           }
 
@@ -2291,15 +2451,18 @@
           background: #f0f4ff;
           color: #1631F8;
           border: none;
-          padding: 6px 12px;
-          border-radius: 6px;
-          font-size: 13px;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease;
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 2px;
+          width: 60px;
+          height: 24px;
+          justify-content: center;
 
           &:hover {
             background: #e0ebff;
@@ -2340,23 +2503,26 @@
           background: #1631F8;
           color: white;
           border: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          font-size: 14px;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 12px;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease;
           display: inline-flex;
           align-items: center;
-          gap: 8px;
+          gap: 4px;
+          width: 80px;
+          height: 28px;
+          justify-content: center;
 
           &:hover {
             background: #0F23C9;
-            transform: translateX(4px);
+            transform: translateX(2px);
           }
 
           &:active {
-            transform: translateX(2px);
+            transform: translateX(1px);
           }
         }
 

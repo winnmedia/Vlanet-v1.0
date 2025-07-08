@@ -174,9 +174,6 @@ export function project_initial(current_project) {
       description: current_project.description,
       manager: current_project.manager,
       consumer: current_project.consumer,
-      tone_manner: current_project.tone_manner || '',
-      genre: current_project.genre || '',
-      concept: current_project.concept || '',
     }
   } else {
     return {
@@ -184,9 +181,6 @@ export function project_initial(current_project) {
       description: '',
       manager: '',
       consumer: '',
-      tone_manner: '',
-      genre: '',
-      concept: '',
     }
   }
 }

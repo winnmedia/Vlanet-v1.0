@@ -193,7 +193,7 @@ export default function MyPage() {
           const imageUrl = response.data.profile_image_url
           let fullImageUrl
           if (imageUrl.startsWith('/')) {
-            fullImageUrl = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${imageUrl}`
+            fullImageUrl = `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
           }
@@ -201,7 +201,10 @@ export default function MyPage() {
           // Redux store에 프로필 이미지 저장
           dispatch(updateProjectStore({ profileImage: fullImageUrl }))
         }
-        fetchMyPageData()
+        // 마이페이지 데이터 새로고침을 지연시켜 이미지 업로드가 완전히 반영되도록 함
+        setTimeout(() => {
+          fetchMyPageData()
+        }, 500)
       }
     } catch (error) {
       console.error('Image upload error:', error)

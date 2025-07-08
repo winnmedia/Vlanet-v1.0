@@ -105,7 +105,7 @@ class MyPageView(View):
             
             memos_data = [{
                 "id": memo.id,
-                "content": memo.content[:100] + "..." if len(memo.content) > 100 else memo.content,
+                "content": memo.memo[:100] + "..." if len(memo.memo) > 100 else memo.memo,
                 "created": memo.created.strftime("%Y-%m-%d %H:%M")
             } for memo in recent_memos]
             

@@ -2140,20 +2140,20 @@
     margin-top: 30px;
 
     button {
-      min-width: 140px;
-      height: 48px;
+      width: 120px;
+      height: 44px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
 
     .back-btn {
-      padding: 14px 32px;
+      padding: 12px 20px;
       background: white;
       color: #666;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -2165,12 +2165,12 @@
     }
 
     .generate-btn {
-      padding: 14px 32px;
+      padding: 12px 20px;
       background: #012fff;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -2188,12 +2188,12 @@
     }
 
     .new-btn {
-      padding: 14px 32px;
+      padding: 12px 20px;
       background: #28a745;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;

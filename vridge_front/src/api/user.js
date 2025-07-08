@@ -53,7 +53,7 @@ export function deleteProfileImage() {
 // 프로필 정보 업데이트
 export function updateProfile(data) {
   return axiosCredentials(
-    'post',
+    'patch',
     `/api/users/profile/update/`,
     data
   )

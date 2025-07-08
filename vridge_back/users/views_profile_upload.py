@@ -176,6 +176,15 @@ class ProfileUpdate(View):
     @user_validator
     def post(self, request):
         """프로필 정보 업데이트"""
+        return self._update_profile(request)
+    
+    @user_validator
+    def patch(self, request):
+        """프로필 정보 업데이트 (PATCH 메서드 지원)"""
+        return self._update_profile(request)
+    
+    def _update_profile(self, request):
+        """프로필 업데이트 공통 로직"""
         try:
             user = request.user
             data = json.loads(request.body)
@@ -184,29 +193,37 @@ class ProfileUpdate(View):
             updatable_fields = ['nickname', 'bio', 'phone', 'company', 'position']
             updated_fields = []
             
+            # UserProfile 가져오기 또는 생성 (먼저 생성)
+            try:
+                profile = user.profile
+            except:
+                from . import models
+                profile = models.UserProfile.objects.create(user=user)
+            
             for field in updatable_fields:
                 if field in data:
                     value = data[field].strip() if isinstance(data[field], str) else data[field]
                     
                     # 필드별 검증
                     if field == 'nickname':
-                        if len(value) < 2:
+                        if value and len(value) < 2:
                             return JsonResponse({
                                 "message": "닉네임은 최소 2자 이상이어야 합니다."
                             }, status=400)
                         
                         # 닉네임 중복 확인
-                        from . import models
-                        existing_user = models.User.objects.filter(
-                            nickname=value
-                        ).exclude(id=user.id).first()
-                        
-                        if existing_user:
-                            return JsonResponse({
-                                "message": "이미 사용 중인 닉네임입니다."
-                            }, status=409)
+                        if value:
+                            from . import models
+                            existing_user = models.User.objects.filter(
+                                nickname=value
+                            ).exclude(id=user.id).first()
+                            
+                            if existing_user:
+                                return JsonResponse({
+                                    "message": "이미 사용 중인 닉네임입니다."
+                                }, status=409)
                     
-                    elif field == 'bio' and len(value) > 500:
+                    elif field == 'bio' and value and len(value) > 500:
                         return JsonResponse({
                             "message": "자기소개는 500자를 초과할 수 없습니다."
                         }, status=400)
@@ -218,13 +235,6 @@ class ProfileUpdate(View):
                             return JsonResponse({
                                 "message": "올바른 전화번호 형식이 아닙니다."
                             }, status=400)
-                    
-                    # UserProfile 가져오기 또는 생성
-                    try:
-                        profile = user.profile
-                    except:
-                        from . import models
-                        profile = models.UserProfile.objects.create(user=user)
                     
                     # 닉네임은 User 모델에, 나머지는 UserProfile에 저장
                     if field == 'nickname':
@@ -243,11 +253,11 @@ class ProfileUpdate(View):
                 profile_data = {
                     "email": user.username,
                     "nickname": user.nickname,
-                    "bio": profile.bio,
-                    "phone": profile.phone,
-                    "company": profile.company,
-                    "position": profile.position,
-                    "profile_image": profile.profile_image.url if profile.profile_image else None,
+                    "bio": profile.bio if hasattr(profile, 'bio') else '',
+                    "phone": profile.phone if hasattr(profile, 'phone') else '',
+                    "company": profile.company if hasattr(profile, 'company') else '',
+                    "position": profile.position if hasattr(profile, 'position') else '',
+                    "profile_image": profile.profile_image.url if hasattr(profile, 'profile_image') and profile.profile_image else None,
                 }
                 
                 return JsonResponse({

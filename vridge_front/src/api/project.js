@@ -20,9 +20,18 @@ export function GetProject(project_id) {
 
 // 원자적 프로젝트 생성 (개선된 멱등성 키)
 export function CreateProjectAPI(data) {
-  // 더 안전한 멱등성 키 생성 (사용자 데이터 기반)
+  // 더 안전한 멱등성 키 생성 (사용자 데이터 기반) - 한글 지원
   const userKey = `${data.name}_${data.manager}_${Date.now()}`
-  const idempotencyKey = btoa(userKey).replace(/[/+=]/g, '').substring(0, 32)
+  
+  // UTF-8 문자열을 안전하게 Base64로 인코딩하는 함수
+  const b64EncodeUnicode = (str) => {
+    return btoa(
+      encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+        (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    )
+  }
+  
+  const idempotencyKey = b64EncodeUnicode(userKey).replace(/[/+=]/g, '').substring(0, 32)
   
   console.log('[API] Atomic CreateProject called:', data.name)
   console.log('[API] Idempotency key:', idempotencyKey)

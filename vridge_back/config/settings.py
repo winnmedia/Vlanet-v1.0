@@ -17,6 +17,9 @@ GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', '')
 HUGGINGFACE_API_KEY = os.environ.get('HUGGINGFACE_API_KEY', '')
 TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY', '')
 
+# Google Service Account
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', '')
+
 # JWT Settings (for authentication)
 JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS256')
 

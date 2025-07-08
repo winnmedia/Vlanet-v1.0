@@ -10,6 +10,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 import requests
 from PIL import Image as PILImage
 from io import BytesIO
@@ -28,28 +29,12 @@ class PDFExportService:
     def setup_fonts(self):
         """한글 폰트 설정"""
         try:
-            # 시스템 폰트 경로 확인
-            font_paths = [
-                '/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
-                '/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf',
-                '/System/Library/Fonts/Supplemental/AppleGothic.ttf',
-                'C:\\Windows\\Fonts\\malgun.ttf',
-                '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
-            ]
-            
-            font_registered = False
-            for font_path in font_paths:
-                if os.path.exists(font_path):
-                    try:
-                        pdfmetrics.registerFont(TTFont('NanumGothic', font_path))
-                        font_registered = True
-                        logger.info(f"폰트 등록 성공: {font_path}")
-                        break
-                    except:
-                        continue
-            
-            if not font_registered:
-                logger.warning("한글 폰트를 찾을 수 없습니다. 기본 폰트를 사용합니다.")
+            # CID 폰트 등록 (한글 지원)
+            pdfmetrics.registerFont(UnicodeCIDFont('HeiseiMin-W3'))
+            pdfmetrics.registerFont(UnicodeCIDFont('HeiseiKakuGo-W5'))
+            pdfmetrics.registerFont(UnicodeCIDFont('HYSMyeongJo-Medium'))
+            pdfmetrics.registerFont(UnicodeCIDFont('HYGothic-Medium'))
+            logger.info("CID 폰트 등록 완료")
                 
         except Exception as e:
             logger.error(f"폰트 설정 오류: {str(e)}")
@@ -58,12 +43,8 @@ class PDFExportService:
         """PDF 스타일 설정"""
         styles = getSampleStyleSheet()
         
-        # 한글 폰트가 등록되었는지 확인
-        try:
-            pdfmetrics.getFont('NanumGothic')
-            font_name = 'NanumGothic'
-        except:
-            font_name = 'Helvetica'
+        # CID 폰트 사용 (한글 지원)
+        font_name = 'HYGothic-Medium'
         
         # 커스텀 스타일 추가
         styles.add(ParagraphStyle(
@@ -175,7 +156,7 @@ class PDFExportService:
         
         info_table = Table(info_data, colWidths=[4*cm, 10*cm])
         info_table.setStyle(TableStyle([
-            ('FONT', (0, 0), (-1, -1), 'NanumGothic' if 'NanumGothic' in pdfmetrics.getRegisteredFontNames() else 'Helvetica'),
+            ('FONT', (0, 0), (-1, -1), 'HYGothic-Medium'),
             ('FONTSIZE', (0, 0), (-1, -1), 12),
             ('TEXTCOLOR', (0, 0), (0, -1), HexColor('#2c3e50')),
             ('ALIGN', (0, 0), (0, -1), 'RIGHT'),

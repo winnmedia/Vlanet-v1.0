@@ -25,7 +25,14 @@ class GoogleSlidesService:
             # 서비스 계정 인증 정보 로드
             credentials_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
             if not credentials_path:
-                logger.error("GOOGLE_APPLICATION_CREDENTIALS 환경변수가 설정되지 않았습니다.")
+                logger.warning("GOOGLE_APPLICATION_CREDENTIALS 환경변수가 설정되지 않았습니다.")
+                # 개발 환경에서의 임시 처리
+                logger.info("Google Slides 서비스가 비활성화됩니다.")
+                return
+            
+            # 파일 존재 여부 확인
+            if not os.path.exists(credentials_path):
+                logger.error(f"서비스 계정 키 파일을 찾을 수 없습니다: {credentials_path}")
                 return
             
             self.credentials = service_account.Credentials.from_service_account_file(
@@ -38,14 +45,18 @@ class GoogleSlidesService:
             
             self.service = build('slides', 'v1', credentials=self.credentials)
             self.drive_service = build('drive', 'v3', credentials=self.credentials)
+            logger.info("Google Slides 서비스가 성공적으로 초기화되었습니다.")
             
         except Exception as e:
-            logger.error(f"Google API 서비스 초기화 실패: {str(e)}")
+            logger.error(f"Google API 서비스 초기화 실패: {str(e)}", exc_info=True)
     
     def create_presentation(self, title, planning_data):
         """비디오 기획안을 기반으로 Google Slides 프레젠테이션 생성"""
         if not self.service:
-            return {'error': 'Google Slides 서비스가 초기화되지 않았습니다.'}
+            error_msg = 'Google Slides 서비스가 초기화되지 않았습니다. '
+            error_msg += 'Railway 환경에서 GOOGLE_APPLICATION_CREDENTIALS 환경변수와 서비스 계정 키 파일을 설정해주세요.'
+            logger.error(error_msg)
+            return {'error': error_msg}
         
         try:
             # 1. 새 프레젠테이션 생성

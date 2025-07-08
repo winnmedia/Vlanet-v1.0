@@ -363,6 +363,116 @@ def generate_storyboards(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+def generate_all_storyboards(request):
+    """
+    모든 씬에 대해 스토리보드를 한번에 생성합니다.
+    """
+    try:
+        scenes = request.data.get('scenes', [])
+        style = request.data.get('style', 'minimal')
+        
+        if not scenes:
+            return Response({
+                'status': 'error',
+                'message': '씬 데이터가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        logger.info("=" * 50)
+        logger.info(f"🎨 모든 스토리보드 생성 시작 ({len(scenes)}개 씬)")
+        logger.info(f"  - 스타일: {style}")
+        
+        # 이미지 생성 서비스 초기화
+        if not IMAGE_SERVICE_AVAILABLE:
+            return Response({
+                'status': 'error',
+                'message': '이미지 생성 서비스가 설치되지 않았습니다.'
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        try:
+            dalle_service = DalleService()
+            if not dalle_service.available:
+                return Response({
+                    'status': 'error',
+                    'message': 'DALL-E 서비스를 사용할 수 없습니다. OPENAI_API_KEY를 확인해주세요.'
+                }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': '이미지 생성 서비스 초기화 실패'
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        # 결과를 저장할 리스트
+        storyboards = []
+        success_count = 0
+        error_count = 0
+        
+        # 각 씬에 대해 스토리보드 생성
+        for i, scene in enumerate(scenes):
+            try:
+                # 씬에서 가상의 샷 데이터 생성 (씬 정보 기반)
+                shot_data = {
+                    'shot_number': 1,
+                    'shot_type': "와이드샷",
+                    'description': scene.get('action') or scene.get('description', ''),
+                    'camera_angle': "아이레벨",
+                    'camera_movement': "고정",
+                    'duration': "5초",
+                    'scene_info': scene
+                }
+                
+                # 각 요청마다 새로운 GeminiService 인스턴스 생성
+                gemini_service = GeminiService()
+                gemini_service.style = style  # 스타일 설정
+                storyboard_data = gemini_service.generate_storyboards_from_shot(shot_data)
+                
+                if 'error' in storyboard_data:
+                    logger.error(f"씬 {i+1} 스토리보드 생성 실패: {storyboard_data['error']}")
+                    storyboards.append({
+                        'scene_index': i,
+                        'error': storyboard_data['error'],
+                        'storyboard': None
+                    })
+                    error_count += 1
+                else:
+                    # 생성된 스토리보드를 리스트에 추가
+                    storyboard_result = storyboard_data.get('storyboards', [{}])[0] if storyboard_data.get('storyboards') else {}
+                    storyboards.append({
+                        'scene_index': i,
+                        'error': None,
+                        'storyboard': storyboard_result
+                    })
+                    success_count += 1
+                    logger.info(f"씬 {i+1} 스토리보드 생성 성공")
+                
+            except Exception as e:
+                logger.error(f"씬 {i+1} 처리 중 오류: {str(e)}")
+                storyboards.append({
+                    'scene_index': i,
+                    'error': str(e),
+                    'storyboard': None
+                })
+                error_count += 1
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'storyboards': storyboards,
+                'total': len(scenes),
+                'success_count': success_count,
+                'error_count': error_count
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error in generate_all_storyboards: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'모든 콘티 생성 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def regenerate_storyboard_image(request):
     """
     스토리보드 이미지를 재생성합니다.
@@ -763,6 +873,7 @@ def export_to_google_slides(request):
         result = slides_service.create_presentation(title, planning_data)
         
         if 'error' in result:
+            logger.error(f"Google Slides 생성 실패: {result['error']}")
             return Response({
                 'status': 'error',
                 'message': result['error']

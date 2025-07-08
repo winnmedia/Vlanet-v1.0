@@ -177,118 +177,6 @@
     }
   }
   
-  .debug-panel {
-    margin-top: 24px;
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    
-    .debug-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      
-      h4 {
-        color: #333;
-        margin: 0;
-        font-size: 16px;
-      }
-      
-      .test-btn {
-        background: #4318FF;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        
-        &:hover {
-          background: #3311CC;
-        }
-        
-        &:disabled {
-          background: #ccc;
-          cursor: not-allowed;
-        }
-      }
-    }
-    
-    .debug-content {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    .debug-section {
-      background: white;
-      padding: 16px;
-      border-radius: 6px;
-      border: 1px solid #e0e0e0;
-      
-      h5 {
-        margin: 0 0 12px 0;
-        color: #333;
-        font-size: 14px;
-        font-weight: 600;
-      }
-      
-      .debug-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 8px;
-        font-size: 13px;
-        
-        &:last-child {
-          margin-bottom: 0;
-        }
-        
-        span:first-child {
-          color: #666;
-          font-weight: 500;
-          min-width: 120px;
-        }
-        
-        .status-ok {
-          color: #22c55e;
-          font-weight: 500;
-        }
-        
-        .status-error {
-          color: #ef4444;
-          font-weight: 500;
-        }
-        
-        .debug-prompt {
-          color: #4318FF;
-          font-family: monospace;
-          font-size: 12px;
-          background: #f0f0f0;
-          padding: 4px 8px;
-          border-radius: 4px;
-          max-width: 300px;
-          word-break: break-word;
-        }
-      }
-    }
-  }
-  
-  .debug-btn {
-    background: #666;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    
-    &:hover {
-      background: #555;
-    }
-  }
 
   .planning-header {
     text-align: center;
@@ -2141,9 +2029,9 @@
 
     button {
       width: auto;
-      min-width: 140px;
-      padding: 0 24px;
-      height: 44px;
+      min-width: 180px;
+      padding: 0 32px;
+      height: 48px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -2151,36 +2039,37 @@
     }
 
     .back-btn {
-      padding: 12px 20px;
+      padding: 14px 32px;
       background: white;
-      color: #666;
-      border: 2px solid #e0e0e0;
+      color: #4318FF;
+      border: 2px solid #4318FF;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
 
       &:hover {
-        border-color: #012fff;
-        color: #012fff;
+        background: #4318FF;
+        color: white;
+        transform: translateY(-1px);
       }
     }
 
     .generate-btn {
-      padding: 12px 20px;
-      background: #012fff;
+      padding: 14px 32px;
+      background: #4318FF;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       margin-top: 0;
 
       &:hover:not(:disabled) {
-        background: #0047b8;
+        background: #3311CC;
         transform: translateY(-1px);
       }
 
@@ -2191,43 +2080,39 @@
     }
 
     .new-btn {
-      padding: 12px 20px;
-      background: #28a745;
+      padding: 14px 32px;
+      background: #00BFA5;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
 
       &:hover {
-        background: #218838;
+        background: #00A693;
         transform: translateY(-1px);
       }
     }
     
     .export-btn {
-      padding: 12px 20px;
-      background: #17a2b8;
+      padding: 14px 32px;
+      background: #FF6B6B;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 0;
       
       &:hover {
-        background: #138496;
+        background: #FF5252;
         transform: translateY(-1px);
-      }
-      
-      i {
-        font-size: 14px;
       }
     }
   }

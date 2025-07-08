@@ -154,7 +154,38 @@
 .video-action-buttons {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  
+  // 영상 삭제 버튼 (빨강색)
+  .video_delete_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+    
+    &:hover {
+      background: #c82333;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
   
   .change_btn_wrap {
     position: relative;
@@ -171,29 +202,30 @@
       border-width: 0;
     }
     
+    // 영상 교체 버튼 (파랑색)
     .video_change_btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      background: #dc3545;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #007bff;
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
       
       svg {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
       }
       
       &:hover {
-        background: #c82333;
+        background: #0056b3;
         transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
       }
       
       &:active {
@@ -205,20 +237,28 @@
 
 // 공유 버튼 스타일 개선
 .share {
-  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
   background: #6c757d;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-left: 8px;
   
   &:hover {
     background: #5a6268;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 }
 

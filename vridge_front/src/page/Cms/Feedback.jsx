@@ -1015,6 +1015,15 @@ export default function Feedback() {
                     </button>
                     {IsAdmin(current_project) && current_project.files && (
                       <div className="video-action-buttons">
+                        <button
+                          onClick={DeleteFile}
+                          className="video_delete_btn"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span>영상 삭제</span>
+                        </button>
                         <div className="change_btn_wrap">
                           <input
                             type="file"

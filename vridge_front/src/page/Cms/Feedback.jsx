@@ -918,7 +918,6 @@ export default function Feedback() {
                     />
                   )}
                   {IsAdmin(current_project) && !current_project.files && (
-                    // <button className="submit">영상 추가</button>
                     <div className="upload_area">
                       <div className="upload_btn_wrap">
                         <input
@@ -926,17 +925,26 @@ export default function Feedback() {
                           accept="video/*"
                           onChange={FileChange}
                           className="video_upload"
-                          id="files"
+                          id="video-upload-input"
                           name="files"
                         />
-                        <label htmlFor="files" className="video_upload_label">
-                          <div>영상 추가</div>
+                        <label htmlFor="video-upload-input" className="video_upload_label">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <span>영상 업로드</span>
+                          <small>또는 파일을 여기로 드래그하세요</small>
                         </label>
                       </div>
                       <button 
                         className="guide_btn"
                         onClick={() => setShowUploadGuide(true)}
                       >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                          <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
                         업로드 가이드
                       </button>
                     </div>

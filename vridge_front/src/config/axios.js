@@ -55,7 +55,7 @@ axios.defaults.withCredentials = true;
 axios.defaults.timeout = 60000; // 30초에서 60초로 증가
 
 // CORS를 위한 기본 헤더 설정
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+// Content-Type은 요청에 따라 자동 설정되도록 비워둠
 axios.defaults.headers.common['Accept'] = 'application/json';
 
 
@@ -143,7 +143,6 @@ const axiosInstance = axios.create({
   withCredentials: true,
   timeout: 60000, // 30초에서 60초로 증가
   headers: {
-    'Content-Type': 'application/json',
     'Accept': 'application/json'
   }
 });

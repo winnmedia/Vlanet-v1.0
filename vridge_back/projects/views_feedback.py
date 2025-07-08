@@ -221,6 +221,15 @@ class ProjectFeedbackComments(View):
 class ProjectFeedbackUpload(View):
     """프로젝트 피드백 파일 업로드"""
     
+    def options(self, request, *args, **kwargs):
+        """OPTIONS 요청 처리 (CORS preflight)"""
+        response = JsonResponse({})
+        response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response
+    
     @user_validator
     def post(self, request, project_id):
         try:

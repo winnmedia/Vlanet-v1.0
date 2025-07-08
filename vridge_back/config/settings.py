@@ -147,6 +147,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://vlanet.net",
     "https://www.vlanet.net",
     "https://videoplanet.up.railway.app",
+    "https://vridge-back-production.up.railway.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -162,6 +163,16 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'x-idempotency-key',
+]
+
+# Allow all methods including OPTIONS for preflight
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
 ]
 
 # CSRF Settings

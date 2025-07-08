@@ -21,6 +21,7 @@ import 'css/Cms/FeedbackPopup.scss'
 import 'css/Cms/OpinionInput.scss'
 import 'css/Cms/AITeacherModal.scss'
 import 'css/Cms/AIAnalyzeButton.scss'
+import 'css/Cms/VideoUploadButton.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'

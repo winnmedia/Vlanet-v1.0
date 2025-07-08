@@ -52,11 +52,7 @@
     }
     
     .video_upload_label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
+      display: inline-block;
       padding: 24px 48px;
       background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
       color: white;
@@ -95,6 +91,14 @@
       &:active {
         transform: translateY(-1px);
         box-shadow: 0 4px 16px rgba(22, 49, 248, 0.3);
+      }
+      
+      div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
       }
       
       svg {

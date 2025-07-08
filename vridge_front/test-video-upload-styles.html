@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Upload Button Style Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        /* Current structure in JSX */
+        .current-structure .video_upload_label {
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .current-structure .video_upload_label span,
+        .current-structure .video_upload_label small {
+            display: block;
+        }
+        
+        /* Expected structure by CSS */
+        .expected-structure .video_upload_label {
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .expected-structure .video_upload_label div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 24px 48px;
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            color: white;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(22, 49, 248, 0.3);
+        }
+        
+        .expected-structure .video_upload_label div:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(22, 49, 248, 0.4);
+        }
+        
+        /* Video change button */
+        .video_change_btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .video_change_btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        }
+        
+        input[type="file"] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Upload Button Style Test</h1>
+    
+    <div class="test-section current-structure">
+        <h2>1. Current JSX Structure (Not matching CSS)</h2>
+        <input type="file" id="upload1" />
+        <label for="upload1" class="video_upload_label">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>영상 업로드</span>
+            <small>또는 파일을 여기로 드래그하세요</small>
+        </label>
+    </div>
+    
+    <div class="test-section expected-structure">
+        <h2>2. Expected Structure (Matching VideoUploadButton.scss)</h2>
+        <input type="file" id="upload2" />
+        <label for="upload2" class="video_upload_label">
+            <div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>영상 업로드</span>
+                <small style="font-size: 13px; opacity: 0.9;">또는 파일을 여기로 드래그하세요</small>
+            </div>
+        </label>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Video Replace Button</h2>
+        <input type="file" id="replace" />
+        <label for="replace" class="video_change_btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9.5M13.5 3L19 9M13.5 3V9H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 17V11L12 14L15 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>영상 교체</span>
+        </label>
+    </div>
+    
+    <div class="test-section">
+        <h2>Diagnosis</h2>
+        <p><strong>Issue:</strong> The VideoUploadButton.scss styles target <code>.video_upload_label div</code>, but the JSX structure has <code>span</code> and <code>small</code> elements directly inside the label, not wrapped in a div.</p>
+        <p><strong>Solution:</strong> Either:</p>
+        <ol>
+            <li>Update the JSX to wrap the content in a div (recommended)</li>
+            <li>Update the SCSS to target the actual structure</li>
+        </ol>
+    </div>
+</body>
+</html>

@@ -41,10 +41,11 @@ export function FeedbackFile(data, projectId, onUploadProgress) {
   const token = localStorage.getItem('VGID')?.replace(/"/g, '');
   
   console.log('File upload token:', token);
+  console.log('Axios base URL:', axios.defaults.baseURL);
   
   const config = {
     method: 'post',
-    url: `${process.env.REACT_APP_BACKEND_API_URL}/api/projects/${projectId}/feedback/upload/`,
+    url: `/api/projects/${projectId}/feedback/upload/`,  // baseURL을 사용하도록 상대 경로로 변경
     data: data,
     headers: {
       'Authorization': token ? `Bearer ${token}` : '',
@@ -56,6 +57,7 @@ export function FeedbackFile(data, projectId, onUploadProgress) {
   };
   
   console.log('Upload config:', config);
+  console.log('Full upload URL:', axios.defaults.baseURL + config.url);
   
   return axios(config);
 }

@@ -41,4 +41,9 @@ urlpatterns = [
     # 라이브러리 API (프론트엔드에서 사용하는 경로)
     path('library/', views.planning_library_view, name='planning_library'),
     path('library/<int:planning_id>/', views.get_planning_detail, name='get_planning_detail_library'),
+    
+    # 내보내기 API
+    path('export/pdf/', views.export_to_pdf, name='export_to_pdf'),
+    path('export/google-slides/', views.export_to_google_slides, name='export_to_google_slides'),
+    path('export/formats/', views.get_export_formats, name='get_export_formats'),
 ]

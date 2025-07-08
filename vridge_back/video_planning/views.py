@@ -22,6 +22,10 @@ except ImportError:
 import requests
 from urllib.parse import urlparse
 import os
+import json
+from django.http import FileResponse
+from .pdf_export_service import PDFExportService
+from .google_slides_service import GoogleSlidesService
 
 logger = logging.getLogger(__name__)
 
@@ -690,3 +694,135 @@ def planning_library_view(request):
         }, status=status.HTTP_200_OK)
     elif request.method == 'POST':
         return save_planning(request)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def export_to_pdf(request):
+    """비디오 기획안을 PDF로 내보내기"""
+    try:
+        planning_data = request.data.get('planning_data', {})
+        export_type = request.data.get('export_type', 'full')  # 'full' or 'storyboard_only'
+        
+        if not planning_data:
+            return Response({
+                'status': 'error',
+                'message': '기획 데이터가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # PDF 생성 서비스
+        pdf_service = PDFExportService()
+        
+        # PDF 생성
+        if export_type == 'storyboard_only':
+            pdf_buffer = pdf_service.generate_storyboard_only_pdf(planning_data)
+        else:
+            pdf_buffer = pdf_service.generate_pdf(planning_data)
+        
+        # 파일명 생성
+        title = planning_data.get('title', '영상기획안')
+        safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        filename = f"{safe_title}_{'스토리보드' if export_type == 'storyboard_only' else '기획안'}.pdf"
+        
+        # 파일 응답 반환
+        response = FileResponse(
+            pdf_buffer,
+            content_type='application/pdf',
+            as_attachment=True,
+            filename=filename
+        )
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error in export_to_pdf: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'PDF 내보내기 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def export_to_google_slides(request):
+    """비디오 기획안을 Google Slides로 내보내기"""
+    try:
+        planning_data = request.data.get('planning_data', {})
+        
+        if not planning_data:
+            return Response({
+                'status': 'error',
+                'message': '기획 데이터가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Google Slides 서비스
+        slides_service = GoogleSlidesService()
+        
+        # 프레젠테이션 생성
+        title = planning_data.get('title', '영상 기획안')
+        result = slides_service.create_presentation(title, planning_data)
+        
+        if 'error' in result:
+            return Response({
+                'status': 'error',
+                'message': result['error']
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'presentation_id': result['presentation_id'],
+                'url': result['url']
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error in export_to_google_slides: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'Google Slides 내보내기 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_export_formats(request):
+    """사용 가능한 내보내기 형식 조회"""
+    try:
+        formats = [
+            {
+                'id': 'pdf_full',
+                'name': 'PDF - 전체 기획안',
+                'description': '모든 내용이 포함된 상세 기획안',
+                'icon': 'file-pdf',
+                'available': True
+            },
+            {
+                'id': 'pdf_storyboard',
+                'name': 'PDF - 스토리보드',
+                'description': '스토리보드 이미지 중심의 간략한 문서',
+                'icon': 'file-image',
+                'available': True
+            },
+            {
+                'id': 'google_slides',
+                'name': 'Google Slides',
+                'description': '프레젠테이션 형식으로 공유 가능',
+                'icon': 'file-presentation',
+                'available': bool(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
+            }
+        ]
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'formats': formats
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error in get_export_formats: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '내보내기 형식 조회 중 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

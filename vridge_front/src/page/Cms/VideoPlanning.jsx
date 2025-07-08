@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import LoadingAnimation from 'components/LoadingAnimation'
+import ExportModal from 'components/ExportModal'
 import 'css/Cms/CmsCommon.scss'
 import './VideoPlanning.scss'
 import axios from 'config/axios'
@@ -86,6 +87,7 @@ export default function VideoPlanning() {
   const [editingStoryboardText, setEditingStoryboardText] = useState('')
   const [expandedStoryIndex, setExpandedStoryIndex] = useState(null)
   const [showPlanningDetail, setShowPlanningDetail] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
 
   useEffect(() => {
     const session = checkSession()
@@ -1597,6 +1599,9 @@ export default function VideoPlanning() {
               <button className="back-btn" onClick={() => goToStep(2)}>
                 스토리 다시 선택
               </button>
+              <button className="export-btn" onClick={() => setShowExportModal(true)}>
+                📥 내보내기
+              </button>
               <button className="new-btn" onClick={resetPlanning}>
                 새로운 기획 시작
               </button>
@@ -2070,6 +2075,17 @@ export default function VideoPlanning() {
           </div>
         </main>
       </div>
+      
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        planningData={{
+          ...planningData,
+          planningTitle,
+          planningOptions
+        }}
+      />
     </PageTemplate>
   )
 }

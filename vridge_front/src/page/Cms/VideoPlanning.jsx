@@ -1804,10 +1804,43 @@ export default function VideoPlanning() {
               <div className="step-preview-section">
                 {/* 기획안 미리보기 */}
                 {planningData.planning && (
-                  <div className={`step-preview ${currentStep === 1 ? 'active' : ''}`}>
-                    <h4>기획안</h4>
+                  <div className={`step-preview ${currentStep === 1 ? 'active' : ''} ${showPlanningDetail ? 'expanded' : ''}`}>
+                    <div className="preview-header">
+                      <h4>기획안</h4>
+                      <button 
+                        className="toggle-detail-btn"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setShowPlanningDetail(!showPlanningDetail)
+                        }}
+                      >
+                        {showPlanningDetail ? '▲ 접기' : '▼ 펼치기'}
+                      </button>
+                    </div>
                     <div className="preview-content">
-                      <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
+                      {showPlanningDetail ? (
+                        <div className="full-content">
+                          <p style={{ whiteSpace: 'pre-wrap' }}>{planningData.planning}</p>
+                          {planningOptions && (
+                            <div className="planning-options-display">
+                              <h5>설정된 옵션:</h5>
+                              <div className="options-grid">
+                                {planningOptions.tone && <span className="option-tag">톤: {planningOptions.tone === 'custom' ? planningOptions.toneCustom : planningOptions.tone}</span>}
+                                {planningOptions.genre && <span className="option-tag">장르: {planningOptions.genre === 'custom' ? planningOptions.genreCustom : planningOptions.genre}</span>}
+                                {planningOptions.concept && <span className="option-tag">콘셉트: {planningOptions.concept === 'custom' ? planningOptions.conceptCustom : planningOptions.concept}</span>}
+                                {planningOptions.target && <span className="option-tag">타겟: {planningOptions.target === 'custom' ? planningOptions.targetCustom : planningOptions.target}</span>}
+                                {planningOptions.purpose && <span className="option-tag">목적: {planningOptions.purpose === 'custom' ? planningOptions.purposeCustom : planningOptions.purpose}</span>}
+                                {planningOptions.duration && <span className="option-tag">길이: {planningOptions.duration === 'custom' ? planningOptions.durationCustom : planningOptions.duration}</span>}
+                                {planningOptions.storyFramework && <span className="option-tag">스토리: {planningOptions.storyFramework}</span>}
+                                {planningOptions.developmentLevel && <span className="option-tag">전개: {planningOptions.developmentLevel}</span>}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
+                      )}
                       {currentStep !== 1 && (
                         <button 
                           className="view-detail-btn" 
@@ -1826,22 +1859,57 @@ export default function VideoPlanning() {
                 
                 {/* 스토리 미리보기 */}
                 {planningData.stories.length > 0 && (
-                  <div className={`step-preview ${currentStep === 2 ? 'active' : ''}`}>
-                    <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
+                  <div className={`step-preview ${currentStep === 2 ? 'active' : ''} ${expandedStoryIndex !== null ? 'expanded' : ''}`}>
+                    <div className="preview-header">
+                      <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
+                      <button 
+                        className="toggle-detail-btn"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setExpandedStoryIndex(expandedStoryIndex !== null ? null : 0)
+                        }}
+                      >
+                        {expandedStoryIndex !== null ? '▲ 접기' : '▼ 펼치기'}
+                      </button>
+                    </div>
                     <div className="preview-content">
-                      {selectedStoryIndex !== null && 
-                       selectedStoryIndex >= 0 && selectedStoryIndex < planningData.stories.length && 
-                       planningData.stories[selectedStoryIndex] ? (
-                        <>
-                          <h5>{planningData.stories[selectedStoryIndex].title}</h5>
-                          <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
-                          <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
-                        </>
+                      {expandedStoryIndex !== null ? (
+                        <div className="full-content">
+                          {planningData.stories.map((story, index) => (
+                            <div key={index} className="story-preview-full">
+                              <h5>{story.stage}. {story.title}</h5>
+                              <p className="story-stage-name">{story.stage_name}</p>
+                              <p className="story-summary">{story.summary}</p>
+                              {story.detailed_content && (
+                                <div className="story-detail">
+                                  <h6>상세 내용:</h6>
+                                  <p>{story.detailed_content}</p>
+                                </div>
+                              )}
+                              {story.characters && story.characters.length > 0 && (
+                                <p className="story-characters">등장인물: {story.characters.join(', ')}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       ) : (
                         <>
-                          <h5>{planningData.stories[0]?.title || '스토리 1'}</h5>
-                          <p className="story-stage">{planningData.stories[0]?.stage} - {planningData.stories[0]?.stage_name}</p>
-                          <p>{planningData.stories[0]?.summary?.substring(0, 100)}...</p>
+                          {selectedStoryIndex !== null && 
+                           selectedStoryIndex >= 0 && selectedStoryIndex < planningData.stories.length && 
+                           planningData.stories[selectedStoryIndex] ? (
+                            <>
+                              <h5>{planningData.stories[selectedStoryIndex].title}</h5>
+                              <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
+                              <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
+                            </>
+                          ) : (
+                            <>
+                              <h5>{planningData.stories[0]?.title || '스토리 1'}</h5>
+                              <p className="story-stage">{planningData.stories[0]?.stage} - {planningData.stories[0]?.stage_name}</p>
+                              <p>{planningData.stories[0]?.summary?.substring(0, 100)}...</p>
+                            </>
+                          )}
                         </>
                       )}
                       {currentStep !== 2 && (
@@ -1862,20 +1930,65 @@ export default function VideoPlanning() {
                 
                 {/* 씬 미리보기 */}
                 {planningData.scenes.length > 0 && (
-                  <div className={`step-preview ${currentStep === 3 ? 'active' : ''}`}>
-                    <h4>🎬 씬 & 콘티 ({planningData.scenes.length}개)</h4>
-                    <div className="preview-content scenes-preview">
-                      {planningData.scenes.slice(0, 3).map((scene, index) => (
-                        <div key={index} className="scene-preview-item">
-                          <span className="scene-number">씬 {index + 1}</span>
-                          <span className="scene-location">{scene.location}</span>
-                          {scene.storyboard?.image_url && (
-                            <span className="has-storyboard">✓ 콘티</span>
+                  <div className={`step-preview ${currentStep === 3 ? 'active' : ''} ${selectedSceneIndex !== null ? 'expanded' : ''}`}>
+                    <div className="preview-header">
+                      <h4>🎬 씬 & 콘티 ({planningData.scenes.length}개)</h4>
+                      <button 
+                        className="toggle-detail-btn"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setSelectedSceneIndex(selectedSceneIndex !== null ? null : 0)
+                        }}
+                      >
+                        {selectedSceneIndex !== null ? '▲ 접기' : '▼ 펼치기'}
+                      </button>
+                    </div>
+                    <div className="preview-content">
+                      {selectedSceneIndex !== null ? (
+                        <div className="full-content scenes-full">
+                          {planningData.scenes.map((scene, index) => (
+                            <div key={index} className="scene-preview-full">
+                              <div className="scene-header-full">
+                                <h5>씬 {index + 1}: {scene.location}</h5>
+                                <span className="scene-time">{scene.time || scene.time_of_day}</span>
+                                {scene.story_stage && (
+                                  <span className="scene-stage-tag">{scene.story_stage}</span>
+                                )}
+                              </div>
+                              <p className="scene-description">{scene.description || scene.action}</p>
+                              {scene.dialogue && <p className="scene-dialogue"><strong>대사:</strong> {scene.dialogue}</p>}
+                              {scene.purpose && <p className="scene-purpose"><strong>목적:</strong> {scene.purpose}</p>}
+                              {scene.characters && scene.characters.length > 0 && (
+                                <p className="scene-characters"><strong>등장인물:</strong> {scene.characters.join(', ')}</p>
+                              )}
+                              {scene.storyboard?.image_url && (
+                                <div className="scene-storyboard-preview">
+                                  <img 
+                                    src={getProxyImageUrl(scene.storyboard.image_url)} 
+                                    alt={`씬 ${index + 1} 콘티`}
+                                    onError={(e) => handleImageError(e, scene.storyboard.image_url)}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="scenes-preview">
+                          {planningData.scenes.slice(0, 3).map((scene, index) => (
+                            <div key={index} className="scene-preview-item">
+                              <span className="scene-number">씬 {index + 1}</span>
+                              <span className="scene-location">{scene.location}</span>
+                              {scene.storyboard?.image_url && (
+                                <span className="has-storyboard">✓ 콘티</span>
+                              )}
+                            </div>
+                          ))}
+                          {planningData.scenes.length > 3 && (
+                            <div className="more-scenes">+{planningData.scenes.length - 3}개 더...</div>
                           )}
                         </div>
-                      ))}
-                      {planningData.scenes.length > 3 && (
-                        <div className="more-scenes">+{planningData.scenes.length - 3}개 더...</div>
                       )}
                       {currentStep !== 3 && (
                         <button 

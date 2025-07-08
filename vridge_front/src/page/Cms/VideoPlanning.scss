@@ -2340,21 +2340,61 @@
         box-shadow: 0 4px 16px rgba(22, 49, 248, 0.1);
       }
 
-      h4 {
-        font-size: 18px;
-        font-weight: 600;
-        color: #1a1a1a;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      &.expanded {
+        .preview-content {
+          max-height: none;
+          
+          .full-content {
+            animation: fadeIn 0.3s ease;
+          }
+        }
+      }
 
-        &::before {
-          content: '';
-          width: 6px;
-          height: 6px;
-          background: #1631F8;
-          border-radius: 50%;
+      .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+
+        h4 {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          &::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #1631F8;
+            border-radius: 50%;
+          }
+        }
+
+        .toggle-detail-btn {
+          background: #f0f4ff;
+          color: #1631F8;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+
+          &:hover {
+            background: #e0ebff;
+          }
+
+          &:active {
+            transform: scale(0.95);
+          }
         }
       }
 
@@ -2453,7 +2493,184 @@
             font-style: italic;
           }
         }
+
+        // 전체 내용 표시 스타일
+        .full-content {
+          .planning-options-display {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+
+            h5 {
+              font-size: 14px;
+              font-weight: 600;
+              color: #333;
+              margin-bottom: 12px;
+            }
+
+            .options-grid {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+
+              .option-tag {
+                background: #e0ebff;
+                color: #1631F8;
+                padding: 4px 10px;
+                border-radius: 16px;
+                font-size: 12px;
+                font-weight: 500;
+              }
+            }
+          }
+
+          .story-preview-full {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 16px;
+
+            h5 {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1a1a1a;
+              margin-bottom: 8px;
+            }
+
+            .story-stage-name {
+              font-size: 13px;
+              color: #1631F8;
+              background: #f0f4ff;
+              padding: 4px 10px;
+              border-radius: 4px;
+              display: inline-block;
+              margin-bottom: 12px;
+            }
+
+            .story-summary {
+              font-size: 14px;
+              color: #333;
+              line-height: 1.6;
+              margin-bottom: 12px;
+            }
+
+            .story-detail {
+              margin-top: 16px;
+              padding: 12px;
+              background: white;
+              border-radius: 6px;
+              border-left: 3px solid #1631F8;
+
+              h6 {
+                font-size: 13px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+              }
+
+              p {
+                font-size: 13px;
+                color: #666;
+                line-height: 1.5;
+              }
+            }
+
+            .story-characters {
+              font-size: 13px;
+              color: #666;
+              margin-top: 8px;
+            }
+          }
+
+          &.scenes-full {
+            .scene-preview-full {
+              padding: 20px;
+              background: #f8f9fa;
+              border-radius: 8px;
+              margin-bottom: 16px;
+
+              .scene-header-full {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 12px;
+
+                h5 {
+                  font-size: 16px;
+                  font-weight: 600;
+                  color: #1a1a1a;
+                  margin: 0;
+                }
+
+                .scene-time {
+                  font-size: 13px;
+                  color: #666;
+                  background: white;
+                  padding: 4px 8px;
+                  border-radius: 4px;
+                }
+
+                .scene-stage-tag {
+                  font-size: 12px;
+                  color: #1631F8;
+                  background: #f0f4ff;
+                  padding: 4px 8px;
+                  border-radius: 4px;
+                  font-weight: 500;
+                }
+              }
+
+              .scene-description {
+                font-size: 14px;
+                color: #333;
+                line-height: 1.6;
+                margin-bottom: 12px;
+              }
+
+              .scene-dialogue,
+              .scene-purpose,
+              .scene-characters {
+                font-size: 13px;
+                color: #666;
+                margin-bottom: 8px;
+
+                strong {
+                  color: #333;
+                  font-weight: 600;
+                }
+              }
+
+              .scene-storyboard-preview {
+                margin-top: 16px;
+                padding: 12px;
+                background: white;
+                border-radius: 8px;
+                text-align: center;
+
+                img {
+                  max-width: 100%;
+                  max-height: 300px;
+                  border-radius: 6px;
+                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+              }
+            }
+          }
+        }
       }
+    }
+  }
+
+  // 애니메이션 정의
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 

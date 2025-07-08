@@ -2140,11 +2140,14 @@
     margin-top: 30px;
 
     button {
-      width: 120px;
+      width: auto;
+      min-width: 140px;
+      padding: 0 24px;
       height: 44px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      white-space: nowrap;
     }
 
     .back-btn {

@@ -918,30 +918,85 @@ export default function Feedback() {
                     />
                   )}
                   {IsAdmin(current_project) && !current_project.files && (
-                    <div className="upload_area">
-                      <div className="upload_btn_wrap">
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '20px',
+                      padding: '60px 40px',
+                      background: 'linear-gradient(135deg, #f8f9fa 0%, #f0f4ff 100%)',
+                      borderRadius: '20px',
+                      border: '2px dashed #c8d4ff',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{ position: 'relative', zIndex: 1 }}>
                         <input
                           type="file"
                           accept="video/*"
                           onChange={FileChange}
-                          className="video_upload"
                           id="video-upload-input"
                           name="files"
+                          style={{
+                            position: 'absolute',
+                            width: '1px',
+                            height: '1px',
+                            padding: '0',
+                            margin: '-1px',
+                            overflow: 'hidden',
+                            clip: 'rect(0, 0, 0, 0)',
+                            whiteSpace: 'nowrap',
+                            borderWidth: '0'
+                          }}
                         />
-                        <label htmlFor="video-upload-input" className="video_upload_label">
-                          <div>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <label 
+                          htmlFor="video-upload-input" 
+                          style={{
+                            display: 'inline-block',
+                            padding: '24px 48px',
+                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                            color: 'white',
+                            borderRadius: '16px',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            boxShadow: '0 8px 24px rgba(22, 49, 248, 0.3)',
+                            position: 'relative',
+                            overflow: 'hidden'
+                          }}
+                        >
+                          <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '12px'
+                          }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
                             </svg>
-                            <span>영상 업로드</span>
-                            <small>또는 파일을 여기로 드래그하세요</small>
+                            <span style={{ fontSize: '18px', fontWeight: '600' }}>영상 업로드</span>
+                            <small style={{ fontSize: '13px', fontWeight: '400', opacity: '0.9' }}>또는 파일을 여기로 드래그하세요</small>
                           </div>
                         </label>
                       </div>
                       <button 
-                        className="guide_btn"
                         onClick={() => setShowUploadGuide(true)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '12px 24px',
+                          background: 'white',
+                          color: '#6c757d',
+                          border: '1px solid #dee2e6',
+                          borderRadius: '10px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          zIndex: 1
+                        }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -1014,26 +1069,63 @@ export default function Feedback() {
                       피드백 전체 보기
                     </button>
                     {IsAdmin(current_project) && current_project.files && (
-                      <div className="video-action-buttons">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <button
                           onClick={DeleteFile}
-                          className="video_delete_btn"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '8px 14px',
+                            backgroundColor: '#dc3545',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            cursor: 'pointer'
+                          }}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                           <span>영상 삭제</span>
                         </button>
-                        <div className="change_btn_wrap">
+                        <div style={{ position: 'relative' }}>
                           <input
                             type="file"
                             accept="video/*"
                             onChange={FileChange}
                             name="files"
-                            className="video_upload"
                             id="video-change-input"
+                            style={{
+                              position: 'absolute',
+                              width: '1px',
+                              height: '1px',
+                              padding: '0',
+                              margin: '-1px',
+                              overflow: 'hidden',
+                              clip: 'rect(0, 0, 0, 0)',
+                              whiteSpace: 'nowrap',
+                              borderWidth: '0'
+                            }}
                           />
-                          <label htmlFor="video-change-input" className="video_change_btn">
+                          <label 
+                            htmlFor="video-change-input" 
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '8px 14px',
+                              backgroundColor: '#007bff',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              fontSize: '13px',
+                              fontWeight: '500',
+                              cursor: 'pointer'
+                            }}
+                          >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9.5M13.5 3L19 9M13.5 3V9H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                               <path d="M9 17V11L12 14L15 11V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

@@ -1197,9 +1197,10 @@
       }
       
       .expand-toggle-btn {
-        width: 100%;
+        width: auto;
+        display: inline-block;
         margin-top: 16px;
-        padding: 10px 16px;
+        padding: 10px 24px;
         background: #4a90e2;
         color: white;
         border: none;

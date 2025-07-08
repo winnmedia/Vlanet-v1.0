@@ -1012,30 +1012,23 @@ export default function Feedback() {
                       피드백 전체 보기
                     </button>
                     {IsAdmin(current_project) && current_project.files && (
-                      // <button className="change">
-                      //   <img src={change} />
-                      // </button>
-                      <div className="good">
+                      <div className="video-action-buttons">
                         <div className="change_btn_wrap">
                           <input
                             type="file"
-                            // accept=".avi,.mov,.mp4,.mxf"
                             accept="video/*"
                             onChange={FileChange}
                             name="files"
                             className="video_upload"
-                            id="files"
+                            id="video-change-input"
                           />
-                          <label htmlFor="files" className="video_upload_label">
-                            <div>교체</div>
+                          <label htmlFor="video-change-input" className="video_change_btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M13.5 3H12H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9.5M13.5 3L19 9M13.5 3V9H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M9 17V11L12 14L15 11V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span>영상 교체</span>
                           </label>
-                        </div>
-                        <div className="change_btn_wrap">
-                          <div className="video_upload_label">
-                            <div onClick={DeleteFile} className="delete">
-                              삭제
-                            </div>
-                          </div>
                         </div>
                       </div>
                     )}

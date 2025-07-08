@@ -255,10 +255,18 @@ class ProjectFeedbackUpload(View):
                 project.feedback.files = request.FILES['files']
                 project.feedback.save()
                 
+                # 파일 URL 생성
+                file_path = project.feedback.files.name
+                if settings.DEBUG:
+                    file_url = f"http://127.0.0.1:8000/media/{file_path}"
+                else:
+                    file_url = f"https://videoplanet.up.railway.app/media/{file_path}"
+                
                 return JsonResponse({
                     "status": "success",
                     "message": "파일이 업로드되었습니다.",
-                    "file_name": project.feedback.files.name
+                    "file_name": project.feedback.files.name,
+                    "file_url": file_url
                 })
             else:
                 return JsonResponse({"error": "파일이 없습니다."}, status=400)

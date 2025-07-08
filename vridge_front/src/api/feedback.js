@@ -72,9 +72,9 @@ export function DeleteFeedbackFile(id) {
 }
 
 // 비디오 인코딩 상태 확인
-export function GetEncodingStatus(id) {
+export function GetEncodingStatus(projectId) {
   return axiosCredentials(
     'get',
-    `/api/feedbacks/encoding-status/${id}`,
+    `/api/projects/${projectId}/feedback/encoding-status/`,
   )
 }

@@ -92,8 +92,11 @@ export default function VideoPlanning() {
     if (!session) {
       navigate('/Login', { replace: true })
     } else {
-      fetchPlanningHistory()
-      fetchRecentPlannings()
+      // 로그인 후 약간의 지연을 두고 API 호출
+      setTimeout(() => {
+        fetchPlanningHistory()
+        fetchRecentPlannings()
+      }, 100)
     }
   }, [navigate])
 
@@ -110,20 +113,36 @@ export default function VideoPlanning() {
     }
   }
 
-  const fetchRecentPlannings = async () => {
+  const fetchRecentPlannings = async (retryCount = 0) => {
     try {
+      console.log('최근 기획 로드 시작...')
       const response = await axios.get(`/api/video-planning/recent/`)
+      console.log('최근 기획 응답:', response.data)
       if (response.data.status === 'success') {
         setRecentPlannings(response.data.data.planning_logs || [])
+        console.log(`최근 기획 ${response.data.data.planning_logs?.length || 0}개 로드 성공`)
       }
     } catch (err) {
-      console.error('최근 기획 로드 실패:', err)
-      // 에러가 발생해도 빈 배열로 설정하여 UI가 깨지지 않도록 함
-      setRecentPlannings([])
+      console.error(`최근 기획 로드 실패 (${retryCount + 1}회차):`, err)
       
-      // 500 에러인 경우 구체적인 메시지 표시
-      if (err.response?.status === 500) {
-        console.error('서버 내부 오류:', err.response.data?.message)
+      // 401 에러인 경우 재시도
+      if (err.response?.status === 401 && retryCount < 2) {
+        console.log('인증 토큰이 아직 준비되지 않았을 수 있음. 재시도...')
+        setTimeout(() => {
+          fetchRecentPlannings(retryCount + 1)
+        }, 1000) // 1초 후 재시도
+      } else {
+        // 에러가 발생해도 빈 배열로 설정하여 UI가 깨지지 않도록 함
+        setRecentPlannings([])
+        
+        if (err.response?.status === 401) {
+          console.error('인증 오류: 로그인이 필요합니다')
+          // 로그인 페이지로 리다이렉트는 axios 인터셉터에서 처리됨
+        } else if (err.response?.status === 500) {
+          console.error('서버 내부 오류:', err.response.data?.message)
+        } else {
+          console.error('알 수 없는 오류:', err.message)
+        }
       }
     }
   }
@@ -335,7 +354,10 @@ export default function VideoPlanning() {
       const selectedScene = planningData.scenes[selectedSceneIndex]
       const response = await axios.post(
         `/api/video-planning/generate/shots/`,
-        { scene_data: selectedScene }
+        { 
+          scene_data: selectedScene,
+          planning_options: planningOptions
+        }
       )
 
       if (response.data.status === 'success') {
@@ -362,7 +384,10 @@ export default function VideoPlanning() {
       const selectedShot = planningData.shots[selectedShotIndex]
       const response = await axios.post(
         `/api/video-planning/generate/storyboards/`,
-        { shot_data: selectedShot }
+        { 
+          shot_data: selectedShot,
+          planning_options: planningOptions
+        }
       )
 
       if (response.data.status === 'success') {
@@ -1102,6 +1127,41 @@ export default function VideoPlanning() {
               </div>
             </div>
             
+            {/* 스토리 전개 강도 - 전개 방식 위로 이동 */}
+            <div className="development-level">
+              <label>스토리 전개 강도</label>
+              <div className="level-buttons">
+                <button
+                  className={`level-btn ${planningOptions.developmentLevel === 'minimal' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal' }))}
+                >
+                  <span className="level-name">그대로</span>
+                  <span className="level-desc">원본 그대로 유지</span>
+                </button>
+                <button
+                  className={`level-btn ${planningOptions.developmentLevel === 'light' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light' }))}
+                >
+                  <span className="level-name">가벼움</span>
+                  <span className="level-desc">적당한 설명</span>
+                </button>
+                <button
+                  className={`level-btn ${planningOptions.developmentLevel === 'balanced' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced' }))}
+                >
+                  <span className="level-name">균형</span>
+                  <span className="level-desc">균형잡힌 전개</span>
+                </button>
+                <button
+                  className={`level-btn ${planningOptions.developmentLevel === 'detailed' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed' }))}
+                >
+                  <span className="level-name">상세</span>
+                  <span className="level-desc">풍부한 묘사</span>
+                </button>
+              </div>
+            </div>
+            
             {/* 스토리 프레임워크 선택 */}
             <div className="story-framework-section">
               <h4>스토리 전개 방식</h4>
@@ -1115,63 +1175,28 @@ export default function VideoPlanning() {
                   <span className="framework-stages">기 → 승 → 전 → 결</span>
                 </div>
                 <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'hero' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hero' }))}
+                  className={`framework-card ${planningOptions.storyFramework === 'pixar' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'pixar' }))}
                 >
-                  <h5>히어로의 여정</h5>
-                  <p>주인공의 성장과 변화를 중심으로 한 감동적인 스토리</p>
-                  <span className="framework-stages">평범한 세계 → 모험의 소명 → 시련 → 보상</span>
+                  <h5>픽사 스토리텔링</h5>
+                  <p>Once upon a time... 공식으로 만드는 매력적인 이야기</p>
+                  <span className="framework-stages">옛날에 → 매일 → 어느날 → 그래서 → 결국</span>
                 </div>
                 <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'problem' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'problem' }))}
+                  className={`framework-card ${planningOptions.storyFramework === 'save_the_cat' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' }))}
                 >
-                  <h5>문제-해결 구조</h5>
-                  <p>명확한 문제 제시와 해결책을 통한 실용적 접근</p>
-                  <span className="framework-stages">문제 인식 → 원인 분석 → 해결책 제시 → 결과</span>
+                  <h5>Save the Cat</h5>
+                  <p>할리우드식 3막 구조로 관객을 사로잡는 스토리</p>
+                  <span className="framework-stages">오프닝 이미지 → 테마 제시 → 촉매제 → 논쟁 → 2막 전환</span>
                 </div>
                 <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'emotional' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'emotional' }))}
+                  className={`framework-card ${planningOptions.storyFramework === 'star_moment' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' }))}
                 >
-                  <h5>감정 곡선</h5>
-                  <p>감정의 기복을 활용한 몰입도 높은 스토리텔링</p>
-                  <span className="framework-stages">평온 → 긴장 → 절정 → 해소</span>
-                </div>
-              </div>
-              
-              {/* 디벨롭 레벨 선택 */}
-              <div className="development-level">
-                <label>스토리 전개 강도</label>
-                <div className="level-buttons">
-                  <button
-                    className={`level-btn ${planningOptions.developmentLevel === 'minimal' ? 'active' : ''}`}
-                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal' }))}
-                  >
-                    <span className="level-name">간결</span>
-                    <span className="level-desc">핵심만 간단히</span>
-                  </button>
-                  <button
-                    className={`level-btn ${planningOptions.developmentLevel === 'light' ? 'active' : ''}`}
-                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light' }))}
-                  >
-                    <span className="level-name">가벼움</span>
-                    <span className="level-desc">적당한 설명</span>
-                  </button>
-                  <button
-                    className={`level-btn ${planningOptions.developmentLevel === 'balanced' ? 'active' : ''}`}
-                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced' }))}
-                  >
-                    <span className="level-name">균형</span>
-                    <span className="level-desc">균형잡힌 전개</span>
-                  </button>
-                  <button
-                    className={`level-btn ${planningOptions.developmentLevel === 'detailed' ? 'active' : ''}`}
-                    onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed' }))}
-                  >
-                    <span className="level-name">상세</span>
-                    <span className="level-desc">풍부한 묘사</span>
-                  </button>
+                  <h5>스타 모멘트</h5>
+                  <p>하나의 강렬한 순간을 중심으로 전후를 구성하는 임팩트 스토리</p>
+                  <span className="framework-stages">빌드업 → 결정적 순간 → 반전/깨달음 → 새로운 시작</span>
                 </div>
               </div>
               

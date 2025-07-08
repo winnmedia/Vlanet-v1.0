@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])  # 임시로 AllowAny로 변경
+@permission_classes([IsAuthenticated])
 def get_recent_plannings(request):
     """
     사용자의 최근 비디오 기획 로그를 가져옵니다.
@@ -37,45 +37,44 @@ def get_recent_plannings(request):
     logger.info(f"[get_recent_plannings] Auth Header: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
     
     try:
-        # 인증된 사용자인 경우에만 필터링
-        if request.user.is_authenticated:
-            # 최근 5개의 기획 로그 가져오기
-            recent_plannings = VideoPlanning.objects.filter(
-                user=request.user
-            ).order_by('-created_at')[:5]
-        else:
-            # 인증되지 않은 경우 빈 쿼리셋
-            recent_plannings = VideoPlanning.objects.none()
+        # 인증된 사용자의 최근 5개 기획 로그 가져오기
+        recent_plannings = VideoPlanning.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:5]
         
         # 응답 데이터 구성
         planning_logs = []
         for planning in recent_plannings:
-            # planning_options 가져오기
-            planning_options = {}
-            if planning.selected_story and isinstance(planning.selected_story, dict):
-                planning_options = planning.selected_story.get('planning_options', {})
-            
-            planning_logs.append({
-                'id': planning.id,
-                'title': planning.title,
-                'created_at': planning.created_at.strftime('%Y-%m-%d %H:%M'),
-                'planning_options': {
-                    'tone': planning_options.get('tone', ''),
-                    'genre': planning_options.get('genre', ''),
-                    'concept': planning_options.get('concept', ''),
-                    'target': planning_options.get('target', ''),
-                    'purpose': planning_options.get('purpose', ''),
-                    'duration': planning_options.get('duration', '')
-                },
-                'current_step': planning.current_step,
-                'is_completed': planning.is_completed
-            })
+            try:
+                # planning_options 가져오기
+                planning_options = {}
+                if planning.selected_story and isinstance(planning.selected_story, dict):
+                    planning_options = planning.selected_story.get('planning_options', {})
+                
+                planning_logs.append({
+                    'id': planning.id,
+                    'title': planning.title or '제목 없음',
+                    'created_at': planning.created_at.strftime('%Y-%m-%d %H:%M') if planning.created_at else '',
+                    'planning_options': {
+                        'tone': planning_options.get('tone', ''),
+                        'genre': planning_options.get('genre', ''),
+                        'concept': planning_options.get('concept', ''),
+                        'target': planning_options.get('target', ''),
+                        'purpose': planning_options.get('purpose', ''),
+                        'duration': planning_options.get('duration', '')
+                    },
+                    'current_step': planning.current_step or 1,
+                    'is_completed': planning.is_completed or False
+                })
+            except Exception as item_error:
+                logger.warning(f"Error processing planning item {planning.id}: {str(item_error)}")
+                continue
         
         return Response({
             'status': 'success',
             'data': {
                 'planning_logs': planning_logs,
-                'total_count': VideoPlanning.objects.filter(user=request.user).count() if request.user.is_authenticated else 0
+                'total_count': VideoPlanning.objects.filter(user=request.user).count()
             }
         }, status=status.HTTP_200_OK)
         

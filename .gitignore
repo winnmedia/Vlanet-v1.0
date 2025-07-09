@@ -124,7 +124,7 @@ vridge_back/static/
 vridge_back/staticfiles/
 
 # Temporary deployment files
-simple_server.py
+# simple_server.py는 현재 배포에 필요하므로 제외하지 않음
 start-server.sh
 start_simple.sh
 start_emergency.sh

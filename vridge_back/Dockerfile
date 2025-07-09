@@ -23,6 +23,7 @@ EXPOSE 8000
 
 # 환경변수 설정
 ENV DJANGO_SETTINGS_MODULE=config.settings_minimal
+ENV PYTHONPATH=/app
 
 # 실행
 CMD ["sh", "-c", "python manage.py migrate --noinput || true && gunicorn config.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2 --access-logfile - --error-logfile -"]

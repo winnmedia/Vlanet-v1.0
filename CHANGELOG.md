@@ -2,6 +2,28 @@
 
 모든 주요 변경사항이 이 파일에 기록됩니다.
 
+## [0.1.13] - 2025-01-09
+
+### 개선
+- Django 설정 파일 구조 대대적 정리
+- 30개 이상의 중복/불필요한 설정 파일 제거
+- settings_base.py 상속 구조로 통합
+- INSTALLED_APPS 중앙 관리 체계 확립
+
+### 추가
+- SETTINGS_GUIDE.md 문서 작성
+- 설정 파일 관리 가이드라인 제공
+
+### 제거
+- 불필요한 settings_*.py 파일들 (emergency, minimal, progressive 등)
+- settings 디렉토리 내 임시 파일들 (cors_*.py, railway_*.py 등)
+- 중복된 urls_*.py, wsgi_*.py 파일들
+- 혼란을 주던 config/settings.py 파일
+
+### 수정
+- config/asgi.py가 환경에 맞는 설정 사용하도록 수정
+- settings/railway.py가 settings_base.py 상속받도록 변경
+
 ## [0.1.12] - 2025-01-09
 
 ### 수정

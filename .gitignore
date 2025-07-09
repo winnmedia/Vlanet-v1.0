@@ -83,6 +83,7 @@ logs/
 deployment-info.txt
 videoplanet_backup_*/
 .vercel/
+backup_settings/
 
 # Security
 secrets.yml

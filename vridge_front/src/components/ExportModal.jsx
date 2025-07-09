@@ -98,18 +98,51 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
           const { url } = response.data.data
           setExportSuccess(
             <div>
-              <p>Google Slides가 생성되었습니다!</p>
-              <a href={url} target="_blank" rel="noopener noreferrer" className="slides-link">
-                프레젠테이션 열기
+              Google Slides가 생성되었습니다! 
+              <a href={url} target="_blank" rel="noopener noreferrer" style={{color: '#4318FF', marginLeft: '8px'}}>
+                📊 열어보기
               </a>
             </div>
           )
         } else {
-          throw new Error(response.data.message || '내보내기 실패')
+          setExportError(response.data.message || 'Google Slides 생성에 실패했습니다.')
         }
+      } else if (selectedFormat === 'ai_proposal') {
+        // 새로운 AI 기반 기획안 내보내기
+        const response = await axios.post(
+          '/api/video-planning/proposals/export/',
+          {
+            planning_text: exportData.planning_text,
+            export_format: 'google_slides',
+            title: exportData.title
+          }
+        )
+
+        if (response.data.success) {
+          const { presentation } = response.data
+          if (presentation) {
+            setExportSuccess(
+              <div>
+                🚀 AI 기획안이 생성되었습니다! 
+                <a href={presentation.url} target="_blank" rel="noopener noreferrer" style={{color: '#4318FF', marginLeft: '8px'}}>
+                  📊 Google Slides 열어보기
+                </a>
+                <div style={{fontSize: '12px', color: '#666', marginTop: '4px'}}>
+                  슬라이드 {presentation.slide_count}개 생성됨
+                </div>
+              </div>
+            )
+          } else {
+            setExportSuccess('AI 기획안 구조화가 완료되었습니다. 수동으로 Google Slides를 생성할 수 있습니다.')
+          }
+        } else {
+          setExportError(response.data.message || 'AI 기획안 생성에 실패했습니다.')
+        }
+      } else {
+        setExportError('지원하지 않는 내보내기 형식입니다.')
       }
     } catch (error) {
-      console.error('내보내기 실패:', error)
+      console.error('내보내기 오류:', error)
       setExportError(error.response?.data?.message || '내보내기 중 오류가 발생했습니다.')
     } finally {
       setIsExporting(false)
@@ -120,55 +153,69 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
 
   return (
     <div className="export-modal-overlay" onClick={onClose}>
-      <div className="export-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>기획안 내보내기</h2>
+      <div className="export-modal" onClick={e => e.stopPropagation()}>
+        <div className="export-modal-header">
+          <h3>기획안 내보내기</h3>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
-        <div className="modal-content">
-          <div className="format-list">
-            {exportFormats.map((format) => (
-              <div
-                key={format.id}
-                className={`format-item ${selectedFormat === format.id ? 'selected' : ''} ${!format.available ? 'disabled' : ''}`}
-                onClick={() => format.available && setSelectedFormat(format.id)}
-              >
-                <div className="format-icon">
-                  {format.id === 'pdf_full' && '📄'}
-                  {format.id === 'pdf_storyboard' && '🖼️'}
-                  {format.id === 'google_slides' && '📊'}
-                </div>
-                <div className="format-info">
-                  <h3>{format.name}</h3>
-                  <p>{format.description}</p>
-                  {!format.available && <span className="unavailable">현재 사용 불가</span>}
+        <div className="export-modal-content">
+          {exportFormats.length === 0 ? (
+            <div className="loading">내보내기 옵션을 불러오는 중...</div>
+          ) : (
+            <>
+              <div className="format-selection">
+                <h4>내보내기 형식 선택</h4>
+                <div className="format-options">
+                  <div 
+                    className={`format-option ${selectedFormat === 'ai_proposal' ? 'selected' : ''}`}
+                    onClick={() => setSelectedFormat('ai_proposal')}
+                  >
+                    <div className="format-icon">🤖</div>
+                    <div className="format-info">
+                      <h5>AI 기반 기획안</h5>
+                      <p>Google Gemini로 구조화된 전문 프레젠테이션</p>
+                      <small>⚡ 5-10분 소요, A4 최적화</small>
+                    </div>
+                  </div>
+                  
+                  {exportFormats.map(format => (
+                    <div 
+                      key={format.id}
+                      className={`format-option ${selectedFormat === format.id ? 'selected' : ''}`}
+                      onClick={() => setSelectedFormat(format.id)}
+                    >
+                      <div className="format-icon">{format.icon}</div>
+                      <div className="format-info">
+                        <h5>{format.name}</h5>
+                        <p>{format.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
 
-          {exportError && (
-            <div className="export-message error">
-              ⚠️
-              {exportError}
-            </div>
-          )}
+              {exportError && (
+                <div className="export-error">
+                  ❌ {exportError}
+                </div>
+              )}
 
-          {exportSuccess && (
-            <div className="export-message success">
-              ✅
-              {exportSuccess}
-            </div>
+              {exportSuccess && (
+                <div className="export-success">
+                  ✅ {exportSuccess}
+                </div>
+              )}
+            </>
           )}
         </div>
 
-        <div className="modal-footer">
+        <div className="export-modal-footer">
           <button className="cancel-btn" onClick={onClose}>
             취소
           </button>
           <button 
-            className="export-btn"
+            className="export-btn" 
             onClick={handleExport}
             disabled={!selectedFormat || isExporting}
           >

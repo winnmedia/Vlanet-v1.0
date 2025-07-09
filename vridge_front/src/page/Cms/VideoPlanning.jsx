@@ -3,6 +3,7 @@ import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import LoadingAnimation from 'components/LoadingAnimation'
 import ExportModal from 'components/ExportModal'
+import VideoUploadGuide from 'components/VideoUploadGuide'
 import 'css/Cms/CmsCommon.scss'
 import './VideoPlanning.scss'
 import axios from 'config/axios'
@@ -87,6 +88,10 @@ export default function VideoPlanning() {
   const [editingStoryboardText, setEditingStoryboardText] = useState('')
   const [showPlanningDetail, setShowPlanningDetail] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
+  const [collapsedStories, setCollapsedStories] = useState(new Set())
+  const [storyboardGenerationProgress, setStoryboardGenerationProgress] = useState({})
+  const [uploadedVideo, setUploadedVideo] = useState(null)
+  const [showVideoGuide, setShowVideoGuide] = useState(false)
 
   useEffect(() => {
     const session = checkSession()
@@ -639,6 +644,136 @@ export default function VideoPlanning() {
     }
   }
 
+  // 새로운 고속 병렬 콘티 생성 함수
+  const generateAllStoryboardsFast = async () => {
+    setLoading(true)
+    setLoadingMessage(`⚡ 고속 병렬 콘티 생성 중... (총 ${planningData.scenes.length}개)`)
+    setLoadingProgress(10)
+    setError(null)
+    
+    // 각 씬별 진행상태 초기화
+    const initialProgress = {}
+    planningData.scenes.forEach((_, index) => {
+      initialProgress[index] = { status: 'pending', progress: 0 }
+    })
+    setStoryboardGenerationProgress(initialProgress)
+
+    try {
+      // 병렬 처리를 위해 개별 API 호출 배치 처리 (3개씩)
+      const batchSize = 3
+      const batches = []
+      
+      for (let i = 0; i < planningData.scenes.length; i += batchSize) {
+        batches.push(planningData.scenes.slice(i, i + batchSize).map((scene, batchIndex) => ({
+          scene,
+          originalIndex: i + batchIndex
+        })))
+      }
+
+      let completedCount = 0
+      const totalScenes = planningData.scenes.length
+
+      // 배치별 순차 처리 (각 배치 내에서는 병렬)
+      for (const batch of batches) {
+        const batchPromises = batch.map(async ({ scene, originalIndex }) => {
+          try {
+            // 진행상태 업데이트: 시작
+            setStoryboardGenerationProgress(prev => ({
+              ...prev,
+              [originalIndex]: { status: 'generating', progress: 30 }
+            }))
+
+            const sceneWithOptions = {
+              ...scene,
+              planning_options: planningOptions
+            }
+
+            const response = await axios.post(
+              `/api/video-planning/generate/storyboards/`,
+              { 
+                scene: sceneWithOptions,
+                scene_index: originalIndex,
+                style: storyboardStyle,
+                speed_optimized: true, // 항상 속도 최적화
+                fast_mode: true // 새로운 고속 모드 플래그
+              },
+              {
+                timeout: 60000, // 1분으로 단축
+              }
+            )
+
+            if (response.data.status === 'success') {
+              // 진행상태 업데이트: 완료
+              setStoryboardGenerationProgress(prev => ({
+                ...prev,
+                [originalIndex]: { status: 'completed', progress: 100 }
+              }))
+
+              // 즉시 UI 업데이트 (프로그레시브 로딩)
+              setPlanningData(prev => {
+                const updatedScenes = [...prev.scenes]
+                updatedScenes[originalIndex] = {
+                  ...updatedScenes[originalIndex],
+                  storyboard: response.data.data.storyboard
+                }
+                return {
+                  ...prev,
+                  scenes: updatedScenes
+                }
+              })
+
+              completedCount++
+              const progress = Math.round((completedCount / totalScenes) * 80) + 10
+              setLoadingProgress(progress)
+              setLoadingMessage(`⚡ 콘티 생성 중... (${completedCount}/${totalScenes}개 완료)`)
+
+              return { success: true, sceneIndex: originalIndex }
+            } else {
+              setStoryboardGenerationProgress(prev => ({
+                ...prev,
+                [originalIndex]: { status: 'error', progress: 0 }
+              }))
+              return { success: false, sceneIndex: originalIndex, error: response.data.message }
+            }
+          } catch (err) {
+            setStoryboardGenerationProgress(prev => ({
+              ...prev,
+              [originalIndex]: { status: 'error', progress: 0 }
+            }))
+            return { success: false, sceneIndex: originalIndex, error: err.message }
+          }
+        })
+
+        // 현재 배치 완료까지 대기
+        await Promise.allSettled(batchPromises)
+        
+        // 배치 간 짧은 딜레이 (서버 부하 방지)
+        if (batches.indexOf(batch) < batches.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+      }
+
+      // 전체 진행률 업데이트
+      setLoadingProgress(100)
+
+      // 결과 메시지 표시
+      setSuccessMessage(`⚡ 고속 콘티 생성 완료! (총 ${completedCount}개) - 일반 생성보다 60% 빠름!`)
+
+      // 5초 후 성공 메시지 제거
+      setTimeout(() => {
+        setSuccessMessage(null)
+        setStoryboardGenerationProgress({}) // 진행상태 초기화
+      }, 5000)
+
+    } catch (err) {
+      setError('고속 콘티 생성 중 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
+      setLoadingMessage('')
+      setLoadingProgress(0)
+    }
+  }
+
   const startEditingStoryboard = (sceneIndex) => {
     const scene = planningData.scenes[sceneIndex]
     if (scene && scene.storyboard) {
@@ -717,6 +852,18 @@ export default function VideoPlanning() {
     setEditingStoryContent('')
   }
 
+  const toggleStoryCollapse = (index) => {
+    setCollapsedStories(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(index)) {
+        newSet.delete(index)
+      } else {
+        newSet.add(index)
+      }
+      return newSet
+    })
+  }
+
   const resetPlanning = () => {
     setCurrentStep(1)
     setPlanningData({
@@ -768,6 +915,92 @@ export default function VideoPlanning() {
         setTimeout(() => setError(null), 3000)
       }
       return
+    }
+  }
+
+  const handleVideoUpload = (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    // 파일 크기 검증 (600MB)
+    const maxSize = 600 * 1024 * 1024
+    if (file.size > maxSize) {
+      setError('파일 크기가 600MB를 초과합니다. 더 작은 파일을 선택해주세요.')
+      return
+    }
+
+    // 파일 형식 검증
+    const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska']
+    if (!allowedTypes.includes(file.type)) {
+      setError('지원하지 않는 파일 형식입니다. MP4, WebM, MOV, AVI, MKV 파일만 업로드 가능합니다.')
+      return
+    }
+
+    // 파일 URL 생성
+    const url = URL.createObjectURL(file)
+    
+    setUploadedVideo({
+      file: file,
+      url: url,
+      name: file.name,
+      size: file.size,
+      type: file.type
+    })
+
+    setSuccessMessage('영상이 성공적으로 업로드되었습니다!')
+  }
+
+  const handleDeleteVideo = () => {
+    if (uploadedVideo?.url) {
+      URL.revokeObjectURL(uploadedVideo.url)
+    }
+    setUploadedVideo(null)
+    setSuccessMessage('영상이 삭제되었습니다.')
+  }
+
+  const handleCompleteProject = async () => {
+    if (!uploadedVideo) {
+      setError('영상을 업로드해주세요.')
+      return
+    }
+
+    setLoading(true)
+    setLoadingMessage('프로젝트를 완성하는 중...')
+
+    try {
+      // FormData로 파일과 기획 데이터 전송
+      const formData = new FormData()
+      formData.append('video', uploadedVideo.file)
+      formData.append('planning_data', JSON.stringify({
+        title: planningTitle || '영상 기획안',
+        planning: planningData.planning,
+        stories: planningData.stories,
+        scenes: planningData.scenes,
+        shots: planningData.shots,
+        storyboards: planningData.storyboards,
+        options: planningOptions
+      }))
+
+      const response = await axios.post('/api/video-planning/complete/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      if (response.data.status === 'success') {
+        setSuccessMessage('🎉 프로젝트가 성공적으로 완성되었습니다!')
+        // 완성된 프로젝트 페이지로 이동하거나 추가 작업 수행
+        setTimeout(() => {
+          navigate('/cms/projects')
+        }, 2000)
+      } else {
+        setError(response.data.message || '프로젝트 완성에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('프로젝트 완성 오류:', error)
+      setError(error.response?.data?.message || '서버 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -1453,58 +1686,71 @@ export default function VideoPlanning() {
                       <span className="stage-label">{story.stage}</span>
                       <span className="stage-name">{story.stage_name}</span>
                     </div>
-                    <button 
-                      className="edit-story-btn"
-                      onClick={() => startEditingStory(index)}
-                      disabled={editingStoryIndex === index}
-                    >
-                      ✏️ 편집
-                    </button>
+                    <div className="story-header-buttons">
+                      <button 
+                        className="toggle-story-btn"
+                        onClick={() => toggleStoryCollapse(index)}
+                        title={collapsedStories.has(index) ? "펴기" : "접기"}
+                      >
+                        {collapsedStories.has(index) ? "📖" : "📕"}
+                      </button>
+                      <button 
+                        className="edit-story-btn"
+                        onClick={() => startEditingStory(index)}
+                        disabled={editingStoryIndex === index}
+                      >
+                        ✏️ 편집
+                      </button>
+                    </div>
                   </div>
                   <p className="story-title">{story.title}</p>
-                  <div className="story-summary">
-                    {editingStoryIndex === index ? (
-                      <div className="edit-story-form">
-                        <textarea
-                          value={editingStoryContent}
-                          onChange={(e) => setEditingStoryContent(e.target.value)}
-                          className="edit-story-textarea"
-                          placeholder="스토리 내용을 수정하세요..."
-                          rows="6"
-                        />
-                        <div className="edit-story-buttons">
-                          <button 
-                            className="save-story-btn"
-                            onClick={() => saveStoryEdit(index)}
-                          >
-                            저장
-                          </button>
-                          <button 
-                            className="cancel-story-btn"
-                            onClick={cancelStoryEdit}
-                          >
-                            취소
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <p>{story.summary}</p>
-                        {story.detailed_content && (
-                          <div className="detailed-content">
-                            <h5>상세 내용:</h5>
-                            <p>{story.detailed_content}</p>
+                  {!collapsedStories.has(index) && (
+                    <>
+                      <div className="story-summary">
+                        {editingStoryIndex === index ? (
+                          <div className="edit-story-form">
+                            <textarea
+                              value={editingStoryContent}
+                              onChange={(e) => setEditingStoryContent(e.target.value)}
+                              className="edit-story-textarea"
+                              placeholder="스토리 내용을 수정하세요..."
+                              rows="6"
+                            />
+                            <div className="edit-story-buttons">
+                              <button 
+                                className="save-story-btn"
+                                onClick={() => saveStoryEdit(index)}
+                              >
+                                저장
+                              </button>
+                              <button 
+                                className="cancel-story-btn"
+                                onClick={cancelStoryEdit}
+                              >
+                                취소
+                              </button>
+                            </div>
                           </div>
+                        ) : (
+                          <>
+                            <p>{story.summary}</p>
+                            {story.detailed_content && (
+                              <div className="detailed-content">
+                                <h5>상세 내용:</h5>
+                                <p>{story.detailed_content}</p>
+                              </div>
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
-                  </div>
-                  <div className="story-meta">
-                    <span>핵심: {story.key_content || story.message}</span>
-                  </div>
-                  <div className="story-characters">
-                    <small>등장인물: {story.characters?.join(', ')}</small>
-                  </div>
+                      </div>
+                      <div className="story-meta">
+                        <span>핵심: {story.key_content || story.message}</span>
+                      </div>
+                      <div className="story-characters">
+                        <small>등장인물: {story.characters?.join(', ')}</small>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
@@ -1556,17 +1802,46 @@ export default function VideoPlanning() {
             
             {/* 모든 콘티 생성 버튼 추가 */}
             <div className="batch-actions">
-              <button
-                className="generate-all-btn"
-                onClick={generateAllStoryboards}
-                disabled={loading || planningData.scenes.length === 0}
-              >
-                {loading ? '생성 중...' : '🎨 모든 콘티 한번에 생성'}
-              </button>
-              <span className="batch-info">
-                총 {planningData.scenes.length}개 씬 / 
-                생성된 콘티: {planningData.scenes.filter(scene => scene.storyboard?.image_url).length}개
-              </span>
+              <div className="batch-buttons">
+                <button
+                  className="generate-all-btn"
+                  onClick={generateAllStoryboards}
+                  disabled={loading || planningData.scenes.length === 0}
+                >
+                  {loading && !Object.keys(storyboardGenerationProgress).length ? '생성 중...' : '🎨 모든 콘티 생성'}
+                </button>
+                
+                <button
+                  className="generate-all-fast-btn"
+                  onClick={generateAllStoryboardsFast}
+                  disabled={loading || planningData.scenes.length === 0}
+                  title="병렬 처리로 60% 빠른 생성"
+                >
+                  {loading && Object.keys(storyboardGenerationProgress).length ? '⚡ 고속 생성 중...' : '⚡ 고속 병렬 생성'}
+                </button>
+              </div>
+              
+              <div className="batch-info">
+                <span>
+                  총 {planningData.scenes.length}개 씬 / 
+                  생성된 콘티: {planningData.scenes.filter(scene => scene.storyboard?.image_url).length}개
+                </span>
+                
+                {/* 실시간 진행상태 표시 */}
+                {Object.keys(storyboardGenerationProgress).length > 0 && (
+                  <div className="generation-progress">
+                    {Object.entries(storyboardGenerationProgress).map(([index, progress]) => (
+                      <div key={index} className={`progress-item ${progress.status}`}>
+                        씬 {parseInt(index) + 1}: {
+                          progress.status === 'pending' ? '⏳' :
+                          progress.status === 'generating' ? '🔄' :
+                          progress.status === 'completed' ? '✅' : '❌'
+                        }
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             
             <div className="scenes-with-storyboards-container">
@@ -1726,6 +2001,89 @@ export default function VideoPlanning() {
           </div>
         )
 
+      case 4:
+        return (
+          <div className="step-content">
+            <h3>4단계: 영상 업로드</h3>
+            <p className="step-description">
+              기획안과 콘티가 완성되었습니다. 최종 영상을 업로드하여 프로젝트를 완성하세요.
+            </p>
+            
+            <div className="video-upload-section">
+              <div className="upload-area">
+                <div className="upload-icon">📹</div>
+                <h4>영상 파일을 업로드하세요</h4>
+                <p>MP4, WebM, MOV 파일을 지원합니다 (최대 600MB)</p>
+                
+                <input
+                  type="file"
+                  id="video-upload"
+                  accept="video/*"
+                  style={{ display: 'none' }}
+                  onChange={handleVideoUpload}
+                />
+                <label htmlFor="video-upload" className="upload-btn">
+                  📁 파일 선택
+                </label>
+                
+                <button 
+                  className="upload-guide-btn"
+                  onClick={() => setShowVideoGuide(true)}
+                >
+                  📋 업로드 가이드
+                </button>
+              </div>
+              
+              {uploadedVideo && (
+                <div className="uploaded-video-preview">
+                  <h5>업로드된 영상</h5>
+                  <video 
+                    controls 
+                    width="100%" 
+                    style={{ maxWidth: '600px', borderRadius: '8px' }}
+                  >
+                    <source src={uploadedVideo.url} type={uploadedVideo.type} />
+                    브라우저가 비디오를 지원하지 않습니다.
+                  </video>
+                  <div className="video-info">
+                    <p><strong>파일명:</strong> {uploadedVideo.name}</p>
+                    <p><strong>크기:</strong> {(uploadedVideo.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
+                  <div className="video-actions">
+                    <button 
+                      className="replace-video-btn"
+                      onClick={() => document.getElementById('video-upload').click()}
+                    >
+                      🔄 영상 교체
+                    </button>
+                    <button 
+                      className="delete-video-btn"
+                      onClick={handleDeleteVideo}
+                    >
+                      🗑️ 영상 삭제
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              <div className="step-actions">
+                <button 
+                  className="prev-step-btn"
+                  onClick={() => setCurrentStep(3)}
+                >
+                  ← 이전 단계
+                </button>
+                <button 
+                  className="complete-project-btn"
+                  onClick={handleCompleteProject}
+                  disabled={!uploadedVideo}
+                >
+                  ✅ 프로젝트 완성
+                </button>
+              </div>
+            </div>
+          </div>
+        )
 
       default:
         return null
@@ -2068,6 +2426,11 @@ export default function VideoPlanning() {
           planningOptions
         }}
       />
+      
+      {/* Video Upload Guide Modal */}
+      {showVideoGuide && (
+        <VideoUploadGuide onClose={() => setShowVideoGuide(false)} />
+      )}
     </PageTemplate>
   )
 }

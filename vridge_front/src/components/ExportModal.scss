@@ -45,14 +45,14 @@
   }
 }
 
-.modal-header {
+.export-modal-header {
   padding: 24px;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  h2 {
+  h3 {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
@@ -80,18 +80,27 @@
   }
 }
 
-.modal-content {
+.export-modal-content {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
 
-  .format-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  .format-selection {
+    h4 {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .format-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
   }
 
-  .format-item {
+  .format-option {
     display: flex;
     align-items: center;
     padding: 16px;
@@ -136,7 +145,7 @@
     .format-info {
       flex: 1;
 
-      h3 {
+      h5 {
         margin: 0 0 4px 0;
         font-size: 16px;
         font-weight: 600;
@@ -144,9 +153,15 @@
       }
 
       p {
-        margin: 0;
+        margin: 0 0 4px 0;
         font-size: 14px;
         color: #6b7280;
+      }
+
+      small {
+        font-size: 12px;
+        color: #9ca3af;
+        font-style: italic;
       }
 
       .unavailable {
@@ -159,47 +174,51 @@
     }
   }
 
-  .export-message {
+  .export-error {
     margin-top: 16px;
     padding: 12px 16px;
     border-radius: 8px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    background-color: #fee;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    font-size: 14px;
+  }
 
-    span:first-child {
-      font-size: 20px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
+  .export-success {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    font-size: 14px;
 
-    &.error {
-      background-color: #fee;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-    }
-
-    &.success {
-      background-color: #f0fdf4;
-      color: #16a34a;
-      border: 1px solid #bbf7d0;
-
-      .slides-link {
-        display: inline-block;
-        margin-top: 8px;
-        color: #3b82f6;
-        text-decoration: none;
-        font-weight: 500;
-        
-        &:hover {
-          text-decoration: underline;
-        }
+    a {
+      color: #4318FF;
+      text-decoration: none;
+      font-weight: 500;
+      
+      &:hover {
+        text-decoration: underline;
       }
     }
+
+    div {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 14px;
   }
 }
 
-.modal-footer {
+.export-modal-footer {
   padding: 20px 24px;
   border-top: 1px solid #e0e0e0;
   display: flex;

@@ -47,6 +47,8 @@ PROJECT_APPS = [
     'feedbacks',
     'onlines',
     'video_planning',
+    'video_analysis',
+    'admin_dashboard',
 ]
 
 THIRD_PARTY_APPS = [
@@ -146,6 +148,12 @@ if DATABASE_URL:
 else:
     import logging
     logging.warning("No database URL found, using SQLite")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db_railway.sqlite3',
+        }
+    }
 
 # Redis 캐시 설정
 REDIS_URL = os.environ.get('REDIS_URL')
@@ -180,13 +188,14 @@ else:
     pass  # Using database cache (no Redis URL)
 
 # 정적 파일 설정 (WhiteNoise)
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# WhiteNoise를 미들웨어에 추가
-MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+# WhiteNoise는 이미 미들웨어에 포함되어 있음
 
 # 미디어 파일 설정
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', BASE_DIR / 'media')
 
 # CORS 설정

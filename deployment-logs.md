@@ -96,8 +96,16 @@
 
 ## 2025-01-09 15:10 KST
 - **버전**: 0.1.10
-- **커밋**: pending
+- **커밋**: a621d91
 - **배포자**: VideoPlanet
 - **플랫폼**: Railway/Vercel
 - **주요 변경사항**: Django URL 오류 수정
+- **상태**: 배포 실패 (INSTALLED_APPS 오류)
+
+## 2025-01-09 15:20 KST
+- **버전**: 0.1.11
+- **커밋**: pending
+- **배포자**: VideoPlanet
+- **플랫폼**: Railway/Vercel
+- **주요 변경사항**: Django 설정 완전 수정
 - **상태**: 배포 예정

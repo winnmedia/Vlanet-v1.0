@@ -2,6 +2,18 @@
 
 모든 주요 변경사항이 이 파일에 기록됩니다.
 
+## [0.1.6] - 2025-01-09
+
+### 수정
+- simple_server.py 대신 실제 Django 앱 실행
+- Procfile과 railway.json에서 gunicorn 명령어로 변경
+- 헬스체크 경로를 /api/health로 수정
+- simple_server.py 파일 제거
+
+### 중요
+- 이제 실제 Django 백엔드가 실행됨
+- API 엔드포인트들이 정상 작동
+
 ## [0.1.5] - 2025-01-09
 
 ### 수정

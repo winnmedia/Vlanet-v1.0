@@ -1,0 +1,184 @@
+.video-js-player-wrapper {
+  position: relative;
+  width: 100%;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+
+  // Video.js 커스터마이징
+  .video-js {
+    width: 100%;
+    height: 100%;
+    
+    // 큰 재생 버튼 스타일
+    .vjs-big-play-button {
+      font-size: 3em;
+      line-height: 1.5em;
+      height: 1.5em;
+      width: 3em;
+      border-radius: 0.3em;
+      background-color: rgba(43, 51, 63, 0.7);
+      border: 0.06666em solid #fff;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    // 컨트롤바 스타일
+    .vjs-control-bar {
+      background-color: rgba(43, 51, 63, 0.7);
+      height: 3em;
+    }
+
+    // 진행바 스타일
+    .vjs-progress-control .vjs-play-progress {
+      background-color: #ff6b6b;
+    }
+
+    // 볼륨 컨트롤
+    .vjs-volume-panel {
+      &.vjs-hover .vjs-volume-control.vjs-volume-horizontal,
+      &:active .vjs-volume-control.vjs-volume-horizontal,
+      &.vjs-slider-active .vjs-volume-control.vjs-volume-horizontal {
+        width: 5em;
+        height: 3em;
+        margin-right: 0;
+      }
+    }
+
+    // 전체화면 버튼
+    .vjs-fullscreen-control {
+      cursor: pointer;
+    }
+
+    // 재생 속도 메뉴
+    .vjs-playback-rate {
+      .vjs-playback-rate-value {
+        font-size: 1.2em;
+        line-height: 3em;
+      }
+    }
+
+    // 시간 표시
+    .vjs-time-control {
+      font-size: 1em;
+      line-height: 3em;
+      min-width: 0;
+      padding: 0 0.5em;
+    }
+  }
+
+  // 키보드 단축키 안내
+  .keyboard-shortcuts {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 10;
+
+    h4 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        kbd {
+          background: #333;
+          border: 1px solid #666;
+          border-radius: 3px;
+          padding: 2px 6px;
+          font-family: monospace;
+          font-size: 11px;
+          min-width: 40px;
+          text-align: center;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  // 호버 시 단축키 안내 표시
+  &:hover .keyboard-shortcuts {
+    opacity: 1;
+  }
+
+  // 모바일 최적화
+  @media (max-width: 768px) {
+    .keyboard-shortcuts {
+      display: none; // 모바일에서는 키보드 단축키 숨김
+    }
+
+    .video-js {
+      .vjs-big-play-button {
+        font-size: 2em;
+        width: 2em;
+        height: 1em;
+        line-height: 1em;
+      }
+
+      .vjs-control-bar {
+        height: 2.5em;
+      }
+    }
+  }
+
+  // 피드백 마커 스타일 (추후 구현)
+  .vjs-feedback-marker {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+    
+    &:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    }
+  }
+
+  // 로딩 스피너 커스터마이징
+  .vjs-loading-spinner {
+    border-color: #ff6b6b;
+  }
+
+  // 에러 화면 스타일
+  .vjs-error-display {
+    background: rgba(0, 0, 0, 0.8);
+    
+    .vjs-modal-dialog-content {
+      color: #fff;
+      font-size: 1.2em;
+    }
+  }
+}
+
+// 다크 테마 지원
+@media (prefers-color-scheme: dark) {
+  .video-js-player-wrapper {
+    .video-js {
+      .vjs-control-bar {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+    }
+  }
+}

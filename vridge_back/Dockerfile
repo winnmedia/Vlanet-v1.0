@@ -4,7 +4,7 @@ FROM python:3.11-alpine
 # 환경 변수 설정
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=config.settings_railway
+ENV DJANGO_SETTINGS_MODULE=config.settings_railway_simple
 
 # 작업 디렉토리 설정
 WORKDIR /app

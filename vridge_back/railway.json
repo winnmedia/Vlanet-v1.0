@@ -4,10 +4,10 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "chmod +x start_emergency.sh && ./start_emergency.sh",
+    "startCommand": "python3 simple_server.py",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
-    "healthcheckPath": "/health/",
+    "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "region": "us-west1"
   },

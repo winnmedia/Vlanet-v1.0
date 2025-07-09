@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting to vlanet.net...</title>
+    <script>
+        // Vercel 도메인에서 접속한 경우 vlanet.net으로 리다이렉트
+        if (window.location.hostname.includes('vercel.app')) {
+            window.location.replace('https://vlanet.net' + window.location.pathname + window.location.search);
+        }
+    </script>
+</head>
+<body>
+    <p>Redirecting to vlanet.net...</p>
+</body>
+</html>

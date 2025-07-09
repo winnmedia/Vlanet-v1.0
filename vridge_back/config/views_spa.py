@@ -15,7 +15,7 @@ class SPAView(View):
                 index_path = os.path.join(settings.WHITENOISE_ROOT, 'index.html')
             else:
                 # 대체 경로: 프론트엔드 빌드 디렉토리
-                index_path = os.path.join(settings.BASE_DIR, '../vridge_front/build/index.html')
+                index_path = os.path.join(settings.BASE_DIR, 'frontend_build/index.html')
             
             with open(index_path, 'r', encoding='utf-8') as file:
                 return HttpResponse(file.read(), content_type='text/html')

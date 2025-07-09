@@ -162,11 +162,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR / '../vridge_front/build/static',
+    BASE_DIR / 'frontend_build/static',
 ]
 
 # WhiteNoise configuration for React SPA
-WHITENOISE_ROOT = BASE_DIR / '../vridge_front/build'
+WHITENOISE_ROOT = BASE_DIR / 'frontend_build'
 WHITENOISE_AUTOREFRESH = DEBUG
 
 # WhiteNoise 설정 (collectstatic 없이도 작동)

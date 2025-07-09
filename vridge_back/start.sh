@@ -2,10 +2,10 @@
 echo "=== Starting VideoPlanet Backend ==="
 echo "Python version: $(python3 --version)"
 echo "Port: $PORT"
-echo "Settings: config.settings_minimal"
+echo "Settings: config.settings.railway"
 
 # 환경 변수 설정
-export DJANGO_SETTINGS_MODULE=config.settings_minimal
+export DJANGO_SETTINGS_MODULE=config.settings.railway
 
 # 마이그레이션
 echo "Running migrations..."

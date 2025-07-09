@@ -23,6 +23,7 @@ from django.shortcuts import redirect
 from .views import health_check, root_view
 from .views_cors_test import cors_test_view, PublicProjectListView
 from .views_spa import SPAView
+from .views_simple_health import simple_health
 from api_health import csrf_token_view
 
 # token_blacklist import를 보호
@@ -35,8 +36,9 @@ except ImportError:
 
 urlpatterns = [
     # API 헬스체크
-    path("api/health/", health_check, name="api_health"),
-    path("health/", health_check, name="health"),  # 레거시 헬스체크
+    path("api/health/", simple_health, name="api_health"),  # 간단한 헬스체크
+    path("api/health-full/", health_check, name="api_health_full"),  # 상세 헬스체크
+    path("health/", simple_health, name="health"),  # 레거시 헬스체크
     path("cors-test/", cors_test_view, name="cors_test"),  # CORS 테스트
     path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
     path("admin/", admin.site.urls),

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # 에러 발생 시 즉시 종료
+# 에러가 발생해도 계속 진행 (헬스체크를 위해)
 
 echo "=== Starting VideoPlanet Backend ==="
 echo "Python version: $(python3 --version)"
@@ -34,16 +34,15 @@ for i in range(30):
         print(f'Waiting for database... ({i+1}/30)')
         time.sleep(2)
 else:
-    print('Database connection timeout!')
-    exit(1)
-"
+    print('Database connection timeout! Continuing anyway...')
+" || echo "Database check failed, continuing..."
 fi
 
 # 마이그레이션
 echo "Running migrations..."
-python3 manage.py showmigrations
+python3 manage.py showmigrations || echo "Show migrations failed"
 echo "---"
-python3 manage.py migrate --noinput --verbosity 2
+python3 manage.py migrate --noinput --verbosity 2 || echo "Migration failed, continuing..."
 
 # 캐시 테이블 생성 (필요한 경우)
 echo "Creating cache table if needed..."

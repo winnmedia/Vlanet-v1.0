@@ -40,7 +40,10 @@
     "react-scripts": "5.0.1",
     "redux-logger": "^3.0.6"
   },
-  "overrides": {},
+  "overrides": {
+    "postcss": "^8.4.31",
+    "postcss-flexbugs-fixes": "^5.0.2"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "CI=false react-scripts build",

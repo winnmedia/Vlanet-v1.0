@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from .version import VERSION, COMMIT_HASH, FULL_VERSION
 
 
 @csrf_exempt
@@ -15,6 +16,9 @@ def health_check(request):
         "status": "healthy",
         "service": "vridge-backend",
         "message": "Service is running",
+        "version": VERSION,
+        "commit": COMMIT_HASH,
+        "full_version": FULL_VERSION,
         "environment": os.environ.get('RAILWAY_ENVIRONMENT', 'unknown'),
         "settings": os.environ.get('DJANGO_SETTINGS_MODULE', 'unknown')
     }

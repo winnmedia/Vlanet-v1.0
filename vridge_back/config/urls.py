@@ -21,9 +21,6 @@ from django.conf.urls.static import static
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from .views import health_check, root_view
-from .views_cors_test import cors_test_view, PublicProjectListView
-from .views_spa import SPAView
-from .views_simple_health import simple_health
 from api_health import csrf_token_view
 
 # token_blacklist import를 보호

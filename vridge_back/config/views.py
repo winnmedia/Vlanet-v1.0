@@ -7,17 +7,35 @@ from django.views.decorators.http import require_http_methods
 @require_http_methods(["GET", "POST", "OPTIONS"])
 def health_check(request):
     """헬스체크 엔드포인트"""
-    return JsonResponse({
+    from django.db import connection
+    import os
+    
+    # 기본 상태
+    status = {
         "status": "healthy",
         "service": "vridge-backend",
         "message": "Service is running",
-        "cors_test": True,
-        "method": request.method,
-        "headers": {
-            "origin": request.META.get('HTTP_ORIGIN', 'No origin'),
-            "host": request.META.get('HTTP_HOST', 'No host')
-        }
-    })
+        "environment": os.environ.get('RAILWAY_ENVIRONMENT', 'unknown'),
+        "settings": os.environ.get('DJANGO_SETTINGS_MODULE', 'unknown')
+    }
+    
+    # 데이터베이스 연결 체크
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        status["database"] = "connected"
+    except Exception as e:
+        status["database"] = f"error: {str(e)[:50]}"
+        status["status"] = "unhealthy"
+    
+    # 필수 환경변수 체크
+    status["env_check"] = {
+        "SECRET_KEY": "set" if os.environ.get('SECRET_KEY') else "missing",
+        "DATABASE_URL": "set" if os.environ.get('DATABASE_URL') else "missing",
+        "PORT": os.environ.get('PORT', 'not set')
+    }
+    
+    return JsonResponse(status)
 
 
 @csrf_exempt

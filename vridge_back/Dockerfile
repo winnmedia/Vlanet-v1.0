@@ -4,7 +4,7 @@ FROM python:3.11-alpine
 # 환경 변수 설정
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=config.settings.railway
+ENV DJANGO_SETTINGS_MODULE=config.settings_railway
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -15,7 +15,8 @@ RUN apk add --no-cache \
     gcc \
     python3-dev \
     musl-dev \
-    bash
+    bash \
+    postgresql-client
 
 # 전체 프로젝트 복사
 COPY . .
@@ -45,5 +46,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health').read()" || exit 1
 
 # Django 서버 실행
-# 직접 gunicorn 실행 (스크립트 없이)
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -"]
+# 데이터베이스 대기 후 실행
+CMD ["sh", "-c", "python wait_for_db.py && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -"]

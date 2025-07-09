@@ -91,7 +91,7 @@ def get_recent_plannings(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def generate_structure(request):
     try:
         # planning_text 또는 planning_input 둘 다 받을 수 있도록 수정
@@ -124,7 +124,7 @@ def generate_structure(request):
 
 
 @api_view(['POST'])
-@permission_classes([DebugAllowAny])
+@permission_classes([IsAuthenticated])
 def generate_story(request):
     # 디버깅 로그 추가
     logger.info(f"[generate_story] User: {request.user}, Authenticated: {request.user.is_authenticated}")
@@ -225,7 +225,7 @@ def generate_story(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def generate_scenes(request):
     try:
         story_data = request.data.get('story_data', {})
@@ -261,7 +261,7 @@ def generate_scenes(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def generate_shots(request):
     try:
         scene_data = request.data.get('scene_data', {})
@@ -293,7 +293,7 @@ def generate_shots(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def generate_storyboards(request):
     try:
         shot_data = request.data.get('shot_data', {})
@@ -362,7 +362,7 @@ def generate_storyboards(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def generate_all_storyboards(request):
     """
     모든 씬에 대해 스토리보드를 한번에 생성합니다.
@@ -472,7 +472,7 @@ def generate_all_storyboards(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def regenerate_storyboard_image(request):
     """
     스토리보드 이미지를 재생성합니다.
@@ -538,7 +538,7 @@ def regenerate_storyboard_image(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def download_storyboard_image(request):
     try:
         image_url = request.data.get('image_url', '')
@@ -588,7 +588,7 @@ def download_storyboard_image(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def save_planning(request):
     """기획을 저장합니다."""
     try:
@@ -635,7 +635,7 @@ def save_planning(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_planning_list(request):
     """사용자의 기획 목록을 조회합니다. (최대 5개)"""
     try:
@@ -667,7 +667,7 @@ def get_planning_list(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_planning_detail(request, planning_id):
     """특정 기획의 상세 정보를 조회합니다."""
     try:
@@ -700,7 +700,7 @@ def get_planning_detail(request, planning_id):
 
 
 @api_view(['PUT'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def update_planning(request, planning_id):
     """기획 정보를 업데이트합니다."""
     try:
@@ -760,7 +760,7 @@ def update_planning(request, planning_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def delete_planning(request, planning_id):
     """기획을 삭제합니다."""
     try:
@@ -791,7 +791,7 @@ def delete_planning(request, planning_id):
 
 
 @api_view(['GET', 'POST'])
-@permission_classes([DebugAllowAny])
+@permission_classes([IsAuthenticated])
 def planning_library_view(request):
     """라이브러리 뷰 - GET과 POST 모두 처리"""
     if request.method == 'GET':
@@ -807,7 +807,7 @@ def planning_library_view(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def export_to_pdf(request):
     """비디오 기획안을 PDF로 내보내기"""
     try:
@@ -853,7 +853,7 @@ def export_to_pdf(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def export_to_google_slides(request):
     """비디오 기획안을 Google Slides로 내보내기"""
     try:
@@ -896,7 +896,7 @@ def export_to_google_slides(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_export_formats(request):
     """사용 가능한 내보내기 형식 조회"""
     try:

@@ -12,7 +12,9 @@ IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
 
 # 보안 설정
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-DcuaI3zQmYubdwPqXgkCQgJkfZJCeiJ5NM7-HqsgEQRUADnZeb')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable must be set")
 ALGORITHM = os.environ.get('ALGORITHM', 'HS256')
 
 # 허용된 호스트

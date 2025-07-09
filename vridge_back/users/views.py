@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging, json, random, requests
 import os
+
+logger = logging.getLogger(__name__)
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.shortcuts import render
@@ -41,8 +43,7 @@ class CheckEmail(View):
                 return JsonResponse({"message": "사용 가능한 이메일입니다."}, status=200)
                 
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
 
 
@@ -67,8 +68,7 @@ class CheckNickname(View):
                 return JsonResponse({"message": "사용 가능한 닉네임입니다."}, status=200)
                 
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
 
 
@@ -103,7 +103,7 @@ class SignUp(View):
             if not is_valid:
                 return JsonResponse({"message": error_msg}, status=400)
 
-            print(f"회원가입 시도 - 이메일: {email}, 닉네임: {nickname}")
+            logger.info(f"회원가입 시도 - 이메일: {email}, 닉네임: {nickname}")
             
             # 이메일 중복 확인
             user = models.User.objects.get_or_none(username=email)
@@ -125,7 +125,7 @@ class SignUp(View):
             new_user.set_password(password)
             new_user.save()
             
-            print(f"회원가입 성공 - ID: {new_user.id}, 이메일: {new_user.username}")
+            logger.info(f"회원가입 성공 - ID: {new_user.id}, 이메일: {new_user.username}")
 
             # JWT 토큰 생성 (SimpleJWT 사용)
             from rest_framework_simplejwt.tokens import RefreshToken
@@ -155,7 +155,7 @@ class SignUp(View):
         except json.JSONDecodeError:
             return JsonResponse({"message": "잘못된 요청 형식입니다."}, status=400)
         except Exception as e:
-            print(f"회원가입 에러: {str(e)}")
+            logger.error(f"회원가입 에러: {str(e)}", exc_info=True)
             logging.error(f"SignUp Error: {str(e)}")
             import traceback
             traceback.print_exc()
@@ -171,24 +171,24 @@ class SignIn(View):
             password = data.get("password")
 
             # Debug
-            print(f"Login attempt - email: {email}, password: {'*' * len(password) if password else 'None'}")
+            logger.debug(f"Login attempt - email: {email}, password: {'*' * len(password) if password else 'None'}")
             
             # Try direct user lookup first
             try:
                 user_obj = models.User.objects.get(username=email)
-                print(f"User found: {user_obj.username}, has_password: {bool(user_obj.password)}")
+                logger.debug(f"User found: {user_obj.username}, has_password: {bool(user_obj.password)}")
                 
                 # Check password manually
                 from django.contrib.auth.hashers import check_password
                 if check_password(password, user_obj.password):
                     user = user_obj
-                    print("Password check passed")
+                    logger.debug("Password check passed")
                 else:
                     user = None
-                    print("Password check failed")
+                    logger.debug("Password check failed")
             except models.User.DoesNotExist:
                 user = None
-                print("User not found in database")
+                logger.debug("User not found in database")
             
             if user is not None:
                 # Use Django REST Framework SimpleJWT instead
@@ -217,8 +217,7 @@ class SignIn(View):
             else:
                 return JsonResponse({"message": "존재하지 않는 사용자입니다."}, status=404)
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": str(e)}, status=500)
 
 
@@ -383,8 +382,7 @@ class ResetPassword(View):
             else:
                 return JsonResponse({"message": "사용자 정보가 일치하지 않습니다."}, status=403)
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
@@ -400,7 +398,7 @@ class KakaoLogin(View):
                 headers={"Authorization": f"Bearer {access_token}"},
             )
             kakao_user = profile_request.json()
-            print(kakao_user)
+            logger.debug(f"Kakao user data: {kakao_user}")
 
             kakao_id = kakao_user["id"]
             nickname = kakao_user.get("properties").get("nickname")
@@ -442,8 +440,7 @@ class KakaoLogin(View):
             )
             return res
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
@@ -476,7 +473,7 @@ class NaverLogin(View):
             )
 
             profile_json = profile_request.json()
-            print(profile_json)
+            logger.debug(f"Naver profile data: {profile_json}")
 
             response = profile_json.get("response")
             email = response.get("email", None)
@@ -521,8 +518,7 @@ class NaverLogin(View):
             )
             return res
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
@@ -554,7 +550,7 @@ class GoogleLogin(View):
             )
 
             userinfo = useinfo.json()
-            print(userinfo)
+            logger.debug(f"Google userinfo: {userinfo}")
 
             email = userinfo.get("email")
             nickname = userinfo.get("name")
@@ -593,8 +589,7 @@ class GoogleLogin(View):
             )
             return res
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
@@ -615,8 +610,7 @@ class UserMemo(View):
             return JsonResponse({"message": "success"}, status=200)
 
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
     @user_validator
@@ -635,6 +629,5 @@ class UserMemo(View):
 
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
-            logging.info(str(e))
+            logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)

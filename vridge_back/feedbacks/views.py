@@ -1,5 +1,7 @@
 import json, logging, os
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
@@ -178,7 +180,7 @@ class FeedbackDetail(View):
             
             return JsonResponse({"result": result}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in feedback operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -221,7 +223,7 @@ class FeedbackDetail(View):
             )
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in feedback operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -242,7 +244,7 @@ class FeedbackDetail(View):
 
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in feedback operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -391,7 +393,7 @@ class FeedbackDetail(View):
                 logging.error(f"Error during file processing: {str(upload_error)}")
                 return JsonResponse({"message": f"파일 처리 중 오류: {str(upload_error)}"}, status=500)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in feedback operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -429,7 +431,7 @@ class FeedbackFileDelete(View):
             feedback.save()
             return JsonResponse({"result": "result"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in feedback operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -498,6 +500,6 @@ class VideoEncodingStatus(View):
             return JsonResponse(response_data, status=200)
             
         except Exception as e:
-            print(e)
+            logger.error(f"Error in feedback operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)

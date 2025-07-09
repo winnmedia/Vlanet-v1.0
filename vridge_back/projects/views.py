@@ -1,5 +1,7 @@
 import logging, json, random
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 from datetime import datetime
 from django.shortcuts import render
 from django.utils import timezone
@@ -283,7 +285,7 @@ class ProjectList(View):
                 status=200,
             )
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -321,7 +323,7 @@ class InviteMember(View):
                 invite_send_email(request, email, uid, token, project.name)
                 return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -345,7 +347,7 @@ class InviteMember(View):
                 invite.delete()
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -378,7 +380,7 @@ class AcceptInvite(View):
 
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -523,7 +525,7 @@ class CreateProject(View):
             logging.info(f"[CreateProject] Successfully created project '{project_name}' with ID: {project.id}")
             return JsonResponse(result, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.error(f"Project creation error: {str(e)}")
             logging.error(f"Error type: {type(e).__name__}")
             import traceback
@@ -622,7 +624,7 @@ class ProjectDetail(View):
             }
             return JsonResponse({"result": result}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -674,7 +676,7 @@ class ProjectDetail(View):
 
             return JsonResponse({"result": "result"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -734,7 +736,7 @@ class ProjectFile(View):
             file_obj.delete()
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -765,7 +767,7 @@ class ProjectMemo(View):
             return JsonResponse({"message": "success"}, status=200)
 
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -791,7 +793,7 @@ class ProjectMemo(View):
 
             return JsonResponse({"message": "success"}, status=200)
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
@@ -824,6 +826,6 @@ class ProjectDate(View):
             return JsonResponse({"message": "success"}, status=200)
 
         except Exception as e:
-            print(e)
+            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)

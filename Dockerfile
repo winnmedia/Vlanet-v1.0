@@ -15,16 +15,13 @@ RUN apk add --no-cache \
     python3-dev \
     musl-dev
 
-# requirements.txt만 먼저 복사 (캐시 최적화)
-COPY vridge_back/requirements.txt .
+# 전체 프로젝트 복사
+COPY . .
 
 # pip 업그레이드 및 의존성 설치
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r vridge_back/requirements.txt && \
     pip install --no-cache-dir gunicorn
-
-# 백엔드 코드 복사
-COPY vridge_back/ ./vridge_back/
 
 # 정적 파일 디렉토리 생성
 RUN mkdir -p /app/vridge_back/staticfiles

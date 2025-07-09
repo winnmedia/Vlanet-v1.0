@@ -1,17 +1,73 @@
-node_modules
-npm-debug.log
+# Git
 .git
 .gitignore
-README.md
-.env
-.nyc_output
-coverage
-.coverage
+
+# Python
 __pycache__
 *.pyc
-.pytest_cache
-.vscode
-.idea
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+myenv/
+ENV/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.pytest_cache/
+htmlcov/
+
+# Django
+*.sqlite3
+*.db
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Frontend
+vridge_front/node_modules/
+vridge_front/build/
+vridge_front/npm-debug.log*
+vridge_front/yarn-debug.log*
+vridge_front/yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
 *~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+deployment-logs.md
+CHANGELOG.md
+README.md
+deployment-guide.md
+*.md
+scripts/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/

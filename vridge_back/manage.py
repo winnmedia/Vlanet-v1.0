@@ -9,7 +9,7 @@ def main():
     # Railway 환경에서는 railway 설정 사용
     if os.environ.get('RAILWAY_ENVIRONMENT'):
         # Railway 환경에서는 항상 railway 설정 사용
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_railway")
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_minimal")
     else:
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_dev")
     try:

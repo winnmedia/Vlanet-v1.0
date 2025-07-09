@@ -34,9 +34,9 @@ except ImportError:
     token_blacklist = None
 
 urlpatterns = [
-    path("", root_view, name="root"),  # 루트 경로
-    path("health/", health_check, name="health"),  # 헬스체크
-    path("api/health/", health_check, name="api_health"),  # API 헬스체크
+    # API 헬스체크
+    path("api/health/", health_check, name="api_health"),
+    path("health/", health_check, name="health"),  # 레거시 헬스체크
     path("cors-test/", cors_test_view, name="cors_test"),  # CORS 테스트
     path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
     path("admin/", admin.site.urls),
@@ -67,11 +67,10 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # SPA catch-all route - API 경로가 아닌 모든 요청을 React로 전달
 # 이것은 반드시 맨 마지막에 와야 함
-if not settings.DEBUG:
-    # 프로덕션에서만 활성화
-    urlpatterns += [
-        re_path(r'^(?!api|admin|media|static|health|users|projects|feedbacks|onlines).*$', SPAView.as_view(), name='spa'),
-    ]
+urlpatterns += [
+    # 루트 경로를 포함한 모든 나머지 경로를 React SPA로 전달
+    re_path(r'^(?!api|admin|media|static|health|users|projects|feedbacks|onlines|cors-test|public).*$', SPAView.as_view(), name='spa'),
+]
 
 # token_blacklist가 있을 때만 unregister
 if HAS_TOKEN_BLACKLIST and token_blacklist:

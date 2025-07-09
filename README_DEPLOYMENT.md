@@ -2,6 +2,13 @@
 
 This guide ensures stable and error-free deployments.
 
+## Current Architecture Status (2025-01-09)
+
+### Problem & Solution
+- **Issue**: vlanet.net showing backend API response instead of React app
+- **Cause**: Railway using minimal settings that only serve health check
+- **Solution**: Configured Django to serve React SPA using WhiteNoise
+
 ## Prerequisites
 
 ### 1. GitHub Secrets Setup

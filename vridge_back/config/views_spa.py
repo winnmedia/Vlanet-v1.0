@@ -10,10 +10,15 @@ class SPAView(View):
     def get(self, request, *args, **kwargs):
         try:
             # React 빌드 파일의 index.html을 반환
-            # 프로덕션에서는 Django가 React 빌드 파일을 서빙
-            index_path = os.path.join(settings.STATICFILES_DIRS[0], 'index.html')
+            # WhiteNoise가 설정되어 있으면 WHITENOISE_ROOT 사용
+            if hasattr(settings, 'WHITENOISE_ROOT'):
+                index_path = os.path.join(settings.WHITENOISE_ROOT, 'index.html')
+            else:
+                # 대체 경로: 프론트엔드 빌드 디렉토리
+                index_path = os.path.join(settings.BASE_DIR, '../vridge_front/build/index.html')
+            
             with open(index_path, 'r', encoding='utf-8') as file:
-                return HttpResponse(file.read())
+                return HttpResponse(file.read(), content_type='text/html')
         except:
             # 개발 환경이거나 index.html이 없는 경우
             # CORS 설정된 프론트엔드 URL로 리다이렉트

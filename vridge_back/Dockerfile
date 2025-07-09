@@ -44,9 +44,8 @@ RUN chmod +x /app/start_server.sh || true
 # 포트 노출
 EXPOSE 8000
 
-# 헬스체크
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/').read()" || exit 1
+# 헬스체크 (Railway가 자체적으로 처리하므로 제거)
+# HEALTHCHECK는 Railway에서 자동으로 처리됨
 
 # Django 서버 실행
-CMD ["sh", "-c", "python manage.py migrate --noinput || true && python manage.py collectstatic --noinput || true && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -"]
+CMD ["sh", "-c", "echo 'Starting on PORT='$PORT && python manage.py migrate --noinput || true && python manage.py collectstatic --noinput || true && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile - --log-level debug"]

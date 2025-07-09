@@ -16,6 +16,10 @@ urlpatterns = [
     # path('debug/test-jwt-protected/', views_jwt_test.test_jwt_protected, name='test_jwt_protected'),
     # path('test-improved-prompts/', views_debug.test_improved_prompts, name='test_improved_prompts'),
     
+    # 기본 리스트 엔드포인트
+    path('', views.get_planning_list, name='planning_list_default'),
+    path('create/', views.save_planning, name='create_planning'),
+    
     # 생성 관련 API
     path('generate/structure/', views.generate_structure, name='generate_structure'),
     path('generate/story/', views.generate_story, name='generate_story'),

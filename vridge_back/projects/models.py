@@ -153,6 +153,13 @@ class Project(core_model.TimeStampedModel):
     tone_manner = models.CharField(verbose_name="톤앤매너", max_length=50, null=True, blank=True)
     genre = models.CharField(verbose_name="장르", max_length=50, null=True, blank=True)
     concept = models.CharField(verbose_name="콘셉트", max_length=50, null=True, blank=True)
+    
+    # 협업 관련 필드
+    is_public = models.BooleanField(default=False, verbose_name="공개 프로젝트")
+    allow_comments = models.BooleanField(default=True, verbose_name="댓글 허용")
+    allow_anonymous_feedback = models.BooleanField(default=False, verbose_name="익명 피드백 허용")
+    tags = models.JSONField(blank=True, default=list, verbose_name="태그")
+    last_activity = models.DateTimeField(auto_now=True, verbose_name="마지막 활동")
 
     basic_plan = models.ForeignKey(
         "BasicPlan",

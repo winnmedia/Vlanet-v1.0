@@ -168,6 +168,33 @@ node final-verification.js
 
 ## 마이그레이션 관리 가이드
 
+### 마이그레이션 오류 방지 체크리스트 (필독!)
+**"Model class doesn't declare an explicit app_label" 오류를 방지하기 위해 반드시 확인해야 할 사항들:**
+
+1. **INSTALLED_APPS 확인**
+   - 새로운 앱을 추가할 때는 `settings_base.py`의 `PROJECT_APPS`에 반드시 추가
+   - Railway 배포 시에는 `config.settings.railway`가 사용되는지 확인
+   - 환경변수 `DJANGO_SETTINGS_MODULE`이 올바른 설정 파일을 가리키는지 확인
+
+2. **마이그레이션 파일 관리**
+   - 모델 변경 후 반드시 `makemigrations` 실행
+   - 생성된 마이그레이션 파일을 반드시 Git에 커밋
+   - 배포 전 로컬에서 `migrate` 테스트 완료
+
+3. **Railway 배포 시 환경변수**
+   ```
+   DJANGO_SETTINGS_MODULE=config.settings.railway
+   SECRET_KEY=your-secret-key
+   DATABASE_URL=postgresql://...
+   ```
+
+4. **자동 마이그레이션 실행**
+   - `start.sh` 스크립트를 통해 서버 시작 (마이그레이션 자동 실행)
+   - 또는 `ensure_migrations` 커맨드 사용:
+     ```bash
+     python manage.py ensure_migrations
+     ```
+
 ### 마이그레이션 개발 프로세스
 1. **모델 변경 전 확인사항**
    ```bash
@@ -205,11 +232,33 @@ node final-verification.js
    - 수동 실행 필요 시: `python3 manage.py migrate --settings=config.settings.railway`
    - 롤백 계획 수립 (migrate [app_name] [previous_migration])
 
+### 마이그레이션 오류 발생 시 해결 방법
+1. **"No migrations to apply" 문제**
+   - 로그에서 실제 적용된 앱 확인 (admin, auth, contenttypes만 나오는 경우)
+   - `settings_base.py`와 실제 사용 중인 설정 파일 비교
+   - 순차적 마이그레이션 실행:
+     ```bash
+     python manage.py migrate contenttypes
+     python manage.py migrate auth
+     python manage.py migrate users
+     python manage.py migrate projects
+     python manage.py migrate feedbacks
+     python manage.py migrate video_planning
+     python manage.py migrate video_analysis
+     python manage.py migrate admin_dashboard
+     ```
+
+2. **"relation does not exist" 오류**
+   - 데이터베이스 초기화 고려: `python manage.py flush --noinput`
+   - 특정 앱만 마이그레이션: `python manage.py migrate [app_name] zero`
+   - 재마이그레이션: `python manage.py migrate [app_name]`
+
 ### 마이그레이션 모범 사례
 - **원자적 마이그레이션**: 하나의 마이그레이션에 하나의 변경사항
 - **데이터 마이그레이션**: RunPython을 사용한 데이터 변환
 - **역방향 마이그레이션**: 항상 롤백 가능하도록 reverse 메서드 구현
 - **대용량 테이블**: 인덱스 추가/삭제는 별도 마이그레이션으로 분리
+- **마이그레이션 파일 커밋**: 생성된 마이그레이션 파일은 반드시 버전 관리에 포함
 
 ### Django 모델 자동 생성 도구 활용
 프로젝트에 포함된 모델 자동 생성 스크립트를 활용하여 API 스펙 기반 모델 생성 가능:
@@ -331,9 +380,12 @@ python3 manage.py collectstatic
 - [ ] **테스트 커버리지**: 수정된 기능에 대한 테스트 실행 및 확인
 - [ ] **마이그레이션 검토**: 
   - [ ] 모델 변경 시 마이그레이션 파일 생성 확인
+  - [ ] 생성된 마이그레이션 파일 Git 커밋 여부 확인
+  - [ ] settings_base.py의 INSTALLED_APPS에 앱 등록 확인
   - [ ] 기존 데이터와의 호환성 검토
   - [ ] 롤백 가능 여부 확인
   - [ ] 운영 환경 영향도 분석
+  - [ ] Railway 환경변수 DJANGO_SETTINGS_MODULE 확인
 
 ## 1000% 성과 측정 기준
 

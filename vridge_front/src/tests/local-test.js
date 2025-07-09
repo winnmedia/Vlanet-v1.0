@@ -73,13 +73,11 @@ async function localTest() {
       body: JSON.stringify({
         email: testEmail,
         password: testPassword,
-        password_confirm: testPassword,
-        username: `testuser_${Date.now()}`,
-        nickname: `테스트유저_${Date.now()}`,
-        phone: '010-1234-5678'
+        nickname: `테스트유저_${Date.now()}`
       })
     });
-    return { success: response.ok };
+    const data = await response.json();
+    return { success: response.ok, message: data.message };
   });
 
   await test('auth', '로그인', async () => {
@@ -95,9 +93,10 @@ async function localTest() {
     if (response.ok) {
       const data = await response.json();
       authToken = data.vridge_session || data.access_token;
-      return { success: !!authToken };
+      return { success: !!authToken, message: data.message };
     }
-    return { success: false };
+    const data = await response.json();
+    return { success: false, message: data.message };
   });
 
   // 3. 프로젝트 테스트
@@ -106,19 +105,31 @@ async function localTest() {
   await test('project', '프로젝트 생성', async () => {
     if (!authToken) return { success: false, message: '인증 토큰 없음' };
     
-    const response = await fetch(`${API_BASE}/api/projects/atomic-create/`, {
+    const formData = new FormData();
+    formData.append('inputs', JSON.stringify({
+      name: `테스트 프로젝트 ${new Date().toISOString()}`,
+      client: '테스트 클라이언트',
+      manager: `testuser_${Date.now()}`,
+      status: 'planning',
+      theme: '테스트 테마'
+    }));
+    formData.append('process', JSON.stringify({
+      basic_plan: { active: true },
+      story_board: { active: true },
+      filming: { active: true },
+      video_edit: { active: true },
+      post_work: { active: true },
+      video_preview: { active: true },
+      confirmation: { active: true },
+      video_delivery: { active: true }
+    }));
+    
+    const response = await fetch(`${API_BASE}/api/projects/create/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${authToken}`
       },
-      body: JSON.stringify({
-        name: `테스트 프로젝트 ${new Date().toISOString()}`,
-        client: '테스트 클라이언트',
-        manager: `testuser_${Date.now()}`,
-        status: 'planning',
-        theme: '테스트 테마'
-      })
+      body: formData
     });
     
     if (response.ok) {
@@ -135,35 +146,45 @@ async function localTest() {
     const projectName = `중복테스트_${Date.now()}`;
     
     // 첫 번째 생성
-    const response1 = await fetch(`${API_BASE}/api/projects/atomic-create/`, {
+    const formData1 = new FormData();
+    formData1.append('inputs', JSON.stringify({
+      name: projectName,
+      client: '테스트',
+      manager: 'test',
+      status: 'planning'
+    }));
+    formData1.append('process', JSON.stringify({
+      basic_plan: { active: true }
+    }));
+    
+    const response1 = await fetch(`${API_BASE}/api/projects/create/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${authToken}`
       },
-      body: JSON.stringify({
-        name: projectName,
-        client: '테스트',
-        manager: 'test',
-        status: 'planning'
-      })
+      body: formData1
     });
     
     if (!response1.ok) return { success: false, message: '첫 번째 생성 실패' };
     
     // 동일한 이름으로 두 번째 생성 시도
-    const response2 = await fetch(`${API_BASE}/api/projects/atomic-create/`, {
+    const formData2 = new FormData();
+    formData2.append('inputs', JSON.stringify({
+      name: projectName,
+      client: '테스트',
+      manager: 'test',
+      status: 'planning'
+    }));
+    formData2.append('process', JSON.stringify({
+      basic_plan: { active: true }
+    }));
+    
+    const response2 = await fetch(`${API_BASE}/api/projects/create/`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${authToken}`
       },
-      body: JSON.stringify({
-        name: projectName,
-        client: '테스트',
-        manager: 'test',
-        status: 'planning'
-      })
+      body: formData2
     });
     
     const responseData = await response2.text();

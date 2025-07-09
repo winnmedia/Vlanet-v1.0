@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .create_users_endpoint import CreateTestUsers
+from rest_framework_simplejwt.views import TokenRefreshView
 # 아래 모듈들은 아직 구현되지 않음
 # from . import views_signup_with_email
 # from . import views_profile
@@ -10,6 +11,8 @@ from .create_users_endpoint import CreateTestUsers
 urlpatterns = [
     path("login/", views.SignIn.as_view()),
     path("signup/", views.SignUp.as_view()),  # 기존 회원가입 (임시 유지)
+    path("me/", views.UserMe.as_view()),  # 현재 사용자 정보
+    path("refresh/", TokenRefreshView.as_view()),  # JWT 토큰 갱신
     
     # 새로운 이메일 인증 회원가입 프로세스 (구현 예정)
     # path("signup/request/", views_signup_with_email.SignUpRequest.as_view()),  # Step 1: 이메일 인증 요청

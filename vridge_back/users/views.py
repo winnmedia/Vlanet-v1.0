@@ -116,12 +116,23 @@ class SignUp(View):
                 return JsonResponse({"message": "이미 사용 중인 닉네임입니다."}, status=409)
             
             # 새 사용자 생성
-            new_user = models.User.objects.create(
+            new_user = models.User(
                 username=email, 
                 email=email,  # email 필드도 설정
                 nickname=nickname,
                 login_method='email'
             )
+            # 혹시 남아있을 수 있는 레거시 필드들을 위한 처리
+            if hasattr(new_user, 'is_social_login'):
+                new_user.is_social_login = False
+            if hasattr(new_user, 'social_id'):
+                new_user.social_id = None
+            if hasattr(new_user, 'social_profile_image'):
+                new_user.social_profile_image = None
+            if hasattr(new_user, 'login_count'):
+                new_user.login_count = 0
+            if hasattr(new_user, 'last_login_ip'):
+                new_user.last_login_ip = None
             new_user.set_password(password)
             new_user.save()
             
@@ -591,6 +602,24 @@ class GoogleLogin(View):
         except Exception as e:
             logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+
+
+class UserMe(View):
+    @user_validator
+    def get(self, request):
+        try:
+            user = request.vridge_user
+            return JsonResponse({
+                "id": user.id,
+                "username": user.username,
+                "email": user.username if user.login_method == "email" else "",
+                "nickname": user.nickname if user.nickname else user.username,
+                "login_method": user.login_method,
+                "date_joined": user.date_joined.isoformat() if user.date_joined else None,
+            }, status=200)
+        except Exception as e:
+            logger.error(f"Error in UserMe: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
 
 
 class UserMemo(View):

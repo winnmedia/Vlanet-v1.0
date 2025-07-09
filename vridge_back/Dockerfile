@@ -38,6 +38,9 @@ RUN if [ -f requirements.txt ]; then \
 # 정적 파일 디렉토리 생성
 RUN mkdir -p /app/staticfiles
 
+# 시작 스크립트 실행 권한 부여
+RUN chmod +x /app/start_server.sh || true
+
 # 포트 노출
 EXPOSE 8000
 
@@ -46,4 +49,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/').read()" || exit 1
 
 # Django 서버 실행
-CMD ["/app/start_server.sh"]
+CMD ["sh", "-c", "python manage.py migrate --noinput || true && python manage.py collectstatic --noinput || true && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -"]

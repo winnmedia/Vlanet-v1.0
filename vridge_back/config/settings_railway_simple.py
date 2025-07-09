@@ -180,11 +180,11 @@ if os.environ.get('SENDGRID_API_KEY'):
     EMAIL_HOST_USER = 'apikey'
     EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
 
-# Cache settings
+# Cache settings - 메모리 캐시로 빠른 시작
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'django_cache_table',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
     }
 }
 

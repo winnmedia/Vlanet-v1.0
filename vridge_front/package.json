@@ -53,7 +53,8 @@
     "serve": "node server.js",
     "serve:build": "npm run build && node server.js",
     "dev": "react-scripts start",
-    "preview": "npm run build && npx serve -s build"
+    "preview": "npm run build && npx serve -s build",
+    "vercel-build": "npm run build"
   },
   "proxy": "http://localhost:8000",
   "eslintConfig": {

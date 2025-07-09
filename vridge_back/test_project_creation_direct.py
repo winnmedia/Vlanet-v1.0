@@ -8,7 +8,7 @@ import sys
 import django
 
 # Django 설정
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_dev')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
 django.setup()
 
 from django.db import connection
@@ -46,7 +46,7 @@ def test_project_creation():
             email="test@example.com",
             defaults={
                 "username": "testuser",
-                "name": "Test User"
+                "nickname": "Test User"
             }
         )
         print(f"사용자: {user.email} (새로 생성: {created})")

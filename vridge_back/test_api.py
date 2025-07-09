@@ -4,7 +4,7 @@ import sys
 import django
 import requests
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_dev')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 django.setup()
 

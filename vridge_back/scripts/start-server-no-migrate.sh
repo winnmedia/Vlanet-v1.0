@@ -5,7 +5,7 @@ set +e
 echo "Starting server WITHOUT migrations..."
 
 # 환경변수 강제 설정
-export DJANGO_SETTINGS_MODULE=config.settings.railway_no_db
+export DJANGO_SETTINGS_MODULE=config.settings.railway
 
 # 환경변수 확인
 echo "Environment check:"

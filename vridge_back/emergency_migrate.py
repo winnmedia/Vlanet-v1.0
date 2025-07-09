@@ -9,7 +9,7 @@ from django.core.management import call_command
 from django.db import connection
 
 # Django 설정
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_minimal')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
 django.setup()
 
 def run_emergency_migration():

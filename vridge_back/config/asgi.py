@@ -13,7 +13,7 @@ import os
 if os.environ.get('RAILWAY_ENVIRONMENT'):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway")
 else:
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_dev")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway")
 
 import django  # 환경변수 입력 후 django 모듈 불러오기
 

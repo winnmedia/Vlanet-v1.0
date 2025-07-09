@@ -8,7 +8,7 @@ import sys
 import django
 
 # Django 설정
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_minimal')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
 django.setup()
 
 from django.core.management import call_command

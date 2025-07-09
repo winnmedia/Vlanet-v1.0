@@ -3,7 +3,7 @@ import google.generativeai as genai
 from django.conf import settings
 
 # Django 설정 초기화
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_dev')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
 import django
 django.setup()
 

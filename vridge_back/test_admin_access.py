@@ -6,7 +6,7 @@ import sys
 import django
 
 # Set Django settings module
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings_dev')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
 
 # Setup Django
 django.setup()

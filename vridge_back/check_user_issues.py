@@ -5,7 +5,7 @@ import django
 
 # Django 설정 초기화
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway_simple")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway")
 django.setup()
 
 from django.contrib.auth import get_user_model

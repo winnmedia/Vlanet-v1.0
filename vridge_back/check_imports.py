@@ -6,7 +6,7 @@ import os
 import sys
 
 # Django 설정
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_minimal")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway")
 
 print("=== Django Import 체크 ===\n")
 
@@ -54,7 +54,7 @@ print("\n=== URL 설정 체크 ===\n")
 # URL 패턴 로드
 try:
     from django.urls import include, path
-    from config.urls_minimal import urlpatterns
+    from config.urls import urlpatterns
     print(f"✓ URL 패턴 로드 성공 ({len(urlpatterns)}개)")
 except Exception as e:
     print(f"✗ URL 패턴 로드 실패: {e}")

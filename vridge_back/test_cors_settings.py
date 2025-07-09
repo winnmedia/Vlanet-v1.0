@@ -3,8 +3,8 @@ import os
 import sys
 import django
 
-# Railway CORS fix 설정 사용
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway_cors_fix')
+# Railway 설정 사용
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 django.setup()
 

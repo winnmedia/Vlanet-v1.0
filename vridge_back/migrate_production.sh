@@ -6,7 +6,7 @@ echo "이 스크립트는 Railway 운영 환경에서 실행되어야 합니다.
 echo ""
 
 # 환경 변수 설정
-export DJANGO_SETTINGS_MODULE=config.settings_minimal
+export DJANGO_SETTINGS_MODULE=config.settings.railway
 
 echo "1. 현재 마이그레이션 상태 확인..."
 python manage.py showmigrations

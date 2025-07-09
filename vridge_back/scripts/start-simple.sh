@@ -2,8 +2,8 @@
 echo "Starting VideoPlanet Backend..."
 cd /app/vridge_back
 
-# Use environment variable if set, otherwise use railway_cors_fix
-export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-config.settings.railway_cors_fix}
+# Use environment variable if set, otherwise use railway
+export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-config.settings.railway}
 echo "Using Django settings: $DJANGO_SETTINGS_MODULE"
 
 # Database URL 확인

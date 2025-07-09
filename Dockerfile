@@ -5,7 +5,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Python 파일만 복사
-COPY vridge_back/simple_server.py .
+COPY simple_server.py .
 
 # 포트 노출
 EXPOSE 8000

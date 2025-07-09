@@ -2,6 +2,13 @@
 
 모든 주요 변경사항이 이 파일에 기록됩니다.
 
+## [0.2.2] - 2025-01-09
+
+### 수정
+- Railway 환경변수 문제 해결
+- Dockerfile에 DJANGO_SETTINGS_MODULE 명시적 설정
+- Railway 빌드 캐시 문제 해결을 위한 buildCommand 추가
+
 ## [0.2.1] - 2025-01-09
 
 ### 수정

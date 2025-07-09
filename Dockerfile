@@ -18,9 +18,13 @@ RUN apk add --no-cache \
 # 전체 프로젝트 복사
 COPY . .
 
+# 디버깅을 위한 파일 목록 확인
+RUN ls -la && ls -la vridge_back/
+
 # pip 업그레이드 및 의존성 설치
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r vridge_back/requirements.txt && \
+    cd vridge_back && \
+    pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir gunicorn
 
 # 정적 파일 디렉토리 생성

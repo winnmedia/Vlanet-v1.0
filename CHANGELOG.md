@@ -2,6 +2,15 @@
 
 모든 주요 변경사항이 이 파일에 기록됩니다.
 
+## [0.1.12] - 2025-01-09
+
+### 수정
+- settings/railway.py에 누락된 앱 추가 (video_planning, admin_dashboard)
+- Railway가 사용하는 실제 설정 파일 수정
+
+### 중요
+- settings_railway.py가 아닌 settings/railway.py가 실제 사용되는 파일임
+
 ## [0.1.11] - 2025-01-09
 
 ### 수정

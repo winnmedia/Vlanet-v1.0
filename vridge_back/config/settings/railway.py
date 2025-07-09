@@ -43,6 +43,8 @@ PROJECT_APPS = [
     "feedbacks",
     "onlines",
     "video_analysis",
+    "video_planning",
+    "admin_dashboard",
 ]
 
 THIRD_PARTY_APPS = [
@@ -61,6 +63,8 @@ INSTALLED_APPS = [
     "feedbacks",
     "onlines",
     "video_analysis",
+    "video_planning",
+    "admin_dashboard",
     
     # Django apps
     "django.contrib.admin",

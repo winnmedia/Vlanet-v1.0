@@ -83,7 +83,7 @@ git push origin main
 
 ### Railway 환경변수 설정
 ```
-SECRET_KEY=django-insecure-DcuaI3zQmYubdwPqXgkCQgJkfZJCeiJ5NM7-HqsgEQRUADnZeb
+SECRET_KEY=your-secret-key-here  # python3 manage.py generate_secret_key로 생성
 DJANGO_SETTINGS_MODULE=config.settings.railway
 
 TWELVE_LABS_API_KEY=tlk_your_api_key

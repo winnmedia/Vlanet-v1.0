@@ -9,12 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Railway 환경 확인
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
-if IS_RAILWAY:
-    print("Running on Railway environment")
-    print(f"Railway environment: {os.environ.get('RAILWAY_ENVIRONMENT')}")
-    # 모든 Railway 환경변수 출력
-    railway_vars = {k: v for k, v in os.environ.items() if k.startswith('RAILWAY_')}
-    print(f"Railway variables found: {list(railway_vars.keys())}")
 
 # 보안 설정
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
@@ -27,8 +21,7 @@ ALLOWED_HOSTS = [
     'vlanet.net', 
     'www.vlanet.net',
     'localhost',
-    '127.0.0.1',
-    '*'  # 임시로 모든 호스트 허용 (테스트용)
+    '127.0.0.1'
 ]
 
 # Application definition
@@ -119,9 +112,6 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('RAILWAY_DATABASE_URL')
 
 # 환경변수 확인을 위한 디버그 출력
-print("Checking database environment variables...")
-print(f"DATABASE_URL exists: {'DATABASE_URL' in os.environ}")
-print(f"RAILWAY_DATABASE_URL exists: {'RAILWAY_DATABASE_URL' in os.environ}")
 
 if DATABASE_URL:
     DATABASES = {
@@ -183,9 +173,6 @@ MEDIA_ROOT = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', BASE_DIR / 'media')
 import os as os_module
 if not os_module.path.exists(MEDIA_ROOT):
     os_module.makedirs(MEDIA_ROOT, exist_ok=True)
-    print(f"Created media directory at: {MEDIA_ROOT}")
-else:
-    print(f"Media directory exists at: {MEDIA_ROOT}")
 
 # CORS 설정
 # 환경변수에서 추가 CORS origin 가져오기
@@ -209,7 +196,6 @@ CORS_ALLOWED_ORIGINS_DEFAULT = [
 CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS_DEFAULT + CORS_ALLOWED_ORIGINS_ENV))
 
 # CORS 디버깅
-print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
 
 # CORS 추가 설정
 CORS_ALLOW_CREDENTIALS = True
@@ -274,7 +260,6 @@ KAKAO_API_KEY = os.environ.get('KAKAO_API_KEY')
 
 # Railway 볼륨 스토리지 설정
 # Railway는 영구 볼륨을 제공하며, RAILWAY_VOLUME_MOUNT_PATH에 마운트됨
-print("Using Railway volume storage for media files")
 
 # 이메일 설정 (SendGrid 또는 Gmail)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -286,7 +271,7 @@ if os.environ.get('SENDGRID_API_KEY'):
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'apikey'  # SendGrid는 항상 'apikey'를 사용
     EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
-    print(f"SendGrid configured with API key: {EMAIL_HOST_PASSWORD[:10]}..." if EMAIL_HOST_PASSWORD else "SendGrid API key not found")
+    pass  # SendGrid configured
 # Gmail을 사용하는 경우
 else:
     EMAIL_HOST = 'smtp.gmail.com'
@@ -294,17 +279,13 @@ else:
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', os.environ.get('GOOGLE_ID'))
     EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', os.environ.get('GOOGLE_APP_PASSWORD'))
-    print(f"Gmail configured with user: {EMAIL_HOST_USER}" if EMAIL_HOST_USER else "Gmail credentials not configured")
+    pass  # Gmail configured
 
 # 공통 설정
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'VideoPlanet <vridgeofficial@gmail.com>')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # 이메일 설정 디버깅
-if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
-    print(f"Email configured successfully")
-else:
-    print("WARNING: Email credentials not configured!")
 
 # Sentry 설정
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
@@ -313,8 +294,6 @@ SENTRY_DSN = os.environ.get('SENTRY_DSN')
 AUTH_USER_MODEL = "users.User"
 
 # WSGI 설정 확인
-print(f"\nDJANGO_SETTINGS_MODULE: {os.environ.get('DJANGO_SETTINGS_MODULE')}")
-print(f"Current settings file: {__file__}")
 
 # 보안 헤더
 SECURE_BROWSER_XSS_FILTER = True
@@ -333,7 +312,7 @@ if REDIS_URL:
             'LOCATION': REDIS_URL,
         }
     }
-    print(f"Redis cache configured: {REDIS_URL[:20]}...")
+    pass  # Redis cache configured
 else:
     # Redis가 없을 경우 데이터베이스 캐시를 대체로 사용
     CACHES = {
@@ -342,8 +321,7 @@ else:
             'LOCATION': 'django_cache_table',
         }
     }
-    print("WARNING: Redis not configured, using database cache as fallback")
-    print("Run: python manage.py createcachetable")
+    pass  # Using database cache as fallback
 
 # 로깅
 LOGGING = {
@@ -361,8 +339,3 @@ LOGGING = {
 }
 
 # 데이터베이스 연결 확인을 위한 로그
-print(f"DATABASE_URL: {DATABASE_URL[:20]}..." if DATABASE_URL else "DATABASE_URL not found")
-if DATABASE_URL:
-    print("Database configured with PostgreSQL")
-else:
-    print("WARNING: No database URL found, using SQLite")

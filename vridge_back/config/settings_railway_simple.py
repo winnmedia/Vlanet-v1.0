@@ -10,16 +10,16 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 보안 설정
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-railway-temp-key')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    print("WARNING: SECRET_KEY not set, using temporary key")
+    SECRET_KEY = 'django-insecure-temporary-key-for-railway-deployment'
+
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # 허용된 호스트
-ALLOWED_HOSTS = [
-    '.railway.app',
-    'videoplanet.up.railway.app',
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '.railway.app,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS]
 
 # Application definition
 INSTALLED_APPS = [
@@ -129,12 +129,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = [
-    'https://vlanet.net',
-    'https://www.vlanet.net',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'https://vlanet.net,https://www.vlanet.net,http://localhost:3000'
+).split(',')
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -174,11 +173,12 @@ SIMPLE_JWT = {
 
 # Email settings (SendGrid)
 if os.environ.get('SENDGRID_API_KEY'):
-    EMAIL_HOST = 'smtp.sendgrid.net'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'apikey'
-    EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'apikey')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', os.environ.get('SENDGRID_API_KEY'))
+    DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@vlanet.net')
 
 # Cache settings - 메모리 캐시로 빠른 시작
 CACHES = {
@@ -203,8 +203,12 @@ LOGGING = {
     },
 }
 
+# 설정 로드 확인
 print("=" * 50)
 print("Railway Simple Settings Loaded")
+print(f"DEBUG: {DEBUG}")
 print(f"DATABASE_URL exists: {bool(DATABASE_URL)}")
 print(f"SECRET_KEY exists: {bool(os.environ.get('SECRET_KEY'))}")
+print(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
+print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
 print("=" * 50)

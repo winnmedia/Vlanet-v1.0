@@ -2,6 +2,13 @@
 
 모든 주요 변경사항이 이 파일에 기록됩니다.
 
+## [0.1.4] - 2025-01-09
+
+### 수정
+- Railway가 vridge_back를 루트로 사용하는 문제 대응
+- 조건부 requirements.txt 경로 처리
+- railway.json의 Dockerfile 경로 수정
+
 ## [0.1.3] - 2025-01-09
 
 ### 수정

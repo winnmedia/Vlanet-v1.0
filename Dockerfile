@@ -18,20 +18,22 @@ RUN apk add --no-cache \
 # 전체 프로젝트 복사
 COPY . .
 
-# 디버깅을 위한 파일 목록 확인
-RUN ls -la && ls -la vridge_back/
-
-# pip 업그레이드 및 의존성 설치
-RUN pip install --upgrade pip && \
-    cd vridge_back && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir gunicorn
+# Railway가 vridge_back 내용을 루트에 복사하는 경우를 처리
+# requirements.txt가 루트에 있는지 확인하고 설치
+RUN if [ -f requirements.txt ]; then \
+        pip install --upgrade pip && \
+        pip install --no-cache-dir -r requirements.txt && \
+        pip install --no-cache-dir gunicorn; \
+    elif [ -f vridge_back/requirements.txt ]; then \
+        pip install --upgrade pip && \
+        pip install --no-cache-dir -r vridge_back/requirements.txt && \
+        pip install --no-cache-dir gunicorn; \
+    else \
+        echo "requirements.txt not found!" && exit 1; \
+    fi
 
 # 정적 파일 디렉토리 생성
-RUN mkdir -p /app/vridge_back/staticfiles
-
-# 작업 디렉토리 변경
-WORKDIR /app/vridge_back
+RUN mkdir -p /app/staticfiles
 
 # 포트 노출
 EXPOSE 8000

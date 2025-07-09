@@ -8,7 +8,7 @@ import sys
 import django
 
 # Django 설정 로드
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', os.environ.get('DJANGO_SETTINGS_MODULE', 'config.settings.sendgrid_config'))
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', os.environ.get('DJANGO_SETTINGS_MODULE', 'config.settings'))
 django.setup()
 
 from django.conf import settings

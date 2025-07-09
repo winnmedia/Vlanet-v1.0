@@ -4,7 +4,7 @@
 echo "VideoPlanet 로컬 백엔드 시작..."
 
 # 환경변수 설정 (로컬 테스트용)
-export DJANGO_SETTINGS_MODULE="config.settings.sendgrid_config"
+export DJANGO_SETTINGS_MODULE="config.settings"
 export SENDGRID_API_KEY="your_sendgrid_api_key_here"
 export CORS_ALLOWED_ORIGINS="http://localhost:3000,http://127.0.0.1:3000"
 export DEBUG="True"

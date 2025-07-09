@@ -53,3 +53,11 @@
 - **플랫폼**: Railway/Vercel
 - **주요 변경사항**: Railway 프로젝트 구조 대응
 - **상태**: 배포 진행 중
+
+## 2025-07-09 13:59 KST
+- **버전**: 0.1.5
+- **커밋**: a35a5ec
+- **배포자**: VideoPlanet
+- **플랫폼**: Railway/Vercel
+- **주요 변경사항**: Dockerfile을 vridge_back 폴더에 추가
+- **상태**: 배포 진행 중

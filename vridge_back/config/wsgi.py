@@ -11,7 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-# Railway 환경에서는 항상 settings_minimal 사용
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_minimal")
+# Railway 환경에서는 settings.railway 사용
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway")
 
 application = get_wsgi_application()

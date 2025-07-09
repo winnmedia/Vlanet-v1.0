@@ -133,7 +133,7 @@ ALLOWED_HOSTS = [
     'www.vlanet.net',
     'localhost',
     '127.0.0.1',
-    '*'  # 임시로 모든 호스트 허용
+    'videoplanet.up.railway.app'
 ]
 
 # 데이터베이스 설정
@@ -142,9 +142,10 @@ if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-    print(f"Using PostgreSQL database")
+    pass  # Using PostgreSQL database
 else:
-    print("WARNING: No database URL found, using SQLite")
+    import logging
+    logging.warning("No database URL found, using SQLite")
 
 # Redis 캐시 설정
 REDIS_URL = os.environ.get('REDIS_URL')
@@ -160,7 +161,7 @@ if REDIS_URL:
                 }
             }
         }
-        print("Redis cache configured")
+        pass  # Redis cache configured
     except ImportError:
         CACHES = {
             'default': {
@@ -168,7 +169,7 @@ if REDIS_URL:
                 'LOCATION': 'django_cache_table',
             }
         }
-        print("Using database cache (django_redis not installed)")
+        pass  # Using database cache (django_redis not installed)
 else:
     CACHES = {
         'default': {
@@ -176,7 +177,7 @@ else:
             'LOCATION': 'django_cache_table',
         }
     }
-    print("Using database cache (no Redis URL)")
+    pass  # Using database cache (no Redis URL)
 
 # 정적 파일 설정 (WhiteNoise)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -234,7 +235,7 @@ if os.environ.get('SENDGRID_API_KEY'):
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'apikey'
     EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
-    print("Email configured with SendGrid")
+    pass  # Email configured with SendGrid
 
 # 로깅 설정
 LOGGING = {
@@ -258,4 +259,4 @@ LOGGING = {
     },
 }
 
-print(f"Railway settings loaded - Debug: {DEBUG}, Database: {'PostgreSQL' if DATABASE_URL else 'SQLite'}")
+# Railway settings loaded

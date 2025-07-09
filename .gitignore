@@ -128,3 +128,8 @@ vridge_back/staticfiles/
 start-server.sh
 start_simple.sh
 start_emergency.sh
+
+# Windows metadata
+*Zone.Identifier
+desktop.ini
+Thumbs.db

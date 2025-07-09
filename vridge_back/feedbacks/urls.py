@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from . import views_redirect
+# from . import views_redirect
 
 urlpatterns = [
     # 기존 API (하위 호환성 유지)

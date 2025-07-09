@@ -1,20 +1,20 @@
 from django.urls import path
 from . import views
-from . import views_debug
-from . import views_jwt_test
-from . import views_proxy
-from . import views_proposal
+# from . import views_debug
+# from . import views_jwt_test
+# from . import views_proxy
+# from . import views_proposal
 
 app_name = 'video_planning'
 
 urlpatterns = [
     # 디버그 엔드포인트
-    path('debug/services/', views_debug.check_services_status, name='check_services_status'),
-    path('debug/test-openai/', views_debug.test_openai_direct, name='test_openai_direct'),
-    path('debug/test-prompt/', views_debug.test_prompt_generation, name='test_prompt_generation'),
-    path('debug/test-jwt/', views_jwt_test.test_jwt_auth, name='test_jwt_auth'),
-    path('debug/test-jwt-protected/', views_jwt_test.test_jwt_protected, name='test_jwt_protected'),
-    path('test-improved-prompts/', views_debug.test_improved_prompts, name='test_improved_prompts'),
+    # path('debug/services/', views_debug.check_services_status, name='check_services_status'),
+    # path('debug/test-openai/', views_debug.test_openai_direct, name='test_openai_direct'),
+    # path('debug/test-prompt/', views_debug.test_prompt_generation, name='test_prompt_generation'),
+    # path('debug/test-jwt/', views_jwt_test.test_jwt_auth, name='test_jwt_auth'),
+    # path('debug/test-jwt-protected/', views_jwt_test.test_jwt_protected, name='test_jwt_protected'),
+    # path('test-improved-prompts/', views_debug.test_improved_prompts, name='test_improved_prompts'),
     
     # 생성 관련 API
     path('generate/structure/', views.generate_structure, name='generate_structure'),
@@ -27,8 +27,8 @@ urlpatterns = [
     # 이미지 관련 API
     path('regenerate/storyboard-image/', views.regenerate_storyboard_image, name='regenerate_storyboard_image'),
     path('download/storyboard-image/', views.download_storyboard_image, name='download_storyboard_image'),
-    path('proxy/image/', views_proxy.proxy_image, name='proxy_image'),
-    path('convert/base64/', views_proxy.convert_to_base64, name='convert_to_base64'),
+    # path('proxy/image/', views_proxy.proxy_image, name='proxy_image'),
+    # path('convert/base64/', views_proxy.convert_to_base64, name='convert_to_base64'),
     
     # 기획 저장/조회 API
     path('save/', views.save_planning, name='save_planning'),
@@ -50,9 +50,9 @@ urlpatterns = [
     path('export/formats/', views.get_export_formats, name='get_export_formats'),
     
     # 기획안 내보내기 API (새로운 AI 기반)
-    path('proposals/export/', views_proposal.export_proposal, name='export_proposal'),
-    path('proposals/preview/', views_proposal.preview_structure, name='preview_structure'),
-    path('proposals/create-slides/', views_proposal.create_slides_from_structure, name='create_slides_from_structure'),
-    path('proposals/templates/', views_proposal.get_available_templates, name='get_available_templates'),
-    path('proposals/status/', views_proposal.get_service_status, name='get_service_status'),
+    # path('proposals/export/', views_proposal.export_proposal, name='export_proposal'),
+    # path('proposals/preview/', views_proposal.preview_structure, name='preview_structure'),
+    # path('proposals/create-slides/', views_proposal.create_slides_from_structure, name='create_slides_from_structure'),
+    # path('proposals/templates/', views_proposal.get_available_templates, name='get_available_templates'),
+    # path('proposals/status/', views_proposal.get_service_status, name='get_service_status'),
 ]

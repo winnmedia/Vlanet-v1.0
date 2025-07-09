@@ -20,6 +20,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.views.generic import TemplateView
 from .views import health_check, root_view
 from api_health import csrf_token_view
 
@@ -30,6 +32,43 @@ try:
 except ImportError:
     HAS_TOKEN_BLACKLIST = False
     token_blacklist = None
+
+# 간단한 헬스체크 뷰
+def simple_health(request):
+    return JsonResponse({"status": "ok"})
+
+# CORS 테스트 뷰
+def cors_test_view(request):
+    return JsonResponse({
+        "status": "ok",
+        "message": "CORS test successful",
+        "method": request.method,
+        "headers": {
+            "Origin": request.headers.get("Origin"),
+            "Host": request.headers.get("Host")
+        }
+    })
+
+# 공개 프로젝트 목록 뷰 (임시)
+from django.views import View
+class PublicProjectListView(View):
+    def get(self, request):
+        return JsonResponse({"projects": []})
+
+# SPA 뷰
+class SPAView(TemplateView):
+    template_name = "index.html"
+    
+    def get_template_names(self):
+        # 템플릿이 없을 경우 빈 응답 반환
+        return ["index.html"]
+    
+    def get(self, request, *args, **kwargs):
+        # 템플릿이 없을 경우를 대비한 처리
+        try:
+            return super().get(request, *args, **kwargs)
+        except:
+            return JsonResponse({"message": "React app should be served here"})
 
 urlpatterns = [
     # API 헬스체크

@@ -1,2 +1,1 @@
-release: python manage.py migrate --noinput || echo "Migration failed but continuing"
-web: gunicorn config.wsgi:application --config gunicorn_config.py
+web: gunicorn railway_test:application --bind 0.0.0.0:$PORT

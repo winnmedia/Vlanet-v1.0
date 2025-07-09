@@ -23,6 +23,7 @@ from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views.generic import TemplateView
 from .views import health_check, root_view
+from .simple_health import simple_health_check
 from api_health import csrf_token_view
 
 # token_blacklist import를 보호
@@ -72,7 +73,7 @@ class SPAView(TemplateView):
 
 urlpatterns = [
     # API 헬스체크
-    path("api/health/", simple_health, name="api_health"),  # 간단한 헬스체크
+    path("api/health/", simple_health_check, name="api_health"),  # 간단한 헬스체크
     path("api/health-full/", health_check, name="api_health_full"),  # 상세 헬스체크
     path("health/", simple_health, name="health"),  # 레거시 헬스체크
     path("cors-test/", cors_test_view, name="cors_test"),  # CORS 테스트

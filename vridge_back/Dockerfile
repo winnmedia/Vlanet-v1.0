@@ -42,9 +42,8 @@ RUN mkdir -p /app/staticfiles
 EXPOSE 8000
 
 # 헬스체크
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health').read()" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/').read()" || exit 1
 
 # Django 서버 실행
-# 데이터베이스 대기 후 실행
-CMD ["sh", "-c", "python wait_for_db.py && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -"]
+CMD ["/app/start_server.sh"]

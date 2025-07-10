@@ -27,6 +27,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.db.models import F
 from django.db import transaction
 from django.utils import timezone as django_timezone
+import os
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -934,10 +935,30 @@ class ProjectFeedback(View):
             
             # 피드백 정보 반환
             feedback = project.feedback
+            
+            # 파일 URL 생성 - 전체 URL 반환
+            file_url = None
+            if feedback.files:
+                if hasattr(feedback.files, 'url'):
+                    file_url = feedback.files.url
+                    # URL이 상대 경로인 경우 전체 URL로 변환
+                    if file_url and not file_url.startswith('http'):
+                        # 환경 변수에서 도메인 가져오기
+                        if settings.DEBUG:
+                            file_url = f"http://localhost:8000{file_url}"
+                        else:
+                            # Railway 또는 프로덕션 환경
+                            backend_url = os.environ.get('BACKEND_URL', 'https://videoplanet.up.railway.app')
+                            # URL이 이미 /로 시작하는 경우와 아닌 경우 처리
+                            if backend_url.endswith('/'):
+                                backend_url = backend_url.rstrip('/')
+                            file_url = f"{backend_url}{file_url}"
+                    logger.info(f"Generated file URL: {file_url}")
+            
             result = {
                 "id": feedback.id,
                 "project": project_id,
-                "files": feedback.files.url if feedback.files else None,
+                "files": file_url,
                 "created": feedback.created,
                 "updated": feedback.updated,
                 "comments": []
@@ -1067,10 +1088,23 @@ class ProjectFeedbackUpload(View):
             feedback.files = file
             feedback.save()
             
+            # 파일 URL 생성 - 전체 URL 반환
+            file_url = feedback.files.url
+            if file_url and not file_url.startswith('http'):
+                if settings.DEBUG:
+                    file_url = f"http://localhost:8000{file_url}"
+                else:
+                    backend_url = os.environ.get('BACKEND_URL', 'https://videoplanet.up.railway.app')
+                    if backend_url.endswith('/'):
+                        backend_url = backend_url.rstrip('/')
+                    file_url = f"{backend_url}{file_url}"
+            
+            logger.info(f"Upload complete. File URL: {file_url}")
+            
             return JsonResponse({
                 "result": {
                     "id": feedback.id,
-                    "file_url": feedback.files.url
+                    "file_url": file_url
                 }
             }, status=200)
             

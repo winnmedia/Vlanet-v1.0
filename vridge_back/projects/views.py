@@ -1040,7 +1040,7 @@ class ProjectFeedbackUpload(View):
                 rating="manager"
             ).exists()
             
-            if project.user \!= user and not is_manager:
+            if project.user != user and not is_manager:
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
             
             # 파일 처리

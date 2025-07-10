@@ -2,32 +2,15 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { checkSession } from 'util/util'
 import 'css/Cms/Cms.scss'
-import 'css/Cms/FeedbackOriginal.scss'
-import 'css/Cms/CommentFix.scss'
-import 'css/Cms/ButtonAlignment.scss'
-import 'css/Cms/ShareDeleteFix.scss'
-import 'css/Cms/ShareButtonFix.scss'
-import 'css/Cms/VideoPlayerButtonFix.scss'
-import 'css/Cms/UploadProgress.scss'
-import 'css/Cms/LayoutFix.scss'
-import 'css/Cms/SidebarSpacingFix.scss'
-import 'css/Cms/ModalOpacityFix.scss'
-import 'css/Cms/FeedbackSectionRedesign.scss'
-import 'css/Cms/SidebarResize.scss'
-import 'css/Cms/SidebarProjectSpacing.scss'
-import 'css/Cms/FeedbackPageSpacing.scss'
-import 'css/Cms/EncodingStatus.scss'
-import 'css/Cms/FeedbackPopup.scss'
+import 'css/Cms/FeedbackUnified.scss'
+import 'css/Cms/FeedbackButtons.scss'
 import 'css/Cms/OpinionInput.scss'
 import 'css/Cms/AITeacherModal.scss'
-import 'css/Cms/AIAnalyzeButton.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import 'css/Cms/SubmenuFinal.scss'
-import 'css/Cms/SubmenuFeedbackFix.scss'
-import 'css/Cms/VideoUploadButton.scss'
 import FeedbackInput from 'tasks/Feedback/FeedbackInput'
 import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
@@ -930,17 +913,7 @@ export default function Feedback() {
                   
                   {/* 비디오 플레이어 컨트롤 버튼들 */}
                   {current_project.files && (
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginTop: '16px',
-                      padding: '12px',
-                      backgroundColor: '#f8f9fa',
-                      borderRadius: '12px',
-                      flexWrap: 'wrap'
-                    }}>
+                    <div className="feedback-button-container">
                       {/* 현재 시점에 피드백 버튼 */}
                       <button
                         onClick={() => {
@@ -955,29 +928,7 @@ export default function Feedback() {
                             changeItem(1); // 피드백 등록 탭으로 이동
                           }
                         }}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '10px 20px',
-                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
-                        }}
+                        className="feedback-button-primary"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -989,29 +940,7 @@ export default function Feedback() {
                       {/* AI 영상 피드백 버튼 */}
                       <button
                         onClick={handleVideoAnalysis}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '10px 20px',
-                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
-                        }}
+                        className="feedback-button-primary"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1029,43 +958,11 @@ export default function Feedback() {
                           onChange={FileChange}
                           name="files"
                           id="video-replace-button"
-                          style={{
-                            position: 'absolute',
-                            width: '1px',
-                            height: '1px',
-                            padding: '0',
-                            margin: '-1px',
-                            overflow: 'hidden',
-                            clip: 'rect(0, 0, 0, 0)',
-                            whiteSpace: 'nowrap',
-                            borderWidth: '0'
-                          }}
+                          className="visually-hidden"
                         />
                         <label 
                           htmlFor="video-replace-button" 
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            padding: '10px 20px',
-                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
-                          }}
+                          className="feedback-upload-label"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1077,29 +974,7 @@ export default function Feedback() {
                       {/* 영상 삭제 버튼 */}
                       <button
                         onClick={DeleteFile}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '10px 20px',
-                          background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          boxShadow: '0 4px 12px rgba(220, 53, 69, 0.25)'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(220, 53, 69, 0.4)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(220, 53, 69, 0.25)';
-                        }}
+                        className="feedback-button-danger"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1129,33 +1004,11 @@ export default function Feedback() {
                           onChange={FileChange}
                           id="video-upload-input"
                           name="files"
-                          style={{
-                            position: 'absolute',
-                            width: '1px',
-                            height: '1px',
-                            padding: '0',
-                            margin: '-1px',
-                            overflow: 'hidden',
-                            clip: 'rect(0, 0, 0, 0)',
-                            whiteSpace: 'nowrap',
-                            borderWidth: '0'
-                          }}
+                          className="visually-hidden"
                         />
                         <label 
                           htmlFor="video-upload-input" 
-                          style={{
-                            display: 'inline-block',
-                            padding: '24px 48px',
-                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                            color: 'white',
-                            borderRadius: '16px',
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            boxShadow: '0 8px 24px rgba(22, 49, 248, 0.3)',
-                            position: 'relative',
-                            overflow: 'hidden'
-                          }}
+                          className="feedback-upload-label"
                         >
                           <div style={{
                             display: 'flex',

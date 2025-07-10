@@ -1,4 +1,5 @@
 # Railway 배포용 Django 설정
+# Version: 2025-01-10 - Force migration for is_public column
 import os
 import dj_database_url
 from ..settings_base import *

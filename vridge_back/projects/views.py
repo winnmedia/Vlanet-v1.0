@@ -469,9 +469,25 @@ class CreateProject(View):
                     }, status=400)
 
             with transaction.atomic():
-                project = models.Project.objects.create(user=user)
-                for k, v in inputs.items():
-                    setattr(project, k, v)
+                # 프로젝트 생성 시 필수 필드들을 함께 전달
+                project_data = {
+                    'user': user,
+                    'name': inputs.get('name'),
+                    'manager': inputs.get('manager'),
+                    'consumer': inputs.get('consumer'),
+                    'description': inputs.get('description', ''),
+                    'color': inputs.get('color', '#1631F8'),
+                }
+                
+                # 추가 필드들
+                if 'tone_manner' in inputs:
+                    project_data['tone_manner'] = inputs['tone_manner']
+                if 'genre' in inputs:
+                    project_data['genre'] = inputs['genre']
+                if 'concept' in inputs:
+                    project_data['concept'] = inputs['concept']
+                
+                project = models.Project.objects.create(**project_data)
                 
                 logging.info(f"[CreateProject] Creating project '{project_name}' for user {user.username}")
                 logging.info(f"[CreateProject] Inputs: {inputs}")

@@ -155,9 +155,9 @@ async function finalVerification() {
         description: '최종 검증용 프로젝트',
         color: '#007ACC'
       }));
-      formData.append('process', JSON.stringify({
-        basic_plan: { start_date: '2024-01-01', end_date: '2024-01-05' }
-      }));
+      formData.append('process', JSON.stringify([
+        { key: 'basic_plan', startDate: '2024-01-01', endDate: '2024-01-05' }
+      ]));
 
       const response = await fetch(`${API_BASE}/api/projects/create/`, {
         method: 'POST',
@@ -191,9 +191,9 @@ async function finalVerification() {
         description: '중복 테스트',
         color: '#FF0000'
       }));
-      formData.append('process', JSON.stringify({
-        basic_plan: { start_date: '2024-01-01', end_date: '2024-01-05' }
-      }));
+      formData.append('process', JSON.stringify([
+        { key: 'basic_plan', startDate: '2024-01-01', endDate: '2024-01-05' }
+      ]));
 
       const response = await fetch(`${API_BASE}/api/projects/create/`, {
         method: 'POST',
@@ -214,7 +214,8 @@ async function finalVerification() {
         data.message?.includes('이미') || 
         data.message?.includes('중복') ||
         data.message?.includes('존재') ||
-        data.message?.includes('같은')
+        data.message?.includes('같은') ||
+        data.message?.includes('동일한')
       );
       
       console.log(`Duplicate test - Status: ${response.status}, Message: ${data.message}`);
@@ -239,7 +240,10 @@ async function finalVerification() {
         // 프로젝트 ID를 사용하여 피드백 조회
         const projectId = testProject.id;
         console.log(`Using project ID: ${projectId}`);
-        const feedbackResponse = await fetch(`${API_BASE}/api/projects/${projectId}/feedbacks`, { headers });
+        // 피드백 ID를 사용하여 피드백 조회
+        const feedbackId = testProject.feedback_id;
+        console.log(`Using feedback ID: ${feedbackId}`);
+        const feedbackResponse = await fetch(`${API_BASE}/api/feedbacks/${feedbackId}`, { headers });
         
         let feedbackData;
         try {

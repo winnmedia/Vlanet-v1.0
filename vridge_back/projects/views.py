@@ -438,6 +438,25 @@ class CreateProject(View):
                     "code": "MISSING_DATA"
                 }, status=400)
             
+            # inputs가 dict인지 확인 (string으로 잘못 전달된 경우 처리)
+            if isinstance(inputs, str):
+                try:
+                    inputs = json.loads(inputs)
+                except json.JSONDecodeError:
+                    return JsonResponse({
+                        "message": "프로젝트 생성 중 오류가 발생했습니다: inputs 데이터가 올바른 형식이 아닙니다.",
+                        "code": "INVALID_INPUTS_FORMAT"
+                    }, status=400)
+            
+            if isinstance(process, str):
+                try:
+                    process = json.loads(process)
+                except json.JSONDecodeError:
+                    return JsonResponse({
+                        "message": "프로젝트 생성 중 오류가 발생했습니다: process 데이터가 올바른 형식이 아닙니다.",
+                        "code": "INVALID_PROCESS_FORMAT"
+                    }, status=400)
+            
             # 멱등성 키 확인
             idempotency_key = request.headers.get('X-Idempotency-Key')
             if idempotency_key:

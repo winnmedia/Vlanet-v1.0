@@ -918,7 +918,7 @@ class ProjectFeedback(View):
             
             # 권한 확인 - 프로젝트 소유자나 멤버인지 확인
             is_member = models.Members.objects.filter(project=project, user=user).exists()
-            if project.user \!= user and not is_member:
+            if project.user != user and not is_member:
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
             
             # 피드백이 없으면 빈 객체 반환
@@ -986,7 +986,7 @@ class ProjectFeedbackComments(View):
             
             # 권한 확인
             is_member = models.Members.objects.filter(project=project, user=user).exists()
-            if project.user \!= user and not is_member:
+            if project.user != user and not is_member:
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
             
             # 피드백이 없으면 에러
@@ -1091,7 +1091,7 @@ class ProjectFeedbackEncodingStatus(View):
             
             # 권한 확인
             is_member = models.Members.objects.filter(project=project, user=user).exists()
-            if project.user \!= user and not is_member:
+            if project.user != user and not is_member:
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
             
             # 피드백이 없으면 인코딩 상태도 없음

@@ -1,1 +1,1 @@
-web: cd vridge_back && bash quick_start.sh
+web: cd vridge_back && gunicorn config.wsgi:application --bind [::]:${PORT:-8000} --workers 2 --threads 2 --timeout 120 --log-level info --access-logfile - --error-logfile -

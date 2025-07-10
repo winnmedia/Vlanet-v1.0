@@ -1,1 +1,1 @@
-web: python3 manage.py migrate --noinput; python3 manage.py createcachetable; gunicorn config.wsgi:application --config gunicorn_health.py
+web: gunicorn config.wsgi:application --bind [::]:$PORT --workers 1 --threads 2 --timeout 120 --preload

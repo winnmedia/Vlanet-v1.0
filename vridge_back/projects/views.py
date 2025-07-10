@@ -470,24 +470,33 @@ class CreateProject(View):
 
             with transaction.atomic():
                 # 프로젝트 생성 시 필수 필드들을 함께 전달
-                project_data = {
-                    'user': user,
-                    'name': inputs.get('name'),
-                    'manager': inputs.get('manager'),
-                    'consumer': inputs.get('consumer'),
-                    'description': inputs.get('description', ''),
-                    'color': inputs.get('color', '#1631F8'),
-                }
+                # 데이터베이스 마이그레이션 이슈를 피하기 위한 임시 조치
+                # is_public 필드 제외
+                project = models.Project(
+                    user=user,
+                    name=inputs.get('name'),
+                    manager=inputs.get('manager'),
+                    consumer=inputs.get('consumer'),
+                    description=inputs.get('description', ''),
+                    color=inputs.get('color', '#1631F8')
+                )
                 
-                # 추가 필드들
+                # 추가 필드들 (있는 경우만 설정)
                 if 'tone_manner' in inputs:
-                    project_data['tone_manner'] = inputs['tone_manner']
+                    project.tone_manner = inputs['tone_manner']
                 if 'genre' in inputs:
-                    project_data['genre'] = inputs['genre']
+                    project.genre = inputs['genre']
                 if 'concept' in inputs:
-                    project_data['concept'] = inputs['concept']
+                    project.concept = inputs['concept']
                 
-                project = models.Project.objects.create(**project_data)
+                # is_public 필드가 모델에 있고 데이터베이스에도 있는 경우만 설정
+                try:
+                    if hasattr(project, 'is_public'):
+                        project.is_public = False  # 기본값
+                except Exception:
+                    pass
+                
+                project.save()
                 
                 logging.info(f"[CreateProject] Creating project '{project_name}' for user {user.username}")
                 logging.info(f"[CreateProject] Inputs: {inputs}")

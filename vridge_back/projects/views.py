@@ -393,23 +393,49 @@ class CreateProject(View):
             user = request.user
             files = request.FILES.getlist("files")
             
-            # JSON 파싱 안전하게 처리
-            inputs_raw = request.POST.get("inputs")
-            process_raw = request.POST.get("process")
+            # Content-Type에 따라 데이터 파싱
+            if request.content_type == 'application/json':
+                # JSON 요청 처리
+                try:
+                    data = json.loads(request.body)
+                    inputs = {
+                        'name': data.get('name'),
+                        'manager': data.get('manager'),
+                        'consumer': data.get('consumer'),
+                        'description': data.get('description'),
+                        'color': data.get('color', '#1631F8')
+                    }
+                    process = data.get('process', [])
+                except json.JSONDecodeError:
+                    return JsonResponse({
+                        "message": "잘못된 JSON 형식입니다.",
+                        "code": "INVALID_JSON"
+                    }, status=400)
+            else:
+                # FormData 요청 처리 (레거시 지원)
+                inputs_raw = request.POST.get("inputs")
+                process_raw = request.POST.get("process")
+                
+                if not inputs_raw or not process_raw:
+                    return JsonResponse({
+                        "message": "프로젝트 생성 중 오류가 발생했습니다: 필수 데이터가 누락되었습니다.",
+                        "code": "MISSING_DATA"
+                    }, status=400)
+                
+                try:
+                    inputs = json.loads(inputs_raw)
+                    process = json.loads(process_raw)
+                except json.JSONDecodeError as e:
+                    return JsonResponse({
+                        "message": f"프로젝트 생성 중 오류가 발생했습니다: 잘못된 데이터 형식입니다.",
+                        "code": "INVALID_JSON"
+                    }, status=400)
             
-            if not inputs_raw or not process_raw:
+            # inputs와 process 검증
+            if not inputs or not process:
                 return JsonResponse({
                     "message": "프로젝트 생성 중 오류가 발생했습니다: 필수 데이터가 누락되었습니다.",
                     "code": "MISSING_DATA"
-                }, status=400)
-            
-            try:
-                inputs = json.loads(inputs_raw)
-                process = json.loads(process_raw)
-            except json.JSONDecodeError as e:
-                return JsonResponse({
-                    "message": f"프로젝트 생성 중 오류가 발생했습니다: 잘못된 데이터 형식입니다.",
-                    "code": "INVALID_JSON"
                 }, status=400)
             
             # 멱등성 키 확인

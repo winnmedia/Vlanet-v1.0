@@ -944,17 +944,18 @@ class ProjectFeedback(View):
             }
             
             # 코멘트 정보 추가
-            comments = feedback_model.FeedbackComment.objects.filter(
+            comments = feedback_model.FeedBackComment.objects.filter(
                 feedback=feedback
-            ).order_by("section", "time")
+            ).order_by("-created")
             
             for comment in comments:
                 result["comments"].append({
                     "id": comment.id,
                     "section": comment.section,
-                    "time": comment.time,
-                    "content": comment.content,
-                    "user": comment.user.email if comment.user else None,
+                    "title": comment.title,
+                    "text": comment.text,
+                    "security": comment.security,
+                    "user": comment.user.email if not comment.security else "익명",
                     "created": comment.created
                 })
             
@@ -996,21 +997,23 @@ class ProjectFeedbackComments(View):
             data = json.loads(request.body)
             
             # 코멘트 생성
-            comment = feedback_model.FeedbackComment.objects.create(
+            comment = feedback_model.FeedBackComment.objects.create(
                 feedback=project.feedback,
                 user=user,
-                section=data.get("section", 0),
-                time=data.get("time", 0),
-                content=data.get("content", "")
+                section=data.get("section", ""),
+                title=data.get("title", ""),
+                text=data.get("text", ""),
+                security=data.get("security", False)
             )
             
             return JsonResponse({
                 "result": {
                     "id": comment.id,
                     "section": comment.section,
-                    "time": comment.time,
-                    "content": comment.content,
-                    "user": comment.user.email,
+                    "title": comment.title,
+                    "text": comment.text,
+                    "security": comment.security,
+                    "user": comment.user.email if not comment.security else "익명",
                     "created": comment.created
                 }
             }, status=201)
@@ -1050,7 +1053,7 @@ class ProjectFeedbackUpload(View):
             
             # 피드백이 없으면 생성
             if not project.feedback:
-                feedback = feedback_model.Feedback.objects.create()
+                feedback = feedback_model.FeedBack.objects.create()
                 project.feedback = feedback
                 project.save()
             else:

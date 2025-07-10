@@ -27,8 +27,10 @@ export function axiosCredentials(method, url, data, config) {
   // 토큰이 없으면 에러 발생
   if (!token) {
     console.error('No authentication token found');
-    // 로그인 페이지로 리다이렉트
-    window.location.href = '/Login';
+    // 로그인 페이지로 리다이렉트 (약간의 지연 추가)
+    setTimeout(() => {
+      window.location.href = '/Login';
+    }, 100);
     return Promise.reject(new Error('No authentication token'));
   }
   

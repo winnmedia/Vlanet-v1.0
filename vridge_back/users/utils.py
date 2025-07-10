@@ -51,15 +51,21 @@ def user_validator(function):
                             print("request.user", request.user)
                             return function(self, request, *args, **kwargs)
                 
-                return JsonResponse({"message": "NEED_ACCESS_TOKEN"}, status=401)
+                response = JsonResponse({"message": "NEED_ACCESS_TOKEN"}, status=401)
+                response['WWW-Authenticate'] = 'Bearer'
+                return response
                     
             except (InvalidToken, TokenError) as e:
                 print(f"Token validation error: {e}")
-                return JsonResponse({"message": "INVALID_TOKEN"}, status=401)
+                response = JsonResponse({"message": "INVALID_TOKEN"}, status=401)
+                response['WWW-Authenticate'] = 'Bearer'
+                return response
                 
         except Exception as e:
             print(f"Authentication error: {e}")
-            return JsonResponse({"message": "AUTHENTICATION_ERROR"}, status=401)
+            response = JsonResponse({"message": "AUTHENTICATION_ERROR"}, status=401)
+            response['WWW-Authenticate'] = 'Bearer'
+            return response
 
     return wrapper
 

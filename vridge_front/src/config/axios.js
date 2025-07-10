@@ -127,16 +127,26 @@ axios.interceptors.response.use(
     
     // 401 에러 처리
     if (error.response?.status === 401) {
+      console.log('[Axios] 401 Unauthorized - Token invalid or missing');
       // 로그인 페이지가 아닌 경우에만 리다이렉트
-      if (!window.location.pathname.includes('/Login')) {
+      if (!window.location.pathname.includes('/Login') && !window.location.pathname.includes('/login')) {
         try {
           localStorage.removeItem('VGID');
         } catch (e) {
           safeStorage.removeItem('VGID');
         }
-        window.alert('인증이 만료되었습니다. 다시 로그인해주세요.');
-        window.location.href = '/Login';
+        // 에러 응답을 500이 아닌 401로 유지
+        error.response.status = 401;
+        error.response.data = error.response.data || { message: '인증이 필요합니다.' };
+        
+        // 약간의 지연 후 리다이렉트
+        setTimeout(() => {
+          window.alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+          window.location.href = '/Login';
+        }, 100);
       }
+      // 401 에러를 그대로 반환 (500으로 변환되지 않도록)
+      return Promise.reject(error);
     }
     
     return Promise.reject(error);
@@ -211,15 +221,25 @@ axiosInstance.interceptors.response.use(
     }
     
     if (error.response?.status === 401) {
-      if (!window.location.pathname.includes('/Login')) {
+      console.log('[Axios Instance] 401 Unauthorized - Token invalid or missing');
+      if (!window.location.pathname.includes('/Login') && !window.location.pathname.includes('/login')) {
         try {
           localStorage.removeItem('VGID');
         } catch (e) {
           safeStorage.removeItem('VGID');
         }
-        window.alert('인증이 만료되었습니다. 다시 로그인해주세요.');
-        window.location.href = '/Login';
+        // 에러 응답을 500이 아닌 401로 유지
+        error.response.status = 401;
+        error.response.data = error.response.data || { message: '인증이 필요합니다.' };
+        
+        // 약간의 지연 후 리다이렉트
+        setTimeout(() => {
+          window.alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+          window.location.href = '/Login';
+        }, 100);
       }
+      // 401 에러를 그대로 반환
+      return Promise.reject(error);
     }
     
     return Promise.reject(error);

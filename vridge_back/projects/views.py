@@ -1047,7 +1047,7 @@ class ProjectFeedbackUpload(View):
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
             
             # 파일 처리
-            file = request.FILES.get("file")
+            file = request.FILES.get("files") or request.FILES.get("file")
             if not file:
                 return JsonResponse({"message": "파일이 없습니다."}, status=400)
             

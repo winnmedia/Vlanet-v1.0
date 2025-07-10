@@ -3,7 +3,7 @@
 ## 필수 환경변수 (Railway Variables에 설정)
 
 ```
-DJANGO_SETTINGS_MODULE=config.settings_minimal
+DJANGO_SETTINGS_MODULE=config.settings_railway_standalone
 SECRET_KEY=django-insecure-your-unique-secret-key
 ```
 

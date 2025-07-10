@@ -22,7 +22,7 @@ RUN python manage.py collectstatic --noinput || true
 EXPOSE 8000
 
 # 환경변수 설정
-ENV DJANGO_SETTINGS_MODULE=config.settings_minimal
+ENV DJANGO_SETTINGS_MODULE=config.settings_railway_standalone
 ENV PYTHONPATH=/app
 
 # 실행

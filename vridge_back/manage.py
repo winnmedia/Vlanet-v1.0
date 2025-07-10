@@ -10,7 +10,7 @@ def main():
     if not os.environ.get('DJANGO_SETTINGS_MODULE'):
         # Railway 환경에서는 minimal 설정 사용
         if os.environ.get('RAILWAY_ENVIRONMENT'):
-            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_minimal")
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_railway_standalone")
         else:
             os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_dev")
     try:

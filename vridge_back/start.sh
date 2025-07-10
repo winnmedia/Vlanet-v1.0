@@ -25,13 +25,13 @@ if [ ! -z "$DATABASE_URL" ]; then
     python3 manage.py shell -c "
 import time
 from django.db import connection
-for i in range(30):
+for i in range(15):
     try:
         connection.ensure_connection()
         print('Database connected!')
         break
     except Exception as e:
-        print(f'Waiting for database... ({i+1}/30)')
+        print(f'Waiting for database... ({i+1}/15)')
         time.sleep(2)
 else:
     print('Database connection timeout! Continuing anyway...')

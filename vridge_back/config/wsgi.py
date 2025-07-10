@@ -11,8 +11,10 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-# 환경변수가 이미 설정되어 있으면 그대로 사용, 없으면 minimal 사용
-if not os.environ.get('DJANGO_SETTINGS_MODULE'):
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_railway_standalone")
+# Railway 환경에서는 railway 설정 사용
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.railway")
+else:
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings_dev")
 
 application = get_wsgi_application()

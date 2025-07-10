@@ -42,6 +42,8 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health').read()" || exit 1
 
-# Django 서버 실행
-# Railway가 PORT 환경변수를 제공하므로 $PORT 사용
-CMD gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120
+# start.sh 스크립트에 실행 권한 부여
+RUN if [ -f vridge_back/start.sh ]; then chmod +x vridge_back/start.sh; fi
+
+# Railway는 Procfile을 사용하므로 기본 CMD는 간단하게
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]

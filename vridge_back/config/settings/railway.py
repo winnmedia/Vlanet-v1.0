@@ -41,9 +41,14 @@ else:
 # 정적 파일 설정
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / 'frontend_build/static',
-]
+
+# frontend_build가 있을 때만 추가
+if os.path.exists(BASE_DIR / 'frontend_build/static'):
+    STATICFILES_DIRS = [
+        BASE_DIR / 'frontend_build/static',
+    ]
+else:
+    STATICFILES_DIRS = []
 
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'

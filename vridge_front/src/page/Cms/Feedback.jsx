@@ -6,7 +6,6 @@ import 'css/Cms/FeedbackUnified.scss'
 import 'css/Cms/FeedbackButtons.scss'
 import 'css/Cms/OpinionInput.scss'
 import 'css/Cms/AITeacherModal.scss'
-import { feedbackButtonStyles, handleButtonHover, handleButtonLeave } from './FeedbackButtonStyles'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
@@ -31,6 +30,84 @@ import { GetChatMessages, SendChatMessage } from 'api/chat'
 
 import moment from 'moment'
 import 'moment/locale/ko'
+
+// 버튼 스타일 객체를 컴포넌트 내부에 정의
+const feedbackButtonStyles = {
+  primary: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '10px 16px',
+    background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
+  },
+  danger: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '10px 16px',
+    background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 12px rgba(220, 53, 69, 0.25)'
+  },
+  secondary: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '10px 16px',
+    background: 'linear-gradient(135deg, #6c757d 0%, #5a6268 100%)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 12px rgba(108, 117, 125, 0.25)'
+  },
+  outline: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '12px 20px',
+    background: 'white',
+    color: '#1631F8',
+    border: '2px solid #1631F8',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  },
+  toggle: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 16px',
+    background: '#f8f9fa',
+    color: '#495057',
+    border: '1px solid #dee2e6',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontWeight: '500',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  }
+}
 
 export default function Feedback() {
   const navigate = useNavigate()
@@ -930,8 +1007,14 @@ export default function Feedback() {
                           }
                         }}
                         style={feedbackButtonStyles.primary}
-                        onMouseEnter={(e) => handleButtonHover(e, 'primary')}
-                        onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)'
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = feedbackButtonStyles.primary.boxShadow
+                        }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -944,8 +1027,14 @@ export default function Feedback() {
                       <button
                         onClick={handleVideoAnalysis}
                         style={feedbackButtonStyles.primary}
-                        onMouseEnter={(e) => handleButtonHover(e, 'primary')}
-                        onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)'
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = feedbackButtonStyles.primary.boxShadow
+                        }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -967,9 +1056,15 @@ export default function Feedback() {
                         />
                         <label 
                           htmlFor="video-replace-button" 
-                          style={feedbackButtonStyles.primary}
-                          onMouseEnter={(e) => handleButtonHover(e, 'primary')}
-                          onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
+                          style={{...feedbackButtonStyles.primary, cursor: 'pointer'}}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)'
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)'
+                            e.currentTarget.style.boxShadow = feedbackButtonStyles.primary.boxShadow
+                          }}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -982,8 +1077,14 @@ export default function Feedback() {
                       <button
                         onClick={DeleteFile}
                         style={feedbackButtonStyles.danger}
-                        onMouseEnter={(e) => handleButtonHover(e, 'danger')}
-                        onMouseLeave={(e) => handleButtonLeave(e, 'danger')}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)'
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(220, 53, 69, 0.4)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = feedbackButtonStyles.danger.boxShadow
+                        }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1038,8 +1139,18 @@ export default function Feedback() {
                       <button 
                         onClick={() => setShowUploadGuide(true)}
                         style={feedbackButtonStyles.outline}
-                        onMouseEnter={(e) => handleButtonHover(e, 'outline')}
-                        onMouseLeave={(e) => handleButtonLeave(e, 'outline')}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#1631F8'
+                          e.currentTarget.style.color = 'white'
+                          e.currentTarget.style.transform = 'translateY(-2px)'
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.3)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'white'
+                          e.currentTarget.style.color = '#1631F8'
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = 'none'
+                        }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -1116,8 +1227,14 @@ export default function Feedback() {
                         <button
                           onClick={() => CopyFileUrl(current_project.files)}
                           style={feedbackButtonStyles.secondary}
-                          onMouseEnter={(e) => handleButtonHover(e, 'secondary')}
-                          onMouseLeave={(e) => handleButtonLeave(e, 'secondary')}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)'
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(108, 117, 125, 0.4)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)'
+                            e.currentTarget.style.boxShadow = feedbackButtonStyles.secondary.boxShadow
+                          }}
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1294,8 +1411,14 @@ export default function Feedback() {
                         padding: 0,
                         transform: showProjectInfo ? 'rotate(180deg)' : 'rotate(0deg)'
                       }}
-                      onMouseEnter={(e) => handleButtonHover(e, 'toggle')}
-                      onMouseLeave={(e) => handleButtonLeave(e, 'toggle')}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#e9ecef'
+                        e.currentTarget.style.color = '#212529'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#f8f9fa'
+                        e.currentTarget.style.color = '#495057'
+                      }}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
                         <path d="M7 10l5 5 5-5z"/>
@@ -1330,8 +1453,14 @@ export default function Feedback() {
                       {is_admin && (
                         <button
                           style={{ ...feedbackButtonStyles.primary, width: '100%', marginTop: '10px' }}
-                          onMouseEnter={(e) => handleButtonHover(e, 'primary')}
-                          onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)'
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)'
+                            e.currentTarget.style.boxShadow = feedbackButtonStyles.primary.boxShadow
+                          }}
                           onClick={() => navigate(`/ProjectEdit/${project_id}`)}
                         >
                           프로젝트 관리

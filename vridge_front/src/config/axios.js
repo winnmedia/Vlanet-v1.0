@@ -25,20 +25,29 @@ const getCleanToken = () => {
   // 모바일 환경을 고려한 안전한 스토리지 접근
   try {
     token = localStorage.getItem('VGID');
+    console.log('[getCleanToken] Raw token from localStorage:', token ? `${token.substring(0, 20)}...` : 'null');
   } catch (e) {
     // localStorage 접근 실패 시 safeStorage 사용
+    console.log('[getCleanToken] localStorage failed, trying safeStorage');
     token = safeStorage.getItem('VGID');
   }
   
-  if (!token) return null;
+  if (!token) {
+    console.log('[getCleanToken] No token found in storage');
+    return null;
+  }
   
   // JSON 문자열로 저장된 경우 파싱
   try {
     const parsed = JSON.parse(token);
-    return typeof parsed === 'string' ? parsed : token;
+    const result = typeof parsed === 'string' ? parsed : token;
+    console.log('[getCleanToken] Parsed token:', result ? `${result.substring(0, 20)}...` : 'null');
+    return result;
   } catch {
     // 파싱 실패시 따옴표만 제거
-    return token.replace(/^["']|["']$/g, '');
+    const cleaned = token.replace(/^["']|["']$/g, '');
+    console.log('[getCleanToken] Cleaned token:', cleaned ? `${cleaned.substring(0, 20)}...` : 'null');
+    return cleaned;
   }
 };
 
@@ -64,8 +73,12 @@ axios.interceptors.request.use(
   (config) => {
     // 토큰 자동 추가
     const cleanToken = getCleanToken();
+    console.log('[Axios Interceptor] Clean token:', cleanToken ? `${cleanToken.substring(0, 20)}...` : 'null');
     if (cleanToken) {
       config.headers.Authorization = `Bearer ${cleanToken}`;
+      console.log('[Axios Interceptor] Authorization header set');
+    } else {
+      console.warn('[Axios Interceptor] No token found - request will likely fail with 401');
     }
     
     // FormData가 아닌 경우에만 Content-Type 설정
@@ -151,8 +164,12 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const cleanToken = getCleanToken();
+    console.log('[Axios Instance Interceptor] Clean token:', cleanToken ? `${cleanToken.substring(0, 20)}...` : 'null');
     if (cleanToken) {
       config.headers.Authorization = `Bearer ${cleanToken}`;
+      console.log('[Axios Instance Interceptor] Authorization header set');
+    } else {
+      console.warn('[Axios Instance Interceptor] No token found - request will likely fail with 401');
     }
     
     if (!(config.data instanceof FormData)) {

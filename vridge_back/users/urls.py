@@ -5,8 +5,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 # 아래 모듈들은 아직 구현되지 않음
 # from . import views_signup_with_email
 # from . import views_profile
-# from . import views_mypage
-# from . import views_profile_upload
+from . import views_mypage
+from . import views_profile_upload
 
 urlpatterns = [
     path("login/", views.SignIn.as_view()),
@@ -37,12 +37,12 @@ urlpatterns = [
     # path("profile/stats/", views_profile.UserStats.as_view()),  # 사용자 통계
     # path("profile/delete-account/", views_profile.DeleteAccount.as_view()),  # 계정 삭제
     
-    # 마이페이지 관련 URL (구현 예정)
-    # path("mypage/", views_mypage.MyPageView.as_view()),  # 마이페이지 종합 정보
-    # path("mypage/activity/", views_mypage.UserActivityView.as_view()),  # 활동 내역
-    # path("mypage/preferences/", views_mypage.UserPreferencesView.as_view()),  # 사용자 설정
+    # 마이페이지 관련 URL
+    path("mypage/", views_mypage.MyPageView.as_view()),  # 마이페이지 종합 정보
+    path("mypage/activity/", views_mypage.UserActivityView.as_view()),  # 활동 내역
+    path("mypage/preferences/", views_mypage.UserPreferencesView.as_view()),  # 사용자 설정
     
-    # 프로필 업로드 관련 URL (구현 예정)
-    # path("profile/upload-image/", views_profile_upload.ProfileImageUpload.as_view()),  # 프로필 이미지 업로드/삭제
-    # path("profile/update/", views_profile_upload.ProfileUpdate.as_view()),  # 프로필 정보 업데이트
+    # 프로필 업로드 관련 URL
+    path("profile/upload-image/", views_profile_upload.ProfileImageUpload.as_view()),  # 프로필 이미지 업로드/삭제
+    path("profile/update/", views_profile_upload.ProfileUpdate.as_view()),  # 프로필 정보 업데이트
 ]

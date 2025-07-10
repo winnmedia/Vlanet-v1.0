@@ -67,26 +67,40 @@ export default function VideoPlanning() {
   const [currentPlanningId, setCurrentPlanningId] = useState(null)
   
   // 최근 기획 불러오기
-  useEffect(() => {
-    fetchRecentPlannings()
-  }, [])
-  
-  const fetchRecentPlannings = async () => {
+  const fetchRecentPlannings = async (retryCount = 0) => {
     try {
+      console.log('최근 기획 로드 시작...')
       const token = checkSession()
       if (!token) return
       
       const response = await axios.get('/api/video-planning/recent/', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
+      console.log('최근 기획 응답:', response.data)
       
       if (response.data && response.data.data && response.data.data.planning_logs) {
         setRecentPlannings(response.data.data.planning_logs)
+        console.log(`최근 기획 ${response.data.data.planning_logs?.length || 0}개 로드 성공`)
       }
-    } catch (error) {
-      console.error('최근 기획 불러오기 오류:', error)
+    } catch (err) {
+      console.error(`최근 기획 로드 실패 (${retryCount + 1}회차):`, err)
+      
+      // 401 에러인 경우 재시도
+      if (err.response?.status === 401 && retryCount < 2) {
+        console.log('인증 토큰이 아직 준비되지 않았을 수 있음. 재시도...')
+        setTimeout(() => {
+          fetchRecentPlannings(retryCount + 1)
+        }, 1000) // 1초 후 재시도
+      } else {
+        // 에러가 발생해도 빈 배열로 설정하여 UI가 깨지지 않도록 함
+        setRecentPlannings([])
+      }
     }
   }
+
+  useEffect(() => {
+    fetchRecentPlannings()
+  }, [])
   
   // 최근 기획 데이터 로드
   const loadPlanningData = (planning) => {
@@ -184,41 +198,6 @@ export default function VideoPlanning() {
       console.error('히스토리 로드 실패:', err)
     }
   }
-
-  const fetchRecentPlannings = async (retryCount = 0) => {
-    try {
-      console.log('최근 기획 로드 시작...')
-      const response = await axios.get(`/api/video-planning/recent/`)
-      console.log('최근 기획 응답:', response.data)
-      if (response.data.status === 'success') {
-        setRecentPlannings(response.data.data.planning_logs || [])
-        console.log(`최근 기획 ${response.data.data.planning_logs?.length || 0}개 로드 성공`)
-      }
-    } catch (err) {
-      console.error(`최근 기획 로드 실패 (${retryCount + 1}회차):`, err)
-      
-      // 401 에러인 경우 재시도
-      if (err.response?.status === 401 && retryCount < 2) {
-        console.log('인증 토큰이 아직 준비되지 않았을 수 있음. 재시도...')
-        setTimeout(() => {
-          fetchRecentPlannings(retryCount + 1)
-        }, 1000) // 1초 후 재시도
-      } else {
-        // 에러가 발생해도 빈 배열로 설정하여 UI가 깨지지 않도록 함
-        setRecentPlannings([])
-        
-        if (err.response?.status === 401) {
-          console.error('인증 오류: 로그인이 필요합니다')
-          // 로그인 페이지로 리다이렉트는 axios 인터셉터에서 처리됨
-        } else if (err.response?.status === 500) {
-          console.error('서버 내부 오류:', err.response.data?.message)
-        } else {
-          console.error('알 수 없는 오류:', err.message)
-        }
-      }
-    }
-  }
-
 
 
   const loadHistoryItem = async (planningId) => {

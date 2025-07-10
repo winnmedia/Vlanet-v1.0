@@ -38,7 +38,7 @@ export function CreateProjectAPI(data) {
   
   return axiosCredentials(
     'post',
-    `/api/projects/atomic-create/`,
+    `/api/projects/create/`,
     data,
     {
       headers: {

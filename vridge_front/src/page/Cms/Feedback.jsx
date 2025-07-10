@@ -868,7 +868,7 @@ export default function Feedback() {
                   {current_project.files && (
                     <VideoPlayer
                       ref={videoPlayerRef}
-                      useVidstack={true} // 고성능 Vidstack 플레이어 사용
+                      useVideoJs={true} // Video.js 플레이어 사용
                       feedbacks={current_project.feedbacks || []} // 피드백 데이터 전달
                       videoUrl={(() => {
                         const fileUrl = current_project.files;

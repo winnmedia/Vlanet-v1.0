@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import FeedbackPlayer from './FeedbackPlayer'
 import VideoJsPlayer from './VideoJsPlayer'
-import VidstackPlayer from './VidstackPlayer'
+// import VidstackPlayer from './VidstackPlayer' // 임시 비활성화
 import './VideoPlayer.scss'
 
 const VideoPlayer = forwardRef(({ 
@@ -147,22 +147,22 @@ const VideoPlayer = forwardRef(({
     )
   }
   
-  // Vidstack 플레이어 사용 (최고 성능)
-  if (useVidstack) {
-    return (
-      <VidstackPlayer
-        ref={playerRef}
-        videoUrl={videoUrl}
-        onTimeUpdate={onTimeClick}
-        initialTime={initialTime}
-        onError={handleError}
-        onFeedbackClick={onFeedbackClick}
-        feedbacks={feedbacks}
-        autoplay={false}
-        muted={false}
-      />
-    )
-  }
+  // Vidstack 플레이어 사용 (최고 성능) - 임시 비활성화
+  // if (useVidstack) {
+  //   return (
+  //     <VidstackPlayer
+  //       ref={playerRef}
+  //       videoUrl={videoUrl}
+  //       onTimeUpdate={onTimeClick}
+  //       initialTime={initialTime}
+  //       onError={handleError}
+  //       onFeedbackClick={onFeedbackClick}
+  //       feedbacks={feedbacks}
+  //       autoplay={false}
+  //       muted={false}
+  //     />
+  //   )
+  // }
   
   // Video.js 플레이어 사용
   if (useVideoJs) {

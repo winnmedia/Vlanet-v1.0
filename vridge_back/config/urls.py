@@ -25,6 +25,7 @@ from django.views.generic import TemplateView
 from .views import health_check, root_view
 from .simple_health import simple_health_check
 from api_health import csrf_token_view
+from .debug_views import debug_info, test_error
 
 # token_blacklist import를 보호
 try:
@@ -81,6 +82,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("admin-dashboard/", include("admin_dashboard.urls")),  # 관리자 대시보드
     
+    # 디버깅 엔드포인트 (Railway 환경에서만 활성화)
+    path("api/debug-info/", debug_info, name="debug_info"),
+    path("api/test-error/", test_error, name="test_error"),
+    
     # API 경로 (권장) - /api/ 프리픽스를 사용하는 표준 경로
     path("api/users/", include("users.urls")),
     path("api/projects/", include("projects.urls")),
@@ -127,3 +132,9 @@ except admin.sites.NotRegistered:
 admin.site.site_title = "Vlanet 관리자"
 admin.site.site_header = "Vlanet 관리 시스템"
 admin.site.index_title = "대시보드"
+
+# 커스텀 에러 핸들러 설정
+handler400 = 'config.error_handlers.custom_400_handler'
+handler403 = 'config.error_handlers.custom_403_handler'
+handler404 = 'config.error_handlers.custom_404_handler'
+handler500 = 'config.error_handlers.custom_500_handler'

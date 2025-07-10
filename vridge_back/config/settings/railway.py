@@ -133,22 +133,138 @@ else:
         }
     }
 
-# 로깅
+# 로깅 - 더 자세한 에러 정보를 위한 강화된 설정
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} [{name}] {process:d} {thread:d} {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
     'handlers': {
         'console': {
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        # 앱별 로거
+        'users': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'projects': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'feedbacks': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'video_planning': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'video_analysis': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'admin_dashboard': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'DEBUG' if DEBUG else 'INFO',
     },
 }
+
+# 디버깅을 위한 추가 설정
+# Railway 환경에서 에러 디버깅을 위해 임시로 설정
+if IS_RAILWAY and os.environ.get('ENABLE_DEBUG_TOOLBAR', 'False').lower() == 'true':
+    DEBUG = True  # 임시로 DEBUG 활성화
+    
+# 500 에러 시 더 자세한 정보 제공을 위한 설정
+ADMINS = [
+    ('Admin', os.environ.get('ADMIN_EMAIL', 'vridgeofficial@gmail.com')),
+]
+
+# 에러 리포팅 설정
+if not DEBUG:
+    # 프로덕션에서 Sentry 사용 (선택사항)
+    SENTRY_DSN = os.environ.get('SENTRY_DSN')
+    if SENTRY_DSN:
+        import sentry_sdk
+        from sentry_sdk.integrations.django import DjangoIntegration
+        
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            integrations=[DjangoIntegration()],
+            traces_sample_rate=0.1,
+            send_default_pii=True
+        )
 
 # 보안 헤더
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
+
+# 추가 디버깅 정보를 위한 설정
+if DEBUG:
+    # DEBUG가 True일 때 더 자세한 에러 페이지 표시
+    DEBUG_PROPAGATE_EXCEPTIONS = True
+    
+    # 템플릿 디버깅 활성화
+    for template_engine in TEMPLATES:
+        template_engine['OPTIONS']['debug'] = True
+
+# Railway 환경에서 디버깅을 위한 로깅 미들웨어 추가
+if IS_RAILWAY or DEBUG:
+    # MIDDLEWARE 리스트에 로깅 미들웨어 추가
+    MIDDLEWARE.insert(0, 'config.logging_middleware.DetailedLoggingMiddleware')

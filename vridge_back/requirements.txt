@@ -16,3 +16,16 @@ boto3==1.29.7
 django-storages==1.14.2
 google-api-python-client==2.108.0
 sendgrid==6.11.0
+
+# WebSocket support
+channels==4.0.0
+channels-redis==4.1.0
+asgiref==3.7.2
+daphne==4.0.0
+
+# AI/ML APIs
+openai==1.3.0
+google-generativeai==0.3.0
+
+# PDF generation
+reportlab==4.0.4

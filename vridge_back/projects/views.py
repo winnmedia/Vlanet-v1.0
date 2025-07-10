@@ -899,3 +899,217 @@ class ProjectDate(View):
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+
+
+
+# 프로젝트 피드백 관련 뷰들
+@method_decorator(csrf_exempt, name="dispatch")
+class ProjectFeedback(View):
+    """프로젝트의 피드백 조회 및 생성"""
+    
+    @user_validator
+    def get(self, request, project_id):
+        try:
+            user = request.user
+            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            
+            if project is None:
+                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+            
+            # 권한 확인 - 프로젝트 소유자나 멤버인지 확인
+            is_member = models.Members.objects.filter(project=project, user=user).exists()
+            if project.user \!= user and not is_member:
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+            
+            # 피드백이 없으면 빈 객체 반환
+            if not project.feedback:
+                return JsonResponse({
+                    "result": {
+                        "id": None,
+                        "project": project_id,
+                        "files": None,
+                        "comments": []
+                    }
+                }, status=200)
+            
+            # 피드백 정보 반환
+            feedback = project.feedback
+            result = {
+                "id": feedback.id,
+                "project": project_id,
+                "files": feedback.files.url if feedback.files else None,
+                "created": feedback.created,
+                "updated": feedback.updated,
+                "comments": []
+            }
+            
+            # 코멘트 정보 추가
+            comments = feedback_model.FeedbackComment.objects.filter(
+                feedback=feedback
+            ).order_by("section", "time")
+            
+            for comment in comments:
+                result["comments"].append({
+                    "id": comment.id,
+                    "section": comment.section,
+                    "time": comment.time,
+                    "content": comment.content,
+                    "user": comment.user.email if comment.user else None,
+                    "created": comment.created
+                })
+            
+            return JsonResponse({"result": result}, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in project feedback: {str(e)}", exc_info=True)
+            return JsonResponse({"message": f"오류가 발생했습니다: {str(e)}"}, status=500)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ProjectFeedbackComments(View):
+    """프로젝트 피드백의 코멘트 목록 조회 및 작성"""
+    
+    @user_validator
+    def get(self, request, project_id):
+        # 이미 ProjectFeedback.get에서 코멘트 정보를 포함하고 있으므로
+        # 여기서는 별도 구현 불필요
+        return JsonResponse({"message": "Use /api/projects/{project_id}/feedback/ endpoint"}, status=200)
+    
+    @user_validator
+    def post(self, request, project_id):
+        try:
+            user = request.user
+            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            
+            if project is None:
+                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+            
+            # 권한 확인
+            is_member = models.Members.objects.filter(project=project, user=user).exists()
+            if project.user \!= user and not is_member:
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+            
+            # 피드백이 없으면 에러
+            if not project.feedback:
+                return JsonResponse({"message": "피드백이 없습니다."}, status=404)
+            
+            data = json.loads(request.body)
+            
+            # 코멘트 생성
+            comment = feedback_model.FeedbackComment.objects.create(
+                feedback=project.feedback,
+                user=user,
+                section=data.get("section", 0),
+                time=data.get("time", 0),
+                content=data.get("content", "")
+            )
+            
+            return JsonResponse({
+                "result": {
+                    "id": comment.id,
+                    "section": comment.section,
+                    "time": comment.time,
+                    "content": comment.content,
+                    "user": comment.user.email,
+                    "created": comment.created
+                }
+            }, status=201)
+            
+        except Exception as e:
+            logger.error(f"Error in feedback comments: {str(e)}", exc_info=True)
+            return JsonResponse({"message": f"오류가 발생했습니다: {str(e)}"}, status=500)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ProjectFeedbackUpload(View):
+    """프로젝트 피드백 파일 업로드"""
+    
+    @user_validator
+    def post(self, request, project_id):
+        try:
+            user = request.user
+            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            
+            if project is None:
+                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+            
+            # 권한 확인 - 매니저 이상만 업로드 가능
+            is_manager = models.Members.objects.filter(
+                project=project, 
+                user=user, 
+                rating="manager"
+            ).exists()
+            
+            if project.user \!= user and not is_manager:
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+            
+            # 파일 처리
+            file = request.FILES.get("file")
+            if not file:
+                return JsonResponse({"message": "파일이 없습니다."}, status=400)
+            
+            # 피드백이 없으면 생성
+            if not project.feedback:
+                feedback = feedback_model.Feedback.objects.create()
+                project.feedback = feedback
+                project.save()
+            else:
+                feedback = project.feedback
+            
+            # 기존 파일이 있으면 삭제
+            if feedback.files:
+                feedback.files.delete()
+            
+            # 새 파일 저장
+            feedback.files = file
+            feedback.save()
+            
+            return JsonResponse({
+                "result": {
+                    "id": feedback.id,
+                    "file_url": feedback.files.url
+                }
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in feedback upload: {str(e)}", exc_info=True)
+            return JsonResponse({"message": f"오류가 발생했습니다: {str(e)}"}, status=500)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ProjectFeedbackEncodingStatus(View):
+    """비디오 인코딩 상태 확인"""
+    
+    @user_validator
+    def get(self, request, project_id):
+        try:
+            user = request.user
+            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            
+            if project is None:
+                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+            
+            # 권한 확인
+            is_member = models.Members.objects.filter(project=project, user=user).exists()
+            if project.user \!= user and not is_member:
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+            
+            # 피드백이 없으면 인코딩 상태도 없음
+            if not project.feedback or not project.feedback.files:
+                return JsonResponse({
+                    "status": "no_file",
+                    "message": "업로드된 파일이 없습니다."
+                }, status=200)
+            
+            # 여기서는 간단히 파일이 있으면 완료로 처리
+            # 실제로는 인코딩 서비스와 연동 필요
+            return JsonResponse({
+                "status": "completed",
+                "message": "인코딩이 완료되었습니다.",
+                "file_url": project.feedback.files.url
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in encoding status: {str(e)}", exc_info=True)
+            return JsonResponse({"message": f"오류가 발생했습니다: {str(e)}"}, status=500)
+

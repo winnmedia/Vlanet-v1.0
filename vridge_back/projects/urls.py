@@ -42,8 +42,9 @@ urlpatterns = [
     path("memo/<int:id>", views.ProjectMemo.as_view()),  # 프로젝트 메모
     path("date_update/<int:id>", views.ProjectDate.as_view()),  # 프로젝트 날짜변경
     
-    # 프로젝트 하위 리소스로 피드백 제공 (구현 예정)
-    # path("<int:project_id>/feedback/", views.ProjectFeedback.as_view()),  # 프로젝트의 피드백 조회/생성
-    # path("<int:project_id>/feedback/comments/", views.ProjectFeedbackComments.as_view()),  # 피드백 코멘트 목록/작성
-    # path("<int:project_id>/feedback/upload/", views.ProjectFeedbackUpload.as_view()),  # 피드백 파일 업로드
+    # 프로젝트 하위 리소스로 피드백 제공
+    path("<int:project_id>/feedback/", views.ProjectFeedback.as_view()),  # 프로젝트의 피드백 조회/생성
+    path("<int:project_id>/feedback/comments/", views.ProjectFeedbackComments.as_view()),  # 피드백 코멘트 목록/작성
+    path("<int:project_id>/feedback/upload/", views.ProjectFeedbackUpload.as_view()),  # 피드백 파일 업로드
+    path("<int:project_id>/feedback/encoding-status/", views.ProjectFeedbackEncodingStatus.as_view()),  # 인코딩 상태 확인
 ]

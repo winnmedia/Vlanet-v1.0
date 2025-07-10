@@ -1028,34 +1028,7 @@ export default function Feedback() {
                       </div>
                       <button 
                         onClick={() => setShowUploadGuide(true)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '12px 24px',
-                          background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                          color: '#1631F8',
-                          border: '2px solid #1631F8',
-                          borderRadius: '12px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          zIndex: 1,
-                          transition: 'all 0.3s ease',
-                          boxShadow: '0 4px 12px rgba(22, 49, 248, 0.15)'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)'
-                          e.currentTarget.style.color = 'white'
-                          e.currentTarget.style.transform = 'translateY(-2px)'
-                          e.currentTarget.style.boxShadow = '0 8px 24px rgba(22, 49, 248, 0.3)'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'
-                          e.currentTarget.style.color = '#1631F8'
-                          e.currentTarget.style.transform = 'translateY(0)'
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.15)'
-                        }}
+                        className="feedback-button-outline"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -1131,29 +1104,7 @@ export default function Feedback() {
                       {current_project.files && (
                         <button
                           onClick={() => CopyFileUrl(current_project.files)}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '10px 16px',
-                            background: 'linear-gradient(135deg, #6c757d 0%, #5a6268 100%)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontSize: '13px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            boxShadow: '0 4px 12px rgba(108, 117, 125, 0.25)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-2px)'
-                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(108, 117, 125, 0.4)'
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)'
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 117, 125, 0.25)'
-                          }}
+                          className="feedback-button-secondary"
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1322,17 +1273,12 @@ export default function Feedback() {
                     <span>피드백</span>
                     <button 
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
+                      className="feedback-button-toggle"
                       style={{
-                        background: '#0058da',
-                        border: 'none',
                         borderRadius: '50%',
                         width: '30px',
                         height: '30px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        transition: 'transform 0.3s ease',
+                        padding: 0,
                         transform: showProjectInfo ? 'rotate(180deg)' : 'rotate(0deg)'
                       }}
                     >
@@ -1368,28 +1314,8 @@ export default function Feedback() {
                       )}
                       {is_admin && (
                         <button
-                          style={{
-                            width: '100%',
-                            marginTop: '10px',
-                            padding: '10px 16px',
-                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-1px)'
-                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)'
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)'
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)'
-                          }}
+                          className="feedback-button-primary"
+                          style={{ width: '100%', marginTop: '10px' }}
                           onClick={() => navigate(`/ProjectEdit/${project_id}`)}
                         >
                           프로젝트 관리

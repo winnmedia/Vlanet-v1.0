@@ -1,5 +1,5 @@
 // 피드백 페이지 버튼 스타일
-// Version: 2.0 - 2024-01-11 캐시 무효화
+// Version: 3.0 - 2024-01-11 인라인 스타일 제거
 .feedback-button-container {
   display: flex;
   gap: 12px;
@@ -152,6 +152,57 @@
     width: 24px;
     height: 24px;
     margin-right: 12px;
+  }
+}
+
+// 공유 버튼 스타일
+.feedback-button-secondary {
+  @extend .feedback-button;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25);
+  
+  &:hover {
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+  }
+}
+
+// 업로드 가이드 버튼 스타일
+.feedback-button-outline {
+  @extend .feedback-button;
+  background: white;
+  color: #1631F8;
+  border: 2px solid #1631F8;
+  
+  &:hover {
+    background: #1631F8;
+    color: white;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+  }
+}
+
+// 프로젝트 정보 토글 버튼
+.feedback-button-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #e9ecef;
+    color: #212529;
+  }
+  
+  &:active {
+    background: #dee2e6;
   }
 }
 

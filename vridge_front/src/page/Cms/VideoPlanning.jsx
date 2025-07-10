@@ -6,6 +6,7 @@ import ExportModal from 'components/ExportModal'
 import VideoUploadGuide from 'components/VideoUploadGuide'
 import 'css/Cms/CmsCommon.scss'
 import './VideoPlanning.scss'
+import './VideoPlanningButtons.scss'
 import axios from 'config/axios'
 import { checkSession } from 'util/util'
 import { useNavigate } from 'react-router-dom'
@@ -63,6 +64,53 @@ export default function VideoPlanning() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null)
   const [planningTitle, setPlanningTitle] = useState('')
   const [recentPlannings, setRecentPlannings] = useState([])
+  
+  // 최근 기획 불러오기
+  useEffect(() => {
+    fetchRecentPlannings()
+  }, [])
+  
+  const fetchRecentPlannings = async () => {
+    try {
+      const token = checkSession()
+      if (!token) return
+      
+      const response = await axios.get('/api/video-planning/recent/', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      
+      if (response.data && response.data.plannings) {
+        setRecentPlannings(response.data.plannings)
+      }
+    } catch (error) {
+      console.error('최근 기획 불러오기 오류:', error)
+    }
+  }
+  
+  // 최근 기획 데이터 로드
+  const loadPlanningData = (planning) => {
+    if (planning.planning_data) {
+      setPlanningData({
+        planning: planning.planning_data.planning || '',
+        stories: planning.planning_data.stories || [],
+        scenes: planning.planning_data.scenes || [],
+        shots: planning.planning_data.shots || [],
+        storyboards: planning.planning_data.storyboards || []
+      })
+      
+      if (planning.planning_options) {
+        setPlanningOptions(planning.planning_options)
+      }
+      
+      setCurrentStep(planning.current_step || 1)
+      setSuccessMessage('기획이 불러와졌습니다.')
+      
+      // 성공 메시지 3초 후 사라짐
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 3000)
+    }
+  }
   const [planningOptions, setPlanningOptions] = useState({
     tone: '',
     genre: '',
@@ -1630,7 +1678,11 @@ export default function VideoPlanning() {
             {recentPlannings.length > 0 ? (
               <div className="recent-plannings-list">
                 {recentPlannings.map((planning, index) => (
-                  <div key={planning.id} className="recent-planning-item">
+                  <div 
+                    key={planning.id} 
+                    className="recent-planning-item"
+                    onClick={() => loadPlanningData(planning)}
+                  >
                     <div className="planning-number">{index + 1}</div>
                     <div className="planning-info">
                       <div className="planning-title">{planning.title}</div>

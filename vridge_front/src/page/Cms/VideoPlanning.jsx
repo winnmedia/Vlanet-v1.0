@@ -52,6 +52,13 @@ export default function VideoPlanning() {
   const [selectedSceneIndex, setSelectedSceneIndex] = useState(0)
   const [selectedShotIndex, setSelectedShotIndex] = useState(0)
   const [planningHistory, setPlanningHistory] = useState([])
+  // 각 섹션의 접기/펼치기 상태 관리
+  const [expandedSections, setExpandedSections] = useState({
+    planning: true,
+    stories: true,
+    scenes: true,
+    shots: true
+  })
   const [showHistory, setShowHistory] = useState(false)
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null)
   const [planningTitle, setPlanningTitle] = useState('')
@@ -2232,7 +2239,7 @@ export default function VideoPlanning() {
                       <h4>기획안</h4>
                     </div>
                     <div className="preview-content">
-                      {showPlanningDetail ? (
+                      {expandedSections.planning ? (
                         <div className="full-content">
                           <p style={{ whiteSpace: 'pre-wrap' }}>{planningData.planning}</p>
                           {planningOptions && (
@@ -2254,18 +2261,46 @@ export default function VideoPlanning() {
                       ) : (
                         <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
                       )}
-                      {currentStep !== 1 && (
-                        <button 
-                          className="view-detail-btn" 
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            goToStep(1)
+                      <button 
+                        className="toggle-section-btn" 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setExpandedSections(prev => ({
+                            ...prev,
+                            planning: !prev.planning
+                          }))
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {expandedSections.planning ? '접기' : '펼치기'}
+                        <svg 
+                          width="12" 
+                          height="12" 
+                          viewBox="0 0 12 12" 
+                          fill="none" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          style={{
+                            transform: expandedSections.planning ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.3s ease'
                           }}
                         >
-                          이 단계로 이동 →
-                        </button>
-                      )}
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -2277,33 +2312,80 @@ export default function VideoPlanning() {
                       <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
                     </div>
                     <div className="preview-content">
-                      {selectedStoryIndex !== null && 
-                       selectedStoryIndex >= 0 && selectedStoryIndex < planningData.stories.length && 
-                       planningData.stories[selectedStoryIndex] ? (
-                        <>
-                          <h5>{planningData.stories[selectedStoryIndex].title}</h5>
-                          <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
-                          <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
-                        </>
+                      {expandedSections.stories ? (
+                        <div className="full-content stories-full">
+                          {planningData.stories.map((story, index) => (
+                            <div key={index} className="story-preview-full">
+                              <h5>{story.title}</h5>
+                              <p className="story-stage">{story.stage} - {story.stage_name}</p>
+                              <p className="story-summary">{story.summary}</p>
+                              {story.development && (
+                                <div className="story-development">
+                                  <strong>전개:</strong> {story.development}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       ) : (
                         <>
-                          <h5>{planningData.stories[0]?.title || '스토리 1'}</h5>
-                          <p className="story-stage">{planningData.stories[0]?.stage} - {planningData.stories[0]?.stage_name}</p>
-                          <p>{planningData.stories[0]?.summary?.substring(0, 100)}...</p>
+                          {selectedStoryIndex !== null && 
+                           selectedStoryIndex >= 0 && selectedStoryIndex < planningData.stories.length && 
+                           planningData.stories[selectedStoryIndex] ? (
+                            <>
+                              <h5>{planningData.stories[selectedStoryIndex].title}</h5>
+                              <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
+                              <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
+                            </>
+                          ) : (
+                            <>
+                              <h5>{planningData.stories[0]?.title || '스토리 1'}</h5>
+                              <p className="story-stage">{planningData.stories[0]?.stage} - {planningData.stories[0]?.stage_name}</p>
+                              <p>{planningData.stories[0]?.summary?.substring(0, 100)}...</p>
+                            </>
+                          )}
                         </>
                       )}
-                      {currentStep !== 2 && (
-                        <button 
-                          className="view-detail-btn" 
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            goToStep(2)
+                      <button 
+                        className="toggle-section-btn" 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setExpandedSections(prev => ({
+                            ...prev,
+                            stories: !prev.stories
+                          }))
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {expandedSections.stories ? '접기' : '펼치기'}
+                        <svg 
+                          width="12" 
+                          height="12" 
+                          viewBox="0 0 12 12" 
+                          fill="none" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          style={{
+                            transform: expandedSections.stories ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.3s ease'
                           }}
                         >
-                          이 단계로 이동 →
-                        </button>
-                      )}
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -2315,7 +2397,7 @@ export default function VideoPlanning() {
                       <h4>🎬 씬 & 콘티 ({planningData.scenes.length}개)</h4>
                     </div>
                     <div className="preview-content">
-                      {selectedSceneIndex !== null ? (
+                      {expandedSections.scenes ? (
                         <div className="full-content scenes-full">
                           {planningData.scenes.map((scene, index) => (
                             <div key={index} className="scene-preview-full">
@@ -2360,18 +2442,46 @@ export default function VideoPlanning() {
                           )}
                         </div>
                       )}
-                      {currentStep !== 3 && (
-                        <button 
-                          className="view-detail-btn" 
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            goToStep(3)
+                      <button 
+                        className="toggle-section-btn" 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setExpandedSections(prev => ({
+                            ...prev,
+                            scenes: !prev.scenes
+                          }))
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {expandedSections.scenes ? '접기' : '펼치기'}
+                        <svg 
+                          width="12" 
+                          height="12" 
+                          viewBox="0 0 12 12" 
+                          fill="none" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          style={{
+                            transform: expandedSections.scenes ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.3s ease'
                           }}
                         >
-                          이 단계로 이동 →
-                        </button>
-                      )}
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 )}

@@ -1,0 +1,3 @@
+This file is used to force Railway to rebuild the application
+Last updated: 2024-01-11 12:55:00
+Purpose: Clear CSS cache and apply new button styles

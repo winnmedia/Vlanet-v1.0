@@ -118,19 +118,30 @@ CHANNEL_LAYERS = {
 }
 
 # Database
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env('DB_NAME'),
-        "USER": env('DB_USER'),
-        "PASSWORD": env('DB_PASSWORD'),
-        "HOST": env('DB_HOST'),
-        "PORT": env('DB_PORT', default='5432'),
-        "OPTIONS": {
-            "connect_timeout": 10,
+import dj_database_url
+
+DATABASE_URL = env('DATABASE_URL', default=None)
+
+if DATABASE_URL:
+    # Railway나 Heroku 같은 플랫폼에서 DATABASE_URL 사용
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # 개발 환경에서 개별 환경변수 사용
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env('DB_NAME', default='videoplanet'),
+            "USER": env('DB_USER', default='postgres'),
+            "PASSWORD": env('DB_PASSWORD', default='postgres'),
+            "HOST": env('DB_HOST', default='localhost'),
+            "PORT": env('DB_PORT', default='5432'),
+            "OPTIONS": {
+                "connect_timeout": 10,
+            }
         }
     }
-}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

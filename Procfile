@@ -1,1 +1,1 @@
-web: python simple_server.py
+web: cd vridge_back && python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:$PORT

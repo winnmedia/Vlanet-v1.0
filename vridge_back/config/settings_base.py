@@ -4,39 +4,68 @@ Base settings for vridge project.
 import os
 from pathlib import Path
 from datetime import timedelta
-import environ
+
+try:
+    import environ
+except ImportError:
+    environ = None
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Initialize environment variables
-env = environ.Env(
-    DEBUG=(bool, False)
-)
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+if environ:
+    try:
+        env = environ.Env(
+            DEBUG=(bool, False)
+        )
+        env_file = os.path.join(BASE_DIR, '.env')
+        if os.path.exists(env_file):
+            environ.Env.read_env(env_file)
+    except Exception as e:
+        environ = None
+
+# environ이 없거나 실패한 경우 환경변수 직접 사용
+if not environ:
+    class MockEnv:
+        def __init__(self):
+            pass
+        def __call__(self, key, default=None):
+            return os.environ.get(key, default)
+        def list(self, key, default=None):
+            value = os.environ.get(key, '')
+            if value:
+                return [item.strip() for item in value.split(',')]
+            return default or []
+    env = MockEnv()
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'django-insecure-default-key'))
 
 # JWT Algorithm for authentication
-ALGORITHM = env('JWT_ALGORITHM', default='HS256')
+ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS256')
 
 # Google Gemini API Key
-GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', '')
 
 # OpenAI API Key (for DALL-E image generation)
-OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 
 # Hugging Face API Key (for Stable Diffusion image generation)
-HUGGINGFACE_API_KEY = env('HUGGINGFACE_API_KEY', default='')
+HUGGINGFACE_API_KEY = os.environ.get('HUGGINGFACE_API_KEY', '')
 
 # Twelve Labs API Key (for video understanding)
-TWELVE_LABS_API_KEY = env('TWELVE_LABS_API_KEY', default='')
+TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 'videoplanet.up.railway.app', 'vlanet.net', '.railway.app', '*'])
+# ALLOWED_HOSTS 환경변수 처리
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',')]
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'videoplanet.up.railway.app', 'vlanet.net', '.railway.app', '*']
 
 # Application definition
 DJANGO_APPS = [
@@ -132,11 +161,11 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": env('DB_NAME', default='videoplanet'),
-            "USER": env('DB_USER', default='postgres'),
-            "PASSWORD": env('DB_PASSWORD', default='postgres'),
-            "HOST": env('DB_HOST', default='localhost'),
-            "PORT": env('DB_PORT', default='5432'),
+            "NAME": os.environ.get('DB_NAME', 'videoplanet'),
+            "USER": os.environ.get('DB_USER', 'postgres'),
+            "PASSWORD": os.environ.get('DB_PASSWORD', 'postgres'),
+            "HOST": os.environ.get('DB_HOST', 'localhost'),
+            "PORT": os.environ.get('DB_PORT', '5432'),
             "OPTIONS": {
                 "connect_timeout": 10,
             }
@@ -174,10 +203,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # AWS Settings
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', default=None)
-AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME', default='ap-northeast-2')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', None)
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', None)
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', None)
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-northeast-2')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
@@ -211,7 +240,7 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
-    "ALGORITHM": env('JWT_ALGORITHM', default='HS256'),
+    "ALGORITHM": os.environ.get('JWT_ALGORITHM', 'HS256'),
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
@@ -268,7 +297,7 @@ try:
     CACHES = {
         'default': {
             'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': f"redis://{env('REDIS_HOST', default='127.0.0.1')}:{env('REDIS_PORT', default='6379')}/1",
+            'LOCATION': f"redis://{os.environ.get('REDIS_HOST', '127.0.0.1')}:{os.environ.get('REDIS_PORT', '6379')}/1",
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'CONNECTION_POOL_KWARGS': {
@@ -300,8 +329,8 @@ except ImportError:
     SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Celery Configuration
-CELERY_BROKER_URL = f"redis://{env('REDIS_HOST', default='127.0.0.1')}:{env('REDIS_PORT', default='6379')}/0"
-CELERY_RESULT_BACKEND = f"redis://{env('REDIS_HOST', default='127.0.0.1')}:{env('REDIS_PORT', default='6379')}/0"
+CELERY_BROKER_URL = f"redis://{os.environ.get('REDIS_HOST', '127.0.0.1')}:{os.environ.get('REDIS_PORT', '6379')}/0"
+CELERY_RESULT_BACKEND = f"redis://{os.environ.get('REDIS_HOST', '127.0.0.1')}:{os.environ.get('REDIS_PORT', '6379')}/0"
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

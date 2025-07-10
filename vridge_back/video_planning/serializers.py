@@ -38,6 +38,7 @@ class VideoPlanningSerializer(serializers.ModelSerializer):
             'scenes', 'selected_scene',
             'shots', 'selected_shot',
             'storyboards', 'images',
+            'planning_options',
             'is_completed', 'current_step',
             'created_at', 'updated_at'
         ]

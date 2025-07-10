@@ -59,16 +59,16 @@ def get_recent_plannings(request):
                     'id': planning.id,
                     'title': planning.title or '제목 없음',
                     'created_at': planning.created_at.strftime('%Y-%m-%d %H:%M') if planning.created_at else '',
-                    'planning_options': {
-                        'tone': planning_options.get('tone', ''),
-                        'genre': planning_options.get('genre', ''),
-                        'concept': planning_options.get('concept', ''),
-                        'target': planning_options.get('target', ''),
-                        'purpose': planning_options.get('purpose', ''),
-                        'duration': planning_options.get('duration', '')
-                    },
+                    'planning_options': planning.planning_options if hasattr(planning, 'planning_options') else planning_options,
                     'current_step': planning.current_step or 1,
-                    'is_completed': planning.is_completed or False
+                    'is_completed': planning.is_completed or False,
+                    'planning_data': {
+                        'planning': planning.planning_text,
+                        'stories': planning.stories,
+                        'scenes': planning.scenes,
+                        'shots': planning.shots,
+                        'storyboards': planning.storyboards
+                    }
                 })
             except Exception as item_error:
                 logger.warning(f"Error processing planning item {planning.id}: {str(item_error)}")

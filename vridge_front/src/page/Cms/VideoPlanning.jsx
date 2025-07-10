@@ -64,6 +64,7 @@ export default function VideoPlanning() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null)
   const [planningTitle, setPlanningTitle] = useState('')
   const [recentPlannings, setRecentPlannings] = useState([])
+  const [currentPlanningId, setCurrentPlanningId] = useState(null)
   
   // 최근 기획 불러오기
   useEffect(() => {
@@ -79,8 +80,8 @@ export default function VideoPlanning() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       
-      if (response.data && response.data.plannings) {
-        setRecentPlannings(response.data.plannings)
+      if (response.data && response.data.data && response.data.data.planning_logs) {
+        setRecentPlannings(response.data.data.planning_logs)
       }
     } catch (error) {
       console.error('최근 기획 불러오기 오류:', error)
@@ -100,6 +101,16 @@ export default function VideoPlanning() {
       
       if (planning.planning_options) {
         setPlanningOptions(planning.planning_options)
+      }
+      
+      // 기획 ID 설정 (계속 자동 저장이 가능하도록)
+      if (planning.id) {
+        setCurrentPlanningId(planning.id)
+      }
+      
+      // 제목 설정
+      if (planning.title) {
+        setPlanningTitle(planning.title)
       }
       
       setCurrentStep(planning.current_step || 1)
@@ -260,6 +271,49 @@ export default function VideoPlanning() {
     }
   }
 
+  // 자동 저장 함수 (백그라운드에서 조용히 저장)
+  const autoSavePlanning = async () => {
+    try {
+      // 제목이 없으면 planning_text의 첫 50자를 제목으로 사용
+      const autoTitle = planningTitle.trim() || 
+        (planningData.planning ? planningData.planning.substring(0, 50) + '...' : '자동 저장된 기획')
+      
+      const planningDataToSave = {
+        title: autoTitle,
+        planning_text: planningData.planning,
+        stories: planningData.stories,
+        scenes: planningData.scenes,
+        shots: planningData.shots,
+        storyboards: planningData.storyboards,
+        planning_options: planningOptions,
+        current_step: currentStep
+      }
+
+      if (currentPlanningId) {
+        // 기존 기획 업데이트
+        await axios.put(
+          `/api/video-planning/update/${currentPlanningId}/`,
+          planningDataToSave
+        )
+      } else {
+        // 새 기획 생성
+        const response = await axios.post(
+          `/api/video-planning/save/`,
+          planningDataToSave
+        )
+        if (response.data.status === 'success' && response.data.data.id) {
+          setCurrentPlanningId(response.data.data.id)
+        }
+      }
+      
+      // 최근 기획 목록 갱신
+      fetchRecentPlannings()
+    } catch (err) {
+      // 자동 저장 실패는 조용히 처리 (사용자에게 에러 메시지 표시하지 않음)
+      console.error('자동 저장 실패:', err)
+    }
+  }
+
   const generateStories = async () => {
     if (!planningData.planning.trim()) {
       setError('기획안을 입력해주세요.')
@@ -298,13 +352,16 @@ export default function VideoPlanning() {
         setLoadingProgress(80)
         setLoadingMessage('기승전결 스토리 생성 완료!')
         
-        setTimeout(() => {
+        setTimeout(async () => {
           setPlanningData(prev => ({
             ...prev,
             stories: response.data.data.stories || []
           }))
           setCurrentStep(2)
           setLoadingProgress(100)
+          
+          // 자동 저장 실행
+          await autoSavePlanning()
           
           // 최근 기획 로그 업데이트
           fetchRecentPlannings()
@@ -365,6 +422,9 @@ export default function VideoPlanning() {
           scenes: allScenes
         }))
         setCurrentStep(3)
+        
+        // 자동 저장 실행
+        await autoSavePlanning()
       } else {
         setError('씬 생성에 실패했습니다.')
       }
@@ -395,6 +455,9 @@ export default function VideoPlanning() {
           shots: response.data.data.shots || []
         }))
         setCurrentStep(4)
+        
+        // 자동 저장 실행
+        await autoSavePlanning()
       } else {
         setError(response.data.message || '숏 생성에 실패했습니다.')
       }
@@ -425,6 +488,9 @@ export default function VideoPlanning() {
           storyboards: response.data.data.storyboards || []
         }))
         setCurrentStep(5)
+        
+        // 자동 저장 실행
+        await autoSavePlanning()
       } else {
         setError(response.data.message || '콘티 생성에 실패했습니다.')
       }
@@ -504,12 +570,15 @@ export default function VideoPlanning() {
           storyboard: response.data.data.storyboards[0] || {}
         }
         
-        setTimeout(() => {
+        setTimeout(async () => {
           setPlanningData(prev => ({
             ...prev,
             scenes: updatedScenes
           }))
           setLoadingProgress(100)
+          
+          // 자동 저장 실행
+          await autoSavePlanning()
         }, 500)
       } else {
         setError(response.data.message || '콘티 생성에 실패했습니다.')
@@ -1668,6 +1737,47 @@ export default function VideoPlanning() {
                     기획안 저장
                   </button>
                 )}
+                {currentPlanningId && (
+                  <button
+                    className="new-planning-btn"
+                    onClick={() => {
+                      // 새 기획 시작
+                      setCurrentPlanningId(null)
+                      setPlanningTitle('')
+                      setPlanningData({
+                        planning: '',
+                        stories: [],
+                        scenes: [],
+                        shots: [],
+                        storyboards: []
+                      })
+                      setPlanningOptions({
+                        tone: '',
+                        genre: '',
+                        concept: '',
+                        target: '',
+                        purpose: '',
+                        duration: '',
+                        toneCustom: '',
+                        genreCustom: '',
+                        conceptCustom: '',
+                        targetCustom: '',
+                        purposeCustom: '',
+                        durationCustom: '',
+                        storyFramework: 'classic',
+                        developmentLevel: 'balanced',
+                        characterName: '',
+                        characterDescription: '',
+                        characterImage: null
+                      })
+                      setCurrentStep(1)
+                      setSuccessMessage('새로운 기획을 시작합니다.')
+                      setTimeout(() => setSuccessMessage(null), 3000)
+                    }}
+                  >
+                    새 기획 시작
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -1757,6 +1867,14 @@ export default function VideoPlanning() {
                         className="edit-story-btn"
                         onClick={() => startEditingStory(index)}
                         disabled={editingStoryIndex === index}
+                        style={{
+                          backgroundColor: '#1631F8',
+                          color: 'white',
+                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
                       >
                         ✏️ 편집
                       </button>
@@ -1779,12 +1897,29 @@ export default function VideoPlanning() {
                               <button 
                                 className="save-story-btn"
                                 onClick={() => saveStoryEdit(index)}
+                                style={{
+                                  backgroundColor: '#1631F8',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '8px 16px',
+                                  borderRadius: '4px',
+                                  cursor: 'pointer',
+                                  marginRight: '8px'
+                                }}
                               >
                                 저장
                               </button>
                               <button 
                                 className="cancel-story-btn"
                                 onClick={cancelStoryEdit}
+                                style={{
+                                  backgroundColor: '#dc3545',
+                                  color: 'white',
+                                  border: 'none',
+                                  padding: '8px 16px',
+                                  borderRadius: '4px',
+                                  cursor: 'pointer'
+                                }}
                               >
                                 취소
                               </button>
@@ -1814,13 +1949,33 @@ export default function VideoPlanning() {
               ))}
             </div>
             <div className="button-group">
-              <button className="back-btn" onClick={() => goToStep(1)}>
+              <button className="back-btn" onClick={() => goToStep(1)} style={{
+                backgroundColor: '#1631F8',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '600'
+              }}>
                 기획안 수정
               </button>
               <button
                 className="generate-btn"
                 onClick={generateScenes}
                 disabled={loading}
+                style={{
+                  backgroundColor: '#1631F8',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  opacity: loading ? 0.7 : 1
+                }}
               >
                 {loading ? '씬 생성 중...' : '씬 생성'}
               </button>
@@ -1946,6 +2101,15 @@ export default function VideoPlanning() {
                                     e.stopPropagation();
                                     saveEditedStoryboard(index);
                                   }}
+                                  style={{
+                                    backgroundColor: '#1631F8',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '6px 12px',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    marginRight: '8px'
+                                  }}
                                 >
                                   저장
                                 </button>
@@ -1954,6 +2118,14 @@ export default function VideoPlanning() {
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     cancelEditingStoryboard();
+                                  }}
+                                  style={{
+                                    backgroundColor: '#dc3545',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '6px 12px',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
                                   }}
                                 >
                                   취소
@@ -1978,6 +2150,15 @@ export default function VideoPlanning() {
                                       startEditingStoryboard(index);
                                     }}
                                     title="설명 수정"
+                                    style={{
+                                      backgroundColor: '#1631F8',
+                                      color: 'white',
+                                      border: 'none',
+                                      padding: '4px 12px',
+                                      borderRadius: '4px',
+                                      cursor: 'pointer',
+                                      fontSize: '14px'
+                                    }}
                                   >
                                     수정
                                   </button>
@@ -2364,80 +2545,20 @@ export default function VideoPlanning() {
                       <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
                     </div>
                     <div className="preview-content">
-                      {expandedSections.stories ? (
-                        <div className="full-content stories-full">
-                          {planningData.stories.map((story, index) => (
-                            <div key={index} className="story-preview-full">
-                              <h5>{story.title}</h5>
-                              <p className="story-stage">{story.stage} - {story.stage_name}</p>
-                              <p className="story-summary">{story.summary}</p>
-                              {story.development && (
-                                <div className="story-development">
-                                  <strong>전개:</strong> {story.development}
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <>
-                          {selectedStoryIndex !== null && 
-                           selectedStoryIndex >= 0 && selectedStoryIndex < planningData.stories.length && 
-                           planningData.stories[selectedStoryIndex] ? (
-                            <>
-                              <h5>{planningData.stories[selectedStoryIndex].title}</h5>
-                              <p className="story-stage">{planningData.stories[selectedStoryIndex].stage} - {planningData.stories[selectedStoryIndex].stage_name}</p>
-                              <p>{planningData.stories[selectedStoryIndex].summary?.substring(0, 100)}...</p>
-                            </>
-                          ) : (
-                            <>
-                              <h5>{planningData.stories[0]?.title || '스토리 1'}</h5>
-                              <p className="story-stage">{planningData.stories[0]?.stage} - {planningData.stories[0]?.stage_name}</p>
-                              <p>{planningData.stories[0]?.summary?.substring(0, 100)}...</p>
-                            </>
-                          )}
-                        </>
-                      )}
-                      <button 
-                        className="toggle-section-btn" 
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          setExpandedSections(prev => ({
-                            ...prev,
-                            stories: !prev.stories
-                          }))
-                        }}
-                        style={{
-                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {expandedSections.stories ? '접기' : '펼치기'}
-                        <svg 
-                          width="12" 
-                          height="12" 
-                          viewBox="0 0 12 12" 
-                          fill="none" 
-                          xmlns="http://www.w3.org/2000/svg"
-                          style={{
-                            transform: expandedSections.stories ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 0.3s ease'
-                          }}
-                        >
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
+                      <div className="full-content stories-full">
+                        {planningData.stories.map((story, index) => (
+                          <div key={index} className="story-preview-full">
+                            <h5>{story.title}</h5>
+                            <p className="story-stage">{story.stage} - {story.stage_name}</p>
+                            <p className="story-summary">{story.summary}</p>
+                            {story.development && (
+                              <div className="story-development">
+                                <strong>전개:</strong> {story.development}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}

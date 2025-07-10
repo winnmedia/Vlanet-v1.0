@@ -23,6 +23,9 @@ class VideoPlanning(models.Model):
     
     storyboards = models.JSONField(default=list, help_text="생성된 스토리보드(콘티) 목록")
     
+    # 기획 옵션 (톤앤매너, 장르 등)
+    planning_options = models.JSONField(default=dict, help_text="기획 옵션 (톤, 장르, 컨셉 등)")
+    
     # 상태 관리
     is_completed = models.BooleanField(default=False, help_text="기획 완료 여부")
     current_step = models.IntegerField(default=1, help_text="현재 진행 단계 (1-5)")

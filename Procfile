@@ -1,1 +1,1 @@
-web: cd vridge_back && (python3 manage.py migrate --noinput || echo "Migration failed, continuing...") && gunicorn config.wsgi:application --bind [::]:${PORT:-8000} --workers 2 --timeout 120
+web: cd vridge_back && python manage.py runserver 0.0.0.0:$PORT

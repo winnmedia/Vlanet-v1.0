@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import FeedbackPlayer from './FeedbackPlayer'
 import VideoJsPlayer from './VideoJsPlayer'
+import VidstackPlayer from './VidstackPlayer'
 import './VideoPlayer.scss'
 
 const VideoPlayer = forwardRef(({ 
@@ -9,7 +10,8 @@ const VideoPlayer = forwardRef(({
   initialTime, 
   onError, 
   onFeedbackClick,
-  useVideoJs = false, // 새로운 prop: Video.js 사용 여부
+  useVideoJs = false, // Video.js 사용 여부
+  useVidstack = false, // Vidstack 사용 여부 (새로운 고성능 플레이어)
   feedbacks = [] 
 }, ref) => {
   const [useNativePlayer, setUseNativePlayer] = useState(false)
@@ -142,6 +144,23 @@ const VideoPlayer = forwardRef(({
           </div>
         </div>
       </div>
+    )
+  }
+  
+  // Vidstack 플레이어 사용 (최고 성능)
+  if (useVidstack) {
+    return (
+      <VidstackPlayer
+        ref={playerRef}
+        videoUrl={videoUrl}
+        onTimeUpdate={onTimeClick}
+        initialTime={initialTime}
+        onError={handleError}
+        onFeedbackClick={onFeedbackClick}
+        feedbacks={feedbacks}
+        autoplay={false}
+        muted={false}
+      />
     )
   }
   

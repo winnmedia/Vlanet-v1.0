@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-07-10T14:34:25.213Z",
+  "tests": [
+    {
+      "name": "Feedback API",
+      "status": "error",
+      "error": "Request failed with status code 401"
+    },
+    {
+      "name": "Encoding Status API",
+      "status": "error",
+      "error": "Request failed with status code 401"
+    },
+    {
+      "name": "Health Check API",
+      "status": "success",
+      "responseTime": 51
+    }
+  ],
+  "summary": {
+    "totalTests": 3,
+    "successfulTests": 1,
+    "avgResponseTime": 51,
+    "grade": "F"
+  }
+}

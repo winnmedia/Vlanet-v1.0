@@ -868,8 +868,8 @@ export default function Feedback() {
                   {current_project.files && (
                     <VideoPlayer
                       ref={videoPlayerRef}
-                      useVideoJs={true} // Video.js 플레이어 사용
-                      feedbacks={mainFeedbacks} // 피드백 데이터 전달
+                      useVidstack={true} // 고성능 Vidstack 플레이어 사용
+                      feedbacks={current_project.feedbacks || []} // 피드백 데이터 전달
                       videoUrl={(() => {
                         const fileUrl = current_project.files;
                         console.log('[VideoPlayer] Original file URL:', fileUrl);
@@ -960,7 +960,7 @@ export default function Feedback() {
                           alignItems: 'center',
                           gap: '8px',
                           padding: '10px 20px',
-                          background: 'linear-gradient(135deg, #17a2b8 0%, #138496 100%)',
+                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                           color: 'white',
                           border: 'none',
                           borderRadius: '8px',
@@ -968,15 +968,15 @@ export default function Feedback() {
                           fontWeight: '600',
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
-                          boxShadow: '0 4px 12px rgba(23, 162, 184, 0.25)'
+                          boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(23, 162, 184, 0.4)';
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(23, 162, 184, 0.25)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
                         }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -994,7 +994,7 @@ export default function Feedback() {
                           alignItems: 'center',
                           gap: '8px',
                           padding: '10px 20px',
-                          background: 'linear-gradient(135deg, #6c63ff 0%, #574ff5 100%)',
+                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                           color: 'white',
                           border: 'none',
                           borderRadius: '8px',
@@ -1002,15 +1002,15 @@ export default function Feedback() {
                           fontWeight: '600',
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
-                          boxShadow: '0 4px 12px rgba(108, 99, 255, 0.25)'
+                          boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(108, 99, 255, 0.4)';
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(108, 99, 255, 0.25)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
                         }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1048,7 +1048,7 @@ export default function Feedback() {
                             alignItems: 'center',
                             gap: '8px',
                             padding: '10px 20px',
-                            background: 'linear-gradient(135deg, #ffc107 0%, #ffb300 100%)',
+                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                             color: 'white',
                             border: 'none',
                             borderRadius: '8px',
@@ -1056,15 +1056,15 @@ export default function Feedback() {
                             fontWeight: '600',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 4px 12px rgba(255, 193, 7, 0.25)'
+                            boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 193, 7, 0.4)';
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 193, 7, 0.25)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
                           }}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

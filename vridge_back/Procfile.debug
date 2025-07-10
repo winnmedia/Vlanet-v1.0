@@ -1,0 +1,1 @@
+web: python3 -c "import sys; print('Python:', sys.version); import os; print('PYTHONPATH:', os.environ.get('PYTHONPATH')); print('CWD:', os.getcwd()); print('Files:', os.listdir('.'))" && python3 manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --log-level debug --access-logfile - --error-logfile -

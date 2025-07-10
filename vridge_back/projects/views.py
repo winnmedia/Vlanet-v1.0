@@ -911,7 +911,7 @@ class ProjectFeedback(View):
     def get(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
             
             if project is None:
                 return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
@@ -979,7 +979,7 @@ class ProjectFeedbackComments(View):
     def post(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
             
             if project is None:
                 return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
@@ -1028,7 +1028,7 @@ class ProjectFeedbackUpload(View):
     def post(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
             
             if project is None:
                 return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
@@ -1084,7 +1084,7 @@ class ProjectFeedbackEncodingStatus(View):
     def get(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").get_or_none(id=project_id)
+            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
             
             if project is None:
                 return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)

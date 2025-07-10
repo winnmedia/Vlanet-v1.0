@@ -1,1 +1,1 @@
-web: cd vridge_back && bash start.sh
+web: cd vridge_back && bash quick_start.sh

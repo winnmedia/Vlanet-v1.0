@@ -19,7 +19,9 @@ ALLOWED_HOSTS = [
     'www.vlanet.net',
     'localhost',
     '127.0.0.1',
-    'videoplanet.up.railway.app'
+    'videoplanet.up.railway.app',
+    'testserver',  # Django 테스트 클라이언트용
+    '*'  # 헬스체크 디버깅용 (운영환경에서는 제거 권장)
 ]
 
 # 데이터베이스 (PostgreSQL)

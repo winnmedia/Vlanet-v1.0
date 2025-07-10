@@ -1,1 +1,1 @@
-web: gunicorn config.wsgi --bind 0.0.0.0:$PORT
+web: python3 manage.py migrate --noinput; python3 manage.py createcachetable; gunicorn config.wsgi:application --config gunicorn_health.py

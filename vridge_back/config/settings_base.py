@@ -36,7 +36,7 @@ TWELVE_LABS_API_KEY = env('TWELVE_LABS_API_KEY', default='')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 'videoplanet.up.railway.app', 'vlanet.net', '.railway.app'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 'videoplanet.up.railway.app', 'vlanet.net', '.railway.app', '*'])
 
 # Application definition
 DJANGO_APPS = [

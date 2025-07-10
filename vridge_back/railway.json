@@ -3,6 +3,6 @@
   "deploy": {
     "numReplicas": 1,
     "healthcheckPath": "/api/health/",
-    "healthcheckTimeout": 30
+    "healthcheckTimeout": 60
   }
 }

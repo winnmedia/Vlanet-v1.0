@@ -489,12 +489,12 @@ class CreateProject(View):
                 if 'concept' in inputs:
                     project.concept = inputs['concept']
                 
-                # is_public 필드가 모델에 있고 데이터베이스에도 있는 경우만 설정
-                try:
-                    if hasattr(project, 'is_public'):
-                        project.is_public = False  # 기본값
-                except Exception:
-                    pass
+                # 협업 관련 필드는 Railway 마이그레이션 문제로 임시 제거
+                # try:
+                #     if hasattr(project, 'is_public'):
+                #         project.is_public = False  # 기본값
+                # except Exception:
+                #     pass
                 
                 project.save()
                 

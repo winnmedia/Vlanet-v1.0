@@ -6,6 +6,7 @@ import 'css/Cms/FeedbackUnified.scss'
 import 'css/Cms/FeedbackButtons.scss'
 import 'css/Cms/OpinionInput.scss'
 import 'css/Cms/AITeacherModal.scss'
+import { feedbackButtonStyles, handleButtonHover, handleButtonLeave } from './FeedbackButtonStyles'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
@@ -928,7 +929,9 @@ export default function Feedback() {
                             changeItem(1); // 피드백 등록 탭으로 이동
                           }
                         }}
-                        className="feedback-button-primary"
+                        style={feedbackButtonStyles.primary}
+                        onMouseEnter={(e) => handleButtonHover(e, 'primary')}
+                        onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -940,7 +943,9 @@ export default function Feedback() {
                       {/* AI 영상 피드백 버튼 */}
                       <button
                         onClick={handleVideoAnalysis}
-                        className="feedback-button-primary"
+                        style={feedbackButtonStyles.primary}
+                        onMouseEnter={(e) => handleButtonHover(e, 'primary')}
+                        onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -962,7 +967,9 @@ export default function Feedback() {
                         />
                         <label 
                           htmlFor="video-replace-button" 
-                          className="feedback-upload-label"
+                          style={feedbackButtonStyles.primary}
+                          onMouseEnter={(e) => handleButtonHover(e, 'primary')}
+                          onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -974,7 +981,9 @@ export default function Feedback() {
                       {/* 영상 삭제 버튼 */}
                       <button
                         onClick={DeleteFile}
-                        className="feedback-button-danger"
+                        style={feedbackButtonStyles.danger}
+                        onMouseEnter={(e) => handleButtonHover(e, 'danger')}
+                        onMouseLeave={(e) => handleButtonLeave(e, 'danger')}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1028,7 +1037,9 @@ export default function Feedback() {
                       </div>
                       <button 
                         onClick={() => setShowUploadGuide(true)}
-                        className="feedback-button-outline"
+                        style={feedbackButtonStyles.outline}
+                        onMouseEnter={(e) => handleButtonHover(e, 'outline')}
+                        onMouseLeave={(e) => handleButtonLeave(e, 'outline')}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -1104,7 +1115,9 @@ export default function Feedback() {
                       {current_project.files && (
                         <button
                           onClick={() => CopyFileUrl(current_project.files)}
-                          className="feedback-button-secondary"
+                          style={feedbackButtonStyles.secondary}
+                          onMouseEnter={(e) => handleButtonHover(e, 'secondary')}
+                          onMouseLeave={(e) => handleButtonLeave(e, 'secondary')}
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1273,14 +1286,16 @@ export default function Feedback() {
                     <span>피드백</span>
                     <button 
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
-                      className="feedback-button-toggle"
                       style={{
+                        ...feedbackButtonStyles.toggle,
                         borderRadius: '50%',
                         width: '30px',
                         height: '30px',
                         padding: 0,
                         transform: showProjectInfo ? 'rotate(180deg)' : 'rotate(0deg)'
                       }}
+                      onMouseEnter={(e) => handleButtonHover(e, 'toggle')}
+                      onMouseLeave={(e) => handleButtonLeave(e, 'toggle')}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
                         <path d="M7 10l5 5 5-5z"/>
@@ -1314,8 +1329,9 @@ export default function Feedback() {
                       )}
                       {is_admin && (
                         <button
-                          className="feedback-button-primary"
-                          style={{ width: '100%', marginTop: '10px' }}
+                          style={{ ...feedbackButtonStyles.primary, width: '100%', marginTop: '10px' }}
+                          onMouseEnter={(e) => handleButtonHover(e, 'primary')}
+                          onMouseLeave={(e) => handleButtonLeave(e, 'primary')}
                           onClick={() => navigate(`/ProjectEdit/${project_id}`)}
                         >
                           프로젝트 관리

@@ -18,6 +18,10 @@ export DJANGO_SETTINGS_MODULE=config.settings.railway
 echo "Running migrations..."
 python manage.py ensure_migrations
 
+# UserProfile 테이블 확인 및 생성
+echo "Ensuring UserProfile table exists..."
+python manage.py ensure_userprofile
+
 # 정적 파일 수집
 echo "Collecting static files..."
 python manage.py collectstatic --noinput

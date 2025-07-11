@@ -4,7 +4,7 @@ Celery 태스크 - 비동기 영상 분석
 from celery import shared_task
 import logging
 from .models import VideoAnalysisResult
-from .analyzer import video_analyzer
+from .analyzer_lazy import get_video_analyzer
 from .views import save_feedback_items
 
 logger = logging.getLogger(__name__)

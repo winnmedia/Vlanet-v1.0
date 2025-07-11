@@ -537,8 +537,49 @@ def get_all_teachers(request):
     모든 AI 선생님 정보 조회
     """
     try:
-        teacher_service = AITeacherService()
-        teachers = teacher_service.get_all_teachers()
+        # AI 선생님 직접 반환 (서비스 초기화 문제 회피)
+        teachers = {
+            'tiger': {
+                'name': '호랑이 선생님',
+                'emoji': '🐯',
+                'personality': '맹렬하고 직설적인',
+                'style': '강렬하고 열정적인 피드백',
+                'tone': '단호하고 엄격한',
+                'greeting': '어흥! 자, 이제 제대로 된 피드백을 들어볼 시간이야!',
+                'color': '#FF6B35',
+                'bg_color': '#FFF5F0'
+            },
+            'owl': {
+                'name': '부엉이 선생님',
+                'emoji': '🦉',
+                'personality': '포근하고 지혜로운',
+                'style': '격려와 용기를 주는 피드백',
+                'tone': '따뜻하고 부드러운',
+                'greeting': '부엉부엉~ 좋은 영상을 만들어주셨네요. 함께 더 나은 작품을 만들어봐요.',
+                'color': '#8B4513',
+                'bg_color': '#FFF8DC'
+            },
+            'dolphin': {
+                'name': '돌고래 선생님',
+                'emoji': '🐬',
+                'personality': '유쾌하고 긍정적인',
+                'style': '재미있고 활기찬 피드백',
+                'tone': '밝고 경쾌한',
+                'greeting': '삐삐~ 안녕하세요! 오늘도 신나게 영상을 분석해볼까요?',
+                'color': '#4169E1',
+                'bg_color': '#F0F8FF'
+            },
+            'eagle': {
+                'name': '독수리 선생님',
+                'emoji': '🦅',
+                'personality': '날카롭고 분석적인',
+                'style': '전문적이고 상세한 피드백',
+                'tone': '침착하고 논리적인',
+                'greeting': '크아악~ 멀리서도 보이는 문제점들을 하나하나 짚어드리겠습니다.',
+                'color': '#8B4513',
+                'bg_color': '#FFFAF0'
+            }
+        }
         
         return Response({
             'status': 'success',

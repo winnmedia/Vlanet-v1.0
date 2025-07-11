@@ -11,6 +11,7 @@ from . import models
 from django.views import View
 from django.http import JsonResponse
 from .utils import user_validator, auth_send_email
+from core.security import sanitize_input, set_secure_cookie, rate_limit, SecurityError
 from .security_utils import PasswordResetSecurity
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -608,7 +609,7 @@ class UserMe(View):
     @user_validator
     def get(self, request):
         try:
-            user = request.vridge_user
+            user = request.user
             return JsonResponse({
                 "id": user.id,
                 "username": user.username,

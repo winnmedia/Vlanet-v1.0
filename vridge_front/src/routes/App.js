@@ -1,5 +1,6 @@
 import './App.scss'
 import 'Common.scss'
+import 'css/Common/LayoutFix.scss'
 import AppRoute from './AppRoute'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'

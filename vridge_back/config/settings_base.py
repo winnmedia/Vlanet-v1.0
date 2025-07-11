@@ -111,6 +111,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "config.middleware.PerformanceMiddleware",
     "feedbacks.middleware.MediaHeadersMiddleware",
+    "projects.middleware.IdempotencyMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -262,13 +263,15 @@ CORS_ALLOW_HEADERS = [
 ]
 
 # Email settings
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='VideoPlanet <noreply@vlanet.net>')
+from .email_settings import configure_email_settings
+email_config = configure_email_settings()
+EMAIL_BACKEND = email_config['EMAIL_BACKEND']
+EMAIL_HOST = email_config['EMAIL_HOST']
+EMAIL_PORT = email_config['EMAIL_PORT']
+EMAIL_USE_TLS = email_config['EMAIL_USE_TLS']
+EMAIL_HOST_USER = email_config['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = email_config['EMAIL_HOST_PASSWORD']
+DEFAULT_FROM_EMAIL = email_config['DEFAULT_FROM_EMAIL']
 
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 629145600  # 600MB

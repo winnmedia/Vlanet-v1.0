@@ -6,6 +6,9 @@ import 'css/Cms/FeedbackUnified.scss'
 import 'css/Cms/FeedbackButtons.scss'
 import 'css/Cms/OpinionInput.scss'
 import 'css/Cms/AITeacherModal.scss'
+import 'css/Cms/FeedbackLayoutFix.scss'
+import 'css/Cms/FeedbackPlayerFix.scss'
+import 'css/Cms/InputActivationFix.scss'
 import styles from './FeedbackButtonStyles.module.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
@@ -28,6 +31,7 @@ import { useSelector } from 'react-redux'
 
 import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from 'api/feedback'
 import { GetChatMessages, SendChatMessage } from 'api/chat'
+import axios from 'config/axios'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -56,6 +60,7 @@ export default function Feedback() {
   const [current_project, set_current_project] = useState(null)
   const [currentVideoTime, setCurrentVideoTime] = useState(0)
   const videoPlayerRef = useRef(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [showUploadGuide, setShowUploadGuide] = useState(false)
   const [VideoLoad, SetVideoLoad] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -184,11 +189,13 @@ export default function Feedback() {
         }
         
         set_current_project(res.data.result)
+        setIsLoading(false)
       })
       .catch((err) => {
         if (err.response && err.response.data) {
           window.alert(err.response.data.message)
         }
+        setIsLoading(false)
       })
     
     // Cleanup function
@@ -201,27 +208,25 @@ export default function Feedback() {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/teachers/`, {
-          headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
-          }
-        })
+        const response = await axios.get('/api/video-analysis/teachers/')
         
-        if (response.ok) {
-          const data = await response.json()
+        if (response.status === 200) {
+          const data = response.data
           if (data.status === 'success' && data.data?.teachers) {
             setTeachers(Object.entries(data.data.teachers).map(([key, teacher]) => ({
               id: key,
               ...teacher
             })))
           }
-        } else if (response.status === 401) {
-          // AI 서비스가 현재 사용 불가능한 경우 무시
-          console.log('AI teacher service not available or not authenticated')
         }
       } catch (error) {
-        // 네트워크 에러 등은 조용히 무시
-        console.log('Could not fetch AI teachers')
+        if (error.response?.status === 401) {
+          // AI 서비스가 현재 사용 불가능한 경우 무시
+          console.log('AI teacher service not available or not authenticated')
+        } else {
+          // 네트워크 에러 등은 조용히 무시
+          console.log('Could not fetch AI teachers')
+        }
       }
     }
     
@@ -404,10 +409,10 @@ export default function Feedback() {
   const content = [
     {
       tab: '코멘트',
-      content: current_project && (
+      content: (
         <OpinionInput
           project_id={project_id}
-          current_project={current_project}
+          current_project={current_project || {}}
           refetch={refetch}
         />
       ),
@@ -423,10 +428,10 @@ export default function Feedback() {
     },
     {
       tab: '피드백 관리',
-      content: current_project && (
+      content: (
         <FeedbackManage
           refetch={refetch}
-          current_project={current_project}
+          current_project={current_project || {}}
           user={user}
           onTimeClick={(timeStr) => {
             // Parse time string (MM:SS) to seconds
@@ -675,19 +680,12 @@ export default function Feedback() {
       const feedbackId = latestFeedback.id
       
       // 1. 비디오 분석 시작
-      const analysisResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/analyze/${feedbackId}/`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json'
-          }
-        }
+      const analysisResponse = await axios.post(
+        `/api/video-analysis/analyze/${feedbackId}/`
       )
       
-      if (!analysisResponse.ok) {
-        const errorData = await analysisResponse.json()
+      if (analysisResponse.status !== 200) {
+        const errorData = analysisResponse.data
         throw new Error(errorData.message || '분석 시작 실패')
       }
       
@@ -698,21 +696,14 @@ export default function Feedback() {
         setAnalysisResult(analysisData.data)
         
         // 2. 선생님 피드백 받기
-        const teacherResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/teacher/${feedbackId}/`,
+        const teacherResponse = await axios.post(
+          `/api/video-analysis/teacher/${feedbackId}/`,
           {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              teacher_type: selectedTeacher.id
-            })
+            teacher_type: selectedTeacher.id
           }
         )
         
-        if (!teacherResponse.ok) {
+        if (teacherResponse.status !== 200) {
           throw new Error('선생님 피드백 생성 실패')
         }
         
@@ -722,38 +713,26 @@ export default function Feedback() {
       } else {
         // 분석 중인 경우 - 폴링으로 상태 확인
         const checkAnalysisStatus = async () => {
-          const statusResponse = await fetch(
-            `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/result/${feedbackId}/`,
-            {
-              headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
-              }
-            }
+          const statusResponse = await axios.get(
+            `/api/video-analysis/result/${feedbackId}/`
           )
           
-          if (statusResponse.ok) {
-            const statusData = await statusResponse.json()
+          if (statusResponse.status === 200) {
+            const statusData = statusResponse.data
             
             if (statusData.data?.analysis?.status === 'completed') {
               setAnalysisResult(statusData.data.analysis)
               
               // 선생님 피드백 받기
-              const teacherResponse = await fetch(
-                `${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/teacher/${feedbackId}/`,
+              const teacherResponse = await axios.post(
+                `/api/video-analysis/teacher/${feedbackId}/`,
                 {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`,
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    teacher_type: selectedTeacher.id
-                  })
+                  teacher_type: selectedTeacher.id
                 }
               )
               
-              if (teacherResponse.ok) {
-                const teacherData = await teacherResponse.json()
+              if (teacherResponse.status === 200) {
+                const teacherData = teacherResponse.data
                 setTeacherFeedback(teacherData.data)
                 setAnalysisStatus('completed')
               }
@@ -782,6 +761,22 @@ export default function Feedback() {
       videoPlayerRef.current.seekTo(timestamp)
     }
     setShowTeacherModal(false)
+  }
+
+  if (isLoading) {
+    return (
+      <PageTemplate>
+        <div className="cms_wrap">
+          <SideBar tab="feedback" />
+          <main>
+            <div className="loading-overlay">
+              <div className="loading-spinner"></div>
+              <p>피드백 데이터를 불러오는 중...</p>
+            </div>
+          </main>
+        </div>
+      </PageTemplate>
+    )
   }
 
   return (
@@ -849,17 +844,18 @@ export default function Feedback() {
                   }
                 >
                   {current_project.files && (
-                    <VideoJsPlayer
-                      ref={videoPlayerRef}
-                      videoUrl={(() => {
-                        const fileUrl = current_project.files;
-                        console.log('[VideoPlayer] Original file URL:', fileUrl);
-                        
-                        // 파일 URL이 없는 경우
-                        if (!fileUrl) {
-                          console.warn('[VideoPlayer] No file URL provided');
-                          return '';
-                        }
+                    <div className="video-player-section">
+                      <VideoJsPlayer
+                        ref={videoPlayerRef}
+                        videoUrl={(() => {
+                          const fileUrl = current_project.files;
+                          console.log('[VideoPlayer] Original file URL:', fileUrl);
+                          
+                          // 파일 URL이 없는 경우
+                          if (!fileUrl) {
+                            console.warn('[VideoPlayer] No file URL provided');
+                            return '';
+                          }
                         
                         // 이미 전체 URL인 경우 (백엔드에서 완전한 URL 반환)
                         if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
@@ -907,13 +903,21 @@ export default function Feedback() {
                       }}
                       onError={(error) => {
                         console.error('Video playback error:', error)
+                        // 비디오 로드 실패 시에도 페이지는 정상 작동하도록
+                        SetVideoLoad(false)
                       }}
-                    />
+                      />
+                      
+                      {/* 플레이어 컨트롤 버튼들 - 플레이어 바로 아래 */}
+                      <div className="player-controls">
+                        {/* 여기에 플레이어 전용 컨트롤 추가 가능 */}
+                      </div>
+                    </div>
                   )}
                   
-                  {/* 비디오 플레이어 컨트롤 버튼들 */}
+                  {/* 피드백 관련 버튼들 - 별도 섹션 */}
                   {current_project.files && (
-                    <div className="feedback-button-container">
+                    <div className="video-control-buttons">
                       {/* 현재 시점에 피드백 버튼 */}
                       <button
                         onClick={() => {

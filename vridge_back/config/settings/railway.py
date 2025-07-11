@@ -3,6 +3,7 @@
 import os
 import dj_database_url
 from ..settings_base import *
+from ..production_security import apply_production_security
 
 # Railway 환경 확인
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
@@ -269,3 +270,7 @@ if DEBUG:
 if IS_RAILWAY or DEBUG:
     # MIDDLEWARE 리스트에 로깅 미들웨어 추가
     MIDDLEWARE.insert(0, 'config.logging_middleware.DetailedLoggingMiddleware')
+
+# 프로덕션 보안 설정 적용
+if not DEBUG:
+    locals().update(apply_production_security(locals()))

@@ -22,6 +22,10 @@ python manage.py ensure_migrations
 echo "Ensuring UserProfile table exists..."
 python manage.py ensure_userprofile
 
+# video_planning 테이블 확인 및 생성
+echo "Checking video_planning table..."
+python fix_railway_migrations.py || echo "Warning: video_planning table check failed"
+
 # 정적 파일 수집
 echo "Collecting static files..."
 python manage.py collectstatic --noinput

@@ -319,11 +319,25 @@ class FeedbackDetail(View):
                 # 파일명 안전하게 변환
                 from django.utils.text import slugify
                 import uuid
+                import re
                 
-                # 한글 파일명을 영문으로 변환하거나 UUID 사용
-                safe_name = slugify(name, allow_unicode=False)
-                if not safe_name or safe_name == 'mp4' or safe_name == 'video':
-                    safe_name = f"video_{uuid.uuid4().hex[:8]}"
+                # 한글이 포함된 경우 처리
+                if re.search(r'[가-힣]', name):
+                    # 프로젝트 ID와 타임스탬프를 사용한 고유한 파일명 생성
+                    import time
+                    timestamp = int(time.time())
+                    safe_name = f"project_{project.id}_video_{timestamp}_{uuid.uuid4().hex[:8]}"
+                    logging.info(f"Korean filename detected, converting '{original_name}' to '{safe_name}{ext}'")
+                else:
+                    # 영문 파일명은 slugify 처리
+                    safe_name = slugify(name, allow_unicode=False)
+                    if not safe_name or safe_name == 'mp4' or safe_name == 'video':
+                        safe_name = f"video_{uuid.uuid4().hex[:8]}"
+                
+                # 특수문자 제거 및 공백을 언더스코어로 변환
+                safe_name = re.sub(r'[^\w\-_]', '_', safe_name)
+                safe_name = re.sub(r'_+', '_', safe_name)  # 연속된 언더스코어 제거
+                safe_name = safe_name.strip('_')  # 앞뒤 언더스코어 제거
                 
                 files.name = f"{safe_name}{ext}"
                 

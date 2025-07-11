@@ -215,9 +215,13 @@ export default function Feedback() {
               ...teacher
             })))
           }
+        } else if (response.status === 401) {
+          // AI 서비스가 현재 사용 불가능한 경우 무시
+          console.log('AI teacher service not available or not authenticated')
         }
       } catch (error) {
-        console.error('Failed to fetch teachers:', error)
+        // 네트워크 에러 등은 조용히 무시
+        console.log('Could not fetch AI teachers')
       }
     }
     

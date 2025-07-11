@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import videojs from 'video.js'
-import 'video.js/dist/video-js.css'
-import '@videojs/themes/dist/sea/index.css'
+// Video.js CSS를 동적으로 로드하여 스타일 충돌 방지
 import './VideoJsPlayer.scss'
 
 const VideoJsPlayer = forwardRef(({ 
@@ -57,6 +56,33 @@ const VideoJsPlayer = forwardRef(({
       return null
     }
   }))
+
+  // Video.js CSS 동적 로드
+  useEffect(() => {
+    // CSS 파일들을 동적으로 로드
+    const loadCSS = (href, id) => {
+      if (!document.getElementById(id)) {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = href
+        link.id = id
+        document.head.appendChild(link)
+      }
+    }
+
+    // Video.js CSS 로드
+    loadCSS('https://vjs.zencdn.net/8.6.1/video-js.css', 'video-js-css')
+    loadCSS('https://unpkg.com/@videojs/themes@1.0.1/dist/sea/index.css', 'video-js-theme-css')
+
+    // 컴포넌트 언마운트 시 CSS 제거 (옵션)
+    return () => {
+      // CSS를 제거하면 다른 비디오 플레이어에도 영향을 줄 수 있으므로 주석 처리
+      // const videoCss = document.getElementById('video-js-css')
+      // const themeCss = document.getElementById('video-js-theme-css')
+      // if (videoCss) videoCss.remove()
+      // if (themeCss) themeCss.remove()
+    }
+  }, [])
 
   useEffect(() => {
     // Video.js 플레이어 옵션

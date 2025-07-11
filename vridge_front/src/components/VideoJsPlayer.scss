@@ -4,6 +4,9 @@
   background: #000;
   border-radius: 8px;
   overflow: hidden;
+  
+  // Video.js 스타일을 이 컨테이너 내부로 격리
+  isolation: isolate;
 
   // Video.js 커스터마이징
   .video-js {

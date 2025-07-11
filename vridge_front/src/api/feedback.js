@@ -11,11 +11,23 @@ export function GetFeedBack(projectId) {
 
 // 피드백 create
 export function CreateFeedback(data, projectId) {
+  console.log('CreateFeedback API called with:', {
+    method: 'PUT',
+    url: `/api/feedbacks/${projectId}`,
+    data: data
+  });
+  
   return axiosCredentials(
     'put',
     `/api/feedbacks/${projectId}`,
     data,
-  )
+  ).then(response => {
+    console.log('CreateFeedback API success:', response);
+    return response;
+  }).catch(error => {
+    console.error('CreateFeedback API error:', error);
+    throw error;
+  });
 }
 
 // 피드백 update

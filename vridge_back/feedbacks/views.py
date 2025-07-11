@@ -205,13 +205,19 @@ class FeedbackDetail(View):
             if not project:
                 return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=404)
 
-            feedback = project.feedback
-            if not feedback:
-                return JsonResponse({"message": "피드백이 생성되지 않았습니다."}, status=400)
-
+            # 권한 확인을 먼저 수행
             members = project.members.all().filter(user__username=email)
             if project.user.username != email and not members.exists():
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
+
+            feedback = project.feedback
+            if not feedback:
+                # 피드백이 없으면 자동으로 생성
+                logging.info(f"Creating feedback for project {id} in PUT method")
+                feedback = models.FeedBack.objects.create()
+                project.feedback = feedback
+                project.save()
+                logging.info(f"Created feedback {feedback.id} for project {id}")
 
             models.FeedBackComment.objects.create(
                 feedback=feedback,

@@ -26,9 +26,20 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
   }, [initialTime, set_inputs])
 
   function SendFeedback() {
+    console.log('SendFeedback called with inputs:', inputs)
+    console.log('Project ID:', project_id)
+    
     if (secret && section && contents) {
+      console.log('Sending feedback data:', {
+        secret,
+        section,
+        contents,
+        project_id
+      })
+      
       CreateFeedback(inputs, project_id)
         .then((res) => {
+          console.log('Feedback creation success:', res)
           window.alert('피드백 등록이 되었습니다.')
           set_inputs({
             secret: 'true',
@@ -45,13 +56,20 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
         })
         .catch((err) => {
           console.error('Feedback creation error:', err)
-          if (err.response && err.response.data) {
-            window.alert(err.response.data.message)
+          console.error('Error response:', err.response)
+          console.error('Error status:', err.response?.status)
+          console.error('Error data:', err.response?.data)
+          
+          if (err.response && err.response.data && err.response.data.message) {
+            window.alert(`오류: ${err.response.data.message}`)
+          } else if (err.message) {
+            window.alert(`오류: ${err.message}`)
           } else {
             window.alert('피드백 등록 중 오류가 발생했습니다.')
           }
         })
     } else {
+      console.log('Validation failed:', { secret, section, contents })
       window.alert('입력란을 채워주세요.')
     }
   }

@@ -17,7 +17,7 @@ import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from 'tasks/Feedback/OpinionInput'
-import VideoPlayer from 'components/VideoPlayer'
+import VideoJsPlayer from 'components/VideoJsPlayer'
 import VideoUploadGuide from 'components/VideoUploadGuide'
 
 import useTab from 'hooks/UseTab'
@@ -843,10 +843,8 @@ export default function Feedback() {
                   }
                 >
                   {current_project.files && (
-                    <VideoPlayer
+                    <VideoJsPlayer
                       ref={videoPlayerRef}
-                      useVideoJs={true} // Video.js 플레이어 사용
-                      feedbacks={current_project.feedbacks || []} // 피드백 데이터 전달
                       videoUrl={(() => {
                         const fileUrl = current_project.files;
                         console.log('[VideoPlayer] Original file URL:', fileUrl);
@@ -889,8 +887,8 @@ export default function Feedback() {
                         return fullUrl;
                       })()}
                       initialTime={currentVideoTime}
-                      onFeedbackClick={(time) => {
-                        // 피드백 버튼 클릭 시 피드백 등록 탭으로 이동
+                      onTimeClick={(time, screenshotUrl) => {
+                        // 시간 클릭 시 해당 시간으로 피드백 추가
                         const minutes = Math.floor(time / 60)
                         const seconds = Math.floor(time % 60)
                         const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
@@ -901,16 +899,8 @@ export default function Feedback() {
                         // 피드백 등록 탭으로 전환
                         changeItem(1)
                       }}
-                      onTimeClick={(time) => {
-                        // 시간 클릭 시 해당 시간으로 코멘트 추가
-                        const minutes = Math.floor(time / 60)
-                        const seconds = Math.floor(time % 60)
-                        const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                        // 코멘트 입력 폼에 시간 추가
-                        const sectionInput = document.querySelector('input[name="section"]')
-                        if (sectionInput) {
-                          sectionInput.value = timeStr
-                        }
+                      onError={(error) => {
+                        console.error('Video playback error:', error)
                       }}
                     />
                   )}

@@ -263,9 +263,9 @@ export default function Feedback() {
           rating: 'manager',
         })
       } else {
-        let member_me = current_project.member_list.filter(
+        let member_me = current_project.member_list ? current_project.member_list.filter(
           (i) => i.email === user,
-        )
+        ) : []
         if (member_me.length === 1) {
           member_me = member_me[0]
           set_me({
@@ -451,7 +451,7 @@ export default function Feedback() {
                 <span>{current_project.owner_email}</span>
               </div>
             </li>
-            {current_project.member_list.map((member, index) => (
+            {current_project.member_list && current_project.member_list.map((member, index) => (
               <li
                 key={index}
                 className={member.rating === 'manager' ? 'admin' : 'basic'}

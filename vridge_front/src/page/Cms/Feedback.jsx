@@ -77,10 +77,10 @@ export default function Feedback() {
     if (current_project) {
       if (
         user === current_project.owner_email ||
-        current_project.member_list.filter(
+        (current_project.member_list && current_project.member_list.filter(
           (member, index) =>
             member.email === user && member.rating === 'manager',
-        ).length > 0
+        ).length > 0)
       ) {
         return true
       } else {
@@ -471,11 +471,13 @@ export default function Feedback() {
   const { currentItem, changeItem } = useTab(0, content)
 
   function IsAdmin(project) {
+    if (!project) return false
+    
     if (
       user === project.owner_email ||
-      project.member_list.filter(
+      (project.member_list && project.member_list.filter(
         (member, index) => member.email === user && member.rating === 'manager',
-      ).length > 0
+      ).length > 0)
     ) {
       return true
     } else {

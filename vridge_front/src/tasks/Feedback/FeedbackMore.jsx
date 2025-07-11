@@ -17,8 +17,17 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
     // 방어 로직: feedback이 없거나 배열이 아닌 경우 처리
     const feedback_data = current_project?.feedback || []
     
+    console.log('[FeedbackMore] Current project:', current_project)
+    console.log('[FeedbackMore] Feedback data:', feedback_data)
+    
     if (!Array.isArray(feedback_data)) {
       console.warn('[FeedbackMore] feedback is not an array:', feedback_data)
+      setFeedback([])
+      return
+    }
+    
+    if (feedback_data.length === 0) {
+      console.log('[FeedbackMore] No feedback data available')
       setFeedback([])
       return
     }
@@ -94,7 +103,20 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
 
   return (
     <div className="feedback-list-container">
-      {feedback.map((item, index) => (
+      {feedback.length === 0 ? (
+        <div className="no-feedback-message" style={{
+          textAlign: 'center',
+          padding: '40px 20px',
+          color: '#666',
+          fontSize: '14px'
+        }}>
+          <p>등록된 피드백이 없습니다.</p>
+          <p style={{ marginTop: '10px', fontSize: '13px' }}>
+            피드백 등록 탭에서 새로운 피드백을 추가해보세요.
+          </p>
+        </div>
+      ) : (
+        feedback.map((item, index) => (
         <div key={index} className="box">
           <div className="day">{item[0]}</div>
           <ul>
@@ -174,7 +196,7 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
             ))}
           </ul>
         </div>
-      ))}
+      )))}
     </div>
   )
 }

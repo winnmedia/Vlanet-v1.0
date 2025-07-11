@@ -860,6 +860,16 @@ export default function Feedback() {
                         // 이미 전체 URL인 경우 (백엔드에서 완전한 URL 반환)
                         if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
                           console.log('[VideoPlayer] Using complete URL from backend:', fileUrl);
+                          // URL이 이미 인코딩되어 있는지 확인하고 필요시 디코딩
+                          try {
+                            const decodedUrl = decodeURI(fileUrl);
+                            if (decodedUrl !== fileUrl) {
+                              console.log('[VideoPlayer] URL was already encoded, using as is');
+                              return fileUrl;
+                            }
+                          } catch (e) {
+                            console.log('[VideoPlayer] URL decode failed, using as is');
+                          }
                           return fileUrl;
                         }
                         

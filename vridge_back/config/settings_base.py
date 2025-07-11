@@ -194,13 +194,13 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "../vridge_front/build/static"),
 ]
 
-# WhiteNoise configuration
-WHITENOISE_ROOT = os.path.join(BASE_DIR, "../vridge_front/build")
-WHITENOISE_AUTOREFRESH = DEBUG
-
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# WhiteNoise configuration
+WHITENOISE_ROOT = os.path.join(BASE_DIR, "../vridge_front/build")
+WHITENOISE_AUTOREFRESH = DEBUG
 
 # AWS Settings
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', None)

@@ -1320,19 +1320,21 @@ export default function Feedback() {
                   <div className="top_box tab_menu">
                     <ul className="tab_list">
                       {content.map((section, index) => (
-                        <li
-                          className={
-                            currentItem.tab == section.tab ? 'active' : ''
-                          }
-                          key={index}
-                          onClick={() => changeItem(index)}
-                        >
-                          <button>{section.tab}</button>
-                        </li>
+                        section && section.tab ? (
+                          <li
+                            className={
+                              currentItem && currentItem.tab == section.tab ? 'active' : ''
+                            }
+                            key={index}
+                            onClick={() => changeItem(index)}
+                          >
+                            <button>{section.tab}</button>
+                          </li>
+                        ) : null
                       ))}
                     </ul>
                   </div>
-                  <div className="tab_content">{currentItem.content}</div>
+                  <div className="tab_content">{currentItem && currentItem.content}</div>
                 </div>
               </div>
             </div>

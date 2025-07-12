@@ -26,6 +26,15 @@ python manage.py ensure_userprofile
 echo "Checking video_planning table..."
 python fix_railway_migrations.py || echo "Warning: video_planning table check failed"
 
+# 미디어 파일 디렉토리 생성
+echo "Creating media directories..."
+mkdir -p /app/media/feedback_file || true
+chmod -R 755 /app/media || true
+
+# 미디어 파일 상태 확인
+echo "Checking media files..."
+python check_media_files.py || true
+
 # 정적 파일 수집
 echo "Collecting static files..."
 python manage.py collectstatic --noinput

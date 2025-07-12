@@ -106,8 +106,16 @@ urlpatterns = [
 ]
 
 # Always serve media files
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.DEBUG:
+    # 개발 환경에서는 Django의 static 서빙 사용
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    # 프로덕션에서는 커스텀 미디어 서빙 뷰 사용
+    from .media_settings import serve_media
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve_media, name='serve_media'),
+    ]
 
 # SPA catch-all route - API 경로가 아닌 모든 요청을 React로 전달
 # 이것은 반드시 맨 마지막에 와야 함

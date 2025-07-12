@@ -62,11 +62,22 @@ WHITENOISE_AUTOREFRESH = DEBUG
 
 # 미디어 파일 설정  
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', BASE_DIR / 'media')
+
+# Railway Volume 설정
+# Railway는 /app/media에 볼륨을 마운트
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    MEDIA_ROOT = '/app/media'
+else:
+    MEDIA_ROOT = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', BASE_DIR / 'media')
 
 # 미디어 디렉토리 확인 및 생성
 if not os.path.exists(MEDIA_ROOT):
-    os.makedirs(MEDIA_ROOT, exist_ok=True)
+    try:
+        os.makedirs(MEDIA_ROOT, exist_ok=True)
+        os.makedirs(os.path.join(MEDIA_ROOT, 'feedback_file'), exist_ok=True)
+        print(f"Created media directories at: {MEDIA_ROOT}")
+    except Exception as e:
+        print(f"Failed to create media directories: {e}")
 
 # CORS 설정
 CORS_ALLOWED_ORIGINS_ENV = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')

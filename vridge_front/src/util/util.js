@@ -1,6 +1,7 @@
 import axios from '../config/axios'
 import { updateProjectStore } from 'redux/project'
 import { ProjectList } from 'api/project'
+import { GetUserInfo } from 'api/auth'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { safeStorage } from 'utils/mobile-utils'
@@ -106,17 +107,31 @@ export function checkSession() {
 export function refetchProject(dispatch, navigate) {
   if (checkSession()) {
     const date = new Date()
-    return ProjectList()
-      .then((res) => {
-        const data = res.data.result
+    
+    // 먼저 localStorage에서 사용자 정보 확인
+    let userInfo = null;
+    try {
+      const storedUserInfo = window.localStorage.getItem('userInfo');
+      if (storedUserInfo) {
+        userInfo = JSON.parse(storedUserInfo);
+      }
+    } catch (e) {
+      console.error('Failed to parse userInfo from localStorage:', e);
+    }
+    
+    // 사용자 정보가 없으면 API 호출
+    const getUserInfoPromise = userInfo ? Promise.resolve({ data: userInfo }) : GetUserInfo().catch(err => {
+      console.error('Failed to fetch user info:', err);
+      return null;
+    });
+    
+    return Promise.all([ProjectList(), getUserInfoPromise])
+      .then(([projectRes, userRes]) => {
+        const data = projectRes.data.result
         const result = data.sort((a, b) => {
           return new Date(b.created) - new Date(a.created)
         })
-        // const current_project_list = result.filter((i) => {
-        //   console.log(i.end_date)
-        //   console.log(new Date())
-        //   return new Date(i.end_date) >= new Date()
-        // })
+        
         const current_month = date.getMonth() + 1
         const this_month_project = result.filter(
           (i, index) =>
@@ -128,29 +143,43 @@ export function refetchProject(dispatch, navigate) {
             moment(i.first_date).format('M') == current_month + 1 ||
             moment(i.end_date).format('M') == current_month + 1,
         )
+        
         // 프로필 이미지 URL 처리
         let profileImage = null
-        if (res.data.profile_image) {
-          if (res.data.profile_image.startsWith('/')) {
-            profileImage = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${res.data.profile_image}`
+        if (projectRes.data.profile_image) {
+          if (projectRes.data.profile_image.startsWith('/')) {
+            profileImage = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${projectRes.data.profile_image}`
           } else {
-            profileImage = res.data.profile_image
+            profileImage = projectRes.data.profile_image
           }
+        }
+        
+        // 사용자 정보 설정 (ProjectList API 응답 우선, 없으면 userInfo API 응답 사용)
+        let user = projectRes.data.user;
+        let nickname = projectRes.data.nickname;
+        
+        if (!user && userRes && userRes.data) {
+          user = userRes.data.email || userRes.data.username;
+          nickname = userRes.data.nickname || user;
+          
+          // localStorage에 저장
+          const userInfoToStore = { email: user, nickname: nickname };
+          window.localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
         }
         
         dispatch(
           updateProjectStore({
-            user: res.data.user,
-            nickname: res.data.nickname,
+            user: user,
+            nickname: nickname,
             profileImage: profileImage,
-            sample_files: res.data.sample_files,
+            sample_files: projectRes.data.sample_files,
             project_list: result,
             this_month_project: this_month_project,
             next_month_project: next_month_project,
-            user_memos: res.data.user_memos,
+            user_memos: projectRes.data.user_memos,
           }),
         )
-        return res
+        return projectRes
       })
       .catch((error) => {
         console.log(error)

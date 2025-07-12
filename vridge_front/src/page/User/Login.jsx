@@ -4,7 +4,7 @@ import queryString from 'query-string'
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { SignIn, GoogleLoginAPI } from 'api/auth'
+import { SignIn, GoogleLoginAPI, GetUserInfo } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
 import { safeStorage } from 'utils/mobile-utils'
 
@@ -52,7 +52,7 @@ export default function Login() {
 
   // Social login code removed
 
-  const CommonLoginSuccess = async (jwt) => {
+  const CommonLoginSuccess = async (jwt, userData = null) => {
     console.log('Login success, saving token:', jwt)
     // 모바일 환경을 고려한 안전한 토큰 저장
     try {
@@ -60,6 +60,29 @@ export default function Login() {
     } catch (e) {
       // localStorage 접근 실패 시 safeStorage 사용
       safeStorage.setItem('VGID', jwt)
+    }
+    
+    // 사용자 정보 저장 (로그인 응답에서 제공되면 사용, 그렇지 않으면 API 호출)
+    if (userData) {
+      const userInfo = {
+        email: userData.user || userData.email,
+        nickname: userData.nickname
+      };
+      window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    } else {
+      // 사용자 정보 API 호출
+      try {
+        const userRes = await GetUserInfo();
+        if (userRes.data) {
+          const userInfo = {
+            email: userRes.data.email || userRes.data.username,
+            nickname: userRes.data.nickname
+          };
+          window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        }
+      } catch (userErr) {
+        console.error('Failed to fetch user info:', userErr);
+      }
     }
     
     // Create controller for refetchProject
@@ -106,7 +129,7 @@ export default function Login() {
       SignIn(inputs, { signal: controller.signal })
         .then((res) => {
           setLoginController(null)
-          CommonLoginSuccess(res.data.vridge_session)
+          CommonLoginSuccess(res.data.vridge_session, res.data)
         })
         .catch((err) => {
           setLoginController(null)

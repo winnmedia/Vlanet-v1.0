@@ -107,6 +107,14 @@ export function DeleteUserMemo(id) {
   )
 }
 
+// 현재 사용자 정보 조회
+export function GetUserInfo() {
+  return axiosCredentials(
+    'get',
+    `/api/users/me/`,
+  )
+}
+
 // ===== 새로운 이메일 인증 회원가입 API =====
 
 // Step 1: 회원가입 이메일 인증 요청

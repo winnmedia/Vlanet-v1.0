@@ -35,6 +35,7 @@ export default function Header({
   const handleLogout = () => {
     localStorage.removeItem('VGID')
     localStorage.removeItem('token')
+    localStorage.removeItem('userInfo')
     navigate('/Login', { replace: true })
   }
 

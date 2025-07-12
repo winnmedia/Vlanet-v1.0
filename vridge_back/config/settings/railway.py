@@ -22,8 +22,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'videoplanet.up.railway.app',
+    'healthcheck.railway.app',  # Railway 헬스체크용
     'testserver',  # Django 테스트 클라이언트용
-    '*'  # 헬스체크 디버깅용 (운영환경에서는 제거 권장)
 ]
 
 # 데이터베이스 (PostgreSQL)

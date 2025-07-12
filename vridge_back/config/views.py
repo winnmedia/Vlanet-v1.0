@@ -7,39 +7,12 @@ from .version import VERSION, COMMIT_HASH, FULL_VERSION
 @csrf_exempt
 @require_http_methods(["GET", "POST", "OPTIONS"])
 def health_check(request):
-    """헬스체크 엔드포인트"""
-    from django.db import connection
-    import os
-    
-    # 기본 상태
-    status = {
-        "status": "healthy",
-        "service": "vridge-backend",
-        "message": "Service is running",
-        "version": VERSION,
-        "commit": COMMIT_HASH,
-        "full_version": FULL_VERSION,
-        "environment": os.environ.get('RAILWAY_ENVIRONMENT', 'unknown'),
-        "settings": os.environ.get('DJANGO_SETTINGS_MODULE', 'unknown')
-    }
-    
-    # 데이터베이스 연결 체크
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-        status["database"] = "connected"
-    except Exception as e:
-        status["database"] = f"error: {str(e)[:50]}"
-        status["status"] = "unhealthy"
-    
-    # 필수 환경변수 체크
-    status["env_check"] = {
-        "SECRET_KEY": "set" if os.environ.get('SECRET_KEY') else "missing",
-        "DATABASE_URL": "set" if os.environ.get('DATABASE_URL') else "missing",
-        "PORT": os.environ.get('PORT', 'not set')
-    }
-    
-    return JsonResponse(status)
+    """헬스체크 엔드포인트 - Railway 헬스체크 호환"""
+    # Railway 헬스체크는 간단한 응답만 필요
+    return JsonResponse({
+        "status": "ok",
+        "service": "videoplanet-backend"
+    }, status=200)
 
 
 @csrf_exempt

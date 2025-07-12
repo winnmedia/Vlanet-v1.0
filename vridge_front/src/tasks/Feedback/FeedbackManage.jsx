@@ -56,7 +56,9 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       })
   }
 
-  const My_Feedback = current_project.feedback.filter((i) => i.email == user)
+  const My_Feedback = current_project && Array.isArray(current_project.feedback) 
+    ? current_project.feedback.filter((i) => i.email == user) 
+    : []
 
   // 반응 토글 함수
   const toggleReaction = (feedbackId, reactionType) => {

@@ -1,0 +1,129 @@
+// 통일된 토글 버튼 디자인
+.toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #f5f5f5;
+    border-color: #1631F8;
+  }
+  
+  &.active {
+    background-color: #1631F8;
+    border-color: #1631F8;
+    
+    .arrow-icon {
+      color: #fff;
+    }
+  }
+  
+  .arrow-icon {
+    width: 16px;
+    height: 16px;
+    color: #666;
+    transition: transform 0.3s ease;
+    
+    &.down {
+      transform: rotate(0deg);
+    }
+    
+    &.up {
+      transform: rotate(180deg);
+    }
+    
+    &.right {
+      transform: rotate(-90deg);
+    }
+    
+    &.left {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+// 섹션 헤더와 함께 사용되는 토글
+.section-header-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #e8f0ff;
+    border-color: #1631F8;
+  }
+  
+  &.active {
+    background-color: #e8f0ff;
+    border-color: #1631F8;
+  }
+  
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .toggle-arrow {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    svg, img {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s ease;
+    }
+    
+    &.expanded {
+      svg, img {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+// 작은 인라인 토글
+.inline-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .toggle-text {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .toggle-icon {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.3s ease;
+    
+    &.expanded {
+      transform: rotate(180deg);
+    }
+  }
+}

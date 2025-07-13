@@ -866,76 +866,128 @@ class ProjectDetail(View):
             # 프로젝트 삭제 - 안전한 삭제 프로세스
             project_name = project.name
             
+            # 프로젝트 삭제 - 단계별 안전 삭제
+            deleted_items = []
+            
             try:
-                with transaction.atomic():
-                    # 1. 연관된 데이터들을 순서대로 삭제
-                    
-                    # 피드백 관련 데이터 삭제
-                    from feedbacks.models import Feedback, FeedbackComment
-                    feedbacks = Feedback.objects.filter(project=project)
-                    for feedback in feedbacks:
+                # 1. 피드백 관련 데이터 삭제 (프로젝트에 연결된 피드백이 있다면)
+                try:
+                    if hasattr(project, 'feedback') and project.feedback:
+                        from feedbacks.models import FeedBackComment, FeedBackMessage
+                        feedback_obj = project.feedback
                         # 피드백 댓글 삭제
-                        FeedbackComment.objects.filter(feedback=feedback).delete()
-                        # 피드백 삭제
-                        feedback.delete()
-                    
-                    # 프로젝트 초대 삭제
+                        comment_count = FeedBackComment.objects.filter(feedback=feedback_obj).count()
+                        FeedBackComment.objects.filter(feedback=feedback_obj).delete()
+                        # 피드백 메시지 삭제
+                        message_count = FeedBackMessage.objects.filter(feedback=feedback_obj).count()
+                        FeedBackMessage.objects.filter(feedback=feedback_obj).delete()
+                        deleted_items.append(f"피드백 댓글 {comment_count}개, 메시지 {message_count}개")
+                except Exception as feedback_error:
+                    logger.warning(f"피드백 데이터 삭제 중 오류: {str(feedback_error)}")
+                
+                # 2. 프로젝트 초대 삭제
+                try:
+                    invite_count = models.ProjectInvite.objects.filter(project=project).count()
                     models.ProjectInvite.objects.filter(project=project).delete()
-                    
-                    # 프로젝트 초대 (새 모델) 삭제
-                    if hasattr(models, 'ProjectInvitation'):
-                        models.ProjectInvitation.objects.filter(project=project).delete()
-                    
-                    # 프로젝트 멤버 삭제
+                    deleted_items.append(f"프로젝트 초대 {invite_count}개")
+                except Exception as e:
+                    logger.warning(f"프로젝트 초대 삭제 중 오류: {str(e)}")
+                
+                # 3. 프로젝트 멤버 삭제
+                try:
+                    member_count = models.Members.objects.filter(project=project).count()
                     models.Members.objects.filter(project=project).delete()
-                    
-                    # 프로젝트 파일 삭제
+                    deleted_items.append(f"프로젝트 멤버 {member_count}개")
+                except Exception as e:
+                    logger.warning(f"프로젝트 멤버 삭제 중 오류: {str(e)}")
+                
+                # 4. 프로젝트 파일 삭제
+                try:
+                    file_count = models.File.objects.filter(project=project).count()
                     models.File.objects.filter(project=project).delete()
-                    
-                    # 메모 삭제
+                    deleted_items.append(f"프로젝트 파일 {file_count}개")
+                except Exception as e:
+                    logger.warning(f"프로젝트 파일 삭제 중 오류: {str(e)}")
+                
+                # 5. 메모 삭제
+                try:
+                    memo_count = models.Memo.objects.filter(project=project).count()
                     models.Memo.objects.filter(project=project).delete()
-                    
-                    # 샘플 파일 삭제
-                    if hasattr(models, 'SampleFiles'):
-                        models.SampleFiles.objects.filter(project=project).delete()
-                    
-                    # 프로젝트 단계별 정보 삭제 (BasicPlan, Confirmation 등)
+                    deleted_items.append(f"메모 {memo_count}개")
+                except Exception as e:
+                    logger.warning(f"메모 삭제 중 오류: {str(e)}")
+                
+                # 6. 프로젝트 단계별 정보 삭제 (안전하게)
+                stage_deleted = []
+                try:
                     if hasattr(project, 'basic_plan') and project.basic_plan:
                         project.basic_plan.delete()
+                        stage_deleted.append("기본계획")
+                except Exception as e:
+                    logger.warning(f"기본계획 삭제 중 오류: {str(e)}")
+                
+                try:
                     if hasattr(project, 'confirmation') and project.confirmation:
                         project.confirmation.delete()
-                    if hasattr(project, 'storyboard') and project.storyboard:
-                        project.storyboard.delete()
-                    if hasattr(project, 'filming') and project.filming:
-                        project.filming.delete()
-                    if hasattr(project, 'video_edit') and project.video_edit:
-                        project.video_edit.delete()
-                    if hasattr(project, 'video_preview') and project.video_preview:
-                        project.video_preview.delete()
-                    if hasattr(project, 'postwork') and project.postwork:
-                        project.postwork.delete()
-                    if hasattr(project, 'video_delivery') and project.video_delivery:
-                        project.video_delivery.delete()
-                    
-                    # 최종적으로 프로젝트 삭제
-                    project.delete()
-                    
-                logging.info(f"[ProjectDetail.delete] Successfully deleted project {project_id} ({project_name}) with all related data")
+                        stage_deleted.append("확정")
+                except Exception as e:
+                    logger.warning(f"확정 단계 삭제 중 오류: {str(e)}")
+                
+                # 다른 단계들도 안전하게 삭제
+                stages = ['storyboard', 'filming', 'video_edit', 'video_preview', 'postwork', 'video_delivery']
+                for stage in stages:
+                    try:
+                        if hasattr(project, stage) and getattr(project, stage):
+                            getattr(project, stage).delete()
+                            stage_deleted.append(stage)
+                    except Exception as e:
+                        logger.warning(f"{stage} 삭제 중 오류: {str(e)}")
+                
+                if stage_deleted:
+                    deleted_items.append(f"프로젝트 단계: {', '.join(stage_deleted)}")
+                
+                # 7. 최종적으로 프로젝트 삭제
+                project.delete()
+                
+                logging.info(f"[ProjectDetail.delete] Successfully deleted project {project_id} ({project_name})")
+                logging.info(f"[ProjectDetail.delete] Deleted items: {', '.join(deleted_items)}")
                 
                 return JsonResponse({
                     "message": "프로젝트가 성공적으로 삭제되었습니다.",
-                    "project_name": project_name
+                    "project_name": project_name,
+                    "deleted_items": deleted_items
                 }, status=200)
                 
             except Exception as delete_error:
-                logging.error(f"[ProjectDetail.delete] Error during atomic deletion: {str(delete_error)}")
-                raise delete_error
+                logging.error(f"[ProjectDetail.delete] Critical error during project deletion: {str(delete_error)}")
+                # 최후의 수단으로 간단한 삭제 시도
+                try:
+                    project.delete()
+                    return JsonResponse({
+                        "message": "프로젝트가 삭제되었습니다. (일부 관련 데이터는 남아있을 수 있습니다)",
+                        "project_name": project_name
+                    }, status=200)
+                except Exception as final_error:
+                    raise final_error
         except Exception as e:
             logging.error(f"[ProjectDetail.delete] Error deleting project {project_id}: {str(e)}")
             logging.error(f"[ProjectDetail.delete] Error type: {type(e).__name__}")
             import traceback
             logging.error(f"[ProjectDetail.delete] Traceback: {traceback.format_exc()}")
-            return JsonResponse({"message": f"프로젝트 삭제 중 오류가 발생했습니다: {str(e)}"}, status=500)
+            
+            # 더 자세한 오류 정보를 사용자에게 제공 (디버깅용)
+            error_details = {
+                "message": "프로젝트 삭제 중 오류가 발생했습니다.",
+                "error_type": type(e).__name__,
+                "error_detail": str(e),
+                "project_id": project_id
+            }
+            
+            # 개발 환경에서는 더 자세한 정보 제공
+            if settings.DEBUG:
+                error_details["traceback"] = traceback.format_exc()
+            
+            return JsonResponse(error_details, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

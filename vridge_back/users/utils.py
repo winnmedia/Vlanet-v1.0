@@ -209,23 +209,95 @@ def auth_send_email(request, email, secret):
 
 
 def invite_send_email(request, email, uid, token, name):
-    if settings.DEBUG:
-        url = "http://localhost:3000/EmailCheck"
-    else:
-        url = "https://vlanet.net/EmailCheck"
-    html_message = render_to_string(
-        "invite_email.html",
-        {
-            "uid": uid,
-            "token": token,
-            "url": url,
-            "scheme": request.scheme,
-            "domain": request.META["HTTP_HOST"],
-            "name": name,
-        },
-    )
-    to = [email]
-    EmailThread("Vlanet", strip_tags(html_message), to, html_message).start()
+    """프로젝트 초대 이메일 발송"""
+    try:
+        print(f"[Invite Email] Sending invite email to: {email} for project: {name}")
+        
+        # 이메일 설정 확인
+        if settings.EMAIL_BACKEND != 'django.core.mail.backends.console.EmailBackend':
+            if os.environ.get('SENDGRID_API_KEY'):
+                print("[Invite Email] Using SendGrid for email")
+            elif settings.EMAIL_HOST_USER and settings.EMAIL_HOST_PASSWORD:
+                print("[Invite Email] Using Gmail for email")
+            else:
+                print("[Invite Email] ERROR: No email credentials configured")
+                return False
+        
+        # URL 설정
+        if settings.DEBUG:
+            url = "http://localhost:3000/EmailCheck"
+        else:
+            url = "https://vlanet.net/EmailCheck"
+        
+        # HTML 메시지 생성
+        try:
+            html_message = render_to_string(
+                "invite_email.html",
+                {
+                    "uid": uid,
+                    "token": token,
+                    "url": url,
+                    "scheme": request.scheme,
+                    "domain": request.META.get("HTTP_HOST", "vlanet.net"),
+                    "name": name,
+                },
+            )
+        except Exception as e:
+            print(f"[Invite Email] Template rendering failed: {str(e)}")
+            # 템플릿이 없는 경우를 대비한 기본 HTML
+            html_message = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>VideoPlanet 프로젝트 초대</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; padding: 20px; margin: 0; background-color: #f5f5f5;">
+                <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #012fff; margin: 0; font-size: 32px;">VideoPlanet</h1>
+                        <p style="color: #666; margin-top: 10px; font-size: 18px;">프로젝트 초대</p>
+                    </div>
+                    
+                    <div style="background: #f9f9f9; padding: 30px; border-radius: 8px;">
+                        <h3 style="font-size: 24px; margin-bottom: 20px;">'{name}' 프로젝트에 초대합니다!</h3>
+                        <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+                            아래 버튼을 클릭하여 프로젝트에 참여하세요.
+                        </p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="{url}?uid={uid}&token={token}" 
+                               style="display: inline-block; padding: 15px 30px; background: #012fff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">
+                                프로젝트 참여하기
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+                        <p style="font-size: 12px; color: #999; margin: 0;">
+                            이 이메일은 VideoPlanet 프로젝트 초대 과정에서 발송되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+        
+        to = [email]
+        subject = f"VideoPlanet '{name}' 프로젝트 초대"
+        
+        # 이메일 발송
+        EmailThread(subject, strip_tags(html_message), to, html_message).start()
+        
+        email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
+        print(f"[Invite Email] Invite email queued for sending via {email_backend}")
+        return True
+        
+    except Exception as e:
+        print(f"[Invite Email] Error in invite_send_email: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 # request.Meta

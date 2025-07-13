@@ -377,8 +377,39 @@ class InviteMember(View):
 
                 uid = urlsafe_base64_encode(force_bytes(project_id)).encode().decode()
                 token = project_token_generator(project)
-                invite_send_email(request, email, uid, token, project.name)
-                return JsonResponse({"message": "success"}, status=200)
+                
+                # 이메일 발송 시도
+                email_sent = invite_send_email(request, email, uid, token, project.name)
+                
+                # 최근 초대 기록 업데이트
+                from users.models import RecentInvitation
+                try:
+                    recent_invite, created = RecentInvitation.objects.get_or_create(
+                        inviter=user,
+                        invitee_email=email,
+                        defaults={
+                            'invitee_name': email.split('@')[0],  # 이메일의 username 부분을 이름으로 사용
+                            'project_name': project.name,
+                            'invitation_count': 1
+                        }
+                    )
+                    if not created:
+                        recent_invite.project_name = project.name
+                        recent_invite.invitation_count += 1
+                        recent_invite.save()
+                except Exception as e:
+                    logger.warning(f"최근 초대 기록 업데이트 실패: {str(e)}")
+                
+                if email_sent:
+                    return JsonResponse({
+                        "message": "초대 이메일이 성공적으로 발송되었습니다.",
+                        "email_sent": True
+                    }, status=200)
+                else:
+                    return JsonResponse({
+                        "message": "초대 생성은 완료되었지만 이메일 발송에 실패했습니다. 관리자에게 문의하세요.",
+                        "email_sent": False
+                    }, status=200)
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
@@ -832,12 +863,73 @@ class ProjectDetail(View):
                 logging.warning(f"[ProjectDetail.delete] Permission denied for user {user.id} on project {project_id}")
                 return JsonResponse({"message": "프로젝트 삭제 권한이 없습니다."}, status=403)
 
-            # 프로젝트 삭제
+            # 프로젝트 삭제 - 안전한 삭제 프로세스
             project_name = project.name
-            project.delete()
-            logging.info(f"[ProjectDetail.delete] Successfully deleted project {project_id} ({project_name})")
             
-            return JsonResponse({"message": "success"}, status=200)
+            try:
+                with transaction.atomic():
+                    # 1. 연관된 데이터들을 순서대로 삭제
+                    
+                    # 피드백 관련 데이터 삭제
+                    from feedbacks.models import Feedback, FeedbackComment
+                    feedbacks = Feedback.objects.filter(project=project)
+                    for feedback in feedbacks:
+                        # 피드백 댓글 삭제
+                        FeedbackComment.objects.filter(feedback=feedback).delete()
+                        # 피드백 삭제
+                        feedback.delete()
+                    
+                    # 프로젝트 초대 삭제
+                    models.ProjectInvite.objects.filter(project=project).delete()
+                    
+                    # 프로젝트 초대 (새 모델) 삭제
+                    if hasattr(models, 'ProjectInvitation'):
+                        models.ProjectInvitation.objects.filter(project=project).delete()
+                    
+                    # 프로젝트 멤버 삭제
+                    models.Members.objects.filter(project=project).delete()
+                    
+                    # 프로젝트 파일 삭제
+                    models.File.objects.filter(project=project).delete()
+                    
+                    # 메모 삭제
+                    models.Memo.objects.filter(project=project).delete()
+                    
+                    # 샘플 파일 삭제
+                    if hasattr(models, 'SampleFiles'):
+                        models.SampleFiles.objects.filter(project=project).delete()
+                    
+                    # 프로젝트 단계별 정보 삭제 (BasicPlan, Confirmation 등)
+                    if hasattr(project, 'basic_plan') and project.basic_plan:
+                        project.basic_plan.delete()
+                    if hasattr(project, 'confirmation') and project.confirmation:
+                        project.confirmation.delete()
+                    if hasattr(project, 'storyboard') and project.storyboard:
+                        project.storyboard.delete()
+                    if hasattr(project, 'filming') and project.filming:
+                        project.filming.delete()
+                    if hasattr(project, 'video_edit') and project.video_edit:
+                        project.video_edit.delete()
+                    if hasattr(project, 'video_preview') and project.video_preview:
+                        project.video_preview.delete()
+                    if hasattr(project, 'postwork') and project.postwork:
+                        project.postwork.delete()
+                    if hasattr(project, 'video_delivery') and project.video_delivery:
+                        project.video_delivery.delete()
+                    
+                    # 최종적으로 프로젝트 삭제
+                    project.delete()
+                    
+                logging.info(f"[ProjectDetail.delete] Successfully deleted project {project_id} ({project_name}) with all related data")
+                
+                return JsonResponse({
+                    "message": "프로젝트가 성공적으로 삭제되었습니다.",
+                    "project_name": project_name
+                }, status=200)
+                
+            except Exception as delete_error:
+                logging.error(f"[ProjectDetail.delete] Error during atomic deletion: {str(delete_error)}")
+                raise delete_error
         except Exception as e:
             logging.error(f"[ProjectDetail.delete] Error deleting project {project_id}: {str(e)}")
             logging.error(f"[ProjectDetail.delete] Error type: {type(e).__name__}")

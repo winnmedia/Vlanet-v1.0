@@ -907,14 +907,24 @@ class FriendshipView(View):
                     "since": friendship.responded_at.isoformat() if friendship.responded_at else friendship.created.isoformat()
                 })
             
-            return JsonResponse({
+            # 빈 목록일 때 명확한 메시지 추가
+            response_data = {
                 "friends": friends_data,
                 "count": len(friends_data)
-            }, status=200)
+            }
+            
+            if len(friends_data) == 0:
+                response_data["message"] = "아직 친구가 없습니다."
+            
+            return JsonResponse(response_data, status=200)
             
         except Exception as e:
-            logger.error(f"Error in friendship list: {str(e)}")
-            return JsonResponse({"message": "친구 목록 조회 중 오류가 발생했습니다."}, status=500)
+            logger.error(f"Error in friendship list: {str(e)}", exc_info=True)
+            return JsonResponse({
+                "message": "친구 목록 조회 중 오류가 발생했습니다.",
+                "friends": [],
+                "count": 0
+            }, status=200)  # 500 대신 200으로 변경하여 프론트엔드에서 처리할 수 있게 함
     
     @user_validator
     def post(self, request):
@@ -1023,14 +1033,24 @@ class FriendRequestView(View):
                     "requested_at": friendship.created.isoformat()
                 })
             
-            return JsonResponse({
+            # 빈 목록일 때 명확한 메시지 추가
+            response_data = {
                 "requests": requests_data,
                 "count": len(requests_data)
-            }, status=200)
+            }
+            
+            if len(requests_data) == 0:
+                response_data["message"] = "받은 친구 요청이 없습니다."
+            
+            return JsonResponse(response_data, status=200)
             
         except Exception as e:
-            logger.error(f"Error in friend requests: {str(e)}")
-            return JsonResponse({"message": "친구 요청 목록 조회 중 오류가 발생했습니다."}, status=500)
+            logger.error(f"Error in friend requests: {str(e)}", exc_info=True)
+            return JsonResponse({
+                "message": "친구 요청 목록 조회 중 오류가 발생했습니다.",
+                "requests": [],
+                "count": 0
+            }, status=200)  # 500 대신 200으로 변경하여 프론트엔드에서 처리할 수 있게 함
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -1192,14 +1212,24 @@ class RecentInvitationView(View):
                     "last_invited_at": invitation.last_invited_at.isoformat()
                 })
             
-            return JsonResponse({
+            # 빈 목록일 때 명확한 메시지 추가
+            response_data = {
                 "recent_invitations": invitations_data,
                 "count": len(invitations_data)
-            }, status=200)
+            }
+            
+            if len(invitations_data) == 0:
+                response_data["message"] = "아직 초대한 사람이 없습니다."
+            
+            return JsonResponse(response_data, status=200)
             
         except Exception as e:
-            logger.error(f"Error in recent invitations: {str(e)}")
-            return JsonResponse({"message": "최근 초대 목록 조회 중 오류가 발생했습니다."}, status=500)
+            logger.error(f"Error in recent invitations: {str(e)}", exc_info=True)
+            return JsonResponse({
+                "message": "최근 초대 목록 조회 중 오류가 발생했습니다.",
+                "recent_invitations": [],
+                "count": 0
+            }, status=200)  # 500 대신 200으로 변경하여 프론트엔드에서 처리할 수 있게 함
 
 
 @method_decorator(csrf_exempt, name='dispatch')

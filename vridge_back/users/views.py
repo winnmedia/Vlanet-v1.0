@@ -661,3 +661,545 @@ class UserMemo(View):
         except Exception as e:
             logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class NotificationView(View):
+    """사용자 알림 관리"""
+    
+    @user_validator
+    def get(self, request):
+        """알림 목록 조회"""
+        try:
+            user = request.user
+            
+            # 읽지 않은 알림 개수 (projects 앱의 Notification 모델 사용)
+            from projects.models import Notification as ProjectNotification
+            unread_count = ProjectNotification.objects.filter(
+                user=user,
+                is_read=False
+            ).count()
+            
+            # URL 파라미터 처리
+            unread_only = request.GET.get('unread_only', 'false').lower() == 'true'
+            limit = int(request.GET.get('limit', 20))
+            
+            # 알림 조회 (projects 앱의 Notification 모델 사용)
+            from projects.models import Notification as ProjectNotification
+            notifications_query = ProjectNotification.objects.filter(user=user)
+            
+            if unread_only:
+                notifications_query = notifications_query.filter(is_read=False)
+            
+            notifications = notifications_query.order_by('-created')[:limit]
+            
+            notifications_data = [
+                {
+                    "id": notif.id,
+                    "type": notif.type,
+                    "title": notif.title,
+                    "message": notif.message,
+                    "icon": notif.icon,
+                    "color": notif.color,
+                    "action_url": notif.action_url,
+                    "is_read": notif.is_read,
+                    "created": notif.created.isoformat(),
+                    "related_project": {
+                        "id": notif.related_project.id,
+                        "name": notif.related_project.name
+                    } if notif.related_project else None,
+                }
+                for notif in notifications
+            ]
+            
+            return JsonResponse({
+                "unread_count": unread_count,
+                "notifications": notifications_data
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in notification list: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "알림 조회 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def post(self, request):
+        """알림 읽음 처리"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            
+            notification_id = data.get('notification_id')
+            mark_all_read = data.get('mark_all_read', False)
+            
+            if mark_all_read:
+                # 모든 알림을 읽음 처리
+                from django.utils import timezone
+                models.Notification.objects.filter(
+                    recipient=user,
+                    is_read=False
+                ).update(
+                    is_read=True,
+                    read_at=timezone.now()
+                )
+                return JsonResponse({"message": "모든 알림을 읽음 처리했습니다."}, status=200)
+            
+            elif notification_id:
+                # 특정 알림을 읽음 처리
+                notification = models.Notification.objects.filter(
+                    id=notification_id,
+                    recipient=user
+                ).first()
+                
+                if not notification:
+                    return JsonResponse({"message": "알림을 찾을 수 없습니다."}, status=404)
+                
+                if not notification.is_read:
+                    from django.utils import timezone
+                    notification.is_read = True
+                    notification.read_at = timezone.now()
+                    notification.save()
+                
+                return JsonResponse({"message": "알림을 읽음 처리했습니다."}, status=200)
+            
+            else:
+                return JsonResponse({"message": "notification_id 또는 mark_all_read가 필요합니다."}, status=400)
+            
+        except Exception as e:
+            logger.error(f"Error in notification mark read: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "알림 처리 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def delete(self, request, notification_id):
+        """알림 삭제"""
+        try:
+            user = request.user
+            
+            notification = models.Notification.objects.filter(
+                id=notification_id,
+                recipient=user
+            ).first()
+            
+            if not notification:
+                return JsonResponse({"message": "알림을 찾을 수 없습니다."}, status=404)
+            
+            notification.delete()
+            return JsonResponse({"message": "알림을 삭제했습니다."}, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in notification delete: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "알림 삭제 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class UnreadNotificationCount(View):
+    """읽지 않은 알림 개수 조회"""
+    
+    @user_validator
+    def get(self, request):
+        """읽지 않은 알림 개수 반환"""
+        try:
+            user = request.user
+            from projects.models import Notification as ProjectNotification
+            
+            unread_count = ProjectNotification.objects.filter(
+                user=user,
+                is_read=False
+            ).count()
+            
+            return JsonResponse({
+                "count": unread_count
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in unread notification count: {str(e)}")
+            return JsonResponse({"message": "읽지 않은 알림 개수 조회 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class MarkNotificationsRead(View):
+    """여러 알림 읽음 처리"""
+    
+    @user_validator
+    def post(self, request):
+        """여러 알림을 읽음 처리"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            notification_ids = data.get('notification_ids', [])
+            
+            if not notification_ids:
+                return JsonResponse({"message": "notification_ids가 필요합니다."}, status=400)
+            
+            from projects.models import Notification as ProjectNotification
+            from django.utils import timezone
+            
+            updated_count = ProjectNotification.objects.filter(
+                id__in=notification_ids,
+                user=user,
+                is_read=False
+            ).update(is_read=True)
+            
+            return JsonResponse({
+                "message": f"{updated_count}개의 알림을 읽음 처리했습니다.",
+                "updated_count": updated_count
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in mark notifications read: {str(e)}")
+            return JsonResponse({"message": "알림 읽음 처리 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class NotificationDetail(View):
+    """개별 알림 관리"""
+    
+    @user_validator
+    def delete(self, request, notification_id):
+        """알림 삭제"""
+        try:
+            user = request.user
+            from projects.models import Notification as ProjectNotification
+            
+            notification = ProjectNotification.objects.filter(
+                id=notification_id,
+                user=user
+            ).first()
+            
+            if not notification:
+                return JsonResponse({"message": "알림을 찾을 수 없습니다."}, status=404)
+            
+            notification.delete()
+            return JsonResponse({"message": "알림을 삭제했습니다."}, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in notification detail delete: {str(e)}")
+            return JsonResponse({"message": "알림 삭제 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FriendshipView(View):
+    """친구 관리"""
+    
+    @user_validator
+    def get(self, request):
+        """친구 목록 조회"""
+        try:
+            user = request.user
+            
+            # 내가 친구인 관계들 (양방향)
+            friendships = models.Friendship.objects.filter(
+                models.Q(user=user) | models.Q(friend=user),
+                status='accepted'
+            ).select_related('user', 'friend', 'user__profile', 'friend__profile')
+            
+            friends_data = []
+            for friendship in friendships:
+                # 나와 반대편 사람이 친구
+                friend_user = friendship.friend if friendship.user == user else friendship.user
+                
+                friends_data.append({
+                    "id": friendship.id,
+                    "friend": {
+                        "id": friend_user.id,
+                        "email": friend_user.email,
+                        "nickname": friend_user.nickname or friend_user.username,
+                        "profile_image": friend_user.profile.profile_image.url if hasattr(friend_user, 'profile') and friend_user.profile.profile_image else None,
+                        "company": friend_user.profile.company if hasattr(friend_user, 'profile') else '',
+                        "position": friend_user.profile.position if hasattr(friend_user, 'profile') else '',
+                    },
+                    "since": friendship.responded_at.isoformat() if friendship.responded_at else friendship.created.isoformat()
+                })
+            
+            return JsonResponse({
+                "friends": friends_data,
+                "count": len(friends_data)
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in friendship list: {str(e)}")
+            return JsonResponse({"message": "친구 목록 조회 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def post(self, request):
+        """친구 요청 보내기"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            friend_email = data.get('friend_email')
+            
+            if not friend_email:
+                return JsonResponse({"message": "친구 이메일이 필요합니다."}, status=400)
+            
+            # 자기 자신에게 친구 요청하는 것 방지
+            if friend_email == user.email:
+                return JsonResponse({"message": "자기 자신에게는 친구 요청을 보낼 수 없습니다."}, status=400)
+            
+            # 친구가 될 사용자 찾기
+            try:
+                friend_user = User.objects.get(email=friend_email)
+            except User.DoesNotExist:
+                return JsonResponse({"message": "해당 이메일의 사용자를 찾을 수 없습니다."}, status=404)
+            
+            # 이미 친구 관계가 있는지 확인
+            existing_friendship = models.Friendship.objects.filter(
+                models.Q(user=user, friend=friend_user) | 
+                models.Q(user=friend_user, friend=user)
+            ).first()
+            
+            if existing_friendship:
+                if existing_friendship.status == 'accepted':
+                    return JsonResponse({"message": "이미 친구입니다."}, status=400)
+                elif existing_friendship.status == 'pending':
+                    return JsonResponse({"message": "이미 친구 요청을 보냈거나 받았습니다."}, status=400)
+                elif existing_friendship.status == 'blocked':
+                    return JsonResponse({"message": "차단된 사용자입니다."}, status=400)
+            
+            # 친구 요청 생성 (양방향으로 생성)
+            friendship1 = models.Friendship.objects.create(
+                user=user,
+                friend=friend_user,
+                requested_by=user,
+                status='pending'
+            )
+            
+            friendship2 = models.Friendship.objects.create(
+                user=friend_user,
+                friend=user,
+                requested_by=user,
+                status='pending'
+            )
+            
+            # 상대방에게 알림 생성
+            from projects.models import Notification as ProjectNotification
+            from projects.notification_service import NotificationService
+            
+            try:
+                NotificationService.create_notification(
+                    user=friend_user,
+                    notification_type='FRIEND_REQUEST_RECEIVED',
+                    title='새로운 친구 요청',
+                    message=f'{user.nickname or user.username}님이 친구 요청을 보냈습니다.',
+                    action_url=f'/friends/requests'
+                )
+            except Exception as e:
+                logger.error(f"친구 요청 알림 생성 실패: {str(e)}")
+            
+            return JsonResponse({
+                "message": "친구 요청을 보냈습니다.",
+                "friendship_id": friendship1.id
+            }, status=201)
+            
+        except Exception as e:
+            logger.error(f"Error in friend request: {str(e)}")
+            return JsonResponse({"message": "친구 요청 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FriendRequestView(View):
+    """받은 친구 요청 목록"""
+    
+    @user_validator
+    def get(self, request):
+        """받은 친구 요청 목록 조회"""
+        try:
+            user = request.user
+            
+            # 나에게 온 친구 요청들 (pending 상태)
+            friend_requests = models.Friendship.objects.filter(
+                user=user,
+                status='pending'
+            ).select_related('requested_by', 'requested_by__profile')
+            
+            requests_data = []
+            for friendship in friend_requests:
+                requester = friendship.requested_by
+                requests_data.append({
+                    "id": friendship.id,
+                    "requester": {
+                        "id": requester.id,
+                        "email": requester.email,
+                        "nickname": requester.nickname or requester.username,
+                        "profile_image": requester.profile.profile_image.url if hasattr(requester, 'profile') and requester.profile.profile_image else None,
+                        "company": requester.profile.company if hasattr(requester, 'profile') else '',
+                        "position": requester.profile.position if hasattr(requester, 'profile') else '',
+                    },
+                    "requested_at": friendship.created.isoformat()
+                })
+            
+            return JsonResponse({
+                "requests": requests_data,
+                "count": len(requests_data)
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in friend requests: {str(e)}")
+            return JsonResponse({"message": "친구 요청 목록 조회 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FriendRequestResponse(View):
+    """친구 요청 수락/거절"""
+    
+    @user_validator
+    def post(self, request, friendship_id):
+        """친구 요청 응답"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            action = data.get('action')  # 'accept' or 'decline'
+            
+            if action not in ['accept', 'decline']:
+                return JsonResponse({"message": "잘못된 액션입니다."}, status=400)
+            
+            # 친구 요청 확인
+            friendship = models.Friendship.objects.filter(
+                id=friendship_id,
+                user=user,
+                status='pending'
+            ).first()
+            
+            if not friendship:
+                return JsonResponse({"message": "친구 요청을 찾을 수 없습니다."}, status=404)
+            
+            from django.utils import timezone
+            
+            if action == 'accept':
+                # 양방향 친구 관계 수락
+                models.Friendship.objects.filter(
+                    models.Q(user=user, friend=friendship.requested_by) |
+                    models.Q(user=friendship.requested_by, friend=user)
+                ).update(
+                    status='accepted',
+                    responded_at=timezone.now()
+                )
+                
+                # 요청자에게 알림
+                from projects.notification_service import NotificationService
+                try:
+                    NotificationService.create_notification(
+                        user=friendship.requested_by,
+                        notification_type='FRIEND_REQUEST_ACCEPTED',
+                        title='친구 요청 수락',
+                        message=f'{user.nickname or user.username}님이 친구 요청을 수락했습니다.',
+                        action_url=f'/friends'
+                    )
+                except Exception as e:
+                    logger.error(f"친구 수락 알림 생성 실패: {str(e)}")
+                
+                return JsonResponse({"message": "친구 요청을 수락했습니다."}, status=200)
+            
+            else:  # decline
+                # 양방향 친구 관계 거절
+                models.Friendship.objects.filter(
+                    models.Q(user=user, friend=friendship.requested_by) |
+                    models.Q(user=friendship.requested_by, friend=user)
+                ).update(
+                    status='declined',
+                    responded_at=timezone.now()
+                )
+                
+                return JsonResponse({"message": "친구 요청을 거절했습니다."}, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in friend request response: {str(e)}")
+            return JsonResponse({"message": "친구 요청 응답 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FriendSearch(View):
+    """친구 검색"""
+    
+    @user_validator
+    def get(self, request):
+        """친구 검색"""
+        try:
+            user = request.user
+            query = request.GET.get('q', '').strip()
+            
+            if not query:
+                return JsonResponse({"message": "검색어가 필요합니다."}, status=400)
+            
+            # 이메일 또는 닉네임으로 검색
+            users = User.objects.filter(
+                models.Q(email__icontains=query) | 
+                models.Q(nickname__icontains=query)
+            ).exclude(id=user.id).select_related('profile')[:10]
+            
+            # 이미 친구인 사용자들 ID 목록
+            friend_ids = set()
+            friendships = models.Friendship.objects.filter(
+                models.Q(user=user) | models.Q(friend=user),
+                status__in=['pending', 'accepted']
+            )
+            
+            for friendship in friendships:
+                if friendship.user == user:
+                    friend_ids.add(friendship.friend.id)
+                else:
+                    friend_ids.add(friendship.user.id)
+            
+            users_data = []
+            for search_user in users:
+                friendship_status = 'none'
+                if search_user.id in friend_ids:
+                    # 구체적인 상태 확인
+                    friendship = models.Friendship.objects.filter(
+                        models.Q(user=user, friend=search_user) | 
+                        models.Q(user=search_user, friend=user)
+                    ).first()
+                    if friendship:
+                        friendship_status = friendship.status
+                
+                users_data.append({
+                    "id": search_user.id,
+                    "email": search_user.email,
+                    "nickname": search_user.nickname or search_user.username,
+                    "profile_image": search_user.profile.profile_image.url if hasattr(search_user, 'profile') and search_user.profile.profile_image else None,
+                    "company": search_user.profile.company if hasattr(search_user, 'profile') else '',
+                    "position": search_user.profile.position if hasattr(search_user, 'profile') else '',
+                    "friendship_status": friendship_status
+                })
+            
+            return JsonResponse({
+                "users": users_data,
+                "count": len(users_data)
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in friend search: {str(e)}")
+            return JsonResponse({"message": "친구 검색 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class RecentInvitationView(View):
+    """최근 초대한 사람 목록"""
+    
+    @user_validator
+    def get(self, request):
+        """최근 초대한 사람 목록 조회"""
+        try:
+            user = request.user
+            limit = int(request.GET.get('limit', 10))
+            
+            recent_invitations = models.RecentInvitation.objects.filter(
+                inviter=user
+            ).order_by('-last_invited_at')[:limit]
+            
+            invitations_data = []
+            for invitation in recent_invitations:
+                invitations_data.append({
+                    "email": invitation.invitee_email,
+                    "name": invitation.invitee_name,
+                    "last_project": invitation.project_name,
+                    "invitation_count": invitation.invitation_count,
+                    "last_invited_at": invitation.last_invited_at.isoformat()
+                })
+            
+            return JsonResponse({
+                "recent_invitations": invitations_data,
+                "count": len(invitations_data)
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in recent invitations: {str(e)}")
+            return JsonResponse({"message": "최근 초대 목록 조회 중 오류가 발생했습니다."}, status=500)

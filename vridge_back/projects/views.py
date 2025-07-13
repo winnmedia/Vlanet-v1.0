@@ -27,7 +27,14 @@ from django.utils.encoding import force_bytes, force_str
 from django.db.models import F
 from django.db import transaction
 from django.utils import timezone as django_timezone
+from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.conf import settings
 import os
+import secrets
+import hashlib
+from datetime import timedelta
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -47,7 +54,7 @@ class ProjectList(View):
                 "confirmation",
                 "video_delivery",
                 "feedback",
-            )
+            ).prefetch_related('feedback__feedbacks')
             result = []
             for i in project_list:
                 if i.video_delivery and i.video_delivery.end_date:
@@ -135,6 +142,18 @@ class ProjectList(View):
                         "owner_nickname": i.user.nickname,
                         "owner_email": i.user.username,
                         "feedback_id": i.feedback.id if i.feedback else None,
+                        "feedback": [
+                            {
+                                "id": fb.id,
+                                "text": fb.text,
+                                "nickname": fb.nickname,
+                                "section": fb.section,
+                                "time_position": fb.time_position,
+                                "created": fb.created,
+                                "updated": fb.updated,
+                            }
+                            for fb in (i.feedback.feedbacks.all() if i.feedback else [])
+                        ],
                         # "pending_list": list(i.invites.all().values("id", "email")),
                         "member_list": list(
                             i.members.all()
@@ -155,8 +174,9 @@ class ProjectList(View):
                 "project__video_preview",
                 "project__confirmation",
                 "project__video_delivery",
-                "project__user"
-            )
+                "project__user",
+                "project__feedback"
+            ).prefetch_related('project__feedback__feedbacks')
             for i in members:
                 if i.project.video_delivery and i.project.video_delivery.end_date:
                     end_date = i.project.video_delivery.end_date
@@ -241,6 +261,19 @@ class ProjectList(View):
                         "updated": i.project.updated,
                         "owner_nickname": i.project.user.nickname,
                         "owner_email": i.project.user.username,
+                        "feedback_id": i.project.feedback.id if i.project.feedback else None,
+                        "feedback": [
+                            {
+                                "id": fb.id,
+                                "text": fb.text,
+                                "nickname": fb.nickname,
+                                "section": fb.section,
+                                "time_position": fb.time_position,
+                                "created": fb.created,
+                                "updated": fb.updated,
+                            }
+                            for fb in (i.project.feedback.feedbacks.all() if i.project.feedback else [])
+                        ],
                         # "pending_list": list(i.project.invites.all().values("id", "email")),
                         "member_list": list(
                             i.project.members.all()
@@ -1149,4 +1182,423 @@ class ProjectFeedbackEncodingStatus(View):
         except Exception as e:
             logger.error(f"Error in encoding status: {str(e)}", exc_info=True)
             return JsonResponse({"message": f"오류가 발생했습니다: {str(e)}"}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ProjectInvitation(View):
+    """프로젝트 초대 관리"""
+    
+    @user_validator
+    def delete(self, request, project_id):
+        """초대 취소"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            
+            invitation_id = data.get('invitation_id')
+            
+            if not invitation_id:
+                return JsonResponse({"message": "초대 ID가 필요합니다."}, status=400)
+            
+            # 초대 확인
+            invitation = models.ProjectInvitation.objects.filter(
+                id=invitation_id,
+                project_id=project_id
+            ).first()
+            
+            if not invitation:
+                return JsonResponse({"message": "초대를 찾을 수 없습니다."}, status=404)
+            
+            # 권한 확인 (초대자만 취소 가능)
+            if invitation.inviter != user:
+                return JsonResponse({"message": "초대를 취소할 권한이 없습니다."}, status=403)
+            
+            # 이미 처리된 초대는 취소 불가
+            if invitation.status != 'pending':
+                return JsonResponse({"message": f"이미 {invitation.get_status_display()}된 초대는 취소할 수 없습니다."}, status=400)
+            
+            # 초대 취소
+            invitation.status = 'cancelled'
+            invitation.save()
+            
+            # 초대받은 사람이 가입된 사용자인 경우 알림 생성
+            from .notification_service import NotificationService
+            try:
+                if invitation.invitee:
+                    NotificationService.create_notification(
+                        user=invitation.invitee,
+                        notification_type='INVITATION_CANCELLED',
+                        title='초대가 취소되었습니다',
+                        message=f'{invitation.inviter.nickname}님이 "{invitation.project.name}" 프로젝트 초대를 취소했습니다.',
+                        related_object=invitation
+                    )
+            except Exception as e:
+                logger.error(f"초대 취소 알림 생성 중 오류: {str(e)}")
+            
+            return JsonResponse({"message": "초대를 취소했습니다."}, status=200)
+            
+        except Exception as e:
+            logger.error(f"초대 취소 중 오류: {str(e)}")
+            return JsonResponse({"message": "초대 취소 중 오류가 발생했습니다."}, status=500)
+
+    @user_validator
+    def post(self, request, project_id):
+        """프로젝트 멤버 초대"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            
+            # 필수 필드 확인
+            email = data.get('email')
+            message = data.get('message', '')
+            
+            if not email:
+                return JsonResponse({"message": "이메일이 필요합니다."}, status=400)
+            
+            # 프로젝트 확인
+            project = models.Project.objects.filter(id=project_id).first()
+            if not project:
+                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+            
+            # 권한 확인 (프로젝트 소유자 또는 매니저만 초대 가능)
+            is_owner = project.user == user
+            is_manager = models.Members.objects.filter(project=project, user=user, rating="manager").exists()
+            
+            if not is_owner and not is_manager:
+                return JsonResponse({"message": "초대 권한이 없습니다."}, status=403)
+            
+            # 이미 멤버인지 확인
+            User = get_user_model()
+            invitee_user = User.objects.filter(email=email).first()
+            if invitee_user and models.Members.objects.filter(project=project, user=invitee_user).exists():
+                return JsonResponse({"message": "이미 프로젝트 멤버입니다."}, status=400)
+            
+            # 이미 초대되었는지 확인
+            existing_invitation = models.ProjectInvitation.objects.filter(
+                project=project,
+                invitee_email=email,
+                status='pending'
+            ).first()
+            
+            if existing_invitation:
+                return JsonResponse({"message": "이미 초대를 보냈습니다."}, status=400)
+            
+            # 초대 토큰 생성
+            token = secrets.token_urlsafe(32)
+            
+            # 초대 생성
+            invitation = models.ProjectInvitation.objects.create(
+                project=project,
+                inviter=user,
+                invitee_email=email,
+                message=message,
+                token=token,
+                expires_at=django_timezone.now() + timedelta(days=7),  # 7일 후 만료
+                invitee=invitee_user if invitee_user else None
+            )
+            
+            # 이메일 발송 및 알림 서비스 사용
+            from .email_service import ProjectInvitationEmailService
+            from .notification_service import NotificationService
+            
+            # 이메일 발송
+            try:
+                email_sent = ProjectInvitationEmailService.send_invitation_email(invitation)
+                if email_sent:
+                    logger.info(f"초대 이메일 발송 성공: {email}")
+                else:
+                    logger.warning(f"초대 이메일 발송 실패: {email}")
+            except Exception as e:
+                logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
+            
+            # 알림 생성 (가입된 사용자인 경우)
+            try:
+                notification = NotificationService.notify_invitation_received(invitation)
+                if notification:
+                    logger.info(f"초대 알림 생성 성공: {email}")
+            except Exception as e:
+                logger.error(f"초대 알림 생성 중 오류: {str(e)}")
+            
+            # 최근 초대 기록 업데이트
+            try:
+                from users.models import RecentInvitation
+                recent_invitation, created = RecentInvitation.objects.get_or_create(
+                    inviter=user,
+                    invitee_email=email,
+                    defaults={
+                        'invitee_name': invitee_user.nickname if invitee_user else '',
+                        'project_name': project.name,
+                        'invitation_count': 1
+                    }
+                )
+                
+                if not created:
+                    # 이미 존재하는 경우 카운트 증가
+                    recent_invitation.invitation_count += 1
+                    recent_invitation.project_name = project.name  # 최근 프로젝트명으로 업데이트
+                    recent_invitation.save()
+            except Exception as e:
+                logger.error(f"최근 초대 기록 업데이트 중 오류: {str(e)}")
+            
+            # 기존 코드 제거를 위해 주석 처리
+            # try:
+            #     if hasattr(settings, 'EMAIL_HOST') and settings.EMAIL_HOST:
+            #         invitation_url = f"{settings.FRONTEND_URL}/invitation/{token}"
+            #         send_mail(
+            #             subject=f'프로젝트 "{project.name}" 초대',
+            #             message=f'{user.nickname or user.username}님이 프로젝트 "{project.name}"에 초대했습니다.\n\n'
+            #                    f'메시지: {message}\n\n'
+            #                    f'초대 수락: {invitation_url}',
+            #             from_email=settings.DEFAULT_FROM_EMAIL,
+            #             recipient_list=[email],
+            #             fail_silently=True,
+            #         )
+            # except Exception as e:
+            #     logger.warning(f"Failed to send invitation email: {str(e)}")
+            
+            return JsonResponse({
+                "message": "초대를 보냈습니다.",
+                "invitation_id": invitation.id
+            }, status=201)
+            
+        except Exception as e:
+            logger.error(f"Error in project invitation: {str(e)}", exc_info=True)
+            return JsonResponse({"message": f"초대 중 오류가 발생했습니다: {str(e)}"}, status=500)
+    
+    @user_validator
+    def get(self, request, project_id=None):
+        """초대 목록 조회"""
+        try:
+            user = request.user
+            
+            if project_id:
+                # 특정 프로젝트의 초대 목록
+                project = models.Project.objects.filter(id=project_id).first()
+                if not project:
+                    return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                
+                # 권한 확인
+                is_owner = project.user == user
+                is_manager = models.Members.objects.filter(project=project, user=user, rating="manager").exists()
+                
+                if not is_owner and not is_manager:
+                    return JsonResponse({"message": "조회 권한이 없습니다."}, status=403)
+                
+                invitations = models.ProjectInvitation.objects.filter(project=project).order_by('-created')
+            else:
+                # 사용자의 모든 초대 (보낸 초대 + 받은 초대)
+                sent_invitations = models.ProjectInvitation.objects.filter(inviter=user).order_by('-created')
+                received_invitations = models.ProjectInvitation.objects.filter(invitee=user).order_by('-created')
+                
+                # 이메일 기반 받은 초대도 포함
+                received_by_email = models.ProjectInvitation.objects.filter(invitee_email=user.email).order_by('-created')
+                
+                result = {
+                    "sent_invitations": [
+                        {
+                            "id": inv.id,
+                            "project_name": inv.project.name,
+                            "project_id": inv.project.id,
+                            "invitee_email": inv.invitee_email,
+                            "message": inv.message,
+                            "status": inv.status,
+                            "created": inv.created.isoformat(),
+                            "expires_at": inv.expires_at.isoformat(),
+                        }
+                        for inv in sent_invitations
+                    ],
+                    "received_invitations": [
+                        {
+                            "id": inv.id,
+                            "project_name": inv.project.name,
+                            "project_id": inv.project.id,
+                            "inviter_name": inv.inviter.nickname or inv.inviter.username,
+                            "message": inv.message,
+                            "status": inv.status,
+                            "created": inv.created.isoformat(),
+                            "expires_at": inv.expires_at.isoformat(),
+                        }
+                        for inv in list(received_invitations) + list(received_by_email)
+                    ]
+                }
+                
+                return JsonResponse(result, status=200)
+            
+            # 특정 프로젝트 초대 목록
+            invitations_data = [
+                {
+                    "id": inv.id,
+                    "invitee_email": inv.invitee_email,
+                    "inviter_name": inv.inviter.nickname or inv.inviter.username,
+                    "message": inv.message,
+                    "status": inv.status,
+                    "created": inv.created.isoformat(),
+                    "expires_at": inv.expires_at.isoformat(),
+                }
+                for inv in invitations
+            ]
+            
+            return JsonResponse({"invitations": invitations_data}, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in invitation list: {str(e)}", exc_info=True)
+            return JsonResponse({"message": f"초대 목록 조회 중 오류가 발생했습니다: {str(e)}"}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class InvitationToken(View):
+    """토큰으로 초대 정보 조회"""
+    
+    def get(self, request, token):
+        """토큰으로 초대 정보 조회 (로그인 불필요)"""
+        try:
+            # 토큰으로 초대 확인
+            invitation = models.ProjectInvitation.objects.filter(token=token).first()
+            
+            if not invitation:
+                return JsonResponse({"status": "error", "message": "유효하지 않은 초대 링크입니다."}, status=404)
+            
+            # 만료 확인
+            if invitation.expires_at < django_timezone.now():
+                return JsonResponse({"status": "error", "message": "만료된 초대 링크입니다."}, status=400)
+            
+            # 이미 처리된 초대 확인
+            if invitation.status != 'pending':
+                status_text = {
+                    'accepted': '이미 수락된',
+                    'declined': '거절된',
+                    'cancelled': '취소된'
+                }.get(invitation.status, '처리된')
+                return JsonResponse({"status": "error", "message": f"{status_text} 초대입니다."}, status=400)
+            
+            # 초대 정보 반환 (민감한 정보 제외)
+            invitation_data = {
+                "id": invitation.id,
+                "project": {
+                    "id": invitation.project.id,
+                    "name": invitation.project.name,
+                    "description": invitation.project.description,
+                    "created": invitation.project.created
+                },
+                "inviter": {
+                    "nickname": invitation.inviter.nickname or invitation.inviter.username,
+                    "email": invitation.inviter.email
+                },
+                "invitee_email": invitation.invitee_email,
+                "message": invitation.message,
+                "created": invitation.created,
+                "expires_at": invitation.expires_at,
+                "status": invitation.status
+            }
+            
+            return JsonResponse({
+                "status": "success",
+                "invitation": invitation_data
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"토큰으로 초대 정보 조회 중 오류: {str(e)}")
+            return JsonResponse({"status": "error", "message": "초대 정보 조회 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class InvitationResponse(View):
+    """초대 수락/거절"""
+    
+    @user_validator
+    def post(self, request, invitation_id):
+        """초대 수락/거절"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            
+            action = data.get('action')  # 'accept' or 'decline'
+            
+            if action not in ['accept', 'decline']:
+                return JsonResponse({"message": "잘못된 액션입니다."}, status=400)
+            
+            # 초대 확인
+            invitation = models.ProjectInvitation.objects.filter(id=invitation_id).first()
+            if not invitation:
+                return JsonResponse({"message": "초대를 찾을 수 없습니다."}, status=404)
+            
+            # 권한 확인 (초대받은 사람만 수락/거절 가능)
+            if invitation.invitee != user and invitation.invitee_email != user.email:
+                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+            
+            # 이미 처리된 초대인지 확인
+            if invitation.status != 'pending':
+                return JsonResponse({"message": f"이미 {invitation.get_status_display()}된 초대입니다."}, status=400)
+            
+            # 만료된 초대인지 확인
+            if invitation.expires_at < django_timezone.now():
+                invitation.status = 'expired'
+                invitation.save()
+                return JsonResponse({"message": "만료된 초대입니다."}, status=400)
+            
+            # 초대 처리
+            from .email_service import ProjectInvitationEmailService
+            from .notification_service import NotificationService
+            
+            if action == 'accept':
+                # 프로젝트 멤버로 추가
+                member, created = models.Members.objects.get_or_create(
+                    project=invitation.project,
+                    user=user,
+                    defaults={'rating': 'member'}
+                )
+                
+                invitation.status = 'accepted'
+                invitation.accepted_at = django_timezone.now()
+                invitation.invitee = user  # 사용자 연결
+                invitation.save()
+                
+                # 초대자에게 알림 및 이메일 발송
+                try:
+                    # 알림 생성
+                    NotificationService.notify_invitation_accepted(invitation)
+                    # 이메일 발송
+                    ProjectInvitationEmailService.send_invitation_accepted_email(invitation)
+                    # 프로젝트 멤버들에게 새 멤버 참여 알림
+                    NotificationService.notify_member_joined(invitation.project, user)
+                except Exception as e:
+                    logger.error(f"초대 수락 알림/이메일 발송 중 오류: {str(e)}")
+                
+                return JsonResponse({"message": "초대를 수락했습니다."}, status=200)
+            
+            else:  # decline
+                invitation.status = 'declined'
+                invitation.declined_at = django_timezone.now()
+                invitation.invitee = user  # 사용자 연결
+                invitation.save()
+                
+                # 초대자에게 알림 및 이메일 발송
+                try:
+                    # 알림 생성
+                    NotificationService.notify_invitation_declined(invitation)
+                    # 이메일 발송
+                    ProjectInvitationEmailService.send_invitation_declined_email(invitation)
+                except Exception as e:
+                    logger.error(f"초대 거절 알림/이메일 발송 중 오류: {str(e)}")
+                
+                # 기존 알림 코드 제거
+                # from users.models import Notification
+                # Notification.objects.create(
+                #     recipient=invitation.inviter,
+                #     notification_type='invitation_declined',
+                #     title=f'초대 거절',
+                #     message=f'{user.nickname or user.username}님이 프로젝트 "{invitation.project.name}" 초대를 거절했습니다.',
+                #     project_id=invitation.project.id,
+                #     invitation_id=invitation.id,
+                #     extra_data={
+                #         'decliner_name': user.nickname or user.username,
+                #         'project_name': invitation.project.name
+                #     }
+                # )
+                
+                return JsonResponse({"message": "초대를 거절했습니다."}, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in invitation response: {str(e)}", exc_info=True)
+            return JsonResponse({"message": f"초대 처리 중 오류가 발생했습니다: {str(e)}"}, status=500)
 

@@ -47,4 +47,10 @@ urlpatterns = [
     path("<int:project_id>/feedback/comments/", views.ProjectFeedbackComments.as_view()),  # 피드백 코멘트 목록/작성
     path("<int:project_id>/feedback/upload/", views.ProjectFeedbackUpload.as_view()),  # 피드백 파일 업로드
     path("<int:project_id>/feedback/encoding-status/", views.ProjectFeedbackEncodingStatus.as_view()),  # 인코딩 상태 확인
+    
+    # 프로젝트 초대 관련
+    path("<int:project_id>/invitations/", views.ProjectInvitation.as_view()),  # 프로젝트 초대 생성/조회
+    path("invitations/", views.ProjectInvitation.as_view()),  # 사용자의 모든 초대 조회
+    path("invitations/token/<str:token>/", views.InvitationToken.as_view()),  # 토큰으로 초대 정보 조회
+    path("invitations/<int:invitation_id>/response/", views.InvitationResponse.as_view()),  # 초대 수락/거절
 ]

@@ -48,6 +48,9 @@ ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS256')
 # Google Gemini API Key
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', '')
 
+# Frontend URL for email links
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://vlanet.net')
+
 # OpenAI API Key (for DALL-E image generation)
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 
@@ -362,6 +365,7 @@ CORS_ALLOW_HEADERS = [
     'content-type',
     'dnt',
     'origin',
+    'range',
     'user-agent',
     'x-csrftoken',
     'x-requested-with',

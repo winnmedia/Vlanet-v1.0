@@ -50,6 +50,7 @@ urlpatterns = [
     
     # 내보내기 API
     path('export/pdf/', views.export_to_pdf, name='export_to_pdf'),
+    path('export/pdf-advanced/', views.export_to_advanced_pdf, name='export_to_advanced_pdf'),
     path('export/google-slides/', views.export_to_google_slides, name='export_to_google_slides'),
     path('export/formats/', views.get_export_formats, name='get_export_formats'),
     

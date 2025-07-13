@@ -26,6 +26,7 @@ import json
 from django.http import FileResponse
 from .pdf_export_service import PDFExportService
 from .google_slides_service import GoogleSlidesService
+from .services.advanced_pdf_export_service import AdvancedPDFExportService
 
 logger = logging.getLogger(__name__)
 
@@ -895,6 +896,50 @@ def export_to_google_slides(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def export_to_advanced_pdf(request):
+    """AI 기반 고급 디자인 PDF로 내보내기"""
+    try:
+        planning_data = request.data.get('planning_data', {})
+        
+        if not planning_data:
+            return Response({
+                'status': 'error',
+                'message': '기획 데이터가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 고급 PDF 서비스
+        advanced_pdf_service = AdvancedPDFExportService()
+        
+        # PDF 생성
+        pdf_bytes = advanced_pdf_service.export_to_pdf(planning_data)
+        
+        if not pdf_bytes:
+            return Response({
+                'status': 'error',
+                'message': 'PDF 생성에 실패했습니다.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # 파일명 생성
+        title = planning_data.get('title', '영상기획안')
+        safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        filename = f"{safe_title}_AI디자인_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        
+        # PDF 반환
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error in export_to_advanced_pdf: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'고급 PDF 내보내기 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_export_formats(request):
@@ -921,6 +966,20 @@ def get_export_formats(request):
                 'description': '프레젠테이션 형식으로 공유 가능',
                 'icon': 'file-presentation',
                 'available': bool(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
+            },
+            {
+                'id': 'pdf_advanced',
+                'name': 'PDF - AI 디자인',
+                'description': 'Gemini AI로 구조화된 전문 디자인 문서',
+                'icon': 'file-pdf-box',
+                'available': bool(os.environ.get('GOOGLE_API_KEY'))
+            },
+            {
+                'id': 'ai_proposal',
+                'name': 'AI 기획서 (Google Slides)',
+                'description': 'AI가 자동으로 구조화하여 슬라이드로 생성',
+                'icon': 'robot',
+                'available': bool(os.environ.get('GOOGLE_API_KEY') and os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
             }
         ]
         

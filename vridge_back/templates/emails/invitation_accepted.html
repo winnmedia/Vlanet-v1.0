@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초대 수락 알림</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 20px;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .project-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎉 VideoPlanet</div>
+            <div class="title">초대 수락 알림</div>
+        </div>
+        
+        <div class="success-box">
+            <h3 style="color: #155724; margin-bottom: 10px;">🎊 좋은 소식입니다!</h3>
+            <p style="font-size: 16px; margin: 0;">
+                <strong>{{ invitee_email }}</strong>님이 프로젝트 초대를 수락했습니다.
+            </p>
+        </div>
+        
+        <p>안녕하세요 <strong>{{ invitation.inviter.nickname }}</strong>님!</p>
+        
+        <div class="project-info">
+            <div style="font-size: 18px; font-weight: 600; color: #28a745; margin-bottom: 8px;">
+                📁 {{ invitation.project.name }}
+            </div>
+            <div style="color: #6c757d; font-size: 14px;">
+                👤 새로운 멤버: {{ invitee_email }}<br>
+                📅 수락일: {{ invitation.updated|date:"Y년 m월 d일 H:i" }}
+            </div>
+        </div>
+        
+        <p>이제 {{ invitee_email }}님과 함께 프로젝트를 진행하실 수 있습니다!</p>
+        
+        <div style="text-align: center;">
+            <a href="{{ site_url }}/project/{{ invitation.project.id }}" class="cta-button">
+                🚀 프로젝트로 이동하기
+            </a>
+        </div>
+        
+        <div style="background: #e3f2fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 14px; color: #1565c0;">
+                <strong>💡 팁:</strong> 새로운 멤버와 함께 실시간 피드백을 주고받으며 더 나은 영상을 만들어보세요!
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>이 이메일은 VideoPlanet 시스템에서 자동으로 발송되었습니다.</p>
+            <p>
+                <a href="{{ site_url }}" style="color: #28a745; text-decoration: none;">{{ site_name }}</a> | 
+                문의: support@vlanet.net
+            </p>
+        </div>
+    </div>
+</body>
+</html>

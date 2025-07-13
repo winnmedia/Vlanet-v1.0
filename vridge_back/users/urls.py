@@ -45,4 +45,19 @@ urlpatterns = [
     # 프로필 업로드 관련 URL
     path("profile/upload-image/", views_profile_upload.ProfileImageUpload.as_view()),  # 프로필 이미지 업로드/삭제
     path("profile/update/", views_profile_upload.ProfileUpdate.as_view()),  # 프로필 정보 업데이트
+    
+    # 알림 관련 URL
+    path("notifications/", views.NotificationView.as_view()),  # 알림 목록 조회/읽음 처리
+    path("notifications/unread-count/", views.UnreadNotificationCount.as_view()),  # 읽지 않은 알림 개수
+    path("notifications/mark-read/", views.MarkNotificationsRead.as_view()),  # 여러 알림 읽음 처리
+    path("notifications/<int:notification_id>/", views.NotificationDetail.as_view()),  # 알림 삭제
+    
+    # 친구 관련 URL
+    path("friends/", views.FriendshipView.as_view()),  # 친구 목록 조회/친구 요청
+    path("friends/requests/", views.FriendRequestView.as_view()),  # 받은 친구 요청 목록
+    path("friends/<int:friendship_id>/response/", views.FriendRequestResponse.as_view()),  # 친구 요청 수락/거절
+    path("friends/search/", views.FriendSearch.as_view()),  # 친구 검색
+    
+    # 최근 초대 관련 URL
+    path("recent-invitations/", views.RecentInvitationView.as_view()),  # 최근 초대한 사람 목록
 ]

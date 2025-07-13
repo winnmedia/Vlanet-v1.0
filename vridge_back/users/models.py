@@ -82,3 +82,161 @@ class UserMemo(core_model.TimeStampedModel):
 
     def __str__(self):
         return self.user.nickname
+
+
+class Notification(core_model.TimeStampedModel):
+    """사용자 알림 모델"""
+    NOTIFICATION_TYPES = [
+        ('invitation_received', '초대를 받았습니다'),
+        ('invitation_accepted', '초대가 수락되었습니다'),
+        ('invitation_declined', '초대가 거절되었습니다'),
+        ('project_member_added', '프로젝트에 새 멤버가 추가되었습니다'),
+        ('feedback_added', '새 피드백이 추가되었습니다'),
+        ('project_updated', '프로젝트가 업데이트되었습니다'),
+        ('system', '시스템 알림'),
+    ]
+    
+    recipient = models.ForeignKey(
+        "User",
+        related_name="notifications",
+        on_delete=models.CASCADE,
+        verbose_name="수신자"
+    )
+    
+    notification_type = models.CharField(
+        max_length=50,
+        choices=NOTIFICATION_TYPES,
+        verbose_name="알림 타입"
+    )
+    
+    title = models.CharField(
+        max_length=200,
+        verbose_name="알림 제목"
+    )
+    
+    message = models.TextField(
+        verbose_name="알림 내용"
+    )
+    
+    # 관련 객체들 (선택사항)
+    project_id = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="관련 프로젝트 ID"
+    )
+    
+    invitation_id = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="관련 초대 ID"
+    )
+    
+    # 알림 상태
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name="읽음 여부"
+    )
+    
+    read_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="읽은 시간"
+    )
+    
+    # 추가 데이터 (JSON)
+    extra_data = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name="추가 데이터"
+    )
+
+    class Meta:
+        verbose_name = "알림"
+        verbose_name_plural = "알림"
+        ordering = ['-created']
+        indexes = [
+            models.Index(fields=['recipient', '-created']),
+            models.Index(fields=['recipient', 'is_read']),
+            models.Index(fields=['notification_type']),
+        ]
+
+    def __str__(self):
+        return f"{self.recipient.username} - {self.title}"
+
+
+class Friendship(core_model.TimeStampedModel):
+    """친구 관계 모델"""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="friendships",
+        verbose_name="사용자"
+    )
+    friend = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="friend_of",
+        verbose_name="친구"
+    )
+    
+    STATUS_CHOICES = [
+        ('pending', '대기중'),
+        ('accepted', '수락됨'),
+        ('declined', '거절됨'),
+        ('blocked', '차단됨'),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+        verbose_name="상태"
+    )
+    
+    # 친구 요청을 보낸 사람
+    requested_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="sent_friend_requests",
+        verbose_name="요청자"
+    )
+    
+    # 수락/거절 시간
+    responded_at = models.DateTimeField(null=True, blank=True, verbose_name="응답 시간")
+    
+    class Meta:
+        unique_together = [['user', 'friend']]
+        indexes = [
+            models.Index(fields=['user', 'status']),
+            models.Index(fields=['friend', 'status']),
+        ]
+        verbose_name = "친구 관계"
+        verbose_name_plural = "친구 관계"
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.friend.email} ({self.get_status_display()})"
+
+
+class RecentInvitation(core_model.TimeStampedModel):
+    """최근 초대한 사람 기록"""
+    inviter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="recent_invitations",
+        verbose_name="초대자"
+    )
+    invitee_email = models.EmailField(verbose_name="초대받은 사람 이메일")
+    invitee_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="초대받은 사람 이름")
+    project_name = models.CharField(max_length=200, verbose_name="프로젝트명")
+    
+    # 초대 횟수 (동일한 사람을 여러 번 초대한 경우)
+    invitation_count = models.PositiveIntegerField(default=1, verbose_name="초대 횟수")
+    last_invited_at = models.DateTimeField(auto_now=True, verbose_name="마지막 초대 시간")
+    
+    class Meta:
+        unique_together = [['inviter', 'invitee_email']]
+        ordering = ['-last_invited_at']
+        verbose_name = "최근 초대"
+        verbose_name_plural = "최근 초대"
+    
+    def __str__(self):
+        return f"{self.inviter.email} -> {self.invitee_email} ({self.invitation_count}회)"

@@ -109,6 +109,72 @@ class Members(core_model.TimeStampedModel):
         ]
 
 
+class ProjectInvitation(core_model.TimeStampedModel):
+    """프로젝트 초대 모델"""
+    project = models.ForeignKey(
+        "Project",
+        related_name="invitations",
+        on_delete=models.CASCADE,
+        verbose_name="프로젝트",
+    )
+    inviter = models.ForeignKey(
+        "users.User",
+        related_name="sent_invitations",
+        on_delete=models.CASCADE,
+        verbose_name="초대자",
+    )
+    invitee_email = models.EmailField(verbose_name="초대받는 사람 이메일")
+    message = models.TextField(verbose_name="초대 메시지", blank=True, null=True)
+    
+    STATUS_CHOICES = [
+        ('pending', '대기중'),
+        ('accepted', '수락됨'),
+        ('declined', '거절됨'),
+        ('expired', '만료됨'),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+        verbose_name="상태"
+    )
+    
+    # 초대받은 사람이 가입된 사용자인 경우
+    invitee = models.ForeignKey(
+        "users.User",
+        related_name="received_invitations",
+        on_delete=models.CASCADE,
+        verbose_name="초대받는 사람",
+        null=True,
+        blank=True,
+    )
+    
+    token = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name="초대 토큰"
+    )
+    
+    expires_at = models.DateTimeField(verbose_name="만료일시")
+    accepted_at = models.DateTimeField(verbose_name="수락일시", null=True, blank=True)
+    declined_at = models.DateTimeField(verbose_name="거절일시", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "프로젝트 초대"
+        verbose_name_plural = "프로젝트 초대"
+        unique_together = ['project', 'invitee_email']
+        indexes = [
+            models.Index(fields=['project']),
+            models.Index(fields=['invitee_email']),
+            models.Index(fields=['invitee']),
+            models.Index(fields=['status']),
+            models.Index(fields=['token']),
+        ]
+
+    def __str__(self):
+        return f"{self.project.name} 초대 to {self.invitee_email}"
+
+
 class Memo(core_model.TimeStampedModel):
     project = models.ForeignKey(
         "Project",

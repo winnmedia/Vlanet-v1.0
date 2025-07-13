@@ -33,9 +33,9 @@ class MyPageView(APIView):
             
             # 최근 활동 (최근 30일)
             thirty_days_ago = timezone.now() - timedelta(days=30)
-            # FeedBack은 파일만 저장하므로, FeedBackMessage를 카운트
-            from feedbacks.models import FeedBackMessage
-            recent_feedbacks = FeedBackMessage.objects.filter(
+            # FeedBack은 파일만 저장하므로, FeedBackComment를 카운트
+            from feedbacks.models import FeedBackComment
+            recent_feedbacks = FeedBackComment.objects.filter(
                 user=user,
                 created__gte=thirty_days_ago
             ).count()
@@ -102,8 +102,8 @@ class UserActivityView(APIView):
             ).distinct().order_by('-updated')[:10]
             
             # 피드백 활동
-            from feedbacks.models import FeedBackMessage
-            recent_feedbacks = FeedBackMessage.objects.filter(
+            from feedbacks.models import FeedBackComment
+            recent_feedbacks = FeedBackComment.objects.filter(
                 user=user,
                 created__gte=start_date
             ).order_by('-created')[:10]
@@ -121,9 +121,9 @@ class UserActivityView(APIView):
                     } for project in recent_projects],
                     'recent_feedbacks': [{
                         'id': feedback.id,
-                        'feedback_id': feedback.feedback_id if hasattr(feedback, 'feedback_id') else feedback.feedback.id,
-                        'title': feedback.title[:50] + '...' if len(feedback.title) > 50 else feedback.title,
-                        'text': feedback.text[:100] + '...' if len(feedback.text) > 100 else feedback.text,
+                        'feedback_id': feedback.feedback.id,
+                        'title': feedback.title[:50] + '...' if feedback.title and len(feedback.title) > 50 else (feedback.title or ''),
+                        'text': feedback.text[:100] + '...' if feedback.text and len(feedback.text) > 100 else (feedback.text or ''),
                         'created_at': feedback.created.strftime('%Y-%m-%d %H:%M:%S')
                     } for feedback in recent_feedbacks]
                 }

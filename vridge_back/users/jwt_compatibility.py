@@ -35,7 +35,7 @@ class CompatibleJWTAuthentication(BaseJWTAuthentication):
                     return User.objects.only(
                         'id', 'username', 'email', 'first_name', 'last_name',
                         'is_active', 'is_staff', 'is_superuser', 'date_joined',
-                        'password', 'nickname', 'login_method', 'email_secret'
+                        'password', 'nickname', 'login_method'
                     ).get(id=user_id)
                 except User.DoesNotExist:
                     raise InvalidToken('User not found')

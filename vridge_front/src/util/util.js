@@ -105,6 +105,8 @@ export function checkSession() {
 }
 
 export function refetchProject(dispatch, navigate) {
+  console.log('[refetchProject] Called at:', new Date().toISOString())
+  
   if (checkSession()) {
     const date = new Date()
     
@@ -127,6 +129,7 @@ export function refetchProject(dispatch, navigate) {
     
     return Promise.all([ProjectList(), getUserInfoPromise])
       .then(([projectRes, userRes]) => {
+        console.log('[refetchProject] ProjectList response:', projectRes.data)
         const data = projectRes.data.result
         const result = data.sort((a, b) => {
           return new Date(b.created) - new Date(a.created)
@@ -148,7 +151,7 @@ export function refetchProject(dispatch, navigate) {
         let profileImage = null
         if (projectRes.data.profile_image) {
           if (projectRes.data.profile_image.startsWith('/')) {
-            profileImage = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${projectRes.data.profile_image}`
+            profileImage = `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${projectRes.data.profile_image}`
           } else {
             profileImage = projectRes.data.profile_image
           }
@@ -167,18 +170,26 @@ export function refetchProject(dispatch, navigate) {
           window.localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
         }
         
-        dispatch(
-          updateProjectStore({
-            user: user,
-            nickname: nickname,
-            profileImage: profileImage,
-            sample_files: projectRes.data.sample_files,
-            project_list: result,
-            this_month_project: this_month_project,
-            next_month_project: next_month_project,
-            user_memos: projectRes.data.user_memos,
-          }),
-        )
+        const storeData = {
+          user: user,
+          nickname: nickname,
+          profileImage: profileImage,
+          sample_files: projectRes.data.sample_files,
+          project_list: result,
+          this_month_project: this_month_project,
+          next_month_project: next_month_project,
+          user_memos: projectRes.data.user_memos,
+        }
+        
+        console.log('[refetchProject] Updating Redux store with:', {
+          projectCount: result.length,
+          thisMonthCount: this_month_project.length,
+          nextMonthCount: next_month_project.length,
+          user: user,
+          profileImage: profileImage
+        })
+        
+        dispatch(updateProjectStore(storeData))
         return projectRes
       })
       .catch((error) => {

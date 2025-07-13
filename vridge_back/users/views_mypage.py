@@ -24,18 +24,20 @@ class MyPageView(APIView):
             
             # 프로젝트 통계
             project_stats = Project.objects.filter(
-                Q(owner_email=user.email) | Q(member_list__email=user.email)
-            ).aggregate(
+                Q(user=user) | Q(members__user=user)
+            ).distinct().aggregate(
                 total_projects=Count('id'),
-                completed_projects=Count('id', filter=Q(status='completed')),
-                ongoing_projects=Count('id', filter=Q(status='ongoing'))
+                completed_projects=Count('id'),  # status 필드가 없으므로 제거
+                ongoing_projects=Count('id')  # status 필드가 없으므로 제거
             )
             
             # 최근 활동 (최근 30일)
             thirty_days_ago = timezone.now() - timedelta(days=30)
-            recent_feedbacks = FeedBack.objects.filter(
-                email=user.email,
-                created_at__gte=thirty_days_ago
+            # FeedBack은 파일만 저장하므로, FeedBackMessage를 카운트
+            from feedbacks.models import FeedBackMessage
+            recent_feedbacks = FeedBackMessage.objects.filter(
+                user=user,
+                created__gte=thirty_days_ago
             ).count()
             
             # 응답 데이터 구성
@@ -95,15 +97,16 @@ class UserActivityView(APIView):
             
             # 프로젝트 활동
             recent_projects = Project.objects.filter(
-                Q(owner_email=user.email) | Q(member_list__email=user.email),
-                updated_at__gte=start_date
-            ).order_by('-updated_at')[:10]
+                Q(user=user) | Q(members__user=user),
+                updated__gte=start_date
+            ).distinct().order_by('-updated')[:10]
             
             # 피드백 활동
-            recent_feedbacks = FeedBack.objects.filter(
-                email=user.email,
-                created_at__gte=start_date
-            ).order_by('-created_at')[:10]
+            from feedbacks.models import FeedBackMessage
+            recent_feedbacks = FeedBackMessage.objects.filter(
+                user=user,
+                created__gte=start_date
+            ).order_by('-created')[:10]
             
             response_data = {
                 'status': 'success',
@@ -112,14 +115,16 @@ class UserActivityView(APIView):
                     'recent_projects': [{
                         'id': project.id,
                         'name': project.name,
-                        'status': project.status,
-                        'updated_at': project.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                        'manager': project.manager,
+                        'consumer': project.consumer,
+                        'updated_at': project.updated.strftime('%Y-%m-%d %H:%M:%S')
                     } for project in recent_projects],
                     'recent_feedbacks': [{
                         'id': feedback.id,
-                        'project_name': feedback.project.name if feedback.project else 'Unknown',
-                        'contents': feedback.contents[:100] + '...' if len(feedback.contents) > 100 else feedback.contents,
-                        'created_at': feedback.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                        'feedback_id': feedback.feedback_id if hasattr(feedback, 'feedback_id') else feedback.feedback.id,
+                        'title': feedback.title[:50] + '...' if len(feedback.title) > 50 else feedback.title,
+                        'text': feedback.text[:100] + '...' if len(feedback.text) > 100 else feedback.text,
+                        'created_at': feedback.created.strftime('%Y-%m-%d %H:%M:%S')
                     } for feedback in recent_feedbacks]
                 }
             }

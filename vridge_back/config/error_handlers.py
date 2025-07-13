@@ -1,5 +1,6 @@
 import logging
 import traceback
+import os
 from django.http import JsonResponse
 from django.views.defaults import server_error
 from django.conf import settings
@@ -37,7 +38,7 @@ def custom_500_handler(request, *args, **kwargs):
         logger.error(f"Request headers: {headers}")
     
     # 개발 환경이거나 DEBUG가 True인 경우 상세 정보 반환
-    if settings.DEBUG or settings.IS_RAILWAY and settings.os.environ.get('ENABLE_DEBUG_TOOLBAR', 'False').lower() == 'true':
+    if settings.DEBUG or (hasattr(settings, 'IS_RAILWAY') and settings.IS_RAILWAY and os.environ.get('ENABLE_DEBUG_TOOLBAR', 'False').lower() == 'true'):
         error_details = {
             'error': 'Internal Server Error',
             'status_code': 500,

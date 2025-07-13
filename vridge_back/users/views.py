@@ -676,7 +676,7 @@ class NotificationView(View):
             # 읽지 않은 알림 개수 (projects 앱의 Notification 모델 사용)
             from users.models import Notification as ProjectNotification
             unread_count = ProjectNotification.objects.filter(
-                user=user,
+                recipient=user,
                 is_read=False
             ).count()
             
@@ -686,7 +686,7 @@ class NotificationView(View):
             
             # 알림 조회 (projects 앱의 Notification 모델 사용)
             from users.models import Notification as ProjectNotification
-            notifications_query = ProjectNotification.objects.filter(user=user)
+            notifications_query = ProjectNotification.objects.filter(recipient=user)
             
             if unread_only:
                 notifications_query = notifications_query.filter(is_read=False)
@@ -802,7 +802,7 @@ class UnreadNotificationCount(View):
             from users.models import Notification as ProjectNotification
             
             unread_count = ProjectNotification.objects.filter(
-                user=user,
+                recipient=user,
                 is_read=False
             ).count()
             
@@ -835,7 +835,7 @@ class MarkNotificationsRead(View):
             
             updated_count = ProjectNotification.objects.filter(
                 id__in=notification_ids,
-                user=user,
+                recipient=user,
                 is_read=False
             ).update(is_read=True)
             
@@ -956,7 +956,7 @@ class FriendshipView(View):
             
             # 친구 요청 생성 (양방향으로 생성)
             friendship1 = models.Friendship.objects.create(
-                user=user,
+                recipient=user,
                 friend=friend_user,
                 requested_by=user,
                 status='pending'
@@ -1006,7 +1006,7 @@ class FriendRequestView(View):
             
             # 나에게 온 친구 요청들 (pending 상태)
             friend_requests = models.Friendship.objects.filter(
-                user=user,
+                recipient=user,
                 status='pending'
             ).select_related('requested_by', 'requested_by__profile')
             
@@ -1054,7 +1054,7 @@ class FriendRequestResponse(View):
             # 친구 요청 확인
             friendship = models.Friendship.objects.filter(
                 id=friendship_id,
-                user=user,
+                recipient=user,
                 status='pending'
             ).first()
             

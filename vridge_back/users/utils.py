@@ -117,7 +117,8 @@ class EmailThread(threading.Thread):
             if self.html_message:
                 email.attach_alternative(self.html_message, "text/html")
             result = email.send(self.fail_silently)
-            print(f"[Email] Email sent successfully to {self.recipient_list}. Result: {result}")
+            email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
+            print(f"[Email] Email sent successfully via {email_backend} to {self.recipient_list}. Result: {result}")
         except Exception as e:
             print(f"[Email] Failed to send email to {self.recipient_list}: {str(e)}")
             import traceback
@@ -133,8 +134,12 @@ def auth_send_email(request, email, secret):
         
         # 실제 이메일 발송이 필요한 경우 설정 확인
         if settings.EMAIL_BACKEND != 'django.core.mail.backends.console.EmailBackend':
-            if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
-                print("[Email] ERROR: Email credentials not configured")
+            if os.environ.get('SENDGRID_API_KEY'):
+                print("[Email] Using SendGrid for email")
+            elif settings.EMAIL_HOST_USER and settings.EMAIL_HOST_PASSWORD:
+                print("[Email] Using Gmail for email")
+            else:
+                print("[Email] ERROR: No email credentials configured")
                 return False
         
         # HTML 템플릿이 없는 경우를 대비한 간단한 HTML 메시지
@@ -191,6 +196,9 @@ def auth_send_email(request, email, secret):
         
         to = [email]
         EmailThread("VideoPlanet 인증번호", strip_tags(html_message), to, html_message).start()
+        
+        email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
+        print(f"[Email] Auth email queued for sending via {email_backend}")
         return True
         
     except Exception as e:

@@ -8,6 +8,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.urls import reverse
 import logging
+import os
 
 from .models import User, EmailVerificationToken
 
@@ -76,7 +77,8 @@ VideoPlanet 팀
             )
             
             if success:
-                logger.info(f"이메일 인증 발송 성공: {user.email}")
+                email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
+                logger.info(f"{email_backend}로 이메일 인증 발송 성공: {user.email}")
                 return verification_token
             else:
                 logger.error(f"이메일 인증 발송 실패: {user.email}")
@@ -175,10 +177,11 @@ VideoPlanet 팀
             )
             
             if success:
-                logger.info(f"환영 이메일 발송 성공: {user.email}")
+                email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
+                logger.info(f"{email_backend}로 환영 이메일 발송 성공: {user.email}")
                 return True
             else:
-                logger.error(f"환영 이메일 발송 실패: {user.email}")
+                logger.error(f"환영 이메일 발송 실핌: {user.email}")
                 return False
                 
         except Exception as e:

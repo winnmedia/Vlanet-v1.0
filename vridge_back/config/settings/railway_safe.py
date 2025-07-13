@@ -69,11 +69,19 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # 데이터베이스 설정
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
-    }
+    # PostgreSQL 설정
+    db_config = dj_database_url.parse(DATABASE_URL)
+    # Railway PostgreSQL 최적화
+    db_config.update({
+        'CONN_MAX_AGE': 600,  # 10분 연결 유지
+        'OPTIONS': {
+            'connect_timeout': 30,
+        }
+    })
+    DATABASES = {'default': db_config}
     print(f"✅ PostgreSQL 연결: {DATABASE_URL[:30]}...")
 else:
+    # SQLite 백업
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

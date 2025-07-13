@@ -674,7 +674,7 @@ class NotificationView(View):
             user = request.user
             
             # 읽지 않은 알림 개수 (projects 앱의 Notification 모델 사용)
-            from projects.models import Notification as ProjectNotification
+            from users.models import Notification as ProjectNotification
             unread_count = ProjectNotification.objects.filter(
                 user=user,
                 is_read=False
@@ -685,7 +685,7 @@ class NotificationView(View):
             limit = int(request.GET.get('limit', 20))
             
             # 알림 조회 (projects 앱의 Notification 모델 사용)
-            from projects.models import Notification as ProjectNotification
+            from users.models import Notification as ProjectNotification
             notifications_query = ProjectNotification.objects.filter(user=user)
             
             if unread_only:
@@ -799,7 +799,7 @@ class UnreadNotificationCount(View):
         """읽지 않은 알림 개수 반환"""
         try:
             user = request.user
-            from projects.models import Notification as ProjectNotification
+            from users.models import Notification as ProjectNotification
             
             unread_count = ProjectNotification.objects.filter(
                 user=user,
@@ -830,7 +830,7 @@ class MarkNotificationsRead(View):
             if not notification_ids:
                 return JsonResponse({"message": "notification_ids가 필요합니다."}, status=400)
             
-            from projects.models import Notification as ProjectNotification
+            from users.models import Notification as ProjectNotification
             from django.utils import timezone
             
             updated_count = ProjectNotification.objects.filter(
@@ -858,7 +858,7 @@ class NotificationDetail(View):
         """알림 삭제"""
         try:
             user = request.user
-            from projects.models import Notification as ProjectNotification
+            from users.models import Notification as ProjectNotification
             
             notification = ProjectNotification.objects.filter(
                 id=notification_id,
@@ -970,7 +970,7 @@ class FriendshipView(View):
             )
             
             # 상대방에게 알림 생성
-            from projects.models import Notification as ProjectNotification
+            from users.models import Notification as ProjectNotification
             from projects.notification_service import NotificationService
             
             try:

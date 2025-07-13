@@ -60,7 +60,7 @@ class ProjectList(View):
                 "confirmation",
                 "video_delivery",
                 "feedback",
-            ).prefetch_related('feedback__feedbacks')
+            ).prefetch_related('feedback__messages')
             result = []
             for i in project_list:
                 if i.video_delivery and i.video_delivery.end_date:
@@ -158,7 +158,7 @@ class ProjectList(View):
                                 "created": fb.created,
                                 "updated": fb.updated,
                             }
-                            for fb in (i.feedback.feedbacks.all() if i.feedback else [])
+                            for fb in (i.feedback.messages.all() if i.feedback else [])
                         ],
                         # "pending_list": list(i.invites.all().values("id", "email")),
                         "member_list": list(
@@ -182,7 +182,7 @@ class ProjectList(View):
                 "project__video_delivery",
                 "project__user",
                 "project__feedback"
-            ).prefetch_related('project__feedback__feedbacks')
+            ).prefetch_related('project__feedback__messages')
             for i in members:
                 if i.project.video_delivery and i.project.video_delivery.end_date:
                     end_date = i.project.video_delivery.end_date
@@ -278,7 +278,7 @@ class ProjectList(View):
                                 "created": fb.created,
                                 "updated": fb.updated,
                             }
-                            for fb in (i.project.feedback.feedbacks.all() if i.project.feedback else [])
+                            for fb in (i.project.feedback.messages.all() if i.project.feedback else [])
                         ],
                         # "pending_list": list(i.project.invites.all().values("id", "email")),
                         "member_list": list(

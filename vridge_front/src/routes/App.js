@@ -24,6 +24,14 @@ export default function App() {
   console.log('[VideoPlanet Frontend] App loaded at:', new Date().toISOString())
   
   useEffect(() => {
+    // 404 페이지에서 리다이렉트된 경로 처리
+    const redirectPath = sessionStorage.getItem('redirectPath')
+    if (redirectPath) {
+      sessionStorage.removeItem('redirectPath')
+      navigate(redirectPath, { replace: true })
+      return
+    }
+    
     // 모바일 환경 설정
     setupMobileConfig()
     

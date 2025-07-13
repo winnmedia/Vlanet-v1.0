@@ -43,6 +43,12 @@ class ProjectList(View):
     def get(self, request):
         try:
             user = request.user
+            
+            # nickname 초기화
+            if user.nickname:
+                nickname = user.nickname
+            else:
+                nickname = user.username
 
             project_list = user.projects.all().select_related(
                 "basic_plan",
@@ -283,10 +289,6 @@ class ProjectList(View):
                         # "files": list(i.project.files.all().values("id", "files")),
                     }
                 )
-            if user.nickname:
-                nickname = user.nickname
-            else:
-                nickname = user.username
 
             sample_files = [
                 {
@@ -297,7 +299,11 @@ class ProjectList(View):
                 if i.files
             ]
 
-            user_memos = list(user.memos.all().values("id", "date", "memo"))
+            # user_memos 안전하게 가져오기
+            try:
+                user_memos = list(user.memos.all().values("id", "date", "memo"))
+            except AttributeError:
+                user_memos = []
             
             # 프로필 이미지 URL 가져오기
             profile_image = None
@@ -319,9 +325,22 @@ class ProjectList(View):
                 status=200,
             )
         except Exception as e:
-            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
-            logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            logger.error(f"Error in ProjectList: {str(e)}", exc_info=True)
+            logging.error(f"ProjectList error for user {request.user.id}: {str(e)}")
+            import traceback
+            logging.error(f"Traceback: {traceback.format_exc()}")
+            
+            # 더 구체적인 에러 메시지 반환
+            error_message = "프로젝트 목록을 불러오는 중 오류가 발생했습니다."
+            if "nickname" in str(e):
+                error_message = "사용자 정보 오류가 발생했습니다."
+            elif "memos" in str(e):
+                error_message = "메모 정보를 불러오는 중 오류가 발생했습니다."
+                
+            return JsonResponse({
+                "message": error_message,
+                "error": str(e) if settings.DEBUG else None
+            }, status=500)
 
 
 # 이미 초대를 보낸경우, 멤버에 있는 경우, 나 자신도 안됨

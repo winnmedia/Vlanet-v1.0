@@ -87,20 +87,19 @@ urlpatterns = [
     path("api/test-error/", test_error, name="test_error"),
     
     # API 경로 (권장) - /api/ 프리픽스를 사용하는 표준 경로
-    path("api/users/", include("users.urls")),
-    path("api/projects/", include("projects.urls")),
-    path("api/feedbacks/", include("feedbacks.urls")),
-    path("api/onlines/", include("onlines.urls")),
+    path("api/users/", include("users.urls", namespace="api-users")),
+    path("api/projects/", include("projects.urls", namespace="api-projects")),
+    path("api/feedbacks/", include("feedbacks.urls", namespace="api-feedbacks")),
+    path("api/onlines/", include("onlines.urls", namespace="api-onlines")),
     path("api/video-planning/", include("video_planning.urls")),
     path("api/video-analysis/", include("video_analysis.urls")),
     
     # 레거시 경로 (하위 호환성) - /api/ 프리픽스가 없는 구 경로
     # 새로운 개발에서는 위의 /api/ 경로를 사용할 것을 권장
-    # 주의: projects 앱이 두 번 포함되어 있지만 다른 경로로 분리되어 있음
-    path("users/", include(("users.urls", "users"), namespace="legacy-users")),
-    path("projects/", include(("projects.urls", "projects"), namespace="legacy-projects")),
-    path("feedbacks/", include(("feedbacks.urls", "feedbacks"), namespace="legacy-feedbacks")),
-    path("onlines/", include(("onlines.urls", "onlines"), namespace="legacy-onlines")),
+    path("users/", include("users.urls", namespace="legacy-users")),
+    path("projects/", include("projects.urls", namespace="legacy-projects")),
+    path("feedbacks/", include("feedbacks.urls", namespace="legacy-feedbacks")),
+    path("onlines/", include("onlines.urls", namespace="legacy-onlines")),
     
     # CSRF 토큰 (특별 경로)
     path("users/csrf-token/", csrf_token_view, name="csrf_token"),

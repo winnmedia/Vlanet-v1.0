@@ -22,9 +22,9 @@ python manage.py migrate --noinput
 # echo "Running additional migrations..."
 # python manage.py migrate users 0003_add_missing_fields --fake-initial || echo "Migration already applied or failed"
 
-# UserProfile 테이블 확인 및 생성
-echo "Ensuring UserProfile table exists..."
-python manage.py ensure_userprofile
+# UserProfile 테이블 확인 및 생성 - 마이그레이션으로 자동 생성됨
+# echo "Ensuring UserProfile table exists..."
+# python manage.py ensure_userprofile
 
 # video_planning 테이블 확인 및 생성
 echo "Checking video_planning table..."

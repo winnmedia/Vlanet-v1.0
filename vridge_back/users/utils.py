@@ -1,8 +1,11 @@
 import threading
 from django.conf import settings
 from django.http import JsonResponse
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+try:
+    from .jwt_compatibility import CompatibleJWTAuthentication as JWTAuthentication
+except ImportError:
+    from rest_framework_simplejwt.authentication import JWTAuthentication
 from . import models
 from projects import models as project_model
 
@@ -62,8 +65,11 @@ def user_validator(function):
                 return response
                 
         except Exception as e:
+            import traceback
             print(f"Authentication error: {e}")
-            response = JsonResponse({"message": "AUTHENTICATION_ERROR"}, status=401)
+            print(f"Error type: {type(e).__name__}")
+            print(f"Error traceback: {traceback.format_exc()}")
+            response = JsonResponse({"message": "AUTHENTICATION_ERROR", "detail": str(e)}, status=401)
             response['WWW-Authenticate'] = 'Bearer'
             return response
 

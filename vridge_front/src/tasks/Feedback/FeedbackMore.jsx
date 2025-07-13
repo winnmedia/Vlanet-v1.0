@@ -6,7 +6,7 @@ import 'css/Cms/FeedbackMoreStyle.scss'
 import moment from 'moment'
 import 'moment/locale/ko'
 
-export default function FeedbackMore({ current_project, onTimeClick }) {
+export default function FeedbackMore({ current_project, onTimeClick, onFeedbackSelect }) {
   const { user } = useSelector((s) => s.ProjectStore)
   const [feedback, setFeedback] = useState([])
   const [expandedId, setExpandedId] = useState(null)
@@ -14,7 +14,7 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
 
   useEffect(() => {
     let groupedObjects = {}
-    // 방어 로직: feedback이 없거나 배열이 아닌 경우 처리
+    // 방어 로직: feedback 필드 확인 (feedbacks가 아닌 feedback)
     const feedback_data = current_project?.feedback || []
     
     console.log('[FeedbackMore] Current project:', current_project)
@@ -91,6 +91,11 @@ export default function FeedbackMore({ current_project, onTimeClick }) {
     // 시간 이동
     if (onTimeClick && data.section) {
       onTimeClick(data.section)
+    }
+    
+    // 피드백 선택 콜백 호출
+    if (onFeedbackSelect) {
+      onFeedbackSelect(data)
     }
     
     // 내용 확장/축소

@@ -139,30 +139,26 @@ class SignUp(View):
             
             logger.info(f"회원가입 성공 - ID: {new_user.id}, 이메일: {new_user.username}")
 
-            # JWT 토큰 생성 (SimpleJWT 사용)
-            from rest_framework_simplejwt.tokens import RefreshToken
-            refresh = RefreshToken.for_user(new_user)
-            vridge_session = str(refresh.access_token)
+            # 이메일 인증 발송
+            from .email_verification_service import EmailVerificationService
+            verification_token = EmailVerificationService.send_verification_email(new_user)
             
-            res = JsonResponse(
-                {
-                    "message": "success",
-                    "vridge_session": vridge_session,
-                    "refresh_token": str(refresh),
+            if verification_token:
+                logger.info(f"이메일 인증 발송 성공 - 사용자: {new_user.username}")
+                return JsonResponse({
+                    "message": "회원가입이 완료되었습니다. 이메일 인증을 완료해 주세요.",
+                    "email_sent": True,
                     "user": new_user.username,
                     "nickname": new_user.nickname,
-                },
-                status=200,
-            )
-            res.set_cookie(
-                "vridge_session",
-                vridge_session,
-                httponly=True,
-                samesite="Lax",
-                secure=True,
-                max_age=2419200,
-            )
-            return res
+                }, status=201)
+            else:
+                logger.warning(f"이메일 인증 발송 실패 - 사용자: {new_user.username}")
+                return JsonResponse({
+                    "message": "회원가입은 완료되었지만 인증 이메일 발송에 실패했습니다. 나중에 다시 시도해 주세요.",
+                    "email_sent": False,
+                    "user": new_user.username,
+                    "nickname": new_user.nickname,
+                }, status=201)
             
         except json.JSONDecodeError:
             return JsonResponse({"message": "잘못된 요청 형식입니다."}, status=400)
@@ -1203,3 +1199,113 @@ class RecentInvitationView(View):
         except Exception as e:
             logger.error(f"Error in recent invitations: {str(e)}")
             return JsonResponse({"message": "최근 초대 목록 조회 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class EmailVerificationView(View):
+    """이메일 인증 처리"""
+    
+    def get(self, request, token):
+        """이메일 인증 토큰 검증"""
+        try:
+            from .email_verification_service import EmailVerificationService
+            
+            success, message = EmailVerificationService.verify_email(token)
+            
+            if success:
+                # 환영 이메일 발송 (백그라운드에서 비동기적으로)
+                try:
+                    from .models import EmailVerificationToken
+                    verification_token = EmailVerificationToken.objects.get(token=token)
+                    EmailVerificationService.send_welcome_email(verification_token.user)
+                except Exception as e:
+                    logger.warning(f"환영 이메일 발송 실패: {str(e)}")
+                
+                return JsonResponse({
+                    "success": True,
+                    "message": message
+                }, status=200)
+            else:
+                return JsonResponse({
+                    "success": False,
+                    "message": message
+                }, status=400)
+                
+        except Exception as e:
+            logger.error(f"Error in email verification: {str(e)}")
+            return JsonResponse({
+                "success": False,
+                "message": "인증 처리 중 오류가 발생했습니다."
+            }, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ResendVerificationEmailView(View):
+    """인증 이메일 재발송"""
+    
+    def post(self, request):
+        """인증 이메일 재발송"""
+        try:
+            data = json.loads(request.body)
+            email = data.get("email")
+            
+            if not email:
+                return JsonResponse({"message": "이메일을 입력해 주세요."}, status=400)
+            
+            # 이메일 유효성 검증
+            is_valid, error_msg = InputValidator.validate_email(email)
+            if not is_valid:
+                return JsonResponse({"message": error_msg}, status=400)
+            
+            # 사용자 존재 확인
+            user = models.User.objects.filter(username=email).first()
+            if not user:
+                return JsonResponse({"message": "존재하지 않는 사용자입니다."}, status=404)
+            
+            # 이메일 인증 재발송
+            from .email_verification_service import EmailVerificationService
+            success, message = EmailVerificationService.resend_verification_email(user)
+            
+            if success:
+                return JsonResponse({"message": message}, status=200)
+            else:
+                return JsonResponse({"message": message}, status=400)
+                
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "잘못된 요청 형식입니다."}, status=400)
+        except Exception as e:
+            logger.error(f"Error in resend verification email: {str(e)}")
+            return JsonResponse({"message": "이메일 재발송 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CheckEmailVerificationStatusView(View):
+    """이메일 인증 상태 확인"""
+    
+    def post(self, request):
+        """이메일 인증 상태 확인"""
+        try:
+            data = json.loads(request.body)
+            email = data.get("email")
+            
+            if not email:
+                return JsonResponse({"message": "이메일을 입력해 주세요."}, status=400)
+            
+            # 사용자 존재 확인
+            user = models.User.objects.filter(username=email).first()
+            if not user:
+                return JsonResponse({"message": "존재하지 않는 사용자입니다."}, status=404)
+            
+            # 인증 상태 반환
+            return JsonResponse({
+                "email_verified": user.email_verified,
+                "verified_at": user.email_verified_at.isoformat() if user.email_verified_at else None,
+                "user": user.username,
+                "nickname": user.nickname
+            }, status=200)
+                
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "잘못된 요청 형식입니다."}, status=400)
+        except Exception as e:
+            logger.error(f"Error in check email verification status: {str(e)}")
+            return JsonResponse({"message": "인증 상태 확인 중 오류가 발생했습니다."}, status=500)

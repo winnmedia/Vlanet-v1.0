@@ -1836,13 +1836,6 @@ export default function VideoPlanning() {
                     </div>
                     <div className="story-header-buttons">
                       <button 
-                        className="toggle-story-btn"
-                        onClick={() => toggleStoryCollapse(index)}
-                        title={collapsedStories.has(index) ? "펴기" : "접기"}
-                      >
-                        {collapsedStories.has(index) ? "📖" : "📕"}
-                      </button>
-                      <button 
                         className="edit-story-btn"
                         onClick={() => startEditingStory(index)}
                         disabled={editingStoryIndex === index}
@@ -1855,7 +1848,7 @@ export default function VideoPlanning() {
                           cursor: 'pointer'
                         }}
                       >
-                        ✏️ 편집
+                        편집
                       </button>
                     </div>
                   </div>
@@ -1998,19 +1991,34 @@ export default function VideoPlanning() {
               <div className="batch-buttons">
                 <button
                   className="generate-all-btn"
-                  onClick={generateAllStoryboards}
-                  disabled={loading || planningData.scenes.length === 0}
-                >
-                  {loading && !Object.keys(storyboardGenerationProgress).length ? '생성 중...' : '🎨 모든 콘티 생성'}
-                </button>
-                
-                <button
-                  className="generate-all-fast-btn"
                   onClick={generateAllStoryboardsFast}
                   disabled={loading || planningData.scenes.length === 0}
-                  title="병렬 처리로 60% 빠른 생성"
+                  style={{
+                    background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: loading ? 'wait' : 'pointer',
+                    opacity: loading || planningData.scenes.length === 0 ? 0.6 : 1,
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!loading && planningData.scenes.length > 0) {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
+                  }}
+                  title="빠른 저품질 콘티 생성 (모든 씬)"
                 >
-                  {loading && Object.keys(storyboardGenerationProgress).length ? '⚡ 고속 생성 중...' : '⚡ 고속 병렬 생성'}
+                  {loading && Object.keys(storyboardGenerationProgress).length ? '⚡ 콘티 생성 중...' : '⚡ 모든 콘티 빠르게 생성'}
                 </button>
               </div>
               
@@ -2522,22 +2530,74 @@ export default function VideoPlanning() {
                   <div className={`step-preview ${currentStep === 2 ? 'active' : ''}`}>
                     <div className="preview-header">
                       <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
+                      <button 
+                        className="toggle-section-btn" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedSections(prev => ({
+                            ...prev,
+                            stories: !prev.stories
+                          }));
+                        }}
+                        style={{
+                          background: 'white',
+                          border: '1px solid #e0e0e0',
+                          borderRadius: '6px',
+                          padding: '6px 12px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {expandedSections.stories ? '접기' : '펼치기'}
+                        <svg 
+                          width="12" 
+                          height="12" 
+                          viewBox="0 0 12 12" 
+                          fill="none" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          style={{
+                            transform: expandedSections.stories ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.3s ease'
+                          }}
+                        >
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
                     </div>
                     <div className="preview-content">
-                      <div className="full-content stories-full">
-                        {planningData.stories.map((story, index) => (
-                          <div key={index} className="story-preview-full">
-                            <h5>{story.title}</h5>
-                            <p className="story-stage">{story.stage} - {story.stage_name}</p>
-                            <p className="story-summary">{story.summary}</p>
-                            {story.development && (
-                              <div className="story-development">
-                                <strong>전개:</strong> {story.development}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      {expandedSections.stories ? (
+                        <div className="full-content stories-full">
+                          {planningData.stories.map((story, index) => (
+                            <div key={index} className="story-preview-full">
+                              <h5>{story.title}</h5>
+                              <p className="story-stage">{story.stage} - {story.stage_name}</p>
+                              <p className="story-summary">{story.summary}</p>
+                              {story.development && (
+                                <div className="story-development">
+                                  <strong>전개:</strong> {story.development}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="stories-preview">
+                          {planningData.stories.slice(0, 2).map((story, index) => (
+                            <div key={index} className="story-preview-item">
+                              <span className="story-stage-badge">{story.stage}</span>
+                              <span className="story-title">{story.title}</span>
+                            </div>
+                          ))}
+                          {planningData.stories.length > 2 && (
+                            <div className="more-stories">+{planningData.stories.length - 2}개 더...</div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

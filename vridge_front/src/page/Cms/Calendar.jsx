@@ -276,39 +276,7 @@ export default function Calendar() {
               <button 
                 className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  background: '#012fff',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.3s ease',
-                  flexShrink: 0
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#0047b8';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#012fff';
-                }}
-              >
-                <svg 
-                  width="10" 
-                  height="10" 
-                  viewBox="0 0 10 10" 
-                  fill="white"
-                  style={{
-                    transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.3s ease'
-                  }}
-                >
-                  <path d="M5 7L1 3h8L5 7z"/>
-                </svg>
-              </button>
+              />
             </div>
             <div className="calendar-toolbar" style={{ 
               display: isCollapsed ? 'none' : 'flex'

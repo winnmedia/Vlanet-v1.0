@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 import { CreateFeedback } from 'api/feedback'
 
-export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange }) {
+export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onAIFeedbackClick, onFeedbackSuccess }) {
   const initial = {
     secret: 'true',
     title: '',
@@ -53,6 +53,10 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
             onTimeChange('')
           }
           refetch()
+          // 피드백 등록 성공 후 관리 탭으로 전환
+          if (onFeedbackSuccess) {
+            setTimeout(() => onFeedbackSuccess(), 500)
+          }
         })
         .catch((err) => {
           console.error('Feedback creation error:', err)
@@ -132,9 +136,29 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
         onChange={onChange}
         className="ty01 mt20"
       />
-      <button onClick={SendFeedback} className="submit mt40">
-        피드백 등록
-      </button>
+      <div style={{ display: 'flex', gap: '12px', marginTop: '40px' }}>
+        <button onClick={SendFeedback} className="submit" style={{ flex: 1 }}>
+          피드백 등록
+        </button>
+        {onAIFeedbackClick && (
+          <button 
+            onClick={onAIFeedbackClick}
+            className="submit"
+            style={{ 
+              flex: 1,
+              background: 'linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%)',
+              border: 'none'
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '8px' }}>
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            AI 피드백
+          </button>
+        )}
+      </div>
     </div>
   )
 }

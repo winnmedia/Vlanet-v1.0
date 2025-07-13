@@ -10,11 +10,14 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   
   // 기존 반응 상태 초기화 및 카운트 계산
   useEffect(() => {
-    if (current_project && Array.isArray(current_project.feedback)) {
+    // feedback 필드 확인 (feedbacks가 아닌 feedback)
+    const feedbackList = current_project?.feedback || []
+    
+    if (Array.isArray(feedbackList)) {
       const initialReactions = {}
       const counts = {}
       
-      current_project.feedback.forEach(feedback => {
+      feedbackList.forEach(feedback => {
         if (feedback.reaction) {
           initialReactions[feedback.id] = feedback.reaction
         }
@@ -36,7 +39,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       setReactionCounts(counts)
     } else {
       // feedback이 없거나 배열이 아닌 경우
-      console.warn('[FeedbackManage] feedback is not an array:', current_project?.feedback)
+      console.warn('[FeedbackManage] feedback is not an array:', feedbackList)
       setReactions({})
       setReactionCounts({})
     }
@@ -56,9 +59,24 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       })
   }
 
-  const My_Feedback = current_project && Array.isArray(current_project.feedback) 
-    ? current_project.feedback.filter((i) => i.email == user) 
+  // feedback 필드 확인 (feedbacks가 아닌 feedback)
+  const feedbackList = current_project?.feedback || []
+  
+  // 현재 사용자의 피드백만 필터링
+  const My_Feedback = Array.isArray(feedbackList) 
+    ? feedbackList.filter((i) => {
+        // 디버깅을 위해 상세 정보 출력
+        console.log('[FeedbackManage] Checking feedback:', i)
+        console.log('[FeedbackManage] Feedback email:', i.email)
+        console.log('[FeedbackManage] Current user:', user)
+        console.log('[FeedbackManage] Match result:', i.email === user)
+        // email 필드로 필터링
+        return i.email === user
+      })
     : []
+  
+  // 디버깅을 위해 모든 피드백도 표시
+  const All_Feedback = Array.isArray(feedbackList) ? feedbackList : []
 
   // 반응 토글 함수
   const toggleReaction = (feedbackId, reactionType) => {
@@ -129,11 +147,26 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
     //   })
   }
 
+  // 디버깅 로그 추가
+  console.log('[FeedbackManage] Current project:', current_project)
+  console.log('[FeedbackManage] Feedback list:', feedbackList)
+  console.log('[FeedbackManage] My feedback:', My_Feedback)
+  console.log('[FeedbackManage] User:', user)
+  
+  // 첫 번째 피드백의 구조 확인
+  if (feedbackList.length > 0) {
+    console.log('[FeedbackManage] First feedback structure:', feedbackList[0])
+    console.log('[FeedbackManage] Feedback fields:', Object.keys(feedbackList[0]))
+  }
+
+  // 디버깅을 위해 일시적으로 모든 피드백 표시
+  const displayFeedbacks = All_Feedback.length > 0 ? All_Feedback : My_Feedback
+
   return (
     <div className="history">
       <ul>
-        {My_Feedback.length > 0 ? (
-          My_Feedback.map((feedback, index) => (
+        {displayFeedbacks.length > 0 ? (
+          displayFeedbacks.map((feedback, index) => (
             <li key={index} style={{ marginBottom: '20px', padding: '16px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
               <div>
                 <div className="flex align_center space_between" style={{ marginBottom: '12px' }}>

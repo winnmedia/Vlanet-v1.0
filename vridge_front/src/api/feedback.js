@@ -1,11 +1,11 @@
 import { axiosOpts, axiosCredentials } from 'util/util'
 import axios from 'axios'
 
-// 피드백 detail - 프로젝트 서브리소스 엔드포인트 사용
+// 피드백 detail - feedbacks 엔드포인트 사용 (기존과 동일하게 유지)
 export function GetFeedBack(projectId) {
   return axiosCredentials(
     'get',
-    `/api/projects/${projectId}/feedback/`,
+    `/api/feedbacks/${projectId}`,
   )
 }
 

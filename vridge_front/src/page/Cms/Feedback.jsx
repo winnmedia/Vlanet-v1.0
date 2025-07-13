@@ -9,6 +9,9 @@ import 'css/Cms/AITeacherModal.scss'
 import 'css/Cms/FeedbackLayoutFix.scss'
 import 'css/Cms/FeedbackPlayerFix.scss'
 import 'css/Cms/InputActivationFix.scss'
+import 'css/Cms/FeedbackResponsiveLayout.scss'
+import 'css/Cms/FeedbackButtonLayoutFix.scss'
+import 'css/Cms/FeedbackHarmonyUI.scss'
 import styles from './FeedbackButtonStyles.module.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
@@ -31,6 +34,8 @@ import { useSelector } from 'react-redux'
 
 import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from 'api/feedback'
 import { GetChatMessages, SendChatMessage } from 'api/chat'
+import { InviteProjectMember, GetProjectInvitations, CancelInvitation } from 'api/invitation'
+import { GetFriends, GetRecentInvitations } from 'api/friends'
 import axios from 'config/axios'
 
 import moment from 'moment'
@@ -39,7 +44,7 @@ import 'moment/locale/ko'
 
 export default function Feedback() {
   const navigate = useNavigate()
-  const { user } = useSelector((s) => s.ProjectStore)
+  const { user, profileImage } = useSelector((s) => s.ProjectStore)
   
   // Cleanup effect for any pending timeouts
   useEffect(() => {
@@ -77,6 +82,16 @@ export default function Feedback() {
   const [analysisResult, setAnalysisResult] = useState(null)
   const [teacherFeedback, setTeacherFeedback] = useState(null)
   const [teachers, setTeachers] = useState([])
+
+  // 멤버 초대 관련 상태
+  const [showInviteModal, setShowInviteModal] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteMessage, setInviteMessage] = useState('')
+  const [inviteLoading, setInviteLoading] = useState(false)
+  const [projectInvitations, setProjectInvitations] = useState([])
+  const [friends, setFriends] = useState([])
+  const [recentInvitations, setRecentInvitations] = useState([])
+  const [quickListLoading, setQuickListLoading] = useState(false)
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -190,6 +205,13 @@ export default function Feedback() {
         
         set_current_project(res.data.result)
         setIsLoading(false)
+        
+        // 피드백 데이터 구조 확인
+        console.log('Feedback array:', res.data.result?.feedback)
+        console.log('Number of feedbacks:', res.data.result?.feedback?.length || 0)
+        if (res.data.result?.feedback?.length > 0) {
+          console.log('First feedback:', res.data.result.feedback[0])
+        }
       })
       .catch((err) => {
         if (err.response && err.response.data) {
@@ -406,7 +428,129 @@ export default function Feedback() {
       window.sessionStorage.setItem('items', JSON.stringify(storage))
     }
   }, [items])
+
+  // AI 분석 시작 함수
+  const handleVideoAnalysis = () => {
+    if (!current_project || !current_project.files) {
+      window.alert('분석할 비디오가 없습니다.')
+      return
+    }
+    
+    setShowTeacherModal(true)
+    setSelectedTeacher(null)
+    setAnalysisStatus('idle')
+    setAnalysisResult(null)
+    setTeacherFeedback(null)
+  }
+
+  // 멤버 초대 관련 함수들
+  const handleInviteMember = async () => {
+    if (!inviteEmail.trim()) {
+      alert('이메일을 입력해주세요.')
+      return
+    }
+
+    if (!inviteEmail.includes('@')) {
+      alert('올바른 이메일 형식을 입력해주세요.')
+      return
+    }
+
+    setInviteLoading(true)
+    try {
+      await InviteProjectMember(project_id, {
+        email: inviteEmail.trim(),
+        message: inviteMessage.trim()
+      })
+      
+      alert('초대를 보냈습니다.')
+      handleCloseInviteModal()
+      
+      // 초대 목록 새로고침
+      loadProjectInvitations()
+    } catch (error) {
+      console.error('초대 실패:', error)
+      alert(error.response?.data?.message || '초대 중 오류가 발생했습니다.')
+    } finally {
+      setInviteLoading(false)
+    }
+  }
+
+  const loadProjectInvitations = async () => {
+    try {
+      const response = await GetProjectInvitations(project_id)
+      setProjectInvitations(response.data.invitations || [])
+    } catch (error) {
+      console.error('초대 목록 조회 실패:', error)
+    }
+  }
+
+  const loadQuickInviteLists = async () => {
+    setQuickListLoading(true)
+    try {
+      const [friendsResponse, recentResponse] = await Promise.all([
+        GetFriends(),
+        GetRecentInvitations(10)
+      ])
+      setFriends(friendsResponse.data?.friends || [])
+      setRecentInvitations(recentResponse.data?.recent_invitations || [])
+    } catch (error) {
+      console.error('빠른 초대 목록 로드 실패:', error)
+    } finally {
+      setQuickListLoading(false)
+    }
+  }
+
+  const handleQuickEmailSelect = (email) => {
+    setInviteEmail(email)
+  }
+
+  const handleOpenInviteModal = () => {
+    setShowInviteModal(true)
+    loadQuickInviteLists()
+  }
+
+  const handleCloseInviteModal = () => {
+    setShowInviteModal(false)
+    setInviteEmail('')
+    setInviteMessage('')
+    setFriends([])
+    setRecentInvitations([])
+  }
+
+  const handleCancelInvitation = async (invitationId) => {
+    if (!window.confirm('정말로 이 초대를 취소하시겠습니까?')) {
+      return
+    }
+
+    try {
+      await CancelInvitation(project_id, invitationId)
+      alert('초대를 취소했습니다.')
+      loadProjectInvitations() // 목록 새로고침
+    } catch (error) {
+      console.error('초대 취소 실패:', error)
+      alert(error.response?.data?.message || '초대 취소 중 오류가 발생했습니다.')
+    }
+  }
+
+  // 프로젝트 초대 목록 로드
+  useEffect(() => {
+    if (project_id && is_admin) {
+      loadProjectInvitations()
+    }
+  }, [project_id, is_admin])
+
   const content = [
+    {
+      tab: '피드백 등록',
+      content: <FeedbackInput 
+        project_id={project_id} 
+        refetch={refetch} 
+        initialTime={feedbackTime}
+        onTimeChange={setFeedbackTime}
+        onAIFeedbackClick={handleVideoAnalysis}
+        onFeedbackSuccess={() => changeItem(2)} // 피드백 관리 탭으로 전환
+      />,
+    },
     {
       tab: '코멘트',
       content: (
@@ -416,15 +560,6 @@ export default function Feedback() {
           refetch={refetch}
         />
       ),
-    },
-    {
-      tab: '피드백 등록',
-      content: <FeedbackInput 
-        project_id={project_id} 
-        refetch={refetch} 
-        initialTime={feedbackTime}
-        onTimeChange={setFeedbackTime}
-      />,
     },
     {
       tab: '피드백 관리',
@@ -452,9 +587,46 @@ export default function Feedback() {
       tab: '멤버',
       content: current_project && (
         <div className="member">
+          {/* 관리자만 초대 버튼 표시 */}
+          {is_admin && (
+            <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+              <button
+                onClick={handleOpenInviteModal}
+                style={{
+                  background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 4px rgba(22, 49, 248, 0.2)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-1px)'
+                  e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)'
+                  e.target.style.boxShadow = '0 2px 4px rgba(22, 49, 248, 0.2)'
+                }}
+              >
+                + 멤버 초대
+              </button>
+            </div>
+          )}
+
           <ul>
             <li className="admin">
-              <div className="img"></div>
+              <div className="img" style={
+                current_project.owner_email === user && profileImage ? {
+                  backgroundImage: `url(${profileImage})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                } : {}
+              }></div>
               <div className="txt">
                 {current_project.owner_nickname}(관리자)
                 <span>{current_project.owner_email}</span>
@@ -465,7 +637,13 @@ export default function Feedback() {
                 key={index}
                 className={member.rating === 'manager' ? 'admin' : 'basic'}
               >
-                <div className="img"></div>
+                <div className="img" style={
+                  member.email === user && profileImage ? {
+                    backgroundImage: `url(${profileImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  } : {}
+                }></div>
                 <div className="txt">
                   {member.nickname}({Rating(member.rating)})
                   <span>{member.email}</span>
@@ -473,6 +651,85 @@ export default function Feedback() {
               </li>
             ))}
           </ul>
+
+          {/* 초대 현황 표시 (관리자만) */}
+          {is_admin && projectInvitations.length > 0 && (
+            <div style={{ marginTop: '30px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '15px', color: '#333' }}>
+                초대 현황
+              </h4>
+              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px' }}>
+                {projectInvitations.map((invitation, index) => (
+                  <div 
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '8px 0',
+                      borderBottom: index < projectInvitations.length - 1 ? '1px solid #e9ecef' : 'none'
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '500' }}>
+                        {invitation.invitee_email}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#6c757d' }}>
+                        {moment(invitation.created).format('YYYY.MM.DD HH:mm')}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        backgroundColor: invitation.status === 'pending' ? '#fff3cd' : 
+                                      invitation.status === 'accepted' ? '#d4edda' : 
+                                      invitation.status === 'cancelled' ? '#f8d7da' :
+                                      invitation.status === 'declined' ? '#f8d7da' : '#e9ecef',
+                        color: invitation.status === 'pending' ? '#856404' : 
+                               invitation.status === 'accepted' ? '#155724' : 
+                               invitation.status === 'cancelled' ? '#721c24' :
+                               invitation.status === 'declined' ? '#721c24' : '#6c757d'
+                      }}>
+                        {invitation.status === 'pending' ? '대기중' :
+                         invitation.status === 'accepted' ? '수락됨' :
+                         invitation.status === 'declined' ? '거절됨' :
+                         invitation.status === 'cancelled' ? '취소됨' : invitation.status}
+                      </span>
+                      {invitation.status === 'pending' && (
+                        <button
+                          onClick={() => handleCancelInvitation(invitation.id)}
+                          style={{
+                            background: 'none',
+                            border: '1px solid #dc3545',
+                            color: '#dc3545',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.background = '#dc3545'
+                            e.target.style.color = 'white'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.background = 'none'
+                            e.target.style.color = '#dc3545'
+                          }}
+                          title="초대 취소"
+                        >
+                          취소
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )
     }
@@ -646,20 +903,6 @@ export default function Feedback() {
     window.alert('링크가 복사되었습니다.')
   }
 
-  // AI 분석 시작 함수
-  const handleVideoAnalysis = () => {
-    if (!current_project || !current_project.files) {
-      window.alert('분석할 비디오가 없습니다.')
-      return
-    }
-    
-    setShowTeacherModal(true)
-    setSelectedTeacher(null)
-    setAnalysisStatus('idle')
-    setAnalysisResult(null)
-    setTeacherFeedback(null)
-  }
-
   // 비디오 분석 실행
   const startVideoAnalysis = async () => {
     if (!selectedTeacher) {
@@ -671,7 +914,7 @@ export default function Feedback() {
     
     try {
       // 가장 최근 피드백 ID 찾기
-      const feedbacks = current_project.feedbacks || []
+      const feedbacks = current_project.feedback || []
       if (feedbacks.length === 0) {
         window.alert('피드백이 없습니다. 먼저 피드백을 생성해주세요.')
         setAnalysisStatus('error')
@@ -845,13 +1088,16 @@ export default function Feedback() {
                     current_project.files ? 'video_inner active' : 'video_inner'
                   }
                 >
-                  {current_project.files && (
+                  {current_project.files ? (
                     <div className="video-player-section">
                       <VideoJsPlayer
                         ref={videoPlayerRef}
                         videoUrl={(() => {
                           const fileUrl = current_project.files;
+                          console.log('[VideoPlayer] === VIDEO URL DEBUG ===');
+                          console.log('[VideoPlayer] Current project:', current_project);
                           console.log('[VideoPlayer] Original file URL:', fileUrl);
+                          console.log('[VideoPlayer] File URL type:', typeof fileUrl);
                           
                           // 파일 URL이 없는 경우
                           if (!fileUrl) {
@@ -862,6 +1108,21 @@ export default function Feedback() {
                         // 이미 전체 URL인 경우 (백엔드에서 완전한 URL 반환)
                         if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
                           console.log('[VideoPlayer] Using complete URL from backend:', fileUrl);
+                          
+                          // 비디오 URL 유효성 검사를 위한 테스트 요청
+                          fetch(fileUrl, { method: 'HEAD' })
+                            .then(response => {
+                              console.log('[VideoPlayer] URL test response:', {
+                                status: response.status,
+                                ok: response.ok,
+                                contentType: response.headers.get('content-type'),
+                                contentLength: response.headers.get('content-length')
+                              });
+                            })
+                            .catch(error => {
+                              console.error('[VideoPlayer] URL test failed:', error);
+                            });
+                          
                           // URL이 이미 인코딩되어 있는지 확인하고 필요시 디코딩
                           try {
                             const decodedUrl = decodeURI(fileUrl);
@@ -877,17 +1138,26 @@ export default function Feedback() {
                         
                         // 상대 경로인 경우 백엔드 URL과 결합
                         const backendUrl = process.env.REACT_APP_BACKEND_API_URL || process.env.REACT_APP_BACKEND_URI || 'https://videoplanet.up.railway.app';
-                        let fullUrl;
                         
+                        // 개발 환경에서 localhost와 127.0.0.1 통일
+                        let adjustedBackendUrl = backendUrl;
+                        if (window.location.hostname === 'localhost' && backendUrl.includes('127.0.0.1')) {
+                          adjustedBackendUrl = backendUrl.replace('127.0.0.1', 'localhost');
+                        } else if (window.location.hostname === '127.0.0.1' && backendUrl.includes('localhost')) {
+                          adjustedBackendUrl = backendUrl.replace('localhost', '127.0.0.1');
+                        }
+                        
+                        let fullUrl;
                         if (fileUrl.startsWith('/')) {
                           // /media/로 시작하는 절대 경로
-                          fullUrl = `${backendUrl}${fileUrl}`;
+                          fullUrl = `${adjustedBackendUrl}${fileUrl}`;
                         } else {
                           // 상대 경로
-                          fullUrl = `${backendUrl}/${fileUrl}`;
+                          fullUrl = `${adjustedBackendUrl}/${fileUrl}`;
                         }
                         
                         console.log('[VideoPlayer] Constructed URL:', fullUrl);
+                        console.log('[VideoPlayer] Current hostname:', window.location.hostname);
                         return fullUrl;
                       })()}
                       initialTime={currentVideoTime}
@@ -901,7 +1171,7 @@ export default function Feedback() {
                         setFeedbackTime(timeStr)
                         
                         // 피드백 등록 탭으로 전환
-                        changeItem(1)
+                        changeItem(0)
                       }}
                       onError={(error) => {
                         console.error('Video playback error:', error)
@@ -915,136 +1185,52 @@ export default function Feedback() {
                         {/* 여기에 플레이어 전용 컨트롤 추가 가능 */}
                       </div>
                     </div>
-                  )}
-                  
-                  {/* 피드백 관련 버튼들 - 별도 섹션 */}
-                  {current_project.files && (
-                    <div className="video-control-buttons">
-                      {/* 현재 시점에 피드백 버튼 */}
-                      <button
-                        onClick={() => {
-                          if (videoPlayerRef.current && videoPlayerRef.current.getCurrentTime) {
-                            const currentTime = videoPlayerRef.current.getCurrentTime();
-                            const minutes = Math.floor(currentTime / 60);
-                            const seconds = Math.floor(currentTime % 60);
-                            const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                            
-                            // 피드백 등록 탭으로 전환하고 시간 설정
-                            setFeedbackTime(timeStr);
-                            changeItem(1); // 피드백 등록 탭으로 이동
-                          }
-                        }}
-                        className={styles.feedbackButtonPrimary}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                        <span>현재 시점에 피드백</span>
-                      </button>
-
-                      {/* AI 영상 피드백 버튼 */}
-                      <button
-                        onClick={handleVideoAnalysis}
-                        className={styles.feedbackButtonPrimary}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <span>AI 영상 피드백</span>
-                      </button>
-
-                      {/* 영상 교체 버튼 */}
-                      <div style={{ position: 'relative' }}>
-                        <input
-                          type="file"
-                          accept="video/*"
-                          onChange={FileChange}
-                          name="files"
-                          id="video-replace-button"
-                          className="visually-hidden"
-                        />
-                        <label 
-                          htmlFor="video-replace-button" 
-                          className={styles.feedbackButtonPrimary}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          <span>영상 교체</span>
-                        </label>
-                      </div>
-
-                      {/* 영상 삭제 버튼 */}
-                      <button
-                        onClick={DeleteFile}
-                        className={styles.feedbackButtonDanger}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <span>영상 삭제</span>
-                      </button>
-                    </div>
-                  )}
-                  
-                  {IsAdmin(current_project) && !current_project.files && (
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '20px',
-                      padding: '60px 40px',
-                      background: 'linear-gradient(135deg, #f8f9fa 0%, #f0f4ff 100%)',
-                      borderRadius: '20px',
-                      border: '2px dashed #c8d4ff',
-                      position: 'relative',
-                      overflow: 'hidden'
-                    }}>
-                      <div style={{ position: 'relative', zIndex: 1 }}>
-                        <input
-                          type="file"
-                          accept="video/*"
-                          onChange={FileChange}
-                          id="video-upload-input"
-                          name="files"
-                          className="visually-hidden"
-                        />
-                        <label 
-                          htmlFor="video-upload-input" 
-                          className="feedback-upload-label"
-                        >
-                          <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '12px'
-                          }}>
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                  ) : (
+                    // 영상이 없을 때 업로드 UI - 플레이어 중앙에 위치
+                    IsAdmin(current_project) && (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                        padding: '40px'
+                      }}>
+                        <div style={{
+                          textAlign: 'center'
+                        }}>
+                          <input
+                            type="file"
+                            accept="video/*"
+                            onChange={FileChange}
+                            name="files"
+                            id="video-center-upload"
+                            className="visually-hidden"
+                          />
+                          <label 
+                            htmlFor="video-center-upload" 
+                            className="feedback-upload-label"
+                            style={{
+                              display: 'inline-block',
+                              padding: '60px 80px',
+                              cursor: 'pointer',
+                              borderRadius: '16px',
+                              border: '2px dashed #c8d4ff',
+                              background: 'rgba(248, 249, 250, 0.8)',
+                              transition: 'all 0.3s ease'
+                            }}
+                          >
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="#1631F8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="#1631F8" strokeWidth="2.5" strokeLinecap="round"/>
                             </svg>
-                            <span style={{ fontSize: '18px', fontWeight: '600' }}>영상 업로드</span>
-                            <small style={{ fontSize: '13px', fontWeight: '400', opacity: '0.9' }}>또는 파일을 여기로 드래그하세요</small>
-                          </div>
-                        </label>
+                            <div style={{ marginTop: '16px', fontSize: '18px', fontWeight: '600', color: '#212529' }}>영상 업로드</div>
+                            <div style={{ marginTop: '8px', fontSize: '14px', color: '#6c757d' }}>또는 파일을 여기로 드래그하세요</div>
+                          </label>
+                        </div>
                       </div>
-                      <button 
-                        onClick={() => setShowUploadGuide(true)}
-                        className={styles.feedbackButtonOutline}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                        업로드 가이드
-                      </button>
-                    </div>
+                    )
                   )}
+                  
                   {VideoLoad && (
                     <div className="loading">
                       <div className="loading-content">
@@ -1095,34 +1281,127 @@ export default function Feedback() {
                     </div>
                   )}
                 </div>
-                <div className="etc_box">
-                  <div className="flex space_between align_center">
-                    <button
-                      onClick={() =>
-                        navigate('/FeedbackAll', {
-                          state: { ...current_project, user: user },
-                        })
-                      }
-                      className="all"
+                
+                {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
+                <div className="video-control-buttons">
+                    {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
+                    {current_project.files && (
+                      <button
+                      onClick={() => {
+                        try {
+                          if (videoPlayerRef.current) {
+                            console.log('[Feedback] Video player ref available:', !!videoPlayerRef.current);
+                            
+                            // 플레이어 준비 상태 확인
+                            const isPlayerReady = videoPlayerRef.current.isReady && videoPlayerRef.current.isReady();
+                            console.log('[Feedback] Player ready state:', isPlayerReady);
+                            
+                            // 현재 시간 가져오기
+                            const currentTime = videoPlayerRef.current.getCurrentTime ? videoPlayerRef.current.getCurrentTime() : 0;
+                            console.log('[Feedback] Current time:', currentTime);
+                            
+                            // 비디오 일시정지
+                            if (videoPlayerRef.current.pause && typeof videoPlayerRef.current.pause === 'function') {
+                              console.log('[Feedback] Attempting to pause video player');
+                              const pauseResult = videoPlayerRef.current.pause();
+                              console.log('[Feedback] Pause result:', pauseResult);
+                            } else {
+                              console.warn('[Feedback] Pause method not available');
+                            }
+                            
+                            // 시간 포맷팅
+                            const minutes = Math.floor(currentTime / 60);
+                            const seconds = Math.floor(currentTime % 60);
+                            const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                            
+                            console.log('[Feedback] Setting feedback time:', timeStr);
+                            
+                            // 피드백 등록 탭으로 전환하고 시간 설정
+                            setFeedbackTime(timeStr);
+                            changeItem(0); // 피드백 등록 탭으로 이동
+                          } else {
+                            console.warn('[Feedback] Video player ref not available');
+                            window.alert('비디오 플레이어가 준비되지 않았습니다.');
+                          }
+                        } catch (error) {
+                          console.error('[Feedback] Error in feedback button click:', error);
+                          window.alert('피드백 버튼 클릭 중 오류가 발생했습니다: ' + error.message);
+                        }
+                      }}
+                      className={styles.feedbackButtonPrimary}
                     >
-                      피드백 전체 보기
-                    </button>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {current_project.files && (
-                        <button
-                          onClick={() => CopyFileUrl(current_project.files)}
-                          className={styles.feedbackButtonSecondary}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          <span>공유</span>
-                        </button>
-                      )}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      <span>시점 피드백</span>
+                      </button>
+                    )}
+
+
+                    {/* 영상 업로드/교체 버튼 */}
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="file"
+                        accept="video/*"
+                        onChange={FileChange}
+                        name="files"
+                        id="video-replace-button"
+                        className="visually-hidden"
+                      />
+                      <label 
+                        htmlFor="video-replace-button" 
+                        className={styles.feedbackButtonPrimary}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {current_project.files ? (
+                          <>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span>영상 교체</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                            <span>영상 업로드</span>
+                          </>
+                        )}
+                      </label>
                     </div>
 
-                  </div>
+                    {/* 영상 삭제 버튼 - 영상이 있을 때만 표시 */}
+                    {current_project.files && (
+                      <button
+                        onClick={DeleteFile}
+                        className={styles.feedbackButtonDanger}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>영상 삭제</span>
+                      </button>
+                    )}
+                    
+                    {/* 공유 버튼 - 영상이 있을 때만 표시 */}
+                    {current_project.files && (
+                      <button
+                        onClick={() => CopyFileUrl(current_project.files)}
+                        className={styles.feedbackButtonSecondary}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>공유</span>
+                      </button>
+                    )}
+                </div>
+                
+                <div className="etc_box">
                   {/* 선택된 피드백 내용 표시 - 피드백 전체 보기 버튼 바로 아래 */}
                   {selectedFeedback && (
                     <div 
@@ -1276,17 +1555,32 @@ export default function Feedback() {
               </div>
               <div className="sidebox">
                 <div className="b_title">
-                  <div className="s_title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div className="s_title" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}>
                     <span>피드백</span>
                     <button 
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
-                      className={styles.feedbackButtonToggleRound}
-                      style={{
-                        transform: showProjectInfo ? 'rotate(180deg)' : 'rotate(0deg)'
+                      className={styles.feedbackButtonIconOnly}
+                      style={{ 
+                        width: '32px',
+                        height: '32px',
+                        padding: '0',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: showProjectInfo ? '#1631F8' : 'transparent',
+                        border: '1px solid #e9ecef',
+                        transition: 'all 0.3s ease'
                       }}
+                      title="프로젝트 정보"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                        <path d="M7 10l5 5 5-5z"/>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill={showProjectInfo ? "white" : "#6c757d"} xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
+                        <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
                     </button>
                   </div>
@@ -1344,7 +1638,40 @@ export default function Feedback() {
                       ))}
                     </ul>
                   </div>
-                  <div className="tab_content">{currentItem && currentItem.content}</div>
+                  <div className="tab_content">
+                    {currentItem && currentItem.content}
+                    {currentItem && currentItem.tab === '피드백 관리' && (
+                      <div style={{ 
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        zIndex: 100
+                      }}>
+                        <button
+                          onClick={() =>
+                            navigate('/FeedbackAll', {
+                              state: { ...current_project, user: user },
+                            })
+                          }
+                          className={styles.feedbackButtonPrimary}
+                          style={{ 
+                            padding: '12px 24px',
+                            boxShadow: '0 4px 12px rgba(22, 49, 248, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" strokeWidth="2"/>
+                            <line x1="9" y1="9" x2="9" y2="21" stroke="currentColor" strokeWidth="2"/>
+                          </svg>
+                          <span>피드백 전체보기</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1553,6 +1880,292 @@ export default function Feedback() {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* 멤버 초대 모달 */}
+      {showInviteModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            width: '90%',
+            maxWidth: '500px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px'
+            }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
+                멤버 초대
+              </h3>
+              <button
+                onClick={handleCloseInviteModal}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#666',
+                  padding: 0,
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* 빠른 선택 섹션 */}
+            {quickListLoading && (
+              <div style={{ 
+                marginBottom: '20px', 
+                textAlign: 'center',
+                color: '#666',
+                fontSize: '14px' 
+              }}>
+                빠른 선택 목록을 불러오는 중...
+              </div>
+            )}
+            {!quickListLoading && (friends.length > 0 || recentInvitations.length > 0) && (
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ 
+                  fontSize: '14px', 
+                  fontWeight: '600', 
+                  marginBottom: '12px', 
+                  color: '#333' 
+                }}>
+                  빠른 선택
+                </h4>
+                
+                {/* 친구 목록 */}
+                {friends.length > 0 && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <h5 style={{ 
+                      fontSize: '13px', 
+                      fontWeight: '500', 
+                      marginBottom: '8px', 
+                      color: '#666',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      👥 친구
+                    </h5>
+                    <div style={{ 
+                      display: 'flex', 
+                      flexWrap: 'wrap', 
+                      gap: '6px',
+                      maxHeight: '80px',
+                      overflowY: 'auto'
+                    }}>
+                      {friends.slice(0, 8).map((friend, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleQuickEmailSelect(friend.email)}
+                          style={{
+                            padding: '4px 8px',
+                            fontSize: '12px',
+                            border: '1px solid #ddd',
+                            borderRadius: '12px',
+                            backgroundColor: inviteEmail === friend.email ? '#1631F8' : 'white',
+                            color: inviteEmail === friend.email ? 'white' : '#333',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (inviteEmail !== friend.email) {
+                              e.target.style.backgroundColor = '#f8f9fa'
+                              e.target.style.borderColor = '#1631F8'
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (inviteEmail !== friend.email) {
+                              e.target.style.backgroundColor = 'white'
+                              e.target.style.borderColor = '#ddd'
+                            }
+                          }}
+                        >
+                          <span>{friend.nickname || friend.email.split('@')[0]}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* 최근 초대한 사람 목록 */}
+                {recentInvitations.length > 0 && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <h5 style={{ 
+                      fontSize: '13px', 
+                      fontWeight: '500', 
+                      marginBottom: '8px', 
+                      color: '#666',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      🕒 최근 초대
+                    </h5>
+                    <div style={{ 
+                      display: 'flex', 
+                      flexWrap: 'wrap', 
+                      gap: '6px',
+                      maxHeight: '80px',
+                      overflowY: 'auto'
+                    }}>
+                      {recentInvitations.slice(0, 8).map((recent, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleQuickEmailSelect(recent.invitee_email)}
+                          style={{
+                            padding: '4px 8px',
+                            fontSize: '12px',
+                            border: '1px solid #ddd',
+                            borderRadius: '12px',
+                            backgroundColor: inviteEmail === recent.invitee_email ? '#1631F8' : 'white',
+                            color: inviteEmail === recent.invitee_email ? 'white' : '#333',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (inviteEmail !== recent.invitee_email) {
+                              e.target.style.backgroundColor = '#f8f9fa'
+                              e.target.style.borderColor = '#1631F8'
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (inviteEmail !== recent.invitee_email) {
+                              e.target.style.backgroundColor = 'white'
+                              e.target.style.borderColor = '#ddd'
+                            }
+                          }}
+                        >
+                          <span>{recent.invitee_email.split('@')[0]}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#333'
+              }}>
+                이메일 <span style={{ color: '#e74c3c' }}>*</span>
+              </label>
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="초대할 사용자의 이메일을 입력하세요"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#333'
+              }}>
+                초대 메시지 (선택사항)
+              </label>
+              <textarea
+                value={inviteMessage}
+                onChange={(e) => setInviteMessage(e.target.value)}
+                placeholder="초대와 함께 보낼 메시지를 입력하세요"
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'flex-end'
+            }}>
+              <button
+                onClick={handleCloseInviteModal}
+                style={{
+                  padding: '10px 20px',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  backgroundColor: 'white',
+                  color: '#666',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                취소
+              </button>
+              <button
+                onClick={handleInviteMember}
+                disabled={inviteLoading || !inviteEmail.trim()}
+                style={{
+                  padding: '10px 20px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  background: inviteLoading || !inviteEmail.trim() ? '#ccc' : 
+                            'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: inviteLoading || !inviteEmail.trim() ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {inviteLoading ? '초대 중...' : '초대 보내기'}
+              </button>
+            </div>
           </div>
         </div>
       )}

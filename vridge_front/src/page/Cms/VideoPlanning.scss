@@ -58,7 +58,7 @@
         .planning-number {
           width: 32px;
           height: 32px;
-          background: #4318FF;
+          background: linear-gradient(135deg, #1631F8, #0F23C9);
           color: white;
           border-radius: 50%;
           display: flex;
@@ -253,7 +253,7 @@
         .recent-number {
           width: 36px;
           height: 36px;
-          background: #4318FF;
+          background: linear-gradient(135deg, #1631F8, #0F23C9);
           color: white;
           border-radius: 50%;
           display: flex;
@@ -534,7 +534,7 @@
 
       &.active {
         .step-number {
-          background: #012fff;
+          background: linear-gradient(135deg, #1631F8, #0F23C9);
           color: white;
         }
 
@@ -716,7 +716,7 @@
 
     .generate-btn, .save-btn {
       padding: 14px 32px;
-      background: #012fff;
+      background: linear-gradient(135deg, #1631F8, #0F23C9);
       color: white;
       border: none;
       border-radius: 8px;
@@ -731,7 +731,7 @@
       justify-content: center;
 
       &:hover:not(:disabled) {
-        background: #0047b8;
+        background: linear-gradient(135deg, #0F23C9, #0A1A99);
         transform: translateY(-1px);
       }
 
@@ -742,10 +742,10 @@
     }
     
     .save-btn {
-      background: #28a745;
+      background: linear-gradient(135deg, #1631F8, #0F23C9);
       
       &:hover:not(:disabled) {
-        background: #218838;
+        background: linear-gradient(135deg, #0F23C9, #0A1A99);
       }
     }
   }
@@ -1160,7 +1160,7 @@
         }
         
         .edit-story-btn {
-          background: #4318FF;
+          background: linear-gradient(135deg, #1631F8, #0F23C9);
           color: white;
           border: none;
           padding: 6px 12px;
@@ -1174,7 +1174,7 @@
           gap: 4px;
           
           &:hover {
-            background: #3311dd;
+            background: linear-gradient(135deg, #0F23C9, #0A1A99);
             transform: translateY(-1px);
           }
           
@@ -1295,7 +1295,7 @@
             right: 12px;
             width: 24px;
             height: 24px;
-            background: #012fff;
+            background: linear-gradient(135deg, #1631F8, #0F23C9);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -2237,7 +2237,7 @@
       transition: all 0.3s ease;
 
       &:hover {
-        background: #4318FF;
+        background: linear-gradient(135deg, #1631F8, #0F23C9);
         color: white;
         transform: translateY(-1px);
       }
@@ -2553,8 +2553,51 @@
           }
         }
 
+        // 스토리 미리보기 스타일
+        .stories-preview {
+          .story-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e8ff;
+
+            .story-stage-badge {
+              font-size: 14px;
+              font-weight: 700;
+              color: #1631F8;
+              background: white;
+              padding: 6px 12px;
+              border-radius: 6px;
+              min-width: 40px;
+              text-align: center;
+              box-shadow: 0 2px 4px rgba(22, 49, 248, 0.1);
+            }
+
+            .story-title {
+              font-size: 14px;
+              color: #333;
+              font-weight: 500;
+              flex: 1;
+            }
+          }
+
+          .more-stories {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-top: 8px;
+          }
+        }
+
         // 씬 미리보기 스타일
-        &.scenes-preview {
+        .scenes-preview {
           .scene-preview-item {
             display: flex;
             align-items: center;
@@ -2837,11 +2880,11 @@
       
       &.generate-btn,
       &.next-btn {
-        background: #4318FF;
+        background: linear-gradient(135deg, #1631F8, #0F23C9);
         color: white;
         
         &:hover {
-          background: #3311dd;
+          background: linear-gradient(135deg, #0F23C9, #0A1A99);
           transform: translateY(-1px);
         }
         
@@ -2854,11 +2897,11 @@
       }
       
       &.export-btn {
-        background: #28a745;
+        background: linear-gradient(135deg, #1631F8, #0F23C9);
         color: white;
         
         &:hover {
-          background: #218838;
+          background: linear-gradient(135deg, #0F23C9, #0A1A99);
           transform: translateY(-1px);
         }
       }
@@ -2890,7 +2933,7 @@
       flex-wrap: wrap;
       
       .generate-all-btn {
-        background: #4318FF;
+        background: linear-gradient(135deg, #1631F8, #0F23C9);
         color: white;
         border: none;
         padding: 12px 20px;
@@ -2906,7 +2949,7 @@
         justify-content: center;
         
         &:hover:not(:disabled) {
-          background: #3311dd;
+          background: linear-gradient(135deg, #0F23C9, #0A1A99);
           transform: translateY(-1px);
         }
         
@@ -3045,7 +3088,7 @@
 
       .upload-btn {
         display: inline-block;
-        background: #4318FF;
+        background: linear-gradient(135deg, #1631F8, #0F23C9);
         color: white;
         padding: 12px 24px;
         border-radius: 8px;
@@ -3057,7 +3100,7 @@
         min-width: 140px;
 
         &:hover {
-          background: #3311dd;
+          background: linear-gradient(135deg, #0F23C9, #0A1A99);
           transform: translateY(-1px);
         }
       }

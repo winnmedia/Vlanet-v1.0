@@ -134,7 +134,7 @@ export default function SideBar({ tab, on_menu }) {
               전체 일정
             </li>
             <li
-              className={cx('menu_project', {
+              className={cx('menu_project', 'has-toggle', {
                 active:
                   path.includes('/ProjectView') ||
                   (SubMenu && tab_name === 'project'),
@@ -153,7 +153,7 @@ export default function SideBar({ tab, on_menu }) {
               <span>{project_list ? project_list.length : 0}</span>
             </li>
             <li
-              className={cx({
+              className={cx('has-toggle', {
                 active:
                   path.includes('/Feedback') ||
                   (SubMenu && tab_name === 'feedback'),

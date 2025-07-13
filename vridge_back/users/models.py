@@ -17,6 +17,8 @@ class User(AbstractUser):
         max_length=50, verbose_name="로그인 방식", choices=LOGIN_CHOICES, default="email"
     )
     email_secret = models.CharField(verbose_name="비밀번호 찾기(인증번호)", max_length=10, null=True, blank=True)
+    email_verified = models.BooleanField(default=False, verbose_name="이메일 인증 완료")
+    email_verified_at = models.DateTimeField(null=True, blank=True, verbose_name="이메일 인증 완료 시간")
     
     objects = managers.CustomUserManager()
 
@@ -67,6 +69,41 @@ class EmailVerify(core_model.TimeStampedModel):
     class Meta:
         verbose_name = "이메일 인증번호"
         verbose_name_plural = "이메일 인증번호"
+
+
+class EmailVerificationToken(core_model.TimeStampedModel):
+    """회원가입 이메일 인증 토큰"""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="verification_tokens",
+        verbose_name="사용자"
+    )
+    token = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        verbose_name="인증 토큰"
+    )
+    email = models.EmailField(verbose_name="인증할 이메일")
+    is_verified = models.BooleanField(default=False, verbose_name="인증 완료 여부")
+    verified_at = models.DateTimeField(null=True, blank=True, verbose_name="인증 완료 시간")
+    expires_at = models.DateTimeField(verbose_name="만료 시간")
+    
+    class Meta:
+        verbose_name = "이메일 인증 토큰"
+        verbose_name_plural = "이메일 인증 토큰"
+        indexes = [
+            models.Index(fields=['token']),
+            models.Index(fields=['email', 'is_verified']),
+        ]
+    
+    def __str__(self):
+        return f"{self.email} - {'인증완료' if self.is_verified else '인증대기'}"
+    
+    def is_expired(self):
+        """토큰이 만료되었는지 확인"""
+        from django.utils import timezone
+        return timezone.now() > self.expires_at
 
 
 class UserMemo(core_model.TimeStampedModel):

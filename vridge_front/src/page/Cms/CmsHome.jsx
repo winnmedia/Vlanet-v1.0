@@ -15,6 +15,7 @@ import { refetchProject, checkSession } from 'util/util'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { UpdateDate } from 'api/project'
+import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
 
 export default function CmsHome() {
   const navigate = useNavigate()
@@ -31,6 +32,9 @@ export default function CmsHome() {
   const [showDashboard, setShowDashboard] = useState(false)
   const [showRecentActivity, setShowRecentActivity] = useState(false)
   const [showDeadlineProjects, setShowDeadlineProjects] = useState(false)
+  const [showInvitations, setShowInvitations] = useState(false)
+  const [invitations, setInvitations] = useState({ sent: [], received: [], recent_accepted: [] })
+  const [invitationLoading, setInvitationLoading] = useState(false)
 
   // 인증 체크 및 프로젝트 목록 확인
   useEffect(() => {
@@ -52,6 +56,49 @@ export default function CmsHome() {
       })
     }
   }, [dispatch, navigate]) // 의존성 추가
+
+  // 초대 목록 로드
+  const loadInvitations = async () => {
+    try {
+      setInvitationLoading(true)
+      const response = await GetMyInvitations()
+      setInvitations(response.data)
+    } catch (error) {
+      console.error('초대 목록 로드 실패:', error)
+    } finally {
+      setInvitationLoading(false)
+    }
+  }
+
+  // 초대 수락 처리
+  const handleAcceptInvitation = async (invitationId) => {
+    try {
+      await AcceptInvitation(invitationId)
+      loadInvitations() // 목록 새로고침
+      refetchProject(dispatch, navigate) // 프로젝트 목록 새로고침
+      alert('초대를 수락했습니다.')
+    } catch (error) {
+      console.error('초대 수락 실패:', error)
+      alert('초대 수락에 실패했습니다.')
+    }
+  }
+
+  // 초대 거절 처리
+  const handleDeclineInvitation = async (invitationId) => {
+    try {
+      await DeclineInvitation(invitationId)
+      loadInvitations() // 목록 새로고침
+      alert('초대를 거절했습니다.')
+    } catch (error) {
+      console.error('초대 거절 실패:', error)
+      alert('초대 거절에 실패했습니다.')
+    }
+  }
+
+  // 컴포넌트 마운트 시 초대 목록 로드
+  useEffect(() => {
+    loadInvitations()
+  }, [])
 
   useEffect(() => {
     setTime(moment(date).format('HH:mm:ss'))
@@ -121,39 +168,7 @@ export default function CmsHome() {
                 <button 
                   className={`collapse-btn ${showDashboard ? '' : 'collapsed'}`}
                   onClick={() => setShowDashboard(!showDashboard)}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: '#1631F8',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.3s ease',
-                    flexShrink: 0
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#0F23C9';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#1631F8';
-                  }}
-                >
-                  <svg 
-                    width="10" 
-                    height="10" 
-                    viewBox="0 0 10 10" 
-                    fill="white"
-                    style={{
-                      transform: showDashboard ? 'rotate(0deg)' : 'rotate(180deg)',
-                      transition: 'transform 0.3s ease'
-                    }}
-                  >
-                    <path d="M5 7L1 3h8L5 7z"/>
-                  </svg>
-                </button>
+                />
               </div>
               <div style={{ 
                 display: showDashboard ? 'none' : 'block',
@@ -246,39 +261,7 @@ export default function CmsHome() {
                 <button 
                   className={`collapse-btn ${showRecentActivity ? 'collapsed' : ''}`}
                   onClick={() => setShowRecentActivity(!showRecentActivity)}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: '#1631F8',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.3s ease',
-                    flexShrink: 0
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#0F23C9';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#1631F8';
-                  }}
-                >
-                  <svg 
-                    width="10" 
-                    height="10" 
-                    viewBox="0 0 10 10" 
-                    fill="white"
-                    style={{
-                      transform: showRecentActivity ? 'rotate(180deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.3s ease'
-                    }}
-                  >
-                    <path d="M5 7L1 3h8L5 7z"/>
-                  </svg>
-                </button>
+                />
               </div>
               {!showRecentActivity && (
               <div className="feedback-list" style={{ marginTop: '20px' }}>
@@ -413,39 +396,7 @@ export default function CmsHome() {
                 <button 
                   className={`collapse-btn ${showDeadlineProjects ? 'collapsed' : ''}`}
                   onClick={() => setShowDeadlineProjects(!showDeadlineProjects)}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: '#1631F8',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.3s ease',
-                    flexShrink: 0
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#0F23C9';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#1631F8';
-                  }}
-                >
-                  <svg 
-                    width="10" 
-                    height="10" 
-                    viewBox="0 0 10 10" 
-                    fill="white"
-                    style={{
-                      transform: showDeadlineProjects ? 'rotate(180deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.3s ease'
-                    }}
-                  >
-                    <path d="M5 7L1 3h8L5 7z"/>
-                  </svg>
-                </button>
+                />
               </div>
               {!showDeadlineProjects && (
               <div className="deadline-list" style={{ marginTop: '20px' }}>
@@ -512,6 +463,337 @@ export default function CmsHome() {
                   </div>
                 )}
               </div>
+              )}
+            </div>
+
+            {/* 초대 현황 섹션 */}
+            <div className="part">
+              <div className="s_title" style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px',
+                marginBottom: '20px'
+              }}>
+                <div style={{ 
+                  fontSize: '24px',
+                  fontWeight: '600',
+                  color: '#333',
+                  whiteSpace: 'nowrap' 
+                }}>초대 현황</div>
+                <button 
+                  className={`collapse-btn ${showInvitations ? 'collapsed' : ''}`}
+                  onClick={() => setShowInvitations(!showInvitations)}
+                />
+              </div>
+              {!showInvitations && (
+                <div className="invitation-section" style={{ marginTop: '20px' }}>
+                  {invitationLoading ? (
+                    <div style={{ 
+                      textAlign: 'center', 
+                      color: '#6c757d', 
+                      padding: '20px',
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '10px'
+                    }}>
+                      로딩 중...
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gap: '20px' }}>
+                      {/* 받은 초대 */}
+                      <div>
+                        <h4 style={{ 
+                          fontSize: '16px', 
+                          fontWeight: '600', 
+                          color: '#495057', 
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          받은 초대
+                          {invitations.received && invitations.received.length > 0 && (
+                            <span style={{
+                              backgroundColor: '#1631F8',
+                              color: 'white',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              minWidth: '20px',
+                              textAlign: 'center'
+                            }}>
+                              {invitations.received.length}
+                            </span>
+                          )}
+                        </h4>
+                        {invitations.received && invitations.received.length > 0 ? (
+                          invitations.received.map(invitation => (
+                            <div 
+                              key={invitation.id}
+                              style={{
+                                padding: '16px',
+                                backgroundColor: '#f8f9ff',
+                                borderRadius: '10px',
+                                marginBottom: '12px',
+                                border: '1px solid #e3e9ff',
+                                position: 'relative'
+                              }}
+                            >
+                              <div style={{ marginBottom: '12px' }}>
+                                <div style={{ fontSize: '14px', fontWeight: '600', color: '#212529', marginBottom: '4px' }}>
+                                  {invitation.project_name}
+                                </div>
+                                <div style={{ fontSize: '13px', color: '#495057' }}>
+                                  {invitation.inviter_name}님이 초대했습니다
+                                </div>
+                                {invitation.message && (
+                                  <div style={{ 
+                                    fontSize: '12px', 
+                                    color: '#6c757d', 
+                                    marginTop: '6px',
+                                    fontStyle: 'italic'
+                                  }}>
+                                    "{invitation.message}"
+                                  </div>
+                                )}
+                                <div style={{ fontSize: '11px', color: '#adb5bd', marginTop: '6px' }}>
+                                  {moment(invitation.created).fromNow()}
+                                </div>
+                              </div>
+                              
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  onClick={() => handleAcceptInvitation(invitation.id)}
+                                  style={{
+                                    padding: '6px 16px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.transform = 'translateY(-2px)'
+                                    e.target.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.3)'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.transform = 'translateY(0)'
+                                    e.target.style.boxShadow = 'none'
+                                  }}
+                                >
+                                  수락
+                                </button>
+                                <button
+                                  onClick={() => handleDeclineInvitation(invitation.id)}
+                                  style={{
+                                    padding: '6px 16px',
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    background: '#dc3545',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.transform = 'translateY(-2px)'
+                                    e.target.style.backgroundColor = '#c82333'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.transform = 'translateY(0)'
+                                    e.target.style.backgroundColor = '#dc3545'
+                                  }}
+                                >
+                                  거절
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div style={{ 
+                            textAlign: 'center', 
+                            color: '#6c757d', 
+                            padding: '20px',
+                            backgroundColor: '#f8f9fa',
+                            borderRadius: '8px',
+                            fontSize: '14px'
+                          }}>
+                            받은 초대가 없습니다
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 보낸 초대 */}
+                      <div>
+                        <h4 style={{ 
+                          fontSize: '16px', 
+                          fontWeight: '600', 
+                          color: '#495057', 
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          보낸 초대
+                          {invitations.sent && invitations.sent.length > 0 && (
+                            <span style={{
+                              backgroundColor: '#6c757d',
+                              color: 'white',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              minWidth: '20px',
+                              textAlign: 'center'
+                            }}>
+                              {invitations.sent.length}
+                            </span>
+                          )}
+                        </h4>
+                        {invitations.sent && invitations.sent.length > 0 ? (
+                          invitations.sent.map(invitation => (
+                            <div 
+                              key={invitation.id}
+                              style={{
+                                padding: '14px',
+                                backgroundColor: '#fff9f0',
+                                borderRadius: '8px',
+                                marginBottom: '10px',
+                                border: '1px solid #ffe0b2'
+                              }}
+                            >
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#212529' }}>
+                                    {invitation.project_name}
+                                  </div>
+                                  <div style={{ fontSize: '13px', color: '#495057', marginTop: '2px' }}>
+                                    {invitation.invitee_email}
+                                  </div>
+                                  <div style={{ fontSize: '11px', color: '#adb5bd', marginTop: '4px' }}>
+                                    {moment(invitation.created).fromNow()}
+                                  </div>
+                                </div>
+                                <div style={{
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  color: invitation.status === 'pending' ? '#f57c00' : 
+                                        invitation.status === 'accepted' ? '#28a745' : '#dc3545',
+                                  backgroundColor: invitation.status === 'pending' ? '#fff3e0' : 
+                                                  invitation.status === 'accepted' ? '#f1f8e9' : '#ffebee',
+                                  padding: '4px 10px',
+                                  borderRadius: '10px'
+                                }}>
+                                  {invitation.status === 'pending' ? '대기중' : 
+                                   invitation.status === 'accepted' ? '수락됨' : '거절됨'}
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div style={{ 
+                            textAlign: 'center', 
+                            color: '#6c757d', 
+                            padding: '20px',
+                            backgroundColor: '#f8f9fa',
+                            borderRadius: '8px',
+                            fontSize: '14px'
+                          }}>
+                            보낸 초대가 없습니다
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 최근 수락한 프로젝트 */}
+                      <div>
+                        <h4 style={{ 
+                          fontSize: '16px', 
+                          fontWeight: '600', 
+                          color: '#495057', 
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          최근 수락한 프로젝트
+                          {invitations.recent_accepted && invitations.recent_accepted.length > 0 && (
+                            <span style={{
+                              backgroundColor: '#28a745',
+                              color: 'white',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              minWidth: '20px',
+                              textAlign: 'center'
+                            }}>
+                              {invitations.recent_accepted.length}
+                            </span>
+                          )}
+                        </h4>
+                        {invitations.recent_accepted && invitations.recent_accepted.length > 0 ? (
+                          invitations.recent_accepted.map(invitation => (
+                            <div 
+                              key={invitation.id}
+                              style={{
+                                padding: '14px',
+                                backgroundColor: '#f1f8e9',
+                                borderRadius: '8px',
+                                marginBottom: '10px',
+                                border: '1px solid #c8e6c9',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onClick={() => navigate(`/Feedback/${invitation.project_id}`)}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#e8f5e8'
+                                e.currentTarget.style.transform = 'translateY(-2px)'
+                                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#f1f8e9'
+                                e.currentTarget.style.transform = 'translateY(0)'
+                                e.currentTarget.style.boxShadow = 'none'
+                              }}
+                            >
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#212529' }}>
+                                    {invitation.project_name}
+                                  </div>
+                                  <div style={{ fontSize: '13px', color: '#495057', marginTop: '2px' }}>
+                                    {invitation.inviter_name}님의 프로젝트
+                                  </div>
+                                  <div style={{ fontSize: '11px', color: '#adb5bd', marginTop: '4px' }}>
+                                    {moment(invitation.responded_at).fromNow()}에 참여
+                                  </div>
+                                </div>
+                                <div style={{ fontSize: '12px', color: '#28a745' }}>
+                                  →
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div style={{ 
+                            textAlign: 'center', 
+                            color: '#6c757d', 
+                            padding: '20px',
+                            backgroundColor: '#f8f9fa',
+                            borderRadius: '8px',
+                            fontSize: '14px'
+                          }}>
+                            최근 수락한 프로젝트가 없습니다
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 

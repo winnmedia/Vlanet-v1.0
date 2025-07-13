@@ -1,0 +1,460 @@
+// FeedbackHarmonyUI.scss
+// Comprehensive UI/UX improvements for the Feedback page
+// Following the brand guidelines and design system
+
+// ========== Brand Colors ==========
+$primary-blue: #1631F8;
+$primary-blue-dark: #0F23C9;
+$danger-red: #dc3545;
+$danger-red-dark: #c82333;
+$success-green: #28a745;
+$warning-yellow: #ffc107;
+$info-cyan: #17a2b8;
+$secondary-gray: #6c757d;
+$dark-gray: #212529;
+$medium-gray: #495057;
+$light-gray: #f8f9fa;
+$border-gray: #dee2e6;
+$text-gray: #6c757d;
+
+// ========== Transitions ==========
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// ========== Shadows ==========
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+$shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.15);
+
+// ========== Feedback Page Overrides ==========
+.feedback_page {
+  // Main layout improvements
+  &.flex.space_between {
+    gap: 24px;
+    align-items: flex-start;
+    padding: 0;
+    
+    @media (max-width: 1200px) {
+      flex-direction: column;
+    }
+  }
+  
+  // Video section enhancements
+  .video_section {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    box-shadow: $shadow-md;
+    overflow: hidden;
+    transition: box-shadow $transition-normal;
+    
+    &:hover {
+      box-shadow: $shadow-lg;
+    }
+    
+    .video_inner {
+      height: 100%;
+      min-height: 500px;
+      position: relative;
+      background: $light-gray;
+      
+      &.active {
+        background: black;
+      }
+      
+      // Loading states
+      .loading, .encoding-status {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        
+        .loading-content, .encoding-content {
+          text-align: center;
+          color: white;
+          
+          .progress-container {
+            width: 300px;
+            margin: 0 auto 20px;
+            
+            .progress-bar {
+              height: 6px;
+              background: rgba(255, 255, 255, 0.2);
+              border-radius: 3px;
+              overflow: hidden;
+              
+              .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, $primary-blue, $primary-blue-dark);
+                transition: width 0.3s ease;
+                box-shadow: 0 0 10px rgba(22, 49, 248, 0.5);
+              }
+            }
+            
+            .progress-text {
+              margin-top: 10px;
+              font-size: 18px;
+              font-weight: 600;
+            }
+          }
+          
+          .loading-message, .encoding-message {
+            font-size: 16px;
+            opacity: 0.9;
+          }
+          
+          .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+          }
+        }
+      }
+    }
+  }
+  
+  // Video control buttons section
+  .video-control-buttons {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid $border-gray;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    
+    @media (max-width: 768px) {
+      justify-content: center;
+      
+      button, label {
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+      }
+    }
+  }
+  
+  // Feedback sections
+  .etc_box {
+    padding: 20px;
+    background: $light-gray;
+    border-radius: 0 0 16px 16px;
+    
+    .list {
+      margin-top: 16px;
+    }
+  }
+  
+  // Sidebar improvements
+  .sidebox {
+    width: 380px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: $shadow-md;
+    overflow: hidden;
+    transition: all $transition-normal;
+    
+    @media (max-width: 1200px) {
+      width: 100%;
+    }
+    
+    &:hover {
+      box-shadow: $shadow-lg;
+    }
+    
+    .b_title {
+      padding: 20px;
+      border-bottom: 1px solid $border-gray;
+      background: $light-gray;
+      
+      .s_title {
+        font-size: 18px;
+        font-weight: 700;
+        color: $dark-gray;
+        margin: 0;
+      }
+    }
+    
+    // Tab container improvements
+    .tab_container {
+      .tab_menu {
+        padding: 0;
+        border-bottom: 1px solid $border-gray;
+        background: white;
+        
+        .tab_list {
+          display: flex;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+          
+          li {
+            flex: 1;
+            
+            button {
+              width: 100%;
+              padding: 16px;
+              font-size: 14px;
+              font-weight: 600;
+              color: $text-gray;
+              background: none;
+              border: none;
+              border-bottom: 3px solid transparent;
+              cursor: pointer;
+              transition: all $transition-fast;
+              
+              &:hover {
+                color: $primary-blue;
+                background: rgba(22, 49, 248, 0.05);
+              }
+            }
+            
+            &.active button {
+              color: $primary-blue;
+              border-bottom-color: $primary-blue;
+              background: rgba(22, 49, 248, 0.05);
+            }
+          }
+        }
+      }
+      
+      .tab_content {
+        padding: 20px;
+        max-height: 600px;
+        overflow-y: auto;
+        
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: $light-gray;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: $border-gray;
+          border-radius: 3px;
+          
+          &:hover {
+            background: $text-gray;
+          }
+        }
+      }
+    }
+    
+    // Member list improvements
+    .member {
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        
+        li {
+          display: flex;
+          align-items: center;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all $transition-fast;
+          
+          &:hover {
+            background: $light-gray;
+          }
+          
+          .img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background: linear-gradient(135deg, $primary-blue, $primary-blue-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            
+            &::before {
+              content: attr(data-initial);
+            }
+          }
+          
+          .txt {
+            flex: 1;
+            
+            span {
+              display: block;
+              font-size: 12px;
+              color: $text-gray;
+              margin-top: 2px;
+            }
+          }
+          
+          &.admin {
+            .img {
+              background: linear-gradient(135deg, $success-green, #229641);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Upload label improvements
+  .feedback-upload-label {
+    &:hover {
+      background: rgba(22, 49, 248, 0.05) !important;
+      border-color: $primary-blue !important;
+      
+      svg path {
+        stroke: $primary-blue-dark;
+      }
+    }
+  }
+}
+
+// ========== WebSocket Status Indicator ==========
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ========== Feedback Detail Display ==========
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feedback-detail-display {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+// ========== Video Player Section Enhancements ==========
+.video-player-section {
+  position: relative;
+  height: 100%;
+  
+  // Ensure video player fills container properly
+  > div {
+    height: 100% !important;
+  }
+  
+  .video-js {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+// ========== Button Focus States ==========
+button:focus-visible,
+.feedback-upload-label:focus-within {
+  outline: 2px solid $primary-blue;
+  outline-offset: 2px;
+}
+
+// ========== Smooth Scrolling ==========
+* {
+  scroll-behavior: smooth;
+}
+
+// ========== Loading Overlay ==========
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  
+  .loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid $border-gray;
+    border-top-color: $primary-blue;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 16px;
+    color: $medium-gray;
+    font-weight: 500;
+  }
+}
+
+// ========== Responsive Improvements ==========
+@media (max-width: 768px) {
+  .feedback_page {
+    .video_section {
+      .video_inner {
+        min-height: 300px;
+      }
+    }
+    
+    .sidebox {
+      margin-top: 20px;
+      
+      .tab_content {
+        max-height: 400px;
+      }
+    }
+  }
+}
+
+// ========== Accessibility Improvements ==========
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ========== Print Styles ==========
+@media print {
+  .video-control-buttons,
+  .tab_menu,
+  button {
+    display: none !important;
+  }
+}

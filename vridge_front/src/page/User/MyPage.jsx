@@ -7,6 +7,10 @@ import { getMyPageInfo, uploadProfileImage, updateProfile } from 'api/user'
 import { useSelector, useDispatch } from 'react-redux'
 import { updateProjectStore } from 'redux/project'
 import ImageCropper from 'components/ImageCropper'
+import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
+import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest } from 'api/friends'
+import moment from 'moment'
+import 'moment/locale/ko'
 
 export default function MyPage() {
   const navigate = useNavigate()
@@ -33,6 +37,16 @@ export default function MyPage() {
   const [showCropper, setShowCropper] = useState(false)
   const [tempImageSrc, setTempImageSrc] = useState(null)
   const fileInputRef = useRef(null)
+  const [invitations, setInvitations] = useState({ sent: [], received: [], recent_accepted: [] })
+  const [invitationLoading, setInvitationLoading] = useState(false)
+  
+  // 친구 관련 상태
+  const [friends, setFriends] = useState([])
+  const [friendRequests, setFriendRequests] = useState([])
+  const [friendSearchQuery, setFriendSearchQuery] = useState('')
+  const [friendSearchResults, setFriendSearchResults] = useState([])
+  const [friendLoading, setFriendLoading] = useState(false)
+  const [showFriendSearch, setShowFriendSearch] = useState(false)
 
   useEffect(() => {
     const session = checkSession()
@@ -42,6 +56,113 @@ export default function MyPage() {
       fetchMyPageData()
     }
   }, [navigate])
+
+  // 초대 목록 로드
+  const loadInvitations = async () => {
+    try {
+      setInvitationLoading(true)
+      const response = await GetMyInvitations()
+      setInvitations(response.data)
+    } catch (error) {
+      console.error('초대 목록 로드 실패:', error)
+    } finally {
+      setInvitationLoading(false)
+    }
+  }
+
+  // 초대 수락 처리
+  const handleAcceptInvitation = async (invitationId) => {
+    try {
+      await AcceptInvitation(invitationId)
+      loadInvitations() // 목록 새로고침
+      alert('초대를 수락했습니다.')
+    } catch (error) {
+      console.error('초대 수락 실패:', error)
+      alert('초대 수락에 실패했습니다.')
+    }
+  }
+
+  // 초대 거절 처리
+  const handleDeclineInvitation = async (invitationId) => {
+    try {
+      await DeclineInvitation(invitationId)
+      loadInvitations() // 목록 새로고침
+      alert('초대를 거절했습니다.')
+    } catch (error) {
+      console.error('초대 거절 실패:', error)
+      alert('초대 거절에 실패했습니다.')
+    }
+  }
+
+  // 친구 관련 함수들
+  const loadFriends = async () => {
+    setFriendLoading(true)
+    try {
+      const response = await GetFriends()
+      setFriends(response.data.friends || [])
+    } catch (error) {
+      console.error('친구 목록 조회 실패:', error)
+    } finally {
+      setFriendLoading(false)
+    }
+  }
+
+  const loadFriendRequests = async () => {
+    try {
+      const response = await GetFriendRequests()
+      setFriendRequests(response.data.requests || [])
+    } catch (error) {
+      console.error('친구 요청 목록 조회 실패:', error)
+    }
+  }
+
+  const handleFriendSearch = async () => {
+    if (!friendSearchQuery.trim()) return
+    
+    setFriendLoading(true)
+    try {
+      const response = await SearchFriends(friendSearchQuery.trim())
+      setFriendSearchResults(response.data.users || [])
+      setShowFriendSearch(true)
+    } catch (error) {
+      console.error('친구 검색 실패:', error)
+      alert('친구 검색 중 오류가 발생했습니다.')
+    } finally {
+      setFriendLoading(false)
+    }
+  }
+
+  const handleSendFriendRequest = async (friendEmail) => {
+    try {
+      await SendFriendRequest(friendEmail)
+      alert('친구 요청을 보냈습니다.')
+      handleFriendSearch() // 검색 결과 새로고침
+    } catch (error) {
+      console.error('친구 요청 실패:', error)
+      alert(error.response?.data?.message || '친구 요청 중 오류가 발생했습니다.')
+    }
+  }
+
+  const handleFriendRequestResponse = async (friendshipId, action) => {
+    try {
+      await RespondToFriendRequest(friendshipId, action)
+      alert(action === 'accept' ? '친구 요청을 수락했습니다.' : '친구 요청을 거절했습니다.')
+      loadFriendRequests()
+      if (action === 'accept') {
+        loadFriends()
+      }
+    } catch (error) {
+      console.error('친구 요청 응답 실패:', error)
+      alert('친구 요청 처리 중 오류가 발생했습니다.')
+    }
+  }
+
+  // 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
+    loadInvitations()
+    loadFriends()
+    loadFriendRequests()
+  }, [])
 
   const fetchMyPageData = async () => {
     try {
@@ -314,6 +435,15 @@ export default function MyPage() {
               onClick={() => setActiveTab('stats')}
             >
               통계
+            </button>
+            <button 
+              className={activeTab === 'friends' ? 'active' : ''}
+              onClick={() => setActiveTab('friends')}
+            >
+              친구
+              {friendRequests.length > 0 && (
+                <span className="badge">{friendRequests.length}</span>
+              )}
             </button>
           </div>
 
@@ -706,6 +836,170 @@ export default function MyPage() {
                     <div className="stat-label">협업자 수</div>
                     <div className="stat-value">{myPageData?.stats?.total_collaborators || 0}</div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'friends' && (
+              <div className="friends-section">
+                <div className="friends-header">
+                  <h2>친구 관리</h2>
+                  <div className="friend-search">
+                    <div className="search-box">
+                      <input
+                        type="text"
+                        placeholder="이메일 또는 닉네임으로 검색"
+                        value={friendSearchQuery}
+                        onChange={(e) => setFriendSearchQuery(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            handleFriendSearch()
+                          }
+                        }}
+                      />
+                      <button onClick={handleFriendSearch} disabled={friendLoading}>
+                        {friendLoading ? '검색 중...' : '검색'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 받은 친구 요청 */}
+                {friendRequests.length > 0 && (
+                  <div className="friend-requests-section">
+                    <h3>받은 친구 요청 ({friendRequests.length})</h3>
+                    <div className="friend-requests">
+                      {friendRequests.map((request) => (
+                        <div key={request.id} className="friend-request-item">
+                          <div className="friend-info">
+                            <div className="friend-avatar">
+                              {request.requester.profile_image ? (
+                                <img src={request.requester.profile_image} alt={request.requester.nickname} />
+                              ) : (
+                                <div className="avatar-placeholder">
+                                  {request.requester.nickname.charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                            </div>
+                            <div className="friend-details">
+                              <div className="friend-name">{request.requester.nickname}</div>
+                              <div className="friend-email">{request.requester.email}</div>
+                              {request.requester.company && (
+                                <div className="friend-company">{request.requester.company}</div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="friend-actions">
+                            <button
+                              onClick={() => handleFriendRequestResponse(request.id, 'accept')}
+                              className="accept-btn"
+                            >
+                              수락
+                            </button>
+                            <button
+                              onClick={() => handleFriendRequestResponse(request.id, 'decline')}
+                              className="decline-btn"
+                            >
+                              거절
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 검색 결과 */}
+                {showFriendSearch && (
+                  <div className="friend-search-results">
+                    <h3>검색 결과</h3>
+                    {friendSearchResults.length === 0 ? (
+                      <p>검색 결과가 없습니다.</p>
+                    ) : (
+                      <div className="search-results">
+                        {friendSearchResults.map((user) => (
+                          <div key={user.id} className="search-result-item">
+                            <div className="friend-info">
+                              <div className="friend-avatar">
+                                {user.profile_image ? (
+                                  <img src={user.profile_image} alt={user.nickname} />
+                                ) : (
+                                  <div className="avatar-placeholder">
+                                    {user.nickname.charAt(0).toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="friend-details">
+                                <div className="friend-name">{user.nickname}</div>
+                                <div className="friend-email">{user.email}</div>
+                                {user.company && (
+                                  <div className="friend-company">{user.company}</div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="friend-actions">
+                              {user.friendship_status === 'none' && (
+                                <button
+                                  onClick={() => handleSendFriendRequest(user.email)}
+                                  className="add-friend-btn"
+                                >
+                                  친구 추가
+                                </button>
+                              )}
+                              {user.friendship_status === 'pending' && (
+                                <span className="status-pending">요청됨</span>
+                              )}
+                              {user.friendship_status === 'accepted' && (
+                                <span className="status-friend">친구</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 친구 목록 */}
+                <div className="friends-list-section">
+                  <h3>내 친구 ({friends.length})</h3>
+                  {friendLoading ? (
+                    <p>로딩 중...</p>
+                  ) : friends.length === 0 ? (
+                    <p>아직 친구가 없습니다. 위에서 친구를 검색해보세요!</p>
+                  ) : (
+                    <div className="friends-list">
+                      {friends.map((friendship) => (
+                        <div key={friendship.id} className="friend-item">
+                          <div className="friend-info">
+                            <div className="friend-avatar">
+                              {friendship.friend.profile_image ? (
+                                <img src={friendship.friend.profile_image} alt={friendship.friend.nickname} />
+                              ) : (
+                                <div className="avatar-placeholder">
+                                  {friendship.friend.nickname.charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                            </div>
+                            <div className="friend-details">
+                              <div className="friend-name">{friendship.friend.nickname}</div>
+                              <div className="friend-email">{friendship.friend.email}</div>
+                              {friendship.friend.company && (
+                                <div className="friend-company">{friendship.friend.company}</div>
+                              )}
+                              <div className="friend-since">
+                                친구 된 날: {moment(friendship.since).format('YYYY.MM.DD')}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="friend-actions">
+                            <button className="message-btn">메시지</button>
+                            <button className="invite-btn">프로젝트 초대</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

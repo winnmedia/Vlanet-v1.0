@@ -50,10 +50,14 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
         storyboards: planningData.storyboards
       }
 
-      if (selectedFormat === 'pdf_full' || selectedFormat === 'pdf_storyboard') {
+      if (selectedFormat === 'pdf_full' || selectedFormat === 'pdf_storyboard' || selectedFormat === 'pdf_advanced') {
         // PDF 내보내기
+        const endpoint = selectedFormat === 'pdf_advanced' 
+          ? '/api/video-planning/export/pdf-advanced/'
+          : '/api/video-planning/export/pdf/'
+        
         const response = await axios.post(
-          '/api/video-planning/export/pdf/',
+          endpoint,
           {
             planning_data: exportData,
             export_type: selectedFormat === 'pdf_storyboard' ? 'storyboard_only' : 'full'

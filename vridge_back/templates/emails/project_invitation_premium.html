@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project_name }} 프로젝트 초대</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 헤더 영역 */
+        .header {
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="25" cy="75" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="75" cy="25" r="1" fill="%23ffffff" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 메인 콘텐츠 */
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+        
+        .invitation-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 30px 0;
+            border: 1px solid #e3f2fd;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .invitation-card::before {
+            content: '📨';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 32px;
+            opacity: 0.3;
+        }
+        
+        .project-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1631F8;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        .inviter-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border-left: 4px solid #1631F8;
+        }
+        
+        .inviter-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 16px;
+        }
+        
+        .inviter-details h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .inviter-details p {
+            margin: 0;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .message-section {
+            margin: 24px 0;
+        }
+        
+        .message-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+        }
+        
+        .message-content {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            font-style: italic;
+            color: #555;
+            border-left: 3px solid #1631F8;
+        }
+        
+        /* 액션 버튼 */
+        .action-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 8px 24px rgba(22, 49, 248, 0.3);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(22, 49, 248, 0.4);
+        }
+        
+        .secondary-text {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        /* 기능 소개 */
+        .features {
+            margin: 40px 0;
+        }
+        
+        .features-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        
+        .feature-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .feature-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        /* 푸터 */
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1631F8;
+            margin-bottom: 12px;
+        }
+        
+        .footer-text {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+        
+        .footer-links {
+            margin: 16px 0;
+        }
+        
+        .footer-links a {
+            color: #1631F8;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .social-links {
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: #1631F8;
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            margin: 0 8px;
+            line-height: 36px;
+            font-size: 14px;
+        }
+        
+        /* 반응형 디자인 */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                margin: 20px;
+                border-radius: 12px;
+            }
+            
+            .header, .content, .footer {
+                padding: 24px 20px;
+            }
+            
+            .invitation-card {
+                padding: 20px;
+                margin: 20px 0;
+            }
+            
+            .inviter-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .inviter-avatar {
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 다크모드 지원 */
+        @media (prefers-color-scheme: dark) {
+            .email-container {
+                background: #1a1a1a;
+                color: #e0e0e0;
+            }
+            
+            .content {
+                background: #1a1a1a;
+            }
+            
+            .greeting {
+                color: #e0e0e0;
+            }
+            
+            .invitation-card {
+                background: linear-gradient(135deg, #2a2a3a 0%, #1f1f2e 100%);
+                border-color: #3a3a4a;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="logo">VideoPlanet</div>
+            <div class="tagline">영상 제작 프로젝트 협업 플랫폼</div>
+        </div>
+        
+        <!-- 메인 콘텐츠 -->
+        <div class="content">
+            <div class="greeting">
+                안녕하세요! 🎬
+            </div>
+            
+            <p style="font-size: 16px; color: #555; margin-bottom: 24px;">
+                <strong>{{ inviter_name }}</strong>님이 VideoPlanet에서 진행 중인 프로젝트에 당신을 초대했습니다.
+            </p>
+            
+            <!-- 초대 카드 -->
+            <div class="invitation-card">
+                <div class="project-title">
+                    {{ project_name }}
+                </div>
+                
+                <div class="inviter-info">
+                    <div class="inviter-avatar">
+                        {{ inviter_name|first|upper }}
+                    </div>
+                    <div class="inviter-details">
+                        <h4>{{ inviter_name }}</h4>
+                        <p>프로젝트 관리자</p>
+                    </div>
+                </div>
+                
+                {% if message %}
+                <div class="message-section">
+                    <div class="message-label">📝 초대 메시지</div>
+                    <div class="message-content">
+                        "{{ message }}"
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div class="action-section">
+                <a href="{{ invitation_url }}" class="cta-button">
+                    🚀 프로젝트 참여하기
+                </a>
+                <div class="secondary-text">
+                    클릭 한 번으로 프로젝트 협업을 시작하세요
+                </div>
+            </div>
+            
+            <!-- 기능 소개 -->
+            <div class="features">
+                <div class="features-title">
+                    VideoPlanet에서 이런 것들을 할 수 있어요
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🎥</div>
+                        <div class="feature-title">실시간 피드백</div>
+                        <div class="feature-desc">영상에 직접 코멘트를 남기고 실시간으로 소통</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📅</div>
+                        <div class="feature-title">일정 관리</div>
+                        <div class="feature-desc">프로젝트 단계별 일정을 체계적으로 관리</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">👥</div>
+                        <div class="feature-title">팀 협업</div>
+                        <div class="feature-desc">팀원들과 효율적인 협업 환경 제공</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">진행 현황</div>
+                        <div class="feature-desc">프로젝트 진행 상황을 한눈에 확인</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center;">
+                <p style="margin: 0; font-size: 14px; color: #666;">
+                    💡 <strong>처음 사용하시나요?</strong><br>
+                    걱정하지 마세요! 직관적인 인터페이스로 누구나 쉽게 사용할 수 있습니다.
+                </p>
+            </div>
+        </div>
+        
+        <!-- 푸터 -->
+        <div class="footer">
+            <div class="footer-logo">VideoPlanet</div>
+            <div class="footer-text">영상 제작의 새로운 협업 경험</div>
+            <div class="footer-text">© 2025 VideoPlanet. All rights reserved.</div>
+            
+            <div class="footer-links">
+                <a href="https://vlanet.net">홈페이지</a>
+                <a href="https://vlanet.net/guide">사용 가이드</a>
+                <a href="https://vlanet.net/support">고객 지원</a>
+            </div>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #999;">
+                이 이메일을 받고 싶지 않으시다면 
+                <a href="#" style="color: #1631F8;">구독 해지</a>를 클릭하세요.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

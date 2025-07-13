@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초대 거절 알림</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 정보 헤더 */
+        .header {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="info-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23info-pattern)"/></svg>') repeat;
+        }
+        
+        .info-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 메인 콘텐츠 */
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .info-message {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 28px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .info-message::before {
+            content: '📝';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+        }
+        
+        .project-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+            border-left: 4px solid #6c757d;
+        }
+        
+        .project-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 12px;
+        }
+        
+        .member-info {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(108, 117, 125, 0.1);
+            border-radius: 8px;
+        }
+        
+        .member-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            margin-right: 16px;
+        }
+        
+        .member-details h3 {
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .member-details p {
+            margin: 0;
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .understanding-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 30px 0;
+        }
+        
+        .understanding-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .understanding-title::before {
+            content: '💡';
+            margin-right: 8px;
+        }
+        
+        .understanding-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .understanding-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+        
+        .understanding-bullet {
+            width: 24px;
+            height: 24px;
+            background: #856404;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .understanding-text {
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        /* 액션 버튼 */
+        .action-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 8px 24px rgba(22, 49, 248, 0.3);
+            transition: all 0.3s ease;
+            margin: 8px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(22, 49, 248, 0.4);
+        }
+        
+        .secondary-button {
+            display: inline-block;
+            background: transparent;
+            color: #6c757d;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            border: 2px solid #6c757d;
+            transition: all 0.3s ease;
+            margin: 8px;
+        }
+        
+        .secondary-button:hover {
+            background: #6c757d;
+            color: white;
+        }
+        
+        /* 푸터 */
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1631F8;
+            margin-bottom: 12px;
+        }
+        
+        .footer-text {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+        
+        /* 반응형 디자인 */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                margin: 20px;
+                border-radius: 12px;
+            }
+            
+            .header, .content, .footer {
+                padding: 24px 20px;
+            }
+            
+            .info-message, .project-info, .understanding-section {
+                padding: 20px;
+                margin: 20px 0;
+            }
+            
+            .member-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .member-avatar {
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+            
+            .action-section {
+                flex-direction: column;
+            }
+            
+            .cta-button, .secondary-button {
+                display: block;
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- 정보 헤더 -->
+        <div class="header">
+            <div class="info-icon">📋</div>
+            <div class="logo">VideoPlanet</div>
+            <div class="tagline">프로젝트 초대 현황 알림</div>
+        </div>
+        
+        <!-- 메인 콘텐츠 -->
+        <div class="content">
+            <h1 class="title">초대 현황 알림 📨</h1>
+            
+            <div class="info-message">
+                <h2 style="margin: 0 0 12px 0; font-size: 20px; color: #495057;">
+                    초대가 거절되었습니다
+                </h2>
+                <p style="margin: 0; font-size: 16px; color: #6c757d;">
+                    아쉽지만 이번에는 함께할 수 없게 되었네요.
+                </p>
+            </div>
+            
+            <!-- 프로젝트 정보 -->
+            <div class="project-info">
+                <div class="project-name">{{ project_name }}</div>
+                <p style="margin: 0; color: #666; font-size: 14px;">
+                    다음 기회에 다시 초대해 보세요!
+                </p>
+            </div>
+            
+            <!-- 거절한 멤버 정보 -->
+            <div class="member-info">
+                <div class="member-avatar">
+                    {{ invitee_name|first|upper }}
+                </div>
+                <div class="member-details">
+                    <h3>{{ invitee_name }}</h3>
+                    <p>🙏 이번에는 참여하지 못해요</p>
+                </div>
+            </div>
+            
+            <!-- 이해와 격려 섹션 -->
+            <div class="understanding-section">
+                <div class="understanding-title">이런 이유들이 있을 수 있어요</div>
+                <ul class="understanding-list">
+                    <li class="understanding-item">
+                        <div class="understanding-bullet">1</div>
+                        <div class="understanding-text">현재 진행 중인 다른 프로젝트로 인한 시간 부족</div>
+                    </li>
+                    <li class="understanding-item">
+                        <div class="understanding-bullet">2</div>
+                        <div class="understanding-text">개인적인 사정이나 스케줄 조정이 어려운 상황</div>
+                    </li>
+                    <li class="understanding-item">
+                        <div class="understanding-bullet">3</div>
+                        <div class="understanding-text">프로젝트 주제나 방향성이 맞지 않는 경우</div>
+                    </li>
+                    <li class="understanding-item">
+                        <div class="understanding-bullet">4</div>
+                        <div class="understanding-text">지금은 여건이 안 되지만 향후 협업 가능성은 열려있음</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 액션 버튼 -->
+            <div class="action-section">
+                <a href="https://vlanet.net/project/{{ project_id }}" class="cta-button">
+                    🎬 프로젝트 계속하기
+                </a>
+                <a href="https://vlanet.net/friends" class="secondary-button">
+                    👥 다른 멤버 찾기
+                </a>
+            </div>
+            
+            <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center;">
+                <p style="margin: 0; font-size: 14px; color: #1e5f74;">
+                    🌟 <strong>포기하지 마세요!</strong><br>
+                    좋은 프로젝트는 항상 적합한 팀원들을 끌어들입니다.<br>
+                    계속해서 다른 분들에게 초대를 보내보세요!
+                </p>
+            </div>
+        </div>
+        
+        <!-- 푸터 -->
+        <div class="footer">
+            <div class="footer-logo">VideoPlanet</div>
+            <div class="footer-text">모든 만남이 좋은 결과로 이어지는 것은 아니지만, 시도하는 것 자체가 의미있어요</div>
+            <div class="footer-text">© 2025 VideoPlanet. All rights reserved.</div>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #999;">
+                이 이메일은 프로젝트 활동 알림입니다.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -25,7 +25,7 @@ import { GetProject, UpdateDate } from 'api/project'
 
 export default function ProjectView() {
   const navigate = useNavigate()
-  const { project_list, user } = useSelector((s) => s.ProjectStore)
+  const { project_list, user, profileImage } = useSelector((s) => s.ProjectStore)
   const [current_project, set_current_project] = useState(null)
   const { project_id } = useParams()
 
@@ -185,7 +185,7 @@ export default function ProjectView() {
         <main className="project">
           {current_project && (
             <>
-              <Info current_project={current_project} />
+              <Info current_project={current_project} user={user} profileImage={profileImage} />
               <div className="content calendar">
                 <div style={{ marginBottom: '20px' }}>
                   <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -193,23 +193,7 @@ export default function ProjectView() {
                     <button 
                       className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
                       onClick={() => setIsCollapsed(!isCollapsed)}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '50%',
-                        background: '#012fff',
-                        border: 'none',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.3s ease',
-                      }}
-                    >
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="white">
-                        <path d={isCollapsed ? "M4 2 L8 6 L4 10" : "M2 4 L6 8 L10 4"} stroke="white" strokeWidth="2" fill="none" />
-                      </svg>
-                    </button>
+                    />
                     
                     <div style={{ marginLeft: '20px', display: 'flex', gap: '6px' }}>
                       <button 
@@ -390,7 +374,7 @@ export default function ProjectView() {
   )
 }
 
-const Info = React.memo(function ({ current_project }) {
+const Info = React.memo(function ({ current_project, user, profileImage }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const contentRef = useRef()
   const [contentHeight, setContentHeight] = useState(0)
@@ -450,7 +434,13 @@ const Info = React.memo(function ({ current_project }) {
             </div>
             <ul>
               <li className="admin">
-                <div className="img"></div>
+                <div className="img" style={
+                  current_project.owner_email === user && profileImage ? {
+                    backgroundImage: `url(${profileImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  } : {}
+                }></div>
                 <div className="txt">
                   {current_project.owner_nickname}(관리자)
                   <span>{current_project.owner_email}</span>
@@ -461,7 +451,13 @@ const Info = React.memo(function ({ current_project }) {
                   className={member.rating === 'manager' ? 'admin' : 'basic'}
                   key={index}
                 >
-                  <div className="img"></div>
+                  <div className="img" style={
+                    member.email === user && profileImage ? {
+                      backgroundImage: `url(${profileImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    } : {}
+                  }></div>
                   <div className="txt">
                     {member.nickname}(
                     {member.rating === 'manager' ? '관리자' : '일반'})

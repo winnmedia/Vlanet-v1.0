@@ -60,4 +60,9 @@ urlpatterns = [
     
     # 최근 초대 관련 URL
     path("recent-invitations/", views.RecentInvitationView.as_view()),  # 최근 초대한 사람 목록
+    
+    # 이메일 인증 관련 URL
+    path("verify-email/<str:token>/", views.EmailVerificationView.as_view()),  # 이메일 인증 처리
+    path("resend-verification-email/", views.ResendVerificationEmailView.as_view()),  # 인증 이메일 재발송
+    path("check-verification-status/", views.CheckEmailVerificationStatusView.as_view()),  # 인증 상태 확인
 ]

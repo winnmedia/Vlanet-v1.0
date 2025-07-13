@@ -22,12 +22,12 @@ class ProjectInvitationEmailService:
             # 이메일 제목
             subject = f"[VideoPlanet] {invitation.project.name} 프로젝트 초대"
             
-            # 이메일 본문 (HTML)
-            html_message = render_to_string('emails/project_invitation.html', {
-                'invitation': invitation,
-                'project': invitation.project,
-                'inviter': invitation.inviter,
+            # 이메일 본문 (HTML) - 프리미엄 템플릿 사용
+            html_message = render_to_string('emails/project_invitation_premium.html', {
+                'project_name': invitation.project.name,
+                'inviter_name': invitation.inviter.nickname,
                 'invitation_url': invitation_url,
+                'message': invitation.message,
                 'site_name': 'VideoPlanet',
                 'site_url': settings.FRONTEND_URL,
             })
@@ -76,10 +76,10 @@ VideoPlanet 팀
         try:
             subject = f"[VideoPlanet] {invitation.invitee_email}님이 초대를 수락했습니다"
             
-            html_message = render_to_string('emails/invitation_accepted.html', {
-                'invitation': invitation,
-                'project': invitation.project,
-                'invitee_email': invitation.invitee_email,
+            html_message = render_to_string('emails/invitation_accepted_premium.html', {
+                'project_name': invitation.project.name,
+                'project_id': invitation.project.id,
+                'invitee_name': invitation.invitee_email.split('@')[0],
                 'site_name': 'VideoPlanet',
                 'site_url': settings.FRONTEND_URL,
             })
@@ -121,10 +121,10 @@ VideoPlanet 팀
         try:
             subject = f"[VideoPlanet] {invitation.invitee_email}님이 초대를 거절했습니다"
             
-            html_message = render_to_string('emails/invitation_declined.html', {
-                'invitation': invitation,
-                'project': invitation.project,
-                'invitee_email': invitation.invitee_email,
+            html_message = render_to_string('emails/invitation_declined_premium.html', {
+                'project_name': invitation.project.name,
+                'project_id': invitation.project.id,
+                'invitee_name': invitation.invitee_email.split('@')[0],
                 'site_name': 'VideoPlanet',
                 'site_url': settings.FRONTEND_URL,
             })

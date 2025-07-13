@@ -1495,17 +1495,41 @@
           button {
             width: 28px;
             height: 28px;
-            background: #0131ff url('../../images/Cms/wb_arrow_icon.png')
-              no-repeat;
-            background-size: 13px;
-            background-position: center;
-            border-radius: 100%;
+            background: #1631F8;
+            border-radius: 50%;
             text-indent: -99999px;
-            &.on {
-              background: #0131ff url('../../images/Cms/wt_arrow_icon.png')
-                no-repeat;
-              background-size: 13px;
-              background-position: center;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            
+            &:hover {
+              background: #0F23C9;
+              transform: translateY(-1px);
+              box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
+            }
+            
+            // 화살표 SVG 스타일
+            &::after {
+              content: '';
+              position: absolute;
+              width: 0;
+              height: 0;
+              border-left: 5px solid transparent;
+              border-right: 5px solid transparent;
+              border-top: 6px solid white;
+              transition: transform 0.3s ease;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            }
+            
+            &.on::after {
+              transform: translate(-50%, -50%) rotate(180deg);
             }
           }
           .s_title {
@@ -1937,4 +1961,64 @@
 
 .db {
   display: none;
+}
+
+// 공통 토글 버튼 스타일
+.collapse-btn {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  border-radius: 50% !important;
+  background: #1631F8 !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  padding: 0 !important;
+  
+  &:hover {
+    background: #0F23C9 !important;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  // 화살표 스타일 (CSS로 생성)
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid white;
+    transition: transform 0.3s ease;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  &.collapsed::after {
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+  
+  // SVG 아이콘이 있는 경우 표시
+  svg {
+    width: 12px !important;
+    height: 12px !important;
+    fill: white;
+    
+    path {
+      fill: white !important;
+      stroke: white !important;
+    }
+  }
 }

@@ -1412,20 +1412,15 @@ class ProjectInvitation(View):
             
             # 이메일 발송 및 알림 생성
             
-            # 이메일 발송
+            # 이메일 발송 (기존 초대 이메일 시스템 사용)
             try:
-                if hasattr(settings, 'EMAIL_HOST') and settings.EMAIL_HOST:
-                    invitation_url = f"{settings.FRONTEND_URL}/invitation/{token}"
-                    send_mail(
-                        subject=f'프로젝트 "{project.name}" 초대',
-                        message=f'{user.nickname or user.username}님이 프로젝트 "{project.name}"에 초대했습니다.\n\n'
-                               f'메시지: {message}\n\n'
-                               f'초대 수락: {invitation_url}',
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[email],
-                        fail_silently=True,
-                    )
-                    logger.info(f"초대 이메일 발송 성공: {email}")
+                # 프로젝트 토큰 생성 (기존 방식 사용)
+                uid = urlsafe_base64_encode(force_bytes(project.id))
+                token = project_token_generator(project)
+                
+                # 이메일 발송
+                invite_send_email(request, email, uid, token, project.name)
+                logger.info(f"초대 이메일 발송 성공: {email}")
             except Exception as e:
                 logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
             

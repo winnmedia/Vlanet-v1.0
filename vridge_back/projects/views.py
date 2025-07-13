@@ -866,109 +866,51 @@ class ProjectDetail(View):
             # 프로젝트 삭제 - 안전한 삭제 프로세스
             project_name = project.name
             
-            # 프로젝트 삭제 - 단계별 안전 삭제
-            deleted_items = []
+            # 프로젝트 삭제 - 간소화된 안전 삭제
+            logging.info(f"[ProjectDetail.delete] Starting deletion process for project {project_id} ({project_name})")
             
             try:
-                # 1. 피드백 관련 데이터 삭제 (프로젝트에 연결된 피드백이 있다면)
-                try:
-                    if hasattr(project, 'feedback') and project.feedback:
-                        from feedbacks.models import FeedBackComment, FeedBackMessage
-                        feedback_obj = project.feedback
-                        # 피드백 댓글 삭제
-                        comment_count = FeedBackComment.objects.filter(feedback=feedback_obj).count()
-                        FeedBackComment.objects.filter(feedback=feedback_obj).delete()
-                        # 피드백 메시지 삭제
-                        message_count = FeedBackMessage.objects.filter(feedback=feedback_obj).count()
-                        FeedBackMessage.objects.filter(feedback=feedback_obj).delete()
-                        deleted_items.append(f"피드백 댓글 {comment_count}개, 메시지 {message_count}개")
-                except Exception as feedback_error:
-                    logger.warning(f"피드백 데이터 삭제 중 오류: {str(feedback_error)}")
-                
-                # 2. 프로젝트 초대 삭제
-                try:
-                    invite_count = models.ProjectInvite.objects.filter(project=project).count()
-                    models.ProjectInvite.objects.filter(project=project).delete()
-                    deleted_items.append(f"프로젝트 초대 {invite_count}개")
-                except Exception as e:
-                    logger.warning(f"프로젝트 초대 삭제 중 오류: {str(e)}")
-                
-                # 3. 프로젝트 멤버 삭제
+                # Django의 CASCADE 삭제를 활용하여 간단히 처리
+                # 먼저 연관 데이터 수를 확인 (로깅용)
                 try:
                     member_count = models.Members.objects.filter(project=project).count()
-                    models.Members.objects.filter(project=project).delete()
-                    deleted_items.append(f"프로젝트 멤버 {member_count}개")
-                except Exception as e:
-                    logger.warning(f"프로젝트 멤버 삭제 중 오류: {str(e)}")
-                
-                # 4. 프로젝트 파일 삭제
-                try:
+                    invite_count = models.ProjectInvite.objects.filter(project=project).count()
                     file_count = models.File.objects.filter(project=project).count()
-                    models.File.objects.filter(project=project).delete()
-                    deleted_items.append(f"프로젝트 파일 {file_count}개")
-                except Exception as e:
-                    logger.warning(f"프로젝트 파일 삭제 중 오류: {str(e)}")
-                
-                # 5. 메모 삭제
-                try:
                     memo_count = models.Memo.objects.filter(project=project).count()
-                    models.Memo.objects.filter(project=project).delete()
-                    deleted_items.append(f"메모 {memo_count}개")
-                except Exception as e:
-                    logger.warning(f"메모 삭제 중 오류: {str(e)}")
+                    
+                    logging.info(f"[ProjectDetail.delete] Associated data count - Members: {member_count}, Invites: {invite_count}, Files: {file_count}, Memos: {memo_count}")
+                except Exception as count_error:
+                    logging.warning(f"[ProjectDetail.delete] Error counting associated data: {str(count_error)}")
                 
-                # 6. 프로젝트 단계별 정보 삭제 (안전하게)
-                stage_deleted = []
-                try:
-                    if hasattr(project, 'basic_plan') and project.basic_plan:
-                        project.basic_plan.delete()
-                        stage_deleted.append("기본계획")
-                except Exception as e:
-                    logger.warning(f"기본계획 삭제 중 오류: {str(e)}")
-                
-                try:
-                    if hasattr(project, 'confirmation') and project.confirmation:
-                        project.confirmation.delete()
-                        stage_deleted.append("확정")
-                except Exception as e:
-                    logger.warning(f"확정 단계 삭제 중 오류: {str(e)}")
-                
-                # 다른 단계들도 안전하게 삭제
-                stages = ['storyboard', 'filming', 'video_edit', 'video_preview', 'postwork', 'video_delivery']
-                for stage in stages:
-                    try:
-                        if hasattr(project, stage) and getattr(project, stage):
-                            getattr(project, stage).delete()
-                            stage_deleted.append(stage)
-                    except Exception as e:
-                        logger.warning(f"{stage} 삭제 중 오류: {str(e)}")
-                
-                if stage_deleted:
-                    deleted_items.append(f"프로젝트 단계: {', '.join(stage_deleted)}")
-                
-                # 7. 최종적으로 프로젝트 삭제
+                # 프로젝트 삭제 (CASCADE로 연관 데이터도 자동 삭제됨)
                 project.delete()
                 
                 logging.info(f"[ProjectDetail.delete] Successfully deleted project {project_id} ({project_name})")
-                logging.info(f"[ProjectDetail.delete] Deleted items: {', '.join(deleted_items)}")
                 
                 return JsonResponse({
                     "message": "프로젝트가 성공적으로 삭제되었습니다.",
-                    "project_name": project_name,
-                    "deleted_items": deleted_items
+                    "project_name": project_name
                 }, status=200)
                 
             except Exception as delete_error:
-                logging.error(f"[ProjectDetail.delete] Critical error during project deletion: {str(delete_error)}")
-                # 최후의 수단으로 간단한 삭제 시도
-                try:
-                    project.delete()
-                    return JsonResponse({
-                        "message": "프로젝트가 삭제되었습니다. (일부 관련 데이터는 남아있을 수 있습니다)",
-                        "project_name": project_name
-                    }, status=200)
-                except Exception as final_error:
-                    raise final_error
+                logging.error(f"[ProjectDetail.delete] Error during project deletion: {str(delete_error)}")
+                logging.error(f"[ProjectDetail.delete] Error type: {type(delete_error).__name__}")
+                
+                # 구체적인 오류 정보 확인
+                error_info = {
+                    "error_type": type(delete_error).__name__,
+                    "error_message": str(delete_error),
+                }
+                
+                # IntegrityError 등 데이터베이스 관련 오류인지 확인
+                if "IntegrityError" in str(type(delete_error)):
+                    error_info["suggestion"] = "데이터베이스 제약조건 위반으로 인한 삭제 실패"
+                elif "DoesNotExist" in str(type(delete_error)):
+                    error_info["suggestion"] = "관련 객체를 찾을 수 없음"
+                else:
+                    error_info["suggestion"] = "알 수 없는 오류"
+                
+                raise delete_error
         except Exception as e:
             logging.error(f"[ProjectDetail.delete] Error deleting project {project_id}: {str(e)}")
             logging.error(f"[ProjectDetail.delete] Error type: {type(e).__name__}")

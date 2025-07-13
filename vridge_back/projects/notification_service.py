@@ -64,13 +64,12 @@ class NotificationService:
                 message=message
             )
             
-            # 관련 객체 연결 (선택사항)
+            # 관련 프로젝트 연결 (선택사항)
             if related_object:
-                if hasattr(related_object, 'project'):
-                    notification.related_project = related_object.project
-                elif hasattr(related_object, 'id') and hasattr(related_object, '_meta'):
-                    # 다른 모델 객체인 경우 추가 처리
-                    pass
+                if hasattr(related_object, 'project') and hasattr(related_object.project, 'id'):
+                    notification.project_id = related_object.project.id
+                elif hasattr(related_object, 'id') and hasattr(related_object, '_meta') and hasattr(related_object, '_meta') and related_object._meta.model_name == 'project':
+                    notification.project_id = related_object.id
             
             notification.save()
             
@@ -196,7 +195,7 @@ class NotificationService:
     def get_user_notifications(user, unread_only=False, limit=20):
         """사용자 알림 조회"""
         try:
-            queryset = models.Notification.objects.filter(user=user)
+            queryset = Notification.objects.filter(recipient=user)
             
             if unread_only:
                 queryset = queryset.filter(is_read=False)
@@ -211,9 +210,9 @@ class NotificationService:
     def mark_as_read(notification_ids, user):
         """알림 읽음 처리"""
         try:
-            updated_count = models.Notification.objects.filter(
+            updated_count = Notification.objects.filter(
                 id__in=notification_ids,
-                user=user
+                recipient=user
             ).update(is_read=True)
             
             logger.info(f"알림 읽음 처리: {updated_count}개")
@@ -227,7 +226,7 @@ class NotificationService:
     def get_unread_count(user):
         """읽지 않은 알림 개수"""
         try:
-            return models.Notification.objects.filter(user=user, is_read=False).count()
+            return Notification.objects.filter(recipient=user, is_read=False).count()
         except Exception as e:
             logger.error(f"읽지 않은 알림 개수 조회 중 오류: {str(e)}")
             return 0

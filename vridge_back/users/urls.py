@@ -65,4 +65,8 @@ urlpatterns = [
     path("verify-email/<str:token>/", views.EmailVerificationView.as_view()),  # 이메일 인증 처리
     path("resend-verification-email/", views.ResendVerificationEmailView.as_view()),  # 인증 이메일 재발송
     path("check-verification-status/", views.CheckEmailVerificationStatusView.as_view()),  # 인증 상태 확인
+    
+    # 디버그 URL (임시)
+    path("debug/jwt/", views.JWTDebugView.as_view()),  # JWT 토큰 디버깅
+    path("debug/auth/", views.AuthDebugView.as_view()),  # 인증 상태 디버깅
 ]

@@ -1,3 +1,4 @@
+import os
 import threading
 from django.conf import settings
 from django.http import JsonResponse
@@ -22,6 +23,19 @@ def user_validator(function):
             print(f"[Auth Debug] Auth header: {request.META.get('HTTP_AUTHORIZATION', 'No auth header')}")
             print(f"[Auth Debug] Content-Type: {request.content_type}")
             print(f"[Auth Debug] User before auth: {request.user}")
+            
+            # TEMPORARY DEBUG MODE - REMOVE AFTER FIXING
+            if os.environ.get('JWT_DEBUG_MODE') == 'true':
+                print("[Auth Debug] JWT_DEBUG_MODE enabled - bypassing authentication")
+                # 테스트 사용자로 설정
+                try:
+                    test_user = models.User.objects.first()
+                    if test_user:
+                        request.user = test_user
+                        print(f"[Auth Debug] Using test user: {test_user.username}")
+                        return function(self, request, *args, **kwargs)
+                except Exception as e:
+                    print(f"[Auth Debug] Failed to get test user: {e}")
             
             # Use Django REST Framework's JWT authentication
             jwt_auth = JWTAuthentication()

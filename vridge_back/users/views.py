@@ -1313,3 +1313,7 @@ class CheckEmailVerificationStatusView(View):
         except Exception as e:
             logger.error(f"Error in check email verification status: {str(e)}")
             return JsonResponse({"message": "인증 상태 확인 중 오류가 발생했습니다."}, status=500)
+
+
+# 디버그 뷰 임포트 (임시)
+from .views_debug import JWTDebugView, AuthDebugView

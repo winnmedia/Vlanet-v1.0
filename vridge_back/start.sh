@@ -39,15 +39,36 @@ python manage.py collectstatic --noinput || echo "⚠️ Static files collection
 echo "✅ Final migration check..."
 python manage.py showmigrations || echo "⚠️ Migration status check failed, continuing..."
 
-# 7. Gunicorn 시작
-echo "🚀 Starting Gunicorn server..."
-exec gunicorn config.wsgi:application \
-    --bind 0.0.0.0:$PORT \
-    --workers 1 \
-    --threads 2 \
-    --timeout 120 \
-    --keep-alive 2 \
-    --max-requests 1000 \
-    --max-requests-jitter 100 \
-    --access-logfile - \
-    --error-logfile -
+# 7. Django 앱 시작 가능 여부 테스트
+echo "🧪 Testing Django app startup..."
+if python -c "
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
+try:
+    django.setup()
+    print('Django setup successful')
+    exit(0)
+except Exception as e:
+    print(f'Django setup failed: {e}')
+    exit(1)
+"; then
+    echo "✅ Django startup test passed"
+    
+    # 8. Gunicorn 시작
+    echo "🚀 Starting Gunicorn server..."
+    exec gunicorn config.wsgi:application \
+        --bind 0.0.0.0:$PORT \
+        --workers 1 \
+        --threads 2 \
+        --timeout 120 \
+        --keep-alive 2 \
+        --max-requests 1000 \
+        --max-requests-jitter 100 \
+        --access-logfile - \
+        --error-logfile -
+else
+    echo "❌ Django startup test failed - starting emergency server"
+    echo "🚨 Emergency mode activated"
+    exec python emergency_server.py
+fi

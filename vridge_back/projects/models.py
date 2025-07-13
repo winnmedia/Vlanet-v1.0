@@ -109,8 +109,11 @@ class Members(core_model.TimeStampedModel):
         ]
 
 
+# 임시로 비활성화 - 테이블이 존재하지 않아 삭제 시 오류 발생
+# TODO: ProjectInvitation 모델의 마이그레이션 문제 해결 후 다시 활성화
+"""
 class ProjectInvitation(core_model.TimeStampedModel):
-    """프로젝트 초대 모델"""
+    프로젝트 초대 모델
     project = models.ForeignKey(
         "Project",
         related_name="invitations",
@@ -173,6 +176,7 @@ class ProjectInvitation(core_model.TimeStampedModel):
 
     def __str__(self):
         return f"{self.project.name} 초대 to {self.invitee_email}"
+"""
 
 
 class Memo(core_model.TimeStampedModel):

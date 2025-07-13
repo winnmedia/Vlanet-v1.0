@@ -181,9 +181,10 @@ class SignIn(View):
             # Debug
             logger.debug(f"Login attempt - email: {email}, password: {'*' * len(password) if password else 'None'}")
             
-            # Try direct user lookup first
+            # Try direct user lookup first with migration compatibility
             try:
-                user_obj = models.User.objects.get(username=email)
+                from .migration_compatibility import get_user_safely
+                user_obj = get_user_safely(email)
                 logger.debug(f"User found: {user_obj.username}, has_password: {bool(user_obj.password)}")
                 
                 # Check password manually
@@ -197,6 +198,9 @@ class SignIn(View):
             except models.User.DoesNotExist:
                 user = None
                 logger.debug("User not found in database")
+            except Exception as e:
+                logger.error(f"User lookup error: {e}")
+                user = None
             
             if user is not None:
                 # Use Django REST Framework SimpleJWT instead

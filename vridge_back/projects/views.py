@@ -1413,16 +1413,24 @@ class ProjectInvitation(View):
             # 이메일 발송 및 알림 생성
             
             # 이메일 발송 (기존 초대 이메일 시스템 사용)
+            email_sent = False
+            email_error = None
             try:
                 # 프로젝트 토큰 생성 (기존 방식 사용)
                 uid = urlsafe_base64_encode(force_bytes(project.id))
                 token = project_token_generator(project)
                 
                 # 이메일 발송
-                invite_send_email(request, email, uid, token, project.name)
-                logger.info(f"초대 이메일 발송 성공: {email}")
+                email_sent = invite_send_email(request, email, uid, token, project.name)
+                if email_sent:
+                    logger.info(f"초대 이메일 발송 성공: {email}")
+                else:
+                    logger.warning(f"초대 이메일 발송 실패: {email}")
+                    email_error = "이메일 발송에 실패했습니다."
             except Exception as e:
                 logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
+                email_sent = False
+                email_error = str(e)
             
             # 알림 생성 (가입된 사용자인 경우)
             try:
@@ -1477,10 +1485,20 @@ class ProjectInvitation(View):
             # except Exception as e:
             #     logger.warning(f"Failed to send invitation email: {str(e)}")
             
-            return JsonResponse({
-                "message": "초대를 보냈습니다.",
-                "invitation_id": invitation.id
-            }, status=201)
+            # 응답 메시지 구성
+            response_data = {
+                "invitation_id": invitation.id,
+                "email_sent": email_sent
+            }
+            
+            if email_sent:
+                response_data["message"] = "초대를 보냈습니다. 이메일이 전송되었습니다."
+            else:
+                response_data["message"] = "초대는 생성되었지만 이메일 전송에 실패했습니다."
+                if email_error:
+                    response_data["email_error"] = email_error
+            
+            return JsonResponse(response_data, status=201)
             
         except Exception as e:
             logger.error(f"Error in project invitation: {str(e)}", exc_info=True)

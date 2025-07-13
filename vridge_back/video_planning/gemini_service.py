@@ -39,6 +39,7 @@ class GeminiService:
         self.image_service = None
         self.placeholder_service = None
         self.style = 'minimal'  # 기본 스타일
+        self.draft_mode = True  # 기본적으로 draft 모드 사용
         
         logger.info(f"IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
         logger.info(f"PLACEHOLDER_SERVICE_AVAILABLE: {PLACEHOLDER_SERVICE_AVAILABLE}")
@@ -762,11 +763,17 @@ class GeminiService:
                 
                 # 1. DALL-E 시도
                 if self.image_service_available and self.image_service:
-                    image_result = self.image_service.generate_storyboard_image(frame, style=getattr(self, 'style', 'minimal'))
+                    draft_mode = getattr(self, 'draft_mode', True)
+                    image_result = self.image_service.generate_storyboard_image(
+                        frame, 
+                        style=getattr(self, 'style', 'minimal'),
+                        draft_mode=draft_mode
+                    )
                     if image_result['success']:
                         storyboard_data['storyboards'][i]['image_url'] = image_result['image_url']
                         storyboard_data['storyboards'][i]['prompt_used'] = image_result.get('prompt_used', '')
                         storyboard_data['storyboards'][i]['model_used'] = image_result.get('model_used', 'dall-e')
+                        storyboard_data['storyboards'][i]['draft_mode'] = draft_mode
                         image_generated = True
                     else:
                         logger.warning(f"DALL-E failed for frame {i+1}: {image_result.get('error')}")

@@ -80,13 +80,14 @@ class DalleService:
                 self.available = False
                 self.client = None
     
-    def generate_storyboard_image(self, frame_data, style='minimal'):
+    def generate_storyboard_image(self, frame_data, style='minimal', draft_mode=True):
         """
         스토리보드 프레임 설명을 바탕으로 이미지를 생성합니다.
         
         Args:
             frame_data: 프레임 정보
             style: 이미지 스타일 ('minimal', 'realistic', 'sketch', 'cartoon', 'cinematic')
+            draft_mode: True일 경우 저품질 스케치 모드로 생성 (비용 절감)
         """
         # API 키와 클라이언트가 있으면 available 상태와 관계없이 시도
         if not self.api_key:
@@ -111,9 +112,13 @@ class DalleService:
                 }
         
         try:
-            prompt = self._create_visual_prompt(frame_data, style)
+            # draft 모드일 경우 스케치 스타일 강제
+            if draft_mode:
+                style = 'sketch'
             
-            logger.info(f"Generating image with DALL-E 3, prompt: {prompt[:100]}...")
+            prompt = self._create_visual_prompt(frame_data, style, draft_mode=draft_mode)
+            
+            logger.info(f"Generating image with DALL-E 3 (draft_mode={draft_mode}), prompt: {prompt[:100]}...")
             
             # OpenAI 1.3.7 버전에서는 client를 통해서만 이미지 생성 가능
             if not hasattr(self, 'client') or self.client is None:
@@ -125,14 +130,26 @@ class DalleService:
                     logger.error(f"Failed to reinitialize client: {e}")
                     raise Exception("OpenAI 클라이언트 초기화 실패")
             
-            # DALL-E 3 API 호출 - 일러스트레이션에 최적화
+            # draft_mode에 따라 설정 변경
+            if draft_mode:
+                # 비용 절감을 위한 draft 모드 설정
+                image_size = "1024x1024"    # 정사각형 (더 작은 크기)
+                image_quality = "standard"   # 표준 품질
+                image_style = "natural"      # 자연스러운 스타일 (덜 정교함)
+            else:
+                # 고품질 모드 설정
+                image_size = "1792x1024"    # 16:9 화면비
+                image_quality = "hd"         # HD 품질
+                image_style = "vivid"        # 더 예술적이고 생동감 있는 스타일
+            
+            # DALL-E 3 API 호출
             response = self.client.images.generate(
                 model="dall-e-3",
                 prompt=prompt,
-                size="1792x1024",  # 16:9 화면비
-                quality="standard", # 표준 품질 (더 빠른 생성)
+                size=image_size,
+                quality=image_quality,
                 n=1,
-                style="vivid"      # 더 예술적이고 생동감 있는 스타일
+                style=image_style
             )
             image_url = response.data[0].url
             
@@ -169,13 +186,14 @@ class DalleService:
                 "image_url": None
             }
     
-    def _create_visual_prompt(self, frame_data, style='minimal'):
+    def _create_visual_prompt(self, frame_data, style='minimal', draft_mode=False):
         """
         프레임 데이터를 바탕으로 DALL-E 3에 최적화된 시각적 프롬프트를 생성합니다.
         
         Args:
             frame_data: 프레임 정보
             style: 이미지 스타일
+            draft_mode: True일 경우 스케치 스타일 프롬프트 생성
         """
         visual_desc = frame_data.get('visual_description', '')
         
@@ -204,18 +222,27 @@ class DalleService:
                     break
         
         # 스타일 적용
-        style_prompts = {
-            'minimal': 'minimalist pencil sketch',
-            'sketch': 'detailed pencil sketch',
-            'realistic': 'photorealistic',
-            'watercolor': 'watercolor painting',
-            'cinematic': 'cinematic dramatic lighting',
-            'black-and-white': 'black and white photograph',
-            'oil-painting': 'oil painting',
-            'digital-art': 'digital art illustration'
-        }
+        if draft_mode:
+            # draft 모드에서는 간단한 스케치 스타일
+            style_prompts = {
+                'sketch': 'simple rough pencil sketch, quick draft drawing',
+                'minimal': 'very simple line drawing, minimal details',
+                'default': 'rough sketch, draft storyboard'
+            }
+        else:
+            # 일반 모드에서는 정교한 스타일
+            style_prompts = {
+                'minimal': 'minimalist pencil sketch',
+                'sketch': 'detailed pencil sketch',
+                'realistic': 'photorealistic',
+                'watercolor': 'watercolor painting',
+                'cinematic': 'cinematic dramatic lighting',
+                'black-and-white': 'black and white photograph',
+                'oil-painting': 'oil painting',
+                'digital-art': 'digital art illustration'
+            }
         
-        style_prefix = style_prompts.get(style, 'cinematic')
+        style_prefix = style_prompts.get(style, style_prompts.get('default', 'cinematic'))
         prompt = f"{style_prefix}, {base_prompt}"
         
         # 추가 디테일 (조명 정보가 있으면 추가)

@@ -196,9 +196,66 @@ node final-verification.js
 4. **프로젝트 생성** 및 **중복 방지** 테스트
 5. **피드백 시스템** 접근성 테스트
 
-## 마이그레이션 관리 가이드
+## 🚨 마이그레이션 관리 가이드 (필독!)
 
-### 마이그레이션 오류 방지 체크리스트 (필독!)
+### ⚠️ 중요: 데이터 구조 변경 시 필수 준수사항
+
+**모든 데이터베이스 관련 변경은 마이그레이션을 통해서만 수행합니다.**
+
+#### 📋 개발 워크플로우 (반드시 이 순서대로!)
+
+1. **모델 변경**
+   ```python
+   # models.py에서 변경 작업
+   class User(models.Model):
+       email_verified = models.BooleanField(default=False)  # 새 필드 추가
+   ```
+
+2. **마이그레이션 생성 (필수!)**
+   ```bash
+   python3 manage.py makemigrations users
+   # 생성된 마이그레이션 파일을 반드시 확인
+   ```
+
+3. **로컬 테스트 (필수!)**
+   ```bash
+   # 마이그레이션 미리보기
+   python3 manage.py sqlmigrate users 0014
+   
+   # 마이그레이션 적용
+   python3 manage.py migrate
+   
+   # 기능 테스트
+   python3 manage.py shell
+   >>> from users.models import User
+   >>> User.objects.first().email_verified  # 새 필드 접근 확인
+   ```
+
+4. **마이그레이션 파일 커밋 (필수!)**
+   ```bash
+   git add users/migrations/0014_*.py
+   git commit -m "add: User 모델에 email_verified 필드 추가"
+   ```
+
+5. **배포**
+   - Railway에서 자동으로 마이그레이션 실행됨
+   - `start.sh`에서 `force_migrate` 명령으로 안전장치 제공
+
+### ⛔ 절대 금지사항
+
+1. **마이그레이션 없이 모델 변경 후 배포**
+   - 즉시 서비스 중단 발생
+   - "relation does not exist" 오류
+
+2. **운영 DB에 직접 SQL 실행**
+   - Django ORM과 불일치 발생
+   - 마이그레이션 상태 꼬임
+
+3. **마이그레이션 파일 수동 편집**
+   - 의존성 관계 파괴
+   - 롤백 불가능 상황 발생
+
+### 마이그레이션 오류 방지 체크리스트
 **"Model class doesn't declare an explicit app_label" 오류를 방지하기 위해 반드시 확인해야 할 사항들:**
 
 1. **INSTALLED_APPS 확인**
@@ -337,16 +394,53 @@ python3 template_model_generator.py
 4. **시작 스크립트**: start.sh가 너무 복잡하지 않은지 확인
 5. **타임아웃 설정**: 헬스체크 타임아웃이 충분한지 확인
 
-### 배포 전 필수 체크리스트
-1. **로컬 테스트 완료**: 모든 기능을 MECE 방식으로 100% 테스트 통과
-   ```bash
-   cd /home/winnmedia/VideoPlanet/vridge_front/src/tests
-   node final-verification.js
-   ```
-2. **마이그레이션 확인**: 
-   - `python3 manage.py showmigrations` 로 모든 마이그레이션 적용 확인
-   - 운영 DB와 로컬 DB의 마이그레이션 상태 동기화 확인
-   - 신규 마이그레이션이 있다면 운영 환경 영향도 분석
+### 🚨 배포 전 필수 체크리스트 (반드시 준수!)
+
+#### 1. 데이터 구조 변경 시 마이그레이션 우선 실행 (최고 우선순위)
+**새로운 기능 개발이나 데이터 구조 변경이 있을 때 반드시 수행:**
+
+```bash
+# A. 모델 변경 후 마이그레이션 생성 (필수)
+python3 manage.py makemigrations [app_name]
+
+# B. 로컬에서 마이그레이션 테스트 (필수)
+python3 manage.py migrate --dry-run
+python3 manage.py migrate
+
+# C. 마이그레이션 파일 커밋 (필수)
+git add */migrations/*.py
+git commit -m "add: [앱명] 모델 변경 마이그레이션"
+
+# D. 운영 환경 영향도 분석 (필수)
+# - 기존 데이터 손실 가능성 확인
+# - NULL/DEFAULT 값 설정 확인
+# - 인덱스 추가로 인한 성능 영향 확인
+```
+
+**⚠️ 경고: 마이그레이션 없이 배포 시 발생하는 문제들**
+- "relation does not exist" 오류로 서비스 중단
+- "column does not exist" 오류로 API 500 에러
+- 데이터 손실 및 복구 불가능한 상황 발생
+- Railway/Vercel 배포 실패로 인한 서비스 장애
+
+**🔒 마이그레이션 필수 상황들:**
+- 새로운 모델(테이블) 추가
+- 기존 모델에 필드(컬럼) 추가/제거/수정
+- 관계(ForeignKey, ManyToMany) 변경
+- 인덱스, 제약조건 추가/제거
+- 데이터 타입 변경
+
+#### 2. 로컬 테스트 완료
+모든 기능을 MECE 방식으로 100% 테스트 통과
+```bash
+cd /home/winnmedia/VideoPlanet/vridge_front/src/tests
+node final-verification.js
+```
+
+#### 3. 마이그레이션 상태 확인
+- `python3 manage.py showmigrations` 로 모든 마이그레이션 적용 확인
+- 운영 DB와 로컬 DB의 마이그레이션 상태 동기화 확인
+- 신규 마이그레이션이 있다면 운영 환경 영향도 분석
 3. **환경변수 점검**: Railway에 필요한 모든 환경변수가 설정되어 있는지 확인
 
 ### 환경 설정
@@ -424,7 +518,21 @@ python3 manage.py collectstatic
 - 브라우저 개발자 도구에서 네트워크 탭 확인
 - Redis 연결 상태 확인 (`redis-cli ping`)
 
-## 코드 리뷰 체크리스트
+## 🔍 코드 리뷰 체크리스트
+
+### 🚨 최우선 검토사항 (배포 중단 방지)
+- [ ] **🔴 마이그레이션 필수 검토 (최고 우선순위)**
+  - [ ] 모델 변경 시 마이그레이션 파일 생성 확인
+  - [ ] 생성된 마이그레이션 파일 Git 커밋 여부 확인  
+  - [ ] `python3 manage.py makemigrations` 실행 여부 확인
+  - [ ] 로컬에서 `python3 manage.py migrate` 테스트 완료 확인
+  - [ ] settings_base.py의 INSTALLED_APPS에 앱 등록 확인
+  - [ ] 기존 데이터와의 호환성 검토 (NULL/DEFAULT 값 설정)
+  - [ ] 롤백 가능 여부 확인
+  - [ ] 운영 환경 영향도 분석 (테이블 락, 성능 저하 등)
+  - [ ] Railway 환경변수 DJANGO_SETTINGS_MODULE 확인
+
+### 📋 일반 검토사항
 - [ ] **안전한 수정**: 다른 기능에 영향을 주지 않는 범위 내에서 수정
 - [ ] **의존성 확인**: 수정된 코드가 다른 기능과 어떻게 연결되어 있는지 분석
 - [ ] **보안 취약점 확인**: XSS, SQL 인젝션 등 보안 문제 검토
@@ -433,14 +541,19 @@ python3 manage.py collectstatic
 - [ ] **성능 최적화**: 쿼리 최적화, 캐시 활용 등 성능 개선
 - [ ] **기존 코드 스타일**: 프로젝트 전체의 일관된 스타일 준수
 - [ ] **테스트 커버리지**: 수정된 기능에 대한 테스트 실행 및 확인
-- [ ] **마이그레이션 검토**: 
-  - [ ] 모델 변경 시 마이그레이션 파일 생성 확인
-  - [ ] 생성된 마이그레이션 파일 Git 커밋 여부 확인
-  - [ ] settings_base.py의 INSTALLED_APPS에 앱 등록 확인
-  - [ ] 기존 데이터와의 호환성 검토
-  - [ ] 롤백 가능 여부 확인
-  - [ ] 운영 환경 영향도 분석
-  - [ ] Railway 환경변수 DJANGO_SETTINGS_MODULE 확인
+
+### ⚠️ 배포 전 마지막 점검
+- [ ] **마이그레이션 상태**: `python3 manage.py showmigrations` 로 모든 앱 확인
+- [ ] **로컬 테스트**: 변경된 기능 완전 동작 확인
+- [ ] **빌드 테스트**: 프론트엔드 `npm run build` 성공 확인
+- [ ] **환경변수**: Railway/Vercel 필수 환경변수 설정 확인
+
+### 🚫 즉시 리젝트 (Reject) 조건
+다음 중 하나라도 해당되면 **무조건 배포 금지**:
+- 모델 변경 후 마이그레이션 파일 없음
+- 마이그레이션 파일이 Git에 커밋되지 않음  
+- 로컬에서 마이그레이션 테스트 미실행
+- 기존 기능 동작 테스트 미완료
 
 ## 1000% 성과 측정 기준
 
@@ -502,6 +615,25 @@ python3 manage.py collectstatic
 프로덕션: vlanet.net <-> api.vlanet.net
 ```
 
+## 📋 데이터 구조 변경 시 체크리스트 요약
+
+### ✅ 필수 수행사항 (순서대로)
+1. **모델 변경** → 
+2. **마이그레이션 생성** (`makemigrations`) → 
+3. **로컬 테스트** (`migrate`) → 
+4. **마이그레이션 파일 커밋** → 
+5. **배포**
+
+### ❌ 절대 금지사항
+- 마이그레이션 없이 모델 변경 후 배포
+- 운영 DB에 직접 SQL 실행  
+- 마이그레이션 파일 수동 편집
+
+### 🚨 오류 발생 시 즉시 확인
+- `python3 manage.py showmigrations`
+- `python3 manage.py migrate --dry-run`
+- Railway 환경변수 DJANGO_SETTINGS_MODULE
+
 ## 연락처 및 리소스
 - **API 베이스 URL**: https://videoplanet.up.railway.app
 - **프론트엔드 URL**: https://vlanet.net
@@ -509,4 +641,5 @@ python3 manage.py collectstatic
 - **캐시**: Redis on Railway
 
 ---
-*이 문서는 VideoPlanet 개발팀의 10배 성과 달성을 위한 가이드라인입니다.*
+*이 문서는 VideoPlanet 개발팀의 10배 성과 달성을 위한 가이드라인입니다.*  
+**🔴 중요: 데이터 구조 변경 시 반드시 마이그레이션을 먼저 실행하세요!**

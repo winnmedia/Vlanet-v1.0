@@ -60,7 +60,7 @@ class ProjectList(View):
                 "confirmation",
                 "video_delivery",
                 "feedback",
-            ).prefetch_related('feedback__messages')
+            ).prefetch_related('feedback__comments')
             result = []
             for i in project_list:
                 if i.video_delivery and i.video_delivery.end_date:
@@ -152,13 +152,13 @@ class ProjectList(View):
                             {
                                 "id": fb.id,
                                 "text": fb.text,
-                                "nickname": fb.nickname,
+                                "nickname": fb.user.nickname if not fb.security else "익명",
                                 "section": fb.section,
-                                "time_position": fb.time_position,
+                                "title": fb.title,
                                 "created": fb.created,
                                 "updated": fb.updated,
                             }
-                            for fb in (i.feedback.messages.all() if i.feedback else [])
+                            for fb in (i.feedback.comments.all() if i.feedback else [])
                         ],
                         # "pending_list": list(i.invites.all().values("id", "email")),
                         "member_list": list(
@@ -182,7 +182,7 @@ class ProjectList(View):
                 "project__video_delivery",
                 "project__user",
                 "project__feedback"
-            ).prefetch_related('project__feedback__messages')
+            ).prefetch_related('project__feedback__comments')
             for i in members:
                 if i.project.video_delivery and i.project.video_delivery.end_date:
                     end_date = i.project.video_delivery.end_date
@@ -272,13 +272,13 @@ class ProjectList(View):
                             {
                                 "id": fb.id,
                                 "text": fb.text,
-                                "nickname": fb.nickname,
+                                "nickname": fb.user.nickname if not fb.security else "익명",
                                 "section": fb.section,
-                                "time_position": fb.time_position,
+                                "title": fb.title,
                                 "created": fb.created,
                                 "updated": fb.updated,
                             }
-                            for fb in (i.project.feedback.messages.all() if i.project.feedback else [])
+                            for fb in (i.project.feedback.comments.all() if i.project.feedback else [])
                         ],
                         # "pending_list": list(i.project.invites.all().values("id", "email")),
                         "member_list": list(

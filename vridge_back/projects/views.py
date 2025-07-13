@@ -619,7 +619,11 @@ class CreateProject(View):
                 models.File.objects.bulk_create(file_obj)
 
             # 성공 결과를 캐시에 저장
-            result = {"message": "success", "project_id": project.id}
+            result = {
+                "message": "success", 
+                "project_id": project.id,
+                "project_name": project.name
+            }
             if idempotency_key:
                 from django.core.cache import cache
                 cache_key = f"create_project_{user.id}_{idempotency_key}"

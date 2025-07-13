@@ -10,8 +10,8 @@ echo "SECRET_KEY: ${SECRET_KEY:0:10}..."
 echo "DATABASE_URL: ${DATABASE_URL:0:20}..."
 echo "DJANGO_SETTINGS_MODULE: $DJANGO_SETTINGS_MODULE"
 
-# Django 설정 모듈 설정
-export DJANGO_SETTINGS_MODULE=config.settings.railway
+# Django 설정 모듈 설정 (최소 설정 사용)
+export DJANGO_SETTINGS_MODULE=config.settings.railway_minimal
 
 # 1. 기본 마이그레이션 실행
 echo "🔄 Running basic migrations..."
@@ -44,7 +44,7 @@ echo "🧪 Testing Django app startup..."
 if python3 -c "
 import os
 import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway_minimal')
 try:
     django.setup()
     print('Django setup successful')

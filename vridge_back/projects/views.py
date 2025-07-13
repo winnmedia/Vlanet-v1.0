@@ -1,14 +1,18 @@
 import logging, json, random
 from django.conf import settings
+from django.core.mail import send_mail
 
 logger = logging.getLogger(__name__)
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils import timezone as django_timezone
 from django.http import JsonResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.contrib.auth import get_user_model
+import secrets
 from users.utils import (
     user_validator,
     invite_send_email,
@@ -1245,15 +1249,15 @@ class ProjectInvitation(View):
             invitation.save()
             
             # 초대받은 사람이 가입된 사용자인 경우 알림 생성
-            from .notification_service import NotificationService
             try:
                 if invitation.invitee:
-                    NotificationService.create_notification(
-                        user=invitation.invitee,
-                        notification_type='INVITATION_CANCELLED',
+                    from users.models import Notification
+                    Notification.objects.create(
+                        recipient=invitation.invitee,
+                        notification_type='invitation_cancelled',
                         title='초대가 취소되었습니다',
                         message=f'{invitation.inviter.nickname}님이 "{invitation.project.name}" 프로젝트 초대를 취소했습니다.',
-                        related_object=invitation
+                        project_id=invitation.project.id
                     )
             except Exception as e:
                 logger.error(f"초대 취소 알림 생성 중 오류: {str(e)}")
@@ -1320,24 +1324,37 @@ class ProjectInvitation(View):
                 invitee=invitee_user if invitee_user else None
             )
             
-            # 이메일 발송 및 알림 서비스 사용
-            from .email_service import ProjectInvitationEmailService
-            from .notification_service import NotificationService
+            # 이메일 발송 및 알림 생성
             
             # 이메일 발송
             try:
-                email_sent = ProjectInvitationEmailService.send_invitation_email(invitation)
-                if email_sent:
+                if hasattr(settings, 'EMAIL_HOST') and settings.EMAIL_HOST:
+                    invitation_url = f"{settings.FRONTEND_URL}/invitation/{token}"
+                    send_mail(
+                        subject=f'프로젝트 "{project.name}" 초대',
+                        message=f'{user.nickname or user.username}님이 프로젝트 "{project.name}"에 초대했습니다.\n\n'
+                               f'메시지: {message}\n\n'
+                               f'초대 수락: {invitation_url}',
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[email],
+                        fail_silently=True,
+                    )
                     logger.info(f"초대 이메일 발송 성공: {email}")
-                else:
-                    logger.warning(f"초대 이메일 발송 실패: {email}")
             except Exception as e:
                 logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
             
             # 알림 생성 (가입된 사용자인 경우)
             try:
-                notification = NotificationService.notify_invitation_received(invitation)
-                if notification:
+                if invitee_user:
+                    from users.models import Notification
+                    Notification.objects.create(
+                        recipient=invitee_user,
+                        notification_type='invitation_received',
+                        title='새로운 프로젝트 초대',
+                        message=f'{user.nickname or user.username}님이 "{project.name}" 프로젝트에 초대했습니다.',
+                        project_id=project.id,
+                        invitation_id=invitation.id
+                    )
                     logger.info(f"초대 알림 생성 성공: {email}")
             except Exception as e:
                 logger.error(f"초대 알림 생성 중 오류: {str(e)}")

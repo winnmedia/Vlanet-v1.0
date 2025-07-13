@@ -696,18 +696,15 @@ class NotificationView(View):
             notifications_data = [
                 {
                     "id": notif.id,
-                    "type": notif.type,
+                    "type": notif.notification_type,
                     "title": notif.title,
                     "message": notif.message,
-                    "icon": notif.icon,
-                    "color": notif.color,
-                    "action_url": notif.action_url,
                     "is_read": notif.is_read,
                     "created": notif.created.isoformat(),
                     "related_project": {
-                        "id": notif.related_project.id,
-                        "name": notif.related_project.name
-                    } if notif.related_project else None,
+                        "id": notif.project_id,
+                        "name": "프로젝트"
+                    } if notif.project_id else None,
                 }
                 for notif in notifications
             ]

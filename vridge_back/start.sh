@@ -41,7 +41,7 @@ python manage.py showmigrations || echo "⚠️ Migration status check failed, c
 
 # 7. Django 앱 시작 가능 여부 테스트
 echo "🧪 Testing Django app startup..."
-if python -c "
+if python3 -c "
 import os
 import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.railway')
@@ -70,5 +70,5 @@ except Exception as e:
 else
     echo "❌ Django startup test failed - starting emergency server"
     echo "🚨 Emergency mode activated"
-    exec python emergency_server.py
+    exec python3 emergency_server.py
 fi

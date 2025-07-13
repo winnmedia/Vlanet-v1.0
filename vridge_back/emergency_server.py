@@ -46,6 +46,74 @@ def application(environ, start_response):
         ] + cors_headers())
         return [response_body]
     
+    # 프론트엔드 API 요청들에 대한 모형 응답
+    elif path == '/api/projects/project_list/' or path == '/api/projects/':
+        mock_projects = {
+            "results": [],
+            "message": "응급 모드: 프로젝트 데이터를 로드할 수 없습니다",
+            "emergency_mode": True
+        }
+        response_body = json.dumps(mock_projects, ensure_ascii=False).encode('utf-8')
+        start_response('200 OK', [
+            ('Content-Type', 'application/json; charset=utf-8'),
+        ] + cors_headers())
+        return [response_body]
+    
+    elif path.startswith('/api/users/notifications'):
+        mock_notifications = {
+            "results": [],
+            "count": 0,
+            "message": "응급 모드: 알림 데이터를 로드할 수 없습니다",
+            "emergency_mode": True
+        }
+        response_body = json.dumps(mock_notifications, ensure_ascii=False).encode('utf-8')
+        start_response('200 OK', [
+            ('Content-Type', 'application/json; charset=utf-8'),
+        ] + cors_headers())
+        return [response_body]
+    
+    elif path == '/api/projects/invitations/' or path.startswith('/api/projects/') and 'invitations' in path:
+        mock_invitations = {
+            "results": [],
+            "message": "응급 모드: 초대 데이터를 로드할 수 없습니다",
+            "emergency_mode": True
+        }
+        response_body = json.dumps(mock_invitations, ensure_ascii=False).encode('utf-8')
+        start_response('200 OK', [
+            ('Content-Type', 'application/json; charset=utf-8'),
+        ] + cors_headers())
+        return [response_body]
+    
+    elif path.startswith('/api/users/') and method == 'GET':
+        mock_user = {
+            "id": 0,
+            "email": "emergency@mode.com",
+            "nickname": "응급모드",
+            "profile_image": None,
+            "message": "응급 모드: 사용자 데이터를 로드할 수 없습니다",
+            "emergency_mode": True
+        }
+        response_body = json.dumps(mock_user, ensure_ascii=False).encode('utf-8')
+        start_response('200 OK', [
+            ('Content-Type', 'application/json; charset=utf-8'),
+        ] + cors_headers())
+        return [response_body]
+    
+    elif path.startswith('/api/'):
+        # 모든 기타 API 요청에 대한 기본 응답
+        mock_response = {
+            "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+            "path": path,
+            "method": method,
+            "emergency_mode": True,
+            "status": "service_unavailable"
+        }
+        response_body = json.dumps(mock_response, ensure_ascii=False).encode('utf-8')
+        start_response('503 Service Unavailable', [
+            ('Content-Type', 'application/json; charset=utf-8'),
+        ] + cors_headers())
+        return [response_body]
+    
     # 디버그 정보
     elif path == '/debug/':
         debug_info = {

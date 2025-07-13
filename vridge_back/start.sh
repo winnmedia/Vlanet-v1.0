@@ -16,11 +16,11 @@ export DJANGO_SETTINGS_MODULE=config.settings.railway
 
 # 마이그레이션 실행
 echo "Running migrations..."
-python manage.py ensure_migrations
+python manage.py migrate --noinput
 
-# 추가 마이그레이션 실행 (누락된 필드 추가)
-echo "Running additional migrations..."
-python manage.py migrate users 0003_add_missing_fields --fake-initial || echo "Migration already applied or failed"
+# 추가 마이그레이션은 더 이상 필요하지 않음 (필드가 이미 0013 마이그레이션에 포함됨)
+# echo "Running additional migrations..."
+# python manage.py migrate users 0003_add_missing_fields --fake-initial || echo "Migration already applied or failed"
 
 # UserProfile 테이블 확인 및 생성
 echo "Ensuring UserProfile table exists..."

@@ -2023,17 +2023,18 @@ export default function VideoPlanning() {
                               {planning.planning_options.target && (
                                 <span className="tag target">{planning.planning_options.target}</span>
                               )}
-                          </div>
-                        )}
-                      </div>
-                      <div className="planning-status">
-                        <span className={`step-indicator step-${planning.current_step}`}>
-                          {planning.current_step === 1 && '스토리'}
-                          {planning.current_step === 2 && '씬'}
-                          {planning.current_step === 3 && '숏'}
-                          {planning.current_step === 4 && '콘티'}
-                          {planning.current_step === 5 && '완료'}
-                        </span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="planning-status">
+                          <span className={`step-indicator step-${planning.current_step}`}>
+                            {planning.current_step === 1 && '스토리'}
+                            {planning.current_step === 2 && '씬'}
+                            {planning.current_step === 3 && '숏'}
+                            {planning.current_step === 4 && '콘티'}
+                            {planning.current_step === 5 && '완료'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <button
@@ -2056,7 +2057,7 @@ export default function VideoPlanning() {
               </div>
             )}
           </div>
-          </div>
+        </div>
         )
 
       case 2:
@@ -2626,8 +2627,8 @@ export default function VideoPlanning() {
                                    planning.current_step === 2 ? '스토리' : 
                                    planning.current_step === 3 ? '씬' : 
                                    planning.current_step === 4 ? '숏' : 
-                                 planning.current_step === 5 ? '콘티' : '진행중'}
-                              </span>
+                                   planning.current_step === 5 ? '콘티' : '진행중'}
+                                </span>
                             </div>
                           )}
                         </div>

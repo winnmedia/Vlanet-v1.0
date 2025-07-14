@@ -103,6 +103,68 @@ export default function VideoPlanning() {
     fetchRecentPlannings()
   }, [])
   
+  // 기획 삭제
+  const deletePlanning = async (planningId) => {
+    if (!window.confirm('이 기획을 삭제하시겠습니까?')) {
+      return
+    }
+    
+    try {
+      const token = checkSession()
+      if (!token) return
+      
+      const response = await axios.delete(`/api/video-planning/delete/${planningId}/`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      
+      if (response.data.status === 'success') {
+        setSuccessMessage('기획이 삭제되었습니다.')
+        fetchRecentPlannings() // 목록 새로고침
+        fetchPlanningHistory() // 기획 보관함도 새로고침
+        
+        // 현재 표시 중인 기획이 삭제된 경우 초기화
+        if (currentPlanningId === planningId) {
+          setPlanningData({
+            planning: '',
+            stories: [],
+            scenes: [],
+            shots: [],
+            storyboards: []
+          })
+          setPlanningOptions({
+            tone: '',
+            genre: '',
+            concept: '',
+            target: '',
+            purpose: '',
+            duration: '',
+            toneCustom: '',
+            genreCustom: '',
+            conceptCustom: '',
+            targetCustom: '',
+            purposeCustom: '',
+            durationCustom: '',
+            storyFramework: 'hook_immersion',
+            developmentLevel: 'balanced',
+            characterName: '',
+            characterDescription: '',
+            characterImage: null
+          })
+          setCurrentStep(1)
+          setCurrentPlanningId(null)
+          setPlanningTitle('')
+        }
+        
+        setTimeout(() => setSuccessMessage(null), 3000)
+      } else {
+        setError(response.data.message || '기획 삭제에 실패했습니다.')
+      }
+    } catch (err) {
+      console.error('기획 삭제 실패:', err)
+      setError(err.response?.data?.message || '기획 삭제에 실패했습니다.')
+    }
+  }
+  
   // 최근 기획 데이터 로드
   const loadPlanningData = (planning) => {
     if (planning.planning_data) {
@@ -270,43 +332,6 @@ export default function VideoPlanning() {
       }
     } catch (err) {
       setError(err.response?.data?.message || '저장에 실패했습니다.')
-    }
-  }
-
-  // 기획 삭제 함수
-  const deletePlanning = async (planningId) => {
-    if (!window.confirm('이 기획을 삭제하시겠습니까?')) {
-      return
-    }
-
-    try {
-      const response = await axios.delete(`/api/video-planning/delete/${planningId}/`)
-      
-      if (response.data.status === 'success') {
-        setSuccessMessage('기획이 삭제되었습니다.')
-        
-        // 현재 로드된 기획이 삭제된 경우 초기화
-        if (currentPlanningId === planningId) {
-          setCurrentPlanningId(null)
-          setPlanningData({
-            planning: '',
-            stories: [],
-            scenes: [],
-            shots: [],
-            storyboards: []
-          })
-          setPlanningTitle('')
-          setCurrentStep(1)
-        }
-        
-        // 최근 기획 목록 갱신
-        fetchRecentPlannings()
-        fetchPlanningHistory()
-        
-        setTimeout(() => setSuccessMessage(null), 3000)
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || '삭제에 실패했습니다.')
     }
   }
 
@@ -2646,7 +2671,6 @@ export default function VideoPlanning() {
                     </div>
                   ))}
                 </div>
-              </div>
             )}
 
             {planningHistory.length > 0 && (

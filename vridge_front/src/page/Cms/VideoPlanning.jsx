@@ -12,7 +12,6 @@ import { checkSession } from 'util/util'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getProxyImageUrl, handleImageError } from 'utils/imageProxy'
-import { GetFrameworks } from 'api/framework'
 
 // 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
 const filterForbiddenWords = (text) => {
@@ -235,9 +234,6 @@ export default function VideoPlanning() {
   const [storyboardGenerationProgress, setStoryboardGenerationProgress] = useState({})
   const [uploadedVideo, setUploadedVideo] = useState(null)
   const [showVideoGuide, setShowVideoGuide] = useState(false)
-  const [frameworks, setFrameworks] = useState([])
-  const [selectedFramework, setSelectedFramework] = useState(null)
-  const [showFrameworkSelector, setShowFrameworkSelector] = useState(false)
   const [sceneLoadingStates, setSceneLoadingStates] = useState({}) // 개별 씬 로딩 상태
 
   useEffect(() => {
@@ -249,7 +245,6 @@ export default function VideoPlanning() {
       setTimeout(() => {
         fetchPlanningHistory()
         fetchRecentPlannings()
-        fetchFrameworks()
       }, 100)
     }
   }, [navigate])
@@ -267,22 +262,6 @@ export default function VideoPlanning() {
     }
   }
 
-  // 프레임워크 목록 로드
-  const fetchFrameworks = async () => {
-    try {
-      const response = await GetFrameworks()
-      if (response.data && response.data.frameworks) {
-        setFrameworks(response.data.frameworks)
-        // 기본 프레임워크 자동 선택
-        const defaultFramework = response.data.frameworks.find(f => f.is_default)
-        if (defaultFramework) {
-          setSelectedFramework(defaultFramework)
-        }
-      }
-    } catch (err) {
-      console.error('프레임워크 로드 실패:', err)
-    }
-  }
 
 
   const loadHistoryItem = async (planningId) => {
@@ -408,14 +387,7 @@ export default function VideoPlanning() {
           development_level: planningOptions.developmentLevel,
           character_name: planningOptions.characterName,
           character_description: planningOptions.characterDescription,
-          character_image: planningOptions.characterImage,
-          // 프레임워크 정보 추가
-          framework: selectedFramework ? {
-            intro_hook: selectedFramework.intro_hook,
-            immersion: selectedFramework.immersion,
-            twist: selectedFramework.twist,
-            hook_next: selectedFramework.hook_next
-          } : null
+          character_image: planningOptions.characterImage
         }
       )
 
@@ -1298,80 +1270,6 @@ export default function VideoPlanning() {
                 제작하고자 하는 영상의 기획안을 입력해주세요. AI가 이를 바탕으로 여러 개의 스토리를 생성합니다.
               </p>
             
-            {/* 프레임워크 선택 섹션 */}
-            <div className="framework-selection">
-              <div className="framework-header">
-                <h4>📋 기획안 디벨롭 프레임워크</h4>
-                <button 
-                  className="framework-select-btn"
-                  onClick={() => setShowFrameworkSelector(!showFrameworkSelector)}
-                >
-                  {selectedFramework ? selectedFramework.name : '프레임워크 선택'}
-                  <span className="arrow">{showFrameworkSelector ? '▲' : '▼'}</span>
-                </button>
-              </div>
-              
-              {showFrameworkSelector && (
-                <div className="framework-dropdown">
-                  {frameworks.length === 0 ? (
-                    <div className="no-framework">
-                      <p>등록된 프레임워크가 없습니다.</p>
-                      <button 
-                        className="create-framework-btn"
-                        onClick={() => navigate('/FrameworkManagement')}
-                      >
-                        프레임워크 관리로 이동
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="framework-list">
-                      {frameworks.map((fw) => (
-                        <div 
-                          key={fw.id} 
-                          className={`framework-option ${selectedFramework?.id === fw.id ? 'selected' : ''}`}
-                          onClick={() => {
-                            setSelectedFramework(fw)
-                            setShowFrameworkSelector(false)
-                          }}
-                        >
-                          <div className="framework-name">
-                            {fw.name}
-                            {fw.is_default && <span className="default-badge">기본값</span>}
-                          </div>
-                          <div className="framework-preview">
-                            <span className="preview-item">인트로훅: {fw.intro_hook.substring(0, 30)}...</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              {selectedFramework && (
-                <div className="selected-framework-info">
-                  <h5>선택된 프레임워크: {selectedFramework.name}</h5>
-                  <div className="framework-details">
-                    <div className="detail-item">
-                      <strong>1. 인트로 훅:</strong>
-                      <p>{selectedFramework.intro_hook}</p>
-                    </div>
-                    <div className="detail-item">
-                      <strong>2. 몰입:</strong>
-                      <p>{selectedFramework.immersion}</p>
-                    </div>
-                    <div className="detail-item">
-                      <strong>3. 반전:</strong>
-                      <p>{selectedFramework.twist}</p>
-                    </div>
-                    <div className="detail-item">
-                      <strong>4. 떡밥:</strong>
-                      <p>{selectedFramework.hook_next}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
             
             {/* 톤앤매너/장르/콘셉트 선택 */}
             <div className="planning-options">
@@ -1835,53 +1733,7 @@ export default function VideoPlanning() {
               </div>
             </div>
             
-            {/* 스토리 프레임워크 선택 */}
-            <div className="story-framework-section">
-              <h4>스토리 전개 방식</h4>
-              <div className="framework-options">
-                <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'hook_immersion' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' }))}
-                >
-                  <h5>훅-몰입-반전-떡밥 🎯</h5>
-                  <p>시청자의 시선을 사로잡고 끝까지 유지시키는 현대적 전개</p>
-                  <span className="framework-stages">인트로 훅 → 몰입 → 반전 → 떡밥</span>
-                </div>
-                <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'classic' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' }))}
-                >
-                  <h5>클래식 기승전결</h5>
-                  <p>전통적인 4단계 구성으로 안정적이고 균형잡힌 전개</p>
-                  <span className="framework-stages">기 → 승 → 전 → 결</span>
-                </div>
-                <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'pixar' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'pixar' }))}
-                >
-                  <h5>픽사 스토리텔링</h5>
-                  <p>Once upon a time... 공식으로 만드는 매력적인 이야기</p>
-                  <span className="framework-stages">옛날에 → 매일 → 어느날 → 그래서 → 결국</span>
-                </div>
-                <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'save_the_cat' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' }))}
-                >
-                  <h5>Save the Cat</h5>
-                  <p>할리우드식 3막 구조로 관객을 사로잡는 스토리</p>
-                  <span className="framework-stages">오프닝 이미지 → 테마 제시 → 촉매제 → 논쟁 → 2막 전환</span>
-                </div>
-                <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'star_moment' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' }))}
-                >
-                  <h5>스타 모멘트</h5>
-                  <p>하나의 강렬한 순간을 중심으로 전후를 구성하는 임팩트 스토리</p>
-                  <span className="framework-stages">빌드업 → 결정적 순간 → 반전/깨달음 → 새로운 시작</span>
-                </div>
-              </div>
-              
-              {/* 주인공 설정 섹션 */}
+            {/* 주인공 설정 섹션 */}
               <div className="character-settings">
                 <label>주인공 설정</label>
                 <div className="character-settings-content">

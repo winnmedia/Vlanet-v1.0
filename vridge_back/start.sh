@@ -29,6 +29,10 @@ python force_migrate_railway.py || echo "⚠️ ProjectInvitation table creation
 echo "🔄 Re-running migrations after force migration..."
 python manage.py migrate --noinput || echo "⚠️ Secondary migration failed, continuing..."
 
+# 4-1. development_framework 컬럼 강제 생성
+echo "🛠️ Ensuring development_framework column exists..."
+python force_development_framework.py || echo "⚠️ Development framework column creation failed, continuing..."
+
 # 5. 미디어 파일 디렉토리 생성
 echo "📁 Creating media directories..."
 mkdir -p /app/media/feedback_file || true

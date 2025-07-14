@@ -55,18 +55,34 @@ class ProjectList(View):
             else:
                 nickname = user.username
 
-            project_list = user.projects.all().select_related(
-                "basic_plan",
-                "story_board",
-                "filming",
-                "video_edit",
-                "post_work",
-                "video_preview",
-                "confirmation",
-                "video_delivery",
-                "feedback",
-                "development_framework",
-            ).prefetch_related('feedback__comments')
+            try:
+                # development_framework 컬럼이 있는지 확인
+                project_list = user.projects.all().select_related(
+                    "basic_plan",
+                    "story_board",
+                    "filming",
+                    "video_edit",
+                    "post_work",
+                    "video_preview",
+                    "confirmation",
+                    "video_delivery",
+                    "feedback",
+                    "development_framework",
+                ).prefetch_related('feedback__comments')
+            except Exception as e:
+                logger.warning(f"development_framework field not available: {str(e)}")
+                # development_framework 없이 재시도
+                project_list = user.projects.all().select_related(
+                    "basic_plan",
+                    "story_board",
+                    "filming",
+                    "video_edit",
+                    "post_work",
+                    "video_preview",
+                    "confirmation",
+                    "video_delivery",
+                    "feedback",
+                ).prefetch_related('feedback__comments')
             result = []
             for i in project_list:
                 if i.video_delivery and i.video_delivery.end_date:

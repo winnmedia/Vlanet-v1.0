@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { updateProjectStore } from 'redux/project'
 import ImageCropper from 'components/ImageCropper'
 import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
-import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest } from 'api/friends'
+import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest, DeleteFriend, BlockFriend } from 'api/friends'
 import moment from 'moment'
 import 'moment/locale/ko'
 
@@ -31,7 +31,11 @@ export default function MyPage() {
     company: '',
     position: ''
   })
-  const [imagePreview, setImagePreview] = useState(storedProfileImage || null)
+  const [imagePreview, setImagePreview] = useState(() => {
+    // localStorage에서 프로필 이미지 불러오기
+    const savedImage = localStorage.getItem('profileImage')
+    return savedImage || storedProfileImage || null
+  })
   const [isUploading, setIsUploading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -171,6 +175,38 @@ export default function MyPage() {
     }
   }
 
+  // 친구 삭제
+  const handleDeleteFriend = async (friendEmail) => {
+    if (!window.confirm('정말로 친구를 삭제하시겠습니까?')) {
+      return
+    }
+    
+    try {
+      await DeleteFriend(friendEmail)
+      alert('친구가 삭제되었습니다.')
+      loadFriends() // 목록 새로고침
+    } catch (error) {
+      console.error('친구 삭제 실패:', error)
+      alert(error.response?.data?.message || '친구 삭제 중 오류가 발생했습니다.')
+    }
+  }
+  
+  // 친구 차단
+  const handleBlockFriend = async (friendEmail) => {
+    if (!window.confirm('정말로 이 사용자를 차단하시겠습니까?')) {
+      return
+    }
+    
+    try {
+      await BlockFriend(friendEmail)
+      alert('사용자를 차단했습니다.')
+      loadFriends() // 목록 새로고침
+    } catch (error) {
+      console.error('친구 차단 실패:', error)
+      alert(error.response?.data?.message || '사용자 차단 중 오류가 발생했습니다.')
+    }
+  }
+
   // 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
     loadInvitations()
@@ -201,8 +237,9 @@ export default function MyPage() {
             fullImageUrl = imageUrl
           }
           setImagePreview(fullImageUrl)
-          // Redux store에 프로필 이미지 저장
+          // Redux store와 localStorage에 프로필 이미지 저장
           dispatch(updateProjectStore({ profileImage: fullImageUrl }))
+          localStorage.setItem('profileImage', fullImageUrl)
         }
         setLoading(false) // 성공 시에도 로딩 종료
       } else {
@@ -300,8 +337,9 @@ export default function MyPage() {
     const reader = new FileReader()
     reader.onloadend = () => {
       setImagePreview(reader.result)
-      // Redux store에 미리보기 이미지 저장
+      // Redux store와 localStorage에 미리보기 이미지 저장
       dispatch(updateProjectStore({ profileImage: reader.result }))
+      localStorage.setItem('profileImage', reader.result)
     }
     reader.readAsDataURL(croppedBlob)
     
@@ -357,8 +395,9 @@ export default function MyPage() {
           console.log('Setting preview image:', fullImageUrl)
           setImagePreview(fullImageUrl)
           
-          // Redux store에 프로필 이미지 저장
+          // Redux store와 localStorage에 프로필 이미지 저장
           dispatch(updateProjectStore({ profileImage: fullImageUrl }))
+          localStorage.setItem('profileImage', fullImageUrl)
         }
         
         // 마이페이지 데이터 새로고침을 지연시켜 이미지 업로드가 완전히 반영되도록 함
@@ -597,12 +636,14 @@ export default function MyPage() {
                           <button 
                             onClick={() => {
                               setProfileImage(null)
-                              setImagePreview(myPageData?.profile?.profile_image ? 
+                              // localStorage에서 이미지 복원 또는 DB 이미지 사용
+                              const savedImage = localStorage.getItem('profileImage')
+                              const dbImage = myPageData?.profile?.profile_image ? 
                                 (myPageData.profile.profile_image.startsWith('/') ? 
                                   `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${myPageData.profile.profile_image}` : 
                                   myPageData.profile.profile_image
                                 ) : null
-                              )
+                              setImagePreview(savedImage || dbImage || null)
                             }}
                             className="cancel-upload-btn"
                           >
@@ -1054,8 +1095,54 @@ export default function MyPage() {
                             </div>
                           </div>
                           <div className="friend-actions">
-                            <button className="message-btn">메시지</button>
-                            <button className="invite-btn">프로젝트 초대</button>
+                            <button className="message-btn" disabled title="준비 중">메시지</button>
+                            <button className="invite-btn" disabled title="준비 중">프로젝트 초대</button>
+                            <button 
+                              className="delete-btn"
+                              onClick={() => handleDeleteFriend(friendship.friend.email)}
+                              style={{
+                                backgroundColor: '#dc3545',
+                                color: 'white',
+                                border: 'none',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                marginLeft: '5px',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = '#c82333'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = '#dc3545'
+                              }}
+                            >
+                              삭제
+                            </button>
+                            <button 
+                              className="block-btn"
+                              onClick={() => handleBlockFriend(friendship.friend.email)}
+                              style={{
+                                backgroundColor: '#6c757d',
+                                color: 'white',
+                                border: 'none',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                marginLeft: '5px',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = '#5a6268'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = '#6c757d'
+                              }}
+                            >
+                              차단
+                            </button>
                           </div>
                         </div>
                       ))}

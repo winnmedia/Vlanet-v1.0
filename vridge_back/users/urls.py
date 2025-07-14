@@ -53,10 +53,11 @@ urlpatterns = [
     path("notifications/<int:notification_id>/", views.NotificationDetail.as_view()),  # 알림 삭제
     
     # 친구 관련 URL
-    path("friends/", views.FriendshipView.as_view()),  # 친구 목록 조회/친구 요청
+    path("friends/", views.FriendshipView.as_view()),  # 친구 목록 조회/친구 요청/친구 삭제
     path("friends/requests/", views.FriendRequestView.as_view()),  # 받은 친구 요청 목록
     path("friends/<int:friendship_id>/response/", views.FriendRequestResponse.as_view()),  # 친구 요청 수락/거절
     path("friends/search/", views.FriendSearch.as_view()),  # 친구 검색
+    path("friends/block/", views.FriendBlockView.as_view()),  # 친구 차단/차단 해제
     
     # 최근 초대 관련 URL
     path("recent-invitations/", views.RecentInvitationView.as_view()),  # 최근 초대한 사람 목록

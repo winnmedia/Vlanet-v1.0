@@ -52,13 +52,35 @@ export default function InvitationAccept() {
     // 로그인 확인
     const session = checkSession()
     if (!session) {
-      alert('로그인이 필요합니다.')
-      navigate('/Login', { 
-        state: { 
-          returnUrl: `/invitation/${token}`,
-          message: '초대를 처리하려면 로그인이 필요합니다.'
+      // 비회원이 수락하려는 경우 회원가입으로 유도
+      if (action === 'accept') {
+        alert('프로젝트에 참여하려면 회원가입이 필요합니다.')
+        // 회원가입 페이지로 이동하면서 초대 토큰과 프로젝트 정보 전달
+        navigate('/signup', { 
+          state: { 
+            invitationToken: token,
+            invitationId: invitation.id,
+            projectId: invitation.project.id,
+            projectName: invitation.project.name,
+            inviterName: invitation.inviter.nickname,
+            returnUrl: `/feedback/${invitation.project.id}`,
+            message: `${invitation.inviter.nickname}님이 "${invitation.project.name}" 프로젝트에 초대했습니다.`
+          }
+        })
+      } else {
+        // 거절은 로그인 없이도 가능
+        setProcessing(true)
+        try {
+          await DeclineInvitation(invitation.id)
+          alert('초대를 거절했습니다.')
+          navigate('/')
+        } catch (error) {
+          console.error('초대 거절 실패:', error)
+          alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.')
+        } finally {
+          setProcessing(false)
         }
-      })
+      }
       return
     }
 
@@ -67,8 +89,9 @@ export default function InvitationAccept() {
     try {
       if (action === 'accept') {
         await AcceptInvitation(invitation.id)
-        alert('초대를 수락했습니다! 프로젝트로 이동합니다.')
-        navigate(`/project/${invitation.project.id}`)
+        alert('초대를 수락했습니다! 피드백 페이지로 이동합니다.')
+        // 피드백 페이지로 이동
+        navigate(`/feedback/${invitation.project.id}`)
       } else {
         await DeclineInvitation(invitation.id)
         alert('초대를 거절했습니다.')

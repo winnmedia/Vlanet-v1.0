@@ -1466,11 +1466,12 @@ export default function Feedback() {
                       <button
                         onClick={DeleteFile}
                         className={styles.feedbackButtonDanger}
+                        title="영상 삭제"
+                        style={{ padding: '10px' }}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>영상 삭제</span>
                       </button>
                     )}
                     
@@ -1479,12 +1480,12 @@ export default function Feedback() {
                       <button
                         onClick={() => CopyFileUrl(current_project.files)}
                         className={styles.feedbackButtonSecondary}
+                        title="공유"
+                        style={{ padding: '10px' }}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M21 3L14 10M14 10L21 17L16 19L14 14L9 12L11 7L14 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>공유</span>
                       </button>
                     )}
                 </div>

@@ -49,3 +49,30 @@ export function GetRecentInvitations(limit = 10) {
     `/api/users/recent-invitations/?limit=${limit}`
   )
 }
+
+// 친구 삭제
+export function DeleteFriend(friendEmail) {
+  return axiosCredentials(
+    'delete',
+    `/api/users/friends/`,
+    { friend_email: friendEmail }
+  )
+}
+
+// 친구 차단
+export function BlockFriend(friendEmail) {
+  return axiosCredentials(
+    'post',
+    `/api/users/friends/block/`,
+    { friend_email: friendEmail }
+  )
+}
+
+// 친구 차단 해제
+export function UnblockFriend(friendEmail) {
+  return axiosCredentials(
+    'delete',
+    `/api/users/friends/block/`,
+    { friend_email: friendEmail }
+  )
+}

@@ -2,7 +2,7 @@ import 'css/User/Auth.scss'
 import PageTemplate from 'components/PageTemplate'
 import queryString from 'query-string'
 import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { SignIn, GoogleLoginAPI, GetUserInfo } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
@@ -11,6 +11,7 @@ import { safeStorage } from 'utils/mobile-utils'
 export default function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
   const initial_input = {
     email: '',
     password: '',
@@ -97,6 +98,10 @@ export default function Login() {
         // 초대 링크 처리 페이지
         console.log('Navigating to EmailCheck with uid and token')
         navigate(`/EmailCheck?uid=${uid}&token=${token}`)
+      } else if (location.state?.returnUrl) {
+        // 초대 수락을 위해 로그인한 경우
+        console.log('Navigating to return URL:', location.state.returnUrl)
+        navigate(location.state.returnUrl)
       } else {
         console.log('Navigating to CmsHome')
         navigate('/CmsHome', { replace: true })
@@ -156,6 +161,28 @@ export default function Login() {
       <div className="Auth_Form">
         <div className="form_wrap">
           <div className="title">로그인</div>
+          
+          {/* 초대 메시지 표시 */}
+          {location.state?.message && (
+            <div style={{
+              background: 'linear-gradient(135deg, #E8EBFF 0%, #D1D8FF 100%)',
+              border: '1px solid #1631F8',
+              borderRadius: '8px',
+              padding: '16px',
+              marginTop: '24px',
+              marginBottom: '-20px',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                margin: 0,
+                color: '#1631F8',
+                fontWeight: '600',
+                fontSize: '15px'
+              }}>
+                🎬 {location.state.message}
+              </p>
+            </div>
+          )}
           <input
             type="text"
             name="email"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { GetProject, InviteProject, InviteCancel } from 'api/project'
+import { GetProject } from 'api/project'
+import { InviteProjectMember, CancelInvitation, GetProjectInvitations } from 'api/invitation'
 
 export default function InviteInput({
   project_id,
@@ -26,9 +27,10 @@ export default function InviteInput({
   }
 
   const CancelBtn = (id) => {
-    if (window.confirm('삭제하시겠습니까?')) {
-      InviteCancel({ pk: id }, project_id)
+    if (window.confirm('초대를 취소하시겠습니까?')) {
+      CancelInvitation(id)
         .then((res) => {
+          window.alert('초대가 취소되었습니다.')
           GetProject(project_id)
             .then((res) => {
               set_current_project(res.data.result)
@@ -49,7 +51,7 @@ export default function InviteInput({
 
   const handleResend = (email) => {
     if (window.confirm('초대를 다시 보내시겠습니까?')) {
-      InviteProject({ email: email, resend: true }, project_id)
+      InviteProjectMember(project_id, { email: email, resend: true })
         .then((res) => {
           window.alert('초대 이메일을 재전송했습니다.')
           GetProject(project_id)
@@ -122,7 +124,7 @@ export default function InviteInput({
               const resend = duplicateEmails.has(email)
               const requestData = resend ? { email: email, resend: true } : { email: email }
               
-              InviteProject(requestData, project_id)
+              InviteProjectMember(project_id, requestData)
                 .then((res) => {
                   // 성공 시 중복 목록에서 제거
                   setDuplicateEmails(prev => {
@@ -151,7 +153,7 @@ export default function InviteInput({
                       setDuplicateEmails(prev => new Set([...prev, email]))
                       if (window.confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
                         // 재전송 요청
-                        InviteProject({ email: email, resend: true }, project_id)
+                        InviteProjectMember(project_id, { email: email, resend: true })
                           .then((res) => {
                             setDuplicateEmails(prev => {
                               const newSet = new Set(prev)

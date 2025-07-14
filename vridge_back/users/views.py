@@ -999,6 +999,44 @@ class FriendshipView(View):
         except Exception as e:
             logger.error(f"Error in friend request: {str(e)}")
             return JsonResponse({"message": "친구 요청 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def delete(self, request):
+        """친구 삭제"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            friend_email = data.get('friend_email')
+            
+            if not friend_email:
+                return JsonResponse({"message": "친구 이메일이 필요합니다."}, status=400)
+            
+            # 친구 사용자 찾기
+            try:
+                friend_user = User.objects.get(email=friend_email)
+            except User.DoesNotExist:
+                return JsonResponse({"message": "해당 이메일의 사용자를 찾을 수 없습니다."}, status=404)
+            
+            # 친구 관계 찾기 및 삭제
+            friendships = models.Friendship.objects.filter(
+                models.Q(user=user, friend=friend_user) | 
+                models.Q(user=friend_user, friend=user)
+            )
+            
+            if not friendships.exists():
+                return JsonResponse({"message": "친구 관계가 존재하지 않습니다."}, status=404)
+            
+            # 양방향 친구 관계 모두 삭제
+            deleted_count = friendships.delete()[0]
+            
+            return JsonResponse({
+                "message": f"{friend_user.nickname or friend_user.username}님을 친구 목록에서 삭제했습니다.",
+                "deleted_count": deleted_count
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in friend deletion: {str(e)}")
+            return JsonResponse({"message": "친구 삭제 중 오류가 발생했습니다."}, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -1344,3 +1382,97 @@ class CheckEmailVerificationStatusView(View):
 
 # 디버그 뷰 임포트 (임시)
 from .views_debug import JWTDebugView, AuthDebugView
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FriendBlockView(View):
+    """친구 차단 관리"""
+    
+    @user_validator
+    def post(self, request):
+        """친구 차단"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            friend_email = data.get('friend_email')
+            
+            if not friend_email:
+                return JsonResponse({"message": "차단할 사용자의 이메일이 필요합니다."}, status=400)
+            
+            # 자기 자신을 차단하는 것 방지
+            if friend_email == user.email:
+                return JsonResponse({"message": "자기 자신을 차단할 수 없습니다."}, status=400)
+            
+            # 차단할 사용자 찾기
+            try:
+                friend_user = User.objects.get(email=friend_email)
+            except User.DoesNotExist:
+                return JsonResponse({"message": "해당 이메일의 사용자를 찾을 수 없습니다."}, status=404)
+            
+            # 기존 친구 관계 찾기
+            friendship = models.Friendship.objects.filter(
+                models.Q(user=user, friend=friend_user) | 
+                models.Q(user=friend_user, friend=user)
+            ).first()
+            
+            if friendship:
+                # 기존 관계를 차단으로 변경
+                models.Friendship.objects.filter(
+                    models.Q(user=user, friend=friend_user) | 
+                    models.Q(user=friend_user, friend=user)
+                ).update(status='blocked', requested_by=user)
+            else:
+                # 새로운 차단 관계 생성
+                models.Friendship.objects.create(
+                    user=user,
+                    friend=friend_user,
+                    requested_by=user,
+                    status='blocked'
+                )
+            
+            return JsonResponse({
+                "message": f"{friend_user.nickname or friend_user.username}님을 차단했습니다."
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in friend block: {str(e)}")
+            return JsonResponse({"message": "사용자 차단 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def delete(self, request):
+        """친구 차단 해제"""
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            friend_email = data.get('friend_email')
+            
+            if not friend_email:
+                return JsonResponse({"message": "차단 해제할 사용자의 이메일이 필요합니다."}, status=400)
+            
+            # 차단 해제할 사용자 찾기
+            try:
+                friend_user = User.objects.get(email=friend_email)
+            except User.DoesNotExist:
+                return JsonResponse({"message": "해당 이메일의 사용자를 찾을 수 없습니다."}, status=404)
+            
+            # 차단 관계 찾기 및 삭제
+            friendships = models.Friendship.objects.filter(
+                models.Q(user=user, friend=friend_user) | 
+                models.Q(user=friend_user, friend=user),
+                status='blocked'
+            )
+            
+            if not friendships.exists():
+                return JsonResponse({"message": "차단된 관계가 존재하지 않습니다."}, status=404)
+            
+            # 차단 관계 삭제
+            deleted_count = friendships.delete()[0]
+            
+            return JsonResponse({
+                "message": f"{friend_user.nickname or friend_user.username}님의 차단을 해제했습니다.",
+                "deleted_count": deleted_count
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in friend unblock: {str(e)}")
+            return JsonResponse({"message": "차단 해제 중 오류가 발생했습니다."}, status=500)

@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 
 import 'css/User/Auth.scss'
 import PageTemplate from 'components/PageTemplate'
 import { SignUp, CheckNickname, CheckEmail } from 'api/auth'
 import { safeStorage } from 'utils/mobile-utils'
+import { AcceptInvitation } from 'api/invitation'
 
 export default function Signup() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const invitationData = location.state || {}
   const [errorMessage, SetErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [nicknameChecked, setNicknameChecked] = useState(false)
@@ -251,10 +254,28 @@ export default function Signup() {
         // 성공 메시지 표시
         setSuccessMessage('회원가입이 완료되었습니다!');
         
-        // 잠시 후 홈으로 이동
-        setTimeout(() => {
-          navigate('/CmsHome', { replace: true });
-        }, 1000);
+        // 초대를 통한 회원가입인 경우 초대 수락 처리
+        if (invitationData.invitationId) {
+          AcceptInvitation(invitationData.invitationId)
+            .then(() => {
+              // 피드백 페이지로 이동
+              setTimeout(() => {
+                navigate(`/feedback/${invitationData.projectId}`, { replace: true });
+              }, 1000);
+            })
+            .catch((err) => {
+              console.error('초대 수락 실패:', err);
+              // 초대 수락에 실패해도 홈으로 이동
+              setTimeout(() => {
+                navigate('/CmsHome', { replace: true });
+              }, 1000);
+            });
+        } else {
+          // 일반 회원가입인 경우 홈으로 이동
+          setTimeout(() => {
+            navigate('/CmsHome', { replace: true });
+          }, 1000);
+        }
       })
       .catch((err) => {
         if (err.response) {
@@ -281,6 +302,34 @@ export default function Signup() {
       <div className="Auth_Form">
         <div className="form_wrap" style={{ width: '480px' }}>
           <div className="title" style={{ marginBottom: '40px' }}>회원가입</div>
+          
+          {/* 초대 메시지 표시 */}
+          {invitationData.message && (
+            <div style={{
+              background: 'linear-gradient(135deg, #E8EBFF 0%, #D1D8FF 100%)',
+              border: '1px solid #1631F8',
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '24px',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                margin: 0,
+                color: '#1631F8',
+                fontWeight: '600',
+                fontSize: '15px'
+              }}>
+                🎬 {invitationData.message}
+              </p>
+              <p style={{
+                margin: '8px 0 0 0',
+                color: '#666',
+                fontSize: '14px'
+              }}>
+                회원가입 후 프로젝트에 참여할 수 있습니다.
+              </p>
+            </div>
+          )}
           
           <form onSubmit={handleSignUp}>
             {/* 이메일 입력 섹션 */}

@@ -1781,10 +1781,10 @@ export default function VideoPlanning() {
             </div>
             
             {/* 주인공 설정 섹션 */}
-              <div className="character-settings">
-                <label>주인공 설정</label>
-                <div className="character-settings-content">
-                  <div className="character-input-group">
+            <div className="character-settings">
+              <label>주인공 설정</label>
+              <div className="character-settings-content">
+                <div className="character-input-group">
                     <input
                       type="text"
                       placeholder="주인공 이름 (예: 김철수, 영희)"

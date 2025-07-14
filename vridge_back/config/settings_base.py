@@ -40,7 +40,7 @@ if not environ:
     env = MockEnv()
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'django-insecure-default-key'))
+SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY'))
 
 # JWT Algorithm for authentication
 ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS256')

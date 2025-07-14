@@ -32,8 +32,8 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
       SetSortProject(sortedProjects)
       
       console.log('[SideBar] Project list updated:', {
-        totalProjects: projects.length,
-        projectNames: projects.slice(0, 5).map(p => p.name)
+        totalProjects: sortedProjects.length,
+        projectNames: sortedProjects.slice(0, 5).map(p => p.name)
       })
     } else {
       SetSortProject([])

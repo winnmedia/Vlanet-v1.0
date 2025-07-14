@@ -573,6 +573,9 @@ export default function VideoPlanning() {
   }
 
   const generateSceneStoryboard = async (sceneIndex) => {
+    let timer1 = null
+    let timer2 = null
+    
     // 개별 씬 로딩 상태 설정
     setSceneLoadingStates(prev => ({
       ...prev,
@@ -583,9 +586,6 @@ export default function VideoPlanning() {
       }
     }))
     setError(null)
-
-    let timer1 = null
-    let timer2 = null
 
     try {
       const scene = planningData.scenes[sceneIndex]
@@ -738,6 +738,9 @@ export default function VideoPlanning() {
   }
 
   const regenerateStoryboardImage = async (sceneIndex) => {
+    let timer1 = null
+    let timer2 = null
+    
     // 개별 씬 로딩 상태 설정
     setSceneLoadingStates(prev => ({
       ...prev,

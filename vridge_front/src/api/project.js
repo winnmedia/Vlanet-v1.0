@@ -99,9 +99,12 @@ export function FileDeleteAPI(id) {
 
 // 프로젝트 파일 삭제
 export function AcceptInvite(uid, token) {
+  console.log('[API] AcceptInvite called with:', { uid, token })
+  const url = `/api/projects/invite/${uid}/${token}/`
+  console.log('[API] AcceptInvite URL:', url)
   return axiosCredentials(
     'get',
-    `/api/projects/invite/${uid}/${token}`,
+    url,
   )
 }
 

@@ -17,17 +17,26 @@ export default function EmailCheck() {
   const [result, SetResult] = useState('')
 
   useEffect(() => {
+    console.log('[EmailCheck] Component loaded with params:', { uid, token })
+    console.log('[EmailCheck] Full URL:', window.location.href)
+    console.log('[EmailCheck] Search params:', param.toString())
+    
     if (checkSession()) {
       if (uid && token) {
+        console.log('[EmailCheck] Calling AcceptInvite API with:', { uid, token })
         AcceptInvite(uid, token)
           .then((res) => {
+            console.log('[EmailCheck] AcceptInvite success:', res)
             SetResult('success')
           })
           .catch((err) => {
+            console.error('[EmailCheck] AcceptInvite error:', err)
+            console.error('[EmailCheck] Error response:', err.response)
             SetResult('fail')
           })
       }
     } else {
+      console.log('[EmailCheck] No session, redirecting to login')
       navigate(`/login?uid=${uid}&token=${token}`)
     }
   }, [])

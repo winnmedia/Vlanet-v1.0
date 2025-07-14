@@ -457,11 +457,15 @@ class AcceptInvite(View):
     @user_validator
     def get(self, request, uid, token):
         try:
+            logger.info(f"[AcceptInvite] Request received - uid: {uid}, token: {token}")
             user = request.user
+            logger.info(f"[AcceptInvite] User: {user.username}")
+            
             project_id = force_str(urlsafe_base64_decode(uid))
+            logger.info(f"[AcceptInvite] Decoded project_id: {project_id}")
 
             project = models.Project.objects.get_or_none(id=project_id)
-            is_member = project.members.filter(user=user)
+            is_member = project.members.filter(user=user) if project else None
 
             if not project and is_member.exists() and project.user == user:
                 return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=404)

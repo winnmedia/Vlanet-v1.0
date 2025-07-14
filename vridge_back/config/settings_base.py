@@ -224,6 +224,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Custom User Model
 AUTH_USER_MODEL = "users.User"
 
+# URL configuration
+APPEND_SLASH = True
+
 # Cache configuration (moved to line 241 for Redis)
 
 # REST Framework settings

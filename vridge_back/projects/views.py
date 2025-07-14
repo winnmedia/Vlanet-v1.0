@@ -55,12 +55,6 @@ class ProjectList(View):
                 "members": [],
                 "sample_files": [],
                 "nickname": user.nickname or user.username,
-                "user": {
-                    "id": user.id,
-                    "email": user.email,
-                    "nickname": user.nickname or user.username,
-                    "username": user.username
-                },
                 "user_memos": [],
                 "profile_image": None
             }, status=200)

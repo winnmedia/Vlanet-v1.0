@@ -101,7 +101,7 @@ export function FileDeleteAPI(id) {
 export function AcceptInvite(uid, token) {
   return axiosCredentials(
     'get',
-    `/projects/invite/${uid}/${token}`,
+    `/api/projects/invite/${uid}/${token}`,
   )
 }
 

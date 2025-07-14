@@ -353,15 +353,16 @@ class Project(core_model.TimeStampedModel):
         verbose_name="영상 납품",
     )
     
-    development_framework = models.ForeignKey(
-        "DevelopmentFramework",
-        related_name="projects",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name="기획안 디벨롭 프레임워크",
-        help_text="프로젝트에 적용할 기획안 디벨롭 프레임워크"
-    )
+    # development_framework 필드는 마이그레이션이 완료될 때까지 임시로 주석 처리
+    # development_framework = models.ForeignKey(
+    #     "DevelopmentFramework",
+    #     related_name="projects",
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     verbose_name="기획안 디벨롭 프레임워크",
+    #     help_text="프로젝트에 적용할 기획안 디벨롭 프레임워크"
+    # )
 
     feedback = models.OneToOneField(
         "feedbacks.Feedback",

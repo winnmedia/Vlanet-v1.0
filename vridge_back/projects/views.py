@@ -1563,6 +1563,12 @@ class ProjectInvitation(View):
             logger.info(f"ProjectInvitation GET request from user: {request.user.email}, project_id: {project_id}")
             user = request.user
             
+            # 임시로 빈 결과 반환 (데이터베이스 마이그레이션 대기 중)
+            return JsonResponse({
+                "sent_invitations": [],
+                "received_invitations": []
+            }, status=200)
+            
             if project_id:
                 # 특정 프로젝트의 초대 목록
                 project = models.Project.objects.filter(id=project_id).first()
@@ -1581,18 +1587,19 @@ class ProjectInvitation(View):
                 # 사용자의 모든 초대 (보낸 초대 + 받은 초대)
                 # ProjectInvitation 쿼리를 더 안전하게 처리
                 try:
+                    # select_related 없이 기본 쿼리만 사용
                     sent_invitations = models.ProjectInvitation.objects.filter(
                         inviter=user
-                    ).select_related('project').order_by('-created')
+                    ).order_by('-created')
                     
                     received_invitations = models.ProjectInvitation.objects.filter(
                         invitee=user
-                    ).select_related('project').order_by('-created')
+                    ).order_by('-created')
                     
                     # 이메일 기반 받은 초대도 포함
                     received_by_email = models.ProjectInvitation.objects.filter(
                         invitee_email=user.email
-                    ).select_related('project').order_by('-created')
+                    ).order_by('-created')
                 except Exception as e:
                     logger.error(f"Error accessing ProjectInvitation model: {str(e)}", exc_info=True)
                     # 에러 발생 시 빈 결과 반환

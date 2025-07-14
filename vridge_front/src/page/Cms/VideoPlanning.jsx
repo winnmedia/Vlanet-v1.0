@@ -1733,6 +1733,53 @@ export default function VideoPlanning() {
               </div>
             </div>
             
+            {/* 스토리 전개 방식 선택 */}
+            <div className="story-framework-section">
+              <h4>스토리 전개 방식</h4>
+              <div className="framework-options">
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'hook_immersion' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' }))}
+                >
+                  <h5>훅-몰입-반전-떡밥 🎯</h5>
+                  <p>시청자의 시선을 사로잡고 끝까지 유지시키는 현대적 전개</p>
+                  <span className="framework-stages">인트로 훅 → 몰입 → 반전 → 떡밥</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'classic' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' }))}
+                >
+                  <h5>클래식 기승전결</h5>
+                  <p>전통적인 4단계 구성으로 안정적이고 균형잡힌 전개</p>
+                  <span className="framework-stages">기 → 승 → 전 → 결</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'pixar' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'pixar' }))}
+                >
+                  <h5>픽사 스토리텔링</h5>
+                  <p>Once upon a time... 공식으로 만드는 매력적인 이야기</p>
+                  <span className="framework-stages">옛날에 → 매일 → 어느날 → 그래서 → 결국</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'save_the_cat' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' }))}
+                >
+                  <h5>Save the Cat</h5>
+                  <p>할리우드식 3막 구조로 관객을 사로잡는 스토리</p>
+                  <span className="framework-stages">오프닝 이미지 → 테마 제시 → 촉매제 → 논쟁 → 2막 전환</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'star_moment' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' }))}
+                >
+                  <h5>스타 모멘트</h5>
+                  <p>하나의 강렬한 순간을 중심으로 전후를 구성하는 임팩트 스토리</p>
+                  <span className="framework-stages">빌드업 → 결정적 순간 → 반전/깨달음 → 새로운 시작</span>
+                </div>
+              </div>
+            </div>
+            
             {/* 주인공 설정 섹션 */}
               <div className="character-settings">
                 <label>주인공 설정</label>

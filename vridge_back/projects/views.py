@@ -55,34 +55,18 @@ class ProjectList(View):
             else:
                 nickname = user.username
 
-            try:
-                # development_framework 컬럼이 있는지 확인
-                project_list = user.projects.all().select_related(
-                    "basic_plan",
-                    "story_board",
-                    "filming",
-                    "video_edit",
-                    "post_work",
-                    "video_preview",
-                    "confirmation",
-                    "video_delivery",
-                    "feedback",
-                    "development_framework",
-                ).prefetch_related('feedback__comments')
-            except Exception as e:
-                logger.warning(f"development_framework field not available: {str(e)}")
-                # development_framework 없이 재시도
-                project_list = user.projects.all().select_related(
-                    "basic_plan",
-                    "story_board",
-                    "filming",
-                    "video_edit",
-                    "post_work",
-                    "video_preview",
-                    "confirmation",
-                    "video_delivery",
-                    "feedback",
-                ).prefetch_related('feedback__comments')
+            # development_framework는 아직 데이터베이스에 없으므로 제외
+            project_list = user.projects.all().select_related(
+                "basic_plan",
+                "story_board",
+                "filming",
+                "video_edit",
+                "post_work",
+                "video_preview",
+                "confirmation",
+                "video_delivery",
+                "feedback",
+            ).prefetch_related('feedback__comments')
             result = []
             for i in project_list:
                 if i.video_delivery and i.video_delivery.end_date:
@@ -362,14 +346,20 @@ class ProjectList(View):
             
             # 더 구체적인 에러 메시지 반환
             error_message = "프로젝트 목록을 불러오는 중 오류가 발생했습니다."
-            if "nickname" in str(e):
+            error_detail = str(e)
+            
+            # development_framework 관련 에러 처리
+            if "development_framework" in error_detail or "column" in error_detail:
+                error_message = "데이터베이스 구조 업데이트 중입니다. 잠시 후 다시 시도해주세요."
+                logger.error("Development framework column missing - migration needed")
+            elif "nickname" in error_detail:
                 error_message = "사용자 정보 오류가 발생했습니다."
-            elif "memos" in str(e):
+            elif "memos" in error_detail:
                 error_message = "메모 정보를 불러오는 중 오류가 발생했습니다."
                 
             return JsonResponse({
                 "message": error_message,
-                "error": str(e) if settings.DEBUG else None
+                "error": error_detail[:200] if settings.DEBUG else None  # 디버그 모드에서만 상세 에러
             }, status=500)
 
 
@@ -1589,40 +1579,51 @@ class ProjectInvitation(View):
                 invitations = models.ProjectInvitation.objects.filter(project=project).order_by('-created')
             else:
                 # 사용자의 모든 초대 (보낸 초대 + 받은 초대)
-                sent_invitations = models.ProjectInvitation.objects.filter(inviter=user).order_by('-created')
-                received_invitations = models.ProjectInvitation.objects.filter(invitee=user).order_by('-created')
-                
-                # 이메일 기반 받은 초대도 포함
+                # ProjectInvitation 쿼리를 더 안전하게 처리
                 try:
-                    received_by_email = models.ProjectInvitation.objects.filter(invitee_email=user.email).order_by('-created')
+                    sent_invitations = models.ProjectInvitation.objects.filter(
+                        inviter=user
+                    ).select_related('project').order_by('-created')
+                    
+                    received_invitations = models.ProjectInvitation.objects.filter(
+                        invitee=user
+                    ).select_related('project').order_by('-created')
+                    
+                    # 이메일 기반 받은 초대도 포함
+                    received_by_email = models.ProjectInvitation.objects.filter(
+                        invitee_email=user.email
+                    ).select_related('project').order_by('-created')
                 except Exception as e:
                     logger.error(f"Error accessing ProjectInvitation model: {str(e)}", exc_info=True)
-                    raise
+                    # 에러 발생 시 빈 결과 반환
+                    sent_invitations = []
+                    received_invitations = []
+                    received_by_email = []
                 
                 result = {
                     "sent_invitations": [
                         {
                             "id": inv.id,
-                            "project_name": inv.project.name,
-                            "project_id": inv.project.id,
+                            "project_name": getattr(inv.project, 'name', 'Unknown Project'),
+                            "project_id": getattr(inv.project, 'id', None),
                             "invitee_email": inv.invitee_email,
                             "message": inv.message,
                             "status": inv.status,
-                            "created": inv.created.isoformat(),
-                            "expires_at": inv.expires_at.isoformat(),
+                            "created": inv.created.isoformat() if inv.created else None,
+                            "expires_at": inv.expires_at.isoformat() if inv.expires_at else None,
                         }
-                        for inv in sent_invitations
+                        for inv in sent_invitations if inv
                     ],
                     "received_invitations": [
                         {
                             "id": inv.id,
-                            "project_name": inv.project.name,
-                            "project_id": inv.project.id,
-                            "inviter_name": inv.inviter.nickname or inv.inviter.username,
+                            "project_name": getattr(inv.project, 'name', 'Unknown Project'),
+                            "project_id": getattr(inv.project, 'id', None),
+                            "inviter_name": getattr(inv.inviter, 'nickname', '') or getattr(inv.inviter, 'username', 'Unknown'),
                             "message": inv.message,
                             "status": inv.status,
-                            "created": inv.created.isoformat(),
-                            "expires_at": inv.expires_at.isoformat(),
+                            "created": inv.created.isoformat() if inv.created else None,
+                            "expires_at": inv.expires_at.isoformat() if inv.expires_at else None,
                         }
                         for inv in list(received_invitations) + list(received_by_email)
                     ]

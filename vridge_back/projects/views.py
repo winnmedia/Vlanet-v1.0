@@ -46,6 +46,7 @@ class ProjectList(View):
     @user_validator
     def get(self, request):
         try:
+            logger.info(f"ProjectList GET request from user: {request.user.email}")
             user = request.user
             
             # nickname 초기화
@@ -1553,6 +1554,7 @@ class ProjectInvitation(View):
     def get(self, request, project_id=None):
         """초대 목록 조회"""
         try:
+            logger.info(f"ProjectInvitation GET request from user: {request.user.email}, project_id: {project_id}")
             user = request.user
             
             if project_id:
@@ -1575,7 +1577,11 @@ class ProjectInvitation(View):
                 received_invitations = models.ProjectInvitation.objects.filter(invitee=user).order_by('-created')
                 
                 # 이메일 기반 받은 초대도 포함
-                received_by_email = models.ProjectInvitation.objects.filter(invitee_email=user.email).order_by('-created')
+                try:
+                    received_by_email = models.ProjectInvitation.objects.filter(invitee_email=user.email).order_by('-created')
+                except Exception as e:
+                    logger.error(f"Error accessing ProjectInvitation model: {str(e)}", exc_info=True)
+                    raise
                 
                 result = {
                     "sent_invitations": [

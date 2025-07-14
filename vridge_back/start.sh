@@ -43,6 +43,10 @@ python manage.py collectstatic --noinput || echo "⚠️ Static files collection
 echo "✅ Final migration check..."
 python manage.py showmigrations || echo "⚠️ Migration status check failed, continuing..."
 
+# 7-1. 데이터베이스 상태 확인
+echo "🔍 Checking database status..."
+python manage.py check_db_status || echo "⚠️ Database status check failed, continuing..."
+
 # 8. Django 앱 시작 가능 여부 테스트
 echo "🧪 Testing Django app startup..."
 if python3 -c "

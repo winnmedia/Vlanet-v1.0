@@ -584,6 +584,9 @@ export default function VideoPlanning() {
     }))
     setError(null)
 
+    let timer1 = null
+    let timer2 = null
+
     try {
       const scene = planningData.scenes[sceneIndex]
       
@@ -612,7 +615,7 @@ export default function VideoPlanning() {
       }))
       
       // 10초 후 추가 안내 메시지
-      const timer1 = setTimeout(() => {
+      timer1 = setTimeout(() => {
         setSceneLoadingStates(prev => {
           if (prev[sceneIndex]?.loading) {
             return {
@@ -629,7 +632,7 @@ export default function VideoPlanning() {
       }, 10000)
       
       // 30초 후 추가 안내
-      const timer2 = setTimeout(() => {
+      timer2 = setTimeout(() => {
         setSceneLoadingStates(prev => {
           if (prev[sceneIndex]?.loading) {
             return {

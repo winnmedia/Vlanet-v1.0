@@ -387,7 +387,9 @@ class InviteMember(View):
                 token = project_token_generator(project)
                 
                 # 이메일 발송 시도
+                logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
                 email_sent = invite_send_email(request, email, uid, token, project.name)
+                logger.info(f"[InviteMember] Email send result: {email_sent}")
                 
                 # 최근 초대 기록 업데이트
                 from users.models import RecentInvitation

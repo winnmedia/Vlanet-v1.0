@@ -28,7 +28,7 @@ export default function InviteInput({
 
   const CancelBtn = (id) => {
     if (window.confirm('초대를 취소하시겠습니까?')) {
-      CancelInvitation(id)
+      CancelInvitation(project_id, id)
         .then((res) => {
           window.alert('초대가 취소되었습니다.')
           GetProject(project_id)

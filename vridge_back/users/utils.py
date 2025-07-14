@@ -212,15 +212,22 @@ def invite_send_email(request, email, uid, token, name):
     """프로젝트 초대 이메일 발송"""
     try:
         print(f"[Invite Email] Sending invite email to: {email} for project: {name}")
+        print(f"[Invite Email] EMAIL_BACKEND: {settings.EMAIL_BACKEND}")
+        print(f"[Invite Email] EMAIL_HOST: {getattr(settings, 'EMAIL_HOST', 'Not set')}")
+        print(f"[Invite Email] EMAIL_HOST_USER: {getattr(settings, 'EMAIL_HOST_USER', 'Not set')[:10] if getattr(settings, 'EMAIL_HOST_USER', None) else 'Not set'}...")
+        print(f"[Invite Email] DEFAULT_FROM_EMAIL: {getattr(settings, 'DEFAULT_FROM_EMAIL', 'Not set')}")
         
         # 이메일 설정 확인
         if settings.EMAIL_BACKEND != 'django.core.mail.backends.console.EmailBackend':
             if os.environ.get('SENDGRID_API_KEY'):
-                print("[Invite Email] Using SendGrid for email")
-            elif settings.EMAIL_HOST_USER and settings.EMAIL_HOST_PASSWORD:
-                print("[Invite Email] Using Gmail for email")
+                print(f"[Invite Email] Using SendGrid for email (API Key present: {bool(os.environ.get('SENDGRID_API_KEY'))})")
+            elif getattr(settings, 'EMAIL_HOST_USER', None) and getattr(settings, 'EMAIL_HOST_PASSWORD', None):
+                print(f"[Invite Email] Using Gmail for email (Credentials present)")
             else:
                 print("[Invite Email] ERROR: No email credentials configured")
+                print(f"[Invite Email] SENDGRID_API_KEY: {bool(os.environ.get('SENDGRID_API_KEY'))}")
+                print(f"[Invite Email] EMAIL_HOST_USER: {bool(getattr(settings, 'EMAIL_HOST_USER', None))}")
+                print(f"[Invite Email] EMAIL_HOST_PASSWORD: {bool(getattr(settings, 'EMAIL_HOST_PASSWORD', None))}")
                 return False
         
         # URL 설정

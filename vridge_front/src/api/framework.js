@@ -1,4 +1,4 @@
-import axios from 'api/axios_config'
+import axios from 'config/axios'
 
 // 프레임워크 목록 조회
 export const GetFrameworks = () => {

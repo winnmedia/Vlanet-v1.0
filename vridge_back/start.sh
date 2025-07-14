@@ -13,6 +13,10 @@ echo "DJANGO_SETTINGS_MODULE: $DJANGO_SETTINGS_MODULE"
 # Django 설정 모듈 설정 (원래 설정 사용)
 export DJANGO_SETTINGS_MODULE=config.settings.railway
 
+# 0. 긴급 수정 먼저 실행
+echo "🚨 Running emergency fix..."
+python emergency_fix.py || echo "⚠️ Emergency fix failed, continuing..."
+
 # 1. 기본 마이그레이션 실행
 echo "🔄 Running basic migrations..."
 python manage.py migrate --noinput || echo "⚠️ Basic migration failed, continuing..."

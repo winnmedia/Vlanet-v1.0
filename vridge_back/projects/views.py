@@ -51,10 +51,16 @@ class ProjectList(View):
             
             # 임시로 빈 프로젝트 목록 반환 (올바른 형식으로)
             return JsonResponse({
-                "project_list": [],  # 프론트엔드가 기대하는 키 이름
+                "result": [],  # 프론트엔드가 기대하는 키 이름 (projectRes.data.result)
                 "members": [],
                 "sample_files": [],
                 "nickname": user.nickname or user.username,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "nickname": user.nickname or user.username,
+                    "username": user.username
+                },
                 "user_memos": [],
                 "profile_image": None
             }, status=200)

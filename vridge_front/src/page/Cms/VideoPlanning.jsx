@@ -1797,7 +1797,6 @@ export default function VideoPlanning() {
                   </div>
                 </div>
               </div>
-            </div>
             
             <textarea
               className="planning-input"

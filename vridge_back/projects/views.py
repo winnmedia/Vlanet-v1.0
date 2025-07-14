@@ -49,15 +49,14 @@ class ProjectList(View):
             logger.info(f"ProjectList GET request from user: {request.user.email}")
             user = request.user
             
-            # 임시로 빈 프로젝트 목록 반환
+            # 임시로 빈 프로젝트 목록 반환 (올바른 형식으로)
             return JsonResponse({
-                "status": 200,
-                "projects": [],
+                "project_list": [],  # 프론트엔드가 기대하는 키 이름
                 "members": [],
                 "sample_files": [],
                 "nickname": user.nickname or user.username,
                 "user_memos": [],
-                "message": "임시 응답입니다. 데이터베이스 업데이트 중입니다."
+                "profile_image": None
             }, status=200)
             
             # nickname 초기화

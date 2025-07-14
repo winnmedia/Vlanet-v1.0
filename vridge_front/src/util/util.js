@@ -79,9 +79,23 @@ export function axiosFormData(method, url, formData, config) {
 }
 
 export function checkSession() {
-  let session = null;
+  // 쿠키 기반 인증으로 변경
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
+    return null;
+  };
   
-  // 모바일 환경을 고려한 안전한 스토리지 접근
+  // 먼저 쿠키에서 확인
+  let session = getCookie('vridge_session');
+  if (session) {
+    return session;
+  }
+  
+  // 하위 호환성을 위해 localStorage도 확인
   try {
     session = window.localStorage.getItem('VGID')
   } catch (e) {

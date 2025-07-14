@@ -1,11 +1,11 @@
 import './SideBar.scss'
 import cx from 'classnames'
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
 
-export default function SideBar({ tab, on_menu }) {
+const SideBar = memo(function SideBar({ tab, on_menu }) {
   const navigate = useNavigate()
   const path = useLocation().pathname
   const { project_list, user } = useSelector((s) => s.ProjectStore)
@@ -16,16 +16,20 @@ export default function SideBar({ tab, on_menu }) {
   const submenuRef = useRef(null)
   const sidebarRef = useRef(null)
 
-  useEffect(() => {
+  const sortedProjects = useMemo(() => {
     if (project_list) {
       const projects = [...project_list]
       projects.sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
       })
-      // projects.sort((a, b) => {
-      //   return new Date(b.created) - new Date(a.created)
-      // })
-      SetSortProject(projects)
+      return projects
+    }
+    return []
+  }, [project_list])
+
+  useEffect(() => {
+    if (sortedProjects.length > 0) {
+      SetSortProject(sortedProjects)
       
       console.log('[SideBar] Project list updated:', {
         totalProjects: projects.length,
@@ -293,5 +297,6 @@ export default function SideBar({ tab, on_menu }) {
       </div>
     </>
   )
-}
-React.memo(SideBar)
+})
+
+export default SideBar

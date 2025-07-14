@@ -21,9 +21,9 @@ urlpatterns = [
     
     path("check-email/", views.CheckEmail.as_view()),  # 이메일 중복 확인
     path("check-nickname/", views.CheckNickname.as_view()),  # 닉네임 중복 확인
-    path("send_authnumber/<str:types>/", views.SendAuthNumber.as_view()),  # 인증번호 보내기 (회원가입)
-    path("signup_emailauth/<str:types>/", views.EmailAuth.as_view()),  # 인증번호 확인하기 (회원가입)
-    path("password_reset/", views.ResetPassword.as_view()),
+    path("send-authnumber/<str:types>/", views.SendAuthNumber.as_view()),  # 인증번호 보내기 (회원가입)
+    path("signup-emailauth/<str:types>/", views.EmailAuth.as_view()),  # 인증번호 확인하기 (회원가입)
+    path("password-reset/", views.ResetPassword.as_view()),
     path("login/kakao/", views.KakaoLogin.as_view()),
     path("login/naver/", views.NaverLogin.as_view()),
     path("login/google/", views.GoogleLogin.as_view()),

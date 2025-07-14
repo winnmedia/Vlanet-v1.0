@@ -40,7 +40,7 @@ export function SignIn(data) {
 export function SendAuthNumber(data, types) {
   return axiosOpts(
     'post',
-    `/api/users/send_authnumber/${types}/`,
+    `/api/users/send-authnumber/${types}/`,
     data,
   )
 }
@@ -49,7 +49,7 @@ export function SendAuthNumber(data, types) {
 export function EmailAuth(data, types) {
   return axiosOpts(
     'post',
-    `/api/users/signup_emailauth/${types}/`,
+    `/api/users/signup-emailauth/${types}/`,
     data,
   )
 }
@@ -58,7 +58,7 @@ export function EmailAuth(data, types) {
 export function ResetPassword(data) {
   return axiosOpts(
     'post',
-    `/api/users/password_reset/`,
+    `/api/users/password-reset/`,
     data,
   )
 }

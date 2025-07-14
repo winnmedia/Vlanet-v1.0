@@ -1,13 +1,13 @@
+import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import cx from 'classnames'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { useState, useRef, useEffect } from 'react'
 import { GetNotifications, MarkNotificationAsRead, MarkAllNotificationsAsRead } from 'api/notification'
 import moment from 'moment'
 import 'moment/locale/ko'
 import './Header.scss'
 
-export default function Header({
+const Header = memo(function Header({
   // 초기값 지정
   leftItems = [],
   rightItems = [],
@@ -40,7 +40,7 @@ export default function Header({
   }, [])
 
   // 알림 로드
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     try {
       const response = await GetNotifications()
       setNotifications(response.data.notifications || [])
@@ -48,7 +48,7 @@ export default function Header({
     } catch (error) {
       console.error('알림 로드 실패:', error)
     }
-  }
+  }, [])
 
   // 알림 읽음 처리
   const handleNotificationClick = async (notification) => {
@@ -301,7 +301,7 @@ export default function Header({
       </div>
     </div>
   )
-}
+})
 
 // type에 따라서 헤더의 html을 만들어주는 함수
 function makeHtml(items = [], navigate, onProfileClick) {
@@ -332,3 +332,4 @@ function makeHtml(items = [], navigate, onProfileClick) {
     }
   })
 }
+export default Header

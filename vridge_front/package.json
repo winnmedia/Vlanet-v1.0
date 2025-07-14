@@ -1,6 +1,6 @@
 {
   "name": "vridge",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "private": true,
   "homepage": ".",
   "dependencies": {
@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "CI=false NODE_ENV=production react-scripts build",
     "build:analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

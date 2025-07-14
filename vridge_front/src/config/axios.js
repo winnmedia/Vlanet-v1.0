@@ -18,11 +18,26 @@ if (isProduction) {
   API_BASE_URL = 'http://localhost:8000';
 }
 
+// 쿠키 가져오기 헬퍼 함수
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop().split(';').shift();
+  }
+  return null;
+};
+
 // 토큰 정리 헬퍼 함수
 const getCleanToken = () => {
-  let token = null;
+  // 먼저 쿠키에서 확인
+  let token = getCookie('vridge_session');
+  if (token) {
+    console.log('[getCleanToken] Token from cookie:', token ? `${token.substring(0, 20)}...` : 'null');
+    return token;
+  }
   
-  // 모바일 환경을 고려한 안전한 스토리지 접근
+  // 하위 호환성을 위해 localStorage도 확인
   try {
     token = localStorage.getItem('VGID');
     console.log('[getCleanToken] Raw token from localStorage:', token ? `${token.substring(0, 20)}...` : 'null');

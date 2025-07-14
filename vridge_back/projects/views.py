@@ -64,6 +64,7 @@ class ProjectList(View):
                 "confirmation",
                 "video_delivery",
                 "feedback",
+                "development_framework",
             ).prefetch_related('feedback__comments')
             result = []
             for i in project_list:
@@ -152,6 +153,14 @@ class ProjectList(View):
                         "owner_nickname": i.user.nickname,
                         "owner_email": i.user.username,
                         "feedback_id": i.feedback.id if i.feedback else None,
+                        "development_framework": {
+                            "id": i.development_framework.id,
+                            "name": i.development_framework.name,
+                            "intro_hook": i.development_framework.intro_hook,
+                            "immersion": i.development_framework.immersion,
+                            "twist": i.development_framework.twist,
+                            "hook_next": i.development_framework.hook_next,
+                        } if i.development_framework else None,
                         "feedback": [
                             {
                                 "id": fb.id,
@@ -1776,4 +1785,202 @@ class InvitationResponse(View):
         except Exception as e:
             logger.error(f"Error in invitation response: {str(e)}", exc_info=True)
             return JsonResponse({"message": f"초대 처리 중 오류가 발생했습니다: {str(e)}"}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DevelopmentFrameworkList(View):
+    """기획안 디벨롭 프레임워크 목록 조회 및 생성"""
+    
+    @user_validator
+    def get(self, request):
+        try:
+            user = request.user
+            frameworks = models.DevelopmentFramework.objects.filter(user=user).order_by('-is_default', '-created')
+            
+            result = []
+            for framework in frameworks:
+                result.append({
+                    "id": framework.id,
+                    "name": framework.name,
+                    "intro_hook": framework.intro_hook,
+                    "immersion": framework.immersion,
+                    "twist": framework.twist,
+                    "hook_next": framework.hook_next,
+                    "is_default": framework.is_default,
+                    "created": framework.created,
+                    "updated": framework.updated,
+                })
+            
+            return JsonResponse({
+                "frameworks": result,
+                "count": len(result)
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in DevelopmentFrameworkList GET: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "프레임워크 목록 조회 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def post(self, request):
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            
+            # 필수 필드 검증
+            required_fields = ['name', 'intro_hook', 'immersion', 'twist', 'hook_next']
+            for field in required_fields:
+                if not data.get(field):
+                    return JsonResponse({"message": f"{field} 필드는 필수입니다."}, status=400)
+            
+            # 프레임워크 생성
+            framework = models.DevelopmentFramework.objects.create(
+                user=user,
+                name=data['name'],
+                intro_hook=data['intro_hook'],
+                immersion=data['immersion'],
+                twist=data['twist'],
+                hook_next=data['hook_next'],
+                is_default=data.get('is_default', False)
+            )
+            
+            return JsonResponse({
+                "message": "프레임워크가 성공적으로 생성되었습니다.",
+                "framework": {
+                    "id": framework.id,
+                    "name": framework.name,
+                    "intro_hook": framework.intro_hook,
+                    "immersion": framework.immersion,
+                    "twist": framework.twist,
+                    "hook_next": framework.hook_next,
+                    "is_default": framework.is_default,
+                    "created": framework.created,
+                    "updated": framework.updated,
+                }
+            }, status=201)
+            
+        except Exception as e:
+            logger.error(f"Error in DevelopmentFrameworkList POST: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "프레임워크 생성 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DevelopmentFrameworkDetail(View):
+    """기획안 디벨롭 프레임워크 상세 조회, 수정, 삭제"""
+    
+    @user_validator
+    def get(self, request, framework_id):
+        try:
+            user = request.user
+            framework = models.DevelopmentFramework.objects.get(id=framework_id, user=user)
+            
+            return JsonResponse({
+                "id": framework.id,
+                "name": framework.name,
+                "intro_hook": framework.intro_hook,
+                "immersion": framework.immersion,
+                "twist": framework.twist,
+                "hook_next": framework.hook_next,
+                "is_default": framework.is_default,
+                "created": framework.created,
+                "updated": framework.updated,
+            }, status=200)
+            
+        except models.DevelopmentFramework.DoesNotExist:
+            return JsonResponse({"message": "프레임워크를 찾을 수 없습니다."}, status=404)
+        except Exception as e:
+            logger.error(f"Error in DevelopmentFrameworkDetail GET: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "프레임워크 조회 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def put(self, request, framework_id):
+        try:
+            user = request.user
+            framework = models.DevelopmentFramework.objects.get(id=framework_id, user=user)
+            data = json.loads(request.body)
+            
+            # 업데이트할 필드
+            update_fields = ['name', 'intro_hook', 'immersion', 'twist', 'hook_next', 'is_default']
+            for field in update_fields:
+                if field in data:
+                    setattr(framework, field, data[field])
+            
+            framework.save()
+            
+            return JsonResponse({
+                "message": "프레임워크가 성공적으로 수정되었습니다.",
+                "framework": {
+                    "id": framework.id,
+                    "name": framework.name,
+                    "intro_hook": framework.intro_hook,
+                    "immersion": framework.immersion,
+                    "twist": framework.twist,
+                    "hook_next": framework.hook_next,
+                    "is_default": framework.is_default,
+                    "created": framework.created,
+                    "updated": framework.updated,
+                }
+            }, status=200)
+            
+        except models.DevelopmentFramework.DoesNotExist:
+            return JsonResponse({"message": "프레임워크를 찾을 수 없습니다."}, status=404)
+        except Exception as e:
+            logger.error(f"Error in DevelopmentFrameworkDetail PUT: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "프레임워크 수정 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def delete(self, request, framework_id):
+        try:
+            user = request.user
+            framework = models.DevelopmentFramework.objects.get(id=framework_id, user=user)
+            
+            # 기본값 프레임워크는 삭제 불가
+            if framework.is_default:
+                # 다른 프레임워크가 있는지 확인
+                other_frameworks = models.DevelopmentFramework.objects.filter(user=user).exclude(id=framework_id)
+                if not other_frameworks.exists():
+                    return JsonResponse({"message": "마지막 프레임워크는 삭제할 수 없습니다."}, status=400)
+                
+                # 다른 프레임워크를 기본값으로 설정
+                other_frameworks.first().is_default = True
+                other_frameworks.first().save()
+            
+            framework.delete()
+            
+            return JsonResponse({"message": "프레임워크가 성공적으로 삭제되었습니다."}, status=200)
+            
+        except models.DevelopmentFramework.DoesNotExist:
+            return JsonResponse({"message": "프레임워크를 찾을 수 없습니다."}, status=404)
+        except Exception as e:
+            logger.error(f"Error in DevelopmentFrameworkDetail DELETE: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "프레임워크 삭제 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class SetDefaultFramework(View):
+    """기본 프레임워크 설정 API"""
+    
+    @user_validator
+    def post(self, request, framework_id):
+        try:
+            user = request.user
+            framework = models.DevelopmentFramework.objects.get(id=framework_id, user=user)
+            
+            # 현재 기본값 프레임워크 해제
+            models.DevelopmentFramework.objects.filter(user=user, is_default=True).update(is_default=False)
+            
+            # 선택한 프레임워크를 기본값으로 설정
+            framework.is_default = True
+            framework.save()
+            
+            return JsonResponse({
+                "message": "기본 프레임워크가 설정되었습니다.",
+                "framework_id": framework.id,
+                "framework_name": framework.name
+            }, status=200)
+            
+        except models.DevelopmentFramework.DoesNotExist:
+            return JsonResponse({"message": "프레임워크를 찾을 수 없습니다."}, status=404)
+        except Exception as e:
+            logger.error(f"Error in SetDefaultFramework: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "기본 프레임워크 설정 중 오류가 발생했습니다."}, status=500)
 

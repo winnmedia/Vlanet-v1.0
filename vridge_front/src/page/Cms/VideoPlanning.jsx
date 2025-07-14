@@ -12,6 +12,7 @@ import { checkSession } from 'util/util'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getProxyImageUrl, handleImageError } from 'utils/imageProxy'
+import { GetFrameworks } from 'api/framework'
 
 // 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
 const filterForbiddenWords = (text) => {
@@ -149,7 +150,7 @@ export default function VideoPlanning() {
     targetCustom: '',
     purposeCustom: '',
     durationCustom: '',
-    storyFramework: 'classic',  // 기본값: 클래식 기승전결
+    storyFramework: 'hook_immersion',  // 기본값: 훅-몰입-반전-떡밥
     developmentLevel: 'balanced', // 기본값: 균형잡힌 전개
     characterName: '',
     characterDescription: '',
@@ -172,6 +173,10 @@ export default function VideoPlanning() {
   const [storyboardGenerationProgress, setStoryboardGenerationProgress] = useState({})
   const [uploadedVideo, setUploadedVideo] = useState(null)
   const [showVideoGuide, setShowVideoGuide] = useState(false)
+  const [frameworks, setFrameworks] = useState([])
+  const [selectedFramework, setSelectedFramework] = useState(null)
+  const [showFrameworkSelector, setShowFrameworkSelector] = useState(false)
+  const [sceneLoadingStates, setSceneLoadingStates] = useState({}) // 개별 씬 로딩 상태
 
   useEffect(() => {
     const session = checkSession()
@@ -182,6 +187,7 @@ export default function VideoPlanning() {
       setTimeout(() => {
         fetchPlanningHistory()
         fetchRecentPlannings()
+        fetchFrameworks()
       }, 100)
     }
   }, [navigate])
@@ -196,6 +202,23 @@ export default function VideoPlanning() {
       }
     } catch (err) {
       console.error('히스토리 로드 실패:', err)
+    }
+  }
+
+  // 프레임워크 목록 로드
+  const fetchFrameworks = async () => {
+    try {
+      const response = await GetFrameworks()
+      if (response.data && response.data.frameworks) {
+        setFrameworks(response.data.frameworks)
+        // 기본 프레임워크 자동 선택
+        const defaultFramework = response.data.frameworks.find(f => f.is_default)
+        if (defaultFramework) {
+          setSelectedFramework(defaultFramework)
+        }
+      }
+    } catch (err) {
+      console.error('프레임워크 로드 실패:', err)
     }
   }
 
@@ -247,6 +270,43 @@ export default function VideoPlanning() {
       }
     } catch (err) {
       setError(err.response?.data?.message || '저장에 실패했습니다.')
+    }
+  }
+
+  // 기획 삭제 함수
+  const deletePlanning = async (planningId) => {
+    if (!window.confirm('이 기획을 삭제하시겠습니까?')) {
+      return
+    }
+
+    try {
+      const response = await axios.delete(`/api/video-planning/delete/${planningId}/`)
+      
+      if (response.data.status === 'success') {
+        setSuccessMessage('기획이 삭제되었습니다.')
+        
+        // 현재 로드된 기획이 삭제된 경우 초기화
+        if (currentPlanningId === planningId) {
+          setCurrentPlanningId(null)
+          setPlanningData({
+            planning: '',
+            stories: [],
+            scenes: [],
+            shots: [],
+            storyboards: []
+          })
+          setPlanningTitle('')
+          setCurrentStep(1)
+        }
+        
+        // 최근 기획 목록 갱신
+        fetchRecentPlannings()
+        fetchPlanningHistory()
+        
+        setTimeout(() => setSuccessMessage(null), 3000)
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || '삭제에 실패했습니다.')
     }
   }
 
@@ -323,7 +383,14 @@ export default function VideoPlanning() {
           development_level: planningOptions.developmentLevel,
           character_name: planningOptions.characterName,
           character_description: planningOptions.characterDescription,
-          character_image: planningOptions.characterImage
+          character_image: planningOptions.characterImage,
+          // 프레임워크 정보 추가
+          framework: selectedFramework ? {
+            intro_hook: selectedFramework.intro_hook,
+            immersion: selectedFramework.immersion,
+            twist: selectedFramework.twist,
+            hook_next: selectedFramework.hook_next
+          } : null
         }
       )
 
@@ -481,9 +548,15 @@ export default function VideoPlanning() {
   }
 
   const generateSceneStoryboard = async (sceneIndex) => {
-    setLoading(true)
-    setLoadingMessage(`씬 ${sceneIndex + 1}의 콘티를 생성하고 있습니다... (약 1-2분 소요)`)
-    setLoadingProgress(30)
+    // 개별 씬 로딩 상태 설정
+    setSceneLoadingStates(prev => ({
+      ...prev,
+      [sceneIndex]: {
+        loading: true,
+        message: '콘티를 생성하고 있습니다...',
+        progress: 30
+      }
+    }))
     setError(null)
 
     try {
@@ -503,23 +576,48 @@ export default function VideoPlanning() {
         quality: "draft" // 품질 설정을 드래프트로
       }
       
-      setLoadingMessage('AI 이미지 생성 중... 잠시만 기다려주세요')
-      setLoadingProgress(50)
+      // 개별 씬 로딩 메시지 업데이트
+      setSceneLoadingStates(prev => ({
+        ...prev,
+        [sceneIndex]: {
+          ...prev[sceneIndex],
+          message: 'AI 이미지 생성 중... 잠시만 기다려주세요',
+          progress: 50
+        }
+      }))
       
       // 10초 후 추가 안내 메시지
-      setTimeout(() => {
-        if (loading) {
-          setLoadingMessage('고품질 이미지 생성을 위해 시간이 걸립니다... (최대 2분)')
-          setLoadingProgress(60)
-        }
+      const timer1 = setTimeout(() => {
+        setSceneLoadingStates(prev => {
+          if (prev[sceneIndex]?.loading) {
+            return {
+              ...prev,
+              [sceneIndex]: {
+                ...prev[sceneIndex],
+                message: '고품질 이미지 생성을 위해 시간이 걸립니다... (최대 2분)',
+                progress: 60
+              }
+            }
+          }
+          return prev
+        })
       }, 10000)
       
       // 30초 후 추가 안내
-      setTimeout(() => {
-        if (loading) {
-          setLoadingMessage('거의 완료되었습니다... 조금만 더 기다려주세요')
-          setLoadingProgress(70)
-        }
+      const timer2 = setTimeout(() => {
+        setSceneLoadingStates(prev => {
+          if (prev[sceneIndex]?.loading) {
+            return {
+              ...prev,
+              [sceneIndex]: {
+                ...prev[sceneIndex],
+                message: '거의 완료되었습니다... 조금만 더 기다려주세요',
+                progress: 70
+              }
+            }
+          }
+          return prev
+        })
       }, 30000)
       
       const response = await axios.post(
@@ -533,14 +631,26 @@ export default function VideoPlanning() {
           timeout: 120000, // 2분 타임아웃
           onUploadProgress: (progressEvent) => {
             const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            setLoadingProgress(Math.min(50 + progress * 0.3, 70));
+            setSceneLoadingStates(prev => ({
+              ...prev,
+              [sceneIndex]: {
+                ...prev[sceneIndex],
+                progress: Math.min(50 + progress * 0.3, 70)
+              }
+            }))
           }
         }
       )
 
       if (response.data.status === 'success') {
-        setLoadingProgress(80)
-        setLoadingMessage('콘티 생성 완료!')
+        setSceneLoadingStates(prev => ({
+          ...prev,
+          [sceneIndex]: {
+            loading: false,
+            message: '콘티 생성 완료!',
+            progress: 100
+          }
+        }))
         
         // 씬에 스토리보드 정보 추가
         const updatedScenes = [...planningData.scenes]
@@ -549,18 +659,29 @@ export default function VideoPlanning() {
           storyboard: response.data.data.storyboards[0] || {}
         }
         
-        setTimeout(async () => {
-          setPlanningData(prev => ({
-            ...prev,
-            scenes: updatedScenes
-          }))
-          setLoadingProgress(100)
-          
-          // 자동 저장 실행
-          await autoSavePlanning()
-        }, 500)
+        setPlanningData(prev => ({
+          ...prev,
+          scenes: updatedScenes
+        }))
+        
+        // 자동 저장 실행
+        await autoSavePlanning()
+        
+        // 로딩 상태 완전히 제거
+        setTimeout(() => {
+          setSceneLoadingStates(prev => {
+            const newState = { ...prev }
+            delete newState[sceneIndex]
+            return newState
+          })
+        }, 1000)
       } else {
         setError(response.data.message || '콘티 생성에 실패했습니다.')
+        setSceneLoadingStates(prev => {
+          const newState = { ...prev }
+          delete newState[sceneIndex]
+          return newState
+        })
       }
     } catch (err) {
       console.error('스토리보드 생성 오류:', err)
@@ -574,18 +695,30 @@ export default function VideoPlanning() {
       } else {
         setError(err.response?.data?.message || '콘티 생성에 실패했습니다.')
       }
+      
+      // 에러 발생 시 해당 씬의 로딩 상태 제거
+      setSceneLoadingStates(prev => {
+        const newState = { ...prev }
+        delete newState[sceneIndex]
+        return newState
+      })
     } finally {
-      setTimeout(() => {
-        setLoading(false)
-        setLoadingMessage('')
-        setLoadingProgress(0)
-      }, 600)
+      // 타이머 정리
+      if (timer1) clearTimeout(timer1)
+      if (timer2) clearTimeout(timer2)
     }
   }
 
   const regenerateStoryboardImage = async (sceneIndex) => {
-    setLoading(true)
-    setLoadingMessage('콘티 이미지를 재생성하고 있습니다...')
+    // 개별 씬 로딩 상태 설정
+    setSceneLoadingStates(prev => ({
+      ...prev,
+      [sceneIndex]: {
+        loading: true,
+        message: '콘티 이미지를 재생성하고 있습니다...',
+        progress: 50
+      }
+    }))
     setError(null)
 
     try {
@@ -621,15 +754,31 @@ export default function VideoPlanning() {
           ...prev,
           scenes: updatedScenes
         }))
+        
+        // 성공 메시지와 함께 로딩 상태 제거
+        setSceneLoadingStates(prev => {
+          const newState = { ...prev }
+          delete newState[sceneIndex]
+          return newState
+        })
         setSuccessMessage('콘티 이미지가 재생성되었습니다.')
       } else {
         setError(response.data.message || '이미지 재생성에 실패했습니다.')
+        setSceneLoadingStates(prev => {
+          const newState = { ...prev }
+          delete newState[sceneIndex]
+          return newState
+        })
       }
     } catch (err) {
       setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
+      setSceneLoadingStates(prev => {
+        const newState = { ...prev }
+        delete newState[sceneIndex]
+        return newState
+      })
     } finally {
-      setLoading(false)
-      setLoadingMessage('')
+      // 개별 씬 로딩이므로 전체 로딩 상태는 변경하지 않음
     }
   }
 
@@ -1118,6 +1267,81 @@ export default function VideoPlanning() {
                 제작하고자 하는 영상의 기획안을 입력해주세요. AI가 이를 바탕으로 여러 개의 스토리를 생성합니다.
               </p>
             
+            {/* 프레임워크 선택 섹션 */}
+            <div className="framework-selection">
+              <div className="framework-header">
+                <h4>📋 기획안 디벨롭 프레임워크</h4>
+                <button 
+                  className="framework-select-btn"
+                  onClick={() => setShowFrameworkSelector(!showFrameworkSelector)}
+                >
+                  {selectedFramework ? selectedFramework.name : '프레임워크 선택'}
+                  <span className="arrow">{showFrameworkSelector ? '▲' : '▼'}</span>
+                </button>
+              </div>
+              
+              {showFrameworkSelector && (
+                <div className="framework-dropdown">
+                  {frameworks.length === 0 ? (
+                    <div className="no-framework">
+                      <p>등록된 프레임워크가 없습니다.</p>
+                      <button 
+                        className="create-framework-btn"
+                        onClick={() => navigate('/FrameworkManagement')}
+                      >
+                        프레임워크 관리로 이동
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="framework-list">
+                      {frameworks.map((fw) => (
+                        <div 
+                          key={fw.id} 
+                          className={`framework-option ${selectedFramework?.id === fw.id ? 'selected' : ''}`}
+                          onClick={() => {
+                            setSelectedFramework(fw)
+                            setShowFrameworkSelector(false)
+                          }}
+                        >
+                          <div className="framework-name">
+                            {fw.name}
+                            {fw.is_default && <span className="default-badge">기본값</span>}
+                          </div>
+                          <div className="framework-preview">
+                            <span className="preview-item">인트로훅: {fw.intro_hook.substring(0, 30)}...</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {selectedFramework && (
+                <div className="selected-framework-info">
+                  <h5>선택된 프레임워크: {selectedFramework.name}</h5>
+                  <div className="framework-details">
+                    <div className="detail-item">
+                      <strong>1. 인트로 훅:</strong>
+                      <p>{selectedFramework.intro_hook}</p>
+                    </div>
+                    <div className="detail-item">
+                      <strong>2. 몰입:</strong>
+                      <p>{selectedFramework.immersion}</p>
+                    </div>
+                    <div className="detail-item">
+                      <strong>3. 반전:</strong>
+                      <p>{selectedFramework.twist}</p>
+                    </div>
+                    <div className="detail-item">
+                      <strong>4. 떡밥:</strong>
+                      <p>{selectedFramework.hook_next}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             {/* 톤앤매너/장르/콘셉트 선택 */}
             <div className="planning-options">
               <div className="option-group">
@@ -1585,6 +1809,14 @@ export default function VideoPlanning() {
               <h4>스토리 전개 방식</h4>
               <div className="framework-options">
                 <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'hook_immersion' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' }))}
+                >
+                  <h5>훅-몰입-반전-떡밥 🎯</h5>
+                  <p>시청자의 시선을 사로잡고 끝까지 유지시키는 현대적 전개</p>
+                  <span className="framework-stages">인트로 훅 → 몰입 → 반전 → 떡밥</span>
+                </div>
+                <div 
                   className={`framework-card ${planningOptions.storyFramework === 'classic' ? 'active' : ''}`}
                   onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' }))}
                 >
@@ -1743,7 +1975,7 @@ export default function VideoPlanning() {
                         targetCustom: '',
                         purposeCustom: '',
                         durationCustom: '',
-                        storyFramework: 'classic',
+                        storyFramework: 'hook_immersion',
                         developmentLevel: 'balanced',
                         characterName: '',
                         characterDescription: '',
@@ -1770,24 +2002,27 @@ export default function VideoPlanning() {
                   <div 
                     key={planning.id} 
                     className="recent-planning-item"
-                    onClick={() => loadPlanningData(planning)}
                   >
-                    <div className="planning-number">{index + 1}</div>
-                    <div className="planning-info">
-                      <div className="planning-title">{planning.title}</div>
-                      <div className="planning-meta">
-                        <span className="planning-date">{planning.created_at}</span>
-                        {planning.planning_options && (
-                          <div className="planning-tags">
-                            {planning.planning_options.tone && (
-                              <span className="tag tone">{planning.planning_options.tone}</span>
-                            )}
-                            {planning.planning_options.genre && (
-                              <span className="tag genre">{planning.planning_options.genre}</span>
-                            )}
-                            {planning.planning_options.target && (
-                              <span className="tag target">{planning.planning_options.target}</span>
-                            )}
+                    <div 
+                      className="planning-content"
+                      onClick={() => loadPlanningData(planning)}
+                    >
+                      <div className="planning-number">{index + 1}</div>
+                      <div className="planning-info">
+                        <div className="planning-title">{planning.title}</div>
+                        <div className="planning-meta">
+                          <span className="planning-date">{planning.created_at}</span>
+                          {planning.planning_options && (
+                            <div className="planning-tags">
+                              {planning.planning_options.tone && (
+                                <span className="tag tone">{planning.planning_options.tone}</span>
+                              )}
+                              {planning.planning_options.genre && (
+                                <span className="tag genre">{planning.planning_options.genre}</span>
+                              )}
+                              {planning.planning_options.target && (
+                                <span className="tag target">{planning.planning_options.target}</span>
+                              )}
                           </div>
                         )}
                       </div>
@@ -1801,6 +2036,16 @@ export default function VideoPlanning() {
                         </span>
                       </div>
                     </div>
+                    <button
+                      className="delete-planning-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deletePlanning(planning.id);
+                      }}
+                      title="기획 삭제"
+                    >
+                      ✕
+                    </button>
                   </div>
                 ))}
               </div>
@@ -2155,10 +2400,10 @@ export default function VideoPlanning() {
                                       e.stopPropagation();
                                       regenerateStoryboardImage(index);
                                     }}
-                                    disabled={loading}
+                                    disabled={sceneLoadingStates[index]?.loading || Object.keys(sceneLoadingStates).length > 0}
                                     title="이미지 재생성"
                                   >
-                                    재생성
+                                    {sceneLoadingStates[index]?.loading ? '재생성 중...' : '재생성'}
                                   </button>
                                   <button 
                                     className="download-storyboard-btn"
@@ -2177,16 +2422,33 @@ export default function VideoPlanning() {
                       </div>
                     ) : (
                       <div className="storyboard-empty">
-                        <button 
-                          className="generate-storyboard-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            generateSceneStoryboard(index);
-                          }}
-                          disabled={loading}
-                        >
-                          콘티 생성
-                        </button>
+                        {sceneLoadingStates[index]?.loading ? (
+                          <div className="scene-loading-indicator">
+                            <div className="loading-spinner"></div>
+                            <p className="loading-message">
+                              {sceneLoadingStates[index]?.message || '콘티 생성 중...'}
+                            </p>
+                            {sceneLoadingStates[index]?.progress > 0 && (
+                              <div className="loading-progress">
+                                <div 
+                                  className="progress-bar" 
+                                  style={{ width: `${sceneLoadingStates[index].progress}%` }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <button 
+                            className="generate-storyboard-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              generateSceneStoryboard(index);
+                            }}
+                            disabled={Object.keys(sceneLoadingStates).length > 0}
+                          >
+                            콘티 생성
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -2341,32 +2603,45 @@ export default function VideoPlanning() {
                     <div 
                       key={planning.id} 
                       className="recent-item"
-                      onClick={() => loadHistoryItem(planning.id)}
                     >
-                      <div className="recent-number">{index + 1}</div>
-                      <div className="recent-info">
-                        <div className="recent-title">{planning.title}</div>
-                        <div className="recent-meta">
-                          <span className="recent-date">{planning.created_at}</span>
-                          {planning.planning_options && (
-                            <div className="recent-tags">
-                              {planning.planning_options.tone && (
-                                <span className="tag tone">{planning.planning_options.tone}</span>
-                              )}
-                              {planning.planning_options.genre && (
-                                <span className="tag genre">{planning.planning_options.genre}</span>
-                              )}
-                              <span className={`tag step step-${planning.current_step}`}>
-                                {planning.current_step === 1 ? '기획' : 
-                                 planning.current_step === 2 ? '스토리' : 
-                                 planning.current_step === 3 ? '씬' : 
-                                 planning.current_step === 4 ? '숏' : 
+                      <div 
+                        className="recent-content"
+                        onClick={() => loadHistoryItem(planning.id)}
+                      >
+                        <div className="recent-number">{index + 1}</div>
+                        <div className="recent-info">
+                          <div className="recent-title">{planning.title}</div>
+                          <div className="recent-meta">
+                            <span className="recent-date">{planning.created_at}</span>
+                            {planning.planning_options && (
+                              <div className="recent-tags">
+                                {planning.planning_options.tone && (
+                                  <span className="tag tone">{planning.planning_options.tone}</span>
+                                )}
+                                {planning.planning_options.genre && (
+                                  <span className="tag genre">{planning.planning_options.genre}</span>
+                                )}
+                                <span className={`tag step step-${planning.current_step}`}>
+                                  {planning.current_step === 1 ? '기획' : 
+                                   planning.current_step === 2 ? '스토리' : 
+                                   planning.current_step === 3 ? '씬' : 
+                                   planning.current_step === 4 ? '숏' : 
                                  planning.current_step === 5 ? '콘티' : '진행중'}
                               </span>
                             </div>
                           )}
                         </div>
                       </div>
+                      <button
+                        className="delete-planning-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deletePlanning(planning.id);
+                        }}
+                        title="기획 삭제"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -2728,7 +3003,7 @@ export default function VideoPlanning() {
 
             {renderStepContent()}
             
-            {loading && (
+            {loading && currentStep !== 3 && (
               <LoadingAnimation 
                 message={loadingMessage} 
                 progress={loadingProgress} 

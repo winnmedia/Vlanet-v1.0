@@ -163,3 +163,41 @@ class SampleFilesAdmin(admin.ModelAdmin):
         "created",
     )
     list_display_links = list_display
+
+
+@admin.register(models.DevelopmentFramework)
+class DevelopmentFrameworkAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "get_is_default",
+        "user",
+        "created",
+        "updated",
+    )
+    list_display_links = ("id", "name")
+    list_filter = ("is_default", "created", "updated")
+    search_fields = ("name", "user__username", "user__email")
+    readonly_fields = ("created", "updated")
+    autocomplete_fields = ("user",)
+    
+    fieldsets = (
+        ("기본 정보", {
+            "fields": ("name", "user", "is_default")
+        }),
+        ("프레임워크 내용", {
+            "fields": ("intro_hook", "immersion", "twist", "hook_next"),
+            "classes": ("wide",)
+        }),
+        ("생성/수정 정보", {
+            "fields": ("created", "updated"),
+            "classes": ("collapse",)
+        }),
+    )
+    
+    def get_is_default(self, obj):
+        if obj.is_default:
+            return format_html('<span style="color: #27ae60; font-weight: bold;">✓ 기본값</span>')
+        return format_html('<span style="color: #95a5a6;">-</span>')
+    get_is_default.short_description = '기본값'
+    get_is_default.admin_order_field = 'is_default'

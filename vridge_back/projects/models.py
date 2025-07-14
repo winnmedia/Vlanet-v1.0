@@ -3,6 +3,66 @@ from django.db import models
 from core import models as core_model
 
 
+class DevelopmentFramework(core_model.TimeStampedModel):
+    """기획안 디벨롭 프레임워크 모델"""
+    name = models.CharField(verbose_name="프레임워크 이름", max_length=100)
+    intro_hook = models.TextField(
+        verbose_name="인트로 훅", 
+        help_text="초반 5초 안에 시청자의 시선을 사로잡을 강력한 한 방"
+    )
+    immersion = models.TextField(
+        verbose_name="몰입", 
+        help_text="빠른 컷 전환과 흥미로운 전개로 시청자 몰입 유도"
+    )
+    twist = models.TextField(
+        verbose_name="반전", 
+        help_text="예상치 못한 이벤트로 지루함 방지 및 긴장감 유지"
+    )
+    hook_next = models.TextField(
+        verbose_name="떡밥", 
+        help_text="다음 콘텐츠에 대한 궁금증 유발로 재방문 유도"
+    )
+    is_default = models.BooleanField(
+        verbose_name="기본값 여부", 
+        default=False,
+        help_text="이 프레임워크를 기본값으로 설정"
+    )
+    user = models.ForeignKey(
+        "users.User",
+        related_name="frameworks",
+        on_delete=models.CASCADE,
+        verbose_name="소유자"
+    )
+    
+    class Meta:
+        verbose_name = "기획안 디벨롭 프레임워크"
+        verbose_name_plural = "기획안 디벨롭 프레임워크"
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['is_default']),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'is_default'],
+                condition=models.Q(is_default=True),
+                name='unique_default_framework_per_user',
+                violation_error_message='사용자별로 하나의 기본 프레임워크만 설정할 수 있습니다.'
+            )
+        ]
+    
+    def __str__(self):
+        return f"{self.name} ({'기본값' if self.is_default else '일반'})"
+    
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            # 다른 기본값 프레임워크를 해제
+            DevelopmentFramework.objects.filter(
+                user=self.user, 
+                is_default=True
+            ).exclude(pk=self.pk).update(is_default=False)
+        super().save(*args, **kwargs)
+
+
 class AbstractItem(core_model.TimeStampedModel):
     start_date = models.DateTimeField(verbose_name="시작 날짜", null=True, blank=True)
     end_date = models.DateTimeField(verbose_name="끝나는 날짜", null=True, blank=True)
@@ -291,6 +351,16 @@ class Project(core_model.TimeStampedModel):
         null=True,
         blank=True,
         verbose_name="영상 납품",
+    )
+    
+    development_framework = models.ForeignKey(
+        "DevelopmentFramework",
+        related_name="projects",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="기획안 디벨롭 프레임워크",
+        help_text="프로젝트에 적용할 기획안 디벨롭 프레임워크"
     )
 
     feedback = models.OneToOneField(

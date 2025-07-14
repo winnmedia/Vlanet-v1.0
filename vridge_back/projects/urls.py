@@ -53,4 +53,9 @@ urlpatterns = [
     path("invitations/", views.ProjectInvitation.as_view()),  # 사용자의 모든 초대 조회
     path("invitations/token/<str:token>/", views.InvitationToken.as_view()),  # 토큰으로 초대 정보 조회
     path("invitations/<int:invitation_id>/response/", views.InvitationResponse.as_view()),  # 초대 수락/거절
+    
+    # 기획안 디벨롭 프레임워크 관련
+    path("frameworks/", views.DevelopmentFrameworkList.as_view()),  # 프레임워크 목록 조회/생성
+    path("frameworks/<int:framework_id>/", views.DevelopmentFrameworkDetail.as_view()),  # 프레임워크 상세/수정/삭제
+    path("frameworks/<int:framework_id>/set-default/", views.SetDefaultFramework.as_view()),  # 기본 프레임워크 설정
 ]

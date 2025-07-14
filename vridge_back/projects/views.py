@@ -49,16 +49,6 @@ class ProjectList(View):
             logger.info(f"ProjectList GET request from user: {request.user.email}")
             user = request.user
             
-            # 임시로 빈 프로젝트 목록 반환 (올바른 형식으로)
-            return JsonResponse({
-                "result": [],  # 프론트엔드가 기대하는 키 이름 (projectRes.data.result)
-                "members": [],
-                "sample_files": [],
-                "nickname": user.nickname or user.username,
-                "user_memos": [],
-                "profile_image": None
-            }, status=200)
-            
             # nickname 초기화
             if user.nickname:
                 nickname = user.nickname
@@ -164,14 +154,6 @@ class ProjectList(View):
                         "owner_nickname": i.user.nickname,
                         "owner_email": i.user.username,
                         "feedback_id": i.feedback.id if i.feedback else None,
-                        "development_framework": {
-                            "id": i.development_framework.id,
-                            "name": i.development_framework.name,
-                            "intro_hook": i.development_framework.intro_hook,
-                            "immersion": i.development_framework.immersion,
-                            "twist": i.development_framework.twist,
-                            "hook_next": i.development_framework.hook_next,
-                        } if i.development_framework else None,
                         "feedback": [
                             {
                                 "id": fb.id,

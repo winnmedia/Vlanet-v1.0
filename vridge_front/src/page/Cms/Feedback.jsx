@@ -1371,7 +1371,7 @@ export default function Feedback() {
                 </div>
                 
                 {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
-                <div className="video-control-buttons">
+                <div className="video-control-buttons" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <button
@@ -1469,7 +1469,7 @@ export default function Feedback() {
                         title="영상 삭제"
                         style={{ padding: '10px' }}
                       >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
@@ -1483,8 +1483,8 @@ export default function Feedback() {
                         title="공유"
                         style={{ padding: '10px' }}
                       >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M21 3L14 10M14 10L21 17L16 19L14 14L9 12L11 7L14 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
                     )}

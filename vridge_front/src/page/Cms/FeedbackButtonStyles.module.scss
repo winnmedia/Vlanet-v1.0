@@ -28,7 +28,7 @@
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  padding: 10px 16px !important;
+  padding: 8px 12px !important;
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
   color: white !important;
   border: none !important;
@@ -38,6 +38,7 @@
   cursor: pointer !important;
   transition: all 0.3s ease !important;
   box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25) !important;
+  min-width: 80px !important;
   
   &:hover {
     transform: translateY(-2px) !important;
@@ -53,7 +54,7 @@
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  padding: 10px 16px !important;
+  padding: 8px 12px !important;
   background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
   color: white !important;
   border: none !important;
@@ -63,6 +64,7 @@
   cursor: pointer !important;
   transition: all 0.3s ease !important;
   box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25) !important;
+  min-width: 80px !important;
   
   &:hover {
     transform: translateY(-2px) !important;

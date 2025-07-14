@@ -50,11 +50,14 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
         storyboards: planningData.storyboards
       }
 
-      if (selectedFormat === 'pdf_full' || selectedFormat === 'pdf_storyboard' || selectedFormat === 'pdf_advanced') {
+      if (selectedFormat === 'pdf_full' || selectedFormat === 'pdf_storyboard' || selectedFormat === 'pdf_advanced' || selectedFormat === 'pdf_enhanced') {
         // PDF 내보내기
-        const endpoint = selectedFormat === 'pdf_advanced' 
-          ? '/api/video-planning/export/pdf-advanced/'
-          : '/api/video-planning/export/pdf/'
+        let endpoint = '/api/video-planning/export/pdf/'
+        if (selectedFormat === 'pdf_advanced') {
+          endpoint = '/api/video-planning/export/pdf-advanced/'
+        } else if (selectedFormat === 'pdf_enhanced') {
+          endpoint = '/api/video-planning/export/pdf-enhanced/'
+        }
         
         const response = await axios.post(
           endpoint,

@@ -23,10 +23,12 @@ import requests
 from urllib.parse import urlparse
 import os
 import json
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from .pdf_export_service import PDFExportService
 from .google_slides_service import GoogleSlidesService
 from .services.advanced_pdf_export_service import AdvancedPDFExportService
+from .enhanced_pdf_export_service import EnhancedPDFExportService
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -944,6 +946,50 @@ def export_to_advanced_pdf(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def export_to_enhanced_pdf(request):
+    """향상된 테이블 구조 PDF로 내보내기 (가로 A4)"""
+    try:
+        planning_data = request.data.get('planning_data', {})
+        
+        if not planning_data:
+            return Response({
+                'status': 'error',
+                'message': '기획 데이터가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 향상된 PDF 서비스
+        enhanced_pdf_service = EnhancedPDFExportService()
+        
+        # PDF 생성
+        pdf_buffer = enhanced_pdf_service.generate_pdf(planning_data)
+        
+        if not pdf_buffer:
+            return Response({
+                'status': 'error',
+                'message': 'PDF 생성에 실패했습니다.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # 파일명 생성
+        title = planning_data.get('title', '영상기획안')
+        safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        filename = f"{safe_title}_테이블구조_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        
+        # PDF 반환
+        response = HttpResponse(pdf_buffer.read(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error in export_to_enhanced_pdf: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'향상된 PDF 내보내기 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_export_formats(request):
@@ -984,6 +1030,13 @@ def get_export_formats(request):
                 'description': 'AI가 자동으로 구조화하여 슬라이드로 생성',
                 'icon': 'robot',
                 'available': bool(os.environ.get('GOOGLE_API_KEY') and os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
+            },
+            {
+                'id': 'pdf_enhanced',
+                'name': 'PDF - 테이블 구조 (가로형)',
+                'description': '표 형식으로 정리된 가로 A4 전문 문서',
+                'icon': 'file-table',
+                'available': True
             }
         ]
         

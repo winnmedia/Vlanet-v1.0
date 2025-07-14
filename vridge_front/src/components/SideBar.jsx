@@ -138,15 +138,6 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               전체 일정
             </li>
             <li
-              className={cx({ active: path === '/FrameworkManagement' && !SubMenu })}
-              onClick={() => {
-                SetSubMenu(false)
-                navigate('/FrameworkManagement')
-              }}
-            >
-              프레임워크 관리
-            </li>
-            <li
               className={cx('menu_project', 'has-toggle', {
                 active:
                   path.includes('/ProjectView') ||

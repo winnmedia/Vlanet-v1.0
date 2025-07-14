@@ -873,6 +873,41 @@ class NotificationDetail(View):
             return JsonResponse({"message": "알림 삭제 중 오류가 발생했습니다."}, status=500)
 
 
+class RecentInvitationsView(View):
+    """최근 초대한 사람 목록"""
+    
+    @user_validator
+    def get(self, request):
+        """최근 초대한 사람 목록 조회"""
+        try:
+            user = request.user
+            limit = int(request.GET.get('limit', 10))
+            
+            recent_invitations = models.RecentInvitation.objects.filter(
+                inviter=user
+            ).order_by('-last_invited_at')[:limit]
+            
+            invitations_data = []
+            for invitation in recent_invitations:
+                invitations_data.append({
+                    "id": invitation.id,
+                    "email": invitation.invitee_email,
+                    "name": invitation.invitee_name or invitation.invitee_email.split('@')[0],
+                    "project_name": invitation.project_name,
+                    "invitation_count": invitation.invitation_count,
+                    "last_invited_at": invitation.last_invited_at.isoformat() if invitation.last_invited_at else None
+                })
+            
+            return JsonResponse({
+                "status": "success",
+                "recent_invitations": invitations_data
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error in RecentInvitationsView: {str(e)}")
+            return JsonResponse({"message": "최근 초대 목록 조회 중 오류가 발생했습니다."}, status=500)
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class FriendshipView(View):
     """친구 관리"""

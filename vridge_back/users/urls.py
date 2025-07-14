@@ -60,7 +60,7 @@ urlpatterns = [
     path("friends/block/", views.FriendBlockView.as_view()),  # 친구 차단/차단 해제
     
     # 최근 초대 관련 URL
-    path("recent-invitations/", views.RecentInvitationView.as_view()),  # 최근 초대한 사람 목록
+    path("recent-invitations/", views.RecentInvitationsView.as_view()),  # 최근 초대한 사람 목록
     
     # 이메일 인증 관련 URL
     path("verify-email/<str:token>/", views.EmailVerificationView.as_view()),  # 이메일 인증 처리

@@ -272,17 +272,27 @@
         &.in_progress {
           background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
           border-color: #1631F8;
+          border-width: 2px;
+          box-sizing: border-box;
           
           .phase-status {
             background: #1631F8 !important;
             box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
             animation: pulse 2s infinite;
+            width: 24px;
+            height: 24px;
           }
         }
         
         @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.1); }
+          0%, 100% { 
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% { 
+            transform: scale(1.05);
+            opacity: 0.8;
+          }
         }
         
         &.delayed {
@@ -307,8 +317,10 @@
         .phase-header {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           gap: 8px;
           margin-bottom: 8px;
+          min-height: 24px;
           
           
           .phase-name {
@@ -330,6 +342,8 @@
             font-size: 12px;
             font-weight: bold;
             transition: all 0.3s;
+            flex-shrink: 0;
+            box-sizing: border-box;
           }
         }
         

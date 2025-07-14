@@ -4,7 +4,7 @@ import { axiosCredentials } from 'util/util'
 export function InviteProjectMember(projectId, data) {
   return axiosCredentials(
     'post',
-    `/api/projects/${projectId}/invitations/`,
+    `/api/projects/${projectId}/invitation/`,
     data,
   )
 }

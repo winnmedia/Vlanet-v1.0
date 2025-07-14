@@ -75,7 +75,7 @@ export function DeleteProjectAPI(project_id) {
 export function InviteProject(data, id) {
   return axiosCredentials(
     'post',
-    `/projects/invite_project/${id}`,
+    `/api/projects/${id}/invitation/`,
     data,
   )
 }
@@ -84,7 +84,7 @@ export function InviteProject(data, id) {
 export function InviteCancel(data, id) {
   return axiosCredentials(
     'delete',
-    `/projects/invite_project/${id}`,
+    `/api/projects/${id}/invitation/`,
     data,
   )
 }

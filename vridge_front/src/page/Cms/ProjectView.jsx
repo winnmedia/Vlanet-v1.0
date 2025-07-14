@@ -22,6 +22,7 @@ import 'moment/locale/ko'
 import down from 'images/Cms/down_icon.svg'
 
 import { GetProject, UpdateDate } from 'api/project'
+import InviteInput from 'tasks/Project/InviteInput'
 
 export default function ProjectView() {
   const navigate = useNavigate()
@@ -185,7 +186,14 @@ export default function ProjectView() {
         <main className="project">
           {current_project && (
             <>
-              <Info current_project={current_project} user={user} profileImage={profileImage} />
+              <Info 
+            current_project={current_project} 
+            user={user} 
+            profileImage={profileImage} 
+            is_admin={is_admin}
+            refetch={refetch}
+            project_id={project_id}
+          />
               <div className="content calendar">
                 <div style={{ marginBottom: '20px' }}>
                   <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -374,10 +382,11 @@ export default function ProjectView() {
   )
 }
 
-const Info = React.memo(function ({ current_project, user, profileImage }) {
+const Info = React.memo(function ({ current_project, user, profileImage, is_admin, refetch, project_id }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const contentRef = useRef()
   const [contentHeight, setContentHeight] = useState(0)
+  const [showInviteModal, setShowInviteModal] = useState(false)
 
   useEffect(() => {
     if (contentRef.current) {
@@ -429,8 +438,33 @@ const Info = React.memo(function ({ current_project, user, profileImage }) {
             <p>{current_project.description}</p>
           </div>
           <div className="member">
-            <div className="ss_title">
+            <div className="ss_title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>멤버</span>
+              {is_admin && (
+                <button
+                  onClick={() => setShowInviteModal(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '5px 15px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)'
+                    e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)'
+                    e.target.style.boxShadow = 'none'
+                  }}
+                >
+                  + 멤버 초대
+                </button>
+              )}
             </div>
             <ul>
               <li className="admin">
@@ -503,6 +537,68 @@ const Info = React.memo(function ({ current_project, user, profileImage }) {
           </div>
         </div>
       </div>
+      
+      {/* 멤버 초대 모달 */}
+      {showInviteModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowInviteModal(false)}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '30px',
+              borderRadius: '8px',
+              maxWidth: '500px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ margin: 0 }}>멤버 초대</h3>
+              <button
+                onClick={() => setShowInviteModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  padding: '0',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <InviteInput
+              project_id={project_id}
+              set_current_project={(updatedProject) => {
+                refetch()
+                setShowInviteModal(false)
+              }}
+              pending_list={current_project.pending_list || []}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 })

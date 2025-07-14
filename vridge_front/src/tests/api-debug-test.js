@@ -1,4 +1,4 @@
-1const axios = require('axios');
+const axios = require('axios');
 
 const API_BASE_URL = 'https://videoplanet.up.railway.app';
 const TEST_TOKEN = process.argv[2];

@@ -17,6 +17,7 @@ export default function MyPage() {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.ProjectStore.user)
   const nickname = useSelector((state) => state.ProjectStore.nickname)
+  const storedProfileImage = useSelector((state) => state.ProjectStore.profileImage)
   
   const [loading, setLoading] = useState(true)
   const [myPageData, setMyPageData] = useState(null)
@@ -30,7 +31,7 @@ export default function MyPage() {
     company: '',
     position: ''
   })
-  const [imagePreview, setImagePreview] = useState(null)
+  const [imagePreview, setImagePreview] = useState(storedProfileImage || null)
   const [isUploading, setIsUploading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -56,6 +57,19 @@ export default function MyPage() {
       fetchMyPageData()
     }
   }, [navigate])
+
+  // 페이지 이탈 시 경고 (업로드되지 않은 이미지가 있을 때)
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (profileImage && !isUploading) {
+        e.preventDefault()
+        e.returnValue = '업로드되지 않은 프로필 이미지가 있습니다. 페이지를 떠나시겠습니까?'
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [profileImage, isUploading])
 
   // 초대 목록 로드
   const loadInvitations = async () => {
@@ -278,12 +292,16 @@ export default function MyPage() {
   }
 
   const handleCroppedImage = (croppedBlob) => {
-    const croppedFile = new File([croppedBlob], 'profile.jpg', { type: 'image/jpeg' })
+    // 파일명에 타임스탬프 추가하여 유니크하게 만들기
+    const timestamp = Date.now()
+    const croppedFile = new File([croppedBlob], `profile_${timestamp}.jpg`, { type: 'image/jpeg' })
     setProfileImage(croppedFile)
     
     const reader = new FileReader()
     reader.onloadend = () => {
       setImagePreview(reader.result)
+      // Redux store에 미리보기 이미지 저장
+      dispatch(updateProjectStore({ profileImage: reader.result }))
     }
     reader.readAsDataURL(croppedBlob)
     
@@ -297,40 +315,83 @@ export default function MyPage() {
   }
 
   const handleImageUpload = async () => {
-    if (!profileImage || isUploading) return
+    if (!profileImage) {
+      alert('업로드할 이미지를 선택해주세요.')
+      return
+    }
+    
+    if (isUploading) {
+      alert('이미지 업로드 중입니다. 잠시 기다려주세요.')
+      return
+    }
 
     setIsUploading(true)
     const formData = new FormData()
     formData.append('profile_image', profileImage)
+    
+    console.log('Uploading profile image:', profileImage.name, profileImage.size, profileImage.type)
 
     try {
       const response = await uploadProfileImage(formData)
       console.log('Upload response:', response)
+      
       if (response.data && response.data.status === 'success') {
         alert('프로필 이미지가 업로드되었습니다.')
         setProfileImage(null)
+        
         // 업로드된 이미지 URL 즉시 반영
         if (response.data.profile_image_url) {
           const imageUrl = response.data.profile_image_url
           let fullImageUrl
-          if (imageUrl.startsWith('/')) {
-            fullImageUrl = `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${imageUrl}`
+          
+          // URL 처리
+          if (imageUrl.startsWith('http')) {
+            fullImageUrl = imageUrl
+          } else if (imageUrl.startsWith('/')) {
+            const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'
+            fullImageUrl = `${baseUrl}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
           }
+          
+          console.log('Setting preview image:', fullImageUrl)
           setImagePreview(fullImageUrl)
+          
           // Redux store에 프로필 이미지 저장
           dispatch(updateProjectStore({ profileImage: fullImageUrl }))
         }
+        
         // 마이페이지 데이터 새로고침을 지연시켜 이미지 업로드가 완전히 반영되도록 함
         setTimeout(() => {
           fetchMyPageData()
-        }, 500)
+        }, 1000)
+      } else {
+        // 응답은 받았지만 성공이 아닌 경우
+        const errorMsg = response.data?.message || '이미지 업로드에 실패했습니다.'
+        console.error('Upload failed with response:', response.data)
+        alert(errorMsg)
       }
     } catch (error) {
       console.error('Image upload error:', error)
       console.error('Error response:', error.response)
-      alert('이미지 업로드 실패: ' + (error.response?.data?.message || error.message || '알 수 없는 오류'))
+      
+      // 에러 메시지 처리
+      let errorMessage = '이미지 업로드 실패: '
+      if (error.response?.data?.message) {
+        errorMessage += error.response.data.message
+      } else if (error.response?.status === 413) {
+        errorMessage += '파일 크기가 너무 큽니다. 5MB 이하의 이미지를 선택해주세요.'
+      } else if (error.response?.status === 401) {
+        errorMessage += '인증이 만료되었습니다. 다시 로그인해주세요.'
+        // 로그인 페이지로 리다이렉트
+        setTimeout(() => navigate('/Login'), 1500)
+      } else if (error.message) {
+        errorMessage += error.message
+      } else {
+        errorMessage += '알 수 없는 오류가 발생했습니다.'
+      }
+      
+      alert(errorMessage)
     } finally {
       setIsUploading(false)
     }

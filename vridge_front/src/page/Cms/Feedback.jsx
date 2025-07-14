@@ -444,7 +444,7 @@ export default function Feedback() {
   }
 
   // 멤버 초대 관련 함수들
-  const handleInviteMember = async () => {
+  const handleInviteMember = async (resend = false) => {
     if (!inviteEmail.trim()) {
       alert('이메일을 입력해주세요.')
       return
@@ -457,19 +457,33 @@ export default function Feedback() {
 
     setInviteLoading(true)
     try {
-      await InviteProjectMember(project_id, {
+      const requestData = {
         email: inviteEmail.trim(),
         message: inviteMessage.trim()
-      })
+      }
       
-      alert('초대를 보냈습니다.')
+      if (resend) {
+        requestData.resend = true
+      }
+      
+      await InviteProjectMember(project_id, requestData)
+      
+      alert(resend ? '초대를 재전송했습니다.' : '초대를 보냈습니다.')
       handleCloseInviteModal()
       
       // 초대 목록 새로고침
       loadProjectInvitations()
     } catch (error) {
       console.error('초대 실패:', error)
-      alert(error.response?.data?.message || '초대 중 오류가 발생했습니다.')
+      
+      // 409 Conflict 처리 (이미 초대된 이메일)
+      if (error.response?.status === 409) {
+        if (window.confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
+          handleInviteMember(true) // 재전송
+        }
+      } else {
+        alert(error.response?.data?.message || '초대 중 오류가 발생했습니다.')
+      }
     } finally {
       setInviteLoading(false)
     }
@@ -699,12 +713,86 @@ export default function Feedback() {
                          invitation.status === 'cancelled' ? '취소됨' : invitation.status}
                       </span>
                       {invitation.status === 'pending' && (
+                        <>
+                          <button
+                            onClick={async () => {
+                              try {
+                                await InviteProjectMember(project_id, {
+                                  email: invitation.invitee_email,
+                                  resend: true
+                                })
+                                alert('초대를 재전송했습니다.')
+                                loadProjectInvitations()
+                              } catch (error) {
+                                alert(error.response?.data?.message || '재전송 중 오류가 발생했습니다.')
+                              }
+                            }}
+                            style={{
+                              background: 'none',
+                              border: '1px solid #ffc107',
+                              color: '#ffc107',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.background = '#ffc107'
+                              e.target.style.color = 'white'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.background = 'none'
+                              e.target.style.color = '#ffc107'
+                            }}
+                            title="초대 재전송"
+                          >
+                            재전송
+                          </button>
+                          <button
+                            onClick={() => handleCancelInvitation(invitation.id)}
+                            style={{
+                              background: 'none',
+                              border: '1px solid #dc3545',
+                              color: '#dc3545',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.background = '#dc3545'
+                              e.target.style.color = 'white'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.background = 'none'
+                              e.target.style.color = '#dc3545'
+                            }}
+                            title="초대 취소"
+                          >
+                            취소
+                          </button>
+                        </>
+                      )}
+                      {(invitation.status === 'cancelled' || invitation.status === 'declined') && (
                         <button
-                          onClick={() => handleCancelInvitation(invitation.id)}
+                          onClick={async () => {
+                            try {
+                              await InviteProjectMember(project_id, {
+                                email: invitation.invitee_email,
+                                resend: true
+                              })
+                              alert('초대를 재전송했습니다.')
+                              loadProjectInvitations()
+                            } catch (error) {
+                              alert(error.response?.data?.message || '재전송 중 오류가 발생했습니다.')
+                            }
+                          }}
                           style={{
                             background: 'none',
-                            border: '1px solid #dc3545',
-                            color: '#dc3545',
+                            border: '1px solid #ffc107',
+                            color: '#ffc107',
                             padding: '2px 6px',
                             borderRadius: '4px',
                             fontSize: '10px',
@@ -712,16 +800,16 @@ export default function Feedback() {
                             transition: 'all 0.2s ease'
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.background = '#dc3545'
+                            e.target.style.background = '#ffc107'
                             e.target.style.color = 'white'
                           }}
                           onMouseLeave={(e) => {
                             e.target.style.background = 'none'
-                            e.target.style.color = '#dc3545'
+                            e.target.style.color = '#ffc107'
                           }}
-                          title="초대 취소"
+                          title="초대 재전송"
                         >
-                          취소
+                          재전송
                         </button>
                       )}
                     </div>

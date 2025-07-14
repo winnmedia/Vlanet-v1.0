@@ -1394,7 +1394,43 @@ class ProjectInvitation(View):
             ).first()
             
             if existing_invitation:
-                return JsonResponse({"message": "이미 초대를 보냈습니다."}, status=400)
+                # 재전송 옵션 확인
+                resend = data.get('resend', False)
+                if resend:
+                    # 기존 초대를 업데이트하고 이메일을 재전송
+                    existing_invitation.updated = django_timezone.now()
+                    existing_invitation.save()
+                    
+                    # 이메일 재전송
+                    email_sent = False
+                    email_error = None
+                    try:
+                        uid = urlsafe_base64_encode(force_bytes(project.id))
+                        token = project_token_generator(project)
+                        email_sent = invite_send_email(request, email, uid, token, project.name)
+                        if email_sent:
+                            logger.info(f"초대 이메일 재발송 성공: {email}")
+                        else:
+                            logger.warning(f"초대 이메일 재발송 실패: {email}")
+                            email_error = "이메일 재발송에 실패했습니다."
+                    except Exception as e:
+                        logger.error(f"초대 이메일 재발송 중 오류: {str(e)}")
+                        email_sent = False
+                        email_error = str(e)
+                    
+                    return JsonResponse({
+                        "message": "초대 이메일을 재전송했습니다." if email_sent else "초대 이메일 재전송에 실패했습니다.",
+                        "invitation_id": existing_invitation.id,
+                        "email_sent": email_sent,
+                        "email_error": email_error,
+                        "resent": True
+                    }, status=200)
+                else:
+                    return JsonResponse({
+                        "message": "이미 초대를 보냈습니다.",
+                        "invitation_exists": True,
+                        "invitation_id": existing_invitation.id
+                    }, status=409)  # 409 Conflict
             
             # 초대 토큰 생성
             token = secrets.token_urlsafe(32)

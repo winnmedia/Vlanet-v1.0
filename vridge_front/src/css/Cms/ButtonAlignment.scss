@@ -172,6 +172,18 @@ button,
     font-weight: 600 !important;
   }
   
+  // 재전송 버튼 스타일
+  .pr button.cert.resend {
+    background: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #000 !important;
+    
+    &:hover {
+      background: #e0a800 !important;
+      border-color: #e0a800 !important;
+    }
+  }
+  
   // 폼 제출 버튼
   .form button.submit {
     height: 44px !important;

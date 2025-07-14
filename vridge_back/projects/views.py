@@ -461,14 +461,30 @@ class AcceptInvite(View):
             user = request.user
             logger.info(f"[AcceptInvite] User: {user.username}")
             
-            project_id = force_str(urlsafe_base64_decode(uid))
-            logger.info(f"[AcceptInvite] Decoded project_id: {project_id}")
+            try:
+                project_id = force_str(urlsafe_base64_decode(uid))
+                logger.info(f"[AcceptInvite] Decoded project_id: {project_id}")
+            except Exception as decode_error:
+                logger.error(f"[AcceptInvite] Error decoding uid: {decode_error}")
+                return JsonResponse({"message": "잘못된 초대 링크입니다."}, status=400)
 
             project = models.Project.objects.get_or_none(id=project_id)
-            is_member = project.members.filter(user=user) if project else None
-
-            if not project and is_member.exists() and project.user == user:
+            logger.info(f"[AcceptInvite] Project found: {project is not None}")
+            
+            if not project:
+                logger.error(f"[AcceptInvite] Project not found with id: {project_id}")
                 return JsonResponse({"message": "존재하지 않는 프로젝트입니다."}, status=404)
+            
+            is_member = project.members.filter(user=user)
+            logger.info(f"[AcceptInvite] User is already member: {is_member.exists()}")
+            
+            if is_member.exists():
+                logger.info(f"[AcceptInvite] User is already a member of project {project.name}")
+                return JsonResponse({"message": "이미 프로젝트 멤버입니다."}, status=400)
+            
+            if project.user == user:
+                logger.info(f"[AcceptInvite] User is project owner")
+                return JsonResponse({"message": "프로젝트 소유자입니다."}, status=400)
 
             invite_obj = models.ProjectInvite.objects.get_or_none(project=project, email=user.username)
             if invite_obj is None:

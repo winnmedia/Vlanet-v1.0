@@ -32,6 +32,14 @@ export default function EmailCheck() {
           .catch((err) => {
             console.error('[EmailCheck] AcceptInvite error:', err)
             console.error('[EmailCheck] Error response:', err.response)
+            console.error('[EmailCheck] Error status:', err.response?.status)
+            console.error('[EmailCheck] Error data:', err.response?.data)
+            
+            if (err.response?.status === 404) {
+              console.error('[EmailCheck] 404 Error - API endpoint not found')
+              console.error('[EmailCheck] Request URL:', err.config?.url)
+            }
+            
             SetResult('fail')
           })
       }

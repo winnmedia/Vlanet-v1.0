@@ -38,7 +38,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
     } else {
       SetSortProject([])
     }
-  }, [project_list])
+  }, [sortedProjects])
 
   // 관리자 권한 확인 (임시 비활성화)
   useEffect(() => {

@@ -1504,8 +1504,8 @@
         .name_box {
           padding: 20px;
           button {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             background: #1631F8;
             border-radius: 50%;
             text-indent: -99999px;
@@ -1517,6 +1517,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
             
             &:hover {
               background: #0F23C9;

@@ -418,15 +418,15 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
   return (
     <div className="info_wrap">
       <div className="name_box flex align_center space_between">
-        <div className=" flex align_center start">
+        <div className="s_title">{current_project.name}</div>
+        <div className="flex align_center" style={{ gap: '15px' }}>
+          <div>
+            최종 업데이트 날짜 |{' '}
+            {moment(current_project.updated).format('YYYY.MM.DD')}
+          </div>
           <button className={isExpanded ? 'on' : ''} onClick={toggleBox}>
-            버튼
+            프로젝트 정보
           </button>
-          <div className="s_title">{current_project.name}</div>
-        </div>
-        <div>
-          최종 업데이트 날짜 |{' '}
-          {moment(current_project.updated).format('YYYY.MM.DD')}
         </div>
       </div>
       <div className="box" style={boxStyle}>
@@ -447,11 +447,15 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                     background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                     color: 'white',
                     border: 'none',
-                    padding: '5px 15px',
+                    padding: '6px 10px',
                     borderRadius: '4px',
-                    fontSize: '12px',
+                    fontSize: '11px',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                    minWidth: '70px',
+                    width: 'auto',
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = 'translateY(-2px)'
@@ -462,7 +466,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                     e.target.style.boxShadow = 'none'
                   }}
                 >
-                  + 멤버 초대
+                  + 초대
                 </button>
               )}
             </div>

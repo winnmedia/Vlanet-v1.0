@@ -397,11 +397,14 @@ class InviteMember(View):
                             return JsonResponse({"message": "이미 초대한 사용자입니다."}, status=409)
                     else:
                         # 새로운 초대 생성
+                        import secrets
+                        token = secrets.token_urlsafe(32)
                         invitation = models.ProjectInvitation.objects.create(
                             project=project,
                             inviter=user,
                             invitee_email=email,
                             message=data.get('message', ''),
+                            token=token,
                             expires_at=timezone.now() + timedelta(days=7)
                         )
                         resend = False
@@ -430,20 +433,51 @@ class InviteMember(View):
                         "resent": data.get('resend', False)
                     }, status=200)
                 
-                # 이메일 발송 시도 - 새로운 이메일 서비스 사용
+                # 이메일 발송 시도 - 간단한 이메일 서비스 사용
                 logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
                 try:
-                    from .email_service import ProjectInvitationEmailService
-                    email_sent = ProjectInvitationEmailService.send_invitation_email(invitation)
+                    from django.core.mail import send_mail
+                    
+                    # 초대 링크 생성
+                    invitation_url = f"{settings.FRONTEND_URL}/invitation/{invitation.token}"
+                    
+                    # 이메일 제목
+                    subject = f"[VideoPlanet] {project.name} 프로젝트 초대"
+                    
+                    # 이메일 본문
+                    message = f"""
+안녕하세요!
+
+{user.nickname or user.username}님이 "{project.name}" 프로젝트에 초대하셨습니다.
+
+초대 메시지: {data.get('message', '')}
+
+아래 링크를 클릭하여 초대를 수락하세요:
+{invitation_url}
+
+이 초대는 {invitation.expires_at.strftime('%Y년 %m월 %d일')}까지 유효합니다.
+
+감사합니다.
+VideoPlanet 팀
+                    """
+                    
+                    # 이메일 발송
+                    email_sent = send_mail(
+                        subject,
+                        message,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [email],
+                        fail_silently=False,
+                    )
                     logger.info(f"[InviteMember] Email send result: {email_sent}")
                 except Exception as e:
                     logger.error(f"[InviteMember] Email send error: {str(e)}")
                     # 이메일 발송 실패 시 로그만 기록
                     email_sent = False
                 
-                # 최근 초대 기록 업데이트
-                from users.models import RecentInvitation
+                # 최근 초대 기록 업데이트 - 안전한 처리
                 try:
+                    from users.models import RecentInvitation
                     recent_invite, created = RecentInvitation.objects.get_or_create(
                         inviter=user,
                         invitee_email=email,
@@ -459,25 +493,28 @@ class InviteMember(View):
                         recent_invite.save()
                 except Exception as e:
                     logger.warning(f"최근 초대 기록 업데이트 실패: {str(e)}")
+                    # RecentInvitation 모델이 없어도 초대 기능은 계속 진행
                 
-                if email_sent:
-                    return JsonResponse({
-                        "message": "초대 이메일이 성공적으로 발송되었습니다." if not resend else "초대 이메일을 재전송했습니다.",
-                        "email_sent": True,
-                        "resent": resend,
-                        "invitation_id": invitation.id
-                    }, status=200)
-                else:
-                    return JsonResponse({
-                        "message": "초대 생성은 완료되었지만 이메일 발송에 실패했습니다. 관리자에게 문의하세요.",
-                        "email_sent": False,
-                        "resent": resend,
-                        "invitation_id": invitation.id
-                    }, status=500)  # 이메일 발송 실패는 서버 에러로 처리
+                # 이메일 발송 성공 여부와 관계없이 초대는 완료됨
+                return JsonResponse({
+                    "message": "초대가 완료되었습니다." if not resend else "초대를 재전송했습니다.",
+                    "email_sent": email_sent,
+                    "resent": resend,
+                    "invitation_id": invitation.id,
+                    "invitation_url": f"{settings.FRONTEND_URL}/invitation/{invitation.token}"
+                }, status=200)
         except Exception as e:
-            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
-            logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            logger.error(f"Error in InviteMember: {str(e)}", exc_info=True)
+            
+            # 구체적인 에러 메시지 제공
+            if "token" in str(e):
+                return JsonResponse({"message": "초대 토큰 생성 중 오류가 발생했습니다."}, status=500)
+            elif "email" in str(e):
+                return JsonResponse({"message": "이메일 발송 중 오류가 발생했습니다."}, status=500)
+            elif "database" in str(e) or "relation" in str(e):
+                return JsonResponse({"message": "데이터베이스 오류가 발생했습니다."}, status=500)
+            else:
+                return JsonResponse({"message": f"초대 처리 중 오류가 발생했습니다: {str(e)}"}, status=500)
 
     @user_validator
     def delete(self, request, project_id):

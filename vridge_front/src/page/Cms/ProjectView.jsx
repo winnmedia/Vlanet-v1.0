@@ -61,13 +61,24 @@ export default function ProjectView() {
   }
 
   function refetch() {
+    if (!project_id) {
+      console.error('Project ID is missing')
+      return
+    }
+    
     GetProject(project_id)
       .then((res) => {
-        set_current_project(res.data.result)
-        console.log(res.data.result)
+        if (res.data && res.data.result) {
+          set_current_project(res.data.result)
+          console.log('Project refetched:', res.data.result)
+        }
       })
       .catch((err) => {
-        if (err.response && err.response.data) {
+        console.error('Error fetching project:', err)
+        if (err.response && err.response.status === 404) {
+          console.error('Project not found')
+          // 404 에러인 경우 페이지 이동하지 않고 에러만 로그
+        } else if (err.response && err.response.data) {
           window.alert(err.response.data.message)
           navigate('/CmsHome')
         }
@@ -597,8 +608,11 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               set_current_project={refetch}
               pending_list={current_project.pending_list || []}
               onInvitationSent={() => {
-                // 초대 성공 시에만 모달 닫기
-                refetch()
+                // 초대 성공 시 모달 닫고 프로젝트 정보 새로고침
+                setShowInviteModal(false)
+                setTimeout(() => {
+                  refetch()
+                }, 500)
               }}
             />
           </div>

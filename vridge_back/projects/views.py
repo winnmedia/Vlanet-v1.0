@@ -500,8 +500,8 @@ VideoPlanet 팀
                     "message": "초대가 완료되었습니다." if not resend else "초대를 재전송했습니다.",
                     "email_sent": email_sent,
                     "resent": resend,
-                    "invitation_id": invitation.id,
-                    "invitation_url": f"{settings.FRONTEND_URL}/invitation/{invitation.token}"
+                    "invitation_id": invitation.id if 'invitation' in locals() else None,
+                    "invitation_url": f"{settings.FRONTEND_URL}/invitation/{invitation.token}" if 'invitation' in locals() else None
                 }, status=200)
         except Exception as e:
             logger.error(f"Error in InviteMember: {str(e)}", exc_info=True)

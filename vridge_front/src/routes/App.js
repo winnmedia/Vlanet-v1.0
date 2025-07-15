@@ -36,8 +36,9 @@ export default function App() {
                          window.location.hostname.includes('vercel.app')
     
     if (isProduction) {
-      updateBaseURL('https://videoplanet.up.railway.app')
-      console.log('[App] Production environment detected, API URL set to:', 'https://videoplanet.up.railway.app')
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://api.vlanet.net'
+      updateBaseURL(apiUrl)
+      console.log('[App] Production environment detected, API URL set to:', apiUrl)
     }
     
     // 프로덕션 도메인이 설정되어 있고, 현재 도메인이 다른 경우 리다이렉트

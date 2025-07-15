@@ -24,15 +24,12 @@
       
       button,
       label {
-        min-width: 130px;
-        width: 130px;
-        max-width: 130px;
+        flex: 0 0 auto;
         white-space: nowrap;
         text-align: center;
         justify-content: center;
         box-sizing: border-box;
-        padding: 8px 12px;
-        font-size: 13px;
+        // 크기를 자동으로 조정하도록 width 제거
         
         &:hover {
           z-index: 2;
@@ -85,8 +82,8 @@
         
         button,
         label {
-          flex: 1;
-          min-width: 140px;
+          flex: 1 1 auto;
+          min-width: 120px;
           justify-content: center;
         }
       }

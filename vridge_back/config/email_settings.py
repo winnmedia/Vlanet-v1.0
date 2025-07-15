@@ -35,10 +35,13 @@ def configure_email_settings():
             'DEFAULT_FROM_EMAIL': os.environ.get('DEFAULT_FROM_EMAIL', 'VideoPlanet <noreply@vlanet.net>')
         }
     
-    # 개발 환경에서는 콘솔 백엔드 사용
+    # 개발 환경에서도 실제 이메일 발송 가능하도록 설정
+    # 이메일 설정이 있으면 실제 발송, 없으면 콘솔 백엔드 사용
     if os.environ.get('DEBUG', 'False').lower() == 'true':
-        settings['EMAIL_BACKEND'] = 'django.core.mail.backends.console.EmailBackend'
-        return settings
+        if not settings['EMAIL_HOST_PASSWORD']:
+            settings['EMAIL_BACKEND'] = 'django.core.mail.backends.console.EmailBackend'
+            return settings
+        # 이메일 설정이 있으면 실제 발송 진행
     
     # 프로덕션 환경에서는 이메일 설정 검증
     if not settings['EMAIL_HOST_PASSWORD']:

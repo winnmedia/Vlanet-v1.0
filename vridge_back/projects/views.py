@@ -38,6 +38,7 @@ import os
 import secrets
 import hashlib
 from datetime import timedelta
+from django.utils import timezone
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -377,13 +378,30 @@ class InviteMember(View):
                 return JsonResponse({"message": "이미 초대 된 사용자입니다."}, status=409)
 
             with transaction.atomic():
-                invite, is_created = models.ProjectInvite.objects.get_or_create(project=project, email=email)
-
-                if not is_created:
-                    return JsonResponse({"message": "이미 초대한 사용자입니다."}, status=409)
-
-                uid = urlsafe_base64_encode(force_bytes(project_id)).encode().decode()
-                token = project_token_generator(project)
+                # 기존 초대 확인 (새로운 시스템)
+                existing_invitation = models.ProjectInvitation.objects.filter(
+                    project=project,
+                    invitee_email=email,
+                    status='pending'
+                ).first()
+                
+                if existing_invitation:
+                    # 재전송 요청인 경우
+                    if data.get('resend'):
+                        invitation = existing_invitation
+                        resend = True
+                    else:
+                        return JsonResponse({"message": "이미 초대한 사용자입니다."}, status=409)
+                else:
+                    # 새로운 초대 생성
+                    invitation = models.ProjectInvitation.objects.create(
+                        project=project,
+                        inviter=user,
+                        invitee_email=email,
+                        message=data.get('message', ''),
+                        expires_at=timezone.now() + timedelta(days=7)
+                    )
+                    resend = False
                 
                 # 이메일 발송 시도 - 새로운 이메일 서비스 사용
                 logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
@@ -417,14 +435,18 @@ class InviteMember(View):
                 
                 if email_sent:
                     return JsonResponse({
-                        "message": "초대 이메일이 성공적으로 발송되었습니다.",
-                        "email_sent": True
+                        "message": "초대 이메일이 성공적으로 발송되었습니다." if not resend else "초대 이메일을 재전송했습니다.",
+                        "email_sent": True,
+                        "resent": resend,
+                        "invitation_id": invitation.id
                     }, status=200)
                 else:
                     return JsonResponse({
                         "message": "초대 생성은 완료되었지만 이메일 발송에 실패했습니다. 관리자에게 문의하세요.",
-                        "email_sent": False
-                    }, status=200)
+                        "email_sent": False,
+                        "resent": resend,
+                        "invitation_id": invitation.id
+                    }, status=500)  # 이메일 발송 실패는 서버 에러로 처리
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))

@@ -25,6 +25,7 @@ import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from 'tasks/Feedback/OpinionInput'
 import VideoJsPlayer from 'components/VideoJsPlayer'
 import VideoUploadGuide from 'components/VideoUploadGuide'
+import InviteInput from 'tasks/Project/InviteInput'
 
 import useTab from 'hooks/UseTab'
 
@@ -1975,15 +1976,17 @@ export default function Feedback() {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 10000
-        }}>
+        }} onClick={handleCloseInviteModal}>
           <div style={{
             backgroundColor: 'white',
             borderRadius: '12px',
             padding: '24px',
             width: '90%',
             maxWidth: '500px',
+            maxHeight: '80vh',
+            overflowY: 'auto',
             boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)'
-          }}>
+          }} onClick={(e) => e.stopPropagation()}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -2012,238 +2015,15 @@ export default function Feedback() {
                 ×
               </button>
             </div>
-
-            {/* 빠른 선택 섹션 */}
-            {quickListLoading && (
-              <div style={{ 
-                marginBottom: '20px', 
-                textAlign: 'center',
-                color: '#666',
-                fontSize: '14px' 
-              }}>
-                빠른 선택 목록을 불러오는 중...
-              </div>
-            )}
-            {!quickListLoading && (friends.length > 0 || recentInvitations.length > 0) && (
-              <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ 
-                  fontSize: '14px', 
-                  fontWeight: '600', 
-                  marginBottom: '12px', 
-                  color: '#333' 
-                }}>
-                  빠른 선택
-                </h4>
-                
-                {/* 친구 목록 */}
-                {friends.length > 0 && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <h5 style={{ 
-                      fontSize: '13px', 
-                      fontWeight: '500', 
-                      marginBottom: '8px', 
-                      color: '#666',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}>
-                      👥 친구
-                    </h5>
-                    <div style={{ 
-                      display: 'flex', 
-                      flexWrap: 'wrap', 
-                      gap: '6px',
-                      maxHeight: '80px',
-                      overflowY: 'auto'
-                    }}>
-                      {friends.slice(0, 8).map((friend, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleQuickEmailSelect(friend.email)}
-                          style={{
-                            padding: '4px 8px',
-                            fontSize: '12px',
-                            border: '1px solid #ddd',
-                            borderRadius: '12px',
-                            backgroundColor: inviteEmail === friend.email ? '#1631F8' : 'white',
-                            color: inviteEmail === friend.email ? 'white' : '#333',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                          onMouseEnter={(e) => {
-                            if (inviteEmail !== friend.email) {
-                              e.target.style.backgroundColor = '#f8f9fa'
-                              e.target.style.borderColor = '#1631F8'
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (inviteEmail !== friend.email) {
-                              e.target.style.backgroundColor = 'white'
-                              e.target.style.borderColor = '#ddd'
-                            }
-                          }}
-                        >
-                          <span>{friend.nickname || friend.email.split('@')[0]}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* 최근 초대한 사람 목록 */}
-                {recentInvitations.length > 0 && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <h5 style={{ 
-                      fontSize: '13px', 
-                      fontWeight: '500', 
-                      marginBottom: '8px', 
-                      color: '#666',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}>
-                      🕒 최근 초대
-                    </h5>
-                    <div style={{ 
-                      display: 'flex', 
-                      flexWrap: 'wrap', 
-                      gap: '6px',
-                      maxHeight: '80px',
-                      overflowY: 'auto'
-                    }}>
-                      {recentInvitations.slice(0, 8).map((recent, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleQuickEmailSelect(recent.invitee_email)}
-                          style={{
-                            padding: '4px 8px',
-                            fontSize: '12px',
-                            border: '1px solid #ddd',
-                            borderRadius: '12px',
-                            backgroundColor: inviteEmail === recent.invitee_email ? '#1631F8' : 'white',
-                            color: inviteEmail === recent.invitee_email ? 'white' : '#333',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                          onMouseEnter={(e) => {
-                            if (inviteEmail !== recent.invitee_email) {
-                              e.target.style.backgroundColor = '#f8f9fa'
-                              e.target.style.borderColor = '#1631F8'
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (inviteEmail !== recent.invitee_email) {
-                              e.target.style.backgroundColor = 'white'
-                              e.target.style.borderColor = '#ddd'
-                            }
-                          }}
-                        >
-                          <span>{recent.invitee_email.split('@')[0]}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#333'
-              }}>
-                이메일 <span style={{ color: '#e74c3c' }}>*</span>
-              </label>
-              <input
-                type="email"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="초대할 사용자의 이메일을 입력하세요"
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#333'
-              }}>
-                초대 메시지 (선택사항)
-              </label>
-              <textarea
-                value={inviteMessage}
-                onChange={(e) => setInviteMessage(e.target.value)}
-                placeholder="초대와 함께 보낼 메시지를 입력하세요"
-                rows={3}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  resize: 'vertical',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'flex-end'
-            }}>
-              <button
-                onClick={handleCloseInviteModal}
-                style={{
-                  padding: '10px 20px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  backgroundColor: 'white',
-                  color: '#666',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer'
-                }}
-              >
-                취소
-              </button>
-              <button
-                onClick={handleInviteMember}
-                disabled={inviteLoading || !inviteEmail.trim()}
-                style={{
-                  padding: '10px 20px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  background: inviteLoading || !inviteEmail.trim() ? '#ccc' : 
-                            'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: inviteLoading || !inviteEmail.trim() ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {inviteLoading ? '초대 중...' : '초대 보내기'}
-              </button>
-            </div>
+            
+            <InviteInput
+              project_id={project_id}
+              set_current_project={(updatedProject) => {
+                set_current_project(updatedProject)
+                handleCloseInviteModal()
+              }}
+              pending_list={current_project?.pending_list || []}
+            />
           </div>
         </div>
       )}

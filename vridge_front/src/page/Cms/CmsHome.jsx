@@ -1,6 +1,7 @@
 import 'css/Cms/CmsCommon.scss'
 import 'css/Cms/CmsHomeEnhanced.scss'
 import 'css/Cms/HomeLayoutFix.scss'
+import 'css/Cms/HomeActivityLayout.scss'
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -139,33 +140,18 @@ export default function CmsHome() {
             </div>
 
             {/* 최근활동 & 초대현황 상단 섹션 */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1fr 1fr', 
-              gap: '24px',
-              marginBottom: '24px'
-            }}>
+            <div className="home-activity-grid">
               {/* 최근 활동 섹션 */}
-              <div className="part" style={{ margin: 0 }}>
-                <div className="s_title" style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '10px',
-                  marginBottom: '20px'
-                }}>
-                  <div style={{ 
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: '#333',
-                    whiteSpace: 'nowrap' 
-                  }}>최근 활동</div>
+              <div className="activity-card">
+                <div className="card-header">
+                  <h3 className="card-title">최근 활동</h3>
                   <button 
                     className={`collapse-btn ${showRecentActivity ? 'collapsed' : ''}`}
                     onClick={() => setShowRecentActivity(!showRecentActivity)}
                   />
                 </div>
                 {!showRecentActivity && (
-                <div className="feedback-list">
+                <div className="card-content">
                   {project_list && project_list.length > 0 ? (
                     (() => {
                       // 모든 피드백 수집
@@ -195,8 +181,7 @@ export default function CmsHome() {
                             className="feedback-item"
                             onClick={() => navigate(`/Feedback/${feedback.projectId}`)}
                           >
-                            <div className="feedback-header">
-                              <div className="project-indicator" style={{ backgroundColor: feedback.projectColor || '#1631F8' }} />
+                            <div className="project-info">
                               <div className="project-name">
                                 {feedback.projectName}
                               </div>
@@ -220,7 +205,7 @@ export default function CmsHome() {
                       ) : (
                         <div className="empty-state">
                           <div className="empty-title">아직 피드백이 없습니다</div>
-                          <div className="empty-description">프로젝트에 피드백이 등록되면 여기에 표시됩니다</div>
+                          <div className="empty-subtitle">프로젝트에 피드백이 등록되면 여기에 표시됩니다</div>
                         </div>
                       );
                     })()
@@ -235,32 +220,22 @@ export default function CmsHome() {
               </div>
 
               {/* 초대 현황 섹션 */}
-              <div className="part" style={{ margin: 0 }}>
-                <div className="s_title" style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '10px',
-                  marginBottom: '20px'
-                }}>
-                  <div style={{ 
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: '#333',
-                    whiteSpace: 'nowrap' 
-                  }}>초대 현황</div>
+              <div className="invitation-card">
+                <div className="card-header">
+                  <h3 className="card-title">초대 현황</h3>
                   <button 
                     className={`collapse-btn ${showInvitations ? 'collapsed' : ''}`}
                     onClick={() => setShowInvitations(!showInvitations)}
                   />
                 </div>
                 {!showInvitations && (
-                  <div className="invitation-section">
+                  <div className="card-content">
                     {invitationLoading ? (
                       <div className="loading-state">
                         로딩 중...
                       </div>
                     ) : (
-                      <div className="invitation-content">
+                      <div>
                         {/* 받은 초대 - 컴팩트 버전 */}
                         {invitations.received && invitations.received.length > 0 && (
                           <div>
@@ -290,52 +265,27 @@ export default function CmsHome() {
                             {invitations.received.slice(0, 2).map(invitation => (
                               <div 
                                 key={invitation.id}
-                                style={{
-                                  padding: '12px',
-                                  backgroundColor: '#f8f9ff',
-                                  borderRadius: '8px',
-                                  marginBottom: '10px',
-                                  border: '1px solid #e3e9ff',
-                                  position: 'relative'
-                                }}
+                                className="invitation-item"
                               >
-                                <div style={{ marginBottom: '10px' }}>
-                                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#212529', marginBottom: '2px' }}>
+                                <div className="invitation-info">
+                                  <div className="project-name">
                                     {invitation.project_name}
                                   </div>
-                                  <div style={{ fontSize: '12px', color: '#495057' }}>
+                                  <div className="inviter-name">
                                     {invitation.inviter_name}님이 초대
                                   </div>
                                 </div>
                                 
-                                <div style={{ display: 'flex', gap: '6px' }}>
+                                <div className="invitation-actions">
                                   <button
+                                    className="btn-accept"
                                     onClick={() => handleAcceptInvitation(invitation.id)}
-                                    style={{
-                                      padding: '4px 12px',
-                                      fontSize: '11px',
-                                      fontWeight: '600',
-                                      background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                                      color: 'white',
-                                      border: 'none',
-                                      borderRadius: '4px',
-                                      cursor: 'pointer'
-                                    }}
                                   >
                                     수락
                                   </button>
                                   <button
+                                    className="btn-decline"
                                     onClick={() => handleDeclineInvitation(invitation.id)}
-                                    style={{
-                                      padding: '4px 12px',
-                                      fontSize: '11px',
-                                      fontWeight: '600',
-                                      background: '#dc3545',
-                                      color: 'white',
-                                      border: 'none',
-                                      borderRadius: '4px',
-                                      cursor: 'pointer'
-                                    }}
                                   >
                                     거절
                                   </button>
@@ -347,8 +297,12 @@ export default function CmsHome() {
                         
                         {/* 간단한 통계 */}
                         <div className="invitation-stats">
-                          <div>보낸 초대: {invitations.sent?.length || 0}개</div>
-                          <div>최근 수락: {invitations.recent_accepted?.length || 0}개</div>
+                          <div className="stat-item">
+                            보낸 초대: <span className="stat-number">{invitations.sent?.length || 0}</span>개
+                          </div>
+                          <div className="stat-item">
+                            최근 수락: <span className="stat-number">{invitations.recent_accepted?.length || 0}</span>개
+                          </div>
                         </div>
                       </div>
                     )}
@@ -389,50 +343,6 @@ export default function CmsHome() {
                   className={`collapse-btn ${showDashboard ? '' : 'collapsed'}`}
                   onClick={() => setShowDashboard(!showDashboard)}
                 />
-              </div>
-              <div style={{ 
-                display: showDashboard ? 'none' : 'block',
-                marginTop: '20px',
-                animation: showDashboard ? '' : 'fadeIn 0.3s ease'
-              }}>
-                <ul className="schedule enhanced">
-                  <li style={{
-                    background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                    borderRadius: '16px',
-                    padding: '16px',
-                    color: '#fff',
-                    boxShadow: '0 4px 12px rgba(22, 49, 248, 0.15)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    전체
-                    프로젝트 <span>{project_list.length}</span>
-                  </li>
-                  <li style={{
-                    background: 'linear-gradient(135deg, #212529 0%, #000000 100%)',
-                    borderRadius: '16px',
-                    padding: '16px',
-                    color: '#fff',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    이번 달
-                    프로젝트 <span>{this_month_project.length}</span>
-                  </li>
-                  <li style={{
-                    background: 'linear-gradient(135deg, #212529 0%, #000000 100%)',
-                    borderRadius: '16px',
-                    padding: '16px',
-                    color: '#fff',
-                    boxShadow: '0 4px 12px rgba(255, 167, 38, 0.15)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    다음 달
-                    프로젝트 <span>{next_month_project.length}</span>
-                  </li>
-                </ul>
               </div>
             </div>
 

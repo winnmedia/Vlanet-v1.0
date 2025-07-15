@@ -1,0 +1,278 @@
+// 홈 페이지 최근활동 & 초대현황 레이아웃 디자인
+
+// 색상 변수
+$primary-color: #1631F8;
+$primary-light: #3b82f6;
+$background-white: #ffffff;
+$background-light: #f8fafc;
+$border-light: #e2e8f0;
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$text-muted: #94a3b8;
+
+// 그림자
+$shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+.home-activity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+
+  .activity-card, .invitation-card {
+    background: $background-white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: $shadow-soft;
+    border: 1px solid $border-light;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: $shadow-medium;
+      transform: translateY(-1px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid $border-light;
+
+      .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: $text-primary;
+        margin: 0;
+      }
+
+      .collapse-btn {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: $background-light;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: $border-light;
+        }
+
+        &::after {
+          content: '−';
+          font-size: 16px;
+          font-weight: 600;
+          color: $text-secondary;
+        }
+
+        &.collapsed::after {
+          content: '+';
+        }
+      }
+    }
+
+    .card-content {
+      min-height: 200px;
+    }
+  }
+
+  // 최근 활동 카드 스타일
+  .activity-card {
+    .feedback-item {
+      background: $background-light;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid $primary-color;
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        background: #f1f5f9;
+        transform: translateX(4px);
+      }
+
+      .project-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+
+        .project-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: $text-primary;
+        }
+      }
+
+      .feedback-content {
+        .feedback-author {
+          font-size: 13px;
+          color: $text-secondary;
+          margin-bottom: 4px;
+        }
+
+        .feedback-text {
+          font-size: 12px;
+          color: $text-muted;
+          line-height: 1.4;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .feedback-time {
+          font-size: 11px;
+          color: $text-muted;
+          margin-top: 6px;
+        }
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: $text-muted;
+
+      .empty-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .empty-subtitle {
+        font-size: 13px;
+      }
+    }
+  }
+
+  // 초대 현황 카드 스타일
+  .invitation-card {
+    .invitation-item {
+      background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #e0e7ff;
+      position: relative;
+
+      .invitation-info {
+        margin-bottom: 12px;
+
+        .project-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: $text-primary;
+          margin-bottom: 4px;
+        }
+
+        .inviter-name {
+          font-size: 12px;
+          color: $text-secondary;
+        }
+      }
+
+      .invitation-actions {
+        display: flex;
+        gap: 8px;
+
+        .btn-accept {
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 600;
+          background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+          }
+        }
+
+        .btn-decline {
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 600;
+          background: #ef4444;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(#ef4444, 0.3);
+          }
+        }
+      }
+    }
+
+    .invitation-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: $text-muted;
+      padding-top: 16px;
+      border-top: 1px solid $border-light;
+
+      .stat-item {
+        .stat-number {
+          font-weight: 600;
+          color: $primary-color;
+        }
+      }
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 20px;
+      color: $text-muted;
+      font-size: 14px;
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .home-activity-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .activity-card, .invitation-card {
+      padding: 20px;
+
+      .card-header {
+        .card-title {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .home-activity-grid {
+    .activity-card, .invitation-card {
+      padding: 16px;
+
+      .card-header {
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+
+        .card-title {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}

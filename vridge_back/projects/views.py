@@ -776,11 +776,12 @@ class ProjectDetail(View):
     def get(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.get_or_none(id=project_id)
-            if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
+            try:
+                project = models.Project.objects.get(id=project_id)
+            except models.Project.DoesNotExist:
+                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
 
-            is_member = models.Members.objects.get_or_none(project=project, user=user)
+            is_member = models.Members.objects.filter(project=project, user=user).first()
             if project.user != user and is_member is None:
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
@@ -857,9 +858,21 @@ class ProjectDetail(View):
             }
             return JsonResponse({"result": result}, status=200)
         except Exception as e:
-            logger.error(f"Error in project operation: {str(e)}", exc_info=True)
-            logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            logger.error(f"Error in ProjectDetail GET: {str(e)}", exc_info=True)
+            
+            # 구체적인 에러 타입에 따른 처리
+            if "invitations" in str(e):
+                logger.error("초대 관련 에러 발생 - 데이터베이스 관계 문제일 가능성")
+                return JsonResponse({"message": "프로젝트 초대 정보를 불러올 수 없습니다."}, status=500)
+            elif "members" in str(e):
+                logger.error("멤버 관련 에러 발생")
+                return JsonResponse({"message": "프로젝트 멤버 정보를 불러올 수 없습니다."}, status=500)
+            elif "feedback" in str(e):
+                logger.error("피드백 관련 에러 발생")
+                return JsonResponse({"message": "프로젝트 피드백 정보를 불러올 수 없습니다."}, status=500)
+            else:
+                logger.error(f"일반적인 에러: {str(e)}")
+                return JsonResponse({"message": f"프로젝트 정보를 불러올 수 없습니다: {str(e)}"}, status=500)
 
     @user_validator
     def post(self, request, project_id):

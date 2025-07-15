@@ -124,8 +124,27 @@ axios.interceptors.response.use(
     console.log(`[Axios Response] ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
     return response;
   },
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+    
     console.error(`[Axios Response Error] ${error.config?.method?.toUpperCase()} ${error.config?.url} - ${error.response?.status || 'Network Error'}`);
+    
+    // 네트워크 에러 또는 타임아웃 시 재시도
+    if (!error.response || error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
+      // 재시도 카운터 초기화
+      originalRequest._retryCount = originalRequest._retryCount || 0;
+      
+      // 최대 2번까지 재시도
+      if (originalRequest._retryCount < 2) {
+        originalRequest._retryCount += 1;
+        console.log(`[Axios] Retrying request (${originalRequest._retryCount}/2)...`);
+        
+        // 재시도 전 대기 시간 (1초, 2초)
+        await new Promise(resolve => setTimeout(resolve, originalRequest._retryCount * 1000));
+        
+        return axios(originalRequest);
+      }
+    }
     
     // 응답 데이터 로깅 (디버깅용)
     if (error.response?.data) {
@@ -219,8 +238,27 @@ axiosInstance.interceptors.response.use(
     console.log(`[Axios Instance Response] ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
     return response;
   },
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+    
     console.error(`[Axios Instance Response Error] ${error.config?.method?.toUpperCase()} ${error.config?.url} - ${error.response?.status || 'Network Error'}`);
+    
+    // 네트워크 에러 또는 타임아웃 시 재시도
+    if (!error.response || error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
+      // 재시도 카운터 초기화
+      originalRequest._retryCount = originalRequest._retryCount || 0;
+      
+      // 최대 2번까지 재시도
+      if (originalRequest._retryCount < 2) {
+        originalRequest._retryCount += 1;
+        console.log(`[Axios Instance] Retrying request (${originalRequest._retryCount}/2)...`);
+        
+        // 재시도 전 대기 시간 (1초, 2초)
+        await new Promise(resolve => setTimeout(resolve, originalRequest._retryCount * 1000));
+        
+        return axiosInstance(originalRequest);
+      }
+    }
     
     // 응답 데이터 로깅 (디버깅용)
     if (error.response?.data) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { SignUpRequest, SignUpVerify, SignUpComplete, CheckNickname } from "api/auth";
+import { SendAuthNumber, EmailAuth, SignUp, CheckNickname } from "api/auth";
 import PasswordInput from "component/PasswordInput";
 import { CircularProgress } from "@material-ui/core";
 
@@ -104,25 +104,24 @@ const SignupWithEmail = () => {
     setEmailStatus("checking");
     
     try {
-      const response = await SignUpRequest(email);
-      const { status, message, detail } = response.data;
+      const response = await SendAuthNumber({ email }, 'signup');
       
-      if (status === "email_sent") {
+      if (response.data.message === "success") {
         setEmailSent(true);
         setEmailStatus("available");
         setCountdown(30); // 30초 후 재발송 가능
         setErrors({});
-        alert(detail || "인증번호가 이메일로 발송되었습니다.");
+        alert("인증번호가 이메일로 발송되었습니다.");
       }
     } catch (error) {
-      const { status, message, remaining_seconds } = error.response?.data || {};
+      const message = error.response?.data?.message || "";
       
-      if (status === "already_registered") {
+      if (message.includes("가입되어") || message.includes("registered")) {
         setEmailStatus("registered");
-        setErrors({ email: message || "이미 가입되어 있는 이메일입니다." });
+        setErrors({ email: "이미 가입되어 있는 이메일입니다." });
         setEmailSent(false);
-      } else if (status === "rate_limited") {
-        setCountdown(remaining_seconds || 30);
+      } else if (message.includes("잠시") || message.includes("wait")) {
+        setCountdown(30);
         setErrors({ email: message });
         setEmailStatus("rate_limited");
       } else {
@@ -145,9 +144,9 @@ const SignupWithEmail = () => {
     setErrors({});
     
     try {
-      const response = await SignUpVerify({ email, auth_number: authNumber });
+      const response = await EmailAuth({ email, auth_number: authNumber }, 'signup');
       if (response.data.message === "success") {
-        setAuthToken(response.data.auth_token);
+        setAuthToken(response.data.token || authNumber); // 토큰이 없으면 인증번호를 임시로 사용
         setStep(2); // 다음 단계로
         alert("이메일 인증이 완료되었습니다.");
       }
@@ -199,9 +198,8 @@ const SignupWithEmail = () => {
     setErrors({});
     
     try {
-      const response = await SignUpComplete({
+      const response = await SignUp({
         email,
-        auth_token: authToken,
         nickname,
         password
       });

@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.urls import reverse
 import logging
+from users.email_queue import email_queue_manager
 
 logger = logging.getLogger(__name__)
 
@@ -49,21 +50,21 @@ class ProjectInvitationEmailService:
 VideoPlanet 팀
             """
             
-            # 이메일 발송
-            success = send_mail(
+            # 이메일 큐에 추가 (높은 우선순위)
+            email_id = email_queue_manager.add_email(
                 subject=subject,
-                message=text_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                body=text_message,
                 recipient_list=[invitation.invitee_email],
                 html_message=html_message,
-                fail_silently=False,
+                priority=2,  # 높은 우선순위
+                email_type='invitation'
             )
             
-            if success:
-                logger.info(f"초대 이메일 발송 성공: {invitation.invitee_email}")
+            if email_id:
+                logger.info(f"초대 이메일이 큐에 추가됨: {invitation.invitee_email} (ID: {email_id})")
                 return True
             else:
-                logger.error(f"초대 이메일 발송 실패: {invitation.invitee_email}")
+                logger.error(f"초대 이메일 큐 추가 실패: {invitation.invitee_email}")
                 return False
                 
         except Exception as e:
@@ -95,20 +96,20 @@ VideoPlanet 팀
 VideoPlanet 팀
             """
             
-            success = send_mail(
+            email_id = email_queue_manager.add_email(
                 subject=subject,
-                message=text_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                body=text_message,
                 recipient_list=[invitation.inviter.email],
                 html_message=html_message,
-                fail_silently=False,
+                priority=3,  # 일반 우선순위
+                email_type='notification'
             )
             
-            if success:
-                logger.info(f"초대 수락 알림 이메일 발송 성공: {invitation.inviter.email}")
+            if email_id:
+                logger.info(f"초대 수락 알림이 큐에 추가됨: {invitation.inviter.email} (ID: {email_id})")
                 return True
             else:
-                logger.error(f"초대 수락 알림 이메일 발송 실패: {invitation.inviter.email}")
+                logger.error(f"초대 수락 알림 큐 추가 실패: {invitation.inviter.email}")
                 return False
                 
         except Exception as e:
@@ -140,20 +141,20 @@ VideoPlanet 팀
 VideoPlanet 팀
             """
             
-            success = send_mail(
+            email_id = email_queue_manager.add_email(
                 subject=subject,
-                message=text_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                body=text_message,
                 recipient_list=[invitation.inviter.email],
                 html_message=html_message,
-                fail_silently=False,
+                priority=3,  # 일반 우선순위
+                email_type='notification'
             )
             
-            if success:
-                logger.info(f"초대 거절 알림 이메일 발송 성공: {invitation.inviter.email}")
+            if email_id:
+                logger.info(f"초대 거절 알림이 큐에 추가됨: {invitation.inviter.email} (ID: {email_id})")
                 return True
             else:
-                logger.error(f"초대 거절 알림 이메일 발송 실패: {invitation.inviter.email}")
+                logger.error(f"초대 거절 알림 큐 추가 실패: {invitation.inviter.email}")
                 return False
                 
         except Exception as e:

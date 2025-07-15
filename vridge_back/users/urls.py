@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 # from . import views_profile
 from . import views_mypage
 from . import views_profile_upload
+from . import views_email_monitor
 
 urlpatterns = [
     path("login/", views.SignIn.as_view()),
@@ -70,4 +71,11 @@ urlpatterns = [
     # 디버그 URL (임시)
     path("debug/jwt/", views.JWTDebugView.as_view()),  # JWT 토큰 디버깅
     path("debug/auth/", views.AuthDebugView.as_view()),  # 인증 상태 디버깅
+    
+    # 이메일 모니터링 URL (관리자용)
+    path("email-monitor/status/<str:email_id>/", views_email_monitor.EmailStatusView.as_view()),  # 이메일 상태 조회
+    path("email-monitor/dashboard/", views_email_monitor.EmailMonitorDashboardView.as_view()),  # 모니터링 대시보드
+    path("email-monitor/resend/<str:email_id>/", views_email_monitor.EmailResendView.as_view()),  # 이메일 재발송
+    path("email-monitor/bulk-send/", views_email_monitor.BulkEmailView.as_view()),  # 대량 이메일 발송
+    path("email-monitor/cleanup/", views_email_monitor.EmailCleanupView.as_view()),  # 오래된 기록 정리
 ]

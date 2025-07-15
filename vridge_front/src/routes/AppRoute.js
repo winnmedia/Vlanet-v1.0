@@ -22,6 +22,7 @@ const PrivacyPolicy = lazy(() => import('page/Policy/PrivacyPolicy'))
 const TermsOfService = lazy(() => import('page/Policy/TermsOfService'))
 const MobileDebug = lazy(() => import('page/MobileDebug'))
 const FrameworkManagement = lazy(() => import('page/Cms/FrameworkManagement'))
+const EmailMonitor = lazy(() => import('page/Admin/EmailMonitor'))
 
 export default function AppRoute() {
   const routes = [
@@ -44,6 +45,7 @@ export default function AppRoute() {
     { path: '/FeedbackAll', component: <LazyWrapper><FeedbackAll /></LazyWrapper> },
     { path: '/mobile-debug', component: <LazyWrapper><MobileDebug /></LazyWrapper> },
     { path: '/FrameworkManagement', component: <LazyWrapper><FrameworkManagement /></LazyWrapper> },
+    { path: '/EmailMonitor', component: <LazyWrapper><EmailMonitor /></LazyWrapper> },
     {
       path: '*',
       component: (

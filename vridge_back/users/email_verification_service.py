@@ -11,6 +11,7 @@ import logging
 import os
 
 from .models import User, EmailVerificationToken
+from .email_queue import email_queue_manager
 
 logger = logging.getLogger(__name__)
 
@@ -66,22 +67,21 @@ VideoPlanet 회원가입을 환영합니다.
 VideoPlanet 팀
             """
             
-            # 이메일 발송
-            success = send_mail(
+            # 이메일 큐에 추가 (높은 우선순위)
+            email_id = email_queue_manager.add_email(
                 subject=subject,
-                message=text_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
+                body=text_message,
                 recipient_list=[user.email],
                 html_message=html_message,
-                fail_silently=False,
+                priority=1,  # 높은 우선순위
+                email_type='verification'
             )
             
-            if success:
-                email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
-                logger.info(f"{email_backend}로 이메일 인증 발송 성공: {user.email}")
+            if email_id:
+                logger.info(f"이메일 인증이 큐에 추가됨: {user.email} (ID: {email_id})")
                 return verification_token
             else:
-                logger.error(f"이메일 인증 발송 실패: {user.email}")
+                logger.error(f"이메일 인증 큐 추가 실패: {user.email}")
                 return None
                 
         except Exception as e:

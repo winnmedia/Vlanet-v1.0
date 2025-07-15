@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import './CustomAlert.scss'
 
 const CustomAlert = ({ message, type = 'info', onClose, duration = 3000, actions }) => {
@@ -95,27 +96,33 @@ export const showAlert = (message, type = 'info', duration = 3000, actions) => {
   const div = document.createElement('div')
   document.body.appendChild(div)
 
+  // React 18 호환을 위한 createRoot 사용
+  const root = createRoot(div)
+
   const cleanup = () => {
     try {
-      ReactDOM.unmountComponentAtNode(div)
-      if (div.parentNode) {
-        document.body.removeChild(div)
-      }
+      // React 18에서는 root.unmount() 사용
+      root.unmount()
+      // DOM 요소 제거를 지연시켜 언마운트가 완료되도록 함
+      setTimeout(() => {
+        if (div.parentNode) {
+          document.body.removeChild(div)
+        }
+      }, 0)
     } catch (error) {
       // DOM 에러 방지 - 이미 제거된 경우 무시
       console.warn('CustomAlert cleanup error:', error)
     }
   }
 
-  ReactDOM.render(
+  root.render(
     <CustomAlert
       message={message}
       type={type}
       duration={duration}
       actions={actions}
       onClose={cleanup}
-    />,
-    div
+    />
   )
 }
 

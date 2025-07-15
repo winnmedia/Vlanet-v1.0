@@ -376,7 +376,7 @@ class InviteMember(View):
 
             members = project.members.all().filter(user__username=email)
             if members.exists():
-                return JsonResponse({"message": "이미 초대 된 사용자입니다."}, status=409)
+                return JsonResponse({"message": "이미 프로젝트의 멤버입니다."}, status=409)
 
             with transaction.atomic():
                 # ProjectInvitation 모델이 마이그레이션되지 않은 경우를 대비한 안전한 처리
@@ -394,7 +394,7 @@ class InviteMember(View):
                             invitation = existing_invitation
                             resend = True
                         else:
-                            return JsonResponse({"message": "이미 초대한 사용자입니다."}, status=409)
+                            return JsonResponse({"message": "이미 초대 대기 중인 사용자입니다. 재전송하려면 재전송 버튼을 클릭하세요."}, status=409)
                     else:
                         # 새로운 초대 생성
                         import secrets
@@ -417,7 +417,7 @@ class InviteMember(View):
                     ).first()
                     
                     if existing_invite and not data.get('resend'):
-                        return JsonResponse({"message": "이미 초대한 사용자입니다."}, status=409)
+                        return JsonResponse({"message": "이미 초대 대기 중인 사용자입니다."}, status=409)
                     
                     # 구 시스템으로 초대 생성
                     if not existing_invite:

@@ -835,7 +835,10 @@ class ProjectDetail(View):
                 "owner_email": project.user.username,
                 "created": project.created,
                 "updated": project.updated,
-                "pending_list": list(project.invites.all().values("id", "email")),
+                "pending_list": list(
+                    project.invitations.filter(status='pending')
+                    .values("id", "invitee_email", "created_at", "expires_at")
+                ),
                 "member_list": list(
                     project.members.all()
                     .annotate(email=F("user__username"), nickname=F("user__nickname"))
@@ -1368,6 +1371,106 @@ class ProjectFeedbackEncodingStatus(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ProjectInvitation(View):
     """프로젝트 초대 관리"""
+    
+    @user_validator
+    def get(self, request, project_id=None):
+        """초대 목록 조회"""
+        try:
+            user = request.user
+            
+            # project_id가 있으면 특정 프로젝트의 초대만 반환
+            if project_id:
+                project = models.Project.objects.filter(id=project_id).first()
+                if not project:
+                    return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                
+                # 권한 확인
+                is_owner = project.user == user
+                is_manager = models.Members.objects.filter(project=project, user=user, rating="manager").exists()
+                
+                if not is_owner and not is_manager:
+                    return JsonResponse({"message": "조회 권한이 없습니다."}, status=403)
+                
+                # 해당 프로젝트의 초대 목록
+                invitations = models.ProjectInvitation.objects.filter(
+                    project=project,
+                    status='pending'
+                ).order_by('-created_at')
+                
+                result = []
+                for invitation in invitations:
+                    result.append({
+                        "id": invitation.id,
+                        "invitee_email": invitation.invitee_email,
+                        "message": invitation.message,
+                        "created_at": invitation.created_at,
+                        "expires_at": invitation.expires_at,
+                        "inviter_name": invitation.inviter.nickname or invitation.inviter.username
+                    })
+                
+                return JsonResponse({"invitations": result}, status=200)
+            
+            # project_id가 없으면 사용자의 모든 초대 목록 반환
+            else:
+                # 보낸 초대
+                sent_invitations = models.ProjectInvitation.objects.filter(
+                    inviter=user,
+                    status='pending'
+                ).select_related('project').order_by('-created_at')
+                
+                sent_list = []
+                for invitation in sent_invitations:
+                    sent_list.append({
+                        "id": invitation.id,
+                        "project_name": invitation.project.name,
+                        "invitee_email": invitation.invitee_email,
+                        "created_at": invitation.created_at,
+                        "expires_at": invitation.expires_at,
+                        "status": invitation.status
+                    })
+                
+                # 받은 초대
+                received_invitations = models.ProjectInvitation.objects.filter(
+                    invitee_email=user.email,
+                    status='pending'
+                ).select_related('project', 'inviter').order_by('-created_at')
+                
+                received_list = []
+                for invitation in received_invitations:
+                    received_list.append({
+                        "id": invitation.id,
+                        "project_name": invitation.project.name,
+                        "inviter_name": invitation.inviter.nickname or invitation.inviter.username,
+                        "inviter_email": invitation.inviter.email,
+                        "message": invitation.message,
+                        "created_at": invitation.created_at,
+                        "expires_at": invitation.expires_at
+                    })
+                
+                # 최근 수락한 초대
+                recent_accepted = models.ProjectInvitation.objects.filter(
+                    invitee_email=user.email,
+                    status='accepted'
+                ).select_related('project', 'inviter').order_by('-updated_at')[:5]
+                
+                recent_accepted_list = []
+                for invitation in recent_accepted:
+                    recent_accepted_list.append({
+                        "id": invitation.id,
+                        "project_name": invitation.project.name,
+                        "inviter_name": invitation.inviter.nickname or invitation.inviter.username,
+                        "accepted_at": invitation.updated_at
+                    })
+                
+                return JsonResponse({
+                    "sent": sent_list,
+                    "received": received_list,
+                    "recent_accepted": recent_accepted_list
+                }, status=200)
+                
+        except Exception as e:
+            logger.error(f"초대 목록 조회 중 오류: {str(e)}")
+            return JsonResponse({"message": "초대 목록 조회 중 오류가 발생했습니다."}, status=500)
     
     @user_validator
     def delete(self, request, project_id):

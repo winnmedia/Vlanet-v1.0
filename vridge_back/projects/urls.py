@@ -21,7 +21,7 @@ urlpatterns = [
         "invite_project/<int:project_id>", views.InviteMember.as_view()
     ),  # 초대 보내기, 초대 취소
     path(
-        "invite/<str:uid>/<str:token>/", views.AcceptInvite.as_view(), name="invite"
+        "invite/<str:uid>/<str:token>/", views.LegacyInviteRedirect.as_view(), name="legacy_invite"
     ),  # 초대 받기
     # 프로젝트 생성 - 기본 버전 사용
     path("create/", views.CreateProject.as_view()),  # 기본 프로젝트 생성

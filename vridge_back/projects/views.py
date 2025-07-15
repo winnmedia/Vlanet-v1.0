@@ -458,6 +458,17 @@ class InviteMember(View):
 # 초대 받았을때 이미 멤버에 있거나 초대유효가 없으면 안됨, 나 자신도 안됨
 # 초대요청이 되면 해당 프로젝트에 멤버가 생성
 @method_decorator(csrf_exempt, name='dispatch')
+class LegacyInviteRedirect(View):
+    """레거시 초대 링크를 새로운 시스템으로 리다이렉트"""
+    def get(self, request, uid, token):
+        """레거시 초대 링크 처리 - 새로운 시스템으로 안내"""
+        return JsonResponse({
+            "status": "error",
+            "message": "이 초대 링크는 더 이상 유효하지 않습니다. 새로운 초대를 요청해주세요.",
+            "redirect_url": f"{settings.FRONTEND_URL}/CmsHome"
+        }, status=410)  # 410 Gone - 리소스가 더 이상 사용되지 않음
+
+@method_decorator(csrf_exempt, name='dispatch')
 class AcceptInvite(View):
     @user_validator
     def get(self, request, uid, token):

@@ -18,10 +18,16 @@ export default function InvitationAccept() {
   useEffect(() => {
     const fetchInvitation = async () => {
       try {
+        console.log('[InvitationAccept] Parameters:', { token, uid })
+        
         // 새로운 초대 시스템 (토큰만 사용)
         if (token && !uid) {
+          const apiUrl = `/api/projects/invitations/token/${token}/`
+          console.log('[InvitationAccept] API URL:', apiUrl)
+          
           // 토큰으로 초대 정보 조회
-          const response = await axios.get(`/api/projects/invitations/token/${token}/`)
+          const response = await axios.get(apiUrl)
+          console.log('[InvitationAccept] API Response:', response.data)
           
           if (response.data.status === 'success') {
             setInvitation(response.data.invitation)
@@ -31,13 +37,21 @@ export default function InvitationAccept() {
         } 
         // 기존 초대 시스템 (uid와 token 사용) - 하위 호환성
         else if (uid && token) {
+          console.log('[InvitationAccept] Legacy URL detected:', { uid, token })
           // 기존 방식의 초대는 지원 중단 메시지 표시
           setError('이 초대 링크는 더 이상 유효하지 않습니다. 새로운 초대를 요청해주세요.')
         } else {
+          console.log('[InvitationAccept] Invalid parameters:', { token, uid })
           setError('잘못된 초대 링크입니다.')
         }
       } catch (error) {
-        console.error('초대 정보 조회 실패:', error)
+        console.error('[InvitationAccept] 초대 정보 조회 실패:', error)
+        console.error('[InvitationAccept] Error details:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        })
+        
         if (error.response?.status === 404) {
           setError('유효하지 않은 초대 링크입니다.')
         } else if (error.response?.status === 400) {

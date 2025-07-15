@@ -100,43 +100,118 @@ export default function InviteInput({
   return (
     <>
       {pending_list.map((pend, index) => (
-        <div key={index} className="pr mt10">
+        <div key={index} style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '10px',
+          padding: '8px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px'
+        }}>
           <input
             type="text"
             value={pend.email}
-            className="ty01"
             placeholder="이메일 입력"
             readOnly
+            style={{
+              flex: 1,
+              padding: '10px 12px',
+              border: '1px solid #e0e0e0',
+              borderRadius: '6px',
+              fontSize: '14px',
+              backgroundColor: '#fff',
+              color: '#666'
+            }}
           />
-          <button className="pend">초대됨</button>
+          <span style={{
+            padding: '6px 12px',
+            backgroundColor: '#e8f4f8',
+            color: '#1631F8',
+            borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: '500',
+            whiteSpace: 'nowrap'
+          }}>
+            초대됨
+          </span>
           <button 
-            className="cert resend" 
             onClick={() => handleResend(pend.email)}
             style={{
               background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
               color: 'white',
               border: 'none',
-              padding: '6px 12px',
-              borderRadius: '4px',
+              padding: '8px 16px',
+              borderRadius: '6px',
               cursor: 'pointer',
-              marginLeft: '5px'
+              fontSize: '13px',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-1px)'
+              e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)'
+              e.target.style.boxShadow = 'none'
             }}
           >
             재전송
           </button>
-          <button className="del" onClick={() => CancelBtn(pend.id)}>
+          <button 
+            onClick={() => CancelBtn(pend.id)}
+            style={{
+              background: '#dc3545',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = '#c82333'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = '#dc3545'
+            }}
+          >
             삭제
           </button>
         </div>
       ))}
       {emails.map((email, index) => (
-        <div key={index} className="pr mt10">
+        <div key={index} style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '10px'
+        }}>
           <input
             type="text"
             value={email}
             onChange={(e) => InputChange(index, e.target.value)}
-            className="ty01"
-            placeholder="이메일 입력"
+            placeholder="초대할 사용자의 이메일 주소"
+            style={{
+              flex: 1,
+              padding: '10px 12px',
+              border: '1px solid #ddd',
+              borderRadius: '6px',
+              fontSize: '14px',
+              transition: 'border-color 0.2s ease'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#1631F8'
+              e.target.style.outline = 'none'
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#ddd'
+            }}
           />
           <button
             onClick={async () => {
@@ -216,88 +291,207 @@ export default function InviteInput({
                   }
                 })
             }}
-            className={duplicateEmails.has(email) ? "cert resend" : "cert"}
+            style={{
+              background: duplicateEmails.has(email) ? 
+                'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)' : 
+                'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '8px 20px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-1px)'
+              e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)'
+              e.target.style.boxShadow = 'none'
+            }}
           >
             {duplicateEmails.has(email) ? '재전송' : '보내기'}
           </button>
-          <button className="del" onClick={() => RemoveInput(index)}>
+          <button 
+            onClick={() => RemoveInput(index)}
+            style={{
+              background: 'transparent',
+              color: '#dc3545',
+              border: '1px solid #dc3545',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = '#dc3545'
+              e.target.style.color = 'white'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'transparent'
+              e.target.style.color = '#dc3545'
+            }}
+          >
             삭제
           </button>
         </div>
       ))}
-      <button className="add" onClick={AddInput}>
+      <button 
+        onClick={AddInput}
+        style={{
+          width: '100%',
+          padding: '12px',
+          marginTop: '16px',
+          marginBottom: '16px',
+          border: '2px dashed #1631F8',
+          borderRadius: '8px',
+          backgroundColor: 'transparent',
+          color: '#1631F8',
+          fontSize: '14px',
+          fontWeight: '600',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.backgroundColor = '#f0f5ff'
+          e.target.style.borderStyle = 'solid'
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.backgroundColor = 'transparent'
+          e.target.style.borderStyle = 'dashed'
+        }}
+      >
+        <span style={{ fontSize: '20px', lineHeight: '1' }}>+</span>
         멤버 추가
       </button>
       
       {/* 최근 초대한 멤버 리스트 */}
       {recentInvitations.length > 0 && (
-        <div className="recent-invitations-section" style={{ marginTop: '20px' }}>
+        <div style={{ 
+          marginTop: '24px',
+          padding: '16px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          border: '1px solid #e9ecef'
+        }}>
           <div 
-            className="recent-invitations-header" 
             onClick={() => setShowRecentInvitations(!showRecentInvitations)}
             style={{
               cursor: 'pointer',
-              padding: '10px',
-              background: '#f5f5f5',
-              borderRadius: '5px',
+              padding: '8px',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              userSelect: 'none'
             }}
           >
-            <span style={{ fontWeight: 'bold', color: '#333' }}>
+            <span style={{ 
+              fontWeight: '600', 
+              color: '#495057',
+              fontSize: '14px'
+            }}>
               최근 초대한 멤버 ({recentInvitations.length})
             </span>
-            <span style={{ fontSize: '12px' }}>
-              {showRecentInvitations ? '▲' : '▼'}
+            <span style={{ 
+              fontSize: '12px',
+              color: '#6c757d',
+              transform: showRecentInvitations ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease'
+            }}>
+              ▼
             </span>
           </div>
           
           {showRecentInvitations && (
-            <div className="recent-invitations-list" style={{ marginTop: '10px' }}>
+            <div style={{ marginTop: '12px' }}>
               {recentInvitations.map((invitation) => (
                 <div 
                   key={invitation.id} 
-                  className="recent-invitation-item"
                   style={{
-                    padding: '10px',
+                    padding: '12px',
                     background: '#fff',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '5px',
-                    marginBottom: '5px',
+                    border: '1px solid #e9ecef',
+                    borderRadius: '6px',
+                    marginBottom: '8px',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#1631F8'
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(22, 49, 248, 0.1)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e9ecef'
+                    e.currentTarget.style.boxShadow = 'none'
                   }}
                 >
                   <div>
-                    <div style={{ fontWeight: '500' }}>{invitation.name}</div>
-                    <div style={{ fontSize: '13px', color: '#666' }}>{invitation.email}</div>
-                    <div style={{ fontSize: '12px', color: '#999' }}>
-                      마지막 초대: {invitation.project_name} ({invitation.invitation_count}회)
+                    <div style={{ 
+                      fontWeight: '600',
+                      fontSize: '14px',
+                      color: '#212529',
+                      marginBottom: '4px'
+                    }}>
+                      {invitation.name || invitation.invitee_name || '이름 없음'}
+                    </div>
+                    <div style={{ 
+                      fontSize: '13px', 
+                      color: '#6c757d',
+                      marginBottom: '2px'
+                    }}>
+                      {invitation.email || invitation.invitee_email}
+                    </div>
+                    <div style={{ 
+                      fontSize: '12px', 
+                      color: '#adb5bd' 
+                    }}>
+                      최근 프로젝트: {invitation.project_name} • {invitation.invitation_count}회 초대
                     </div>
                   </div>
                   <button
-                    className="invite-again-btn"
                     onClick={() => {
                       const emptyIndex = emails.findIndex(email => !email.trim())
                       if (emptyIndex !== -1) {
-                        InputChange(emptyIndex, invitation.email)
+                        InputChange(emptyIndex, invitation.email || invitation.invitee_email)
                       } else {
                         AddInput()
                         setTimeout(() => {
-                          InputChange(emails.length, invitation.email)
+                          InputChange(emails.length, invitation.email || invitation.invitee_email)
                         }, 0)
                       }
                     }}
                     style={{
-                      padding: '5px 15px',
+                      padding: '6px 16px',
                       background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                       color: 'white',
                       border: 'none',
-                      borderRadius: '5px',
+                      borderRadius: '6px',
                       cursor: 'pointer',
-                      fontSize: '13px'
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-1px)'
+                      e.target.style.boxShadow = '0 3px 6px rgba(22, 49, 248, 0.3)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)'
+                      e.target.style.boxShadow = 'none'
                     }}
                   >
                     빠른 초대

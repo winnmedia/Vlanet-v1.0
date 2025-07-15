@@ -1285,6 +1285,11 @@ export default function Feedback() {
                     <div className="loading">
                       <div className="loading-content">
                         <div className="progress-container">
+                          <div className="upload-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 16.5V18.75C3 19.9926 4.00736 21 5.25 21H18.75C19.9926 21 21 19.9926 21 18.75V16.5M16.5 12L12 7.5M12 7.5L7.5 12M12 7.5V16.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
                           <div className="progress-bar">
                             <div 
                               className="progress-fill" 
@@ -1294,6 +1299,7 @@ export default function Feedback() {
                           <div className="progress-text">{uploadProgress}%</div>
                         </div>
                         <div className="loading-message">영상 업로드 중...</div>
+                        <div className="loading-subtitle">잠시만 기다려 주세요</div>
                       </div>
                     </div>
                   )}

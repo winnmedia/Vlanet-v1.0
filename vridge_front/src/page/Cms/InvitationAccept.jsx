@@ -203,7 +203,7 @@ export default function InvitationAccept() {
           textAlign: 'center',
           maxWidth: '500px'
         }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>😞</div>
+          <div style={{ fontSize: '48px', marginBottom: '20px', color: '#dc3545' }}>!</div>
           <h2 style={{ color: '#dc3545', marginBottom: '16px' }}>초대 확인 실패</h2>
           <p style={{ color: '#666', marginBottom: '30px' }}>{error}</p>
           <button
@@ -247,8 +247,10 @@ export default function InvitationAccept() {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div style={{
             fontSize: '48px',
-            marginBottom: '16px'
-          }}>🎬</div>
+            marginBottom: '16px',
+            color: '#1631F8',
+            fontWeight: 'bold'
+          }}>VP</div>
           <h1 style={{
             fontSize: '28px',
             fontWeight: '700',
@@ -279,7 +281,7 @@ export default function InvitationAccept() {
             alignItems: 'center',
             gap: '8px'
           }}>
-            📁 {invitation.project.name}
+{invitation.project.name}
           </h3>
           
           <div style={{ marginBottom: '16px' }}>

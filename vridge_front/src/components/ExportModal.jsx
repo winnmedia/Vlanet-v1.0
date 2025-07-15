@@ -107,7 +107,7 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
             <div>
               Google Slides가 생성되었습니다! 
               <a href={url} target="_blank" rel="noopener noreferrer" style={{color: '#4318FF', marginLeft: '8px'}}>
-                📊 열어보기
+열어보기
               </a>
             </div>
           )
@@ -130,9 +130,9 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
           if (presentation) {
             setExportSuccess(
               <div>
-                🚀 AI 기획안이 생성되었습니다! 
+AI 기획안이 생성되었습니다! 
                 <a href={presentation.url} target="_blank" rel="noopener noreferrer" style={{color: '#4318FF', marginLeft: '8px'}}>
-                  📊 Google Slides 열어보기
+Google Slides 열어보기
                 </a>
                 <div style={{fontSize: '12px', color: '#666', marginTop: '4px'}}>
                   슬라이드 {presentation.slide_count}개 생성됨
@@ -210,7 +210,7 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
 
               {exportSuccess && (
                 <div className="export-success">
-                  ✅ {exportSuccess}
+{exportSuccess}
                 </div>
               )}
             </>

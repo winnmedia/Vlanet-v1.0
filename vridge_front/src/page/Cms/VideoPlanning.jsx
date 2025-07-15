@@ -1243,7 +1243,7 @@ export default function VideoPlanning() {
       })
 
       if (response.data.status === 'success') {
-        setSuccessMessage('🎉 프로젝트가 성공적으로 완성되었습니다!')
+        setSuccessMessage('프로젝트가 성공적으로 완성되었습니다!')
         // 완성된 프로젝트 페이지로 이동하거나 추가 작업 수행
         setTimeout(() => {
           navigate('/cms/projects')
@@ -1317,7 +1317,7 @@ export default function VideoPlanning() {
                         <option value="테크놀로지컬하고 미래적인">테크놀로지컬하고 미래적인</option>
                         <option value="자연친화적이고 에코">자연친화적이고 에코</option>
                       </optgroup>
-                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>직접입력</option>
                     </select>
                   ) : (
                     <div className="custom-input-wrapper">
@@ -1396,7 +1396,7 @@ export default function VideoPlanning() {
                         <option value="푸드 콘텐츠">푸드 콘텐츠</option>
                         <option value="부동산 투어">부동산 투어</option>
                       </optgroup>
-                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>직접입력</option>
                     </select>
                   ) : (
                     <div className="custom-input-wrapper">
@@ -1467,7 +1467,7 @@ export default function VideoPlanning() {
                         <option value="타임라인">타임라인</option>
                         <option value="페이크 다큐">페이크 다큐</option>
                       </optgroup>
-                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>직접입력</option>
                     </select>
                   ) : (
                     <div className="custom-input-wrapper">
@@ -1538,7 +1538,7 @@ export default function VideoPlanning() {
                         <option value="건강/웰빙 관심층">건강/웰빙 관심층</option>
                         <option value="문화예술 관심층">문화예술 관심층</option>
                       </optgroup>
-                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>직접입력</option>
                     </select>
                   ) : (
                     <div className="custom-input-wrapper">
@@ -1609,7 +1609,7 @@ export default function VideoPlanning() {
                         <option value="팬 소통">팬 소통</option>
                         <option value="이야기 전달">이야기 전달</option>
                       </optgroup>
-                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>직접입력</option>
                     </select>
                   ) : (
                     <div className="custom-input-wrapper">
@@ -1670,7 +1670,7 @@ export default function VideoPlanning() {
                         <option value="45-60분">45-60분</option>
                         <option value="60분 이상">60분 이상</option>
                       </optgroup>
-                      <option value="직접입력" style={{fontWeight: 'bold'}}>✅ 직접입력</option>
+                      <option value="직접입력" style={{fontWeight: 'bold'}}>직접입력</option>
                     </select>
                   ) : (
                     <div className="custom-input-wrapper">
@@ -2147,7 +2147,7 @@ export default function VideoPlanning() {
                 value={storyboardStyle}
                 onChange={(e) => setStoryboardStyle(e.target.value)}
               >
-                <option value="quick_draft">🚀 빠른 드래프트 - 신속 생성 (추천)</option>
+                <option value="quick_draft">빠른 드래프트 - 신속 생성 (추천)</option>
                 <option value="minimal">미니멀 - 깔끔한 라인아트</option>
                 <option value="sketch">스케치 - 연필 드로잉</option>
                 <option value="realistic">사실적 - 포토리얼리스틱</option>
@@ -2209,9 +2209,9 @@ export default function VideoPlanning() {
                     {Object.entries(storyboardGenerationProgress).map(([index, progress]) => (
                       <div key={index} className={`progress-item ${progress.status}`}>
                         씬 {parseInt(index) + 1}: {
-                          progress.status === 'pending' ? '⏳' :
-                          progress.status === 'generating' ? '🔄' :
-                          progress.status === 'completed' ? '✅' : '❌'
+                          progress.status === 'pending' ? '대기중' :
+                          progress.status === 'generating' ? '생성중' :
+                          progress.status === 'completed' ? '완료' : '대기'
                         }
                       </div>
                     ))}
@@ -2442,7 +2442,7 @@ export default function VideoPlanning() {
                   onChange={handleVideoUpload}
                 />
                 <label htmlFor="video-upload" className="upload-btn">
-                  📁 파일 선택
+파일 선택
                 </label>
                 
                 <button 
@@ -2497,7 +2497,7 @@ export default function VideoPlanning() {
                   onClick={handleCompleteProject}
                   disabled={!uploadedVideo}
                 >
-                  ✅ 프로젝트 완성
+프로젝트 완성
                 </button>
               </div>
             </div>

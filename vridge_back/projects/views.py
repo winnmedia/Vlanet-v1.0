@@ -386,10 +386,16 @@ class InviteMember(View):
                 uid = urlsafe_base64_encode(force_bytes(project_id)).encode().decode()
                 token = project_token_generator(project)
                 
-                # 이메일 발송 시도
+                # 이메일 발송 시도 - 새로운 이메일 서비스 사용
                 logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
-                email_sent = invite_send_email(request, email, uid, token, project.name)
-                logger.info(f"[InviteMember] Email send result: {email_sent}")
+                try:
+                    from .email_service import ProjectInvitationEmailService
+                    email_sent = ProjectInvitationEmailService.send_invitation_email(invitation)
+                    logger.info(f"[InviteMember] Email send result: {email_sent}")
+                except Exception as e:
+                    logger.error(f"[InviteMember] Email send error: {str(e)}")
+                    # 폴백으로 기존 방식 사용
+                    email_sent = invite_send_email(request, email, uid, token, project.name)
                 
                 # 최근 초대 기록 업데이트
                 from users.models import RecentInvitation
@@ -1435,9 +1441,9 @@ class ProjectInvitation(View):
                     email_sent = False
                     email_error = None
                     try:
-                        uid = urlsafe_base64_encode(force_bytes(project.id))
-                        token = project_token_generator(project)
-                        email_sent = invite_send_email(request, email, uid, token, project.name)
+                        # 새로운 이메일 서비스 사용
+                        from .email_service import ProjectInvitationEmailService
+                        email_sent = ProjectInvitationEmailService.send_invitation_email(invitation)
                         if email_sent:
                             logger.info(f"초대 이메일 재발송 성공: {email}")
                         else:
@@ -1482,17 +1488,23 @@ class ProjectInvitation(View):
             email_sent = False
             email_error = None
             try:
-                # 프로젝트 토큰 생성 (기존 방식 사용)
-                uid = urlsafe_base64_encode(force_bytes(project.id))
-                token = project_token_generator(project)
-                
-                # 이메일 발송
-                email_sent = invite_send_email(request, email, uid, token, project.name)
-                if email_sent:
-                    logger.info(f"초대 이메일 발송 성공: {email}")
-                else:
-                    logger.warning(f"초대 이메일 발송 실패: {email}")
-                    email_error = "이메일 발송에 실패했습니다."
+                # 이메일 발송 - 새로운 이메일 서비스 사용
+                try:
+                    from .email_service import ProjectInvitationEmailService
+                    email_sent = ProjectInvitationEmailService.send_invitation_email(invitation)
+                    if email_sent:
+                        logger.info(f"초대 이메일 발송 성공: {email}")
+                    else:
+                        logger.warning(f"초대 이메일 발송 실패: {email}")
+                        email_error = "이메일 발송에 실패했습니다."
+                except Exception as e:
+                    logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
+                    # 폴백으로 기존 방식 사용
+                    uid = urlsafe_base64_encode(force_bytes(project.id))
+                    token = project_token_generator(project)
+                    email_sent = invite_send_email(request, email, uid, token, project.name)
+                    if not email_sent:
+                        email_error = "이메일 발송에 실패했습니다."
             except Exception as e:
                 logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
                 email_sent = False

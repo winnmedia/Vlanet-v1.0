@@ -160,7 +160,7 @@ def auth_send_email(request, email, secret):
         <body style="font-family: Arial, sans-serif; padding: 20px; margin: 0; background-color: #f5f5f5;">
             <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                 <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #012fff; margin: 0; font-size: 32px;">VideoPlanet</h1>
+                    <h1 style="color: #1631F8; margin: 0; font-size: 32px;">VideoPlanet</h1>
                     <p style="color: #666; margin-top: 10px; font-size: 18px;">이메일 인증</p>
                 </div>
                 
@@ -169,7 +169,7 @@ def auth_send_email(request, email, secret):
                         회원가입을 계속하려면 아래 인증번호를 입력해주세요:
                     </p>
                     
-                    <div style="background: #012fff; color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <div style="background: #1631F8; color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px;">{secret}</span>
                     </div>
                     
@@ -281,7 +281,7 @@ def invite_send_email(request, email, uid, token, name):
             <body style="font-family: Arial, sans-serif; padding: 20px; margin: 0; background-color: #f5f5f5;">
                 <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #012fff; margin: 0; font-size: 32px;">VideoPlanet</h1>
+                        <h1 style="color: #1631F8; margin: 0; font-size: 32px;">VideoPlanet</h1>
                         <p style="color: #666; margin-top: 10px; font-size: 18px;">프로젝트 초대</p>
                     </div>
                     
@@ -293,7 +293,7 @@ def invite_send_email(request, email, uid, token, name):
                         
                         <div style="text-align: center; margin: 30px 0;">
                             <a href="{url}?uid={uid}&token={token}" 
-                               style="display: inline-block; padding: 15px 30px; background: #012fff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">
+                               style="display: inline-block; padding: 15px 30px; background: #1631F8; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">
                                 프로젝트 참여하기
                             </a>
                         </div>

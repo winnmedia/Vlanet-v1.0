@@ -1601,7 +1601,7 @@ export default function Feedback() {
                     alignItems: 'center',
                     justifyContent: 'space-between'
                   }}>
-                    <span>피드백</span>
+                    <span>프로젝트 정보</span>
                     <button 
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
                       className={styles.feedbackButtonIconOnly}
@@ -1628,32 +1628,69 @@ export default function Feedback() {
                   {showProjectInfo && current_project && (
                     <div style={{
                       marginTop: '15px',
-                      padding: '15px',
-                      background: '#f8f8f8',
+                      padding: '20px',
+                      background: '#f8f9fa',
                       borderRadius: '8px',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      lineHeight: '1.6'
                     }}>
-                      <div style={{ marginBottom: '8px' }}>
-                        <strong>프로젝트:</strong> {current_project.name}
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'row',
+                        alignItems: 'flex-start',
+                        marginBottom: '12px',
+                        gap: '8px'
+                      }}>
+                        <strong style={{ minWidth: '80px', flexShrink: 0 }}>프로젝트:</strong>
+                        <span style={{ wordBreak: 'break-word' }}>{current_project.name}</span>
                       </div>
-                      <div style={{ marginBottom: '8px' }}>
-                        <strong>담당자:</strong> {current_project.manager}
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'row',
+                        alignItems: 'flex-start',
+                        marginBottom: '12px',
+                        gap: '8px'
+                      }}>
+                        <strong style={{ minWidth: '80px', flexShrink: 0 }}>담당자:</strong>
+                        <span>{current_project.manager}</span>
                       </div>
-                      <div style={{ marginBottom: '8px' }}>
-                        <strong>고객사:</strong> {current_project.consumer}
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'row',
+                        alignItems: 'flex-start',
+                        marginBottom: '12px',
+                        gap: '8px'
+                      }}>
+                        <strong style={{ minWidth: '80px', flexShrink: 0 }}>고객사:</strong>
+                        <span>{current_project.consumer}</span>
                       </div>
-                      <div style={{ marginBottom: '8px' }}>
-                        <strong>생성일:</strong> {moment(current_project.created).format('YYYY.MM.DD')}
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'row',
+                        alignItems: 'flex-start',
+                        marginBottom: '12px',
+                        gap: '8px'
+                      }}>
+                        <strong style={{ minWidth: '80px', flexShrink: 0 }}>생성일:</strong>
+                        <span>{moment(current_project.created).format('YYYY.MM.DD')}</span>
                       </div>
                       {current_project.description && (
-                        <div style={{ marginBottom: '8px' }}>
-                          <strong>설명:</strong> {current_project.description}
+                        <div style={{ 
+                          display: 'flex', 
+                          flexDirection: 'row',
+                          alignItems: 'flex-start',
+                          marginBottom: '12px',
+                          gap: '8px'
+                        }}>
+                          <strong style={{ minWidth: '80px', flexShrink: 0 }}>설명:</strong>
+                          <span style={{ wordBreak: 'break-word' }}>{current_project.description}</span>
                         </div>
                       )}
                       {is_admin && (
                         <button
                           className={styles.feedbackButtonPrimaryFull}
                           onClick={() => navigate(`/ProjectEdit/${project_id}`)}
+                          style={{ marginTop: '8px' }}
                         >
                           프로젝트 관리
                         </button>

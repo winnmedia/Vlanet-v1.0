@@ -174,7 +174,7 @@ export default function InviteInput({
                       }
                     })
                 })
-                .catch((err) => {
+                .catch(async (err) => {
                   if (err.response) {
                     if (err.response.status === 409) {
                       // 409 Conflict: 이미 초대된 이메일

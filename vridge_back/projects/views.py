@@ -15,7 +15,6 @@ from django.contrib.auth import get_user_model
 import secrets
 from users.utils import (
     user_validator,
-    invite_send_email,
     project_token_generator,
     check_project_token,
 )
@@ -394,8 +393,8 @@ class InviteMember(View):
                     logger.info(f"[InviteMember] Email send result: {email_sent}")
                 except Exception as e:
                     logger.error(f"[InviteMember] Email send error: {str(e)}")
-                    # 폴백으로 기존 방식 사용
-                    email_sent = invite_send_email(request, email, uid, token, project.name)
+                    # 이메일 발송 실패 시 로그만 기록
+                    email_sent = False
                 
                 # 최근 초대 기록 업데이트
                 from users.models import RecentInvitation
@@ -1499,12 +1498,8 @@ class ProjectInvitation(View):
                         email_error = "이메일 발송에 실패했습니다."
                 except Exception as e:
                     logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
-                    # 폴백으로 기존 방식 사용
-                    uid = urlsafe_base64_encode(force_bytes(project.id))
-                    token = project_token_generator(project)
-                    email_sent = invite_send_email(request, email, uid, token, project.name)
-                    if not email_sent:
-                        email_error = "이메일 발송에 실패했습니다."
+                    # 이메일 발송 실패 시 에러 메시지 설정
+                    email_error = "이메일 발송에 실패했습니다."
             except Exception as e:
                 logger.error(f"초대 이메일 발송 중 오류: {str(e)}")
                 email_sent = False

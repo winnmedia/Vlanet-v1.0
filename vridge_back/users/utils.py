@@ -228,13 +228,13 @@ def auth_send_email(request, email, secret):
 
 
 def invite_send_email(request, email, uid, token, name):
-    """프로젝트 초대 이메일 발송"""
+    """프로젝트 초대 이메일 발송 (레거시 지원)"""
     try:
-        print(f"[Invite Email] Sending invite email to: {email} for project: {name}")
-        print(f"[Invite Email] EMAIL_BACKEND: {settings.EMAIL_BACKEND}")
-        print(f"[Invite Email] EMAIL_HOST: {getattr(settings, 'EMAIL_HOST', 'Not set')}")
-        print(f"[Invite Email] EMAIL_HOST_USER: {getattr(settings, 'EMAIL_HOST_USER', 'Not set')[:10] if getattr(settings, 'EMAIL_HOST_USER', None) else 'Not set'}...")
-        print(f"[Invite Email] DEFAULT_FROM_EMAIL: {getattr(settings, 'DEFAULT_FROM_EMAIL', 'Not set')}")
+        print(f"[Invite Email] Legacy invite email function called for: {email} for project: {name}")
+        print(f"[Invite Email] This function is deprecated. Use ProjectInvitationEmailService instead.")
+        
+        # 새로운 시스템으로 리다이렉트하려면 ProjectInvitation 객체가 필요함
+        # 레거시 호출의 경우 기본 이메일 발송만 수행
         
         # 이메일 설정 확인
         if settings.EMAIL_BACKEND != 'django.core.mail.backends.console.EmailBackend':
@@ -244,16 +244,16 @@ def invite_send_email(request, email, uid, token, name):
                 print(f"[Invite Email] Using Gmail for email (Credentials present)")
             else:
                 print("[Invite Email] ERROR: No email credentials configured")
-                print(f"[Invite Email] SENDGRID_API_KEY: {bool(os.environ.get('SENDGRID_API_KEY'))}")
-                print(f"[Invite Email] EMAIL_HOST_USER: {bool(getattr(settings, 'EMAIL_HOST_USER', None))}")
-                print(f"[Invite Email] EMAIL_HOST_PASSWORD: {bool(getattr(settings, 'EMAIL_HOST_PASSWORD', None))}")
                 return False
         
-        # URL 설정
+        # URL 설정 - 새로운 초대 시스템에 맞게 수정
         if settings.DEBUG:
-            url = "http://localhost:3000/EmailCheck"
+            base_url = "http://localhost:3000"
         else:
-            url = "https://vlanet.net/EmailCheck"
+            base_url = "https://vlanet.net"
+        
+        # 새로운 초대 시스템: /invitation/{token} 형태로 URL 생성
+        url = f"{base_url}/invitation/{token}"
         
         # HTML 메시지 생성
         try:
@@ -292,7 +292,7 @@ def invite_send_email(request, email, uid, token, name):
                         </p>
                         
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="{url}?uid={uid}&token={token}" 
+                            <a href="{url}" 
                                style="display: inline-block; padding: 15px 30px; background: #1631F8; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">
                                 프로젝트 참여하기
                             </a>
@@ -326,7 +326,7 @@ def invite_send_email(request, email, uid, token, name):
             EmailThread(subject, strip_tags(html_message), to, html_message).start()
         
         email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
-        print(f"[Invite Email] Invite email queued for sending via {email_backend}")
+        print(f"[Invite Email] Legacy invite email queued for sending via {email_backend}")
         return True
         
     except Exception as e:

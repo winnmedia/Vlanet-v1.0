@@ -378,25 +378,30 @@ class InviteMember(View):
             if members.exists():
                 return JsonResponse({"message": "이미 프로젝트의 멤버입니다."}, status=409)
 
-            with transaction.atomic():
-                # ProjectInvitation 모델이 마이그레이션되지 않은 경우를 대비한 안전한 처리
-                try:
-                    # 기존 초대 확인 (새로운 시스템)
-                    existing_invitation = models.ProjectInvitation.objects.filter(
-                        project=project,
-                        invitee_email=email,
-                        status='pending'
-                    ).first()
-                    
-                    if existing_invitation:
-                        # 재전송 요청인 경우
-                        if data.get('resend'):
-                            invitation = existing_invitation
-                            resend = True
-                        else:
-                            return JsonResponse({"message": "이미 초대 대기 중인 사용자입니다. 재전송하려면 재전송 버튼을 클릭하세요."}, status=409)
+            # 초대 생성 로직 처리
+            invitation = None
+            resend = False
+            use_legacy = False
+            
+            # ProjectInvitation 모델이 마이그레이션되지 않은 경우를 대비한 안전한 처리
+            try:
+                # 기존 초대 확인 (새로운 시스템)
+                existing_invitation = models.ProjectInvitation.objects.filter(
+                    project=project,
+                    invitee_email=email,
+                    status='pending'
+                ).first()
+                
+                if existing_invitation:
+                    # 재전송 요청인 경우
+                    if data.get('resend'):
+                        invitation = existing_invitation
+                        resend = True
                     else:
-                        # 새로운 초대 생성
+                        return JsonResponse({"message": "이미 초대 대기 중인 사용자입니다. 재전송하려면 재전송 버튼을 클릭하세요."}, status=409)
+                else:
+                    # 새로운 초대 생성
+                    with transaction.atomic():
                         import secrets
                         token = secrets.token_urlsafe(32)
                         invitation = models.ProjectInvitation.objects.create(
@@ -408,59 +413,62 @@ class InviteMember(View):
                             expires_at=timezone.now() + timedelta(days=7)
                         )
                         resend = False
-                except Exception as db_error:
-                    logger.error(f"ProjectInvitation 테이블 문제: {str(db_error)}")
-                    # 구 시스템 사용 (ProjectInvite)
-                    existing_invite = models.ProjectInvite.objects.filter(
-                        project=project,
-                        email=email
-                    ).first()
-                    
-                    if existing_invite and not data.get('resend'):
-                        return JsonResponse({"message": "이미 초대 대기 중인 사용자입니다."}, status=409)
-                    
-                    # 구 시스템으로 초대 생성
-                    if not existing_invite:
+            except Exception as db_error:
+                logger.error(f"ProjectInvitation 테이블 문제: {str(db_error)}")
+                # 구 시스템 사용 (ProjectInvite)
+                use_legacy = True
+                existing_invite = models.ProjectInvite.objects.filter(
+                    project=project,
+                    email=email
+                ).first()
+                
+                if existing_invite and not data.get('resend'):
+                    return JsonResponse({"message": "이미 초대 대기 중인 사용자입니다."}, status=409)
+                
+                # 구 시스템으로 초대 생성
+                if not existing_invite:
+                    with transaction.atomic():
                         models.ProjectInvite.objects.create(
                             project=project,
                             email=email
                         )
+            
+            # 레거시 시스템 사용 시 간단한 응답 반환
+            if use_legacy:
+                return JsonResponse({
+                    "message": "초대가 완료되었습니다.",
+                    "email_sent": False,
+                    "resent": data.get('resend', False),
+                    "invitation_id": None,
+                    "invitation_url": None
+                }, status=200)
+            
+            # 이메일 발송 시도 - 간단한 이메일 서비스 사용
+            email_sent = False
+            invitation_id = None
+            invitation_url = None
+            invitation_object = None
+            
+            # 초대 객체 확인 (새 시스템)
+            if 'invitation' in locals() and invitation:
+                invitation_object = invitation
+                invitation_url = f"{settings.FRONTEND_URL}/invitation/{invitation.token}"
+                invitation_id = invitation.id
+            
+            # 이메일 발송 시도
+            if invitation_object:
+                logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
+                try:
+                    from django.core.mail import send_mail
                     
-                    # 간단한 성공 응답
-                    return JsonResponse({
-                        "message": "초대가 완료되었습니다.",
-                        "email_sent": False,
-                        "resent": data.get('resend', False),
-                        "invitation_id": None,
-                        "invitation_url": None
-                    }, status=200)
-                
-                # 이메일 발송 시도 - 간단한 이메일 서비스 사용
-                email_sent = False
-                invitation_id = None
-                invitation_url = None
-                invitation_object = None
-                
-                # 초대 객체 확인 (새 시스템)
-                if 'invitation' in locals() and invitation:
-                    invitation_object = invitation
-                    invitation_url = f"{settings.FRONTEND_URL}/invitation/{invitation.token}"
-                    invitation_id = invitation.id
-                
-                # 이메일 발송 시도
-                if invitation_object:
-                    logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
-                    try:
-                        from django.core.mail import send_mail
-                        
-                        # 이메일 제목
-                        subject = f"[VideoPlanet] {project.name} 프로젝트 초대"
-                        
-                        # 만료일 문자열 생성
-                        expires_date = invitation_object.expires_at.strftime('%Y년 %m월 %d일')
-                        
-                        # 이메일 본문
-                        message = f"""
+                    # 이메일 제목
+                    subject = f"[VideoPlanet] {project.name} 프로젝트 초대"
+                    
+                    # 만료일 문자열 생성
+                    expires_date = invitation_object.expires_at.strftime('%Y년 %m월 %d일')
+                    
+                    # 이메일 본문
+                    message = f"""
 안녕하세요!
 
 {user.nickname or user.username}님이 "{project.name}" 프로젝트에 초대하셨습니다.
@@ -474,57 +482,57 @@ class InviteMember(View):
 
 감사합니다.
 VideoPlanet 팀
-                        """
-                        
-                        # 이메일 발송
-                        email_sent = send_mail(
-                            subject,
-                            message,
-                            settings.DEFAULT_FROM_EMAIL,
-                            [email],
-                            fail_silently=False,
-                        )
-                        logger.info(f"[InviteMember] Email send result: {email_sent}")
-                    except Exception as e:
-                        logger.error(f"[InviteMember] Email send error: {str(e)}")
-                        # 이메일 발송 실패 시 로그만 기록
-                        email_sent = False
-                
-                # 최근 초대 기록 업데이트 - 안전한 처리
-                try:
-                    from users.models import RecentInvitation
-                    recent_invite, created = RecentInvitation.objects.get_or_create(
-                        inviter=user,
-                        invitee_email=email,
-                        defaults={
-                            'invitee_name': email.split('@')[0],  # 이메일의 username 부분을 이름으로 사용
-                            'project_name': project.name,
-                            'invitation_count': 1
-                        }
+                    """
+                    
+                    # 이메일 발송
+                    email_sent = send_mail(
+                        subject,
+                        message,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [email],
+                        fail_silently=False,
                     )
-                    if not created:
-                        recent_invite.project_name = project.name
-                        recent_invite.invitation_count += 1
-                        recent_invite.save()
+                    logger.info(f"[InviteMember] Email send result: {email_sent}")
                 except Exception as e:
-                    logger.warning(f"최근 초대 기록 업데이트 실패: {str(e)}")
-                    # RecentInvitation 모델이 없어도 초대 기능은 계속 진행
-                
-                # 이메일 발송 성공 여부와 관계없이 초대는 완료됨
-                # resend 변수가 정의되어 있는지 확인
-                is_resend = False
-                if 'resend' in locals():
-                    is_resend = resend
-                else:
-                    is_resend = data.get('resend', False)
-                
-                return JsonResponse({
-                    "message": "초대가 완료되었습니다." if not is_resend else "초대를 재전송했습니다.",
-                    "email_sent": email_sent,
-                    "resent": is_resend,
-                    "invitation_id": invitation_id,
-                    "invitation_url": invitation_url
-                }, status=200)
+                    logger.error(f"[InviteMember] Email send error: {str(e)}")
+                    # 이메일 발송 실패 시 로그만 기록
+                    email_sent = False
+            
+            # 최근 초대 기록 업데이트 - 안전한 처리
+            try:
+                from users.models import RecentInvitation
+                recent_invite, created = RecentInvitation.objects.get_or_create(
+                    inviter=user,
+                    invitee_email=email,
+                    defaults={
+                        'invitee_name': email.split('@')[0],  # 이메일의 username 부분을 이름으로 사용
+                        'project_name': project.name,
+                        'invitation_count': 1
+                    }
+                )
+                if not created:
+                    recent_invite.project_name = project.name
+                    recent_invite.invitation_count += 1
+                    recent_invite.save()
+            except Exception as e:
+                logger.warning(f"최근 초대 기록 업데이트 실패: {str(e)}")
+                # RecentInvitation 모델이 없어도 초대 기능은 계속 진행
+            
+            # 이메일 발송 성공 여부와 관계없이 초대는 완료됨
+            # resend 변수가 정의되어 있는지 확인
+            is_resend = False
+            if 'resend' in locals():
+                is_resend = resend
+            else:
+                is_resend = data.get('resend', False)
+            
+            return JsonResponse({
+                "message": "초대가 완료되었습니다." if not is_resend else "초대를 재전송했습니다.",
+                "email_sent": email_sent,
+                "resent": is_resend,
+                "invitation_id": invitation_id,
+                "invitation_url": invitation_url
+            }, status=200)
         except Exception as e:
             logger.error(f"Error in InviteMember: {str(e)}", exc_info=True)
             

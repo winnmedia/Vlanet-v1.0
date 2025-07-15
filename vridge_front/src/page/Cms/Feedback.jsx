@@ -2027,11 +2027,15 @@ export default function Feedback() {
             
             <InviteInput
               project_id={project_id}
-              set_current_project={(updatedProject) => {
-                set_current_project(updatedProject)
-                handleCloseInviteModal()
-              }}
+              set_current_project={refetch}
               pending_list={current_project?.pending_list || []}
+              onInvitationSent={() => {
+                // 초대 성공 시 모달 닫고 프로젝트 정보 새로고침
+                setTimeout(() => {
+                  handleCloseInviteModal()
+                  refetch()
+                }, 500)
+              }}
             />
           </div>
         </div>

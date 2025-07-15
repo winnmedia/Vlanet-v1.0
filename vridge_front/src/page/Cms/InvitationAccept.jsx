@@ -7,7 +7,7 @@ import moment from 'moment'
 import 'moment/locale/ko'
 
 export default function InvitationAccept() {
-  const { token } = useParams()
+  const { token, uid } = useParams()
   const navigate = useNavigate()
   
   const [invitation, setInvitation] = useState(null)
@@ -18,13 +18,23 @@ export default function InvitationAccept() {
   useEffect(() => {
     const fetchInvitation = async () => {
       try {
-        // 토큰으로 초대 정보 조회
-        const response = await axios.get(`/api/projects/invitations/token/${token}/`)
-        
-        if (response.data.status === 'success') {
-          setInvitation(response.data.invitation)
+        // 새로운 초대 시스템 (토큰만 사용)
+        if (token && !uid) {
+          // 토큰으로 초대 정보 조회
+          const response = await axios.get(`/api/projects/invitations/token/${token}/`)
+          
+          if (response.data.status === 'success') {
+            setInvitation(response.data.invitation)
+          } else {
+            setError(response.data.message || '초대 정보를 찾을 수 없습니다.')
+          }
+        } 
+        // 기존 초대 시스템 (uid와 token 사용) - 하위 호환성
+        else if (uid && token) {
+          // 기존 방식의 초대는 지원 중단 메시지 표시
+          setError('이 초대 링크는 더 이상 유효하지 않습니다. 새로운 초대를 요청해주세요.')
         } else {
-          setError(response.data.message || '초대 정보를 찾을 수 없습니다.')
+          setError('잘못된 초대 링크입니다.')
         }
       } catch (error) {
         console.error('초대 정보 조회 실패:', error)
@@ -46,7 +56,7 @@ export default function InvitationAccept() {
       setError('잘못된 초대 링크입니다.')
       setLoading(false)
     }
-  }, [token])
+  }, [token, uid])
 
   const handleResponse = async (action) => {
     // 로그인 확인

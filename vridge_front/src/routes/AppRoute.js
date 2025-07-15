@@ -48,6 +48,7 @@ export default function AppRoute() {
     { path: '/FrameworkManagement', component: <LazyWrapper><FrameworkManagement /></LazyWrapper> },
     { path: '/EmailMonitor', component: <LazyWrapper><EmailMonitor /></LazyWrapper> },
     { path: '/invitation/:uid/:token', component: <LazyWrapper><InvitationAccept /></LazyWrapper> },
+    { path: '/invitation/:token', component: <LazyWrapper><InvitationAccept /></LazyWrapper> },
     {
       path: '*',
       component: (

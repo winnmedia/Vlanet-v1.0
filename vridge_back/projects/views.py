@@ -430,22 +430,37 @@ class InviteMember(View):
                     return JsonResponse({
                         "message": "초대가 완료되었습니다.",
                         "email_sent": False,
-                        "resent": data.get('resend', False)
+                        "resent": data.get('resend', False),
+                        "invitation_id": None,
+                        "invitation_url": None
                     }, status=200)
                 
                 # 이메일 발송 시도 - 간단한 이메일 서비스 사용
-                logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
-                try:
-                    from django.core.mail import send_mail
-                    
-                    # 초대 링크 생성
+                email_sent = False
+                invitation_id = None
+                invitation_url = None
+                invitation_object = None
+                
+                # 초대 객체 확인 (새 시스템)
+                if 'invitation' in locals() and invitation:
+                    invitation_object = invitation
                     invitation_url = f"{settings.FRONTEND_URL}/invitation/{invitation.token}"
-                    
-                    # 이메일 제목
-                    subject = f"[VideoPlanet] {project.name} 프로젝트 초대"
-                    
-                    # 이메일 본문
-                    message = f"""
+                    invitation_id = invitation.id
+                
+                # 이메일 발송 시도
+                if invitation_object:
+                    logger.info(f"[InviteMember] Attempting to send email to {email} for project {project.name}")
+                    try:
+                        from django.core.mail import send_mail
+                        
+                        # 이메일 제목
+                        subject = f"[VideoPlanet] {project.name} 프로젝트 초대"
+                        
+                        # 만료일 문자열 생성
+                        expires_date = invitation_object.expires_at.strftime('%Y년 %m월 %d일')
+                        
+                        # 이메일 본문
+                        message = f"""
 안녕하세요!
 
 {user.nickname or user.username}님이 "{project.name}" 프로젝트에 초대하셨습니다.
@@ -455,25 +470,25 @@ class InviteMember(View):
 아래 링크를 클릭하여 초대를 수락하세요:
 {invitation_url}
 
-이 초대는 {invitation.expires_at.strftime('%Y년 %m월 %d일')}까지 유효합니다.
+이 초대는 {expires_date}까지 유효합니다.
 
 감사합니다.
 VideoPlanet 팀
-                    """
-                    
-                    # 이메일 발송
-                    email_sent = send_mail(
-                        subject,
-                        message,
-                        settings.DEFAULT_FROM_EMAIL,
-                        [email],
-                        fail_silently=False,
-                    )
-                    logger.info(f"[InviteMember] Email send result: {email_sent}")
-                except Exception as e:
-                    logger.error(f"[InviteMember] Email send error: {str(e)}")
-                    # 이메일 발송 실패 시 로그만 기록
-                    email_sent = False
+                        """
+                        
+                        # 이메일 발송
+                        email_sent = send_mail(
+                            subject,
+                            message,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email],
+                            fail_silently=False,
+                        )
+                        logger.info(f"[InviteMember] Email send result: {email_sent}")
+                    except Exception as e:
+                        logger.error(f"[InviteMember] Email send error: {str(e)}")
+                        # 이메일 발송 실패 시 로그만 기록
+                        email_sent = False
                 
                 # 최근 초대 기록 업데이트 - 안전한 처리
                 try:
@@ -496,12 +511,19 @@ VideoPlanet 팀
                     # RecentInvitation 모델이 없어도 초대 기능은 계속 진행
                 
                 # 이메일 발송 성공 여부와 관계없이 초대는 완료됨
+                # resend 변수가 정의되어 있는지 확인
+                is_resend = False
+                if 'resend' in locals():
+                    is_resend = resend
+                else:
+                    is_resend = data.get('resend', False)
+                
                 return JsonResponse({
-                    "message": "초대가 완료되었습니다." if not resend else "초대를 재전송했습니다.",
+                    "message": "초대가 완료되었습니다." if not is_resend else "초대를 재전송했습니다.",
                     "email_sent": email_sent,
-                    "resent": resend,
-                    "invitation_id": invitation.id if 'invitation' in locals() else None,
-                    "invitation_url": f"{settings.FRONTEND_URL}/invitation/{invitation.token}" if 'invitation' in locals() else None
+                    "resent": is_resend,
+                    "invitation_id": invitation_id,
+                    "invitation_url": invitation_url
                 }, status=200)
         except Exception as e:
             logger.error(f"Error in InviteMember: {str(e)}", exc_info=True)

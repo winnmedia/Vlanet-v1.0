@@ -87,7 +87,7 @@ export default function InvitationAccept() {
             projectId: invitation.project.id,
             projectName: invitation.project.name,
             inviterName: invitation.inviter.nickname,
-            returnUrl: `/feedback/${invitation.project.id}`,
+            returnUrl: `/Feedback/${invitation.project.id}`,
             message: `${invitation.inviter.nickname}님이 "${invitation.project.name}" 프로젝트에 초대했습니다.`
           }
         })
@@ -115,7 +115,7 @@ export default function InvitationAccept() {
         await AcceptInvitation(invitation.id)
         alert('초대를 수락했습니다! 피드백 페이지로 이동합니다.')
         // 피드백 페이지로 이동
-        navigate(`/feedback/${invitation.project.id}`)
+        navigate(`/Feedback/${invitation.project.id}`)
       } else {
         await DeclineInvitation(invitation.id)
         alert('초대를 거절했습니다.')

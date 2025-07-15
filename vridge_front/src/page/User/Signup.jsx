@@ -260,7 +260,7 @@ export default function Signup() {
             .then(() => {
               // 피드백 페이지로 이동
               setTimeout(() => {
-                navigate(`/feedback/${invitationData.projectId}`, { replace: true });
+                navigate(`/Feedback/${invitationData.projectId}`, { replace: true });
               }, 1000);
             })
             .catch((err) => {

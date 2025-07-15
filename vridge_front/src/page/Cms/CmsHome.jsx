@@ -311,44 +311,50 @@ export default function CmsHome() {
               </div>
             </div>
 
-            {/* 프로젝트 현황 섹션 */}
+            {/* 프로젝트 현황 3개 버튼 */}
             <div className="part project-progress-enhanced">
-              <div className="s_title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                프로젝트 현황
-                <button
-                  onClick={() => {
-                    console.log('[CmsHome] Manual refresh triggered')
-                    refetchProject(dispatch, navigate).then(() => {
-                      console.log('[CmsHome] Project list refreshed manually')
-                      alert('프로젝트 목록이 새로고침 되었습니다.')
-                    }).catch(err => {
-                      console.error('[CmsHome] Manual refresh failed:', err)
-                      alert('프로젝트 목록 새로고침에 실패했습니다.')
-                    })
-                  }}
-                  style={{
-                    marginLeft: 'auto',
-                    padding: '4px 12px',
-                    fontSize: '12px',
-                    background: '#1631F8',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  새로고침
-                </button>
-                <button 
-                  className={`collapse-btn ${showDashboard ? '' : 'collapsed'}`}
-                  onClick={() => setShowDashboard(!showDashboard)}
-                />
-              </div>
+              <ul className="schedule enhanced">
+                <li style={{
+                  background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  color: '#fff',
+                  boxShadow: '0 4px 12px rgba(22, 49, 248, 0.15)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  전체
+                  프로젝트 <span>{project_list.length}</span>
+                </li>
+                <li style={{
+                  background: 'linear-gradient(135deg, #212529 0%, #000000 100%)',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  color: '#fff',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  이번 달
+                  프로젝트 <span>{this_month_project.length}</span>
+                </li>
+                <li style={{
+                  background: 'linear-gradient(135deg, #212529 0%, #000000 100%)',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  color: '#fff',
+                  boxShadow: '0 4px 12px rgba(255, 167, 38, 0.15)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  다음 달
+                  프로젝트 <span>{next_month_project.length}</span>
+                </li>
+              </ul>
             </div>
 
             {/* 프로젝트 단계별 진행 현황 - Calendar 페이지와 동일한 디자인 */}
-            {!showDashboard && (
-              <ProjectPhaseBoard 
+            <ProjectPhaseBoard 
                   projects={[...project_list]} 
                   onPhaseUpdate={(projectId, phase, startDate, endDate, completed) => {
                     const data = {
@@ -372,7 +378,6 @@ export default function CmsHome() {
                   }}
                   showTitle={true}
                 />
-            )}
 
           </div>
         </main>

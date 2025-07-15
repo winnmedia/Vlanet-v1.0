@@ -59,16 +59,24 @@ $shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
 
         &:hover {
           background: $border-light;
         }
 
+        &::before {
+          display: none !important; // 기존 CSS의 이상한 요소 제거
+        }
+
         &::after {
           content: '−';
-          font-size: 16px;
+          font-size: 20px;
           font-weight: 600;
           color: $text-secondary;
+          line-height: 1;
+          display: block;
         }
 
         &.collapsed::after {

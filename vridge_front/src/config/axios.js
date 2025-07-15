@@ -11,8 +11,8 @@ const isProduction = window.location.hostname === 'vlanet.net' ||
                      window.location.hostname.includes('railway.app');
 
 if (isProduction) {
-  // 프로덕션 환경에서는 API 서브도메인 사용
-  API_BASE_URL = process.env.REACT_APP_API_URL || 'https://api.vlanet.net';
+  // 프로덕션 환경에서는 Railway URL 직접 사용 (임시)
+  API_BASE_URL = process.env.REACT_APP_API_URL || 'https://videoplanet.up.railway.app';
 } else if (process.env.REACT_APP_API_URL) {
   API_BASE_URL = process.env.REACT_APP_API_URL;
 } else {

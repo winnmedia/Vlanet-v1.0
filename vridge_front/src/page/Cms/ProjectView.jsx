@@ -14,6 +14,8 @@ import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
+import { useNavigationFlow } from 'hooks/useNavigationFlow'
+import { SafeRoute } from 'components/SafeRoute'
 
 import { Select, Space } from 'antd'
 import moment from 'moment'
@@ -26,6 +28,7 @@ import InviteInput from 'tasks/Project/InviteInput'
 
 export default function ProjectView() {
   const navigate = useNavigate()
+  const { handleNotFound } = useNavigationFlow()
   const { project_list, user, profileImage } = useSelector((s) => s.ProjectStore)
   const [current_project, set_current_project] = useState(null)
   const { project_id } = useParams()
@@ -77,7 +80,9 @@ export default function ProjectView() {
         console.error('Error fetching project:', err)
         if (err.response && err.response.status === 404) {
           console.error('Project not found')
-          // 404 에러인 경우 페이지 이동하지 않고 에러만 로그
+          window.alert('프로젝트를 찾을 수 없습니다.')
+          // 404 에러 처리
+          handleNotFound(err)
         } else if (err.response && err.response.data) {
           window.alert(err.response.data.message)
           navigate('/CmsHome')
@@ -191,11 +196,16 @@ export default function ProjectView() {
   }, [])
 
   return (
-    <PageTemplate>
-      <div className="cms_wrap">
-        <SideBar />
-        <main className="project">
-          {current_project && (
+    <SafeRoute
+      checkResource={GetProject}
+      resourceId={project_id}
+      resourceType="project"
+    >
+      <PageTemplate>
+        <div className="cms_wrap">
+          <SideBar />
+          <main className="project">
+            {current_project && (
             <>
               <Info 
             current_project={current_project} 
@@ -390,6 +400,7 @@ export default function ProjectView() {
         </main>
       </div>
     </PageTemplate>
+    </SafeRoute>
   )
 }
 

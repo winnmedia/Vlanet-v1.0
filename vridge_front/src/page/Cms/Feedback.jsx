@@ -41,10 +41,12 @@ import axios from 'config/axios'
 
 import moment from 'moment'
 import 'moment/locale/ko'
-
+import { useNavigationFlow } from 'hooks/useNavigationFlow'
+import { SafeRoute } from 'components/SafeRoute'
 
 export default function Feedback() {
   const navigate = useNavigate()
+  const { handleNotFound } = useNavigationFlow()
   const { user, profileImage } = useSelector((s) => s.ProjectStore)
   
   // Cleanup effect for any pending timeouts
@@ -216,7 +218,14 @@ export default function Feedback() {
         }
       })
       .catch((err) => {
-        if (err.response && err.response.data) {
+        console.error('[Feedback] Failed to load project:', err)
+        if (err.response?.status === 401) {
+          window.alert('로그인이 필요합니다.')
+          navigate('/Login')
+        } else if (err.response?.status === 404) {
+          window.alert('프로젝트를 찾을 수 없습니다.')
+          handleNotFound(err)
+        } else if (err.response && err.response.data) {
           window.alert(err.response.data.message)
         }
         setIsLoading(false)

@@ -5,10 +5,12 @@ import { checkSession } from 'util/util'
 import axios from 'config/axios'
 import moment from 'moment'
 import 'moment/locale/ko'
+import { useNavigationFlow } from 'hooks/useNavigationFlow'
 
 export default function InvitationAccept() {
   const { token, uid } = useParams()
   const navigate = useNavigate()
+  const { startFlow, navigateInFlow, navigateSafely, handleNotFound } = useNavigationFlow()
   
   const [invitation, setInvitation] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -79,7 +81,17 @@ export default function InvitationAccept() {
       // 비회원이 수락하려는 경우 회원가입으로 유도
       if (action === 'accept') {
         alert('프로젝트에 참여하려면 회원가입이 필요합니다.')
-        // 회원가입 페이지로 이동하면서 초대 토큰과 프로젝트 정보 전달
+        
+        // 초대 플로우 시작
+        startFlow('invitation', {
+          token: token,
+          invitationId: invitation.id,
+          projectId: invitation.project.id,
+          projectName: invitation.project.name,
+          inviterName: invitation.inviter.nickname
+        })
+        
+        // 회원가입 페이지로 이동
         navigate('/signup', { 
           state: { 
             invitationToken: token,
@@ -97,7 +109,7 @@ export default function InvitationAccept() {
         try {
           await DeclineInvitation(invitation.id)
           alert('초대를 거절했습니다.')
-          navigate('/')
+          navigateSafely('/')
         } catch (error) {
           console.error('초대 거절 실패:', error)
           alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.')
@@ -112,18 +124,32 @@ export default function InvitationAccept() {
     
     try {
       if (action === 'accept') {
+        // 초대 플로우 시작 (로그인된 사용자)
+        startFlow('invitation', {
+          projectId: invitation.project.id
+        })
+        
         await AcceptInvitation(invitation.id)
         alert('초대를 수락했습니다! 피드백 페이지로 이동합니다.')
-        // 피드백 페이지로 이동
-        navigate(`/Feedback/${invitation.project.id}`)
+        
+        // 안전한 네비게이션으로 피드백 페이지로 이동
+        navigateSafely(`/Feedback/${invitation.project.id}`, {
+          projectId: invitation.project.id
+        })
       } else {
         await DeclineInvitation(invitation.id)
         alert('초대를 거절했습니다.')
-        navigate('/')
+        navigateSafely('/')
       }
     } catch (error) {
       console.error('초대 처리 실패:', error)
-      alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.')
+      
+      if (error.response?.status === 404) {
+        alert('프로젝트를 찾을 수 없습니다.')
+        handleNotFound(error)
+      } else {
+        alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.')
+      }
     } finally {
       setProcessing(false)
     }

@@ -23,6 +23,7 @@ const TermsOfService = lazy(() => import('page/Policy/TermsOfService'))
 const MobileDebug = lazy(() => import('page/MobileDebug'))
 const FrameworkManagement = lazy(() => import('page/Cms/FrameworkManagement'))
 const EmailMonitor = lazy(() => import('page/Admin/EmailMonitor'))
+const InvitationAccept = lazy(() => import('page/Cms/InvitationAccept'))
 
 export default function AppRoute() {
   const routes = [
@@ -46,6 +47,7 @@ export default function AppRoute() {
     { path: '/mobile-debug', component: <LazyWrapper><MobileDebug /></LazyWrapper> },
     { path: '/FrameworkManagement', component: <LazyWrapper><FrameworkManagement /></LazyWrapper> },
     { path: '/EmailMonitor', component: <LazyWrapper><EmailMonitor /></LazyWrapper> },
+    { path: '/invitation/:uid/:token', component: <LazyWrapper><InvitationAccept /></LazyWrapper> },
     {
       path: '*',
       component: (

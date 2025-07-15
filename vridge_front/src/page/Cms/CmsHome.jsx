@@ -133,7 +133,7 @@ export default function CmsHome() {
             <div className="today">
               <div className="clock">
                 {time}
-                <small>{moment(date).format('YYYY.MM.DD.dd')}</small>
+                <small style={{ marginLeft: '20px' }}>{moment(date).format('YYYY.MM.DD.dd')}</small>
               </div>
             </div>
 

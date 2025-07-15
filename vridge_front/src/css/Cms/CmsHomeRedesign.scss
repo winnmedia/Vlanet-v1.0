@@ -83,27 +83,18 @@ $spacing-xl: 32px;
       
       // 시계 섹션 - 미니멀하게
       .today {
-        margin-bottom: $spacing-xl;
-        animation: fadeIn 0.6s ease;
+        margin-bottom: $spacing-lg;
         
         .clock {
-          background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
-          color: white;
-          padding: $spacing-lg $spacing-xl;
-          border-radius: $border-radius;
-          display: inline-flex;
-          align-items: center;
-          font-size: 28px;
-          font-weight: 300;
-          letter-spacing: 2px;
-          box-shadow: $shadow-primary;
+          // 원래 스타일 유지
+          font-size: 2rem;
+          font-weight: 600;
+          color: $text-primary;
           
           small {
-            font-size: 14px;
+            font-size: 1rem;
+            color: $text-secondary;
             font-weight: 400;
-            opacity: 0.9;
-            letter-spacing: 0.5px;
-            margin-left: $spacing-lg !important;
           }
         }
       }
@@ -142,11 +133,11 @@ $spacing-xl: 32px;
           justify-content: space-between;
           gap: $spacing-sm;
           
-          // 새로고침 버튼
+          // 새로고침 버튼 - 크기 고정
           .refresh-btn {
             margin-left: auto;
-            padding: 6px 14px;
-            font-size: 13px;
+            padding: 6px 12px;
+            font-size: 12px;
             font-weight: 500;
             background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
             color: white;
@@ -154,6 +145,9 @@ $spacing-xl: 32px;
             border-radius: $border-radius-sm;
             cursor: pointer;
             transition: all 0.3s ease;
+            width: 80px; // 고정 너비
+            text-align: center;
+            white-space: nowrap;
             
             &:hover {
               transform: translateY(-2px);
@@ -611,14 +605,34 @@ $spacing-xl: 32px;
   }
 }
 
+// 태블릿 반응형 (1024px 이하)
+@media (max-width: 1024px) {
+  .cms_wrap main .content.home {
+    .top-grid {
+      gap: $spacing-md;
+    }
+    
+    .refresh-btn {
+      width: 70px !important;
+      font-size: 11px !important;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .cms_wrap main .content.home {
     padding: $spacing-md;
     
     // 상단 그리드를 세로로 변경
-    > div[style*="grid"] {
+    .top-grid {
       grid-template-columns: 1fr !important;
       gap: $spacing-md !important;
+    }
+    
+    .refresh-btn {
+      width: 60px !important;
+      font-size: 10px !important;
+      padding: 4px 8px !important;
     }
     
     .today .clock {

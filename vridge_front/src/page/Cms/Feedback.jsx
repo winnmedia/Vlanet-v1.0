@@ -186,9 +186,10 @@ export default function Feedback() {
           console.log('File URL value:', res.data.result.files);
           
           // 파일 존재 여부 테스트
+          const apiUrl = process.env.REACT_APP_API_URL || 'https://api.vlanet.net';
           const testUrl = res.data.result.files.startsWith('http') 
             ? res.data.result.files 
-            : `https://videoplanet.up.railway.app${res.data.result.files.startsWith('/') ? '' : '/'}${res.data.result.files}`;
+            : `${apiUrl}${res.data.result.files.startsWith('/') ? '' : '/'}${res.data.result.files}`;
           
           console.log('Testing URL:', testUrl);
           

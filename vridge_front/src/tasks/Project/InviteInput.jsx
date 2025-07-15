@@ -187,10 +187,11 @@ export default function InviteInput({
       ))}
       {emails.map((email, index) => (
         <div key={index} style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          marginBottom: '10px'
+          marginBottom: '16px',
+          padding: '12px',
+          border: '1px solid #e9ecef',
+          borderRadius: '8px',
+          backgroundColor: '#f8f9fa'
         }}>
           <input
             type="text"
@@ -198,12 +199,14 @@ export default function InviteInput({
             onChange={(e) => InputChange(index, e.target.value)}
             placeholder="초대할 사용자의 이메일 주소"
             style={{
-              flex: 1,
-              padding: '10px 12px',
+              width: '100%',
+              padding: '12px 16px',
               border: '1px solid #ddd',
               borderRadius: '6px',
               fontSize: '14px',
-              transition: 'border-color 0.2s ease'
+              transition: 'border-color 0.2s ease',
+              marginBottom: '12px',
+              boxSizing: 'border-box'
             }}
             onFocus={(e) => {
               e.target.style.borderColor = '#1631F8'
@@ -213,134 +216,140 @@ export default function InviteInput({
               e.target.style.borderColor = '#ddd'
             }}
           />
-          <button
-            onClick={async () => {
-              if (!email || !email.trim()) {
-                alertError('이메일을 입력해주세요.')
-                return
-              }
-              
-              // 중복 초대인 경우 재전송 여부 확인
-              const resend = duplicateEmails.has(email)
-              const requestData = resend ? { email: email, resend: true } : { email: email }
-              
-              InviteProjectMember(project_id, requestData)
-                .then((res) => {
-                  // 성공 시 중복 목록에서 제거
-                  setDuplicateEmails(prev => {
-                    const newSet = new Set(prev)
-                    newSet.delete(email)
-                    return newSet
-                  })
-                  
-                  InputChange(index, '')
-                  alertSuccess(res.data.resent ? '초대 이메일을 재전송했습니다.' : '초대를 보냈습니다.')
-                  
-                  // 최근 초대 목록 갱신
-                  fetchRecentInvitations()
-                  
-                  GetProject(project_id)
-                    .then((res) => {
-                      set_current_project(res.data.result)
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'flex-end'
+          }}>
+            <button
+              onClick={async () => {
+                if (!email || !email.trim()) {
+                  alertError('이메일을 입력해주세요.')
+                  return
+                }
+                
+                // 중복 초대인 경우 재전송 여부 확인
+                const resend = duplicateEmails.has(email)
+                const requestData = resend ? { email: email, resend: true } : { email: email }
+                
+                InviteProjectMember(project_id, requestData)
+                  .then((res) => {
+                    // 성공 시 중복 목록에서 제거
+                    setDuplicateEmails(prev => {
+                      const newSet = new Set(prev)
+                      newSet.delete(email)
+                      return newSet
                     })
-                    .catch((err) => {
-                      if (err.response && err.response.data) {
+                    
+                    InputChange(index, '')
+                    alertSuccess(res.data.resent ? '초대 이메일을 재전송했습니다.' : '초대를 보냈습니다.')
+                    
+                    // 최근 초대 목록 갱신
+                    fetchRecentInvitations()
+                    
+                    GetProject(project_id)
+                      .then((res) => {
+                        set_current_project(res.data.result)
+                      })
+                      .catch((err) => {
+                        if (err.response && err.response.data) {
+                          alertError(err.response.data.message)
+                        }
+                      })
+                  })
+                  .catch(async (err) => {
+                    if (err.response) {
+                      if (err.response.status === 409) {
+                        // 409 Conflict: 이미 초대된 이메일
+                        setDuplicateEmails(prev => new Set([...prev, email]))
+                        if (await confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
+                          // 재전송 요청
+                          InviteProjectMember(project_id, { email: email, resend: true })
+                            .then((res) => {
+                              setDuplicateEmails(prev => {
+                                const newSet = new Set(prev)
+                                newSet.delete(email)
+                                return newSet
+                              })
+                              InputChange(index, '')
+                              alertSuccess('초대 이메일을 재전송했습니다.')
+                              
+                              // 최근 초대 목록 갱신
+                              fetchRecentInvitations()
+                              
+                              GetProject(project_id)
+                                .then((res) => {
+                                  set_current_project(res.data.result)
+                                })
+                                .catch((err) => {
+                                  if (err.response && err.response.data) {
+                                    alertError(err.response.data.message)
+                                  }
+                                })
+                            })
+                            .catch((err) => {
+                              if (err.response && err.response.data) {
+                                alertError(err.response.data.message)
+                              }
+                            })
+                        }
+                      } else if (err.response.data) {
                         alertError(err.response.data.message)
                       }
-                    })
-                })
-                .catch(async (err) => {
-                  if (err.response) {
-                    if (err.response.status === 409) {
-                      // 409 Conflict: 이미 초대된 이메일
-                      setDuplicateEmails(prev => new Set([...prev, email]))
-                      if (await confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
-                        // 재전송 요청
-                        InviteProjectMember(project_id, { email: email, resend: true })
-                          .then((res) => {
-                            setDuplicateEmails(prev => {
-                              const newSet = new Set(prev)
-                              newSet.delete(email)
-                              return newSet
-                            })
-                            InputChange(index, '')
-                            alertSuccess('초대 이메일을 재전송했습니다.')
-                            
-                            // 최근 초대 목록 갱신
-                            fetchRecentInvitations()
-                            
-                            GetProject(project_id)
-                              .then((res) => {
-                                set_current_project(res.data.result)
-                              })
-                              .catch((err) => {
-                                if (err.response && err.response.data) {
-                                  alertError(err.response.data.message)
-                                }
-                              })
-                          })
-                          .catch((err) => {
-                            if (err.response && err.response.data) {
-                              alertError(err.response.data.message)
-                            }
-                          })
-                      }
-                    } else if (err.response.data) {
-                      alertError(err.response.data.message)
                     }
-                  }
-                })
-            }}
-            style={{
-              background: duplicateEmails.has(email) ? 
-                'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)' : 
-                'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-              color: 'white',
-              border: 'none',
-              padding: '8px 20px',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-1px)'
-              e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(0)'
-              e.target.style.boxShadow = 'none'
-            }}
-          >
-            {duplicateEmails.has(email) ? '재전송' : '보내기'}
-          </button>
-          <button 
-            onClick={() => RemoveInput(index)}
-            style={{
-              background: 'transparent',
-              color: '#dc3545',
-              border: '1px solid #dc3545',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#dc3545'
-              e.target.style.color = 'white'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = 'transparent'
-              e.target.style.color = '#dc3545'
-            }}
-          >
-            삭제
-          </button>
+                  })
+              }}
+              style={{
+                background: duplicateEmails.has(email) ? 
+                  'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)' : 
+                  'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '8px 20px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-1px)'
+                e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = 'none'
+              }}
+            >
+              {duplicateEmails.has(email) ? '재전송' : '보내기'}
+            </button>
+            <button 
+              onClick={() => RemoveInput(index)}
+              style={{
+                background: 'transparent',
+                color: '#dc3545',
+                border: '1px solid #dc3545',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#dc3545'
+                e.target.style.color = 'white'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent'
+                e.target.style.color = '#dc3545'
+              }}
+            >
+              삭제
+            </button>
+          </div>
         </div>
       ))}
       <button 

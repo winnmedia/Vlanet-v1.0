@@ -63,9 +63,16 @@ export default function CmsHome() {
     try {
       setInvitationLoading(true)
       const response = await GetMyInvitations()
-      setInvitations(response.data)
+      console.log('GetMyInvitations response:', response)
+      if (response && response.data) {
+        setInvitations(response.data)
+      } else {
+        console.warn('GetMyInvitations returned empty data')
+        setInvitations({ sent: [], received: [], recent_accepted: [] })
+      }
     } catch (error) {
       console.error('초대 목록 로드 실패:', error)
+      setInvitations({ sent: [], received: [], recent_accepted: [] })
     } finally {
       setInvitationLoading(false)
     }
@@ -292,6 +299,18 @@ export default function CmsHome() {
                                 </div>
                               </div>
                             ))}
+                          </div>
+                        )}
+                        
+                        {/* 받은 초대가 없을 때 */}
+                        {(!invitations.received || invitations.received.length === 0) && (
+                          <div style={{
+                            textAlign: 'center',
+                            padding: '20px',
+                            color: '#6c757d',
+                            fontSize: '14px'
+                          }}>
+                            받은 초대가 없습니다
                           </div>
                         )}
                         

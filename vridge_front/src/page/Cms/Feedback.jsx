@@ -503,14 +503,14 @@ export default function Feedback() {
   const loadQuickInviteLists = async () => {
     setQuickListLoading(true)
     try {
-      const [friendsResponse, recentResponse] = await Promise.all([
-        GetFriends(),
-        GetRecentInvitations(10)
-      ])
-      setFriends(friendsResponse.data?.friends || [])
+      // 친구 기능 임시 비활성화 - 데이터베이스 테이블 문제로 인한 CORS 에러 방지
+      const recentResponse = await GetRecentInvitations(10)
+      setFriends([]) // 친구 목록 비활성화
       setRecentInvitations(recentResponse.data?.recent_invitations || [])
     } catch (error) {
       console.error('빠른 초대 목록 로드 실패:', error)
+      setFriends([])
+      setRecentInvitations([])
     } finally {
       setQuickListLoading(false)
     }

@@ -5,12 +5,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
   animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   
   &.closing {
     animation: fadeOut 0.3s ease;
@@ -18,13 +20,14 @@
 }
 
 .custom-alert {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   min-width: 320px;
   max-width: 500px;
   padding: 24px;
   animation: slideIn 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.8);
   
   &.closing {
     animation: slideOut 0.3s ease;
@@ -110,21 +113,41 @@
     }
   }
   
-  // 타입별 스타일
+  // 타입별 스타일 - 대표 색상 사용
   &.success {
-    border-top: 3px solid #22c55e;
+    border-top: 4px solid #28a745;
+    background: rgba(40, 167, 69, 0.08);
+    
+    .alert-icon circle {
+      fill: #28a745;
+    }
   }
   
   &.error {
-    border-top: 3px solid #ef4444;
+    border-top: 4px solid #dc3545;
+    background: rgba(220, 53, 69, 0.08);
+    
+    .alert-icon circle {
+      fill: #dc3545;
+    }
   }
   
   &.warning {
-    border-top: 3px solid #f59e0b;
+    border-top: 4px solid #ffc107;
+    background: rgba(255, 193, 7, 0.08);
+    
+    .alert-icon path:first-child {
+      fill: #ffc107;
+    }
   }
   
   &.info {
-    border-top: 3px solid #1631F8;
+    border-top: 4px solid #1631F8;
+    background: rgba(22, 49, 248, 0.08);
+    
+    .alert-icon circle {
+      fill: #1631F8;
+    }
   }
 }
 

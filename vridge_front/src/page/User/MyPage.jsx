@@ -113,12 +113,12 @@ export default function MyPage() {
     }
   }
 
-  // 친구 관련 함수들
+  // 친구 관련 함수들 - 임시 비활성화 (데이터베이스 테이블 문제)
   const loadFriends = async () => {
     setFriendLoading(true)
     try {
-      const response = await GetFriends()
-      setFriends(response.data.friends || [])
+      // 친구 기능 임시 비활성화
+      setFriends([])
     } catch (error) {
       console.error('친구 목록 조회 실패:', error)
     } finally {
@@ -128,8 +128,8 @@ export default function MyPage() {
 
   const loadFriendRequests = async () => {
     try {
-      const response = await GetFriendRequests()
-      setFriendRequests(response.data.requests || [])
+      // 친구 기능 임시 비활성화
+      setFriendRequests([])
     } catch (error) {
       console.error('친구 요청 목록 조회 실패:', error)
     }

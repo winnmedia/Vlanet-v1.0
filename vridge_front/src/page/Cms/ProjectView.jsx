@@ -594,11 +594,12 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
             
             <InviteInput
               project_id={project_id}
-              set_current_project={(updatedProject) => {
-                refetch()
-                setShowInviteModal(false)
-              }}
+              set_current_project={refetch}
               pending_list={current_project.pending_list || []}
+              onInvitationSent={() => {
+                // 초대 성공 시에만 모달 닫기
+                refetch()
+              }}
             />
           </div>
         </div>

@@ -8,6 +8,7 @@ export default function InviteInput({
   project_id,
   set_current_project,
   pending_list,
+  onInvitationSent,
 }) {
   const [emails, setEmails] = useState([''])
   const [duplicateEmails, setDuplicateEmails] = useState(new Set()) // 중복 초대된 이메일 추적
@@ -54,15 +55,9 @@ export default function InviteInput({
       CancelInvitation(project_id, id)
         .then((res) => {
           alertSuccess('초대가 취소되었습니다.')
-          GetProject(project_id)
-            .then((res) => {
-              set_current_project(res.data.result)
-            })
-            .catch((err) => {
-              if (err.response && err.response.data) {
-                alertError(err.response.data.message)
-              }
-            })
+          if (typeof set_current_project === 'function') {
+            set_current_project()
+          }
         })
         .catch((err) => {
           if (err.response && err.response.data) {
@@ -79,15 +74,9 @@ export default function InviteInput({
           alertSuccess('초대 이메일을 재전송했습니다.')
           // 최근 초대 목록 갱신
           fetchRecentInvitations()
-          GetProject(project_id)
-            .then((res) => {
-              set_current_project(res.data.result)
-            })
-            .catch((err) => {
-              if (err.response && err.response.data) {
-                alertError(err.response.data.message)
-              }
-            })
+          if (typeof set_current_project === 'function') {
+            set_current_project()
+          }
         })
         .catch((err) => {
           if (err.response && err.response.data) {
@@ -111,7 +100,7 @@ export default function InviteInput({
         }}>
           <input
             type="text"
-            value={pend.email}
+            value={pend.invitee_email || pend.email}
             placeholder="이메일 입력"
             readOnly
             style={{
@@ -136,7 +125,7 @@ export default function InviteInput({
             초대됨
           </span>
           <button 
-            onClick={() => handleResend(pend.email)}
+            onClick={() => handleResend(pend.invitee_email || pend.email)}
             style={{
               background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
               color: 'white',
@@ -247,15 +236,15 @@ export default function InviteInput({
                     // 최근 초대 목록 갱신
                     fetchRecentInvitations()
                     
-                    GetProject(project_id)
-                      .then((res) => {
-                        set_current_project(res.data.result)
-                      })
-                      .catch((err) => {
-                        if (err.response && err.response.data) {
-                          alertError(err.response.data.message)
-                        }
-                      })
+                    // 프로젝트 정보 갱신
+                    if (typeof set_current_project === 'function') {
+                      set_current_project()
+                    }
+                    
+                    // 초대 성공 콜백 호출
+                    if (onInvitationSent) {
+                      onInvitationSent()
+                    }
                   })
                   .catch(async (err) => {
                     if (err.response) {
@@ -277,15 +266,15 @@ export default function InviteInput({
                               // 최근 초대 목록 갱신
                               fetchRecentInvitations()
                               
-                              GetProject(project_id)
-                                .then((res) => {
-                                  set_current_project(res.data.result)
-                                })
-                                .catch((err) => {
-                                  if (err.response && err.response.data) {
-                                    alertError(err.response.data.message)
-                                  }
-                                })
+                              // 프로젝트 정보 갱신
+                              if (typeof set_current_project === 'function') {
+                                set_current_project()
+                              }
+                              
+                              // 초대 성공 콜백 호출
+                              if (onInvitationSent) {
+                                onInvitationSent()
+                              }
                             })
                             .catch((err) => {
                               if (err.response && err.response.data) {

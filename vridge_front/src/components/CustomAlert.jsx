@@ -26,21 +26,21 @@ const CustomAlert = ({ message, type = 'info', onClose, duration = 3000, actions
       case 'success':
         return (
           <svg className="alert-icon" viewBox="0 0 24 24" width="24" height="24">
-            <circle cx="12" cy="12" r="10" fill="#22c55e" />
+            <circle cx="12" cy="12" r="10" fill="#28a745" />
             <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )
       case 'error':
         return (
           <svg className="alert-icon" viewBox="0 0 24 24" width="24" height="24">
-            <circle cx="12" cy="12" r="10" fill="#ef4444" />
+            <circle cx="12" cy="12" r="10" fill="#dc3545" />
             <path d="M8 8l8 8M16 8l-8 8" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </svg>
         )
       case 'warning':
         return (
           <svg className="alert-icon" viewBox="0 0 24 24" width="24" height="24">
-            <path d="M12 2L2 20h20L12 2z" fill="#f59e0b" />
+            <path d="M12 2L2 20h20L12 2z" fill="#ffc107" />
             <path d="M12 9v4M12 17h.01" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </svg>
         )
@@ -96,8 +96,15 @@ export const showAlert = (message, type = 'info', duration = 3000, actions) => {
   document.body.appendChild(div)
 
   const cleanup = () => {
-    ReactDOM.unmountComponentAtNode(div)
-    document.body.removeChild(div)
+    try {
+      ReactDOM.unmountComponentAtNode(div)
+      if (div.parentNode) {
+        document.body.removeChild(div)
+      }
+    } catch (error) {
+      // DOM 에러 방지 - 이미 제거된 경우 무시
+      console.warn('CustomAlert cleanup error:', error)
+    }
   }
 
   ReactDOM.render(

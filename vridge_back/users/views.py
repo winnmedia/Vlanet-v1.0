@@ -901,6 +901,31 @@ class RecentInvitationsView(View):
             user = request.user
             limit = int(request.GET.get('limit', 10))
             
+            # 테이블 존재 여부 확인
+            from django.db import connection
+            with connection.cursor() as cursor:
+                if connection.vendor == 'postgresql':
+                    cursor.execute("""
+                        SELECT EXISTS (
+                            SELECT FROM information_schema.tables 
+                            WHERE table_name = 'users_recentinvitation'
+                        );
+                    """)
+                    table_exists = cursor.fetchone()[0]
+                else:
+                    cursor.execute("""
+                        SELECT name FROM sqlite_master 
+                        WHERE type='table' AND name='users_recentinvitation';
+                    """)
+                    table_exists = cursor.fetchone() is not None
+            
+            if not table_exists:
+                logger.warning("users_recentinvitation table does not exist")
+                return JsonResponse({
+                    "status": "success",
+                    "recent_invitations": []
+                }, status=200)
+            
             recent_invitations = models.RecentInvitation.objects.filter(
                 inviter=user
             ).order_by('-last_invited_at')[:limit]
@@ -922,8 +947,13 @@ class RecentInvitationsView(View):
             }, status=200)
             
         except Exception as e:
-            logger.error(f"Error in RecentInvitationsView: {str(e)}")
-            return JsonResponse({"message": "최근 초대 목록 조회 중 오류가 발생했습니다."}, status=500)
+            import traceback
+            logger.error(f"Error in RecentInvitationsView: {str(e)}\n{traceback.format_exc()}")
+            return JsonResponse({
+                "message": "최근 초대 목록 조회 중 오류가 발생했습니다.",
+                "error": str(e),
+                "type": type(e).__name__
+            }, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

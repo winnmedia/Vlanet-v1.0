@@ -76,3 +76,30 @@ class RailwayHealthCheckMiddleware(MiddlewareMixin):
                     'version': '1.0'
                 })
         return None
+
+
+class SecurityHeadersMiddleware(MiddlewareMixin):
+    """Add security headers to all responses"""
+    
+    def process_response(self, request, response):
+        # XSS 보호
+        response['X-XSS-Protection'] = '1; mode=block'
+        
+        # Content Type 스니핑 방지
+        response['X-Content-Type-Options'] = 'nosniff'
+        
+        # Clickjacking 방지 (이미 Django 설정에 있지만 명시적으로 추가)
+        if 'X-Frame-Options' not in response:
+            response['X-Frame-Options'] = 'DENY'
+        
+        # HSTS (HTTPS 환경에서만)
+        if request.is_secure():
+            response['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        
+        # Referrer Policy
+        response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        
+        # Permissions Policy (이전 Feature Policy)
+        response['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+        
+        return response

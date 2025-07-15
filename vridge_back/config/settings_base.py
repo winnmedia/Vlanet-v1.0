@@ -121,6 +121,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "config.middleware.SecurityHeadersMiddleware",  # 보안 헤더 추가
     "config.middleware.PerformanceMiddleware",
     "feedbacks.middleware.MediaHeadersMiddleware",
     "projects.middleware.IdempotencyMiddleware",

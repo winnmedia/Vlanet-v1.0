@@ -26,6 +26,9 @@ export default function InviteInput({
       }
     } catch (err) {
       console.error('Failed to fetch recent invitations:', err)
+      if (err.response && err.response.data) {
+        console.error('Error details:', err.response.data)
+      }
     }
   }
 

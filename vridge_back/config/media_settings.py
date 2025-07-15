@@ -71,10 +71,27 @@ def serve_media(request, path):
             response['Accept-Ranges'] = 'bytes'
             
             # CORS 헤더 추가
-            response['Access-Control-Allow-Origin'] = '*'
+            # Origin 확인 및 허용된 도메인에 대해서만 CORS 허용
+            origin = request.headers.get('Origin', '')
+            allowed_origins = [
+                'https://vlanet.net',
+                'https://www.vlanet.net',
+                'http://localhost:3000',
+                'http://127.0.0.1:3000',
+                'https://vlanet-v1-0.vercel.app',
+                'https://videoplanet.up.railway.app',
+                'https://api.vlanet.net',
+            ]
+            
+            if origin in allowed_origins:
+                response['Access-Control-Allow-Origin'] = origin
+            else:
+                response['Access-Control-Allow-Origin'] = 'https://vlanet.net'
+            
             response['Access-Control-Allow-Methods'] = 'GET, HEAD, OPTIONS'
-            response['Access-Control-Allow-Headers'] = 'Range'
+            response['Access-Control-Allow-Headers'] = 'Range, Content-Type, Accept, Origin'
             response['Access-Control-Expose-Headers'] = 'Content-Range, Accept-Ranges, Content-Length'
+            response['Access-Control-Allow-Credentials'] = 'true'
             
             return response
     
@@ -94,8 +111,26 @@ def serve_media(request, path):
         response['Accept-Ranges'] = 'bytes'
     
     # CORS 헤더 추가
-    response['Access-Control-Allow-Origin'] = '*'
+    # Origin 확인 및 허용된 도메인에 대해서만 CORS 허용
+    origin = request.headers.get('Origin', '')
+    allowed_origins = [
+        'https://vlanet.net',
+        'https://www.vlanet.net',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'https://vlanet-v1-0.vercel.app',
+        'https://videoplanet.up.railway.app',
+        'https://api.vlanet.net',
+    ]
+    
+    if origin in allowed_origins:
+        response['Access-Control-Allow-Origin'] = origin
+    else:
+        # 특정 도메인으로 기본값 설정
+        response['Access-Control-Allow-Origin'] = 'https://vlanet.net'
+    
     response['Access-Control-Allow-Methods'] = 'GET, HEAD, OPTIONS'
-    response['Access-Control-Allow-Headers'] = 'Range'
+    response['Access-Control-Allow-Headers'] = 'Range, Content-Type, Accept, Origin'
+    response['Access-Control-Allow-Credentials'] = 'true'
     
     return response

@@ -14,6 +14,13 @@ from django.core.mail import EmailMessage, send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+# 이메일 큐 매니저 import
+try:
+    from .email_queue import email_queue_manager
+    USE_EMAIL_QUEUE = True
+except ImportError:
+    USE_EMAIL_QUEUE = False
+
 
 def user_validator(function):
     def wrapper(self, request, *args, **kwargs):
@@ -195,7 +202,19 @@ def auth_send_email(request, email, secret):
             pass
         
         to = [email]
-        EmailThread("VideoPlanet 인증번호", strip_tags(html_message), to, html_message).start()
+        
+        # 이메일 큐 사용 (우선순위 높음)
+        if USE_EMAIL_QUEUE:
+            email_queue_manager.add_email(
+                "VideoPlanet 인증번호", 
+                strip_tags(html_message), 
+                to, 
+                html_message,
+                priority=1  # 인증 이메일은 높은 우선순위
+            )
+        else:
+            # 기존 방식 폴백
+            EmailThread("VideoPlanet 인증번호", strip_tags(html_message), to, html_message).start()
         
         email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
         print(f"[Email] Auth email queued for sending via {email_backend}")
@@ -294,7 +313,17 @@ def invite_send_email(request, email, uid, token, name):
         subject = f"VideoPlanet '{name}' 프로젝트 초대"
         
         # 이메일 발송
-        EmailThread(subject, strip_tags(html_message), to, html_message).start()
+        if USE_EMAIL_QUEUE:
+            email_queue_manager.add_email(
+                subject,
+                strip_tags(html_message),
+                to,
+                html_message,
+                priority=3  # 초대 이메일은 중간 우선순위
+            )
+        else:
+            # 기존 방식 폴백
+            EmailThread(subject, strip_tags(html_message), to, html_message).start()
         
         email_backend = 'SendGrid' if os.environ.get('SENDGRID_API_KEY') else 'Gmail'
         print(f"[Invite Email] Invite email queued for sending via {email_backend}")

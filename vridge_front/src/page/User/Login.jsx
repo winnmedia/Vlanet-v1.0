@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { SignIn, GoogleLoginAPI, GetUserInfo } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
 import { safeStorage } from 'utils/mobile-utils'
+import axios from 'axios'
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -22,6 +23,7 @@ export default function Login() {
   const [param] = useSearchParams()
   const { uid, token } = queryString.parse(param.toString())
   const [loginController, setLoginController] = useState(null)
+  const [resendingEmail, setResendingEmail] = useState(false)
   
   // Cleanup effect for any pending API requests
   useEffect(() => {
@@ -121,6 +123,32 @@ export default function Login() {
     }
   }
 
+  // 이메일 인증 메일 재발송 함수
+  const resendVerificationEmail = async (email) => {
+    if (resendingEmail) return
+    
+    setResendingEmail(true)
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/users/resend-verification-email/`,
+        { email }
+      )
+      
+      if (response.data.success) {
+        SetLoginMessage('인증 메일이 재발송되었습니다. 이메일을 확인해주세요.')
+        setTimeout(() => SetLoginMessage(''), 5000)
+      }
+    } catch (err) {
+      if (err.response?.data?.message) {
+        SetLoginMessage(err.response.data.message)
+      } else {
+        SetLoginMessage('인증 메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      }
+    } finally {
+      setResendingEmail(false)
+    }
+  }
+
   function Login() {
     if (email.length > 0 && password.length > 0) {
       // Cancel any previous login request
@@ -144,8 +172,34 @@ export default function Login() {
           }
           console.error('Login error:', err)
           console.error('Error response:', err.response)
-          if (err.response && err.response.data && err.response.data.message) {
-            SetLoginMessage(err.response.data.message)
+          
+          if (err.response && err.response.data) {
+            // 이메일 미인증 에러 처리
+            if (err.response.status === 403 && err.response.data.error_code === 'EMAIL_NOT_VERIFIED') {
+              SetLoginMessage(
+                <div>
+                  <p style={{ margin: '0 0 10px 0' }}>{err.response.data.message}</p>
+                  <button 
+                    onClick={() => resendVerificationEmail(err.response.data.email)}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#1631F8',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    인증 메일 재발송
+                  </button>
+                </div>
+              )
+            } else if (err.response.data.message) {
+              SetLoginMessage(err.response.data.message)
+            } else {
+              SetLoginMessage('이메일 또는 비밀번호가 일치하지 않습니다.')
+            }
           } else {
             SetLoginMessage('이메일 또는 비밀번호가 일치하지 않습니다.')
           }

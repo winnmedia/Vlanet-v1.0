@@ -163,9 +163,19 @@ export function refetchProject(dispatch, navigate) {
         
         // 프로필 이미지 URL 처리
         let profileImage = null
-        if (projectRes.data.profile_image) {
+        
+        // userRes에서 프로필 이미지 우선 확인 (UserMe API에서 온 데이터)
+        if (userRes && userRes.data && userRes.data.profile_image) {
+          if (userRes.data.profile_image.startsWith('/')) {
+            profileImage = `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${userRes.data.profile_image}`
+          } else {
+            profileImage = userRes.data.profile_image
+          }
+        } 
+        // projectRes에서도 확인 (폴백)
+        else if (projectRes.data.profile_image) {
           if (projectRes.data.profile_image.startsWith('/')) {
-            profileImage = `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${projectRes.data.profile_image}`
+            profileImage = `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${projectRes.data.profile_image}`
           } else {
             profileImage = projectRes.data.profile_image
           }

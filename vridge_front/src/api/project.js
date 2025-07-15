@@ -100,12 +100,26 @@ export function FileDeleteAPI(id) {
 // 프로젝트 파일 삭제
 export function AcceptInvite(uid, token) {
   console.log('[API] AcceptInvite called with:', { uid, token })
+  // URL에 trailing slash 추가 (중요!)
   const url = `/api/projects/invite/${uid}/${token}/`
   console.log('[API] AcceptInvite URL:', url)
+  console.log('[API] Full URL will be:', `${process.env.REACT_APP_API_URL}${url}`)
+  
   return axiosCredentials(
     'get',
     url,
-  )
+  ).catch(err => {
+    console.error('[API] AcceptInvite error:', err)
+    if (err.response?.status === 404) {
+      console.error('[API] 404 Error Details:', {
+        requestedURL: err.config?.url,
+        baseURL: err.config?.baseURL,
+        fullURL: err.request?.responseURL,
+        response: err.response?.data
+      })
+    }
+    throw err
+  })
 }
 
 // 프로젝트 메모 작성

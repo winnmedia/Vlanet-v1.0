@@ -276,7 +276,7 @@ export default function FeedbackPolling() {
     const fetchTeachers = async () => {
       try {
         const token = localStorage.getItem('VGID')?.replace(/"/g, '');
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_API_URL}/api/video-analysis/teachers/`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/video-analysis/teachers/`, {
           headers: {
             'Authorization': token ? `Bearer ${token}` : ''
           }

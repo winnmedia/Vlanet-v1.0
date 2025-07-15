@@ -882,7 +882,7 @@ export default function Feedback() {
       SetVideoLoad(true)
       setUploadProgress(0)
       console.log('Uploading file to project:', project_id)
-      console.log('Backend URL:', process.env.REACT_APP_BACKEND_API_URL)
+      console.log('Backend URL:', process.env.REACT_APP_API_URL)
       
       const onUploadProgress = (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -1225,7 +1225,7 @@ export default function Feedback() {
                         }
                         
                         // 상대 경로인 경우 백엔드 URL과 결합
-                        const backendUrl = process.env.REACT_APP_BACKEND_API_URL || process.env.REACT_APP_BACKEND_URI || 'https://videoplanet.up.railway.app';
+                        const backendUrl = process.env.REACT_APP_API_URL || 'https://api.vlanet.net';
                         
                         // 개발 환경에서 localhost와 127.0.0.1 통일
                         let adjustedBackendUrl = backendUrl;

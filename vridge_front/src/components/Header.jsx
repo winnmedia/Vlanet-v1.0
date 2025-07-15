@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { GetNotifications, MarkNotificationAsRead, MarkAllNotificationsAsRead } from 'api/notification'
 import moment from 'moment'
 import 'moment/locale/ko'
+import UserAvatar from './UserAvatar'
 import './Header.scss'
 
 const Header = memo(function Header({
@@ -318,6 +319,18 @@ function makeHtml(items = [], navigate, onProfileClick) {
         </div>
       )
       return button
+    } else if (item.type === 'avatar') {
+      return (
+        <UserAvatar
+          key={i}
+          profileImage={item.profileImage}
+          name={item.name}
+          size={40}
+          showBorder={true}
+          className={item.className}
+          onClick={onProfileClick}
+        />
+      )
     } else if (item.type === 'string') {
       const element = (
         <div 

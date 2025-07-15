@@ -203,6 +203,17 @@ class SignIn(View):
                 user = None
             
             if user is not None:
+                # 이메일 인증 확인
+                if not user.email_verified:
+                    return JsonResponse(
+                        {
+                            "message": "이메일 인증이 필요합니다. 가입 시 받은 이메일을 확인해주세요.",
+                            "error_code": "EMAIL_NOT_VERIFIED",
+                            "email": user.email
+                        },
+                        status=403
+                    )
+                
                 # Use Django REST Framework SimpleJWT instead
                 from rest_framework_simplejwt.tokens import RefreshToken
                 refresh = RefreshToken.for_user(user)
@@ -610,6 +621,12 @@ class UserMe(View):
     def get(self, request):
         try:
             user = request.user
+            
+            # 프로필 이미지 URL 처리
+            profile_image = None
+            if hasattr(user, 'profile') and user.profile and user.profile.profile_image:
+                profile_image = user.profile.profile_image.url
+            
             return JsonResponse({
                 "id": user.id,
                 "username": user.username,
@@ -617,6 +634,7 @@ class UserMe(View):
                 "nickname": user.nickname if user.nickname else user.username,
                 "login_method": user.login_method,
                 "date_joined": user.date_joined.isoformat() if user.date_joined else None,
+                "profile_image": profile_image,
             }, status=200)
         except Exception as e:
             logger.error(f"Error in UserMe: {str(e)}", exc_info=True)

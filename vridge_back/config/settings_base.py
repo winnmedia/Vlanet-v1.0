@@ -68,7 +68,15 @@ allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
 if allowed_hosts_env:
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',')]
 else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'videoplanet.up.railway.app', 'vlanet.net', '.railway.app', '*']
+    ALLOWED_HOSTS = [
+        'localhost', 
+        '127.0.0.1', 
+        'videoplanet.up.railway.app',
+        'api.vlanet.net',  # API 서브도메인 추가
+        'vlanet.net', 
+        '.railway.app', 
+        '*'
+    ]
 
 # Application definition
 DJANGO_APPS = [
@@ -357,6 +365,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://videoplanet.up.railway.app",
     "https://vlanet.net",
     "https://www.vlanet.net",
+    "https://api.vlanet.net",  # API 서브도메인 추가
 ]
 
 CORS_ALLOW_CREDENTIALS = True

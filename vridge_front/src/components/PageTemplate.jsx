@@ -53,14 +53,11 @@ export default function PageTemplate({
     ]
   if (nickname) {
     rightItems = [
-      profileImage ? {
-        type: 'img',
-        src: profileImage,
-        className: 'profile-photo',
-      } : {
-        type: 'string',
-        className: 'nick',
-        text: nickname.substr(0, 1),
+      {
+        type: 'avatar',
+        profileImage: profileImage,
+        name: nickname,
+        className: 'profile-avatar',
       },
       {
         type: 'string',

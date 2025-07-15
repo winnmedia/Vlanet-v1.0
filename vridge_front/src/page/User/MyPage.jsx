@@ -11,6 +11,7 @@ import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invit
 import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest, DeleteFriend, BlockFriend } from 'api/friends'
 import moment from 'moment'
 import 'moment/locale/ko'
+import UserAvatar from 'components/UserAvatar'
 
 export default function MyPage() {
   const navigate = useNavigate()
@@ -232,7 +233,7 @@ export default function MyPage() {
           // 백엔드 URL이 상대 경로인 경우 처리
           let fullImageUrl
           if (imageUrl.startsWith('/')) {
-            fullImageUrl = `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${imageUrl}`
+            fullImageUrl = `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
           }
@@ -386,7 +387,7 @@ export default function MyPage() {
           if (imageUrl.startsWith('http')) {
             fullImageUrl = imageUrl
           } else if (imageUrl.startsWith('/')) {
-            const baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'
+            const baseUrl = process.env.REACT_APP_API_URL || 'https://api.vlanet.net'
             fullImageUrl = `${baseUrl}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
@@ -562,13 +563,13 @@ export default function MyPage() {
                 <div className="profile-image-section">
                   <div className="profile-image-wrapper">
                     <div className="profile-image-container">
-                      {imagePreview ? (
-                        <img src={imagePreview} alt="프로필" className="profile-image" />
-                      ) : (
-                        <div className="profile-image-placeholder">
-                          <span>{(myPageData?.profile?.nickname || nickname || 'U').charAt(0)}</span>
-                        </div>
-                      )}
+                      <UserAvatar 
+                        profileImage={imagePreview}
+                        name={myPageData?.profile?.nickname || nickname || 'U'}
+                        size={150}
+                        showBorder={false}
+                        className="profile-avatar-main"
+                      />
                       {isEditing && (
                         <div className="image-overlay">
                           <svg className="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -640,7 +641,7 @@ export default function MyPage() {
                               const savedImage = localStorage.getItem('profileImage')
                               const dbImage = myPageData?.profile?.profile_image ? 
                                 (myPageData.profile.profile_image.startsWith('/') ? 
-                                  `${process.env.REACT_APP_API_BASE_URL || 'https://videoplanet.up.railway.app'}${myPageData.profile.profile_image}` : 
+                                  `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${myPageData.profile.profile_image}` : 
                                   myPageData.profile.profile_image
                                 ) : null
                               setImagePreview(savedImage || dbImage || null)
@@ -974,15 +975,13 @@ export default function MyPage() {
                       {friendRequests.map((request) => (
                         <div key={request.id} className="friend-request-item">
                           <div className="friend-info">
-                            <div className="friend-avatar">
-                              {request.requester.profile_image ? (
-                                <img src={request.requester.profile_image} alt={request.requester.nickname} />
-                              ) : (
-                                <div className="avatar-placeholder">
-                                  {request.requester.nickname.charAt(0).toUpperCase()}
-                                </div>
-                              )}
-                            </div>
+                            <UserAvatar
+                              profileImage={request.requester.profile_image}
+                              name={request.requester.nickname}
+                              size={40}
+                              showBorder={false}
+                              className="friend-avatar"
+                            />
                             <div className="friend-details">
                               <div className="friend-name">{request.requester.nickname}</div>
                               <div className="friend-email">{request.requester.email}</div>
@@ -1022,15 +1021,13 @@ export default function MyPage() {
                         {friendSearchResults.map((user) => (
                           <div key={user.id} className="search-result-item">
                             <div className="friend-info">
-                              <div className="friend-avatar">
-                                {user.profile_image ? (
-                                  <img src={user.profile_image} alt={user.nickname} />
-                                ) : (
-                                  <div className="avatar-placeholder">
-                                    {user.nickname.charAt(0).toUpperCase()}
-                                  </div>
-                                )}
-                              </div>
+                              <UserAvatar
+                                profileImage={user.profile_image}
+                                name={user.nickname}
+                                size={40}
+                                showBorder={false}
+                                className="friend-avatar"
+                              />
                               <div className="friend-details">
                                 <div className="friend-name">{user.nickname}</div>
                                 <div className="friend-email">{user.email}</div>
@@ -1074,15 +1071,13 @@ export default function MyPage() {
                       {friends.map((friendship) => (
                         <div key={friendship.id} className="friend-item">
                           <div className="friend-info">
-                            <div className="friend-avatar">
-                              {friendship.friend.profile_image ? (
-                                <img src={friendship.friend.profile_image} alt={friendship.friend.nickname} />
-                              ) : (
-                                <div className="avatar-placeholder">
-                                  {friendship.friend.nickname.charAt(0).toUpperCase()}
-                                </div>
-                              )}
-                            </div>
+                            <UserAvatar
+                              profileImage={friendship.friend.profile_image}
+                              name={friendship.friend.nickname}
+                              size={40}
+                              showBorder={false}
+                              className="friend-avatar"
+                            />
                             <div className="friend-details">
                               <div className="friend-name">{friendship.friend.nickname}</div>
                               <div className="friend-email">{friendship.friend.email}</div>

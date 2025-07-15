@@ -484,14 +484,62 @@ class InviteMember(View):
 VideoPlanet 팀
                     """
                     
-                    # 이메일 발송
-                    email_sent = send_mail(
-                        subject,
-                        message,
-                        settings.DEFAULT_FROM_EMAIL,
-                        [email],
-                        fail_silently=False,
+                    # HTML 이메일 본문
+                    html_message = f"""
+                    <html>
+                    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                            <h2 style="color: #1631F8;">VideoPlanet 프로젝트 초대</h2>
+                            <p>안녕하세요!</p>
+                            <p><strong>{user.nickname or user.username}</strong>님이 "<strong>{project.name}</strong>" 프로젝트에 초대하셨습니다.</p>
+                            
+                            {f'<p><strong>초대 메시지:</strong> {data.get("message", "")}</p>' if data.get("message") else ''}
+                            
+                            <div style="margin: 30px 0; text-align: center;">
+                                <a href="{invitation_url}" 
+                                   style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%); 
+                                          color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                                    초대 수락하기
+                                </a>
+                            </div>
+                            
+                            <p style="color: #666; font-size: 14px;">
+                                버튼이 작동하지 않으면 아래 링크를 복사하여 브라우저에 붙여넣으세요:<br>
+                                <span style="word-break: break-all; color: #1631F8;">{invitation_url}</span>
+                            </p>
+                            
+                            <p style="color: #666; font-size: 14px;">
+                                이 초대는 <strong>{expires_date}</strong>까지 유효합니다.
+                            </p>
+                            
+                            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                            
+                            <p style="color: #999; font-size: 12px; text-align: center;">
+                                VideoPlanet - 영상 프로젝트 관리의 모든 것<br>
+                                <a href="https://vlanet.net" style="color: #1631F8;">vlanet.net</a>
+                            </p>
+                        </div>
+                    </body>
+                    </html>
+                    """
+                    
+                    # 이메일 발송 (HTML 버전 포함)
+                    from django.core.mail import EmailMultiAlternatives
+                    
+                    email_message = EmailMultiAlternatives(
+                        subject=subject,
+                        body=message,  # 텍스트 버전
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        to=[email]
                     )
+                    email_message.attach_alternative(html_message, "text/html")
+                    
+                    # SendGrid의 링크 추적 비활성화
+                    email_message.extra_headers = {
+                        'X-SMTPAPI': '{"filters": {"clicktrack": {"settings": {"enable": 0}}}}'
+                    }
+                    
+                    email_sent = email_message.send(fail_silently=False)
                     logger.info(f"[InviteMember] Email send result: {email_sent}")
                 except Exception as e:
                     logger.error(f"[InviteMember] Email send error: {str(e)}")

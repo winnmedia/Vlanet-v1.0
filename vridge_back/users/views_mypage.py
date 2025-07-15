@@ -14,6 +14,15 @@ class MyPageView(APIView):
     """마이페이지 종합 정보"""
     permission_classes = [IsAuthenticated]
     
+    def get_absolute_url(self, request, url):
+        """상대 URL을 절대 URL로 변환"""
+        if not url or url.startswith('http'):
+            return url
+        from django.conf import settings
+        protocol = 'https' if not settings.DEBUG else 'http'
+        host = request.get_host()
+        return f"{protocol}://{host}{url}"
+    
     def get(self, request):
         """마이페이지 정보 조회"""
         try:
@@ -57,7 +66,7 @@ class MyPageView(APIView):
                         'nickname': user.nickname or user.username,
                         'login_method': user.login_method,
                         'date_joined': user.date_joined.strftime('%Y-%m-%d'),
-                        'profile_image': profile.profile_image.url if profile.profile_image else None,
+                        'profile_image': self.get_absolute_url(request, profile.profile_image.url) if profile.profile_image else None,
                         'bio': profile.bio,
                         'phone': profile.phone,
                         'company': profile.company,

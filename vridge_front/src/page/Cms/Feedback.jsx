@@ -1118,56 +1118,7 @@ export default function Feedback() {
       <div className="cms_wrap">
         <SideBar tab="feedback" />
         <main>
-          {/* WebSocket 연결 상태 표시기 */}
-          <div style={{
-            position: 'fixed',
-            top: '20px',
-            right: '20px',
-            zIndex: 1000,
-            padding: '8px 16px',
-            borderRadius: '20px',
-            fontSize: '12px',
-            fontWeight: '500',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            ...(connectionStatus === 'connected' ? {
-              backgroundColor: 'rgba(34, 197, 94, 0.9)',
-              color: 'white'
-            } : connectionStatus === 'connecting' || connectionStatus === 'reconnecting' ? {
-              backgroundColor: 'rgba(251, 191, 36, 0.9)',
-              color: 'white'
-            } : {
-              backgroundColor: 'rgba(239, 68, 68, 0.9)',
-              color: 'white'
-            })
-          }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: 'currentColor',
-              ...(connectionStatus === 'connecting' || connectionStatus === 'reconnecting' ? {
-                animation: 'pulse 1s infinite'
-              } : {})
-            }} />
-            {connectionStatus === 'connected' && '실시간 연결됨'}
-            {connectionStatus === 'connecting' && '연결 중...'}
-            {connectionStatus === 'reconnecting' && `재연결 중... (${connectionAttempts}/${maxReconnectAttempts})`}
-            {connectionStatus === 'disconnected' && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                연결 끊김
-                <button
-                  onClick={manualReconnect}
-                  className={styles.reconnectButton}
-                >
-                  재연결
-                </button>
-              </span>
-            )}
-          </div>
+          {/* WebSocket 연결 상태 표시기 - 사용자 요청으로 삭제됨 */}
           
           {current_project && (
             <div className="content feedback feedback_page flex space_between">

@@ -712,6 +712,17 @@
               justify-content: center;
               align-items: center;
               z-index: 1;
+              
+              // 프로그레스 바 스타일 (회전 애니메이션 제거)
+              .loading-content {
+                .progress-container {
+                  .progress-bar {
+                    animation: none !important;
+                    transform: none !important;
+                  }
+                }
+              }
+              
               .animation {
                 margin: 0 auto;
                 width: 80px;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { GetProject } from 'api/project'
 import { InviteProjectMember, CancelInvitation, GetProjectInvitations } from 'api/invitation'
 import { axiosCredentials } from 'util/util'
+import { alertSuccess, alertError, confirm } from 'util/alert'
 
 export default function InviteInput({
   project_id,
@@ -48,18 +49,18 @@ export default function InviteInput({
     setEmails(newEmails)
   }
 
-  const CancelBtn = (id) => {
-    if (window.confirm('초대를 취소하시겠습니까?')) {
+  const CancelBtn = async (id) => {
+    if (await confirm('초대를 취소하시겠습니까?')) {
       CancelInvitation(project_id, id)
         .then((res) => {
-          window.alert('초대가 취소되었습니다.')
+          alertSuccess('초대가 취소되었습니다.')
           GetProject(project_id)
             .then((res) => {
               set_current_project(res.data.result)
             })
             .catch((err) => {
               if (err.response && err.response.data) {
-                window.alert(err.response.data.message)
+                alertError(err.response.data.message)
               }
             })
         })
@@ -71,11 +72,11 @@ export default function InviteInput({
     }
   }
 
-  const handleResend = (email) => {
-    if (window.confirm('초대를 다시 보내시겠습니까?')) {
+  const handleResend = async (email) => {
+    if (await confirm('초대를 다시 보내시겠습니까?')) {
       InviteProjectMember(project_id, { email: email, resend: true })
         .then((res) => {
-          window.alert('초대 이메일을 재전송했습니다.')
+          alertSuccess('초대 이메일을 재전송했습니다.')
           // 최근 초대 목록 갱신
           fetchRecentInvitations()
           GetProject(project_id)
@@ -84,7 +85,7 @@ export default function InviteInput({
             })
             .catch((err) => {
               if (err.response && err.response.data) {
-                window.alert(err.response.data.message)
+                alertError(err.response.data.message)
               }
             })
         })
@@ -138,9 +139,9 @@ export default function InviteInput({
             placeholder="이메일 입력"
           />
           <button
-            onClick={() => {
+            onClick={async () => {
               if (!email || !email.trim()) {
-                window.alert('이메일을 입력해주세요.')
+                alertError('이메일을 입력해주세요.')
                 return
               }
               
@@ -158,7 +159,7 @@ export default function InviteInput({
                   })
                   
                   InputChange(index, '')
-                  window.alert(res.data.resent ? '초대 이메일을 재전송했습니다.' : '초대를 보냈습니다.')
+                  alertSuccess(res.data.resent ? '초대 이메일을 재전송했습니다.' : '초대를 보냈습니다.')
                   
                   // 최근 초대 목록 갱신
                   fetchRecentInvitations()
@@ -169,7 +170,7 @@ export default function InviteInput({
                     })
                     .catch((err) => {
                       if (err.response && err.response.data) {
-                        window.alert(err.response.data.message)
+                        alertError(err.response.data.message)
                       }
                     })
                 })
@@ -178,7 +179,7 @@ export default function InviteInput({
                     if (err.response.status === 409) {
                       // 409 Conflict: 이미 초대된 이메일
                       setDuplicateEmails(prev => new Set([...prev, email]))
-                      if (window.confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
+                      if (await confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
                         // 재전송 요청
                         InviteProjectMember(project_id, { email: email, resend: true })
                           .then((res) => {
@@ -188,7 +189,7 @@ export default function InviteInput({
                               return newSet
                             })
                             InputChange(index, '')
-                            window.alert('초대 이메일을 재전송했습니다.')
+                            alertSuccess('초대 이메일을 재전송했습니다.')
                             
                             // 최근 초대 목록 갱신
                             fetchRecentInvitations()
@@ -199,18 +200,18 @@ export default function InviteInput({
                               })
                               .catch((err) => {
                                 if (err.response && err.response.data) {
-                                  window.alert(err.response.data.message)
+                                  alertError(err.response.data.message)
                                 }
                               })
                           })
                           .catch((err) => {
                             if (err.response && err.response.data) {
-                              window.alert(err.response.data.message)
+                              alertError(err.response.data.message)
                             }
                           })
                       }
                     } else if (err.response.data) {
-                      window.alert(err.response.data.message)
+                      alertError(err.response.data.message)
                     }
                   }
                 })

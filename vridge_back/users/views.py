@@ -625,7 +625,14 @@ class UserMe(View):
             # 프로필 이미지 URL 처리
             profile_image = None
             if hasattr(user, 'profile') and user.profile and user.profile.profile_image:
+                # 절대 URL로 변환
+                from django.conf import settings
                 profile_image = user.profile.profile_image.url
+                if profile_image and not profile_image.startswith('http'):
+                    # Railway 환경에서는 HTTPS 사용
+                    protocol = 'https' if not settings.DEBUG else 'http'
+                    host = request.get_host()
+                    profile_image = f"{protocol}://{host}{profile_image}"
             
             return JsonResponse({
                 "id": user.id,

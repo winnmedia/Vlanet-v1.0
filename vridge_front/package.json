@@ -1,6 +1,6 @@
 {
   "name": "vridge",
-  "version": "0.7.4",
+  "version": "0.8.0",
   "private": true,
   "homepage": "https://vlanet.net",
   "dependencies": {
@@ -39,8 +39,13 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "babel-plugin-import": "^1.13.8",
+    "compression-webpack-plugin": "^11.1.0",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1",
     "react-scripts": "5.0.1",
-    "redux-logger": "^3.0.6"
+    "redux-logger": "^3.0.6",
+    "webpack-bundle-analyzer": "^4.10.2"
   },
   "overrides": {
     "postcss": "^8.4.31",
@@ -51,14 +56,14 @@
     "webpack-dev-server": "^5.2.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "NODE_ENV=production CI=false react-scripts build",
-    "build:analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "NODE_ENV=production CI=false react-app-rewired build",
+    "build:analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "serve": "node server.js",
     "serve:build": "npm run build && node server.js",
-    "dev": "react-scripts start",
+    "dev": "react-app-rewired start",
     "preview": "npm run build && npx serve -s build",
     "vercel-build": "CI=false npm run build"
   },

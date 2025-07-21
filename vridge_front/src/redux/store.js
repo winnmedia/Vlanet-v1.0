@@ -7,20 +7,26 @@ import logger from 'redux-logger'
 import ProjectStore from './project'
 
 let store
-if (process.env.REACT_APP_MODE === 'production') {
-  // 빌드제품
-  store = createStore(
-    combineReducers({
-      ProjectStore,
-    }), // store 불러올때는 ProjectStore로 사용됨
-  )
-} else {
-  // 개발환경에선 로거 사용
+if (process.env.NODE_ENV === 'production') {
+  // 프로덕션 환경
   store = createStore(
     combineReducers({
       ProjectStore,
     }),
-    applyMiddleware(logger),
+    // Redux DevTools Extension 비활성화
+  )
+} else {
+  // 개발환경에선 로거 사용
+  const middleware = []
+  if (process.env.NODE_ENV === 'development') {
+    middleware.push(logger)
+  }
+  
+  store = createStore(
+    combineReducers({
+      ProjectStore,
+    }),
+    applyMiddleware(...middleware),
   )
 }
 export default store

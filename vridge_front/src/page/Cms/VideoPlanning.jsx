@@ -2612,7 +2612,6 @@ export default function VideoPlanning() {
                     </div>
                   ))}
                 </div>
-              </div>
             )}
             
             {recentPlannings.length === 0 && (

@@ -36,6 +36,10 @@ export default function CmsHome() {
   const [showInvitations, setShowInvitations] = useState(false)
   const [invitations, setInvitations] = useState({ sent: [], received: [], recent_accepted: [] })
   const [invitationLoading, setInvitationLoading] = useState(false)
+  
+  // 프로젝트 데이터 로딩 상태를 별도로 관리
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasInitialized, setHasInitialized] = useState(false)
 
   // 인증 체크 및 프로젝트 목록 확인
   useEffect(() => {
@@ -45,25 +49,32 @@ export default function CmsHome() {
       return
     }
     
-    console.log('[CmsHome] Component mounted, project_list:', project_list)
+    console.log('[CmsHome] Component mounted, hasInitialized:', hasInitialized, 'project_list:', project_list)
     
-    // 프로젝트 목록이 없으면 로드 시도 (빈 배열은 정상 상태)
-    if (project_list === null) {
-      console.log('[CmsHome] Project list is null, loading...')
-      setIsLoading(true)
-      refetchProject(dispatch, navigate).then(() => {
-        console.log('[CmsHome] Project list loaded successfully')
+    // 한 번만 초기화 실행
+    if (!hasInitialized) {
+      setHasInitialized(true)
+      
+      // 프로젝트 목록이 없으면 로드 시도
+      if (project_list === null) {
+        console.log('[CmsHome] Project list is null, loading...')
+        setIsLoading(true)
+        refetchProject(dispatch, navigate)
+          .then(() => {
+            console.log('[CmsHome] Project list loaded successfully')
+            setIsLoading(false)
+          })
+          .catch(err => {
+            console.error('[CmsHome] Failed to load project list:', err)
+            setIsLoading(false)
+            // 에러가 발생해도 페이지는 표시되도록 함
+          })
+      } else {
+        console.log('[CmsHome] Project list already exists:', project_list?.length || 0, 'projects')
         setIsLoading(false)
-      }).catch(err => {
-        console.error('[CmsHome] Failed to load project list:', err)
-        setIsLoading(false)
-        // 에러가 발생해도 페이지는 표시되도록 함
-      })
-    } else {
-      console.log('[CmsHome] Project list already loaded:', project_list?.length || 0, 'projects')
-      setIsLoading(false)
+      }
     }
-  }, [dispatch, navigate]) // project_list 의존성 제거 - 무한 루프 방지
+  }, [hasInitialized, dispatch, navigate, project_list])
 
   // 초대 목록 로드
   const loadInvitations = async () => {
@@ -126,9 +137,6 @@ export default function CmsHome() {
     }, 1000)
     return () => clearInterval(intervalId)
   }, [])
-
-  // 프로젝트 데이터 로딩 중일 때 표시
-  const [isLoading, setIsLoading] = useState(project_list === null)
   
   if (isLoading) {
     return (
@@ -344,7 +352,7 @@ export default function CmsHome() {
 
             {/* 프로젝트 단계별 진행 현황 - Calendar 페이지와 동일한 디자인 */}
             <ProjectPhaseBoard 
-                  projects={[...project_list]} 
+                  projects={project_list ? [...project_list] : []} 
                   onPhaseUpdate={(projectId, phase, startDate, endDate, completed) => {
                     const data = {
                       type: phase,
@@ -361,9 +369,9 @@ export default function CmsHome() {
                       })
                   }}
                   projectCounts={{
-                    total: project_list.length,
-                    thisMonth: this_month_project.length,
-                    nextMonth: next_month_project.length
+                    total: project_list ? project_list.length : 0,
+                    thisMonth: this_month_project ? this_month_project.length : 0,
+                    nextMonth: next_month_project ? next_month_project.length : 0
                   }}
                   showTitle={true}
                 />

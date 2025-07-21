@@ -379,6 +379,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://vlanet.net",
     "https://www.vlanet.net",
     "https://api.vlanet.net",  # API 서브도메인 추가
+    "https://videoplanet-seven.vercel.app",  # 스테이징 환경
+    "https://*.vercel.app",  # Vercel 프리뷰 배포
 ]
 
 CORS_ALLOW_CREDENTIALS = True

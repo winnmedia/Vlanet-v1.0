@@ -6,6 +6,7 @@ import axios from 'config/axios'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
+import { debug404 } from 'utils/debug404'
 
 export default function InvitationAccept() {
   const { token, uid } = useParams()
@@ -53,6 +54,9 @@ export default function InvitationAccept() {
           data: error.response?.data,
           message: error.message
         })
+        
+        // 404 디버깅 정보 추가
+        debug404.analyzeError(error)
         
         if (error.response?.status === 404) {
           setError('유효하지 않은 초대 링크입니다.')

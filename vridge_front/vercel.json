@@ -4,7 +4,7 @@
   "framework": null,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!static/).*)",
       "destination": "/index.html"
     }
   ],
@@ -35,5 +35,6 @@
         }
       ]
     }
-  ]
+  ],
+  "trailingSlash": false
 }

@@ -38,43 +38,59 @@ export default function CmsHome() {
   const [invitationLoading, setInvitationLoading] = useState(false)
   
   // 프로젝트 데이터 로딩 상태를 별도로 관리
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasInitialized, setHasInitialized] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [dataFetched, setDataFetched] = useState(false)
 
-  // 인증 체크 및 프로젝트 목록 확인
+  // 인증 체크
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
       return
     }
+  }, [navigate])
+  
+  // 프로젝트 목록 로드 (한 번만 실행)
+  useEffect(() => {
+    console.log('[CmsHome] Initialization check - dataFetched:', dataFetched, 'project_list:', project_list)
     
-    console.log('[CmsHome] Component mounted, hasInitialized:', hasInitialized, 'project_list:', project_list)
+    // 이미 데이터를 가져왔으면 스킵
+    if (dataFetched) {
+      return
+    }
     
-    // 한 번만 초기화 실행
-    if (!hasInitialized) {
-      setHasInitialized(true)
-      
-      // 프로젝트 목록이 없으면 로드 시도
-      if (project_list === null) {
-        console.log('[CmsHome] Project list is null, loading...')
-        setIsLoading(true)
-        refetchProject(dispatch, navigate)
-          .then(() => {
-            console.log('[CmsHome] Project list loaded successfully')
-            setIsLoading(false)
-          })
-          .catch(err => {
-            console.error('[CmsHome] Failed to load project list:', err)
-            setIsLoading(false)
-            // 에러가 발생해도 페이지는 표시되도록 함
-          })
-      } else {
-        console.log('[CmsHome] Project list already exists:', project_list?.length || 0, 'projects')
+    // 프로젝트 목록이 이미 있으면 로딩 완료로 처리
+    if (project_list !== null) {
+      console.log('[CmsHome] Project list already loaded:', project_list.length, 'projects')
+      setIsLoading(false)
+      setDataFetched(true)
+      return
+    }
+    
+    // 프로젝트 목록이 없으면 로드
+    console.log('[CmsHome] Loading project list...')
+    const loadProjects = async () => {
+      try {
+        await refetchProject(dispatch, navigate)
+        console.log('[CmsHome] Project list loaded successfully')
+      } catch (err) {
+        console.error('[CmsHome] Failed to load project list:', err)
+      } finally {
         setIsLoading(false)
+        setDataFetched(true)
       }
     }
-  }, [hasInitialized, dispatch, navigate, project_list])
+    
+    loadProjects()
+  }, [dataFetched, dispatch, navigate]) // project_list를 의존성에서 제거
+  
+  // project_list가 업데이트되면 로딩 상태 해제
+  useEffect(() => {
+    if (project_list !== null && isLoading) {
+      console.log('[CmsHome] Project list updated, stopping loading')
+      setIsLoading(false)
+    }
+  }, [project_list, isLoading])
 
   // 초대 목록 로드
   const loadInvitations = async () => {

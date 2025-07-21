@@ -2545,9 +2545,9 @@ export default function VideoPlanning() {
               <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다.</p>
             </div>
 
+            <div>
             {/* 최근 기획안 기록 표시 */}
-            <>
-            {recentPlannings.length > 0 ? (
+            {recentPlannings.length > 0 && (
               <div className="recent-plannings-section">
                 <div className="recent-header">
                   <h3>📋 최근 기획안</h3>
@@ -2613,7 +2613,9 @@ export default function VideoPlanning() {
                   ))}
                 </div>
               </div>
-            ) : (
+            )}
+            
+            {recentPlannings.length === 0 && (
               <div className="no-recent-plannings">
                 <p>아직 생성한 기획이 없습니다.</p>
                 <p className="hint">새로운 기획을 시작해보세요!</p>
@@ -2642,7 +2644,7 @@ export default function VideoPlanning() {
                 </div>
               </div>
             )}
-            </>
+            </div>
 
             <div className="planning-navigation">
               <div 

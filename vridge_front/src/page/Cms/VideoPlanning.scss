@@ -202,6 +202,10 @@
       .no-recent-plannings {
         text-align: center;
         padding: 40px 20px;
+        background: #f9fafb;
+        border: 2px dashed #e5e7eb;
+        border-radius: 12px;
+        margin: 16px 0;
         
         p {
           color: #666;
@@ -221,6 +225,10 @@
   .planning-header {
     text-align: center;
     margin-bottom: 40px;
+    padding: 40px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
     h2 {
       font-size: 28px;
@@ -650,6 +658,11 @@
       color: #666;
       margin-bottom: 30px;
       line-height: 1.6;
+      background: #f0f4ff;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 4px solid #1631F8;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .recent-scenarios {

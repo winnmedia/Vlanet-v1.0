@@ -5,7 +5,7 @@ const initialState = {
   nickname: null,
   profileImage: null,
   sample_files: [],
-  project_list: [],
+  project_list: null,  // 빈 배열 대신 null로 초기화
   this_month_project: [],
   next_month_project: [],
 }

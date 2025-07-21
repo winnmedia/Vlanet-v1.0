@@ -47,16 +47,20 @@ export default function CmsHome() {
     
     console.log('[CmsHome] Component mounted, project_list length:', project_list?.length || 0)
     
-    // 프로젝트 목록이 없으면 로드
+    // 프로젝트 목록이 없으면 로드 시도 (빈 배열은 정상 상태)
     if (!project_list) {
       console.log('[CmsHome] Project list not found, loading...')
+      setIsLoading(true)
       refetchProject(dispatch, navigate).then(() => {
         console.log('[CmsHome] Project list loaded')
+        setIsLoading(false)
       }).catch(err => {
         console.error('[CmsHome] Failed to load project list:', err)
+        setIsLoading(false)
+        // 에러가 발생해도 페이지는 표시되도록 함
       })
     }
-  }, [dispatch, navigate]) // 의존성 추가
+  }, [dispatch, navigate, project_list]) // project_list 의존성 추가
 
   // 초대 목록 로드
   const loadInvitations = async () => {
@@ -120,17 +124,28 @@ export default function CmsHome() {
     return () => clearInterval(intervalId)
   }, [])
 
-  // 프로젝트 데이터가 로드되지 않았을 때 로딩 표시 제거
-  // 빈 배열도 허용
-  // if (!project_list) {
-  //   return (
-  //     <PageTemplate>
-  //       <div className="cms_wrap" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-  //         <div>Loading...</div>
-  //       </div>
-  //     </PageTemplate>
-  //   )
-  // }
+  // 프로젝트 데이터 로딩 중일 때 표시
+  const [isLoading, setIsLoading] = useState(!project_list)
+  
+  // 프로젝트 리스트 로드 상태 추적
+  useEffect(() => {
+    if (project_list !== null) {
+      setIsLoading(false)
+    }
+  }, [project_list])
+  
+  if (isLoading) {
+    return (
+      <PageTemplate>
+        <div className="cms_wrap" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p style={{ marginTop: '20px', color: '#666' }}>프로젝트를 불러오는 중...</p>
+          </div>
+        </div>
+      </PageTemplate>
+    )
+  }
 
   return (
     <PageTemplate>

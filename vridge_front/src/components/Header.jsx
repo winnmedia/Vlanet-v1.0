@@ -92,7 +92,7 @@ const Header = memo(function Header({
     // 30초마다 알림 새로고침
     const interval = setInterval(loadNotifications, 30000)
     return () => clearInterval(interval)
-  }, [])
+  }, [loadNotifications])
 
   const left = makeHtml(leftItems, navigate)
   const right = makeHtml(rightItems, navigate, () => setShowDropdown(!showDropdown))

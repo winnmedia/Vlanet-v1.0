@@ -8,7 +8,7 @@ import SideBar from 'components/SideBar'
 import ProjectDashboard from 'components/ProjectDashboard'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { refetchProject, checkSession } from 'util/util'
@@ -36,6 +36,7 @@ export default function CmsHome() {
   const [showInvitations, setShowInvitations] = useState(false)
   const [invitations, setInvitations] = useState({ sent: [], received: [], recent_accepted: [] })
   const [invitationLoading, setInvitationLoading] = useState(false)
+  const [isProjectLoading, setIsProjectLoading] = useState(false)
 
   // 인증 체크 및 프로젝트 목록 로드
   useEffect(() => {
@@ -47,9 +48,10 @@ export default function CmsHome() {
     
     console.log('[CmsHome] Component mounted, project_list:', project_list)
     
-    // 프로젝트 목록이 없을 때만 로드
-    if (project_list === null) {
+    // 프로젝트 목록이 없고 로딩 중이 아닐 때만 로드
+    if (project_list === null && !isProjectLoading) {
       console.log('[CmsHome] Loading project list...')
+      setIsProjectLoading(true)
       refetchProject(dispatch, navigate)
         .then(() => {
           console.log('[CmsHome] Project list loaded successfully')
@@ -57,11 +59,14 @@ export default function CmsHome() {
         .catch(err => {
           console.error('[CmsHome] Failed to load project list:', err)
         })
+        .finally(() => {
+          setIsProjectLoading(false)
+        })
     }
-  }, []) // 빈 의존성 배열 - 마운트 시 한 번만 실행
+  }, []) // 빈 의존성 배열로 변경 - 마운트 시 한 번만 실행
 
   // 초대 목록 로드
-  const loadInvitations = async () => {
+  const loadInvitations = useCallback(async () => {
     try {
       setInvitationLoading(true)
       const response = await GetMyInvitations()
@@ -78,7 +83,7 @@ export default function CmsHome() {
     } finally {
       setInvitationLoading(false)
     }
-  }
+  }, [])
 
   // 초대 수락 처리
   const handleAcceptInvitation = async (invitationId) => {
@@ -108,18 +113,16 @@ export default function CmsHome() {
   // 컴포넌트 마운트 시 초대 목록 로드
   useEffect(() => {
     loadInvitations()
-  }, [])
+  }, [loadInvitations])
 
   useEffect(() => {
     setTime(moment(date).format('HH:mm:ss'))
     let current_time
-    intervalId = setInterval(() => {
+    const interval = setInterval(() => {
       current_time = moment(new Date()).format('HH:mm:ss')
-      if (time != current_time) {
-        setTime(current_time)
-      }
+      setTime(current_time)
     }, 1000)
-    return () => clearInterval(intervalId)
+    return () => clearInterval(interval)
   }, [])
   
   // 로딩 상태는 project_list 자체로 판단
@@ -137,6 +140,9 @@ export default function CmsHome() {
       </PageTemplate>
     )
   }
+  
+  // project_list가 빈 배열이어도 정상적으로 렌더링
+  const projectListData = project_list || []
 
   return (
     <PageTemplate>
@@ -165,11 +171,11 @@ export default function CmsHome() {
                 </div>
                 {!showRecentActivity && (
                 <div className="card-content">
-                  {project_list && project_list.length > 0 ? (
+                  {projectListData.length > 0 ? (
                     (() => {
                       // 모든 피드백 수집
                       const allFeedbacks = [];
-                      project_list.forEach(project => {
+                      projectListData.forEach(project => {
                         if (project.feedback && project.feedback.length > 0) {
                           project.feedback.forEach(feedback => {
                             allFeedbacks.push({
@@ -339,7 +345,7 @@ export default function CmsHome() {
 
             {/* 프로젝트 단계별 진행 현황 - Calendar 페이지와 동일한 디자인 */}
             <ProjectPhaseBoard 
-                  projects={project_list ? [...project_list] : []} 
+                  projects={[...projectListData]} 
                   onPhaseUpdate={(projectId, phase, startDate, endDate, completed) => {
                     const data = {
                       type: phase,
@@ -356,7 +362,7 @@ export default function CmsHome() {
                       })
                   }}
                   projectCounts={{
-                    total: project_list ? project_list.length : 0,
+                    total: projectListData.length,
                     thisMonth: this_month_project ? this_month_project.length : 0,
                     nextMonth: next_month_project ? next_month_project.length : 0
                   }}

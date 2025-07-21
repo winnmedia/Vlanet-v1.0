@@ -51,9 +51,9 @@ class PDFExportService:
             name='CustomTitle',
             parent=styles['Title'],
             fontName=font_name,
-            fontSize=24,
+            fontSize=20,
             textColor=HexColor('#1a1a1a'),
-            spaceAfter=30,
+            spaceAfter=15,
             alignment=TA_CENTER
         ))
         
@@ -61,39 +61,39 @@ class PDFExportService:
             name='CustomHeading',
             parent=styles['Heading1'],
             fontName=font_name,
-            fontSize=18,
+            fontSize=14,
             textColor=HexColor('#2c3e50'),
-            spaceAfter=20,
-            spaceBefore=20
+            spaceAfter=10,
+            spaceBefore=10
         ))
         
         styles.add(ParagraphStyle(
             name='CustomSubHeading',
             parent=styles['Heading2'],
             fontName=font_name,
-            fontSize=14,
+            fontSize=12,
             textColor=HexColor('#34495e'),
-            spaceAfter=12,
-            spaceBefore=12
+            spaceAfter=8,
+            spaceBefore=8
         ))
         
         styles.add(ParagraphStyle(
             name='CustomBody',
             parent=styles['BodyText'],
             fontName=font_name,
-            fontSize=11,
+            fontSize=9,
             textColor=HexColor('#4a4a4a'),
-            spaceAfter=6,
-            leading=16
+            spaceAfter=4,
+            leading=12
         ))
         
         styles.add(ParagraphStyle(
             name='SceneTitle',
             parent=styles['Heading3'],
             fontName=font_name,
-            fontSize=12,
+            fontSize=10,
             textColor=HexColor('#2980b9'),
-            spaceAfter=8
+            spaceAfter=4
         ))
         
         return styles
@@ -103,33 +103,21 @@ class PDFExportService:
         if output_buffer is None:
             output_buffer = io.BytesIO()
         
-        # PDF 문서 생성
+        # PDF 문서 생성 (A4 가로)
         doc = SimpleDocTemplate(
             output_buffer,
-            pagesize=A4,
-            rightMargin=2*cm,
-            leftMargin=2*cm,
-            topMargin=2*cm,
-            bottomMargin=2*cm
+            pagesize=landscape(A4),
+            rightMargin=1.5*cm,
+            leftMargin=1.5*cm,
+            topMargin=1.5*cm,
+            bottomMargin=1.5*cm
         )
         
-        # 컨텐츠 구성
+        # 컨텐츠 구성 (압축된 형태)
         story = []
         
-        # 1. 타이틀 페이지
-        story.extend(self._create_title_page(planning_data))
-        story.append(PageBreak())
-        
-        # 2. 기획 개요
-        story.extend(self._create_overview_section(planning_data))
-        story.append(PageBreak())
-        
-        # 3. 스토리 구성 (기승전결)
-        story.extend(self._create_story_section(planning_data))
-        story.append(PageBreak())
-        
-        # 4. 씬별 상세 내용
-        story.extend(self._create_scenes_section(planning_data))
+        # 1. 모든 내용을 한 페이지에 압축
+        story.extend(self._create_compressed_layout(planning_data))
         
         # PDF 생성
         doc.build(story)
@@ -319,6 +307,145 @@ class PDFExportService:
         except Exception as e:
             logger.error(f"이미지 요소 생성 실패: {str(e)}")
             return None
+    
+    def _create_compressed_layout(self, planning_data):
+        """압축된 레이아웃으로 전체 기획안 생성"""
+        elements = []
+        
+        # 상단 타이틀 및 기본 정보 (가로 2단 레이아웃)
+        title = planning_data.get('title', '영상 기획안')
+        elements.append(Paragraph(title, self.styles['CustomTitle']))
+        elements.append(Spacer(1, 0.5*cm))
+        
+        # 기본 정보를 2열 테이블로 구성
+        info_data = []
+        info_data.append(['장르', planning_data.get('genre', 'N/A'), '타겟', planning_data.get('target', 'N/A')])
+        info_data.append(['러닝타임', planning_data.get('duration', 'N/A'), '목적', planning_data.get('purpose', 'N/A')])
+        
+        info_table = Table(info_data, colWidths=[3*cm, 5*cm, 3*cm, 5*cm])
+        info_table.setStyle(TableStyle([
+            ('FONT', (0, 0), (-1, -1), 'HYGothic-Medium'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('TEXTCOLOR', (0, 0), (-1, -1, 2), HexColor('#2c3e50')),
+            ('TEXTCOLOR', (1, 0), (-1, -1, 2), HexColor('#4a4a4a')),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BACKGROUND', (0, 0), (-1, -1), HexColor('#f8f9fa')),
+            ('BOX', (0, 0), (-1, -1), 0.5, HexColor('#e0e0e0')),
+        ]))
+        elements.append(info_table)
+        elements.append(Spacer(1, 0.5*cm))
+        
+        # 기획 의도 및 컨셉 (가로로 배치)
+        concept_data = []
+        planning_text = planning_data.get('planning_text', '')[:200] + '...' if len(planning_data.get('planning_text', '')) > 200 else planning_data.get('planning_text', '')
+        concept = planning_data.get('concept', '')
+        
+        if planning_text or concept:
+            concept_row = []
+            if planning_text:
+                concept_row.append(Paragraph(f"<b>기획의도:</b> {planning_text}", self.styles['CustomBody']))
+            if concept:
+                concept_row.append(Paragraph(f"<b>컨셉:</b> {concept}", self.styles['CustomBody']))
+            
+            if concept_row:
+                concept_table = Table([concept_row], colWidths=[12*cm, 12*cm] if len(concept_row) > 1 else [24*cm])
+                concept_table.setStyle(TableStyle([
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 0),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ]))
+                elements.append(concept_table)
+                elements.append(Spacer(1, 0.3*cm))
+        
+        # 스토리 구성 (기승전결) - 가로 4단
+        stories = planning_data.get('stories', [])
+        if stories:
+            elements.append(Paragraph('스토리 구성', self.styles['CustomSubHeading']))
+            story_data = []
+            story_row = []
+            story_phases = ['기', '승', '전', '결']
+            
+            for idx, story in enumerate(stories[:4]):
+                phase = story_phases[idx] if idx < 4 else f'파트 {idx+1}'
+                content = story.get('content', '')[:100] + '...' if len(story.get('content', '')) > 100 else story.get('content', '')
+                story_cell = Paragraph(f"<b>{phase}</b><br/>{content}", self.styles['CustomBody'])
+                story_row.append(story_cell)
+            
+            if story_row:
+                story_table = Table([story_row], colWidths=[6*cm, 6*cm, 6*cm, 6*cm])
+                story_table.setStyle(TableStyle([
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ('BOX', (0, 0), (-1, -1), 0.5, HexColor('#e0e0e0')),
+                    ('INNERGRID', (0, 0), (-1, -1), 0.5, HexColor('#e0e0e0')),
+                    ('BACKGROUND', (0, 0), (-1, -1), HexColor('#f8f9fa')),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 8),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+                    ('TOPPADDING', (0, 0), (-1, -1), 8),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+                ]))
+                elements.append(story_table)
+                elements.append(Spacer(1, 0.5*cm))
+        
+        # 씬 구성 (그리드 레이아웃)
+        scenes = planning_data.get('scenes', [])
+        if scenes:
+            elements.append(Paragraph('씬 구성', self.styles['CustomSubHeading']))
+            
+            # 3열 그리드로 씬 배치
+            scene_rows = []
+            current_row = []
+            
+            for idx, scene in enumerate(scenes):
+                scene_content = []
+                scene_title = f"씬 {idx + 1}"
+                if scene.get('location'):
+                    scene_title += f" - {scene.get('location')}"
+                
+                scene_content.append(Paragraph(scene_title, self.styles['SceneTitle']))
+                
+                description = scene.get('description', scene.get('action', ''))[:80] + '...' if len(scene.get('description', scene.get('action', ''))) > 80 else scene.get('description', scene.get('action', ''))
+                if description:
+                    scene_content.append(Paragraph(description, ParagraphStyle(
+                        'CompactBody',
+                        parent=self.styles['CustomBody'],
+                        fontSize=9,
+                        leading=11
+                    )))
+                
+                # 스토리보드 이미지가 있으면 작게 추가
+                storyboard = scene.get('storyboard', {})
+                image_url = storyboard.get('image_url')
+                if image_url and image_url != 'generated_image_placeholder':
+                    img_element = self._create_image_element(image_url, max_width=4*cm, max_height=3*cm)
+                    if img_element:
+                        scene_content.append(img_element)
+                
+                current_row.append(scene_content)
+                
+                if len(current_row) == 3 or idx == len(scenes) - 1:
+                    # 빈 셀 채우기
+                    while len(current_row) < 3:
+                        current_row.append('')
+                    scene_rows.append(current_row)
+                    current_row = []
+            
+            if scene_rows:
+                scene_table = Table(scene_rows, colWidths=[8*cm, 8*cm, 8*cm])
+                scene_table.setStyle(TableStyle([
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ('BOX', (0, 0), (-1, -1), 0.5, HexColor('#e0e0e0')),
+                    ('INNERGRID', (0, 0), (-1, -1), 0.5, HexColor('#e0e0e0')),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 8),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+                    ('TOPPADDING', (0, 0), (-1, -1), 8),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+                ]))
+                elements.append(scene_table)
+        
+        return elements
     
     def generate_storyboard_only_pdf(self, planning_data, output_buffer=None):
         """스토리보드 이미지만 포함하는 간단한 PDF 생성"""

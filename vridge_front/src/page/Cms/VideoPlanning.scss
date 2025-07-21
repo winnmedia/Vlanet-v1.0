@@ -3706,4 +3706,35 @@
       }
     }
   }
+  
+  // 원형 토글 버튼 스타일
+  .toggle-circle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
+    flex-shrink: 0;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(22, 49, 248, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
 }

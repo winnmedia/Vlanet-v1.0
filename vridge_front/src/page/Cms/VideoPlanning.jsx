@@ -2461,7 +2461,7 @@ export default function VideoPlanning() {
                         <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
                       )}
                       <button 
-                        className="toggle-section-btn" 
+                        className="toggle-circle-btn" 
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
@@ -2470,26 +2470,12 @@ export default function VideoPlanning() {
                             planning: !prev.planning
                           }))
                         }}
-                        style={{
-                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.3s ease'
-                        }}
+                        title={expandedSections.planning ? '접기' : '펼치기'}
                       >
-                        {expandedSections.planning ? '접기' : '펼치기'}
                         <svg 
-                          width="12" 
-                          height="12" 
-                          viewBox="0 0 12 12" 
+                          width="16" 
+                          height="16" 
+                          viewBox="0 0 16 16" 
                           fill="none" 
                           xmlns="http://www.w3.org/2000/svg"
                           style={{
@@ -2497,7 +2483,7 @@ export default function VideoPlanning() {
                             transition: 'transform 0.3s ease'
                           }}
                         >
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
                     </div>
@@ -2510,7 +2496,7 @@ export default function VideoPlanning() {
                     <div className="preview-header">
                       <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
                       <button 
-                        className="toggle-section-btn" 
+                        className="toggle-circle-btn" 
                         onClick={(e) => {
                           e.stopPropagation();
                           setExpandedSections(prev => ({
@@ -2518,25 +2504,12 @@ export default function VideoPlanning() {
                             stories: !prev.stories
                           }));
                         }}
-                        style={{
-                          background: 'white',
-                          border: '1px solid #e0e0e0',
-                          borderRadius: '6px',
-                          padding: '6px 12px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.3s ease'
-                        }}
+                        title={expandedSections.stories ? '접기' : '펼치기'}
                       >
-                        {expandedSections.stories ? '접기' : '펼치기'}
                         <svg 
-                          width="12" 
-                          height="12" 
-                          viewBox="0 0 12 12" 
+                          width="16" 
+                          height="16" 
+                          viewBox="0 0 16 16" 
                           fill="none" 
                           xmlns="http://www.w3.org/2000/svg"
                           style={{
@@ -2544,7 +2517,7 @@ export default function VideoPlanning() {
                             transition: 'transform 0.3s ease'
                           }}
                         >
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
                     </div>
@@ -2634,7 +2607,7 @@ export default function VideoPlanning() {
                         </div>
                       )}
                       <button 
-                        className="toggle-section-btn" 
+                        className="toggle-circle-btn" 
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
@@ -2643,26 +2616,12 @@ export default function VideoPlanning() {
                             scenes: !prev.scenes
                           }))
                         }}
-                        style={{
-                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.3s ease'
-                        }}
+                        title={expandedSections.scenes ? '접기' : '펼치기'}
                       >
-                        {expandedSections.scenes ? '접기' : '펼치기'}
                         <svg 
-                          width="12" 
-                          height="12" 
-                          viewBox="0 0 12 12" 
+                          width="16" 
+                          height="16" 
+                          viewBox="0 0 16 16" 
                           fill="none" 
                           xmlns="http://www.w3.org/2000/svg"
                           style={{
@@ -2670,7 +2629,7 @@ export default function VideoPlanning() {
                             transition: 'transform 0.3s ease'
                           }}
                         >
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
                     </div>

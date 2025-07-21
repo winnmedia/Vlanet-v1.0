@@ -2272,14 +2272,62 @@ export default function VideoPlanning() {
       <div className="cms_wrap">
         <SideBar />
         <main>
-          <div className="title">영상 기획</div>
           <div className="content video-planning">
+            {/* 통합 헤더 */}
             <div className="planning-header">
-              <h2>영상의 씨앗을 심어보세요</h2>
-              <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다.</p>
+              <div className="header-content">
+                <div className="header-left">
+                  <h1 className="page-title">AI 영상 기획</h1>
+                  <p className="page-subtitle">AI가 도와주는 체계적인 영상 기획 프로세스</p>
+                </div>
+                <div className="header-right">
+                  <div className="auto-save-status">
+                    {currentPlanningId && (
+                      <span className="save-indicator">
+                        <span className="save-dot"></span>
+                        자동 저장됨
+                      </span>
+                    )}
+                  </div>
+                  <div className="header-actions">
+                    <button 
+                      className="export-btn"
+                      onClick={() => setShowExportModal(true)}
+                      disabled={!planningData.planning}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 10V13C2 13.5523 2.44772 14 3 14H13C13.5523 14 14 13.5523 14 13V10M8 2V10M8 10L5 7M8 10L11 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      내보내기
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 진행률 바 */}
+              <div className="progress-section">
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ 
+                      width: `${(currentStep / 3) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+                <div className="progress-info">
+                  <span className="progress-text">
+                    {currentStep === 1 && '기획안 작성 중'}
+                    {currentStep === 2 && '스토리 구성 중'}
+                    {currentStep === 3 && '씬 & 콘티 제작 중'}
+                  </span>
+                  <span className="progress-percentage">
+                    {Math.round((currentStep / 3) * 100)}%
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div className="planning-content-wrapper">
+            <div className="planning-main-grid">
               {/* 최근 기획안 기록 표시 */}
               <>
                 {recentPlannings.length > 0 && (

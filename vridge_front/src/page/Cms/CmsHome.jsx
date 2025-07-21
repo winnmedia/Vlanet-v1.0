@@ -60,7 +60,7 @@ export default function CmsHome() {
         // 에러가 발생해도 페이지는 표시되도록 함
       })
     }
-  }, [dispatch, navigate, project_list]) // project_list 의존성 추가
+  }, [dispatch, navigate]) // project_list 의존성 제거 - 무한 루프 방지
 
   // 초대 목록 로드
   const loadInvitations = async () => {

@@ -108,7 +108,14 @@ export default function ProjectView() {
   }
 
   useEffect(() => {
-    console.log('????')
+    // project_id가 없으면 홈으로 리다이렉트
+    if (!project_id) {
+      console.error('Project ID is missing - redirecting to home')
+      window.alert('프로젝트 ID가 없습니다.')
+      navigate('/CmsHome')
+      return
+    }
+    console.log('Fetching project with ID:', project_id)
     refetch()
   }, [project_id])
 
@@ -118,13 +125,19 @@ export default function ProjectView() {
   const [week_index, set_week_index] = useState(0)
   const [totalDate, setTotalDate] = useState([])
 
-  // 인증 체크
+  // 인증 체크 및 project_id 검증
   useEffect(() => {
     const session = checkSession()
     if (!session) {
       navigate('/Login', { replace: true })
+      return
     }
-  }, [])
+    
+    // project_id가 없으면 즉시 홈으로 리다이렉트
+    if (!project_id) {
+      navigate('/CmsHome', { replace: true })
+    }
+  }, [project_id, navigate])
 
   const changeDate = (type) => {
     //이전 날짜
@@ -195,6 +208,22 @@ export default function ProjectView() {
     changeDate(DateType)
   }, [])
 
+  // project_id가 없으면 빈 페이지 렌더링 (리다이렉트 처리는 useEffect에서)
+  if (!project_id) {
+    return (
+      <PageTemplate>
+        <div className="cms_wrap">
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+              <p style={{ marginTop: '20px', color: '#666' }}>잠시만 기다려주세요...</p>
+            </div>
+          </div>
+        </div>
+      </PageTemplate>
+    )
+  }
+
   return (
     <SafeRoute
       checkResource={GetProject}
@@ -205,7 +234,7 @@ export default function ProjectView() {
         <div className="cms_wrap">
           <SideBar />
           <main className="project">
-            {current_project && (
+            {project_id && current_project ? (
             <>
               <Info 
             current_project={current_project} 
@@ -396,6 +425,13 @@ export default function ProjectView() {
                 />
               </div>
             </>
+          ) : (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+                <p style={{ marginTop: '20px', color: '#666' }}>프로젝트를 불러오는 중...</p>
+              </div>
+            </div>
           )}
         </main>
       </div>

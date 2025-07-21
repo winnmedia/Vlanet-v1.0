@@ -201,21 +201,49 @@
       
       .no-recent-plannings {
         text-align: center;
-        padding: 40px 20px;
-        background: #f9fafb;
-        border: 2px dashed #e5e7eb;
-        border-radius: 12px;
-        margin: 16px 0;
+        padding: 60px 40px;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8edff 100%);
+        border: 2px dashed #c7d2fe;
+        border-radius: 16px;
+        margin: 24px 0;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: "🎬";
+          position: absolute;
+          top: -20px;
+          right: -20px;
+          font-size: 120px;
+          opacity: 0.1;
+          transform: rotate(-15deg);
+        }
         
         p {
-          color: #666;
-          margin-bottom: 8px;
-          font-size: 14px;
+          color: #4b5563;
+          margin-bottom: 12px;
+          font-size: 18px;
+          font-weight: 500;
+          position: relative;
+          z-index: 1;
           
           &.hint {
-            color: #999;
-            font-size: 13px;
+            color: #6b7280;
+            font-size: 16px;
+            font-weight: 400;
+            margin-top: 8px;
           }
+        }
+        
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #1631F8 0%, #4318FF 100%);
+          opacity: 0.3;
         }
       }
     }
@@ -400,18 +428,49 @@
           }
         }
         
-        .delete-planning-btn {
+        .recent-actions {
           position: absolute;
           top: 12px;
           right: 12px;
-          width: 24px;
-          height: 24px;
+          display: flex;
+          gap: 8px;
+          opacity: 0;
+          transition: all 0.2s;
+        }
+
+        &:hover .recent-actions {
+          opacity: 1;
+        }
+
+        .pdf-download-btn {
+          border: none;
+          background: #1631F8;
+          color: white;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 13px;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 6px 12px;
+          
+          &:hover {
+            background: #0F23C9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
+          }
+        }
+
+        .delete-planning-btn {
+          width: 28px;
+          height: 28px;
           border: none;
           background: #dc3545;
           color: white;
-          border-radius: 50%;
+          border-radius: 6px;
           cursor: pointer;
-          opacity: 0;
           transition: all 0.2s;
           font-size: 16px;
           font-weight: bold;
@@ -1559,18 +1618,39 @@
     }
 
     .character-settings {
-      background: white;
-      padding: 24px;
-      border-radius: 10px;
-      border: 1px solid #e0e0e0;
-      margin-top: 20px;
+      background: linear-gradient(to bottom, #ffffff 0%, #f8faff 100%);
+      padding: 32px;
+      border-radius: 16px;
+      border: 1px solid #e0e8ff;
+      margin-top: 24px;
+      box-shadow: 0 4px 12px rgba(22, 49, 248, 0.08);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #1631F8 0%, #4318FF 100%);
+      }
 
       > label {
         display: block;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 600;
-        color: #333;
-        margin-bottom: 20px;
+        color: #1a1a1a;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &::before {
+          content: "👤";
+          font-size: 24px;
+        }
       }
 
       .character-settings-content {
@@ -1590,20 +1670,22 @@
 
           .character-name-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 14px 18px;
+            border: 2px solid #e0e8ff;
+            border-radius: 10px;
             font-size: 15px;
             transition: all 0.2s ease;
+            background: #fafbff;
 
             &:focus {
               outline: none;
-              border-color: #012fff;
-              box-shadow: 0 0 0 3px rgba(1, 47, 255, 0.1);
+              border-color: #1631F8;
+              box-shadow: 0 0 0 4px rgba(22, 49, 248, 0.1);
+              background: white;
             }
 
             &::placeholder {
-              color: #999;
+              color: #9ca3af;
             }
           }
 

@@ -285,6 +285,31 @@ export default function VideoPlanning() {
     }
   }
 
+  // PDF 다운로드 함수
+  const downloadPlanningAsPDF = async (planningId, planningTitle) => {
+    try {
+      const response = await axios.get(
+        `/api/video-planning/export/pdf/${planningId}/`,
+        { responseType: 'blob' }
+      )
+      
+      // Blob으로부터 다운로드 URL 생성
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `${planningTitle}_기획안.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+      
+      setSuccessMessage('PDF 다운로드가 완료되었습니다.')
+      setTimeout(() => setSuccessMessage(null), 3000)
+    } catch (err) {
+      setError('PDF 다운로드에 실패했습니다.')
+    }
+  }
+
   const savePlanning = async () => {
     if (!planningTitle.trim()) {
       setError('기획안 제목을 입력해주세요.')
@@ -2562,17 +2587,28 @@ export default function VideoPlanning() {
                           )}
                         </div>
                       </div>
-                    </div>
-                    <button
-                      className="delete-planning-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deletePlanning(planning.id);
-                        }}
-                        title="기획 삭제"
-                      >
-                        ✕
-                      </button>
+                      <div className="recent-actions">
+                        <button
+                          className="pdf-download-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            downloadPlanningAsPDF(planning.id, planning.title);
+                          }}
+                          title="PDF 다운로드"
+                        >
+                          📄 PDF
+                        </button>
+                        <button
+                          className="delete-planning-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deletePlanning(planning.id);
+                          }}
+                          title="기획 삭제"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

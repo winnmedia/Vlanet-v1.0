@@ -39,8 +39,23 @@ if not environ:
             return default or []
     env = MockEnv()
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY'))
+
+# 프로덕션 환경에서 SECRET_KEY 검증
+if not DEBUG and SECRET_KEY:
+    from .security_settings import validate_secret_key
+    try:
+        validate_secret_key(SECRET_KEY)
+    except ValueError:
+        # Railway 배포 시에만 임시 키 허용
+        if 'RAILWAY_ENVIRONMENT' in os.environ:
+            pass
+        else:
+            raise
 
 # JWT Algorithm for authentication
 ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS256')
@@ -64,19 +79,14 @@ TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY', '')
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # ALLOWED_HOSTS 환경변수 처리
-allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
-if allowed_hosts_env:
-    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',')]
-else:
-    ALLOWED_HOSTS = [
-        'localhost', 
-        '127.0.0.1', 
-        'videoplanet.up.railway.app',
-        'api.vlanet.net',  # API 서브도메인 추가
-        'vlanet.net', 
-        '.railway.app', 
-        '*'
-    ]
+from .security_settings import get_allowed_hosts
+ALLOWED_HOSTS = get_allowed_hosts()
+
+# 보안 설정 추가
+from .security_settings import get_secure_settings
+secure_settings = get_secure_settings(DEBUG)
+for key, value in secure_settings.items():
+    globals()[key] = value
 
 # Application definition
 DJANGO_APPS = [
@@ -122,6 +132,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "config.middleware.SecurityHeadersMiddleware",  # 보안 헤더 추가
+    "config.rate_limit_middleware.RateLimitMiddleware",  # Rate Limiting 추가
+    "config.rate_limit_middleware.SecurityAuditMiddleware",  # 보안 감사 추가
     "config.middleware.PerformanceMiddleware",
     "feedbacks.middleware.MediaHeadersMiddleware",
     "projects.middleware.IdempotencyMiddleware",
@@ -401,9 +413,63 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Session and CSRF cookie settings
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
-CSRF_COOKIE_HTTPONLY = False
+# 보안 설정은 security_settings.py에서 환경에 따라 자동으로 처리됨
+CSRF_COOKIE_HTTPONLY = False  # JavaScript에서 CSRF 토큰 접근 필요
 CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 86400  # 24시간
+SESSION_SAVE_EVERY_REQUEST = True  # 활동 시 세션 갱신
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] {asctime} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
+            'maxBytes': 1024 * 1024 * 10,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'security_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'security.log'),
+            'maxBytes': 1024 * 1024 * 10,  # 10MB
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'security': {
+            'handlers': ['console', 'security_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['security_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}

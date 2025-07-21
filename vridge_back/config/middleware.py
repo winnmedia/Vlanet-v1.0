@@ -102,4 +102,20 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         # Permissions Policy (이전 Feature Policy)
         response['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
         
+        # Content Security Policy
+        csp_directives = [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "img-src 'self' data: https: blob:",
+            "font-src 'self' data: https://fonts.gstatic.com",
+            "connect-src 'self' https://api.vlanet.net https://videoplanet.up.railway.app wss://videoplanet.up.railway.app",
+            "media-src 'self' blob: data:",
+            "object-src 'none'",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'"
+        ]
+        response['Content-Security-Policy'] = '; '.join(csp_directives)
+        
         return response

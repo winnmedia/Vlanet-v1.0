@@ -486,7 +486,10 @@ export default function MyPage() {
     return (
       <PageTemplate>
         <main className="mypage-container">
-          <div className="loading">마이페이지 불러오는 중...</div>
+          <div className="loading">
+            <div className="loading-spinner"></div>
+            <span className="loading-text">마이페이지 불러오는 중...</span>
+          </div>
         </main>
       </PageTemplate>
     )
@@ -567,7 +570,7 @@ export default function MyPage() {
                         profileImage={imagePreview}
                         name={myPageData?.profile?.nickname || nickname || 'U'}
                         size={150}
-                        showBorder={false}
+                        showBorder={true}
                         className="profile-avatar-main"
                       />
                       {isEditing && (

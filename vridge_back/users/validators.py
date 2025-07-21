@@ -182,3 +182,146 @@ def validate_request_data(required_fields=None, optional_fields=None):
         
         return wrapper
     return decorator
+
+
+class FileValidator:
+    """파일 업로드 보안 검증"""
+    
+    # 허용된 파일 확장자
+    ALLOWED_EXTENSIONS = {
+        'image': ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        'video': ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'],
+        'document': ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'],
+        'audio': ['mp3', 'wav', 'ogg', 'm4a', 'aac'],
+    }
+    
+    # MIME 타입 매핑
+    MIME_TYPE_MAPPING = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'gif': 'image/gif',
+        'webp': 'image/webp',
+        'mp4': 'video/mp4',
+        'avi': 'video/x-msvideo',
+        'mov': 'video/quicktime',
+        'pdf': 'application/pdf',
+        'mp3': 'audio/mpeg',
+        'wav': 'audio/wav',
+    }
+    
+    # 파일 크기 제한 (바이트)
+    MAX_FILE_SIZES = {
+        'image': 10 * 1024 * 1024,  # 10MB
+        'video': 500 * 1024 * 1024,  # 500MB
+        'document': 50 * 1024 * 1024,  # 50MB
+        'audio': 50 * 1024 * 1024,  # 50MB
+    }
+    
+    @classmethod
+    def validate_file(cls, file, file_type='image'):
+        """
+        파일 검증
+        Returns: (is_valid: bool, error_message: str or None)
+        """
+        if not file:
+            return False, "파일을 선택해주세요."
+        
+        # 파일 이름 검증
+        filename = file.name
+        if not filename:
+            return False, "파일 이름이 없습니다."
+        
+        # 파일 이름 길이 제한
+        if len(filename) > 255:
+            return False, "파일 이름이 너무 깁니다."
+        
+        # 파일 이름에서 위험한 문자 제거
+        dangerous_chars = ['..', '/', '\\', '\x00', '%00']
+        for char in dangerous_chars:
+            if char in filename:
+                return False, "파일 이름에 허용되지 않는 문자가 포함되어 있습니다."
+        
+        # 확장자 검증
+        ext = filename.split('.')[-1].lower()
+        allowed_exts = cls.ALLOWED_EXTENSIONS.get(file_type, [])
+        if ext not in allowed_exts:
+            return False, f"허용되지 않는 파일 형식입니다. 허용된 형식: {', '.join(allowed_exts)}"
+        
+        # 파일 크기 검증
+        max_size = cls.MAX_FILE_SIZES.get(file_type, 10 * 1024 * 1024)
+        if file.size > max_size:
+            max_size_mb = max_size / (1024 * 1024)
+            return False, f"파일 크기가 너무 큽니다. 최대 {max_size_mb}MB까지 허용됩니다."
+        
+        # MIME 타입 검증 (magic 모듈이 있는 경우)
+        try:
+            import magic
+            # 파일의 실제 MIME 타입 확인
+            mime = magic.from_buffer(file.read(1024), mime=True)
+            file.seek(0)  # 파일 포인터 초기화
+            
+            expected_mime = cls.MIME_TYPE_MAPPING.get(ext)
+            if expected_mime and mime != expected_mime:
+                return False, "파일 내용이 확장자와 일치하지 않습니다."
+        except ImportError:
+            # magic 모듈이 없는 경우 기본 검증만 수행
+            pass
+        except Exception as e:
+            logger.warning(f"MIME type validation error: {str(e)}")
+        
+        # 파일 내용 검증 (악성 코드 패턴)
+        try:
+            file.seek(0)
+            content_sample = file.read(1024)  # 처음 1KB만 검사
+            file.seek(0)
+            
+            # 실행 파일 시그니처 검사
+            executable_signatures = [
+                b'MZ',  # Windows PE
+                b'\x7fELF',  # Linux ELF
+                b'\xca\xfe\xba\xbe',  # Mach-O
+                b'\xfe\xed\xfa',  # Mach-O
+                b'#!/bin/',  # Shell script
+                b'#!/usr/bin/',  # Shell script
+            ]
+            
+            for sig in executable_signatures:
+                if content_sample.startswith(sig):
+                    return False, "실행 파일은 업로드할 수 없습니다."
+            
+            # PHP 코드 검사
+            if b'<?php' in content_sample.lower():
+                return False, "PHP 코드가 포함된 파일은 업로드할 수 없습니다."
+            
+        except Exception as e:
+            logger.warning(f"File content validation error: {str(e)}")
+        
+        return True, None
+    
+    @classmethod
+    def sanitize_filename(cls, filename):
+        """파일명 안전하게 변환"""
+        import string
+        import random
+        
+        # 확장자 분리
+        name, ext = filename.rsplit('.', 1) if '.' in filename else (filename, '')
+        
+        # 안전한 문자만 남기기
+        safe_chars = string.ascii_letters + string.digits + '-_'
+        safe_name = ''.join(c if c in safe_chars else '_' for c in name)
+        
+        # 빈 이름이 되는 경우 랜덤 이름 생성
+        if not safe_name:
+            safe_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+        
+        # 길이 제한
+        if len(safe_name) > 100:
+            safe_name = safe_name[:100]
+        
+        # 타임스탬프 추가 (중복 방지)
+        import time
+        timestamp = str(int(time.time()))
+        
+        return f"{safe_name}_{timestamp}.{ext}" if ext else f"{safe_name}_{timestamp}"

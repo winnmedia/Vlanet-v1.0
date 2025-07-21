@@ -1691,23 +1691,25 @@
 
           .character-description-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 14px 18px;
+            border: 2px solid #e0e8ff;
+            border-radius: 10px;
             font-size: 15px;
             resize: vertical;
-            min-height: 80px;
+            min-height: 100px;
             font-family: inherit;
             transition: all 0.2s ease;
+            background: #fafbff;
 
             &:focus {
               outline: none;
-              border-color: #012fff;
-              box-shadow: 0 0 0 3px rgba(1, 47, 255, 0.1);
+              border-color: #1631F8;
+              box-shadow: 0 0 0 4px rgba(22, 49, 248, 0.1);
+              background: white;
             }
 
             &::placeholder {
-              color: #999;
+              color: #9ca3af;
             }
           }
         }

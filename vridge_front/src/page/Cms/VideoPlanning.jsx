@@ -2004,12 +2004,7 @@ export default function VideoPlanning() {
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="no-recent-plannings">
-                <p>아직 생성한 기획이 없습니다.</p>
-                <p className="hint">새로운 기획을 시작해보세요!</p>
-              </div>
-            )}
+            ) : null}
           </div>
           </div>
         )
@@ -2618,12 +2613,6 @@ export default function VideoPlanning() {
                   </div>
                 )}
                 
-                {recentPlannings.length === 0 && (
-                  <div className="no-recent-plannings">
-                    <p>아직 생성한 기획이 없습니다.</p>
-                    <p className="hint">새로운 기획을 시작해보세요!</p>
-                  </div>
-                )}
 
                 {planningHistory.length > 0 && (
                   <div className="planning-history-section">

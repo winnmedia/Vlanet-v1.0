@@ -1,6 +1,6 @@
 {
   "name": "vridge",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "private": true,
   "homepage": "https://vlanet.net",
   "dependencies": {
@@ -44,7 +44,11 @@
   },
   "overrides": {
     "postcss": "^8.4.31",
-    "postcss-flexbugs-fixes": "^5.0.2"
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "nth-check": "^2.1.1",
+    "css-select": "^5.1.0",
+    "svgo": "^3.0.0",
+    "webpack-dev-server": "^5.2.2"
   },
   "scripts": {
     "start": "react-scripts start",

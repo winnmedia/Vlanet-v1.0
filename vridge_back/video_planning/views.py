@@ -299,9 +299,31 @@ def generate_shots(request):
 @permission_classes([IsAuthenticated])
 def generate_storyboards(request):
     try:
+        # shot_data 또는 scene 데이터 처리
         shot_data = request.data.get('shot_data', {})
+        scene_data = request.data.get('scene', {})
+        
+        # scene 데이터가 있으면 shot_data로 변환
+        if not shot_data and scene_data:
+            shot_data = {
+                'shot_number': 1,
+                'shot_type': "와이드샷",
+                'description': scene_data.get('action') or scene_data.get('description', ''),
+                'camera_angle': "아이레벨",
+                'camera_movement': "고정",
+                'duration': "5초",
+                'scene_info': scene_data,
+                'planning_options': scene_data.get('planning_options', {})
+            }
+        
         style = request.data.get('style', 'minimal')
         draft_mode = request.data.get('draft_mode', True)  # 기본값을 True로 설정하여 비용 절감
+        speed_optimized = request.data.get('speed_optimized', False)
+        
+        # 빠른 드래프트 모드 처리
+        if speed_optimized or style == 'quick_draft':
+            draft_mode = True
+            style = 'minimal'  # 빠른 드래프트는 minimal 스타일 사용
         
         if not shot_data:
             return Response({

@@ -89,9 +89,40 @@ const Header = memo(function Header({
   useEffect(() => {
     loadNotifications()
     
-    // 30초마다 알림 새로고침
-    const interval = setInterval(loadNotifications, 30000)
-    return () => clearInterval(interval)
+    // Page Visibility API를 사용하여 백그라운드에서는 polling 중지
+    let interval
+    
+    const startPolling = () => {
+      interval = setInterval(loadNotifications, 60000) // 30초 → 60초로 증가
+    }
+    
+    const stopPolling = () => {
+      if (interval) {
+        clearInterval(interval)
+        interval = null
+      }
+    }
+    
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopPolling()
+      } else {
+        loadNotifications() // 포그라운드로 돌아올 때 즉시 로드
+        startPolling()
+      }
+    }
+    
+    // 초기 시작
+    if (!document.hidden) {
+      startPolling()
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      stopPolling()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [loadNotifications])
 
   const left = makeHtml(leftItems, navigate)

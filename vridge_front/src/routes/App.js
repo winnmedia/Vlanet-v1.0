@@ -87,7 +87,7 @@ export default function App() {
     } else {
       console.log('[App] Skipping project list load - not logged in or on auth page')
     }
-  }, [pathname, dispatch, navigate, project_list]) // 경로 변경 시 프로젝트 목록 확인
+  }, [pathname, dispatch, navigate]) // 경로 변경 시 프로젝트 목록 확인 (project_list 제거로 무한루프 방지)
   
   return (
     <div className="App">

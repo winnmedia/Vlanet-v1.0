@@ -37,7 +37,7 @@ export default function CmsHome() {
   const [invitations, setInvitations] = useState({ sent: [], received: [], recent_accepted: [] })
   const [invitationLoading, setInvitationLoading] = useState(false)
 
-  // 인증 체크
+  // 인증 체크 (최초 마운트 시 한 번만)
   useEffect(() => {
     const session = checkSession()
     if (!session) {
@@ -45,8 +45,8 @@ export default function CmsHome() {
       return
     }
     
-    console.log('[CmsHome] Component mounted, project_list:', project_list)
-  }, [navigate, project_list])
+    console.log('[CmsHome] Component mounted')
+  }, [navigate])
 
   // 초대 목록 로드
   const loadInvitations = useCallback(async () => {
@@ -99,12 +99,13 @@ export default function CmsHome() {
   }, [loadInvitations])
 
   useEffect(() => {
-    setTime(moment(date).format('HH:mm:ss'))
+    // 초 단위 제거하고 분 단위로만 표시
+    setTime(moment(date).format('HH:mm'))
     let current_time
     const interval = setInterval(() => {
-      current_time = moment(new Date()).format('HH:mm:ss')
+      current_time = moment(new Date()).format('HH:mm')
       setTime(current_time)
-    }, 1000)
+    }, 60000) // 1분마다 업데이트 (성능 최적화)
     return () => clearInterval(interval)
   }, [])
   

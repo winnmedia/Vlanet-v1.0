@@ -14,6 +14,18 @@
       "destination": "https://videoplanet.up.railway.app/media/:path*"
     },
     {
+      "source": "/invitation/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/ProjectView/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/Feedback/:id",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

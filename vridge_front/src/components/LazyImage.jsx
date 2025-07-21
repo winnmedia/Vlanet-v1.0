@@ -1,69 +1,47 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
-const LazyImage = ({ 
-  src, 
-  alt, 
-  placeholder = '/images/placeholder.png',
-  className = '',
-  style = {},
-  onLoad = () => {},
-  ...props 
-}) => {
-  const [imageSrc, setImageSrc] = useState(placeholder)
+export default function LazyImage({ src, alt, className, style, placeholder }) {
+  const [imageSrc, setImageSrc] = useState(placeholder || '')
   const [imageRef, setImageRef] = useState()
   const [isLoaded, setIsLoaded] = useState(false)
-  const imgRef = useRef()
 
-  useEffect(() => {
-    if (!imgRef.current) return
-
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setImageRef(entry.target)
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.1 }
-    )
-
-    observer.observe(imgRef.current)
-
-    return () => {
-      if (imgRef.current) {
-        observer.unobserve(imgRef.current)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (imageRef) {
-      const img = new Image()
-      img.src = src
-      img.onload = () => {
+  const onIntersection = (entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
         setImageSrc(src)
-        setIsLoaded(true)
-        onLoad()
+        observer.unobserve(entry.target)
+      }
+    })
+  }
+
+  useEffect(() => {
+    let observer
+    if (imageRef && !isLoaded) {
+      observer = new IntersectionObserver(onIntersection, {
+        threshold: 0.01,
+        rootMargin: '50px'
+      })
+      observer.observe(imageRef)
+    }
+    return () => {
+      if (observer && observer.unobserve) {
+        observer.disconnect()
       }
     }
-  }, [imageRef, src, onLoad])
+  }, [imageRef, isLoaded, src])
 
   return (
     <img
-      ref={imgRef}
+      ref={setImageRef}
       src={imageSrc}
       alt={alt}
-      className={`${className} ${isLoaded ? 'loaded' : 'loading'}`}
+      className={className}
       style={{
         ...style,
-        opacity: isLoaded ? 1 : 0.5,
+        opacity: isLoaded ? 1 : 0,
         transition: 'opacity 0.3s ease-in-out'
       }}
-      {...props}
+      onLoad={() => setIsLoaded(true)}
     />
   )
 }
-
-export default LazyImage

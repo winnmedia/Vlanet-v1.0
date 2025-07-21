@@ -38,6 +38,7 @@ export default function ProjectView() {
   const [viewMode, setViewMode] = useState('month') // month, timeline, gantt
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showEnhancedView, setShowEnhancedView] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -63,12 +64,13 @@ export default function ProjectView() {
     SetDateType(DateList[index])
   }
 
-  function refetch() {
+  const refetch = React.useCallback(() => {
     if (!project_id) {
       console.error('Project ID is missing')
       return
     }
     
+    setIsLoading(true)
     GetProject(project_id)
       .then((res) => {
         if (res.data && res.data.result) {
@@ -88,7 +90,10 @@ export default function ProjectView() {
           navigate('/CmsHome')
         }
       })
-  }
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [project_id, navigate, handleNotFound])
   
   // 프로젝트 단계 업데이트 핸들러
   const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
@@ -107,25 +112,13 @@ export default function ProjectView() {
       })
   }
 
-  useEffect(() => {
-    // project_id가 없으면 홈으로 리다이렉트
-    if (!project_id) {
-      console.error('Project ID is missing - redirecting to home')
-      window.alert('프로젝트 ID가 없습니다.')
-      navigate('/CmsHome')
-      return
-    }
-    console.log('Fetching project with ID:', project_id)
-    refetch()
-  }, [project_id])
-
   const [day, setDay] = useState(new Date().getDate() - 1)
   const [month, setMonth] = useState(new Date().getMonth())
   const [year, setYear] = useState(new Date().getFullYear())
   const [week_index, set_week_index] = useState(0)
   const [totalDate, setTotalDate] = useState([])
 
-  // 인증 체크 및 project_id 검증
+  // 인증 체크 및 프로젝트 로드 (통합)
   useEffect(() => {
     const session = checkSession()
     if (!session) {
@@ -135,9 +128,15 @@ export default function ProjectView() {
     
     // project_id가 없으면 즉시 홈으로 리다이렉트
     if (!project_id) {
+      console.error('Project ID is missing - redirecting to home')
       navigate('/CmsHome', { replace: true })
+      return
     }
-  }, [project_id, navigate])
+    
+    // 프로젝트 로드
+    console.log('Fetching project with ID:', project_id)
+    refetch()
+  }, [project_id, navigate, refetch])
 
   const changeDate = (type) => {
     //이전 날짜
@@ -208,15 +207,15 @@ export default function ProjectView() {
     changeDate(DateType)
   }, [])
 
-  // project_id가 없으면 빈 페이지 렌더링 (리다이렉트 처리는 useEffect에서)
-  if (!project_id) {
+  // project_id가 없거나 로딩 중일 때
+  if (!project_id || isLoading) {
     return (
       <PageTemplate>
         <div className="cms_wrap">
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
             <div className="loading-spinner">
               <div className="spinner"></div>
-              <p style={{ marginTop: '20px', color: '#666' }}>잠시만 기다려주세요...</p>
+              <p style={{ marginTop: '20px', color: '#666' }}>프로젝트를 불러오는 중...</p>
             </div>
           </div>
         </div>

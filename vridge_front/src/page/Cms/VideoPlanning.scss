@@ -1618,14 +1618,20 @@
     }
 
     .character-settings {
-      background: linear-gradient(to bottom, #ffffff 0%, #f8faff 100%);
+      background: #ffffff;
       padding: 32px;
       border-radius: 16px;
-      border: 1px solid #e0e8ff;
+      border: 2px solid #e9ecef;
       margin-top: 24px;
-      box-shadow: 0 4px 12px rgba(22, 49, 248, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       position: relative;
       overflow: hidden;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: #1631F8;
+        box-shadow: 0 4px 16px rgba(22, 49, 248, 0.1);
+      }
 
       &::before {
         content: "";
@@ -1640,16 +1646,34 @@
       > label {
         display: block;
         font-size: 18px;
-        font-weight: 600;
-        color: #1a1a1a;
+        font-weight: 700;
+        color: #1a1f36;
         margin-bottom: 24px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f4ff;
+        position: relative;
 
         &::before {
+          content: "";
+          width: 40px;
+          height: 40px;
+          background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        &::after {
           content: "👤";
-          font-size: 24px;
+          position: absolute;
+          left: 12px;
+          top: 2px;
+          font-size: 20px;
+          filter: brightness(0) invert(1);
         }
       }
 
@@ -1670,12 +1694,13 @@
 
           .character-name-input {
             width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e8ff;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.2s ease;
-            background: #fafbff;
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            font-weight: 500;
 
             &:focus {
               outline: none;
@@ -1686,20 +1711,22 @@
 
             &::placeholder {
               color: #9ca3af;
+              font-size: 14px;
             }
           }
 
           .character-description-input {
             width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e8ff;
-            border-radius: 10px;
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
             font-size: 15px;
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
             font-family: inherit;
-            transition: all 0.2s ease;
-            background: #fafbff;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            line-height: 1.6;
 
             &:focus {
               outline: none;
@@ -1710,6 +1737,7 @@
 
             &::placeholder {
               color: #9ca3af;
+              font-size: 14px;
             }
           }
         }
@@ -1718,41 +1746,49 @@
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 12px;
+          gap: 16px;
+          padding: 20px;
+          background: #f8faff;
+          border-radius: 12px;
+          border: 1px solid #e9ecef;
 
           .image-upload-label {
             cursor: pointer;
 
             .upload-button {
-              width: 150px;
-              height: 150px;
-              border: 2px dashed #e0e0e0;
-              border-radius: 12px;
+              width: 160px;
+              height: 160px;
+              border: 3px dashed #1631F8;
+              border-radius: 16px;
               display: flex;
               flex-direction: column;
               align-items: center;
               justify-content: center;
-              gap: 8px;
-              background: #f8f9fa;
+              gap: 12px;
+              background: rgba(22, 49, 248, 0.05);
               transition: all 0.3s ease;
               position: relative;
               overflow: hidden;
 
               &:hover {
-                border-color: #012fff;
-                background: #f0f7ff;
-                transform: scale(1.02);
+                border-color: #0F23C9;
+                background: rgba(22, 49, 248, 0.1);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(22, 49, 248, 0.2);
               }
 
               .upload-icon {
-                font-size: 32px;
+                font-size: 40px;
+                color: #1631F8;
+                margin-bottom: 4px;
               }
 
               .upload-text {
-                font-size: 13px;
-                color: #666;
+                font-size: 14px;
+                color: #495057;
                 text-align: center;
                 padding: 0 10px;
+                font-weight: 500;
               }
 
               .image-preview {

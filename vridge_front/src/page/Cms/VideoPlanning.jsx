@@ -2546,6 +2546,7 @@ export default function VideoPlanning() {
             </div>
 
             {/* 최근 기획안 기록 표시 */}
+            <>
             {recentPlannings.length > 0 ? (
               <div className="recent-plannings-section">
                 <div className="recent-header">
@@ -2641,6 +2642,7 @@ export default function VideoPlanning() {
                 </div>
               </div>
             )}
+            </>
 
             <div className="planning-navigation">
               <div 

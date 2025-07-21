@@ -27,7 +27,8 @@ from common.exceptions import APIException
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 
-from django.db.models import F
+from django.db.models import F, Case, When, Value, Subquery, OuterRef, Count
+from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone as django_timezone
 from django.core.mail import send_mail
@@ -49,6 +50,14 @@ class ProjectList(View):
             logger.info(f"ProjectList GET request from user: {request.user.email}")
             user = request.user
             
+            # 캐시 확인
+            cache_key = f"project_list_{user.id}"
+            cached_result = cache.get(cache_key)
+            
+            if cached_result is not None:
+                logger.info(f"Returning cached project list for user: {user.email}")
+                return JsonResponse(cached_result, safe=False)
+            
             # nickname 초기화
             if user.nickname:
                 nickname = user.nickname
@@ -56,6 +65,7 @@ class ProjectList(View):
                 nickname = user.username
 
             # development_framework는 아직 데이터베이스에 없으므로 제외
+            # 최적화: feedback__comments__user를 추가하여 N+1 문제 해결
             project_list = user.projects.all().select_related(
                 "basic_plan",
                 "story_board",
@@ -66,7 +76,11 @@ class ProjectList(View):
                 "confirmation",
                 "video_delivery",
                 "feedback",
-            ).prefetch_related('feedback__comments')
+            ).prefetch_related(
+                'feedback__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
+                'members__user',  # 프로젝트 멤버 정보 미리 로드
+                'invitations'  # 초대 정보 미리 로드
+            )
             result = []
             for i in project_list:
                 if i.video_delivery and i.video_delivery.end_date:
@@ -319,17 +333,21 @@ class ProjectList(View):
             except:
                 pass
 
-            return JsonResponse(
-                {
-                    "result": result,
-                    "user": user.username,
-                    "nickname": nickname,
-                    "profile_image": profile_image,
-                    "sample_files": sample_files,
-                    "user_memos": user_memos,
-                },
-                status=200,
-            )
+            # 응답 데이터 생성
+            response_data = {
+                "result": result,
+                "user": user.username,
+                "nickname": nickname,
+                "profile_image": profile_image,
+                "sample_files": sample_files,
+                "user_memos": user_memos,
+            }
+            
+            # 캐시에 저장 (5분간 유효)
+            cache.set(cache_key, response_data, 300)
+            logger.info(f"Cached project list for user: {user.email}")
+            
+            return JsonResponse(response_data, status=200)
         except Exception as e:
             logger.error(f"Error in ProjectList: {str(e)}", exc_info=True)
             logging.error(f"ProjectList error for user {request.user.id}: {str(e)}")
@@ -918,13 +936,39 @@ class ProjectDetail(View):
     def get(self, request, project_id):
         try:
             user = request.user
+            
+            # 캐시 확인
+            cache_key = f"project_detail_{project_id}_{user.id}"
+            cached_result = cache.get(cache_key)
+            
+            if cached_result is not None:
+                logger.info(f"Returning cached project detail for project: {project_id}, user: {user.email}")
+                return JsonResponse({"result": cached_result}, status=200)
+            
             try:
-                project = models.Project.objects.get(id=project_id)
+                # 최적화된 쿼리: 모든 관련 데이터를 한 번에 로드
+                project = models.Project.objects.select_related(
+                    'user',
+                    'basic_plan',
+                    'story_board',
+                    'filming',
+                    'video_edit',
+                    'post_work',
+                    'video_preview',
+                    'confirmation',
+                    'video_delivery',
+                    'feedback'
+                ).prefetch_related(
+                    'members__user',
+                    'files',
+                    'memos',
+                    'invitations'
+                ).get(id=project_id)
             except models.Project.DoesNotExist:
                 return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
 
-            is_member = models.Members.objects.filter(project=project, user=user).first()
-            if project.user != user and is_member is None:
+            is_member = project.members.filter(user=user).exists()
+            if project.user != user and not is_member:
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
 
             result = {
@@ -995,6 +1039,11 @@ class ProjectDetail(View):
                 ],
                 "memo": list(project.memos.all().values("id", "date", "memo")),
             }
+            
+            # 캐시에 저장 (3분간 유효)
+            cache.set(cache_key, result, 180)
+            logger.info(f"Cached project detail for project: {project_id}, user: {user.email}")
+            
             return JsonResponse({"result": result}, status=200)
         except Exception as e:
             logger.error(f"Error in ProjectDetail GET: {str(e)}", exc_info=True)

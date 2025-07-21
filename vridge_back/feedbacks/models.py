@@ -128,6 +128,10 @@ class FeedBackComment(core_model.TimeStampedModel):
         verbose_name = "피드백 등록"
         verbose_name_plural = "피드백 등록"
         ordering = ("-created",)
+        indexes = [
+            models.Index(fields=['feedback', '-created']),  # 피드백별 코멘트 조회 최적화
+            models.Index(fields=['user']),  # 사용자별 코멘트 조회
+        ]
 
     def __str__(self):
         if self.feedback and hasattr(self.feedback, 'projects') and self.feedback.projects:

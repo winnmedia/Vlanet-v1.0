@@ -130,6 +130,13 @@ class File(core_model.TimeStampedModel):
     files = models.FileField(
         verbose_name="프로젝트 파일", upload_to="project_file", blank=False
     )
+    
+    class Meta:
+        verbose_name = "프로젝트 파일"
+        verbose_name_plural = "프로젝트 파일"
+        indexes = [
+            models.Index(fields=['project', '-created']),  # 프로젝트별 파일 조회 최적화
+        ]
 
 
 class Members(core_model.TimeStampedModel):
@@ -257,6 +264,9 @@ class Memo(core_model.TimeStampedModel):
     class Meta:
         verbose_name = "프로젝트 메모"
         verbose_name_plural = "프로젝트 메모"
+        indexes = [
+            models.Index(fields=['project', '-date']),  # 프로젝트별 날짜순 메모 조회
+        ]
 
     def __str__(self):
         return self.project.name

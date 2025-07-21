@@ -2011,7 +2011,6 @@ export default function VideoPlanning() {
               </div>
             )}
           </div>
-        </div>
         )
 
       case 2:

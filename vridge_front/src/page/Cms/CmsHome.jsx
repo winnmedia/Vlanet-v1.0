@@ -36,9 +36,8 @@ export default function CmsHome() {
   const [showInvitations, setShowInvitations] = useState(false)
   const [invitations, setInvitations] = useState({ sent: [], received: [], recent_accepted: [] })
   const [invitationLoading, setInvitationLoading] = useState(false)
-  const [isProjectLoading, setIsProjectLoading] = useState(false)
 
-  // 인증 체크 및 프로젝트 목록 로드
+  // 인증 체크
   useEffect(() => {
     const session = checkSession()
     if (!session) {
@@ -47,23 +46,7 @@ export default function CmsHome() {
     }
     
     console.log('[CmsHome] Component mounted, project_list:', project_list)
-    
-    // 프로젝트 목록이 없고 로딩 중이 아닐 때만 로드
-    if (project_list === null && !isProjectLoading) {
-      console.log('[CmsHome] Loading project list...')
-      setIsProjectLoading(true)
-      refetchProject(dispatch, navigate)
-        .then(() => {
-          console.log('[CmsHome] Project list loaded successfully')
-        })
-        .catch(err => {
-          console.error('[CmsHome] Failed to load project list:', err)
-        })
-        .finally(() => {
-          setIsProjectLoading(false)
-        })
-    }
-  }, []) // 빈 의존성 배열로 변경 - 마운트 시 한 번만 실행
+  }, [navigate, project_list])
 
   // 초대 목록 로드
   const loadInvitations = useCallback(async () => {

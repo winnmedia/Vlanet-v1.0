@@ -17,7 +17,7 @@ export default function App() {
   const navigate = useNavigate()
   const location = useLocation()
   const pathname = location.pathname
-  const isProjectListLoaded = useRef(false)
+  const isProjectListLoading = useRef(false)
   const { project_list } = useSelector((s) => s.ProjectStore || {})
   
   // 프론트엔드 확인용 콘솔
@@ -58,13 +58,16 @@ export default function App() {
     // 로그인 페이지나 랜딩 페이지가 아니고, 세션이 있는 경우
     if (session && pathname !== '/Login' && pathname !== '/' && pathname !== '/Signup') {
       console.log('[App] Checking if project list needs loading')
-      // Redux store가 비어있거나 아직 로드하지 않은 경우
-      if (!project_list || project_list.length === 0) {
+      // Redux store가 비어있는 경우 (null인 경우만 로드)
+      if (project_list === null && !isProjectListLoading.current) {
         console.log('[App] Loading project list')
+        isProjectListLoading.current = true
         refetchProject(dispatch, navigate).then(() => {
           console.log('[App] Project list loaded successfully')
+          isProjectListLoading.current = false
         }).catch(err => {
           console.error('[App] Failed to load project list:', err)
+          isProjectListLoading.current = false
           // 에러가 발생해도 페이지는 표시
         })
       } else {
@@ -84,7 +87,7 @@ export default function App() {
     } else {
       console.log('[App] Skipping project list load - not logged in or on auth page')
     }
-  }, [pathname, dispatch, navigate]) // 경로 변경 시 프로젝트 목록 확인
+  }, [pathname, dispatch, navigate, project_list]) // 경로 변경 시 프로젝트 목록 확인
   
   return (
     <div className="App">

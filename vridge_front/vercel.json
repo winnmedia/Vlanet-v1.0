@@ -2,6 +2,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "framework": null,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/:path*",

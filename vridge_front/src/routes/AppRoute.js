@@ -52,12 +52,7 @@ export default function AppRoute() {
     { path: '/invitation/:token', component: <LazyWrapper><InvitationAccept /></LazyWrapper> },
     {
       path: '*',
-      component: (
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-          <h2>404 - 페이지를 찾을 수 없습니다</h2>
-          <p>URL을 확인해주세요.</p>
-        </div>
-      ),
+      component: <LazyWrapper><Home /></LazyWrapper>,  // 404 대신 홈으로 리다이렉트
     },
   ]
   return (

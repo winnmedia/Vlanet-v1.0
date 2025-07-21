@@ -233,7 +233,7 @@ export default function ProjectView() {
         <div className="cms_wrap">
           <SideBar />
           <main className="project">
-            {project_id && current_project ? (
+            {current_project ? (
             <>
               <Info 
             current_project={current_project} 

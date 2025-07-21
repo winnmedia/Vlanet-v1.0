@@ -1621,9 +1621,9 @@
       background: linear-gradient(to bottom, #ffffff 0%, #f8faff 100%);
       padding: 32px;
       border-radius: 16px;
-      border: 1px solid #e0e8ff;
+      border: 2px solid #e0e8ff;
       margin-top: 24px;
-      box-shadow: 0 4px 12px rgba(22, 49, 248, 0.08);
+      box-shadow: 0 4px 16px rgba(22, 49, 248, 0.12);
       position: relative;
       overflow: hidden;
 
@@ -1647,10 +1647,6 @@
         align-items: center;
         gap: 8px;
 
-        &::before {
-          content: "👤";
-          font-size: 24px;
-        }
       }
 
       .character-settings-content {
@@ -2405,8 +2401,8 @@
     .back-btn {
       padding: 14px 32px;
       background: white;
-      color: #4318FF;
-      border: 2px solid #4318FF;
+      color: #1631F8;
+      border: 2px solid #1631F8;
       border-radius: 8px;
       font-size: 15px;
       font-weight: 600;
@@ -2416,13 +2412,15 @@
       &:hover {
         background: linear-gradient(135deg, #1631F8, #0F23C9);
         color: white;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
+        border-color: transparent;
       }
     }
 
     .generate-btn {
       padding: 14px 32px;
-      background: #4318FF;
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
       color: white;
       border: none;
       border-radius: 8px;
@@ -2433,8 +2431,8 @@
       margin-top: 0;
 
       &:hover:not(:disabled) {
-        background: #3311CC;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
       }
 
       &:disabled {
@@ -2445,7 +2443,7 @@
 
     .new-btn {
       padding: 14px 32px;
-      background: #00BFA5;
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
       color: white;
       border: none;
       border-radius: 8px;
@@ -2455,14 +2453,14 @@
       transition: all 0.3s ease;
 
       &:hover {
-        background: #00A693;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
       }
     }
     
     .export-btn {
       padding: 14px 32px;
-      background: #FF6B6B;
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
       color: white;
       border: none;
       border-radius: 8px;
@@ -2475,8 +2473,8 @@
       gap: 0;
       
       &:hover {
-        background: #FF5252;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
       }
     }
   }
@@ -3350,12 +3348,12 @@
           min-width: 140px;
 
           &.replace-video-btn {
-            background: #ffc107;
-            color: #333;
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            color: white;
 
             &:hover {
-              background: #e0a800;
-              transform: translateY(-1px);
+              transform: translateY(-2px);
+              box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
             }
           }
 
@@ -3379,9 +3377,9 @@
       gap: 16px;
 
       .prev-step-btn {
-        background: #6c757d;
-        color: white;
-        border: none;
+        background: white;
+        color: #1631F8;
+        border: 2px solid #1631F8;
         padding: 12px 24px;
         border-radius: 8px;
         font-weight: 600;
@@ -3390,13 +3388,16 @@
         min-width: 140px;
 
         &:hover {
-          background: #5a6268;
-          transform: translateY(-1px);
+          background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
+          border-color: transparent;
         }
       }
 
       .complete-project-btn {
-        background: linear-gradient(135deg, #28a745, #20c997);
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
         color: white;
         border: none;
         padding: 14px 28px;
@@ -3408,9 +3409,8 @@
         min-width: 180px;
 
         &:hover:not(:disabled) {
-          background: linear-gradient(135deg, #218838, #1fa07a);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
         }
 
         &:disabled {

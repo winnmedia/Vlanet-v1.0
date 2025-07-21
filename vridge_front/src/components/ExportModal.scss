@@ -22,6 +22,10 @@
 }
 
 .export-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -32,6 +36,7 @@
   display: flex;
   flex-direction: column;
   animation: slideUp 0.3s ease-out;
+  z-index: 10000;
 }
 
 @keyframes slideUp {
@@ -52,7 +57,7 @@
   justify-content: space-between;
   align-items: center;
 
-  h3 {
+  h2 {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
@@ -80,23 +85,26 @@
   }
 }
 
-.export-modal-content {
+.export-modal-body {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
 
-  .format-selection {
-    h4 {
-      margin: 0 0 16px 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #1a1a1a;
+  .export-info {
+    p {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #374151;
     }
 
-    .format-options {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    ul {
+      margin-left: 20px;
+      color: #6b7280;
+      font-size: 14px;
+      
+      li {
+        margin-bottom: 8px;
+      }
     }
   }
 
@@ -244,11 +252,12 @@
     }
 
     &.export-btn {
-      background-color: #3b82f6;
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
       color: white;
 
       &:hover:not(:disabled) {
-        background-color: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 49, 248, 0.4);
       }
 
       &:disabled {

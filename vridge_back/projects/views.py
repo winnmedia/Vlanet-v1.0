@@ -2028,11 +2028,11 @@ class InvitationToken(View):
 class InvitationResponse(View):
     """초대 수락/거절"""
     
-    @user_validator
     def post(self, request, invitation_id):
         """초대 수락/거절"""
         try:
-            user = request.user
+            # 사용자 확인 (인증된 사용자 또는 비회원)
+            user = request.user if request.user.is_authenticated else None
             data = json.loads(request.body)
             
             action = data.get('action')  # 'accept' or 'decline'
@@ -2046,8 +2046,13 @@ class InvitationResponse(View):
                 return JsonResponse({"message": "초대를 찾을 수 없습니다."}, status=404)
             
             # 권한 확인 (초대받은 사람만 수락/거절 가능)
-            if invitation.invitee != user and invitation.invitee_email != user.email:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+            # 비회원의 경우 이메일로 확인
+            if user:
+                if invitation.invitee != user and invitation.invitee_email != user.email:
+                    return JsonResponse({"message": "권한이 없습니다."}, status=403)
+            else:
+                # 비회원의 경우 초대 토큰으로 접근했으므로 추가 검증 불필요
+                pass
             
             # 이미 처리된 초대인지 확인
             if invitation.status != 'pending':
@@ -2064,6 +2069,10 @@ class InvitationResponse(View):
             from .notification_service import NotificationService
             
             if action == 'accept':
+                # 로그인한 사용자만 수락 가능
+                if not user:
+                    return JsonResponse({"message": "프로젝트에 참여하려면 로그인이 필요합니다."}, status=401)
+                
                 # 프로젝트 멤버로 추가
                 member, created = models.Members.objects.get_or_create(
                     project=invitation.project,
@@ -2092,7 +2101,8 @@ class InvitationResponse(View):
             else:  # decline
                 invitation.status = 'declined'
                 invitation.declined_at = django_timezone.now()
-                invitation.invitee = user  # 사용자 연결
+                if user:
+                    invitation.invitee = user  # 사용자 연결
                 invitation.save()
                 
                 # 초대자에게 알림 및 이메일 발송

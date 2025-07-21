@@ -23,10 +23,14 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
         target: planningData.planningOptions?.target,
         purpose: planningData.planningOptions?.purpose,
         duration: planningData.planningOptions?.duration,
-        stories: planningData.stories,
-        scenes: planningData.scenes,
-        shots: planningData.shots,
-        storyboards: planningData.storyboards,
+        stories: planningData.stories || [],
+        scenes: planningData.scenes?.map(scene => ({
+          ...scene,
+          title: scene.scene_title || scene.title,
+          description: scene.action || scene.description
+        })) || [],
+        shots: planningData.shots || [],
+        storyboards: planningData.storyboards || [],
         character_name: planningData.planningOptions?.characterName,
         character_description: planningData.planningOptions?.characterDescription
       }
@@ -85,8 +89,8 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
   if (!isOpen) return null
 
   return (
-    <div className="export-modal">
-      <div className="export-modal-content">
+    <div className="export-modal-overlay">
+      <div className="export-modal">
         <div className="export-modal-header">
           <h2>영상 기획안 내보내기</h2>
           <button className="close-btn" onClick={onClose}>✕</button>

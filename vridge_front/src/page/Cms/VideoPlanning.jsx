@@ -849,210 +849,6 @@ export default function VideoPlanning() {
     }
   }
 
-  const generateAllStoryboards = async () => {
-    setLoading(true)
-    setLoadingMessage(`모든 콘티를 생성하고 있습니다... (총 ${planningData.scenes.length}개)`)
-    setLoadingProgress(10)
-    setError(null)
-
-    try {
-      // planning_options를 포함한 씬 데이터 준비
-      const scenesWithOptions = planningData.scenes.map(scene => ({
-        ...scene,
-        planning_options: planningOptions
-      }))
-
-      const response = await axios.post(
-        `/api/video-planning/generate/all-storyboards/`,
-        { 
-          scenes: scenesWithOptions,
-          style: storyboardStyle,
-          speed_optimized: storyboardStyle === 'quick_draft' // 빠른 드래프트일 때만 속도 최적화
-        },
-        {
-          timeout: storyboardStyle === 'quick_draft' ? 180000 : 300000, // 빠른 드래프트: 3분, 일반: 5분
-        }
-      )
-
-      if (response.data.status === 'success') {
-        const { storyboards: results, success_count, error_count } = response.data.data
-        
-        // 씬 데이터 업데이트
-        const updatedScenes = [...planningData.scenes]
-        
-        results.forEach((result) => {
-          if (result.storyboard && !result.error) {
-            updatedScenes[result.scene_index] = {
-              ...updatedScenes[result.scene_index],
-              storyboard: result.storyboard
-            }
-          }
-        })
-
-        setPlanningData(prev => ({
-          ...prev,
-          scenes: updatedScenes
-        }))
-
-        // 결과 메시지 표시
-        if (error_count > 0) {
-          setSuccessMessage(`콘티 생성 완료! 성공: ${success_count}개, 실패: ${error_count}개`)
-        } else {
-          setSuccessMessage(`모든 콘티가 성공적으로 생성되었습니다! (총 ${success_count}개)`)
-        }
-        
-        setTimeout(() => setSuccessMessage(null), 5000)
-      } else {
-        setError(response.data.message || '콘티 생성에 실패했습니다.')
-      }
-    } catch (err) {
-      console.error('모든 스토리보드 생성 오류:', err)
-      
-      if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
-        setError('이미지 생성에 시간이 오래 걸리고 있습니다. 개별적으로 생성해주세요.')
-      } else if (err.response?.status === 500) {
-        setError(`서버 오류: ${err.response.data?.message || '콘티 생성 중 문제가 발생했습니다.'}`)
-      } else if (!err.response) {
-        setError('네트워크 연결을 확인해주세요.')
-      } else {
-        setError(err.response?.data?.message || '콘티 생성에 실패했습니다.')
-      }
-    } finally {
-      setLoading(false)
-      setLoadingMessage('')
-      setLoadingProgress(0)
-    }
-  }
-
-  // 새로운 고속 병렬 콘티 생성 함수
-  const generateAllStoryboardsFast = async () => {
-    setLoading(true)
-    setLoadingMessage(`⚡ 고속 병렬 콘티 생성 중... (총 ${planningData.scenes.length}개)`)
-    setLoadingProgress(10)
-    setError(null)
-    
-    // 각 씬별 진행상태 초기화
-    const initialProgress = {}
-    planningData.scenes.forEach((_, index) => {
-      initialProgress[index] = { status: 'pending', progress: 0 }
-    })
-    setStoryboardGenerationProgress(initialProgress)
-
-    try {
-      // 병렬 처리를 위해 개별 API 호출 배치 처리 (3개씩)
-      const batchSize = 3
-      const batches = []
-      
-      for (let i = 0; i < planningData.scenes.length; i += batchSize) {
-        batches.push(planningData.scenes.slice(i, i + batchSize).map((scene, batchIndex) => ({
-          scene,
-          originalIndex: i + batchIndex
-        })))
-      }
-
-      let completedCount = 0
-      const totalScenes = planningData.scenes.length
-
-      // 배치별 순차 처리 (각 배치 내에서는 병렬)
-      for (const batch of batches) {
-        const batchPromises = batch.map(async ({ scene, originalIndex }) => {
-          try {
-            // 진행상태 업데이트: 시작
-            setStoryboardGenerationProgress(prev => ({
-              ...prev,
-              [originalIndex]: { status: 'generating', progress: 30 }
-            }))
-
-            const sceneWithOptions = {
-              ...scene,
-              planning_options: planningOptions
-            }
-
-            const response = await axios.post(
-              `/api/video-planning/generate/storyboards/`,
-              { 
-                scene: sceneWithOptions,
-                scene_index: originalIndex,
-                style: storyboardStyle,
-                speed_optimized: true, // 항상 속도 최적화
-                fast_mode: true // 새로운 고속 모드 플래그
-              },
-              {
-                timeout: 60000, // 1분으로 단축
-              }
-            )
-
-            if (response.data.status === 'success') {
-              // 진행상태 업데이트: 완료
-              setStoryboardGenerationProgress(prev => ({
-                ...prev,
-                [originalIndex]: { status: 'completed', progress: 100 }
-              }))
-
-              // 즉시 UI 업데이트 (프로그레시브 로딩)
-              setPlanningData(prev => {
-                const updatedScenes = [...prev.scenes]
-                updatedScenes[originalIndex] = {
-                  ...updatedScenes[originalIndex],
-                  storyboard: response.data.data.storyboard
-                }
-                return {
-                  ...prev,
-                  scenes: updatedScenes
-                }
-              })
-
-              completedCount++
-              const progress = Math.round((completedCount / totalScenes) * 80) + 10
-              setLoadingProgress(progress)
-              setLoadingMessage(`⚡ 콘티 생성 중... (${completedCount}/${totalScenes}개 완료)`)
-
-              return { success: true, sceneIndex: originalIndex }
-            } else {
-              setStoryboardGenerationProgress(prev => ({
-                ...prev,
-                [originalIndex]: { status: 'error', progress: 0 }
-              }))
-              return { success: false, sceneIndex: originalIndex, error: response.data.message }
-            }
-          } catch (err) {
-            setStoryboardGenerationProgress(prev => ({
-              ...prev,
-              [originalIndex]: { status: 'error', progress: 0 }
-            }))
-            return { success: false, sceneIndex: originalIndex, error: err.message }
-          }
-        })
-
-        // 현재 배치 완료까지 대기
-        await Promise.allSettled(batchPromises)
-        
-        // 배치 간 짧은 딜레이 (서버 부하 방지)
-        if (batches.indexOf(batch) < batches.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 1000))
-        }
-      }
-
-      // 전체 진행률 업데이트
-      setLoadingProgress(100)
-
-      // 결과 메시지 표시
-      setSuccessMessage(`⚡ 고속 콘티 생성 완료! (총 ${completedCount}개) - 일반 생성보다 60% 빠름!`)
-
-      // 5초 후 성공 메시지 제거
-      setTimeout(() => {
-        setSuccessMessage(null)
-        setStoryboardGenerationProgress({}) // 진행상태 초기화
-      }, 5000)
-
-    } catch (err) {
-      setError('고속 콘티 생성 중 오류가 발생했습니다.')
-    } finally {
-      setLoading(false)
-      setLoadingMessage('')
-      setLoadingProgress(0)
-    }
-  }
 
   const startEditingStoryboard = (sceneIndex) => {
     const scene = planningData.scenes[sceneIndex]
@@ -1766,7 +1562,7 @@ export default function VideoPlanning() {
                   className={`framework-card ${planningOptions.storyFramework === 'hook_immersion' ? 'active' : ''}`}
                   onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' }))}
                 >
-                  <h5>훅-몰입-반전-떡밥 🎯</h5>
+                  <h5>훅-몰입-반전-떡밥</h5>
                   <p>시청자의 시선을 사로잡고 끝까지 유지시키는 현대적 전개</p>
                   <span className="framework-stages">인트로 훅 → 몰입 → 반전 → 떡밥</span>
                 </div>
@@ -2181,64 +1977,6 @@ export default function VideoPlanning() {
               </select>
             </div>
             
-            {/* 모든 콘티 생성 버튼 추가 */}
-            <div className="batch-actions">
-              <div className="batch-buttons">
-                <button
-                  className="generate-all-btn"
-                  onClick={generateAllStoryboardsFast}
-                  disabled={loading || planningData.scenes.length === 0}
-                  style={{
-                    background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: loading ? 'wait' : 'pointer',
-                    opacity: loading || planningData.scenes.length === 0 ? 0.6 : 1,
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!loading && planningData.scenes.length > 0) {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.25)';
-                  }}
-                  title="빠른 저품질 콘티 생성 (모든 씬)"
-                >
-                  {loading && Object.keys(storyboardGenerationProgress).length ? '⚡ 콘티 생성 중...' : '⚡ 모든 콘티 빠르게 생성'}
-                </button>
-              </div>
-              
-              <div className="batch-info">
-                <span>
-                  총 {planningData.scenes.length}개 씬 / 
-                  생성된 콘티: {planningData.scenes.filter(scene => scene.storyboard?.image_url).length}개
-                </span>
-                
-                {/* 실시간 진행상태 표시 */}
-                {Object.keys(storyboardGenerationProgress).length > 0 && (
-                  <div className="generation-progress">
-                    {Object.entries(storyboardGenerationProgress).map(([index, progress]) => (
-                      <div key={index} className={`progress-item ${progress.status}`}>
-                        씬 {parseInt(index) + 1}: {
-                          progress.status === 'pending' ? '대기중' :
-                          progress.status === 'generating' ? '생성중' :
-                          progress.status === 'completed' ? '완료' : '대기'
-                        }
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
             
             <div className="scenes-with-storyboards-container">
               {planningData.scenes.map((scene, index) => (
@@ -2450,7 +2188,7 @@ export default function VideoPlanning() {
             
             <div className="video-upload-section">
               <div className="upload-area">
-                <div className="upload-icon">📹</div>
+                <div className="upload-icon"></div>
                 <h4>영상 파일을 업로드하세요</h4>
                 <p>MP4, WebM, MOV 파일을 지원합니다 (최대 600MB)</p>
                 
@@ -2469,7 +2207,7 @@ export default function VideoPlanning() {
                   className="upload-guide-btn"
                   onClick={() => setShowVideoGuide(true)}
                 >
-                  📋 업로드 가이드
+                  업로드 가이드
                 </button>
               </div>
               
@@ -2493,13 +2231,13 @@ export default function VideoPlanning() {
                       className="replace-video-btn"
                       onClick={() => document.getElementById('video-upload').click()}
                     >
-                      🔄 영상 교체
+                      영상 교체
                     </button>
                     <button 
                       className="delete-video-btn"
                       onClick={handleDeleteVideo}
                     >
-                      🗑️ 영상 삭제
+                      영상 삭제
                     </button>
                   </div>
                 </div>
@@ -2547,7 +2285,7 @@ export default function VideoPlanning() {
                 {recentPlannings.length > 0 && (
                   <div className="recent-plannings-section">
                     <div className="recent-header">
-                      <h3>📋 최근 기획안</h3>
+                      <h3>최근 기획안</h3>
                       <span className="recent-count">최근 {recentPlannings.length}개</span>
                     </div>
                     <div className="recent-list">
@@ -2594,7 +2332,7 @@ export default function VideoPlanning() {
                               }}
                               title="PDF 다운로드"
                             >
-                              📄 PDF
+                              PDF
                             </button>
                             <button
                               className="delete-planning-btn"
@@ -2847,7 +2585,7 @@ export default function VideoPlanning() {
                 {planningData.scenes.length > 0 && (
                   <div className={`step-preview ${currentStep === 3 ? 'active' : ''}`}>
                     <div className="preview-header">
-                      <h4>🎬 씬 & 콘티 ({planningData.scenes.length}개)</h4>
+                      <h4>씬 & 콘티 ({planningData.scenes.length}개)</h4>
                     </div>
                     <div className="preview-content">
                       {expandedSections.scenes ? (

@@ -21,3 +21,25 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Next.js
+.next/
+next-env.d.ts
+
+# Test files
+test-*.js
+*-test.js
+*.test.html
+
+# Backup files
+*.backup
+*.old
+*.tmp.*
+*_backup_*
+*_old.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

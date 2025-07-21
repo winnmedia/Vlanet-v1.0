@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import LoadingAnimation from 'components/LoadingAnimation'
@@ -2011,6 +2011,7 @@ export default function VideoPlanning() {
               </div>
             )}
           </div>
+          </div>
         )
 
       case 2:
@@ -2521,7 +2522,7 @@ export default function VideoPlanning() {
                   onClick={handleCompleteProject}
                   disabled={!uploadedVideo}
                 >
-프로젝트 완성
+                  프로젝트 완성
                 </button>
               </div>
             </div>
@@ -2545,90 +2546,93 @@ export default function VideoPlanning() {
               <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다.</p>
             </div>
 
-            <div>
-            {/* 최근 기획안 기록 표시 */}
-            {recentPlannings.length > 0 && (
-              <div className="recent-plannings-section">
-                <div className="recent-header">
-                  <h3>📋 최근 기획안</h3>
-                  <span className="recent-count">최근 {recentPlannings.length}개</span>
-                </div>
-                <div className="recent-list">
-                  {recentPlannings.map((planning, index) => (
-                    <div 
-                      key={planning.id} 
-                      className="recent-item"
-                    >
-                      <div 
-                        className="recent-content"
-                        onClick={() => loadHistoryItem(planning.id)}
-                      >
-                        <div className="recent-number">{index + 1}</div>
-                        <div className="recent-info">
-                          <div className="recent-title">{planning.title}</div>
-                          <div className="recent-meta">
-                            <span className="recent-date">{planning.created_at}</span>
-                            {planning.planning_options && (
-                              <div className="recent-tags">
-                                {planning.planning_options.tone && (
-                                  <span className="tag tone">{planning.planning_options.tone}</span>
-                                )}
-                                {planning.planning_options.genre && (
-                                  <span className="tag genre">{planning.planning_options.genre}</span>
-                                )}
-                                <span className={`tag step step-${planning.current_step}`}>
-                                  {planning.current_step === 1 ? '기획' : 
-                                   planning.current_step === 2 ? '스토리' : 
-                                   planning.current_step === 3 ? '씬' : 
-                                   planning.current_step === 4 ? '숏' : 
-                                   planning.current_step === 5 ? '콘티' : '진행중'}
-                                </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="recent-actions">
-                        <button
-                          className="pdf-download-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            downloadPlanningAsPDF(planning.id, planning.title);
-                          }}
-                          title="PDF 다운로드"
-                        >
-                          📄 PDF
-                        </button>
-                        <button
-                          className="delete-planning-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deletePlanning(planning.id);
-                          }}
-                          title="기획 삭제"
-                        >
-                          ✕
-                        </button>
-                      </div>
+            <div className="planning-content-wrapper">
+              {/* 최근 기획안 기록 표시 */}
+              <>
+                {recentPlannings.length > 0 && (
+                  <div className="recent-plannings-section">
+                    <div className="recent-header">
+                      <h3>📋 최근 기획안</h3>
+                      <span className="recent-count">최근 {recentPlannings.length}개</span>
                     </div>
-                  ))}
-                </div>
-            )}
-            
-            {recentPlannings.length === 0 && (
-              <div className="no-recent-plannings">
-                <p>아직 생성한 기획이 없습니다.</p>
-                <p className="hint">새로운 기획을 시작해보세요!</p>
-              </div>
-            )}
+                    <div className="recent-list">
+                      {recentPlannings.map((planning, index) => (
+                        <div 
+                          key={planning.id} 
+                          className="recent-item"
+                        >
+                          <div 
+                            className="recent-content"
+                            onClick={() => loadHistoryItem(planning.id)}
+                          >
+                            <div className="recent-number">{index + 1}</div>
+                            <div className="recent-info">
+                              <div className="recent-title">{planning.title}</div>
+                              <div className="recent-meta">
+                                <span className="recent-date">{planning.created_at}</span>
+                                {planning.planning_options && (
+                                  <div className="recent-tags">
+                                    {planning.planning_options.tone && (
+                                      <span className="tag tone">{planning.planning_options.tone}</span>
+                                    )}
+                                    {planning.planning_options.genre && (
+                                      <span className="tag genre">{planning.planning_options.genre}</span>
+                                    )}
+                                    <span className={`tag step step-${planning.current_step}`}>
+                                      {planning.current_step === 1 ? '기획' : 
+                                       planning.current_step === 2 ? '스토리' : 
+                                       planning.current_step === 3 ? '씬' : 
+                                       planning.current_step === 4 ? '숏' : 
+                                       planning.current_step === 5 ? '콘티' : '진행중'}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="recent-actions">
+                            <button
+                              className="pdf-download-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                downloadPlanningAsPDF(planning.id, planning.title);
+                              }}
+                              title="PDF 다운로드"
+                            >
+                              📄 PDF
+                            </button>
+                            <button
+                              className="delete-planning-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deletePlanning(planning.id);
+                              }}
+                              title="기획 삭제"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {recentPlannings.length === 0 && (
+                  <div className="no-recent-plannings">
+                    <p>아직 생성한 기획이 없습니다.</p>
+                    <p className="hint">새로운 기획을 시작해보세요!</p>
+                  </div>
+                )}
 
-            {planningHistory.length > 0 && (
-              <div className="planning-history-section">
-                <div className="history-header">
-                  <h3>나의 기획 보관함</h3>
-                  <span className="history-count">{planningHistory.length}/5</span>
-                </div>
-                <div className="history-list">
-                  {planningHistory.map((item) => (
+                {planningHistory.length > 0 && (
+                  <div className="planning-history-section">
+                    <div className="history-header">
+                      <h3>나의 기획 보관품</h3>
+                      <span className="history-count">{planningHistory.length}/5</span>
+                    </div>
+                    <div className="history-list">
+                      {planningHistory.map((item) => (
                     <div 
                       key={item.id} 
                       className="history-item"
@@ -2639,13 +2643,12 @@ export default function VideoPlanning() {
                         {new Date(item.created_at).toLocaleDateString('ko-KR')}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            <div className="planning-navigation">
+                <div className="planning-navigation">
               <div 
                 className={`nav-step ${currentStep >= 1 ? 'active' : ''} ${currentStep === 1 ? 'current' : ''}`}
                 onClick={(e) => {
@@ -2974,6 +2977,8 @@ export default function VideoPlanning() {
                 </button>
               </div>
             )}
+              </>
+            </div>
 
             {renderStepContent()}
             

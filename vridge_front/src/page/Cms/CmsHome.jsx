@@ -45,20 +45,23 @@ export default function CmsHome() {
       return
     }
     
-    console.log('[CmsHome] Component mounted, project_list length:', project_list?.length || 0)
+    console.log('[CmsHome] Component mounted, project_list:', project_list)
     
     // 프로젝트 목록이 없으면 로드 시도 (빈 배열은 정상 상태)
-    if (!project_list) {
-      console.log('[CmsHome] Project list not found, loading...')
+    if (project_list === null) {
+      console.log('[CmsHome] Project list is null, loading...')
       setIsLoading(true)
       refetchProject(dispatch, navigate).then(() => {
-        console.log('[CmsHome] Project list loaded')
+        console.log('[CmsHome] Project list loaded successfully')
         setIsLoading(false)
       }).catch(err => {
         console.error('[CmsHome] Failed to load project list:', err)
         setIsLoading(false)
         // 에러가 발생해도 페이지는 표시되도록 함
       })
+    } else {
+      console.log('[CmsHome] Project list already loaded:', project_list?.length || 0, 'projects')
+      setIsLoading(false)
     }
   }, [dispatch, navigate]) // project_list 의존성 제거 - 무한 루프 방지
 
@@ -125,14 +128,7 @@ export default function CmsHome() {
   }, [])
 
   // 프로젝트 데이터 로딩 중일 때 표시
-  const [isLoading, setIsLoading] = useState(!project_list)
-  
-  // 프로젝트 리스트 로드 상태 추적
-  useEffect(() => {
-    if (project_list !== null) {
-      setIsLoading(false)
-    }
-  }, [project_list])
+  const [isLoading, setIsLoading] = useState(project_list === null)
   
   if (isLoading) {
     return (

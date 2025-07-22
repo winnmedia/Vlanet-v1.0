@@ -14,6 +14,18 @@
       "destination": "https://videoplanet.up.railway.app/media/:path*"
     },
     {
+      "source": "/invitation/:token",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/invitation/accept/:token",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/invitation/:uid/:token",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

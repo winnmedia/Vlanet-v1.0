@@ -2,6 +2,135 @@
   min-height: 100vh;
   background: #f0f2f5;
   
+  &.enhanced {
+    padding: 24px;
+    background: #f0f2f5;
+    min-height: calc(100vh - 80px);
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      background: white;
+      padding: 20px 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      
+      .title {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 0;
+        color: #1631F8;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .anticon {
+          font-size: 32px;
+        }
+      }
+    }
+    
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      background: white;
+      border-radius: 8px;
+    }
+    
+    .dashboard-content {
+      .stats-row {
+        margin-bottom: 24px;
+        
+        .ant-card {
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+          }
+          
+          .ant-statistic-title {
+            font-size: 14px;
+            color: #8c8c8c;
+          }
+          
+          .ant-statistic-content {
+            .ant-statistic-content-prefix {
+              font-size: 24px;
+              margin-right: 8px;
+            }
+            
+            .ant-statistic-content-value {
+              font-size: 32px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+      
+      .quick-actions {
+        margin-bottom: 24px;
+        
+        .ant-card-head-title {
+          font-size: 18px;
+          font-weight: 600;
+        }
+        
+        .ant-btn {
+          height: 40px;
+          font-size: 14px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          }
+        }
+      }
+      
+      .recent-projects {
+        margin-bottom: 24px;
+        
+        .ant-card-head-title {
+          font-size: 18px;
+          font-weight: 600;
+        }
+        
+        .ant-table {
+          .ant-tag {
+            font-weight: 500;
+            padding: 2px 8px;
+          }
+        }
+      }
+      
+      .system-info {
+        .ant-card-head-title {
+          font-size: 18px;
+          font-weight: 600;
+        }
+        
+        p {
+          margin-bottom: 8px;
+          font-size: 14px;
+          
+          strong {
+            color: #262626;
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+  }
+  
+  // 기존 스타일 (하위 호환성 유지)
   .loading {
     display: flex;
     justify-content: center;
@@ -560,11 +689,38 @@
       }
     }
   }
+  
+  // 기본 스타일
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .content {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
 }
 
 // 반응형 디자인
 @media (max-width: 768px) {
   .admin-dashboard {
+    &.enhanced {
+      padding: 16px;
+      
+      .dashboard-header {
+        flex-direction: column;
+        gap: 16px;
+        
+        .title {
+          font-size: 24px;
+        }
+      }
+    }
+    
     .dashboard-header {
       padding: 16px 20px;
       flex-direction: column;

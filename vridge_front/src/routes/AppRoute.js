@@ -23,6 +23,7 @@ const TermsOfService = lazy(() => import(/* webpackChunkName: "terms-of-service"
 const MobileDebug = lazy(() => import(/* webpackChunkName: "mobile-debug" */ 'page/MobileDebug'))
 const FrameworkManagement = lazy(() => import(/* webpackChunkName: "framework-mgmt" */ 'page/Cms/FrameworkManagement'))
 const EmailMonitor = lazy(() => import(/* webpackChunkName: "email-monitor" */ 'page/Admin/EmailMonitor'))
+const AdminRedirect = lazy(() => import(/* webpackChunkName: "admin-redirect" */ 'page/Admin/AdminRedirect'))
 const InvitationAccept = lazy(() => import(/* webpackChunkName: "invitation-accept" */ 'page/Cms/InvitationAccept'))
 
 export default function AppRoute() {
@@ -34,6 +35,7 @@ export default function AppRoute() {
     { path: '/Signup', component: <LazyWrapper><Signup /></LazyWrapper> },
     { path: '/ResetPw', component: <LazyWrapper><ResetPw /></LazyWrapper> },
     { path: '/MyPage', component: <LazyWrapper><MyPage /></LazyWrapper> },
+    { path: '/admin', component: <LazyWrapper><AdminRedirect /></LazyWrapper> },
     { path: '/AdminDashboard', component: <LazyWrapper><AdminDashboard /></LazyWrapper> },
     { path: '/VideoPlanning', component: <LazyWrapper><VideoPlanning /></LazyWrapper> },
     { path: '/Calendar', component: <LazyWrapper><Calendar /></LazyWrapper> },

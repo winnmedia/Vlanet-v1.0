@@ -14,20 +14,50 @@
       "destination": "https://videoplanet.up.railway.app/media/:path*"
     },
     {
-      "source": "/invitation/:token",
+      "source": "/:path*",
       "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/CmsHome",
+      "destination": "/dashboard",
+      "permanent": false
     },
     {
-      "source": "/invitation/accept/:token",
-      "destination": "/index.html"
+      "source": "/ProjectView/:id",
+      "destination": "/projects/:id",
+      "permanent": false
     },
     {
-      "source": "/invitation/:uid/:token",
-      "destination": "/index.html"
+      "source": "/ProjectEdit/:id",
+      "destination": "/projects/:id/edit",
+      "permanent": false
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/ProjectCreate",
+      "destination": "/projects/new",
+      "permanent": false
+    },
+    {
+      "source": "/VideoPlanning",
+      "destination": "/planning",
+      "permanent": false
+    },
+    {
+      "source": "/Calendar",
+      "destination": "/calendar",
+      "permanent": false
+    },
+    {
+      "source": "/MyPage",
+      "destination": "/my-page",
+      "permanent": false
+    },
+    {
+      "source": "/AdminDashboard",
+      "destination": "/admin",
+      "permanent": false
     }
   ],
   "headers": [

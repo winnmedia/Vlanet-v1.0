@@ -25,6 +25,7 @@ const FrameworkManagement = lazy(() => import(/* webpackChunkName: "framework-mg
 const EmailMonitor = lazy(() => import(/* webpackChunkName: "email-monitor" */ 'page/Admin/EmailMonitor'))
 const AdminRedirect = lazy(() => import(/* webpackChunkName: "admin-redirect" */ 'page/Admin/AdminRedirect'))
 const InvitationAccept = lazy(() => import(/* webpackChunkName: "invitation-accept" */ 'page/Cms/InvitationAccept'))
+const NotFound = lazy(() => import(/* webpackChunkName: "not-found" */ 'page/NotFound'))
 
 export default function AppRoute() {
   const routes = [
@@ -54,7 +55,7 @@ export default function AppRoute() {
     { path: '/invitation/:token', component: <LazyWrapper><InvitationAccept /></LazyWrapper> },
     {
       path: '*',
-      component: <LazyWrapper><Home /></LazyWrapper>,  // 404 대신 홈으로 리다이렉트
+      component: <LazyWrapper><NotFound /></LazyWrapper>,  // 404 페이지
     },
   ]
   return (

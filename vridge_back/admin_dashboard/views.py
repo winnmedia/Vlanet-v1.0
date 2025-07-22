@@ -9,6 +9,10 @@ from datetime import timedelta
 from users.decorators import admin_required
 from users import models as user_models
 from projects import models as project_models
+from feedbacks import models as feedback_models
+from video_planning import models as planning_models
+from django.db.models import Avg, Sum, Max, Min
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +60,42 @@ class AdminDashboardStats(View):
                     'count': count
                 })
             
+            # 피드백 통계
+            total_feedbacks = feedback_models.Feedback.objects.count()
+            pending_feedbacks = feedback_models.Feedback.objects.filter(
+                is_read=False
+            ).count()
+            
+            # 영상 기획 통계
+            total_planning = planning_models.VideoPlanningProject.objects.count()
+            completed_planning = planning_models.VideoPlanningProject.objects.filter(
+                status='completed'
+            ).count()
+            
+            # 프로젝트 단계별 통계
+            project_phases = project_models.Project.objects.values('production_phase').annotate(
+                count=Count('id')
+            ).order_by('production_phase')
+            
+            # 월별 프로젝트 생성 추이 (최근 6개월)
+            monthly_projects = []
+            for i in range(6):
+                start_date = now.replace(day=1) - timedelta(days=30*i)
+                end_date = (start_date + timedelta(days=32)).replace(day=1)
+                count = project_models.Project.objects.filter(
+                    created__gte=start_date,
+                    created__lt=end_date
+                ).count()
+                monthly_projects.append({
+                    'month': start_date.strftime('%Y-%m'),
+                    'count': count
+                })
+            
+            # 평균 프로젝트 멤버 수
+            avg_members = project_models.Members.objects.values('project').annotate(
+                member_count=Count('user')
+            ).aggregate(avg=Avg('member_count'))['avg'] or 0
+            
             stats = {
                 'users': {
                     'total': total_users,
@@ -65,10 +105,21 @@ class AdminDashboardStats(View):
                 },
                 'projects': {
                     'total': total_projects,
-                    'active': active_projects
+                    'active': active_projects,
+                    'by_phase': list(project_phases),
+                    'avg_members': round(avg_members, 1)
+                },
+                'feedbacks': {
+                    'total': total_feedbacks,
+                    'pending': pending_feedbacks
+                },
+                'planning': {
+                    'total': total_planning,
+                    'completed': completed_planning
                 },
                 'trends': {
-                    'daily_signups': daily_signups
+                    'daily_signups': daily_signups,
+                    'monthly_projects': monthly_projects
                 }
             }
             
@@ -207,4 +258,231 @@ class AdminUserList(View):
             logger.error(f"Admin user update error: {str(e)}")
             return JsonResponse({
                 'error': '사용자 정보 업데이트 중 오류가 발생했습니다.'
+            }, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(admin_required, name='dispatch')
+class AdminProjectList(View):
+    """관리자 프로젝트 목록 API"""
+    
+    def get(self, request):
+        try:
+            # 페이지네이션
+            page = int(request.GET.get('page', 1))
+            per_page = int(request.GET.get('per_page', 20))
+            
+            # 검색
+            search = request.GET.get('search', '')
+            
+            # 필터링
+            production_phase = request.GET.get('production_phase', '')
+            status = request.GET.get('status', '')
+            
+            # 쿼리셋 생성
+            queryset = project_models.Project.objects.all().order_by('-created')
+            
+            # 검색 적용
+            if search:
+                queryset = queryset.filter(
+                    Q(name__icontains=search) |
+                    Q(manager__icontains=search) |
+                    Q(owner_nickname__icontains=search)
+                )
+            
+            # 필터 적용
+            if production_phase:
+                queryset = queryset.filter(production_phase=production_phase)
+            
+            if status == 'active':
+                queryset = queryset.filter(
+                    updated__gte=timezone.now() - timedelta(days=30)
+                )
+            elif status == 'inactive':
+                queryset = queryset.filter(
+                    updated__lt=timezone.now() - timedelta(days=30)
+                )
+            
+            # 총 개수
+            total = queryset.count()
+            
+            # 페이지네이션 적용
+            start = (page - 1) * per_page
+            end = start + per_page
+            projects = queryset[start:end]
+            
+            # 프로젝트 데이터 직렬화
+            project_list = []
+            for project in projects:
+                member_count = project.members.count() + 1  # +1 for owner
+                feedback_count = project.feedbacks.count()
+                
+                project_list.append({
+                    'id': project.id,
+                    'name': project.name,
+                    'manager': project.manager,
+                    'owner_nickname': project.owner_nickname,
+                    'production_phase': project.production_phase,
+                    'color': project.color,
+                    'member_count': member_count,
+                    'feedback_count': feedback_count,
+                    'created': project.created.isoformat(),
+                    'updated': project.updated.isoformat(),
+                    'is_active': project.updated >= timezone.now() - timedelta(days=30)
+                })
+            
+            return JsonResponse({
+                'status': 'success',
+                'data': {
+                    'projects': project_list,
+                    'pagination': {
+                        'total': total,
+                        'page': page,
+                        'per_page': per_page,
+                        'total_pages': (total + per_page - 1) // per_page
+                    }
+                }
+            })
+            
+        except Exception as e:
+            logger.error(f"Admin project list error: {str(e)}")
+            return JsonResponse({
+                'error': '프로젝트 목록을 불러오는 중 오류가 발생했습니다.'
+            }, status=500)
+    
+    def delete(self, request):
+        """프로젝트 삭제"""
+        try:
+            data = json.loads(request.body)
+            project_id = data.get('project_id')
+            
+            if not project_id:
+                return JsonResponse({
+                    'error': '프로젝트 ID가 필요합니다.'
+                }, status=400)
+            
+            project = project_models.Project.objects.get(id=project_id)
+            project_name = project.name
+            
+            # 관련 데이터도 삭제 (CASCADE)
+            project.delete()
+            
+            logger.info(f"Admin deleted project: {project_name} (ID: {project_id}) by {request.user.username}")
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': f'프로젝트 "{project_name}"가 삭제되었습니다.'
+            })
+            
+        except project_models.Project.DoesNotExist:
+            return JsonResponse({
+                'error': '프로젝트를 찾을 수 없습니다.'
+            }, status=404)
+        except Exception as e:
+            logger.error(f"Admin project delete error: {str(e)}")
+            return JsonResponse({
+                'error': '프로젝트 삭제 중 오류가 발생했습니다.'
+            }, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(admin_required, name='dispatch')
+class AdminFeedbackStats(View):
+    """관리자 피드백 통계 API"""
+    
+    def get(self, request):
+        try:
+            # 전체 피드백 통계
+            total_feedbacks = feedback_models.Feedback.objects.count()
+            unread_feedbacks = feedback_models.Feedback.objects.filter(is_read=False).count()
+            
+            # 프로젝트별 피드백 통계
+            feedbacks_by_project = feedback_models.Feedback.objects.values(
+                'project__name', 'project__id'
+            ).annotate(
+                total=Count('id'),
+                unread=Count('id', filter=Q(is_read=False))
+            ).order_by('-total')[:10]
+            
+            # 최근 피드백 (7일)
+            recent_date = timezone.now() - timedelta(days=7)
+            recent_feedbacks = feedback_models.Feedback.objects.filter(
+                created__gte=recent_date
+            ).order_by('-created')[:20]
+            
+            recent_list = []
+            for feedback in recent_feedbacks:
+                recent_list.append({
+                    'id': feedback.id,
+                    'project_name': feedback.project.name if feedback.project else 'Unknown',
+                    'content': feedback.content[:100] + '...' if len(feedback.content) > 100 else feedback.content,
+                    'is_read': feedback.is_read,
+                    'created': feedback.created.isoformat()
+                })
+            
+            return JsonResponse({
+                'status': 'success',
+                'data': {
+                    'total': total_feedbacks,
+                    'unread': unread_feedbacks,
+                    'by_project': list(feedbacks_by_project),
+                    'recent': recent_list
+                }
+            })
+            
+        except Exception as e:
+            logger.error(f"Admin feedback stats error: {str(e)}")
+            return JsonResponse({
+                'error': '피드백 통계를 불러오는 중 오류가 발생했습니다.'
+            }, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(admin_required, name='dispatch')
+class AdminSystemInfo(View):
+    """시스템 정보 API"""
+    
+    def get(self, request):
+        try:
+            from django.conf import settings
+            import sys
+            import django
+            
+            # 데이터베이스 크기 (대략적)
+            db_size = {
+                'users': user_models.User.objects.count(),
+                'projects': project_models.Project.objects.count(),
+                'feedbacks': feedback_models.Feedback.objects.count(),
+                'planning': planning_models.VideoPlanningProject.objects.count()
+            }
+            
+            # 스토리지 사용량 (미디어 파일)
+            media_count = feedback_models.FeedbackFiles.objects.count()
+            
+            # 시스템 정보
+            system_info = {
+                'django_version': django.__version__,
+                'python_version': sys.version.split()[0],
+                'debug_mode': settings.DEBUG,
+                'allowed_hosts': settings.ALLOWED_HOSTS,
+                'time_zone': settings.TIME_ZONE,
+                'database': {
+                    'engine': settings.DATABASES['default']['ENGINE'].split('.')[-1],
+                    'tables': db_size,
+                    'total_records': sum(db_size.values())
+                },
+                'media': {
+                    'total_files': media_count
+                }
+            }
+            
+            return JsonResponse({
+                'status': 'success',
+                'data': system_info
+            })
+            
+        except Exception as e:
+            logger.error(f"Admin system info error: {str(e)}")
+            return JsonResponse({
+                'error': '시스템 정보를 불러오는 중 오류가 발생했습니다.'
             }, status=500)

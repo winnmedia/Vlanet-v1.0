@@ -83,8 +83,7 @@ export default function ProjectView() {
         if (err.response && err.response.status === 404) {
           console.error('Project not found')
           window.alert('프로젝트를 찾을 수 없습니다.')
-          // 404 에러 처리
-          handleNotFound(err)
+          navigate('/CmsHome')
         } else if (err.response && err.response.data) {
           window.alert(err.response.data.message)
           navigate('/CmsHome')
@@ -93,7 +92,7 @@ export default function ProjectView() {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [project_id, navigate, handleNotFound])
+  }, [project_id, navigate])
   
   // 프로젝트 단계 업데이트 핸들러
   const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
@@ -135,8 +134,30 @@ export default function ProjectView() {
     
     // 프로젝트 로드
     console.log('Fetching project with ID:', project_id)
-    refetch()
-  }, [project_id, navigate, refetch])
+    setIsLoading(true)
+    GetProject(project_id)
+      .then((res) => {
+        if (res.data && res.data.result) {
+          set_current_project(res.data.result)
+          console.log('Project loaded:', res.data.result)
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching project:', err)
+        if (err.response && err.response.status === 404) {
+          console.error('Project not found')
+          window.alert('프로젝트를 찾을 수 없습니다.')
+          // 404 에러 처리
+          handleNotFound(err)
+        } else if (err.response && err.response.data) {
+          window.alert(err.response.data.message)
+          navigate('/CmsHome')
+        }
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [project_id, navigate, handleNotFound])
 
   const changeDate = (type) => {
     //이전 날짜

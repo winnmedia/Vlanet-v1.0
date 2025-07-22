@@ -75,14 +75,6 @@ export default function App() {
           projectListLength: project_list?.length || 0,
           projectIds: project_list.map(p => p.id).slice(0, 10)
         })
-        
-        // 페이지 이동 시마다 프로젝트 목록 갱신 (필요한 경우)
-        if (pathname.includes('/Feedback/') || pathname.includes('/ProjectView/')) {
-          console.log('[App] Refreshing project list for detail page')
-          refetchProject(dispatch, navigate).catch(err => {
-            console.error('[App] Background refresh failed:', err)
-          })
-        }
       }
     } else {
       console.log('[App] Skipping project list load - not logged in or on auth page')

@@ -1,0 +1,46 @@
+name: Vercel Deploy - Absolute Path Fix
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Debug Path Structure
+        run: |
+          echo "=== GitHub Actions Working Directory ==="
+          echo "PWD: $(pwd)"
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          echo ""
+          echo "=== Repository Structure ==="
+          ls -la
+          echo ""
+          echo "=== Checking vridge_front ==="
+          if [ -d "vridge_front" ]; then
+            echo "✅ vridge_front exists"
+            ls -la vridge_front/
+          else
+            echo "❌ vridge_front NOT FOUND"
+          fi
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+      
+      - name: Deploy with Absolute Path
+        run: |
+          # GitHub Actions의 정확한 작업 디렉토리 사용
+          vercel --prod --yes --cwd="${GITHUB_WORKSPACE}/vridge_front" --token="${{ secrets.VERCEL_TOKEN }}"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

@@ -1,0 +1,28 @@
+name: Vercel Deploy - Final Solution
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25.1.1
+        id: vercel-deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: vridge_front
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Deployment Result
+        run: |
+          echo "Deployment URL: ${{ steps.vercel-deploy.outputs.preview-url }}"

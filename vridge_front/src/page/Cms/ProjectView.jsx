@@ -11,7 +11,7 @@ import CalendarEnhanced from 'components/CalendarEnhanced'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 
 import React, { useState, useRef, useEffect, useMemo } from 'react'
-import { useRouter, useParams } from '../../util/nextNavigation'
+import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
@@ -27,11 +27,12 @@ import { GetProject, UpdateDate } from 'api/project'
 import InviteInput from 'tasks/Project/InviteInput'
 
 export default function ProjectView() {
-  const { navigate } = useRouter()
+  const router = useRouter()
+  const navigate = router.push
   const { handleNotFound } = useNavigationFlow()
   const { project_list, user, profileImage } = useSelector((s) => s.ProjectStore)
   const [current_project, set_current_project] = useState(null)
-  const { project_id } = useParams()
+  const project_id = router.query.id
 
   const DateList = ['월', '주', '일']
   const [DateType, SetDateType] = useState('월')

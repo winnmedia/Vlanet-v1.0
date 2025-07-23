@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, forwardRef } from 'react'
 
 import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import { ko } from 'date-fns/esm/locale'
+
+import { ko } from 'date-fns/locale'
 
 export default function ProcessDate({ process, set_process }) {
   const DateChange = (index, key, value) => {

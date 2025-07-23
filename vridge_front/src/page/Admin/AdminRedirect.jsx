@@ -1,34 +1,37 @@
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../../util/nextNavigation'
 import { useSelector } from 'react-redux'
 import { Spin, Card, Button, Typography, Space } from 'antd'
 import { LoadingOutlined, SettingOutlined, DashboardOutlined } from '@ant-design/icons'
-import 'css/Admin/AdminRedirect.scss'
 
 const { Title, Text, Paragraph } = Typography
 
 export default function AdminRedirect() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const { user } = useSelector((s) => s.ProjectStore)
-  const backendAdminUrl = process.env.REACT_APP_API_URL 
-    ? `${process.env.REACT_APP_API_URL.replace('/api', '')}/admin/`
+  const backendAdminUrl = process.env.NEXT_PUBLIC_API_URL 
+    ? `${process.env.NEXT_PUBLIC_API_URL.replace('/api', '')}/admin/`
     : 'https://videoplanet.up.railway.app/admin/'
 
   useEffect(() => {
     // 3초 후 자동 리다이렉트
     const timer = setTimeout(() => {
-      window.location.href = backendAdminUrl
+      if (typeof window !== 'undefined') {
+        window.location.href = backendAdminUrl
+      }
     }, 3000)
 
     return () => clearTimeout(timer)
   }, [backendAdminUrl])
 
   const handleImmediateRedirect = () => {
-    window.location.href = backendAdminUrl
+    if (typeof window !== 'undefined') {
+      window.location.href = backendAdminUrl
+    }
   }
 
   const handleGoToDashboard = () => {
-    navigate('/AdminDashboard')
+    navigate('/admindashboard')
   }
 
   return (

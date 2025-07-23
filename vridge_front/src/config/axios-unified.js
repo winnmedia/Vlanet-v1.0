@@ -5,10 +5,10 @@ import { addMobileHeaders, safeStorage } from 'utils/mobile-utils';
 let API_BASE_URL;
 
 // 프로덕션 도메인 체크
-const isProduction = window.location.hostname === 'vlanet.net' || 
-                     window.location.hostname === 'www.vlanet.net' ||
-                     window.location.hostname.includes('vercel.app') ||
-                     window.location.hostname.includes('railway.app');
+const isProduction = typeof window !== 'undefined' && window.location.hostname === 'vlanet.net' || 
+                     typeof window !== 'undefined' && window.location.hostname === 'www.vlanet.net' ||
+                     typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') ||
+                     typeof window !== 'undefined' && window.location.hostname.includes('railway.app');
 
 if (isProduction) {
   // 프로덕션 환경에서는 API 서브도메인 사용
@@ -21,7 +21,7 @@ if (isProduction) {
 
 // 쿠키 가져오기 헬퍼 함수
 const getCookie = (name) => {
-  const value = `; ${document.cookie}`;
+  const value = `; ${(typeof window !== 'undefined' && document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
     return parts.pop().split(';').shift();
@@ -39,7 +39,7 @@ const getCleanToken = () => {
   
   // 하위 호환성을 위해 localStorage도 확인
   try {
-    token = localStorage.getItem('VGID');
+    token = typeof window !== 'undefined' && localStorage.getItem('VGID');
   } catch (e) {
     // localStorage 접근 실패 시 safeStorage 사용
     token = safeStorage.getItem('VGID');
@@ -103,13 +103,15 @@ const responseErrorInterceptor = async (error) => {
     
     // 401 에러 처리
     if (error.response.status === 401) {
-      const isAuthPath = window.location.pathname === '/Login' || 
-                        window.location.pathname === '/Signup';
+      const isAuthPath = typeof window !== 'undefined' && window.location.pathname === '/Login' || 
+                        typeof window !== 'undefined' && window.location.pathname === '/Signup';
       
       if (!isAuthPath) {
         // 로그인 페이지로 리다이렉트
         setTimeout(() => {
-          window.location.href = '/Login';
+          if (typeof window !== 'undefined') {
+        window.location.href = '/Login';
+      }
         }, 100);
       }
     }

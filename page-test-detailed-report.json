@@ -1,0 +1,894 @@
+{
+  "timestamp": "2025-07-22T08:34:01.574Z",
+  "summary": {
+    "ok": 18,
+    "partial": 0,
+    "serverError": 1,
+    "notFound": 0,
+    "other": 1
+  },
+  "categories": {
+    "기본": [
+      {
+        "path": "/",
+        "name": "홈페이지",
+        "category": "기본",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 71,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 71,
+          "htmlSize": 8788,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "인증": [
+      {
+        "path": "/login",
+        "name": "로그인",
+        "category": "인증",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 454,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 454,
+          "htmlSize": 3884,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/signup",
+        "name": "회원가입",
+        "category": "인증",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 339,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 339,
+          "htmlSize": 7917,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/resetpw",
+        "name": "비밀번호 재설정",
+        "category": "인증",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 310,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 310,
+          "htmlSize": 3779,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "사용자": [
+      {
+        "path": "/mypage",
+        "name": "마이페이지",
+        "category": "사용자",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 399,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 399,
+          "htmlSize": 3899,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "프로젝트": [
+      {
+        "path": "/project/create",
+        "name": "프로젝트 생성",
+        "category": "프로젝트",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 1155,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 1155,
+          "htmlSize": 16750,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/project/1",
+        "name": "프로젝트 상세",
+        "category": "프로젝트",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 1996,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 1996,
+          "htmlSize": 5474,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/project/1/edit",
+        "name": "프로젝트 수정",
+        "category": "프로젝트",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 357,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 357,
+          "htmlSize": 4628,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "CMS": [
+      {
+        "path": "/videoplanning",
+        "name": "영상 기획",
+        "category": "CMS",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 363,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 363,
+          "htmlSize": 14275,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/calendar",
+        "name": "캘린더",
+        "category": "CMS",
+        "status": 500,
+        "pageStatus": "SERVER_ERROR",
+        "loadTime": 1023,
+        "issues": [
+          "서버 에러"
+        ],
+        "checks": {
+          "status": 500,
+          "loadTime": 1023,
+          "htmlSize": 11075,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": true,
+          "has500": true,
+          "has404": false,
+          "hasImages": false,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/cmshome",
+        "name": "CMS 홈",
+        "category": "CMS",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 617,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 617,
+          "htmlSize": 4266,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "피드백": [
+      {
+        "path": "/feedback/1",
+        "name": "피드백",
+        "category": "피드백",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 1013,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 1013,
+          "htmlSize": 4977,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/feedbackall",
+        "name": "전체 피드백",
+        "category": "피드백",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 264,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 264,
+          "htmlSize": 4473,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "관리자": [
+      {
+        "path": "/admin",
+        "name": "관리자 리다이렉트",
+        "category": "관리자",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 1170,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 1170,
+          "htmlSize": 9379,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": false,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/admindashboard",
+        "name": "관리자 대시보드",
+        "category": "관리자",
+        "status": "ERROR",
+        "pageStatus": "ERROR",
+        "error": "timeout of 5000ms exceeded",
+        "issues": [
+          "접속 실패: timeout of 5000ms exceeded"
+        ]
+      },
+      {
+        "path": "/emailmonitor",
+        "name": "이메일 모니터",
+        "category": "관리자",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 321,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 321,
+          "htmlSize": 2822,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": false,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "기타": [
+      {
+        "path": "/emailcheck",
+        "name": "이메일 확인",
+        "category": "기타",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 495,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 495,
+          "htmlSize": 3691,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/invitation/test-token",
+        "name": "초대 수락",
+        "category": "기타",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 346,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 346,
+          "htmlSize": 3506,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": false,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ],
+    "정책": [
+      {
+        "path": "/privacy",
+        "name": "개인정보처리방침",
+        "category": "정책",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 2944,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 2944,
+          "htmlSize": 5899,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      },
+      {
+        "path": "/terms",
+        "name": "이용약관",
+        "category": "정책",
+        "status": 200,
+        "pageStatus": "OK",
+        "loadTime": 316,
+        "issues": [],
+        "checks": {
+          "status": 200,
+          "loadTime": 316,
+          "htmlSize": 7545,
+          "hasTitle": false,
+          "hasReactRoot": true,
+          "hasError": false,
+          "has500": false,
+          "has404": false,
+          "hasImages": true,
+          "hasObjectObject": false,
+          "hasContent": true
+        }
+      }
+    ]
+  },
+  "details": [
+    {
+      "path": "/",
+      "name": "홈페이지",
+      "category": "기본",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 71,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 71,
+        "htmlSize": 8788,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/login",
+      "name": "로그인",
+      "category": "인증",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 454,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 454,
+        "htmlSize": 3884,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/signup",
+      "name": "회원가입",
+      "category": "인증",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 339,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 339,
+        "htmlSize": 7917,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/resetpw",
+      "name": "비밀번호 재설정",
+      "category": "인증",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 310,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 310,
+        "htmlSize": 3779,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/mypage",
+      "name": "마이페이지",
+      "category": "사용자",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 399,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 399,
+        "htmlSize": 3899,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/project/create",
+      "name": "프로젝트 생성",
+      "category": "프로젝트",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 1155,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 1155,
+        "htmlSize": 16750,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/project/1",
+      "name": "프로젝트 상세",
+      "category": "프로젝트",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 1996,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 1996,
+        "htmlSize": 5474,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/project/1/edit",
+      "name": "프로젝트 수정",
+      "category": "프로젝트",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 357,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 357,
+        "htmlSize": 4628,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/videoplanning",
+      "name": "영상 기획",
+      "category": "CMS",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 363,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 363,
+        "htmlSize": 14275,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/calendar",
+      "name": "캘린더",
+      "category": "CMS",
+      "status": 500,
+      "pageStatus": "SERVER_ERROR",
+      "loadTime": 1023,
+      "issues": [
+        "서버 에러"
+      ],
+      "checks": {
+        "status": 500,
+        "loadTime": 1023,
+        "htmlSize": 11075,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": true,
+        "has500": true,
+        "has404": false,
+        "hasImages": false,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/cmshome",
+      "name": "CMS 홈",
+      "category": "CMS",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 617,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 617,
+        "htmlSize": 4266,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/feedback/1",
+      "name": "피드백",
+      "category": "피드백",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 1013,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 1013,
+        "htmlSize": 4977,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/feedbackall",
+      "name": "전체 피드백",
+      "category": "피드백",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 264,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 264,
+        "htmlSize": 4473,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/admin",
+      "name": "관리자 리다이렉트",
+      "category": "관리자",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 1170,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 1170,
+        "htmlSize": 9379,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": false,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/admindashboard",
+      "name": "관리자 대시보드",
+      "category": "관리자",
+      "status": "ERROR",
+      "pageStatus": "ERROR",
+      "error": "timeout of 5000ms exceeded",
+      "issues": [
+        "접속 실패: timeout of 5000ms exceeded"
+      ]
+    },
+    {
+      "path": "/emailmonitor",
+      "name": "이메일 모니터",
+      "category": "관리자",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 321,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 321,
+        "htmlSize": 2822,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": false,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/emailcheck",
+      "name": "이메일 확인",
+      "category": "기타",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 495,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 495,
+        "htmlSize": 3691,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/privacy",
+      "name": "개인정보처리방침",
+      "category": "정책",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 2944,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 2944,
+        "htmlSize": 5899,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/terms",
+      "name": "이용약관",
+      "category": "정책",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 316,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 316,
+        "htmlSize": 7545,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": true,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    },
+    {
+      "path": "/invitation/test-token",
+      "name": "초대 수락",
+      "category": "기타",
+      "status": 200,
+      "pageStatus": "OK",
+      "loadTime": 346,
+      "issues": [],
+      "checks": {
+        "status": 200,
+        "loadTime": 346,
+        "htmlSize": 3506,
+        "hasTitle": false,
+        "hasReactRoot": true,
+        "hasError": false,
+        "has500": false,
+        "has404": false,
+        "hasImages": false,
+        "hasObjectObject": false,
+        "hasContent": true
+      }
+    }
+  ]
+}

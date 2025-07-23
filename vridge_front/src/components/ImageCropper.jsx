@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react'
 import Cropper from 'react-easy-crop'
-import './ImageCropper.scss'
 
 const createImage = (url) =>
   new Promise((resolve, reject) => {

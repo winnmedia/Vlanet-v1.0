@@ -1,0 +1,549 @@
+// Video Planning Page - Improved UX/UI
+
+@import '../../styles/variables';
+@import '../../styles/design-system';
+
+.video-planning-improved {
+  min-height: 100vh;
+  background: $bg-secondary;
+  
+  .planning-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: $spacing-8;
+    
+    // 페이지 헤더
+    .page-header {
+      text-align: center;
+      margin-bottom: $spacing-12;
+      
+      .page-title {
+        font-size: $font-size-3xl;
+        font-weight: $font-weight-bold;
+        color: $text-primary;
+        margin-bottom: $spacing-3;
+        
+        .highlight {
+          background: $primary-gradient;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+      }
+      
+      .page-subtitle {
+        font-size: $font-size-lg;
+        color: $text-secondary;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    }
+    
+    // AI 입력 섹션
+    .ai-input-section {
+      @include card;
+      margin-bottom: $spacing-8;
+      position: relative;
+      overflow: visible;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: $primary-gradient;
+        border-radius: $card-border-radius;
+        opacity: 0;
+        z-index: -1;
+        transition: opacity $duration-normal;
+      }
+      
+      &:focus-within::before {
+        opacity: 0.1;
+      }
+      
+      .input-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $spacing-5;
+        
+        .input-title {
+          display: flex;
+          align-items: center;
+          gap: $spacing-3;
+          font-size: $font-size-lg;
+          font-weight: $font-weight-semibold;
+          color: $text-primary;
+          
+          .ai-icon {
+            width: 32px;
+            height: 32px;
+            padding: $spacing-2;
+            background: $primary-gradient;
+            border-radius: $radius-md;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            svg {
+              width: 20px;
+              height: 20px;
+              color: white;
+            }
+          }
+        }
+        
+        .input-actions {
+          display: flex;
+          gap: $spacing-2;
+          
+          .template-btn {
+            @include button-variant($gray-100, $gray-200);
+            padding: $spacing-2 $spacing-4;
+            font-size: $font-size-sm;
+            color: $text-secondary;
+            
+            &:hover {
+              color: $text-primary;
+            }
+          }
+        }
+      }
+      
+      .input-body {
+        .prompt-input {
+          width: 100%;
+          min-height: 150px;
+          padding: $spacing-4;
+          font-size: $font-size-md;
+          line-height: $line-height-relaxed;
+          border: 2px solid $border-color;
+          border-radius: $radius-lg;
+          resize: vertical;
+          transition: all $duration-fast;
+          
+          &:focus {
+            outline: none;
+            border-color: $primary-blue;
+            box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+          }
+          
+          &::placeholder {
+            color: $text-muted;
+          }
+        }
+        
+        .input-hints {
+          display: flex;
+          flex-wrap: wrap;
+          gap: $spacing-2;
+          margin-top: $spacing-3;
+          
+          .hint-chip {
+            padding: $spacing-1 $spacing-3;
+            font-size: $font-size-sm;
+            color: $text-secondary;
+            background: $gray-100;
+            border: 1px solid $border-color;
+            border-radius: $radius-pill;
+            cursor: pointer;
+            transition: all $duration-fast;
+            
+            &:hover {
+              background: $primary-blue;
+              color: white;
+              border-color: $primary-blue;
+              transform: translateY(-2px);
+            }
+          }
+        }
+      }
+      
+      .input-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: $spacing-5;
+        
+        .char-count {
+          font-size: $font-size-sm;
+          color: $text-muted;
+        }
+        
+        .generate-btn {
+          @include button-variant($primary-blue);
+          padding: $spacing-3 $spacing-6;
+          font-size: $font-size-base;
+          font-weight: $font-weight-semibold;
+          display: flex;
+          align-items: center;
+          gap: $spacing-2;
+          
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+          
+          &.loading {
+            position: relative;
+            color: transparent;
+            
+            &::after {
+              content: '';
+              position: absolute;
+              width: 20px;
+              height: 20px;
+              top: 50%;
+              left: 50%;
+              margin-left: -10px;
+              margin-top: -10px;
+              border: 2px solid white;
+              border-radius: 50%;
+              border-top-color: transparent;
+              animation: spinner-rotate 1s linear infinite;
+            }
+          }
+        }
+      }
+    }
+    
+    // 결과 섹션
+    .results-section {
+      .results-tabs {
+        display: flex;
+        gap: $spacing-1;
+        padding: $spacing-1;
+        background: $gray-100;
+        border-radius: $radius-lg;
+        margin-bottom: $spacing-6;
+        
+        .tab-btn {
+          flex: 1;
+          padding: $spacing-3 $spacing-4;
+          font-size: $font-size-base;
+          font-weight: $font-weight-medium;
+          color: $text-secondary;
+          background: transparent;
+          border: none;
+          border-radius: $radius-md;
+          cursor: pointer;
+          transition: all $duration-fast;
+          position: relative;
+          
+          &:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.5);
+          }
+          
+          &.active {
+            background: white;
+            color: $text-primary;
+            box-shadow: $shadow-sm;
+            
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -1px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 40px;
+              height: 3px;
+              background: $primary-gradient;
+              border-radius: $radius-sm;
+            }
+          }
+          
+          .tab-badge {
+            margin-left: $spacing-2;
+            padding: 2px 8px;
+            font-size: $font-size-xs;
+            background: $primary-blue;
+            color: white;
+            border-radius: $radius-pill;
+          }
+        }
+      }
+      
+      // 기획안 결과
+      .planning-result {
+        @include card;
+        
+        .result-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: $spacing-6;
+          padding-bottom: $spacing-4;
+          border-bottom: 2px solid $border-color-light;
+          
+          .result-title {
+            font-size: $font-size-xl;
+            font-weight: $font-weight-semibold;
+            color: $text-primary;
+          }
+          
+          .result-actions {
+            display: flex;
+            gap: $spacing-2;
+            
+            .action-btn {
+              @include button-variant($gray-100, $gray-200);
+              padding: $spacing-2 $spacing-4;
+              font-size: $font-size-sm;
+              display: flex;
+              align-items: center;
+              gap: $spacing-2;
+              color: $text-secondary;
+              
+              svg {
+                width: 16px;
+                height: 16px;
+              }
+              
+              &:hover {
+                color: $text-primary;
+              }
+              
+              &.primary {
+                @include button-variant($primary-blue);
+                color: white;
+              }
+            }
+          }
+        }
+        
+        .result-content {
+          .content-section {
+            margin-bottom: $spacing-8;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+            
+            h3 {
+              font-size: $font-size-lg;
+              font-weight: $font-weight-semibold;
+              color: $text-primary;
+              margin-bottom: $spacing-4;
+              display: flex;
+              align-items: center;
+              gap: $spacing-2;
+              
+              &::before {
+                content: '';
+                width: 4px;
+                height: 20px;
+                background: $primary-gradient;
+                border-radius: $radius-sm;
+              }
+            }
+            
+            p, ul, ol {
+              font-size: $font-size-base;
+              line-height: $line-height-relaxed;
+              color: $text-secondary;
+              margin-bottom: $spacing-4;
+            }
+            
+            ul, ol {
+              padding-left: $spacing-6;
+              
+              li {
+                margin-bottom: $spacing-2;
+              }
+            }
+          }
+        }
+      }
+      
+      // 스토리보드 결과
+      .storyboard-result {
+        .storyboard-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: $spacing-6;
+          
+          .scene-card {
+            @include card;
+            cursor: pointer;
+            transition: all $duration-normal;
+            
+            &:hover {
+              transform: translateY(-4px);
+              box-shadow: $shadow-lg;
+              
+              .scene-image {
+                img {
+                  transform: scale(1.05);
+                }
+              }
+            }
+            
+            .scene-image {
+              position: relative;
+              width: 100%;
+              height: 200px;
+              background: $gray-100;
+              border-radius: $radius-md;
+              overflow: hidden;
+              margin-bottom: $spacing-4;
+              
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform $duration-normal;
+              }
+              
+              .scene-number {
+                position: absolute;
+                top: $spacing-3;
+                left: $spacing-3;
+                padding: $spacing-1 $spacing-3;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                font-size: $font-size-sm;
+                font-weight: $font-weight-semibold;
+                border-radius: $radius-pill;
+              }
+              
+              .scene-duration {
+                position: absolute;
+                bottom: $spacing-3;
+                right: $spacing-3;
+                padding: $spacing-1 $spacing-3;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                font-size: $font-size-sm;
+                border-radius: $radius-pill;
+              }
+            }
+            
+            .scene-content {
+              h4 {
+                font-size: $font-size-base;
+                font-weight: $font-weight-semibold;
+                color: $text-primary;
+                margin-bottom: $spacing-2;
+              }
+              
+              p {
+                font-size: $font-size-sm;
+                color: $text-secondary;
+                line-height: $line-height-relaxed;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // 플로팅 도구 모음
+    .floating-tools {
+      position: fixed;
+      bottom: $spacing-8;
+      right: $spacing-8;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-3;
+      z-index: 100;
+      
+      .tool-btn {
+        @include button-variant($primary-blue);
+        width: 56px;
+        height: 56px;
+        padding: 0;
+        border-radius: $radius-full;
+        box-shadow: $shadow-lg;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all $duration-fast;
+        
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+        
+        &:hover {
+          transform: scale(1.1);
+          box-shadow: $shadow-xl;
+        }
+        
+        &.secondary {
+          @include button-variant(white, $gray-100);
+          color: $text-primary;
+          box-shadow: $shadow-md;
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: $breakpoint-lg) {
+  .video-planning-improved {
+    .planning-container {
+      padding: $spacing-5;
+      
+      .page-header {
+        margin-bottom: $spacing-8;
+        
+        .page-title {
+          font-size: $font-size-2xl;
+        }
+        
+        .page-subtitle {
+          font-size: $font-size-base;
+        }
+      }
+      
+      .results-section {
+        .storyboard-result {
+          .storyboard-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: $spacing-4;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .video-planning-improved {
+    .planning-container {
+      .results-section {
+        .results-tabs {
+          flex-direction: column;
+          
+          .tab-btn {
+            width: 100%;
+          }
+        }
+        
+        .storyboard-result {
+          .storyboard-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      }
+      
+      .floating-tools {
+        bottom: $spacing-5;
+        right: $spacing-5;
+        
+        .tool-btn {
+          width: 48px;
+          height: 48px;
+          
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
+}

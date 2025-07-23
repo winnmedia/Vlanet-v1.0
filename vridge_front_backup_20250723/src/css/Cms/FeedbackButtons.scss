@@ -1,0 +1,228 @@
+// 피드백 페이지 버튼 스타일
+// Version: 3.0 - 2024-01-11 인라인 스타일 제거
+.feedback-button-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 20px;
+}
+
+// 기본 버튼 스타일
+.feedback-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 파란색 버튼 (기본)
+.feedback-button-primary {
+  @extend .feedback-button;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+  
+  &:hover {
+    box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+  }
+}
+
+// 빨간색 버튼 (삭제)
+.feedback-button-danger {
+  @extend .feedback-button;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+  
+  &:hover {
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+  }
+}
+
+// 파일 업로드 레이블 스타일
+.feedback-upload-label {
+  @extend .feedback-button-primary;
+  display: inline-flex;
+}
+
+// 업로드 영역 스타일
+.feedback-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 60px 40px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f4ff 100%);
+  border-radius: 20px;
+  border: 2px dashed #c8d4ff;
+  position: relative;
+  overflow: hidden;
+  
+  .upload-content {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// 비디오 플레이어 컨테이너
+.feedback-video-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+// 숨겨진 파일 입력
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// 업로드 가이드 버튼
+.upload-guide-button {
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(108, 117, 125, 0.4);
+  }
+}
+
+// 대형 업로드 버튼
+.feedback-upload-button-large {
+  display: inline-block;
+  padding: 24px 48px;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(22, 49, 248, 0.3);
+  letter-spacing: 0.5px;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(22, 49, 248, 0.45);
+  }
+  
+  svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+  }
+}
+
+// 공유 버튼 스타일
+.feedback-button-secondary {
+  @extend .feedback-button;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25);
+  
+  &:hover {
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+  }
+}
+
+// 업로드 가이드 버튼 스타일
+.feedback-button-outline {
+  @extend .feedback-button;
+  background: white;
+  color: #1631F8;
+  border: 2px solid #1631F8;
+  
+  &:hover {
+    background: #1631F8;
+    color: white;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+  }
+}
+
+// 프로젝트 정보 토글 버튼
+.feedback-button-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #e9ecef;
+    color: #212529;
+  }
+  
+  &:active {
+    background: #dee2e6;
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .feedback-button-container {
+    justify-content: center;
+  }
+  
+  .feedback-button {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+  
+  .feedback-upload-area {
+    padding: 40px 20px;
+  }
+  
+  .feedback-upload-button-large {
+    padding: 20px 40px;
+    font-size: 16px;
+  }
+}

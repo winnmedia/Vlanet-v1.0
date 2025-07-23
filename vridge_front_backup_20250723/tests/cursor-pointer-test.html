@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor Pointer 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .test-elements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        /* VideoPlanet 스타일 복제 */
+        button {
+            cursor: pointer;
+        }
+        
+        button,
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        input[type="file"],
+        [role="button"],
+        .button,
+        .btn,
+        .submit,
+        .clickable,
+        .cursor-pointer,
+        [onclick],
+        [data-click],
+        a,
+        label[for],
+        select,
+        .tab_menu li,
+        .menu_box li,
+        .collapse-btn,
+        .video_upload_label,
+        .change_btn_wrap,
+        .share,
+        .close-button,
+        .reconnectButton {
+            cursor: pointer !important;
+        }
+        
+        /* 버튼 스타일 */
+        .test-button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .test-button-danger {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .test-div {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+        }
+        
+        .test-link {
+            color: #1631F8;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .test-link:hover {
+            background: #f0f7ff;
+        }
+        
+        .result-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+            position: relative;
+        }
+        
+        .cursor-pointer-check {
+            background: #28a745;
+        }
+        
+        .cursor-default-check {
+            background: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 VideoPlanet Cursor Pointer 테스트</h1>
+        <p>모든 클릭 가능한 요소에 마우스를 올려보세요. 손가락 모양(👆)으로 바뀌어야 합니다.</p>
+        
+        <div class="test-section">
+            <h3>📱 기본 버튼 요소들</h3>
+            <div class="test-elements">
+                <button class="test-button">기본 버튼</button>
+                <button class="test-button-danger">위험 버튼</button>
+                <input type="button" value="Input Button" />
+                <input type="submit" value="Submit Button" />
+                <input type="file" />
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 링크 및 클릭 요소들</h3>
+            <div class="test-elements">
+                <a href="#" class="test-link">테스트 링크</a>
+                <div class="clickable test-div">클릭 가능한 div</div>
+                <span onclick="alert('클릭!')" class="test-div">onclick 속성</span>
+                <div data-click="true" class="test-div">data-click 속성</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎛️ 폼 요소들</h3>
+            <div class="test-elements">
+                <select>
+                    <option>옵션 1</option>
+                    <option>옵션 2</option>
+                </select>
+                <label for="test-input">라벨 (체크박스용)</label>
+                <input type="checkbox" id="test-input" />
+                <label for="test-radio">라벨 (라디오용)</label>
+                <input type="radio" id="test-radio" name="test" />
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎨 VideoPlanet 전용 클래스들</h3>
+            <div class="test-elements">
+                <div class="submit test-div">submit 클래스</div>
+                <div class="btn test-div">btn 클래스</div>
+                <div class="button test-div">button 클래스</div>
+                <div class="cursor-pointer test-div">cursor-pointer 클래스</div>
+                <div class="collapse-btn test-div">collapse-btn 클래스</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 텍스트 입력 (text cursor여야 함)</h3>
+            <div class="test-elements">
+                <input type="text" placeholder="텍스트 입력" />
+                <input type="password" placeholder="비밀번호" />
+                <textarea placeholder="텍스트 영역"></textarea>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚫 비활성화된 요소들 (not-allowed cursor)</h3>
+            <div class="test-elements">
+                <button disabled>비활성화된 버튼</button>
+                <input type="text" disabled placeholder="비활성화된 입력" />
+                <select disabled>
+                    <option>비활성화된 선택</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 커서 상태 확인 스크립트
+        document.addEventListener('DOMContentLoaded', function() {
+            const testElements = document.querySelectorAll('.test-elements > *');
+            
+            testElements.forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    const computedStyle = window.getComputedStyle(this);
+                    const cursor = computedStyle.cursor;
+                    
+                    // 기존 표시기 제거
+                    const existingIndicator = this.querySelector('.result-indicator');
+                    if (existingIndicator) {
+                        existingIndicator.remove();
+                    }
+                    
+                    // 새 표시기 추가
+                    const indicator = document.createElement('span');
+                    indicator.className = 'result-indicator';
+                    
+                    if (cursor === 'pointer') {
+                        indicator.classList.add('cursor-pointer-check');
+                        indicator.title = '✅ cursor: pointer';
+                    } else if (cursor === 'text') {
+                        indicator.classList.add('cursor-pointer-check');
+                        indicator.title = '✅ cursor: text (올바름)';
+                    } else if (cursor === 'not-allowed') {
+                        indicator.classList.add('cursor-pointer-check');
+                        indicator.title = '✅ cursor: not-allowed (올바름)';
+                    } else {
+                        indicator.classList.add('cursor-default-check');
+                        indicator.title = `❌ cursor: ${cursor}`;
+                    }
+                    
+                    this.appendChild(indicator);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 // 프로덕션 환경에서 console.log를 비활성화하는 유틸리티
 
 const isDevelopment = process.env.NODE_ENV === 'development' || 
-                      window.location.hostname === 'localhost' ||
-                      window.location.hostname === '127.0.0.1';
+                      typeof window !== 'undefined' && window.location.hostname === 'localhost' ||
+                      typeof window !== 'undefined' && window.location.hostname === '127.0.0.1';
 
 export const logger = {
   log: (...args) => {

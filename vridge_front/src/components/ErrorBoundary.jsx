@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component {
           </p>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => (typeof window !== 'undefined' && window.location.reload()}
               style={{
                 padding: '10px 20px',
                 background: '#1631F8',
@@ -45,7 +45,8 @@ class ErrorBoundary extends React.Component {
               새로고침
             </button>
             <button
-              onClick={() => window.location.href = '/'}
+              onClick={() => if (typeof window !== 'undefined') {
+        window.location.href = '/'}
               style={{
                 padding: '10px 20px',
                 background: '#6c757d',
@@ -60,6 +61,7 @@ class ErrorBoundary extends React.Component {
           </div>
         </div>
       );
+      }
     }
 
     return this.props.children;

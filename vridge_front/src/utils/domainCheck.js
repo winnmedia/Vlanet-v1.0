@@ -1,6 +1,6 @@
 // 도메인 체크 및 리다이렉트 방지
 export function checkDomain() {
-  const currentDomain = window.location.hostname;
+  const currentDomain = typeof window !== 'undefined' && window.location.hostname;
   const preferredDomain = 'vlanet.net'; // 선호하는 도메인
   
   console.log('[DomainCheck] Current domain:', currentDomain);
@@ -22,22 +22,22 @@ export function checkDomain() {
 // 중복 탭/도메인 감지
 export function detectDuplicateTabs() {
   const tabId = Date.now() + '_' + Math.random();
-  const tabs = JSON.parse(localStorage.getItem('activeTabs') || '[]');
+  const tabs = JSON.parse(typeof window !== 'undefined' && localStorage.getItem('activeTabs') || '[]');
   
   // 현재 탭 추가
   tabs.push({
     id: tabId,
-    domain: window.location.hostname,
+    domain: typeof window !== 'undefined' && window.location.hostname,
     timestamp: Date.now()
   });
   
   // 5초 이상 된 탭 제거
   const activeTabs = tabs.filter(tab => Date.now() - tab.timestamp < 5000);
-  localStorage.setItem('activeTabs', JSON.stringify(activeTabs));
+  typeof window !== 'undefined' && localStorage.setItem('activeTabs', JSON.stringify(activeTabs));
   
   // 다른 도메인에서 활성 탭이 있는지 확인
   const otherDomainTabs = activeTabs.filter(tab => 
-    tab.domain !== window.location.hostname && 
+    tab.domain !== typeof window !== 'undefined' && window.location.hostname && 
     tab.id !== tabId
   );
   

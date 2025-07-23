@@ -1,0 +1,58 @@
+# 가비아 g클라우드 최적화 React Dockerfile
+
+# Build stage
+FROM node:18-alpine as builder
+
+# Build arguments
+ARG BUILD_ENV=production
+ARG REACT_APP_BACKEND_URI
+ARG REACT_APP_SOCKET_URI
+
+# Set environment variables
+ENV NODE_ENV=production \
+    GENERATE_SOURCEMAP=false \
+    REACT_APP_BACKEND_URI=${REACT_APP_BACKEND_URI} \
+    REACT_APP_SOCKET_URI=${REACT_APP_SOCKET_URI}
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies with clean install
+RUN npm ci --only=production --silent && npm cache clean --force
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Production stage
+FROM nginx:alpine as production
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Copy built assets from build stage
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.gabia.conf /etc/nginx/conf.d/default.conf
+
+# Copy custom nginx.conf for optimization
+COPY nginx.main.conf /etc/nginx/nginx.conf
+
+# Create nginx user and set permissions
+RUN chown -R nginx:nginx /usr/share/nginx/html \
+    && chmod -R 755 /usr/share/nginx/html
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost/ || exit 1
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

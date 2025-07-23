@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { WriteMemo, DeleteMemo, UpdateDate } from 'api/project'
 import { WriteUserMemo, DeleteUserMemo } from 'api/auth'
-import { useParams } from 'react-router-dom'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useRouter, useParams } from '../../util/nextNavigation'
 import moment from 'moment'
 import 'moment/locale/ko'
 import cx from 'classnames'
 import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import 'tasks/Calendar/ModalStyle.scss'
+
 
 import styled from 'styled-components'
 
@@ -54,7 +52,7 @@ export function CalendarDate({
       {type === '월' && (
         <div key={index} className="td">
           <div className="week">
-            {week.map((day, i) => (
+            {(week || []).map((day, i) => (
               <Dates
                 current_project={current_project}
                 key={i}
@@ -73,7 +71,7 @@ export function CalendarDate({
       {type === '주' && (
         <div className="td">
           <div className="week">
-            {week.map((day, index) => (
+            {(week || []).map((day, index) => (
               <Dates
                 current_project={current_project}
                 key={index}
@@ -146,7 +144,8 @@ export function Dates({
     }
   }
 
-  const navigate = useNavigate()
+  const router = useRouter()
+  const navigate = router.navigate
 
   const [OnInputModal, setInputModal] = useState(false)
 
@@ -193,7 +192,7 @@ export function Dates({
                           window.alert(err.response.data.message)
                         }
                       })
-                  } else if (window.location.pathname.includes('/Calendar')) {
+                  } else if (typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
                     WriteUserMemo({
                       date: `${year}-${month + 1}-${date}`,
                       memo: memo,
@@ -234,7 +233,7 @@ export function Dates({
           <div className="memo_txt">{DetailModal.memo}</div>
 
           <div className="btn_wrap">
-            {(is_admin || window.location.pathname.includes('/Calendar')) && (
+            {(is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) && (
               <button
                 className="submit"
                 onClick={() => {
@@ -249,7 +248,7 @@ export function Dates({
                           window.alert(err.response.data.message)
                         }
                       })
-                  } else if (window.location.pathname.includes('/Calendar')) {
+                  } else if (typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
                     DeleteUserMemo(DetailModal.id)
                       .then((res) => {
                         refetch()
@@ -401,12 +400,12 @@ export function Dates({
       <p
         style={{
           cursor:
-            is_admin || window.location.pathname.includes('/Calendar')
+            is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')
               ? 'pointer'
               : 'auto',
         }}
         onClick={() => {
-          if (is_admin || window.location.pathname.includes('/Calendar')) {
+          if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
             setInputModal(true)
           }
         }}

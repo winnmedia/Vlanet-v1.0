@@ -1,4 +1,4 @@
-import 'css/Cms/CmsCommon.scss'
+
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -10,7 +10,7 @@ import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
 import { formatProcessDatesForBackend } from 'utils/dateUtils'
 
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRouter, useParams } from '../../util/nextNavigation'
 import { produce } from 'immer'
 import { useSelector, useDispatch } from 'react-redux'
 import { project_initial, project_dateRange, refetchProject, checkSession } from 'util/util'
@@ -22,7 +22,7 @@ import {
 } from 'api/project'
 
 export default function ProjectEdit() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const dispatch = useDispatch()
   const { project_id } = useParams()
   const { project_list } = useSelector((s) => s.ProjectStore)

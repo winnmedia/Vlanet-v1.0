@@ -50,7 +50,7 @@ export function DeleteFeedback(id) {
 // 피드백 file uploads
 export function FeedbackFile(data, projectId, onUploadProgress) {
   // 직접 axios 사용하여 업로드
-  const token = localStorage.getItem('VGID')?.replace(/"/g, '');
+  const token = typeof window !== 'undefined' && localStorage.getItem('VGID')?.replace(/"/g, '');
   
   console.log('File upload token:', token);
   console.log('Axios base URL:', axios.defaults.baseURL);

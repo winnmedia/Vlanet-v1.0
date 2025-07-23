@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'config/axios'
-import './ExportModal.scss'
+import axios from '../config/axios'
 
 export default function ExportModal({ isOpen, onClose, planningData }) {
   const [isExporting, setIsExporting] = useState(false)

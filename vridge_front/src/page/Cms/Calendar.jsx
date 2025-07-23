@@ -1,7 +1,7 @@
-import 'css/Cms/CmsCommon.scss'
-import 'css/Cms/CalendarToolbar.scss'
-import 'css/Cms/CalendarLayout.scss'
-import 'css/Cms/CalendarResponsive.scss'
+
+
+
+
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -13,7 +13,7 @@ import CalendarEnhanced from 'components/CalendarEnhanced'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useRouter, useLocation } from 'util/nextNavigation'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { Select, Space } from 'antd'
@@ -24,12 +24,13 @@ import { refetchProject, checkSession } from 'util/util'
 import { UpdateDate, WriteMemo } from 'api/project'
 
 export default function Calendar() {
-  const navigate = useNavigate()
+  const router = useRouter()
+  const { navigate } = router
   const location = useLocation()
   const dispatch = useDispatch()
   const { project_list, this_month_project, next_month_project, user_memos, user } =
     useSelector((s) => s.ProjectStore)
-  const [project_filter, set_project_filter] = useState(project_list)
+  const [project_filter, set_project_filter] = useState([])
   const { Option } = Select
   const [message, setMessage] = useState(null)
   const [activeControllers, setActiveControllers] = useState([])
@@ -50,9 +51,9 @@ export default function Calendar() {
 
   const ProjectChange = (e) => {
     if (e === '전체') {
-      set_project_filter(current_project_list)
+      set_project_filter(current_project_list || [])
     } else {
-      const result = current_project_list.filter((project) => project.name === e)
+      const result = (current_project_list || []).filter((project) => project.name === e)
       set_project_filter(result)
     }
   }
@@ -118,16 +119,24 @@ export default function Calendar() {
   }
 
   const current_project_list = useMemo(() => {
+    if (!project_list) return []
     return project_list.filter((i) => {
       return new Date(i.end_date).getMonth() == month || new Date(i.first_date).getMonth() == month
     })
   }, [month, project_list])
 
+  // project_list가 변경될 때 project_filter 업데이트
+  useEffect(() => {
+    if (project_list) {
+      set_project_filter(project_list)
+    }
+  }, [project_list])
+
   // 인증 체크만 수행 (프로젝트 목록은 App.js에서 이미 로드됨)
   useEffect(() => {
     const session = checkSession()
     if (!session) {
-      navigate('/Login', { replace: true })
+      navigate('/login', { replace: true })
       return
     }
     
@@ -456,7 +465,7 @@ export default function Calendar() {
                     onChange={ProjectChange}
                   >
                     <Option value="전체">전체</Option>
-                    {project_list.map((i, index) => (
+                    {(project_list || []).map((i, index) => (
                       <Option key={index} value={i.name}>
                         {i.name}
                       </Option>
@@ -485,7 +494,7 @@ export default function Calendar() {
                     week_index={week_index}
                     type={DateType}
                     day={day}
-                    project_list={project_filter.filter(project => {
+                    project_list={(project_filter || []).filter(project => {
                       // Apply search filter
                       const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase())
                       // Apply phase filter
@@ -515,7 +524,7 @@ export default function Calendar() {
             )}
             <div className="list_mark">
               <ul>
-                {current_project_list.map((project, index) => (
+                {(current_project_list || []).map((project, index) => (
                   <li key={index}>
                     <span style={{ background: project.color }}></span>
                     {project.name}
@@ -525,17 +534,17 @@ export default function Calendar() {
             </div>
             {viewMode === 'month' ? (
               <ProjectPhaseBoard 
-                projects={[...project_list]} 
+                projects={[...(project_list || [])]} 
                 onPhaseUpdate={handlePhaseUpdate}
                 projectCounts={{
-                  total: project_list.length,
-                  thisMonth: this_month_project.length,
-                  nextMonth: next_month_project.length
+                  total: (project_list || []).length,
+                  thisMonth: (this_month_project || []).length,
+                  nextMonth: (next_month_project || []).length
                 }}
                 showTitle={true}
               />
             ) : (
-              <ProjectList project_list={[...project_list]} />
+              <ProjectList project_list={[...(project_list || [])]} />
             )}
           </div>
         </main>

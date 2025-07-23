@@ -1,0 +1,173 @@
+// 레이아웃 스타일 표준화
+// 픽셀 퍼펙트 레이아웃 일관성
+
+// 레이아웃 표준 간격
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 40px;
+$spacing-section: 60px;
+
+// 컨테이너 너비
+$container-sm: 640px;
+$container-md: 768px;
+$container-lg: 1024px;
+$container-xl: 1280px;
+
+// 헤더/사이드바 크기
+$header-height: 60px;
+$sidebar-width: 260px;
+
+// 카드 스타일
+@mixin card-base {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// 섹션 간격
+@mixin section-spacing {
+  margin-bottom: $spacing-section;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// 컨테이너
+@mixin container {
+  width: 100%;
+  max-width: $container-xl;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  
+  @media (min-width: 768px) {
+    padding: 0 $spacing-lg;
+  }
+  
+  @media (min-width: 1024px) {
+    padding: 0 $spacing-xl;
+  }
+}
+
+// Flexbox 유틸리티
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+// 전역 레이아웃 클래스
+.container {
+  @include container;
+}
+
+.card {
+  @include card-base;
+}
+
+.section {
+  @include section-spacing;
+}
+
+// 간격 유틸리티 클래스
+@each $size, $value in (
+  'xs': $spacing-xs,
+  'sm': $spacing-sm,
+  'md': $spacing-md,
+  'lg': $spacing-lg,
+  'xl': $spacing-xl,
+  'xxl': $spacing-xxl
+) {
+  .m-#{$size} { margin: $value !important; }
+  .mt-#{$size} { margin-top: $value !important; }
+  .mr-#{$size} { margin-right: $value !important; }
+  .mb-#{$size} { margin-bottom: $value !important; }
+  .ml-#{$size} { margin-left: $value !important; }
+  .mx-#{$size} { margin-left: $value !important; margin-right: $value !important; }
+  .my-#{$size} { margin-top: $value !important; margin-bottom: $value !important; }
+  
+  .p-#{$size} { padding: $value !important; }
+  .pt-#{$size} { padding-top: $value !important; }
+  .pr-#{$size} { padding-right: $value !important; }
+  .pb-#{$size} { padding-bottom: $value !important; }
+  .pl-#{$size} { padding-left: $value !important; }
+  .px-#{$size} { padding-left: $value !important; padding-right: $value !important; }
+  .py-#{$size} { padding-top: $value !important; padding-bottom: $value !important; }
+}
+
+// 그리드 시스템
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -($spacing-md / 2);
+  
+  > * {
+    padding: 0 ($spacing-md / 2);
+  }
+}
+
+.col {
+  flex: 1;
+  min-width: 0;
+}
+
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    flex: 0 0 percentage($i / 12);
+    max-width: percentage($i / 12);
+  }
+}
+
+// 정렬 유틸리티
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+
+.flex { display: flex !important; }
+.flex-center { @include flex-center; }
+.flex-between { @include flex-between; }
+.flex-start { @include flex-start; }
+
+.align-start { align-items: flex-start !important; }
+.align-center { align-items: center !important; }
+.align-end { align-items: flex-end !important; }
+
+.justify-start { justify-content: flex-start !important; }
+.justify-center { justify-content: center !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-between { justify-content: space-between !important; }
+
+// 표시/숨김
+.hidden { display: none !important; }
+.visible { visibility: visible !important; }
+.invisible { visibility: hidden !important; }
+
+// 반응형 유틸리티
+@media (max-width: 767px) {
+  .hidden-mobile { display: none !important; }
+}
+
+@media (min-width: 768px) {
+  .hidden-desktop { display: none !important; }
+}

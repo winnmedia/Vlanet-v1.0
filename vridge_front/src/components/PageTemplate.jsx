@@ -1,9 +1,10 @@
-import './PageTemplate.scss'
-import cx from 'classnames'
-import { useNavigate } from 'react-router-dom'
 
-import logo from 'images/Common/w_logo02.svg'
-import profile from 'images/Cms/profie_sample.png'
+import cx from 'classnames'
+import { useRouter } from '../util/nextNavigation'
+
+// Next.js에서는 public 폴더의 이미지를 직접 경로로 참조
+const logo = '/images/Common/w_logo02.svg'
+const profile = '/images/Cms/profie_sample.png'
 import Header from './Header'
 import LoginIntro from './LoginIntro'
 import { useEffect } from 'react'
@@ -22,7 +23,7 @@ export default function PageTemplate({
   props,
   noLogin,
 }) {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const { nickname, user, profileImage } = useSelector((s) => s.ProjectStore)
 
   // 인증 체크를 각 페이지에서 처리하도록 변경
@@ -39,11 +40,11 @@ export default function PageTemplate({
   //   rightItems = [
   //     {
   //       type: 'img',
-  //       src: profile,
+  //       src: profile.src || profile,
   //       className: 'profile',
   //     },
   //   ]
-  if (leftItems === undefined)
+  if (leftItems === undefined) {
     leftItems = [
       {
         type: 'img',
@@ -51,6 +52,7 @@ export default function PageTemplate({
         className: 'logo',
       },
     ]
+  }
   if (nickname) {
     rightItems = [
       {

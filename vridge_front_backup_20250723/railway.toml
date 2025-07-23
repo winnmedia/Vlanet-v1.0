@@ -1,0 +1,17 @@
+[build]
+builder = "nixpacks"
+
+[build.nixpacksPlan]
+providers = ["node"]
+
+[build.nixpacksPlan.phases.build]
+cmds = ["npm ci", "npm run build"]
+
+[deploy]
+restartPolicyType = "ALWAYS"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+
+[env]
+NODE_ENV = "production"
+GENERATE_SOURCEMAP = "false"

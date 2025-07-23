@@ -1,5 +1,5 @@
-import 'css/Cms/CmsCommon.scss'
-import 'css/Cms/ProjectCreate.scss'
+
+
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -9,7 +9,7 @@ import useFile from 'hooks/Usefile'
 import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../../util/nextNavigation'
 import { CreateProjectAPI } from 'api/project'
 import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,7 +20,7 @@ import { checkDomain, detectDuplicateTabs } from 'utils/domainCheck'
 export default function ProjectCreate() {
   const dispatch = useDispatch()
 
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const initial = project_initial()
   const [isCreating, setIsCreating] = useState(false)
   const createRequestRef = useRef(null) // API 요청 추적
@@ -207,12 +207,15 @@ export default function ProjectCreate() {
       <div className="cms_wrap project-create">
         <SideBar />
         <main className="project edit">
-          <div className="title">프로젝트 등록</div>
           <div className="content">
+            <div className="page-header">
+              <h1>프로젝트 등록</h1>
+              <p>새로운 프로젝트의 기본 정보와 일정을 설정해주세요</p>
+            </div>
             <div className="group grid">
               <ProjectInput inputs={inputs} onChange={onChange} />
             </div>
-            <div className="group mt50">
+            <div className="group schedule-section mt50">
               <div className="part day">
                 <div className="s_title">프로젝트 일정</div>
                 <ProcessDateEnhanced process={process} set_process={set_process} />
@@ -261,6 +264,14 @@ export default function ProjectCreate() {
             </div>
           </div>
         </main>
+        
+        {/* 로딩 오버레이 */}
+        {isCreating && (
+          <div className="creating-overlay">
+            <div className="spinner"></div>
+            <div className="loading-text">프로젝트를 생성하고 있습니다...</div>
+          </div>
+        )}
       </div>
     </PageTemplate>
   )

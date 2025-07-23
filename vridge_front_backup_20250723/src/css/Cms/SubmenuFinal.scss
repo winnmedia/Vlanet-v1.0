@@ -1,0 +1,52 @@
+// Submenu Final - 최종 서브메뉴 스타일 (최고 우선순위)
+
+// 모든 서브메뉴에 강제 적용
+.Submenu,
+.Submenu.active,
+div.Submenu,
+div.Submenu.active,
+aside + .Submenu,
+aside + .Submenu.active {
+  background-color: rgba(248, 248, 248, 0.8) !important;
+  background-image: none !important;
+  background: rgba(248, 248, 248, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+// React 앱의 모든 서브메뉴
+#root {
+  .Submenu {
+    background-color: rgba(248, 248, 248, 0.8) !important;
+    background-image: none !important;
+    background: rgba(248, 248, 248, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+}
+
+// 서브메뉴 클릭 가능 영역 확보
+.Submenu {
+  // 클릭 이벤트 전파 방지
+  * {
+    pointer-events: auto;
+  }
+  
+  // 버튼 클릭 영역 확보
+  .etc {
+    ul li {
+      pointer-events: auto;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  
+  // 네비게이션 항목 클릭 영역
+  nav ul li {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+}

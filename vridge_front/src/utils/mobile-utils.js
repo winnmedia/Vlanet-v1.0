@@ -30,7 +30,7 @@ export const enhanceMobileExperience = () => {
       console.log('[Mobile Debug]', {
         error: event.error?.message || 'Unknown error',
         userAgent: navigator.userAgent,
-        url: window.location.href
+        url: typeof window !== 'undefined' && window.location.href
       });
     });
     
@@ -44,12 +44,14 @@ export const enhanceMobileExperience = () => {
     // 4. iOS Safari 쿠키 처리 개선
     if (isIOSSafari()) {
       // iOS Safari에서 third-party 쿠키 문제 해결을 위한 설정
-      document.cookie = 'SameSite=None; Secure';
+      if (typeof window !== 'undefined') {
+        document.cookie = 'SameSite=None; Secure';
+      }
       console.log('[Mobile] iOS Safari detected - cookie settings applied');
     }
     
     // 5. 모바일 뷰포트 설정 확인
-    let viewport = document.querySelector('meta[name=viewport]');
+    let viewport = typeof window !== 'undefined' ? document.querySelector('meta[name=viewport]') : null;
     if (!viewport) {
       viewport = document.createElement('meta');
       viewport.name = 'viewport';
@@ -84,28 +86,30 @@ export const addMobileHeaders = (config) => {
 export const safeStorage = {
   setItem: (key, value) => {
     try {
-      localStorage.setItem(key, value);
+      typeof window !== 'undefined' && localStorage.setItem(key, value);
     } catch (e) {
       // localStorage 사용 불가 시 sessionStorage 시도
       try {
         sessionStorage.setItem(key, value);
       } catch (e2) {
         // 쿠키로 대체
-        document.cookie = `${key}=${value}; path=/; max-age=86400; SameSite=Lax`;
+        if (typeof window !== 'undefined') {
+          document.cookie = `${key}=${value}; path=/; max-age=86400; SameSite=Lax`;
+        }
       }
     }
   },
   
   getItem: (key) => {
     try {
-      return localStorage.getItem(key);
+      return typeof window !== 'undefined' && localStorage.getItem(key);
     } catch (e) {
       // localStorage 사용 불가 시 sessionStorage 확인
       try {
         return sessionStorage.getItem(key);
       } catch (e2) {
         // 쿠키에서 찾기
-        const match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
+        const match = typeof window !== 'undefined' ? document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)')) : null;
         return match ? match[2] : null;
       }
     }
@@ -113,13 +117,15 @@ export const safeStorage = {
   
   removeItem: (key) => {
     try {
-      localStorage.removeItem(key);
+      typeof window !== 'undefined' && localStorage.removeItem(key);
     } catch (e) {
       try {
         sessionStorage.removeItem(key);
       } catch (e2) {
         // 쿠키 삭제
-        document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        if (typeof window !== 'undefined') {
+          document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        }
       }
     }
   }

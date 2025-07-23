@@ -1,0 +1,1174 @@
+// VideoPlanet 영상 기획 페이지 향상된 디자인
+@import '../../styles/variables';
+
+.video-planning-page {
+  background: $bg-secondary;
+  min-height: 100vh;
+  
+  // 페이지 헤더
+  .planning-header {
+    background: white;
+    border-bottom: 1px solid $border-light;
+    padding: 24px 0;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .header-left {
+        h1 {
+          font-size: 28px;
+          font-weight: 700;
+          color: $text-primary;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          
+          &::before {
+            content: '🎬';
+            font-size: 32px;
+          }
+        }
+        
+        p {
+          margin: 8px 0 0;
+          font-size: 16px;
+          color: $text-secondary;
+        }
+      }
+      
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        
+        button {
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          
+          &.primary {
+            background: $primary-gradient;
+            color: white;
+            border: none;
+            
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+            }
+          }
+          
+          &.secondary {
+            background: white;
+            color: $text-primary;
+            border: 1px solid $border-main;
+            
+            &:hover {
+              border-color: $primary-color;
+              color: $primary-color;
+              background: rgba(22, 49, 248, 0.05);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 최근 기획 섹션
+  .recent-plannings-section {
+    max-width: 1400px;
+    margin: 0 auto 32px;
+    padding: 0 24px;
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: $text-primary;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      svg {
+        width: 24px;
+        height: 24px;
+        stroke: $primary-color;
+      }
+    }
+    
+    .recent-plannings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      
+      .planning-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid $border-light;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 4px;
+          height: 100%;
+          background: $primary-gradient;
+          transform: scaleY(0);
+          transition: transform 0.3s ease;
+        }
+        
+        &:hover {
+          border-color: $primary-color;
+          box-shadow: 0 4px 16px rgba(22, 49, 248, 0.1);
+          transform: translateY(-2px);
+          
+          &::before {
+            transform: scaleY(1);
+          }
+        }
+        
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: start;
+          margin-bottom: 12px;
+          
+          h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: $text-primary;
+            margin: 0;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          
+          .card-actions {
+            display: flex;
+            gap: 8px;
+            
+            button {
+              width: 32px;
+              height: 32px;
+              border: none;
+              background: $gray-100;
+              border-radius: 6px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s ease;
+              
+              svg {
+                width: 16px;
+                height: 16px;
+                stroke: $text-secondary;
+              }
+              
+              &:hover {
+                background: $gray-200;
+                
+                &.delete {
+                  background: rgba(220, 53, 69, 0.1);
+                  
+                  svg {
+                    stroke: $danger-color;
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        .card-meta {
+          display: flex;
+          gap: 16px;
+          font-size: 13px;
+          color: $text-secondary;
+          
+          span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            
+            svg {
+              width: 14px;
+              height: 14px;
+            }
+          }
+        }
+        
+        .card-options {
+          margin-top: 12px;
+          padding-top: 12px;
+          border-top: 1px solid $border-light;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          
+          .option-tag {
+            padding: 4px 10px;
+            background: rgba(22, 49, 248, 0.08);
+            color: $primary-color;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 20px;
+        color: $text-secondary;
+        
+        svg {
+          width: 80px;
+          height: 80px;
+          margin-bottom: 16px;
+          stroke: $gray-400;
+        }
+        
+        p {
+          font-size: 16px;
+          margin: 0;
+        }
+      }
+    }
+  }
+  
+  // 메인 콘텐츠 영역
+  .planning-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+    
+    // 단계 표시기
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 48px;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 24px;
+        position: relative;
+        
+        &:not(:last-child)::after {
+          content: '';
+          position: absolute;
+          right: -20px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 40px;
+          height: 2px;
+          background: $gray-300;
+        }
+        
+        &.active {
+          .step-number {
+            background: $primary-gradient;
+            color: white;
+            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+          }
+          
+          .step-label {
+            color: $primary-color;
+            font-weight: 600;
+          }
+          
+          &::after {
+            background: $primary-color;
+          }
+        }
+        
+        &.completed {
+          .step-number {
+            background: $success-color;
+            color: white;
+            
+            &::after {
+              content: '✓';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              font-size: 16px;
+            }
+          }
+          
+          .step-label {
+            color: $success-color;
+          }
+          
+          &::after {
+            background: $success-color;
+          }
+        }
+        
+        .step-number {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: $gray-200;
+          color: $text-secondary;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          position: relative;
+        }
+        
+        .step-label {
+          font-size: 14px;
+          color: $text-secondary;
+          transition: all 0.3s ease;
+        }
+      }
+    }
+    
+    // 단계별 콘텐츠
+    .step-content-wrapper {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      
+      .step-header {
+        margin-bottom: 32px;
+        
+        h2 {
+          font-size: 24px;
+          font-weight: 700;
+          color: $text-primary;
+          margin: 0 0 8px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          
+          .step-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(22, 49, 248, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+          }
+        }
+        
+        .step-description {
+          font-size: 16px;
+          color: $text-secondary;
+          line-height: 1.6;
+        }
+      }
+      
+      // 기획안 입력 영역
+      .planning-input-section {
+        .planning-options {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 20px;
+          margin-bottom: 32px;
+          
+          .option-group {
+            label {
+              display: block;
+              font-size: 14px;
+              font-weight: 600;
+              color: $text-primary;
+              margin-bottom: 8px;
+              
+              &.required::after {
+                content: '*';
+                color: $danger-color;
+                margin-left: 4px;
+              }
+            }
+            
+            select,
+            input {
+              width: 100%;
+              padding: 12px 16px;
+              border: 2px solid $border-light;
+              border-radius: 10px;
+              font-size: 15px;
+              transition: all 0.3s ease;
+              background: white;
+              
+              &:hover {
+                border-color: $border-main;
+              }
+              
+              &:focus {
+                outline: none;
+                border-color: $primary-color;
+                box-shadow: 0 0 0 4px rgba(22, 49, 248, 0.1);
+              }
+            }
+            
+            select {
+              appearance: none;
+              background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+              background-repeat: no-repeat;
+              background-position: right 16px center;
+              background-size: 20px;
+              padding-right: 48px;
+              cursor: pointer;
+              
+              optgroup {
+                font-weight: 600;
+                color: $text-primary;
+              }
+              
+              option {
+                padding: 8px;
+              }
+            }
+            
+            .custom-input-wrapper {
+              display: flex;
+              gap: 8px;
+              align-items: center;
+              
+              input {
+                flex: 1;
+              }
+              
+              .cancel-custom-btn {
+                padding: 8px 16px;
+                background: $gray-100;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                color: $text-secondary;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+                
+                &:hover {
+                  background: $gray-200;
+                  color: $text-primary;
+                }
+              }
+            }
+          }
+        }
+        
+        .planning-textarea {
+          margin-bottom: 24px;
+          
+          label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: $text-primary;
+            margin-bottom: 12px;
+          }
+          
+          textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            border: 2px solid $border-light;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              border-color: $border-main;
+            }
+            
+            &:focus {
+              outline: none;
+              border-color: $primary-color;
+              box-shadow: 0 0 0 4px rgba(22, 49, 248, 0.1);
+            }
+            
+            &::placeholder {
+              color: $text-hint;
+            }
+          }
+          
+          .char-count {
+            text-align: right;
+            font-size: 13px;
+            color: $text-secondary;
+            margin-top: 4px;
+            
+            &.warning {
+              color: $warning-color;
+            }
+            
+            &.error {
+              color: $danger-color;
+            }
+          }
+        }
+        
+        // 고급 옵션
+        .advanced-options {
+          background: $gray-50;
+          border-radius: 12px;
+          padding: 24px;
+          margin-top: 24px;
+          
+          .options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            
+            h3 {
+              font-size: 16px;
+              font-weight: 600;
+              color: $text-primary;
+              margin: 0;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              
+              svg {
+                width: 20px;
+                height: 20px;
+                stroke: $primary-color;
+              }
+            }
+            
+            .toggle-icon {
+              width: 24px;
+              height: 24px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: white;
+              border-radius: 6px;
+              transition: transform 0.3s ease;
+              
+              &.expanded {
+                transform: rotate(180deg);
+              }
+            }
+          }
+          
+          .options-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+          }
+        }
+      }
+      
+      // 결과 표시 영역
+      .results-section {
+        .results-grid {
+          display: grid;
+          gap: 24px;
+          
+          .result-card {
+            background: $gray-50;
+            border-radius: 12px;
+            padding: 24px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            
+            &:hover {
+              border-color: $primary-color;
+              background: white;
+              box-shadow: 0 4px 16px rgba(22, 49, 248, 0.1);
+            }
+            
+            &.selected {
+              border-color: $primary-color;
+              background: white;
+              box-shadow: 0 4px 16px rgba(22, 49, 248, 0.15);
+              
+              .card-header {
+                .card-number {
+                  background: $primary-gradient;
+                  color: white;
+                }
+              }
+            }
+            
+            .card-header {
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 16px;
+              
+              .card-number {
+                width: 32px;
+                height: 32px;
+                background: $gray-300;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                font-size: 14px;
+                transition: all 0.3s ease;
+              }
+              
+              .card-title {
+                flex: 1;
+                font-size: 18px;
+                font-weight: 600;
+                color: $text-primary;
+              }
+              
+              .card-actions {
+                display: flex;
+                gap: 8px;
+                
+                button {
+                  width: 36px;
+                  height: 36px;
+                  border: none;
+                  background: white;
+                  border-radius: 8px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: all 0.2s ease;
+                  
+                  svg {
+                    width: 18px;
+                    height: 18px;
+                    stroke: $text-secondary;
+                  }
+                  
+                  &:hover {
+                    background: $primary-color;
+                    
+                    svg {
+                      stroke: white;
+                    }
+                  }
+                }
+              }
+            }
+            
+            .card-content {
+              font-size: 15px;
+              line-height: 1.7;
+              color: $text-primary;
+              
+              p {
+                margin: 0 0 12px;
+                
+                &:last-child {
+                  margin-bottom: 0;
+                }
+              }
+              
+              ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                
+                li {
+                  position: relative;
+                  padding-left: 24px;
+                  margin-bottom: 8px;
+                  
+                  &::before {
+                    content: '•';
+                    position: absolute;
+                    left: 8px;
+                    color: $primary-color;
+                    font-weight: bold;
+                  }
+                }
+              }
+            }
+            
+            .card-meta {
+              margin-top: 16px;
+              padding-top: 16px;
+              border-top: 1px solid $border-light;
+              display: flex;
+              gap: 16px;
+              font-size: 13px;
+              color: $text-secondary;
+              
+              .meta-item {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                
+                svg {
+                  width: 14px;
+                  height: 14px;
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // 스토리보드 섹션
+      .storyboard-section {
+        .storyboard-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 24px;
+          
+          .storyboard-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid $border-light;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+              transform: translateY(-4px);
+            }
+            
+            .storyboard-image {
+              position: relative;
+              padding-top: 56.25%; // 16:9 비율
+              background: $gray-100;
+              overflow: hidden;
+              
+              img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+              
+              .image-loading {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                
+                .spinner {
+                  width: 40px;
+                  height: 40px;
+                  border: 3px solid $gray-300;
+                  border-top-color: $primary-color;
+                  border-radius: 50%;
+                  animation: spin 0.8s linear infinite;
+                }
+              }
+              
+              .scene-number {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+              }
+            }
+            
+            .storyboard-content {
+              padding: 20px;
+              
+              h4 {
+                font-size: 16px;
+                font-weight: 600;
+                color: $text-primary;
+                margin: 0 0 8px;
+              }
+              
+              p {
+                font-size: 14px;
+                line-height: 1.6;
+                color: $text-secondary;
+                margin: 0;
+              }
+              
+              .storyboard-actions {
+                display: flex;
+                gap: 8px;
+                margin-top: 16px;
+                
+                button {
+                  flex: 1;
+                  padding: 8px 16px;
+                  border-radius: 8px;
+                  font-size: 14px;
+                  font-weight: 500;
+                  cursor: pointer;
+                  transition: all 0.2s ease;
+                  
+                  &.regenerate {
+                    background: white;
+                    color: $primary-color;
+                    border: 1px solid $primary-color;
+                    
+                    &:hover {
+                      background: $primary-color;
+                      color: white;
+                    }
+                  }
+                  
+                  &.download {
+                    background: $gray-100;
+                    color: $text-primary;
+                    border: 1px solid $gray-300;
+                    
+                    &:hover {
+                      background: $gray-200;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // 액션 버튼 영역
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 40px;
+        padding-top: 40px;
+        border-top: 2px solid $border-light;
+        
+        button {
+          padding: 14px 32px;
+          border-radius: 10px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          min-width: 160px;
+          
+          &.primary {
+            background: $primary-gradient;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 16px rgba(22, 49, 248, 0.3);
+            
+            &:hover:not(:disabled) {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+            }
+            
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+          }
+          
+          &.secondary {
+            background: white;
+            color: $text-primary;
+            border: 2px solid $border-main;
+            
+            &:hover {
+              border-color: $primary-color;
+              color: $primary-color;
+              background: rgba(22, 49, 248, 0.05);
+            }
+          }
+          
+          &.ghost {
+            background: transparent;
+            color: $text-secondary;
+            border: none;
+            
+            &:hover {
+              color: $text-primary;
+              background: $gray-100;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 로딩 오버레이
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    
+    .loading-content {
+      text-align: center;
+      
+      .loading-animation {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 24px;
+        position: relative;
+        
+        .spinner {
+          width: 100%;
+          height: 100%;
+          border: 4px solid $gray-200;
+          border-top-color: $primary-color;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+        
+        .progress-ring {
+          position: absolute;
+          top: -10px;
+          left: -10px;
+          width: 100px;
+          height: 100px;
+          
+          circle {
+            fill: none;
+            stroke: $primary-color;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.3s ease;
+          }
+        }
+      }
+      
+      .loading-message {
+        font-size: 18px;
+        font-weight: 500;
+        color: $text-primary;
+        margin-bottom: 8px;
+      }
+      
+      .loading-submessage {
+        font-size: 14px;
+        color: $text-secondary;
+      }
+      
+      .loading-progress {
+        margin-top: 24px;
+        width: 300px;
+        
+        .progress-bar {
+          height: 6px;
+          background: $gray-200;
+          border-radius: 3px;
+          overflow: hidden;
+          
+          .progress-fill {
+            height: 100%;
+            background: $primary-gradient;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+          }
+        }
+        
+        .progress-text {
+          font-size: 13px;
+          color: $text-secondary;
+          margin-top: 8px;
+          text-align: center;
+        }
+      }
+    }
+  }
+  
+  // 메시지 알림
+  .message-toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    padding: 16px 24px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.3s ease;
+    z-index: 1001;
+    
+    &.success {
+      background: white;
+      border-left: 4px solid $success-color;
+      
+      .icon {
+        color: $success-color;
+      }
+    }
+    
+    &.error {
+      background: white;
+      border-left: 4px solid $danger-color;
+      
+      .icon {
+        color: $danger-color;
+      }
+    }
+    
+    .icon {
+      font-size: 20px;
+    }
+    
+    .message {
+      font-size: 15px;
+      color: $text-primary;
+      font-weight: 500;
+    }
+    
+    .close-btn {
+      margin-left: 12px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: $gray-100;
+      }
+      
+      svg {
+        width: 16px;
+        height: 16px;
+        stroke: $text-secondary;
+      }
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: $breakpoint-lg) {
+  .video-planning-page {
+    .planning-header {
+      .header-content {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+        
+        .header-actions {
+          width: 100%;
+          
+          button {
+            flex: 1;
+          }
+        }
+      }
+    }
+    
+    .planning-content {
+      padding: 0 16px 32px;
+      
+      .step-indicator {
+        overflow-x: auto;
+        margin: 0 -16px 32px;
+        padding: 20px 16px;
+        
+        .step {
+          padding: 0 16px;
+          
+          .step-label {
+            display: none;
+          }
+        }
+      }
+      
+      .step-content-wrapper {
+        padding: 24px 20px;
+        
+        .planning-input-section {
+          .planning-options {
+            grid-template-columns: 1fr;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .video-planning-page {
+    .recent-plannings-section {
+      .recent-plannings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .planning-content {
+      .storyboard-section {
+        .storyboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+        
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

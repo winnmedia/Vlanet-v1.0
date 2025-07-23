@@ -1,6 +1,5 @@
 import React from 'react'
 import PageTemplate from 'components/PageTemplate'
-import 'css/Policy.scss'
 
 export default function PrivacyPolicy() {
   return (

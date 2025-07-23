@@ -1,5 +1,5 @@
-import axios from '../config/axios-unified'
-import { updateProjectStore } from 'redux/project'
+import axios from '../config/axios'
+import { updateProjectStore } from '../redux/project'
 import { ProjectList } from 'api/project'
 import { GetUserInfo } from 'api/auth'
 import moment from 'moment'
@@ -30,7 +30,9 @@ export function axiosCredentials(method, url, data, config) {
     console.error('No authentication token found');
     // 로그인 페이지로 리다이렉트 (약간의 지연 추가)
     setTimeout(() => {
-      window.location.href = '/Login';
+      if (typeof window !== 'undefined') {
+        window.location.href = '/Login';
+      }
     }, 100);
     return Promise.reject(new Error('No authentication token'));
   }
@@ -79,6 +81,11 @@ export function axiosFormData(method, url, formData, config) {
 }
 
 export function checkSession() {
+  // SSR 환경에서는 null 반환
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  
   // 쿠키 기반 인증으로 변경
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -119,6 +126,11 @@ export function checkSession() {
 }
 
 export function refetchProject(dispatch, navigate) {
+  // SSR 환경에서는 실행하지 않음
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
   console.log('[refetchProject] Called at:', new Date().toISOString())
   
   if (checkSession()) {
@@ -127,7 +139,7 @@ export function refetchProject(dispatch, navigate) {
     // 먼저 localStorage에서 사용자 정보 확인
     let userInfo = null;
     try {
-      const storedUserInfo = window.localStorage.getItem('userInfo');
+      const storedUserInfo = typeof window !== 'undefined' && window.localStorage.getItem('userInfo');
       if (storedUserInfo) {
         userInfo = JSON.parse(storedUserInfo);
       }
@@ -144,14 +156,7 @@ export function refetchProject(dispatch, navigate) {
     return Promise.all([ProjectList(), getUserInfoPromise])
       .then(([projectRes, userRes]) => {
         console.log('[refetchProject] ProjectList response:', projectRes.data)
-        
-        // 안전한 데이터 처리
-        if (!projectRes || !projectRes.data || !projectRes.data.result) {
-          console.error('[refetchProject] Invalid project list response')
-          return Promise.reject(new Error('Invalid project list response'))
-        }
-        
-        const data = projectRes.data.result || []
+        const data = projectRes.data.result
         const result = data.sort((a, b) => {
           return new Date(b.created) - new Date(a.created)
         })
@@ -174,7 +179,7 @@ export function refetchProject(dispatch, navigate) {
         // userRes에서 프로필 이미지 우선 확인 (UserMe API에서 온 데이터)
         if (userRes && userRes.data && userRes.data.profile_image) {
           if (userRes.data.profile_image.startsWith('/')) {
-            profileImage = `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${userRes.data.profile_image}`
+            profileImage = `${process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'}${userRes.data.profile_image}`
           } else {
             profileImage = userRes.data.profile_image
           }
@@ -182,7 +187,7 @@ export function refetchProject(dispatch, navigate) {
         // projectRes에서도 확인 (폴백)
         else if (projectRes.data.profile_image) {
           if (projectRes.data.profile_image.startsWith('/')) {
-            profileImage = `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${projectRes.data.profile_image}`
+            profileImage = `${process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'}${projectRes.data.profile_image}`
           } else {
             profileImage = projectRes.data.profile_image
           }
@@ -198,7 +203,7 @@ export function refetchProject(dispatch, navigate) {
           
           // localStorage에 저장
           const userInfoToStore = { email: user, nickname: nickname };
-          window.localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
+          typeof window !== 'undefined' && window.localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
         }
         
         const storeData = {
@@ -230,7 +235,7 @@ export function refetchProject(dispatch, navigate) {
           error.response.data &&
           error.response.data.message === 'NEED_ACCESS_TOKEN'
         ) {
-          window.localStorage.removeItem('VGID')
+          typeof window !== 'undefined' && window.localStorage.removeItem('VGID')
           // navigate를 제거하고 PageTemplate에서 처리하도록 함
           // navigate('/Login', { replace: true })
         }

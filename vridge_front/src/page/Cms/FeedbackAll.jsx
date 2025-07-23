@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import 'css/Cms/CmsCommon.scss'
+import { useRouter, useLocation } from '../../util/nextNavigation'
 
 /* 상단 이미지 - 샘플, 기본 */
 /* 상단 이미지 - 샘플, 기본 */
@@ -11,15 +10,15 @@ import moment from 'moment'
 import 'moment/locale/ko'
 
 export default function FeedbackAll() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const [feedback, setFeedback] = useState([])
   const [reactions, setReactions] = useState({})
-  const state = useLocation().state
+  const state = useLocation().state || {}
   const { user } = state
 
   useEffect(() => {
     let groupedObjects = {}
-    const feedback_data = state.feedback
+    const feedback_data = state.feedback || []
     feedback_data.forEach((obj) => {
       const createdDate = moment(obj.created).format('YYYY.MM.DD.dd')
       if (groupedObjects.hasOwnProperty(createdDate)) {

@@ -1,6 +1,6 @@
-import 'css/Cms/CmsCommon.scss'
-import 'css/Cms/CalendarToolbar.scss'
-import 'css/Cms/CalendarLayout.scss'
+
+
+
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -11,10 +11,11 @@ import CalendarEnhanced from 'components/CalendarEnhanced'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 
 import React, { useState, useRef, useEffect, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRouter, useParams } from '../../util/nextNavigation'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
+import { SafeRoute } from 'components/SafeRoute'
 
 import { Select, Space } from 'antd'
 import moment from 'moment'
@@ -26,7 +27,7 @@ import { GetProject, UpdateDate } from 'api/project'
 import InviteInput from 'tasks/Project/InviteInput'
 
 export default function ProjectView() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const { handleNotFound } = useNavigationFlow()
   const { project_list, user, profileImage } = useSelector((s) => s.ProjectStore)
   const [current_project, set_current_project] = useState(null)
@@ -82,16 +83,16 @@ export default function ProjectView() {
         if (err.response && err.response.status === 404) {
           console.error('Project not found')
           window.alert('프로젝트를 찾을 수 없습니다.')
-          navigate('/CmsHome')
+          navigate('/cmshome')
         } else if (err.response && err.response.data) {
           window.alert(err.response.data.message)
-          navigate('/CmsHome')
+          navigate('/cmshome')
         }
       })
       .finally(() => {
         setIsLoading(false)
       })
-  }, [project_id]) // navigate를 의존성에서 제거
+  }, [project_id, navigate])
   
   // 프로젝트 단계 업데이트 핸들러
   const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
@@ -120,7 +121,7 @@ export default function ProjectView() {
   useEffect(() => {
     const session = checkSession()
     if (!session) {
-      navigate('/Login', { replace: true })
+      navigate('/login', { replace: true })
       return
     }
     
@@ -150,13 +151,13 @@ export default function ProjectView() {
           handleNotFound(err)
         } else if (err.response && err.response.data) {
           window.alert(err.response.data.message)
-          navigate('/CmsHome')
+          navigate('/cmshome')
         }
       })
       .finally(() => {
         setIsLoading(false)
       })
-  }, [project_id]) // navigate와 handleNotFound를 의존성에서 제거
+  }, [project_id, navigate, handleNotFound])
 
   const changeDate = (type) => {
     //이전 날짜
@@ -244,10 +245,15 @@ export default function ProjectView() {
   }
 
   return (
-    <PageTemplate>
-      <div className="cms_wrap">
-        <SideBar />
-        <main className="project">
+    <SafeRoute
+      checkResource={GetProject}
+      resourceId={project_id}
+      resourceType="project"
+    >
+      <PageTemplate>
+        <div className="cms_wrap">
+          <SideBar />
+          <main className="project">
             {current_project ? (
             <>
               <Info 
@@ -450,6 +456,7 @@ export default function ProjectView() {
         </main>
       </div>
     </PageTemplate>
+    </SafeRoute>
   )
 }
 
@@ -603,7 +610,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                   <div key={index} onClick={() => download(item.files)}>
                     {filename(item.file_name)}
                     <i>
-                      <img src={down} />
+                      <img src={down.src || down} />
                     </i>
                   </div>
                 ))}

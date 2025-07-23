@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from 'util/util'
-import 'css/Cms/Cms.scss'
-import 'css/Cms/FeedbackUnified.scss'
-import 'css/Cms/FeedbackButtons.scss'
-import 'css/Cms/OpinionInput.scss'
-import 'css/Cms/AITeacherModal.scss'
-import 'css/Cms/FeedbackLayoutFix.scss'
-import 'css/Cms/FeedbackPlayerFix.scss'
-import 'css/Cms/InputActivationFix.scss'
-import 'css/Cms/FeedbackResponsiveLayout.scss'
-import 'css/Cms/FeedbackButtonLayoutFix.scss'
-import 'css/Cms/FeedbackHarmonyUI.scss'
+
+
+
+
+
+
+
+
+
+
+
 import styles from './FeedbackButtonStyles.module.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
-import 'css/Cms/SubmenuFinal.scss'
+
 import FeedbackInput from 'tasks/Feedback/FeedbackInput'
 import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
@@ -37,7 +37,7 @@ import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from
 import { GetChatMessages, SendChatMessage } from 'api/chat'
 import { InviteProjectMember, GetProjectInvitations, CancelInvitation } from 'api/invitation'
 import { GetFriends, GetRecentInvitations } from 'api/friends'
-import axios from 'config/axios'
+import axios from '../../config/axios'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -45,7 +45,7 @@ import { useNavigationFlow } from 'hooks/useNavigationFlow'
 import { SafeRoute } from 'components/SafeRoute'
 
 export default function Feedback() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const { handleNotFound } = useNavigationFlow()
   const { user, profileImage } = useSelector((s) => s.ProjectStore)
   
@@ -189,7 +189,7 @@ export default function Feedback() {
           console.log('File URL value:', res.data.result.files);
           
           // 파일 존재 여부 테스트
-          const apiUrl = process.env.REACT_APP_API_URL || 'https://api.vlanet.net';
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net';
           const testUrl = res.data.result.files.startsWith('http') 
             ? res.data.result.files 
             : `${apiUrl}${res.data.result.files.startsWith('/') ? '' : '/'}${res.data.result.files}`;
@@ -294,7 +294,7 @@ export default function Feedback() {
   const [connectionAttempts, setConnectionAttempts] = useState(0)
   const maxReconnectAttempts = 5
   const baseReconnectDelay = 1000
-  const webSocketUrl = process.env.REACT_APP_WS_URL ? `${process.env.REACT_APP_WS_URL}/ws/feedback/${project_id}/` : null
+  const webSocketUrl = process.env.NEXT_PUBLIC_WS_URL ? `${process.env.NEXT_PUBLIC_WS_URL}/ws/feedback/${project_id}/` : null
 
   useEffect(() => {
     if (current_project && user) {
@@ -893,7 +893,7 @@ export default function Feedback() {
       SetVideoLoad(true)
       setUploadProgress(0)
       console.log('Uploading file to project:', project_id)
-      console.log('Backend URL:', process.env.REACT_APP_API_URL)
+      console.log('Backend URL:', process.env.NEXT_PUBLIC_API_URL)
       
       const onUploadProgress = (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -1187,13 +1187,13 @@ export default function Feedback() {
                         }
                         
                         // 상대 경로인 경우 백엔드 URL과 결합
-                        const backendUrl = process.env.REACT_APP_API_URL || 'https://api.vlanet.net';
+                        const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net';
                         
                         // 개발 환경에서 localhost와 127.0.0.1 통일
                         let adjustedBackendUrl = backendUrl;
-                        if (window.location.hostname === 'localhost' && backendUrl.includes('127.0.0.1')) {
+                        if (typeof window !== 'undefined' && window.location.hostname === 'localhost' && backendUrl.includes('127.0.0.1')) {
                           adjustedBackendUrl = backendUrl.replace('127.0.0.1', 'localhost');
-                        } else if (window.location.hostname === '127.0.0.1' && backendUrl.includes('localhost')) {
+                        } else if (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1' && backendUrl.includes('localhost')) {
                           adjustedBackendUrl = backendUrl.replace('localhost', '127.0.0.1');
                         }
                         
@@ -1207,7 +1207,7 @@ export default function Feedback() {
                         }
                         
                         console.log('[VideoPlayer] Constructed URL:', fullUrl);
-                        console.log('[VideoPlayer] Current hostname:', window.location.hostname);
+                        console.log('[VideoPlayer] Current hostname:', typeof window !== 'undefined' && window.location.hostname);
                         return fullUrl;
                       })()}
                       initialTime={currentVideoTime}

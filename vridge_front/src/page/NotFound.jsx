@@ -1,10 +1,9 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../util/nextNavigation'
 import { Button, Result } from 'antd'
-import './NotFound.scss'
 
 export default function NotFound() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
 
   return (
     <div className="not-found-container">

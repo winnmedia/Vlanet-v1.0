@@ -1,0 +1,194 @@
+/* 입력 요소 활성화 문제 해결 */
+
+/* 전체 페이지에서 입력 요소 활성화 */
+* {
+  /* pointer-events 상속 방지 */
+  &:not(.modal-overlay):not(.loading-overlay) {
+    pointer-events: initial !important;
+  }
+}
+
+/* 입력 요소 강제 활성화 */
+input,
+textarea,
+select,
+button,
+label[for],
+.btn,
+.button {
+  pointer-events: auto !important;
+  user-select: auto !important;
+  -webkit-user-select: auto !important;
+  cursor: auto !important;
+  
+  &:hover {
+    cursor: pointer !important;
+  }
+  
+  &:focus {
+    outline: 2px solid #1631F8 !important;
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+  }
+}
+
+/* 텍스트 입력 필드 특별 처리 */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background-color: white !important;
+  
+  &:focus {
+    z-index: 100 !important;
+    box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.2) !important;
+  }
+}
+
+/* 피드백 페이지 특별 처리 */
+.Feedback {
+  /* 오버레이 제거 */
+  &::before,
+  &::after {
+    display: none !important;
+  }
+  
+  /* 모든 컨테이너에서 pointer-events 활성화 */
+  .content,
+  .submenu_content,
+  .opinion-input-container,
+  .feedback-input-container,
+  .feedback-manage-container {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 1 !important;
+    
+    * {
+      pointer-events: auto !important;
+    }
+  }
+  
+  /* 탭 컨텐츠 활성화 */
+  .tab-content {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* 버튼 활성화 */
+  button,
+  .btn,
+  [role="button"] {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}
+
+/* OpinionInput 컴포넌트 특별 처리 */
+.opinion-input-container,
+.opinion-input-area {
+  position: relative !important;
+  z-index: 10 !important;
+  
+  textarea,
+  input,
+  select,
+  button {
+    position: relative !important;
+    z-index: 20 !important;
+    pointer-events: auto !important;
+    cursor: text !important;
+    
+    &:hover {
+      cursor: text !important;
+    }
+  }
+  
+  button {
+    cursor: pointer !important;
+    
+    &:hover {
+      cursor: pointer !important;
+    }
+  }
+}
+
+/* 모달과 오버레이는 제외 */
+.modal-overlay,
+.loading-overlay,
+.ai-teacher-modal-overlay {
+  pointer-events: auto !important;
+  
+  .modal-content {
+    pointer-events: auto !important;
+  }
+}
+
+/* 비디오 플레이어는 별도 처리 */
+.video-js {
+  pointer-events: auto !important;
+  
+  .vjs-control-bar {
+    pointer-events: auto !important;
+    z-index: 15 !important;
+  }
+}
+
+/* 드롭다운 메뉴 활성화 */
+.dropdown,
+.select-dropdown,
+.vjs-menu {
+  pointer-events: auto !important;
+  z-index: 1000 !important;
+}
+
+/* 파일 업로드 인풋 */
+input[type="file"] {
+  position: absolute !important;
+  pointer-events: auto !important;
+  opacity: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  z-index: 100 !important;
+}
+
+/* 라벨 클릭 가능하게 */
+label {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+/* 디버깅용 - 개발 중에만 사용 */
+.debug-input-check {
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border: 3px solid red !important;
+  }
+}

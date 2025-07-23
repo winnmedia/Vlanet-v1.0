@@ -1,14 +1,14 @@
-import { useNavigate } from 'react-router-dom'
-import './LoginIntro.scss'
+import { useRouter } from '../util/nextNavigation'
+
 import w_logo from 'images/Common/w_logo02.svg'
 
 export default function LoginIntro() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   return (
     <div className="LoginIntro">
       <div className="intro_wrap">
         <h1 className="logo">
-          <img onClick={() => navigate('/')} src={w_logo} />
+          <img onClick={() => navigate('/')} src={w_logo.src || w_logo} />
         </h1>
         <div className="slogun">
           당신의 창의력에

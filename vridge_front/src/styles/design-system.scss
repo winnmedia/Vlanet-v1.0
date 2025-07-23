@@ -1,0 +1,103 @@
+// VideoPlanet Design System
+// 통합 디자인 시스템 - 일관된 UX/UI를 위한 기준
+// 변수는 _variables.scss에서 자동으로 로드됩니다
+
+// ========================================
+// Mixins (믹스인)
+// ========================================
+
+// Button Mixin
+@mixin button-variant($bg, $bg-hover: darken($bg, 10%)) {
+  background: $bg;
+  color: white;
+  border: none;
+  
+  &:hover:not(:disabled) {
+    background: $bg-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px 0 rgba($bg, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Card Mixin
+@mixin card {
+  background: $card-bg;
+  border-radius: $card-border-radius;
+  box-shadow: $card-shadow;
+  padding: $card-padding;
+  transition: all $duration-normal $easing-standard;
+  
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+// Focus Ring Mixin
+@mixin focus-ring($color: $primary-blue) {
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color, 0.2);
+  }
+}
+
+// Responsive Mixin (보완)
+@mixin responsive($breakpoint) {
+  @if $breakpoint == sm {
+    @media (min-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (min-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (min-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (min-width: $breakpoint-xl) { @content; }
+  }
+}
+
+// ========================================
+// Utility Classes (유틸리티 클래스)
+// ========================================
+
+// Text Utilities
+.text-primary { color: $text-primary !important; }
+.text-secondary { color: $text-secondary !important; }
+.text-muted { color: $text-muted !important; }
+.text-success { color: $color-success !important; }
+.text-danger { color: $color-danger !important; }
+.text-warning { color: $color-warning !important; }
+.text-info { color: $color-info !important; }
+
+// Background Utilities
+.bg-primary { background-color: $primary-blue !important; }
+.bg-secondary { background-color: $bg-secondary !important; }
+.bg-success { background-color: $color-success !important; }
+.bg-danger { background-color: $color-danger !important; }
+.bg-warning { background-color: $color-warning !important; }
+.bg-info { background-color: $color-info !important; }
+
+// Spacing Utilities
+@for $i from 0 through 10 {
+  .m-#{$i} { margin: $spacing-1 * $i !important; }
+  .mt-#{$i} { margin-top: $spacing-1 * $i !important; }
+  .mb-#{$i} { margin-bottom: $spacing-1 * $i !important; }
+  .ml-#{$i} { margin-left: $spacing-1 * $i !important; }
+  .mr-#{$i} { margin-right: $spacing-1 * $i !important; }
+  .mx-#{$i} { margin-left: $spacing-1 * $i !important; margin-right: $spacing-1 * $i !important; }
+  .my-#{$i} { margin-top: $spacing-1 * $i !important; margin-bottom: $spacing-1 * $i !important; }
+  
+  .p-#{$i} { padding: $spacing-1 * $i !important; }
+  .pt-#{$i} { padding-top: $spacing-1 * $i !important; }
+  .pb-#{$i} { padding-bottom: $spacing-1 * $i !important; }
+  .pl-#{$i} { padding-left: $spacing-1 * $i !important; }
+  .pr-#{$i} { padding-right: $spacing-1 * $i !important; }
+  .px-#{$i} { padding-left: $spacing-1 * $i !important; padding-right: $spacing-1 * $i !important; }
+  .py-#{$i} { padding-top: $spacing-1 * $i !important; padding-bottom: $spacing-1 * $i !important; }
+}

@@ -1,0 +1,203 @@
+// 피드백 페이지 버튼 스타일 - CSS Modules로 격리
+.feedbackButtonPrimary,
+label.feedbackButtonPrimary {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 16px !important;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25) !important;
+  min-height: 38px !important;  // 높이 통일
+  line-height: 1 !important;  // label 태그의 line-height 조정
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.feedbackButtonDanger {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 16px !important;  // Primary와 동일하게 수정
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25) !important;
+  min-height: 38px !important;  // 높이 통일
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.feedbackButtonSecondary {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 10px 16px !important;  // Primary와 동일하게 수정
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25) !important;
+  min-height: 38px !important;  // 높이 통일
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.feedbackButtonOutline {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 12px 20px !important;
+  background: white !important;
+  color: #1631F8 !important;
+  border: 2px solid #1631F8 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    background: #1631F8 !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.feedbackButtonToggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 16px !important;
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    background: #e9ecef !important;
+    color: #212529 !important;
+  }
+  
+  &:active {
+    background: #dee2e6 !important;
+  }
+}
+
+// 추가 스타일
+.feedbackButtonPrimaryFull {
+  @extend .feedbackButtonPrimary;
+  width: 100% !important;
+  margin-top: 10px !important;
+}
+
+.feedbackButtonToggleRound {
+  @extend .feedbackButtonToggle;
+  border-radius: 50% !important;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+}
+
+// AI 선생님 모달 버튼들
+.btnCancel {
+  padding: 10px 20px !important;
+  border: 1px solid #dee2e6 !important;
+  background: white !important;
+  color: #495057 !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    background: #f8f9fa !important;
+    border-color: #ced4da !important;
+  }
+}
+
+.btnAnalyze {
+  padding: 10px 20px !important;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3) !important;
+  }
+  
+  &:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+  }
+}
+
+// WebSocket 재연결 버튼
+.reconnectButton {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: white !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  font-size: 11px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+}

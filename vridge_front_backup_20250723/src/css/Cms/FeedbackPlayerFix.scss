@@ -1,0 +1,241 @@
+/* 피드백 플레이어 및 버튼 레이아웃 수정 */
+
+.Feedback {
+  /* 비디오 플레이어 섹션 */
+  .video-player-section {
+    margin-bottom: 20px;
+    
+    /* 비디오 컨테이너 */
+    .video-wrapper {
+      position: relative;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 0; /* 버튼과의 간격 제거 */
+      
+      .video-js {
+        width: 100%;
+        height: auto;
+        max-height: 600px;
+      }
+    }
+    
+    /* 플레이어 컨트롤 버튼들 - 플레이어 아래에 배치 */
+    .player-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 0 0 8px 8px;
+      margin-top: -4px; /* 플레이어와 버튼 영역 연결 */
+      
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        
+        /* 재생/일시정지 버튼 */
+        &.play-button {
+          background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+          color: white;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+          }
+        }
+        
+        /* 구간 반복 버튼 */
+        &.loop-button {
+          background: #fff;
+          border: 1px solid #ddd;
+          color: #333;
+          
+          &:hover {
+            background: #f5f5f5;
+          }
+          
+          &.active {
+            background: #e3f2fd;
+            border-color: #1631F8;
+            color: #1631F8;
+          }
+        }
+        
+        /* 속도 조절 버튼 */
+        &.speed-button {
+          background: #fff;
+          border: 1px solid #ddd;
+          color: #333;
+          
+          &:hover {
+            background: #f5f5f5;
+          }
+        }
+      }
+    }
+  }
+  
+  /* 입력란 활성화 보장 */
+  input,
+  textarea,
+  select,
+  button {
+    pointer-events: auto !important;
+    cursor: auto !important;
+    
+    &:disabled {
+      pointer-events: none !important;
+      cursor: not-allowed !important;
+      opacity: 0.6;
+    }
+  }
+  
+  /* 버튼 호버 효과 강화 */
+  button:not(:disabled) {
+    cursor: pointer !important;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+  
+  /* 피드백 입력 영역 z-index 조정 */
+  .opinion-input-container,
+  .feedback-input-container {
+    position: relative;
+    z-index: 1;
+    
+    input,
+    textarea {
+      position: relative;
+      z-index: 2;
+      background: white;
+      
+      &:focus {
+        z-index: 3;
+        outline: none;
+        border-color: #1631F8;
+        box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+      }
+    }
+    
+    button {
+      position: relative;
+      z-index: 2;
+    }
+  }
+  
+  /* 오버레이 방지 */
+  .submenu_content {
+    position: relative;
+    z-index: 1;
+    
+    > * {
+      position: relative;
+      z-index: auto;
+    }
+  }
+  
+  /* 모달 제외 최상위 z-index 제거 */
+  .content_right {
+    .submenu_area,
+    .submenu_content {
+      z-index: auto !important;
+    }
+  }
+}
+
+/* 플레이어 관련 버튼 그룹화 */
+.video-control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  
+  button {
+    min-width: 120px;
+    padding: 10px 20px;
+    
+    &.primary {
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+      color: white;
+      border: none;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+      }
+    }
+    
+    &.secondary {
+      background: white;
+      color: #333;
+      border: 1px solid #ddd;
+      
+      &:hover:not(:disabled) {
+        background: #f5f5f5;
+      }
+    }
+  }
+}
+
+/* 타임스탬프 버튼 스타일 */
+.timestamp-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #bbdefb;
+    transform: translateY(-1px);
+  }
+  
+  .icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .Feedback {
+    .player-controls {
+      flex-wrap: wrap;
+      gap: 10px;
+      
+      button {
+        flex: 1;
+        min-width: 100px;
+      }
+    }
+    
+    .video-control-buttons {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

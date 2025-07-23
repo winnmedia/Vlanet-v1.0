@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /static/js/
+Disallow: /static/css/
+
+Sitemap: https://vlanet.net/sitemap.xml

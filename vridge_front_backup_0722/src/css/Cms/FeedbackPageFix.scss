@@ -1,0 +1,388 @@
+// 피드백 페이지 레이아웃 및 버튼 위치 수정
+// MECE 체크 결과 발견된 모든 오류 수정
+
+// ===== 비디오 플레이어 섹션 =====
+.video-player-section {
+  width: 100%;
+  margin-bottom: 20px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  
+  // 비디오 플레이어가 제대로 표시되도록 최소 높이 설정
+  min-height: 400px;
+  position: relative;
+  
+  @media (max-width: 768px) {
+    min-height: 250px;
+  }
+}
+
+// ===== 비디오 컨트롤 버튼 그룹 =====
+.video-control-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  // 버튼 공통 스타일 (브랜드 가이드라인 준수)
+  button, label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+    border: none !important;
+    
+    svg {
+      width: 16px !important;
+      height: 16px !important;
+      flex-shrink: 0 !important;
+    }
+    
+    &:disabled {
+      opacity: 0.6 !important;
+      cursor: not-allowed !important;
+    }
+    
+    // 호버 효과
+    &:hover:not(:disabled) {
+      transform: translateY(-2px) !important;
+    }
+  }
+}
+
+// ===== 플로팅 버튼 수정 =====
+.feedback-floating-buttons {
+  position: absolute;
+  bottom: 80px !important; // 비디오 컨트롤과 겹치지 않도록 조정
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  
+  button {
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    min-width: auto !important;
+    height: auto !important;
+    
+    @media (max-width: 768px) {
+      padding: 6px 10px !important;
+      font-size: 12px !important;
+    }
+  }
+}
+
+// ===== 비디오 업로드 가이드 모달 =====
+.video-upload-guide-modal {
+  .modal-content {
+    max-width: 600px !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .guide-content {
+    h3 {
+      color: #1631F8 !important;
+      font-size: 18px !important;
+      margin-bottom: 16px !important;
+    }
+    
+    ul {
+      padding-left: 20px !important;
+      
+      li {
+        margin-bottom: 8px !important;
+        line-height: 1.6 !important;
+      }
+    }
+  }
+}
+
+// ===== 프로젝트 정보 토글 =====
+.project-info-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 12px 16px !important;
+  background: #f0f4ff !important;
+  border-radius: 8px !important;
+  margin-bottom: 16px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    background: #e0e8ff !important;
+  }
+  
+  .s_title {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+  }
+  
+  .toggle-icon {
+    width: 20px !important;
+    height: 20px !important;
+    transition: transform 0.3s ease !important;
+    color: #1631F8 !important;
+    
+    &.expanded {
+      transform: rotate(180deg) !important;
+    }
+  }
+}
+
+.project-info-content {
+  margin-top: 15px !important;
+  padding: 15px !important;
+  background: #f8f8f8 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  
+  .info-item {
+    margin-bottom: 8px !important;
+    
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+    
+    strong {
+      color: #555 !important;
+      margin-right: 8px !important;
+    }
+  }
+}
+
+// ===== 피드백 리스트 레이아웃 수정 =====
+.feedback-list {
+  max-height: calc(100vh - 400px) !important;
+  overflow-y: auto !important;
+  padding-right: 8px !important;
+  
+  &::-webkit-scrollbar {
+    width: 6px !important;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+    border-radius: 3px !important;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #888 !important;
+    border-radius: 3px !important;
+    
+    &:hover {
+      background: #555 !important;
+    }
+  }
+}
+
+// ===== AI 선생님 모달 버튼 정렬 =====
+.ai-teacher-modal {
+  .modal-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    padding: 20px !important;
+    border-top: 1px solid #e9ecef !important;
+    
+    button {
+      min-width: 100px !important;
+    }
+  }
+  
+  .teacher-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 16px !important;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
+
+// ===== WebSocket 재연결 버튼 =====
+.websocket-status {
+  .reconnect-button {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3) !important;
+      border-color: rgba(255, 255, 255, 0.4) !important;
+    }
+  }
+}
+
+// ===== 피드백 입력 폼 정렬 =====
+.feedback-input-form {
+  .form-group {
+    margin-bottom: 20px !important;
+    
+    label {
+      display: block !important;
+      margin-bottom: 8px !important;
+      font-weight: 600 !important;
+      color: #333 !important;
+    }
+    
+    input, textarea {
+      width: 100% !important;
+      padding: 10px 14px !important;
+      border: 1px solid #dee2e6 !important;
+      border-radius: 6px !important;
+      font-size: 14px !important;
+      transition: border-color 0.3s ease !important;
+      
+      &:focus {
+        outline: none !important;
+        border-color: #1631F8 !important;
+        box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1) !important;
+      }
+    }
+  }
+  
+  .form-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    margin-top: 24px !important;
+  }
+}
+
+// ===== 모바일 반응형 수정 =====
+@media (max-width: 768px) {
+  .feedback-content {
+    gap: 16px !important;
+  }
+  
+  .feedback-main {
+    padding: 16px !important;
+  }
+  
+  .feedback-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    
+    &::-webkit-scrollbar {
+      display: none !important;
+    }
+    
+    .tab-item {
+      flex-shrink: 0 !important;
+      padding: 10px 16px !important;
+    }
+  }
+  
+  .video-control-buttons {
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    
+    &::-webkit-scrollbar {
+      display: none !important;
+    }
+    
+    button, label {
+      flex-shrink: 0 !important;
+    }
+  }
+}
+
+// ===== 로딩 상태 통일 =====
+.loading-indicator {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px !important;
+  
+  .spinner {
+    width: 40px !important;
+    height: 40px !important;
+    border: 3px solid #f3f3f3 !important;
+    border-top: 3px solid #1631F8 !important;
+    border-radius: 50% !important;
+    animation: spin 1s linear infinite !important;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
+// ===== 에러 메시지 스타일 통일 =====
+.error-message {
+  background: #fee !important;
+  border: 1px solid #fcc !important;
+  color: #c33 !important;
+  padding: 12px 16px !important;
+  border-radius: 6px !important;
+  margin: 16px 0 !important;
+  font-size: 14px !important;
+  
+  &::before {
+    content: "⚠️ " !important;
+  }
+}
+
+// ===== 성공 메시지 스타일 통일 =====
+.success-message {
+  background: #d4edda !important;
+  border: 1px solid #c3e6cb !important;
+  color: #155724 !important;
+  padding: 12px 16px !important;
+  border-radius: 6px !important;
+  margin: 16px 0 !important;
+  font-size: 14px !important;
+  
+  &::before {
+    content: "✓ " !important;
+  }
+}
+
+// ===== Z-index 계층 정리 =====
+.feedback-video-section { z-index: 1; }
+.feedback-floating-buttons { z-index: 10; }
+.feedback-tabs { z-index: 2; }
+.ai-teacher-modal { z-index: 1000; }
+.video-upload-guide-modal { z-index: 1001; }
+.modal-overlay { z-index: 999; }
+
+// ===== 접근성 클래스 =====
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

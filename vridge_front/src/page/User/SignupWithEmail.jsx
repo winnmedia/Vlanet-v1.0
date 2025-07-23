@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from '../../util/nextNavigation';
 import { SendAuthNumber, EmailAuth, SignUp, CheckNickname } from "api/auth";
 import PasswordInput from "component/PasswordInput";
 import { CircularProgress } from "@material-ui/core";
 
 const SignupWithEmail = () => {
-  const navigate = useNavigate();
+  const { navigate } = useRouter();
   
   // 스타일 정의
   const styles = {
@@ -206,9 +206,9 @@ const SignupWithEmail = () => {
       
       if (response.data.message === "success") {
         // 토큰 저장
-        localStorage.setItem("VGID", JSON.stringify(response.data.vridge_session));
+        typeof window !== 'undefined' && localStorage.setItem("VGID", JSON.stringify(response.data.vridge_session));
         alert("회원가입이 완료되었습니다!");
-        navigate("/CmsHome");
+        navigate("/cmshome");
       }
     } catch (error) {
       const message = error.response?.data?.message || "회원가입에 실패했습니다.";

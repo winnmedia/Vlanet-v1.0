@@ -1,0 +1,152 @@
+{
+  "timestamp": "2025-07-11T08:13:21.815Z",
+  "duration": "0.86",
+  "results": {
+    "totalTests": 19,
+    "passed": 17,
+    "failed": 2,
+    "categories": {
+      "인증": {
+        "total": 5,
+        "passed": 5,
+        "failed": 0,
+        "tests": [
+          {
+            "name": "이메일 중복 확인 - 사용 가능",
+            "status": "PASS",
+            "message": "사용 가능한 이메일입니다."
+          },
+          {
+            "name": "이메일 형식 검증",
+            "status": "PASS",
+            "message": "Invalid email format correctly rejected"
+          },
+          {
+            "name": "회원가입",
+            "status": "PASS",
+            "message": "success"
+          },
+          {
+            "name": "로그인",
+            "status": "PASS",
+            "message": "Login successful, token received"
+          },
+          {
+            "name": "인증된 API 접근",
+            "status": "PASS",
+            "message": "Authenticated access successful"
+          }
+        ]
+      },
+      "프로젝트": {
+        "total": 4,
+        "passed": 3,
+        "failed": 1,
+        "tests": [
+          {
+            "name": "프로젝트 목록 조회",
+            "status": "PASS",
+            "message": "0개 프로젝트 조회됨"
+          },
+          {
+            "name": "프로젝트 생성",
+            "status": "PASS",
+            "message": "success"
+          },
+          {
+            "name": "중복 프로젝트 차단",
+            "status": "FAIL",
+            "message": "Duplicate project correctly blocked"
+          },
+          {
+            "name": "프로젝트 상세 조회",
+            "status": "PASS",
+            "message": "Project details retrieved"
+          }
+        ]
+      },
+      "피드백": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "tests": [
+          {
+            "name": "피드백 데이터 조회",
+            "status": "PASS",
+            "message": "Feedback data retrieved"
+          },
+          {
+            "name": "코멘트 작성",
+            "status": "PASS",
+            "message": "Comment created"
+          },
+          {
+            "name": "파일 업로드 API 확인",
+            "status": "PASS",
+            "message": "File upload endpoint accessible"
+          }
+        ]
+      },
+      "AI": {
+        "total": 2,
+        "passed": 1,
+        "failed": 1,
+        "tests": [
+          {
+            "name": "AI 선생님 목록 조회",
+            "status": "FAIL",
+            "message": "AI teachers list retrieved"
+          },
+          {
+            "name": "프롬프트 체크 API",
+            "status": "PASS",
+            "message": "Prompt check API tested"
+          }
+        ]
+      },
+      "UI/UX": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "tests": [
+          {
+            "name": "프론트엔드 홈페이지 접근",
+            "status": "PASS",
+            "message": "Backend API accessible (frontend uses proxy)"
+          },
+          {
+            "name": "정적 자원 로드",
+            "status": "PASS",
+            "message": "Development server running (webpack-dev-server)"
+          }
+        ]
+      },
+      "보안": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "tests": [
+          {
+            "name": "XSS 패턴 차단",
+            "status": "PASS",
+            "message": "XSS pattern correctly blocked"
+          },
+          {
+            "name": "SQL 인젝션 방지",
+            "status": "PASS",
+            "message": "SQL injection pattern handled safely"
+          },
+          {
+            "name": "인증 없는 API 접근 차단",
+            "status": "PASS",
+            "message": "Unauthorized access correctly blocked"
+          }
+        ]
+      }
+    }
+  },
+  "environment": {
+    "backend": "http://localhost:8000",
+    "frontend": "http://localhost:3000"
+  }
+}

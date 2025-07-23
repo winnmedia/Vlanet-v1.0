@@ -1,0 +1,79 @@
+// Feedback Page Spacing - 피드백 페이지만 여백 최소화
+
+// 피드백 페이지 전용 레이아웃 - 최상위에서 강제 적용
+body .cms_wrap {
+  main {
+    // 피드백 페이지일 때만 적용
+    .content.feedback.feedback_page {
+      // 모든 패딩 초기화 후 최소값 설정
+      padding: 10px 10px 10px 2px !important; // 상 우 하 좌
+      margin-left: -15px !important; // 사이드바에 더 가깝게
+      
+      // 비디오 섹션과 피드백 섹션 사이 간격
+      gap: 5px !important;
+      
+      // 큰 화면에서도 동일하게 적용
+      @media (min-width: 1401px) {
+        padding-left: 5px !important;
+        gap: 8px !important;
+      }
+      
+      // 중간 화면
+      @media (max-width: 1400px) {
+        padding-left: 5px !important;
+        gap: 8px !important;
+      }
+      
+      // 작은 화면
+      @media (max-width: 992px) {
+        padding: 10px !important;
+        padding-left: 5px !important;
+        gap: 6px !important;
+      }
+      
+      // 모바일
+      @media (max-width: 768px) {
+        padding: 8px !important;
+        padding-left: 5px !important;
+        gap: 5px !important;
+      }
+    }
+  }
+}
+
+// 사이드바와 메인 콘텐츠 사이 간격 강제 제거
+body {
+  .cms_wrap {
+    display: flex !important;
+    gap: 0 !important; // 사이드바와 메인 사이 간격 제거
+    
+    aside.SideBar,
+    aside.sidebar {
+      margin-right: 0 !important;
+      padding-right: 0 !important;
+    }
+    
+    main {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      
+      // 피드백 페이지에서만 특별 처리
+      .content.feedback.feedback_page {
+        padding-left: 10px !important; // 적절한 여백
+        margin-left: 0 !important;
+        
+        // 비디오박스 왼쪽 여백도 제거
+        .videobox {
+          padding-left: 0 !important;
+          margin-left: 0 !important;
+        }
+      }
+    }
+  }
+}
+
+// 다른 CSS보다 우선순위 높이기
+html body .cms_wrap main .content.feedback.feedback_page {
+  padding-left: 10px !important; // 3px에서 10px로 증가
+  gap: 10px !important; // 5px에서 10px로 증가
+}

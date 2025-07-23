@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import './ProjectPhaseBoard.scss'
+
 import moment from 'moment'
 import 'moment/locale/ko'
 
@@ -159,6 +159,10 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
             <li>
               다음 달 <br />
               프로젝트 <span>{projectCounts.nextMonth}</span>
+            </li>
+            <li>
+              완료된 <br />
+              프로젝트 <span>{projectsByStatus.completed?.length || 0}</span>
             </li>
           </ul>
         </div>

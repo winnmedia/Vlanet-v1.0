@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { checkSession } from 'util/util'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../util/nextNavigation'
 
 axios.defaults.withCredentials = true
 axios.defaults.timeout = 30000
 
 const useAxios = (opts, axiosInstance = axios) => {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const [state, setState] = useState({
     loading: true,
     error: null,
@@ -37,7 +37,7 @@ const useAxios = (opts, axiosInstance = axios) => {
           error.response.data.message === 'NEED_ACCESS_TOKEN'
         ) {
           if (checkSession()) {
-            window.localStorage.removeItem('VGID')
+            typeof window !== 'undefined' && window.localStorage.removeItem('VGID')
           }
           navigate('/login', { replace: true })
         } else {

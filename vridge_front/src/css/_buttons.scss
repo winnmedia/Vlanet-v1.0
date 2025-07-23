@@ -1,0 +1,142 @@
+// 버튼 스타일 표준화
+// 브랜드 가이드라인에 따른 픽셀 퍼펙트 버튼 스타일
+
+// 버튼 높이 표준
+$button-height-small: 36px;
+$button-height-medium: 44px;
+$button-height-large: 52px;
+
+// 버튼 패딩 표준
+$button-padding-small: 8px 16px;
+$button-padding-medium: 12px 24px;
+$button-padding-large: 16px 32px;
+
+// 기본 버튼 스타일
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  white-space: nowrap;
+  text-decoration: none;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Primary 버튼 (파란색 그라데이션)
+@mixin button-primary {
+  @include button-base;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+  color: #ffffff;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Secondary 버튼 (흰색 배경)
+@mixin button-secondary {
+  @include button-base;
+  background: #ffffff;
+  color: #333333;
+  border: 1px solid #e0e0e0;
+  
+  &:hover:not(:disabled) {
+    background: #f8f9fa;
+    border-color: #1631F8;
+    color: #1631F8;
+  }
+}
+
+// Danger 버튼 (빨간색 그라데이션)
+@mixin button-danger {
+  @include button-base;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: #ffffff;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+  }
+}
+
+// 버튼 크기
+@mixin button-small {
+  height: $button-height-small;
+  padding: $button-padding-small;
+  font-size: 13px;
+}
+
+@mixin button-medium {
+  height: $button-height-medium;
+  padding: $button-padding-medium;
+  font-size: 14px;
+}
+
+@mixin button-large {
+  height: $button-height-large;
+  padding: $button-padding-large;
+  font-size: 16px;
+}
+
+// 전역 버튼 클래스 적용
+button,
+.btn,
+.submit {
+  @include button-primary;
+  @include button-medium;
+}
+
+// 크기 변형
+.btn-small {
+  @include button-small;
+}
+
+.btn-large {
+  @include button-large;
+}
+
+// 스타일 변형
+.btn-secondary {
+  @include button-secondary;
+}
+
+.btn-danger {
+  @include button-danger;
+}
+
+// 전체 너비 버튼
+.btn-block {
+  width: 100%;
+}
+
+// 아이콘 버튼
+.btn-icon {
+  padding: 0;
+  width: $button-height-medium;
+  height: $button-height-medium;
+  
+  &.btn-small {
+    width: $button-height-small;
+    height: $button-height-small;
+  }
+  
+  &.btn-large {
+    width: $button-height-large;
+    height: $button-height-large;
+  }
+}

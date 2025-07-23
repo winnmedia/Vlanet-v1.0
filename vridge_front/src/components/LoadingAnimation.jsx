@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import './LoadingAnimation.scss'
 
 export default function LoadingAnimation({ message, progress }) {
   const [humorousMessage, setHumorousMessage] = useState('')

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import './ProjectDashboard.scss'
-import { useNavigate } from 'react-router-dom'
+
+import { useRouter } from '../util/nextNavigation'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { Progress, Tag, Tooltip } from 'antd'
@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons'
 
 export default function ProjectDashboard({ projects }) {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const [filter, setFilter] = useState('all') // all, active, delayed, completed
   const [sortBy, setSortBy] = useState('deadline') // deadline, name, progress
   const [viewMode, setViewMode] = useState('card') // card, list, kanban

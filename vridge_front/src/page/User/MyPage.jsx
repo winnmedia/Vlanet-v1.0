@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './MyPage.scss'
+import { useRouter } from '../../util/nextNavigation'
+
 import PageTemplate from 'components/PageTemplate'
 import { checkSession } from 'util/util'
 import { getMyPageInfo, uploadProfileImage, updateProfile } from 'api/user'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateProjectStore } from 'redux/project'
+import { updateProjectStore } from '../../redux/project'
 import ImageCropper from 'components/ImageCropper'
 import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
 import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest, DeleteFriend, BlockFriend } from 'api/friends'
@@ -14,7 +14,7 @@ import 'moment/locale/ko'
 import UserAvatar from 'components/UserAvatar'
 
 export default function MyPage() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const dispatch = useDispatch()
   const user = useSelector((state) => state.ProjectStore.user)
   const nickname = useSelector((state) => state.ProjectStore.nickname)
@@ -34,7 +34,7 @@ export default function MyPage() {
   })
   const [imagePreview, setImagePreview] = useState(() => {
     // localStorage에서 프로필 이미지 불러오기
-    const savedImage = localStorage.getItem('profileImage')
+    const savedImage = typeof window !== 'undefined' ? localStorage.getItem('profileImage') : null
     return savedImage || storedProfileImage || null
   })
   const [isUploading, setIsUploading] = useState(false)
@@ -57,7 +57,7 @@ export default function MyPage() {
   useEffect(() => {
     const session = checkSession()
     if (!session) {
-      navigate('/Login', { replace: true })
+      navigate('/login', { replace: true })
     } else {
       fetchMyPageData()
     }
@@ -233,14 +233,14 @@ export default function MyPage() {
           // 백엔드 URL이 상대 경로인 경우 처리
           let fullImageUrl
           if (imageUrl.startsWith('/')) {
-            fullImageUrl = `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${imageUrl}`
+            fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
           }
           setImagePreview(fullImageUrl)
           // Redux store와 localStorage에 프로필 이미지 저장
           dispatch(updateProjectStore({ profileImage: fullImageUrl }))
-          localStorage.setItem('profileImage', fullImageUrl)
+          typeof window !== 'undefined' && localStorage.setItem('profileImage', fullImageUrl)
         }
         setLoading(false) // 성공 시에도 로딩 종료
       } else {
@@ -340,7 +340,7 @@ export default function MyPage() {
       setImagePreview(reader.result)
       // Redux store와 localStorage에 미리보기 이미지 저장
       dispatch(updateProjectStore({ profileImage: reader.result }))
-      localStorage.setItem('profileImage', reader.result)
+      typeof window !== 'undefined' && localStorage.setItem('profileImage', reader.result)
     }
     reader.readAsDataURL(croppedBlob)
     
@@ -387,7 +387,7 @@ export default function MyPage() {
           if (imageUrl.startsWith('http')) {
             fullImageUrl = imageUrl
           } else if (imageUrl.startsWith('/')) {
-            const baseUrl = process.env.REACT_APP_API_URL || 'https://api.vlanet.net'
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'
             fullImageUrl = `${baseUrl}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
@@ -398,7 +398,7 @@ export default function MyPage() {
           
           // Redux store와 localStorage에 프로필 이미지 저장
           dispatch(updateProjectStore({ profileImage: fullImageUrl }))
-          localStorage.setItem('profileImage', fullImageUrl)
+          typeof window !== 'undefined' && localStorage.setItem('profileImage', fullImageUrl)
         }
         
         // 마이페이지 데이터 새로고침을 지연시켜 이미지 업로드가 완전히 반영되도록 함
@@ -424,7 +424,7 @@ export default function MyPage() {
       } else if (error.response?.status === 401) {
         errorMessage += '인증이 만료되었습니다. 다시 로그인해주세요.'
         // 로그인 페이지로 리다이렉트
-        setTimeout(() => navigate('/Login'), 1500)
+        setTimeout(() => navigate('/login'), 1500)
       } else if (error.message) {
         errorMessage += error.message
       } else {
@@ -641,10 +641,10 @@ export default function MyPage() {
                             onClick={() => {
                               setProfileImage(null)
                               // localStorage에서 이미지 복원 또는 DB 이미지 사용
-                              const savedImage = localStorage.getItem('profileImage')
+                              const savedImage = typeof window !== 'undefined' ? localStorage.getItem('profileImage') : null
                               const dbImage = myPageData?.profile?.profile_image ? 
                                 (myPageData.profile.profile_image.startsWith('/') ? 
-                                  `${process.env.REACT_APP_API_URL || 'https://api.vlanet.net'}${myPageData.profile.profile_image}` : 
+                                  `${process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'}${myPageData.profile.profile_image}` : 
                                   myPageData.profile.profile_image
                                 ) : null
                               setImagePreview(savedImage || dbImage || null)

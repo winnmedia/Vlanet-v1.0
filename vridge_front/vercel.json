@@ -1,101 +1,31 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "framework": null,
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://videoplanet.up.railway.app/api/:path*"
-    },
-    {
-      "source": "/media/:path*",
-      "destination": "https://videoplanet.up.railway.app/media/:path*"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/index.html"
+  "outputDirectory": ".next",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs",
+  "regions": ["icn1"],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
+    "NEXT_PUBLIC_VERSION": "@next_public_version"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "@next_public_api_url",
+      "NEXT_PUBLIC_VERSION": "@next_public_version",
+      "NODE_ENV": "production"
     }
-  ],
+  },
+  "functions": {
+    "pages/api/**.js": {
+      "maxDuration": 30
+    }
+  },
   "redirects": [
     {
-      "source": "/CmsHome",
-      "destination": "/dashboard",
-      "permanent": false
-    },
-    {
-      "source": "/ProjectView/:id",
-      "destination": "/projects/:id",
-      "permanent": false
-    },
-    {
-      "source": "/ProjectEdit/:id",
-      "destination": "/projects/:id/edit",
-      "permanent": false
-    },
-    {
-      "source": "/ProjectCreate",
-      "destination": "/projects/new",
-      "permanent": false
-    },
-    {
-      "source": "/VideoPlanning",
-      "destination": "/planning",
-      "permanent": false
-    },
-    {
-      "source": "/Calendar",
-      "destination": "/calendar",
-      "permanent": false
-    },
-    {
-      "source": "/MyPage",
-      "destination": "/my-page",
-      "permanent": false
-    },
-    {
-      "source": "/AdminDashboard",
-      "destination": "/admin",
-      "permanent": false
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
-      ]
-    },
-    {
-      "source": "/static/js/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/static/css/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/static/media/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" }
-      ]
+      "source": "/home",
+      "destination": "/cmshome",
+      "permanent": true
     }
   ]
 }

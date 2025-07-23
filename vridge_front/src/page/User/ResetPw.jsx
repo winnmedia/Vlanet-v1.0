@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../../util/nextNavigation'
 
 import PageTemplate from 'components/PageTemplate'
-import 'css/User/Auth.scss'
+
 import AuthEmail from 'tasks/AuthEmail'
 import { ResetPassword } from 'api/auth'
 
 export default function ResetPw() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const [valid_email, SetValidEmail] = useState(false)
   const [errorMessage, SetErrorMessage] = useState('')
   const initial = {

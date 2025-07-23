@@ -1,0 +1,383 @@
+/* 홈페이지 정렬 문제 수정 */
+
+#Home {
+  /* visual 섹션 정렬 수정 */
+  .visual {
+    .txt {
+      text-align: left;
+      line-height: 1.4;
+      
+      br + span {
+        display: inline-block;
+        margin-top: 0;
+      }
+      
+      p {
+        text-align: left;
+        line-height: 1.6;
+        margin-top: 30px;
+      }
+    }
+  }
+
+  /* textbox 섹션 정렬 수정 */
+  .textbox {
+    text-align: center;
+    
+    img {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    
+    div {
+      text-align: center;
+      line-height: 1.5;
+    }
+    
+    p {
+      text-align: center;
+      line-height: 1.6;
+      margin: 0 auto;
+      max-width: 800px;
+    }
+  }
+
+  /* function 섹션들 공통 정렬 수정 */
+  .function {
+    .content {
+      align-items: center;
+      
+      .txt {
+        text-align: left;
+        
+        > div {
+          text-align: left;
+          line-height: 1.4;
+          margin-bottom: 20px;
+          
+          span {
+            display: inline;
+          }
+        }
+        
+        p {
+          text-align: left;
+          line-height: 1.6;
+          margin-bottom: 15px;
+          
+          &:last-of-type {
+            margin-bottom: 30px;
+          }
+        }
+        
+        button {
+          margin-top: 30px;
+        }
+      }
+    }
+  }
+
+  /* contents 섹션 정렬 수정 */
+  .contents {
+    .content {
+      .txt {
+        text-align: left;
+        
+        > div {
+          text-align: left;
+          line-height: 1.4;
+          margin-bottom: 20px;
+        }
+        
+        p {
+          text-align: left;
+          line-height: 1.6;
+          margin-bottom: 30px;
+        }
+      }
+      
+      .list ul {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        align-items: start;
+        
+        li {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          
+          .text {
+            text-align: center;
+            line-height: 1.4;
+            margin-top: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  /* identity 섹션 그리드 정렬 개선 */
+  .identity {
+    ul {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      align-items: start;
+      
+      li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        
+        .img {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
+        }
+        
+        .txt {
+          text-align: center;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+
+  /* background 섹션 정렬 수정 */
+  .background {
+    .group {
+      align-items: flex-start;
+      
+      .txt_box {
+        text-align: left;
+        line-height: 1.5;
+        
+        span {
+          display: block;
+          margin-bottom: 20px;
+        }
+        
+        b {
+          display: block;
+          margin-top: 20px;
+          line-height: 1.6;
+        }
+      }
+      
+      .ex {
+        .part {
+          align-items: center;
+          
+          .text {
+            text-align: left;
+            
+            div {
+              margin-bottom: 10px;
+              
+              span {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+              }
+            }
+            
+            p {
+              text-align: left;
+              line-height: 1.6;
+              
+              b {
+                display: block;
+                margin-top: 10px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* video 섹션 정렬 수정 */
+  .video {
+    h2 {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    .video-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  /* end 섹션 정렬 수정 */
+  .end {
+    .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      .txt {
+        text-align: left;
+        line-height: 1.3;
+        
+        span {
+          display: inline;
+        }
+      }
+    }
+    
+    .ment {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      
+      img {
+        vertical-align: middle;
+      }
+    }
+  }
+
+  /* footer 정렬 수정 */
+  #footer {
+    .inner {
+      align-items: flex-start;
+      
+      > div {
+        text-align: left;
+        
+        .logo {
+          margin-bottom: 20px;
+        }
+        
+        ul {
+          li {
+            text-align: left;
+            line-height: 1.8;
+          }
+        }
+        
+        > div {
+          margin-top: 20px;
+          
+          span {
+            display: inline-block;
+            margin-right: 20px;
+          }
+        }
+      }
+      
+      > ul {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+    }
+  }
+
+  /* 반응형 정렬 일관성 개선 */
+  @media (max-width: 1024px) {
+    .function {
+      .content {
+        .txt {
+          text-align: center;
+          
+          > div,
+          p {
+            text-align: center;
+          }
+          
+          button {
+            margin: 30px auto 0;
+            display: block;
+          }
+        }
+      }
+    }
+    
+    .contents {
+      .content {
+        .txt {
+          text-align: center;
+          
+          > div,
+          p {
+            text-align: center;
+          }
+          
+          button {
+            margin: 30px auto 0;
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .visual {
+      .txt {
+        text-align: center;
+        
+        p {
+          text-align: center;
+        }
+      }
+    }
+    
+    .identity {
+      ul {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .background {
+      .group {
+        .txt_box,
+        .ex .part .text {
+          text-align: center;
+          
+          p, b {
+            text-align: center;
+          }
+        }
+      }
+    }
+    
+    .end {
+      .inner {
+        flex-direction: column;
+        align-items: center;
+        
+        .txt {
+          text-align: center;
+          margin-bottom: 30px;
+        }
+      }
+    }
+    
+    #footer {
+      .inner {
+        flex-direction: column;
+        align-items: center;
+        
+        > div {
+          text-align: center;
+          margin-bottom: 30px;
+          
+          ul li {
+            text-align: center;
+          }
+          
+          > div {
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}

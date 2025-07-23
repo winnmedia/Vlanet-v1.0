@@ -1,0 +1,160 @@
+// 폼 요소 스타일 표준화
+// 픽셀 퍼펙트 입력 필드 및 폼 요소
+
+// 입력 필드 높이 표준
+$input-height: 44px;
+$textarea-min-height: 100px;
+
+// 입력 필드 스타일
+@mixin input-base {
+  width: 100%;
+  height: $input-height;
+  padding: 0 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333333;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+  
+  &::placeholder {
+    color: #999999;
+  }
+  
+  &:focus {
+    border-color: #1631F8;
+    box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+  }
+  
+  &:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  &.error {
+    border-color: #dc3545;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+  }
+}
+
+// 텍스트영역 스타일
+@mixin textarea-base {
+  @include input-base;
+  height: auto;
+  min-height: $textarea-min-height;
+  padding: 12px 16px;
+  resize: vertical;
+}
+
+// 레이블 스타일
+@mixin label-base {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  
+  &.required::after {
+    content: ' *';
+    color: #dc3545;
+  }
+}
+
+// 폼 그룹 스타일
+@mixin form-group {
+  margin-bottom: 20px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// 에러 메시지 스타일
+@mixin error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #dc3545;
+}
+
+// 전역 폼 요소 스타일 적용
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+.input {
+  @include input-base;
+}
+
+textarea,
+.textarea {
+  @include textarea-base;
+}
+
+label,
+.label {
+  @include label-base;
+}
+
+.form-group,
+.form_list {
+  @include form-group;
+}
+
+.error-message,
+.form-error {
+  @include error-message;
+}
+
+// 선택 박스 스타일
+select,
+.select {
+  @include input-base;
+  padding-right: 40px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23333333" d="M6 8L0 0h12z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+// 체크박스 & 라디오 버튼
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  margin-right: 8px;
+  vertical-align: middle;
+  cursor: pointer;
+  
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// 인라인 폼
+.form-inline {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  
+  .form-group {
+    flex: 1;
+    margin-bottom: 0;
+  }
+}

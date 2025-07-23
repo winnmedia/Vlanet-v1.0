@@ -1,5 +1,4 @@
 import React from 'react';
-import './VideoUploadGuide.scss';
 
 export default function VideoUploadGuide({ onClose }) {
   return (

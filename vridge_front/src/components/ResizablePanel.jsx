@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './ResizablePanel.scss';
 
 export default function ResizablePanel({ children, defaultWidth = 50, minWidth = 30, maxWidth = 70 }) {
   const [leftWidth, setLeftWidth] = useState(defaultWidth);

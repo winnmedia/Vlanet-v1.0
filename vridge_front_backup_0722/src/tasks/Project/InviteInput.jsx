@@ -1,0 +1,507 @@
+import React, { useState, useEffect } from 'react'
+import { GetProject } from 'api/project'
+import { InviteProjectMember, CancelInvitation, GetProjectInvitations } from 'api/invitation'
+import { axiosCredentials } from 'util/util'
+import { alertSuccess, alertError, confirm } from 'util/alert'
+
+export default function InviteInput({
+  project_id,
+  set_current_project,
+  pending_list,
+  onInvitationSent,
+}) {
+  const [emails, setEmails] = useState([''])
+  const [duplicateEmails, setDuplicateEmails] = useState(new Set()) // 중복 초대된 이메일 추적
+  const [recentInvitations, setRecentInvitations] = useState([]) // 최근 초대한 사람 목록
+  const [showRecentInvitations, setShowRecentInvitations] = useState(false) // 최근 초대 목록 표시 여부
+
+  // 최근 초대한 사람 목록 가져오기
+  useEffect(() => {
+    fetchRecentInvitations()
+  }, [])
+
+  const fetchRecentInvitations = async () => {
+    try {
+      const response = await axiosCredentials('get', '/api/users/recent-invitations/?limit=5')
+      if (response.data && response.data.recent_invitations) {
+        setRecentInvitations(response.data.recent_invitations)
+      }
+    } catch (err) {
+      console.error('Failed to fetch recent invitations:', err)
+      if (err.response && err.response.data) {
+        console.error('Error details:', err.response.data)
+      }
+    }
+  }
+
+  const InputChange = (index, value) => {
+    const newEmails = [...emails]
+    newEmails[index] = value
+    setEmails(newEmails)
+  }
+
+  const AddInput = () => {
+    setEmails([...emails, ''])
+  }
+
+  const RemoveInput = (index) => {
+    const newEmails = [...emails]
+    newEmails.splice(index, 1)
+    setEmails(newEmails)
+  }
+
+  const CancelBtn = async (id) => {
+    if (await confirm('초대를 취소하시겠습니까?')) {
+      CancelInvitation(project_id, id)
+        .then((res) => {
+          alertSuccess('초대가 취소되었습니다.')
+          if (typeof set_current_project === 'function') {
+            set_current_project()
+          }
+        })
+        .catch((err) => {
+          if (err.response && err.response.data) {
+            window.alert(err.response.data.message)
+          }
+        })
+    }
+  }
+
+  const handleResend = async (email) => {
+    if (await confirm('초대를 다시 보내시겠습니까?')) {
+      InviteProjectMember(project_id, { email: email, resend: true })
+        .then((res) => {
+          alertSuccess('초대 이메일을 재전송했습니다.')
+          // 최근 초대 목록 갱신
+          fetchRecentInvitations()
+          if (typeof set_current_project === 'function') {
+            set_current_project()
+          }
+        })
+        .catch((err) => {
+          if (err.response && err.response.data) {
+            window.alert(err.response.data.message)
+          }
+        })
+    }
+  }
+
+  return (
+    <>
+      {pending_list.map((pend, index) => (
+        <div key={index} style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '10px',
+          padding: '8px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px'
+        }}>
+          <input
+            type="text"
+            value={pend.invitee_email || pend.email}
+            placeholder="이메일 입력"
+            readOnly
+            style={{
+              flex: 1,
+              padding: '10px 12px',
+              border: '1px solid #e0e0e0',
+              borderRadius: '6px',
+              fontSize: '14px',
+              backgroundColor: '#fff',
+              color: '#666'
+            }}
+          />
+          <span style={{
+            padding: '6px 12px',
+            backgroundColor: '#e8f4f8',
+            color: '#1631F8',
+            borderRadius: '6px',
+            fontSize: '13px',
+            fontWeight: '500',
+            whiteSpace: 'nowrap'
+          }}>
+            초대됨
+          </span>
+          <button 
+            onClick={() => handleResend(pend.invitee_email || pend.email)}
+            style={{
+              background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-1px)'
+              e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)'
+              e.target.style.boxShadow = 'none'
+            }}
+          >
+            재전송
+          </button>
+          <button 
+            onClick={() => CancelBtn(pend.id)}
+            style={{
+              background: '#dc3545',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontWeight: '500',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = '#c82333'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = '#dc3545'
+            }}
+          >
+            삭제
+          </button>
+        </div>
+      ))}
+      {emails.map((email, index) => (
+        <div key={index} style={{
+          marginBottom: '16px',
+          padding: '12px',
+          border: '1px solid #e9ecef',
+          borderRadius: '8px',
+          backgroundColor: '#f8f9fa'
+        }}>
+          <input
+            type="text"
+            value={email}
+            onChange={(e) => InputChange(index, e.target.value)}
+            placeholder="초대할 사용자의 이메일 주소"
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              border: '1px solid #ddd',
+              borderRadius: '6px',
+              fontSize: '14px',
+              transition: 'border-color 0.2s ease',
+              marginBottom: '12px',
+              boxSizing: 'border-box'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#1631F8'
+              e.target.style.outline = 'none'
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#ddd'
+            }}
+          />
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'flex-end'
+          }}>
+            <button
+              onClick={async () => {
+                if (!email || !email.trim()) {
+                  alertError('이메일을 입력해주세요.')
+                  return
+                }
+                
+                // 중복 초대인 경우 재전송 여부 확인
+                const resend = duplicateEmails.has(email)
+                const requestData = resend ? { email: email, resend: true } : { email: email }
+                
+                InviteProjectMember(project_id, requestData)
+                  .then((res) => {
+                    // 성공 시 중복 목록에서 제거
+                    setDuplicateEmails(prev => {
+                      const newSet = new Set(prev)
+                      newSet.delete(email)
+                      return newSet
+                    })
+                    
+                    InputChange(index, '')
+                    alertSuccess(res.data.resent ? '초대 이메일을 재전송했습니다.' : '초대를 보냈습니다.')
+                    
+                    // 최근 초대 목록 갱신
+                    fetchRecentInvitations()
+                    
+                    // 프로젝트 정보 갱신
+                    if (typeof set_current_project === 'function') {
+                      set_current_project()
+                    }
+                    
+                    // 초대 성공 콜백 호출
+                    if (onInvitationSent) {
+                      onInvitationSent()
+                    }
+                  })
+                  .catch(async (err) => {
+                    if (err.response) {
+                      if (err.response.status === 409) {
+                        // 409 Conflict: 이미 초대된 이메일
+                        setDuplicateEmails(prev => new Set([...prev, email]))
+                        if (await confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
+                          // 재전송 요청
+                          InviteProjectMember(project_id, { email: email, resend: true })
+                            .then((res) => {
+                              setDuplicateEmails(prev => {
+                                const newSet = new Set(prev)
+                                newSet.delete(email)
+                                return newSet
+                              })
+                              InputChange(index, '')
+                              alertSuccess('초대 이메일을 재전송했습니다.')
+                              
+                              // 최근 초대 목록 갱신
+                              fetchRecentInvitations()
+                              
+                              // 프로젝트 정보 갱신
+                              if (typeof set_current_project === 'function') {
+                                set_current_project()
+                              }
+                              
+                              // 초대 성공 콜백 호출
+                              if (onInvitationSent) {
+                                onInvitationSent()
+                              }
+                            })
+                            .catch((err) => {
+                              if (err.response && err.response.data) {
+                                alertError(err.response.data.message)
+                              }
+                            })
+                        }
+                      } else if (err.response.data) {
+                        alertError(err.response.data.message)
+                      }
+                    }
+                  })
+              }}
+              style={{
+                background: duplicateEmails.has(email) ? 
+                  'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)' : 
+                  'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '8px 20px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-1px)'
+                e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = 'none'
+              }}
+            >
+              {duplicateEmails.has(email) ? '재전송' : '보내기'}
+            </button>
+            <button 
+              onClick={() => RemoveInput(index)}
+              style={{
+                background: 'transparent',
+                color: '#dc3545',
+                border: '1px solid #dc3545',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#dc3545'
+                e.target.style.color = 'white'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent'
+                e.target.style.color = '#dc3545'
+              }}
+            >
+              삭제
+            </button>
+          </div>
+        </div>
+      ))}
+      <button 
+        onClick={AddInput}
+        style={{
+          width: '100%',
+          padding: '12px',
+          marginTop: '16px',
+          marginBottom: '16px',
+          border: '2px dashed #1631F8',
+          borderRadius: '8px',
+          backgroundColor: 'transparent',
+          color: '#1631F8',
+          fontSize: '14px',
+          fontWeight: '600',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.backgroundColor = '#f0f5ff'
+          e.target.style.borderStyle = 'solid'
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.backgroundColor = 'transparent'
+          e.target.style.borderStyle = 'dashed'
+        }}
+      >
+        <span style={{ fontSize: '20px', lineHeight: '1' }}>+</span>
+        멤버 추가
+      </button>
+      
+      {/* 최근 초대한 멤버 리스트 */}
+      {recentInvitations.length > 0 && (
+        <div style={{ 
+          marginTop: '24px',
+          padding: '16px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          border: '1px solid #e9ecef'
+        }}>
+          <div 
+            onClick={() => setShowRecentInvitations(!showRecentInvitations)}
+            style={{
+              cursor: 'pointer',
+              padding: '8px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              userSelect: 'none'
+            }}
+          >
+            <span style={{ 
+              fontWeight: '600', 
+              color: '#495057',
+              fontSize: '14px'
+            }}>
+              최근 초대한 멤버 ({recentInvitations.length})
+            </span>
+            <span style={{ 
+              fontSize: '12px',
+              color: '#6c757d',
+              transform: showRecentInvitations ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease'
+            }}>
+              ▼
+            </span>
+          </div>
+          
+          {showRecentInvitations && (
+            <div style={{ marginTop: '12px' }}>
+              {recentInvitations.map((invitation) => (
+                <div 
+                  key={invitation.id} 
+                  style={{
+                    padding: '12px',
+                    background: '#fff',
+                    border: '1px solid #e9ecef',
+                    borderRadius: '6px',
+                    marginBottom: '8px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#1631F8'
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(22, 49, 248, 0.1)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e9ecef'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }}
+                >
+                  <div>
+                    <div style={{ 
+                      fontWeight: '600',
+                      fontSize: '14px',
+                      color: '#212529',
+                      marginBottom: '4px'
+                    }}>
+                      {invitation.name || invitation.invitee_name || '이름 없음'}
+                    </div>
+                    <div style={{ 
+                      fontSize: '13px', 
+                      color: '#6c757d',
+                      marginBottom: '2px'
+                    }}>
+                      {invitation.email || invitation.invitee_email}
+                    </div>
+                    <div style={{ 
+                      fontSize: '12px', 
+                      color: '#adb5bd' 
+                    }}>
+                      최근 프로젝트: {invitation.project_name} • {invitation.invitation_count}회 초대
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const emptyIndex = emails.findIndex(email => !email.trim())
+                      if (emptyIndex !== -1) {
+                        InputChange(emptyIndex, invitation.email || invitation.invitee_email)
+                      } else {
+                        AddInput()
+                        setTimeout(() => {
+                          InputChange(emails.length, invitation.email || invitation.invitee_email)
+                        }, 0)
+                      }
+                    }}
+                    style={{
+                      padding: '6px 16px',
+                      background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-1px)'
+                      e.target.style.boxShadow = '0 3px 6px rgba(22, 49, 248, 0.3)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)'
+                      e.target.style.boxShadow = 'none'
+                    }}
+                  >
+                    빠른 초대
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
+React.memo(InviteInput)

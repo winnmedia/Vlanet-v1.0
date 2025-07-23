@@ -1,12 +1,13 @@
-import './SideBar.scss'
+
+import styles from './SideBar.module.scss'
 import cx from 'classnames'
 import React, { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useRouter, useLocation } from '../util/nextNavigation'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
 
 const SideBar = memo(function SideBar({ tab, on_menu }) {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const path = useLocation().pathname
   const { project_list, user } = useSelector((s) => s.ProjectStore)
   const [SubMenu, SetSubMenu] = useState(false)
@@ -38,7 +39,6 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
       SetSortProject([])
     }
   }, [sortedProjects])
-
 
   useEffect(() => {
     if (on_menu === true) {
@@ -88,11 +88,11 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
 
   return (
     <>
-      <aside className="SideBar" ref={sidebarRef}>
+      <aside className={styles.SideBar} ref={sidebarRef}>
         <nav>
           <ul>
             <li
-              className={cx({ active: path === '/CmsHome' && !SubMenu })}
+              className={cx({ [styles.active]: path === '/CmsHome' && !SubMenu })}
               onClick={() => {
                 SetSubMenu(false)
                 navigate('/CmsHome')
@@ -101,7 +101,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               홈
             </li>
             <li
-              className={cx({ active: path === '/VideoPlanning' && !SubMenu })}
+              className={cx({ [styles.active]: path === '/VideoPlanning' && !SubMenu })}
               onClick={() => {
                 SetSubMenu(false)
                 navigate('/VideoPlanning')
@@ -110,7 +110,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               영상 기획
             </li>
             <li
-              className={cx({ active: path === '/Calendar' && !SubMenu })}
+              className={cx({ [styles.active]: path === '/Calendar' && !SubMenu })}
               onClick={() => {
                 SetSubMenu(false)
                 navigate('/Calendar')
@@ -119,8 +119,8 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               전체 일정
             </li>
             <li
-              className={cx('menu_project', 'has-toggle', {
-                active:
+              className={cx(styles.menu_project, styles['has-toggle'], {
+                [styles.active]:
                   path.includes('/ProjectView') ||
                   (SubMenu && tab_name === 'project'),
               })}
@@ -138,9 +138,9 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               <span>{project_list ? project_list.length : 0}</span>
             </li>
             <li
-              className={cx('has-toggle', {
-                active:
-                  path.includes('/Feedback') ||
+              className={cx(styles['has-toggle'], {
+                [styles.active]:
+                  path.includes('/feedback') ||
                   (SubMenu && tab_name === 'feedback'),
               })}
               onClick={() => {
@@ -158,7 +158,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
           </ul>
         </nav>
         <div
-          className={cx('mypage', { active: path === '/MyPage' })}
+          className={cx(styles.mypage, { [styles.active]: path === '/mypage' })}
           onClick={() => {
             SetSubMenu(false)
             navigate('/MyPage')
@@ -167,12 +167,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
           마이페이지
         </div>
         <div
-          className="logout"
+          className={styles.logout}
           onClick={() => {
-            if (checkSession()) {
-              window.localStorage.removeItem('VGID')
+            if (checkSession() && typeof window !== 'undefined') {
+              localStorage.removeItem('VGID')
             }
-            navigate('/login', { replace: true })
+            navigate('/Login', { replace: true })
           }}
         >
           로그아웃
@@ -181,13 +181,13 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
 
       <div 
         ref={submenuRef}
-        className={SubMenu ? 'Submenu active' : 'Submenu'}
+        className={SubMenu ? `${styles.Submenu} ${styles.active}` : styles.Submenu}
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
-        <div className="etc">
-          <div className="ss_title">
+        <div className={styles.etc}>
+          <div className={styles.ss_title}>
             {tab_name === 'feedback' ? '영상 피드백' : '프로젝트 관리'}
           </div>
           <ul>
@@ -197,7 +197,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                   e.stopPropagation();
                   navigate('/ProjectCreate');
                 }} 
-                className="plus"
+                className={styles.plus}
               >
                 +
               </li>
@@ -207,7 +207,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                 e.stopPropagation();
                 SetSubMenu(false);
               }} 
-              className="close"
+              className={styles.close}
             >
               x
             </li>

@@ -1,4 +1,4 @@
-import 'css/Cms/Cms.scss'
+
 /* 상단 이미지 - 샘플, 기본 */
 
 import React from 'react'

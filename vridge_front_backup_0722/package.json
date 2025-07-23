@@ -1,0 +1,90 @@
+{
+  "name": "vridge",
+  "version": "0.9.1",
+  "private": true,
+  "homepage": "https://vlanet.net",
+  "dependencies": {
+    "@ant-design/plots": "^2.6.1",
+    "@react-oauth/google": "^0.11.0",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@videojs/themes": "^1.0.1",
+    "@vidstack/react": "^0.6.15",
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
+    "antd": "^5.5.2",
+    "axios": "^1.6.8",
+    "classnames": "^2.3.2",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "form-data": "^4.0.3",
+    "immer": "^10.0.2",
+    "moment": "^2.29.4",
+    "query-string": "^8.1.0",
+    "react": "^18.2.0",
+    "react-datepicker": "^4.14.1",
+    "react-dom": "^18.2.0",
+    "react-easy-crop": "^5.4.2",
+    "react-helmet-async": "^2.0.5",
+    "react-kakao-login": "^2.1.1",
+    "react-redux": "^8.1.0",
+    "react-router-dom": "^6.11.2",
+    "react-switch": "^7.0.0",
+    "sass": "^1.62.1",
+    "serve": "^14.2.0",
+    "styled-components": "^6.1.0",
+    "swiper": "^10.1.0",
+    "video.js": "^8.23.3",
+    "web-vitals": "^2.1.4",
+    "zustand": "^4.4.1"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.13.8",
+    "compression-webpack-plugin": "^11.1.0",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1",
+    "react-scripts": "5.0.1",
+    "redux-logger": "^3.0.6",
+    "webpack-bundle-analyzer": "^4.10.2"
+  },
+  "overrides": {
+    "postcss": "^8.4.31",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "nth-check": "^2.1.1",
+    "css-select": "^5.1.0",
+    "svgo": "^3.0.0",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "NODE_ENV=production CI=false react-app-rewired build",
+    "build:analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "serve": "node server.js",
+    "serve:build": "npm run build && node server.js",
+    "dev": "react-app-rewired start",
+    "preview": "npm run build && npx serve -s build",
+    "vercel-build": "CI=false npm run build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

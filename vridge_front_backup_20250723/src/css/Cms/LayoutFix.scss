@@ -1,0 +1,235 @@
+// Layout Fix - 전체 레이아웃 정리
+
+// 메인 피드백 페이지 레이아웃
+.content.feedback.feedback_page {
+  display: flex !important;
+  height: calc(100vh - 100px) !important;
+  margin: 0 0 30px !important;
+  padding: 20px !important;
+  padding-left: 8px !important; // 왼쪽 패딩 최소화
+  gap: 10px !important; // 섹션 간 간격도 축소
+  
+  // 큰 화면 - 좌우 배치
+  @media (min-width: 1401px) {
+    flex-direction: row !important;
+    
+    // 왼쪽 비디오 섹션
+    .videobox {
+      flex: 1 !important;
+      width: auto !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 15px !important;
+      
+      .video_inner {
+        flex: 1 !important;
+        height: auto !important;
+        min-height: 500px !important;
+        
+        &.active {
+          display: flex !important;
+          
+          .feedback-player {
+            width: 100% !important;
+            height: 100% !important;
+          }
+        }
+      }
+      
+      .etc_box {
+        flex-shrink: 0 !important;
+        margin-top: 0 !important;
+      }
+    }
+    
+    // 오른쪽 피드백 섹션
+    .sidebox {
+      width: 450px !important;
+      flex-shrink: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      margin-top: 0 !important;
+      max-height: none !important;
+      
+      .b_title {
+        flex-shrink: 0 !important;
+      }
+      
+      .tab_container {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        
+        .top_box.tab_menu {
+          flex-shrink: 0 !important;
+        }
+        
+        .tab_content {
+          flex: 1 !important;
+          overflow-y: auto !important;
+          min-height: 0 !important;
+        }
+      }
+    }
+  }
+  
+  // 중간 화면 - 세로 배치
+  @media (max-width: 1400px) {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: calc(100vh - 100px) !important;
+    
+    .videobox {
+      width: 100% !important;
+      height: auto !important;
+      
+      .video_inner {
+        height: 500px !important;
+        min-height: 500px !important;
+      }
+    }
+    
+    .sidebox {
+      width: 100% !important;
+      height: 600px !important;
+      margin-top: 20px !important;
+    }
+  }
+  
+  // 작은 화면
+  @media (max-width: 992px) {
+    padding: 15px !important;
+    
+    .videobox {
+      .video_inner {
+        height: 400px !important;
+        min-height: 400px !important;
+      }
+    }
+    
+    .sidebox {
+      height: 500px !important;
+    }
+  }
+  
+  // 모바일
+  @media (max-width: 768px) {
+    padding: 10px !important;
+    gap: 10px !important;
+    
+    .videobox {
+      .video_inner {
+        height: 300px !important;
+        min-height: 300px !important;
+      }
+      
+      .etc_box {
+        padding: 15px !important;
+      }
+    }
+    
+    .sidebox {
+      height: 400px !important;
+      margin-top: 15px !important;
+      
+      .b_title {
+        padding: 15px !important;
+      }
+      
+      .tab_content {
+        padding: 15px !important;
+      }
+    }
+  }
+}
+
+// 피드백 섹션 내부 레이아웃 정리
+.sidebox {
+  background: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  
+  .b_title {
+    padding: 18px 20px !important;
+    border-bottom: 1px solid #efefef !important;
+    background: #fafafa !important;
+    
+    .s_title {
+      font-size: 18px !important;
+      font-weight: 600 !important;
+      color: #333 !important;
+    }
+  }
+  
+  .tab_container {
+    .top_box.tab_menu {
+      padding: 12px 16px !important;
+      background: #f8f8f8 !important;
+      border-bottom: 1px solid #efefef !important;
+      
+      .tab_list {
+        display: flex !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
+        flex-wrap: wrap !important;
+        
+        li {
+          margin: 0 !important;
+          
+          button {
+            padding: 6px 14px !important;
+            font-size: 13px !important;
+            border-radius: 6px !important;
+            border: 1px solid transparent !important;
+            background: #fff !important;
+            color: #666 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
+            
+            &:hover {
+              background: #f0f0f0 !important;
+              color: #333 !important;
+            }
+          }
+          
+          &.active button {
+            background: #0058da !important;
+            color: #fff !important;
+            border-color: #0058da !important;
+          }
+        }
+      }
+    }
+    
+    .tab_content {
+      padding: 20px !important;
+      
+      // 스크롤바 스타일
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 3px;
+        
+        &:hover {
+          background: #999;
+        }
+      }
+    }
+  }
+}

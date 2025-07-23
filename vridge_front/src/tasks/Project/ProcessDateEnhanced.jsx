@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import { ko } from 'date-fns/esm/locale'
+
+import { ko } from 'date-fns/locale'
 import { format, addDays, differenceInDays, addHours, isValid } from 'date-fns'
 import moment from 'moment'
 import { setDefaultTime } from 'utils/dateUtils'
-import './ProcessDateEnhanced.scss'
 
 // 아이콘 컴포넌트
 const CalendarIcon = () => (

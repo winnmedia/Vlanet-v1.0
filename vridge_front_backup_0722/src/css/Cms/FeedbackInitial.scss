@@ -1,0 +1,541 @@
+// Feedback Page - Initial Design (제일 처음 디자인)
+.content.feedback {
+  &.feedback_page {
+    height: calc(100% - 50px);
+    margin: 0 0 50px;
+    display: flex;
+    justify-content: space-between;
+    
+    .videobox {
+      width: calc(100% - 490px);
+      background: transparent;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+      
+      &.video_section {
+        // 비디오 섹션 스타일
+      }
+      
+      .video_inner {
+        background: #f8f8f8;
+        border: 3px dashed #0058da;
+        height: 100%;
+        min-height: 700px;
+        border-radius: 15px;
+        position: relative;
+        
+        .loading {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.9);
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 1;
+          
+          .animation {
+            margin: 0 auto;
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            -webkit-animation: spin 1s ease-in-out infinite;
+          }
+        }
+
+        @keyframes spin {
+          to {
+            -webkit-transform: rotate(360deg);
+          }
+        }
+        @-webkit-keyframes spin {
+          to {
+            -webkit-transform: rotate(360deg);
+          }
+        }
+        
+        .upload_area {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          
+          .upload_btn_wrap {
+            max-width: 260px;
+            margin-bottom: 15px;
+            
+            .video_upload {
+              display: none;
+            }
+            
+            .video_upload_label {
+              cursor: pointer;
+              
+              div {
+                display: block;
+                text-align: center;
+                line-height: 50px;
+                background: #0058da;
+                color: #fff;
+                width: 150px;
+                height: 50px;
+                border-radius: 15px;
+                font-size: 16px;
+                
+                &:hover {
+                  background: #0047b8;
+                }
+              }
+            }
+          }
+          
+          .guide_btn {
+            background: none;
+            border: 1px solid #0058da;
+            color: #0058da;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            
+            &:hover {
+              background: #0058da;
+              color: #fff;
+            }
+          }
+        }
+        
+        &.active {
+          border: 2px solid #0058da;
+          overflow: hidden;
+          
+          .feedback-player {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+      
+      .etc_box {
+        margin-top: 30px;
+        
+        .flex {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          
+          button {
+            background: none;
+            border: none;
+            width: auto;
+            cursor: pointer;
+            
+            &.all {
+              background: #0058da;
+              color: #fff;
+              width: 150px;
+              height: 50px;
+              border-radius: 15px;
+              font-size: 16px;
+              
+              &:hover {
+                background: #0047b8;
+              }
+            }
+          }
+          
+          .good {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            
+            .change_btn_wrap {
+              .video_upload {
+                display: none;
+              }
+              
+              .video_upload_label {
+                cursor: pointer;
+                
+                div {
+                  padding: 8px 20px;
+                  border: 1px solid #0058da;
+                  color: #0058da;
+                  border-radius: 10px;
+                  font-size: 14px;
+                  
+                  &:hover {
+                    background: #0058da;
+                    color: #fff;
+                  }
+                  
+                  &.delete {
+                    border-color: #d93a3a;
+                    color: #d93a3a;
+                    
+                    &:hover {
+                      background: #d93a3a;
+                      color: #fff;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+          .share {
+            background: #0058da;
+            color: #fff;
+            padding: 0 20px;
+            height: 50px;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            border: none;
+            
+            &:hover {
+              background: #0047b8;
+            }
+          }
+        }
+        
+        .list {
+          margin-top: 20px;
+          max-height: 300px;
+          overflow-y: auto;
+        }
+      }
+    }
+    
+    .sidebox {
+      width: 475px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      
+      .b_title {
+        padding: 20px 25px;
+        border-bottom: 1px solid #efefef;
+        
+        .s_title {
+          font-size: 20px;
+          font-weight: bold;
+          color: #000;
+        }
+      }
+      
+      .tab_container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      
+      .top_box {
+        &.tab_menu {
+          padding: 15px 25px;
+          background: #f8f8f8;
+          border-bottom: 1px solid #efefef;
+          
+          .tab_list {
+            display: flex;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            
+            li {
+              button {
+                background: none;
+                border: none;
+                padding: 8px 16px;
+                color: #707175;
+                font-size: 14px;
+                cursor: pointer;
+                border-radius: 8px;
+                
+                &:hover {
+                  background: rgba(0, 88, 218, 0.1);
+                  color: #0058da;
+                }
+              }
+              
+              &.active button {
+                background: #0058da;
+                color: #fff;
+              }
+            }
+          }
+        }
+      }
+      
+      .tab_content {
+        flex: 1;
+        padding: 25px;
+        overflow-y: auto;
+        
+        // Comment Section
+        .comment {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          
+          ul {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            
+            li {
+              padding: 15px;
+              border-bottom: 1px solid #efefef;
+              
+              &:last-child {
+                border-bottom: none;
+              }
+            }
+          }
+          
+          .input-area {
+            border-top: 1px solid #efefef;
+            padding-top: 20px;
+            
+            input, textarea {
+              width: 100%;
+              padding: 10px 15px;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              font-size: 14px;
+              
+              &:focus {
+                outline: none;
+                border-color: #0058da;
+              }
+            }
+            
+            button {
+              width: 100%;
+              margin-top: 10px;
+              padding: 12px;
+              background: #0058da;
+              color: #fff;
+              border: none;
+              border-radius: 8px;
+              font-size: 14px;
+              cursor: pointer;
+              
+              &:hover {
+                background: #0047b8;
+              }
+            }
+          }
+        }
+        
+        // Form Section
+        .form {
+          .flex {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            
+            > div {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              
+              input[type="radio"] {
+                width: 16px;
+                height: 16px;
+                margin: 0;
+                cursor: pointer;
+                
+                &.ty02 {
+                  accent-color: #0058da;
+                }
+              }
+              
+              label {
+                margin: 0;
+                cursor: pointer;
+                font-size: 14px;
+                color: #000;
+              }
+            }
+          }
+          
+          input.ty01 {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            
+            &:focus {
+              outline: none;
+              border-color: #0058da;
+            }
+            
+            &.mt20 {
+              margin-top: 20px;
+            }
+          }
+          
+          button.submit {
+            width: 100%;
+            padding: 12px;
+            background: #0058da;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            
+            &.mt40 {
+              margin-top: 40px;
+            }
+            
+            &:hover {
+              background: #0047b8;
+            }
+          }
+        }
+        
+        // Member List
+        .member {
+          ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            
+            li {
+              display: flex;
+              align-items: center;
+              gap: 15px;
+              padding: 15px;
+              border-radius: 8px;
+              
+              &:hover {
+                background: #f8f8f8;
+              }
+              
+              .img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #0058da;
+              }
+              
+              .txt {
+                flex: 1;
+                
+                span {
+                  display: block;
+                  
+                  &:last-child {
+                    font-size: 13px;
+                    color: #707175;
+                    margin-top: 2px;
+                  }
+                }
+              }
+              
+              &.admin .img {
+                background: #55a1f5;
+              }
+            }
+          }
+        }
+        
+        // Project Info
+        .info {
+          dl {
+            display: flex;
+            margin-bottom: 15px;
+            
+            dt {
+              min-width: 120px;
+              color: #707175;
+              font-size: 14px;
+            }
+            
+            dd {
+              flex: 1;
+              color: #000;
+              margin: 0;
+            }
+          }
+          
+          .project_btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #0058da;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            
+            &:hover {
+              background: #0047b8;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 1200px) {
+  .content.feedback.feedback_page {
+    flex-direction: column;
+    
+    .videobox {
+      width: 100% !important;
+      
+      .video_inner {
+        min-height: 400px;
+      }
+    }
+    
+    .sidebox {
+      width: 100% !important;
+      min-height: 500px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .content.feedback.feedback_page {
+    .videobox {
+      padding: 10px;
+      
+      .etc_box {
+        .flex {
+          flex-wrap: wrap;
+          gap: 10px;
+          justify-content: center;
+        }
+      }
+    }
+    
+    .sidebox {
+      .tab_content {
+        padding: 15px;
+      }
+    }
+  }
+}

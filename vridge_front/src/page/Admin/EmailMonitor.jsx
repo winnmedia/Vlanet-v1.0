@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { axiosCredentials } from 'util/util';
-import './EmailMonitor.scss';
+
 import moment from 'moment';
 import 'moment/locale/ko';
 

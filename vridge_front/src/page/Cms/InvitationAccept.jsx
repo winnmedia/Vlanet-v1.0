@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useRouter, useParams } from '../../util/nextNavigation'
 import { AcceptInvitation, DeclineInvitation } from 'api/invitation'
 import { checkSession } from 'util/util'
-import axios from 'config/axios'
+import axios from '../../config/axios'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
@@ -10,7 +10,7 @@ import { debug404 } from 'utils/debug404'
 
 export default function InvitationAccept() {
   const { token, uid } = useParams()
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const { startFlow, navigateInFlow, navigateSafely, handleNotFound } = useNavigationFlow()
   
   const [invitation, setInvitation] = useState(null)

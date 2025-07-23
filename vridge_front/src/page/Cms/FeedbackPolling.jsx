@@ -1,31 +1,30 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from 'util/util'
-import 'css/Cms/Cms.scss'
-import 'css/Cms/FeedbackOriginal.scss'
-import 'css/Cms/CommentFix.scss'
-import 'css/Cms/ButtonAlignment.scss'
-import 'css/Cms/ShareDeleteFix.scss'
-import 'css/Cms/ShareButtonFix.scss'
-import 'css/Cms/VideoPlayerButtonFix.scss'
-import 'css/Cms/UploadProgress.scss'
-import 'css/Cms/LayoutFix.scss'
-import 'css/Cms/SidebarSpacingFix.scss'
-import 'css/Cms/ModalOpacityFix.scss'
-import 'css/Cms/FeedbackSectionRedesign.scss'
-import 'css/Cms/SidebarResize.scss'
-import 'css/Cms/SidebarProjectSpacing.scss'
-import 'css/Cms/FeedbackPageSpacing.scss'
-import 'css/Cms/EncodingStatus.scss'
-import 'css/Cms/FeedbackPopup.scss'
-import 'css/Cms/OpinionInput.scss'
-import 'css/Cms/AITeacherModal.scss'
-import 'css/Cms/AIAnalyzeButton.scss'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
-import 'css/Cms/SubmenuFinal.scss'
-import 'css/Cms/SubmenuFeedbackFix.scss'
+
+
 import FeedbackInput from 'tasks/Feedback/FeedbackInput'
 import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
@@ -45,7 +44,7 @@ import moment from 'moment'
 import 'moment/locale/ko'
 
 export default function FeedbackPolling() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const { user } = useSelector((s) => s.ProjectStore)
   const { project_id } = useParams()
 
@@ -275,8 +274,8 @@ export default function FeedbackPolling() {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const token = localStorage.getItem('VGID')?.replace(/"/g, '');
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/video-analysis/teachers/`, {
+        const token = typeof window !== 'undefined' && localStorage.getItem('VGID')?.replace(/"/g, '');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/video-analysis/teachers/`, {
           headers: {
             'Authorization': token ? `Bearer ${token}` : ''
           }

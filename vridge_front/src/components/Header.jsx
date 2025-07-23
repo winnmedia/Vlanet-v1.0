@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import cx from 'classnames'
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter } from '../util/nextNavigation'
 import { GetNotifications, MarkNotificationAsRead, MarkAllNotificationsAsRead } from 'api/notification'
 import moment from 'moment'
 import 'moment/locale/ko'
 import UserAvatar from './UserAvatar'
-import './Header.scss'
+import styles from './Header.module.scss'
 
 const Header = memo(function Header({
   // 초기값 지정
@@ -15,7 +15,7 @@ const Header = memo(function Header({
   children,
   props,
 }) {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const [showDropdown, setShowDropdown] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [notifications, setNotifications] = useState([])
@@ -67,7 +67,7 @@ const Header = memo(function Header({
 
     // 알림과 관련된 페이지로 이동
     if (notification.project_id) {
-      navigate(`/Feedback/${notification.project_id}`)
+      navigate(`/feedback/${notification.project_id}`)
     }
     setShowNotifications(false)
   }
@@ -129,22 +129,24 @@ const Header = memo(function Header({
   const right = makeHtml(rightItems, navigate, () => setShowDropdown(!showDropdown))
 
   const handleLogout = () => {
-    localStorage.removeItem('VGID')
-    localStorage.removeItem('token')
-    localStorage.removeItem('userInfo')
-    navigate('/Login', { replace: true })
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('VGID')
+      localStorage.removeItem('token')
+      localStorage.removeItem('userInfo')
+    }
+    navigate('/login', { replace: true })
   }
 
   return (
-    <div className="Header">
+    <div className={styles.Header}>
       <div>{left}</div>
       
       {/* 우측 영역: 알림 아이콘 + 프로필 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         {/* 알림 아이콘 */}
-        <div className="notification-wrapper" ref={notificationRef}>
+        <div className={styles['notification-wrapper']} ref={notificationRef}>
           <div 
-            className="notification-icon" 
+            className={styles['notification-icon']} 
             onClick={() => setShowNotifications(!showNotifications)}
             style={{
               position: 'relative',
@@ -187,7 +189,7 @@ const Header = memo(function Header({
 
           {/* 알림 드롭다운 */}
           {showNotifications && (
-            <div className="notification-dropdown" style={{
+            <div className={styles['notification-dropdown']} style={{
               position: 'absolute',
               top: '100%',
               right: '0',
@@ -305,26 +307,26 @@ const Header = memo(function Header({
         </div>
 
         {/* 프로필 */}
-        <div className="profile-wrapper" ref={dropdownRef}>
-          <div className="profile" onClick={() => setShowDropdown(!showDropdown)}>
+        <div className={styles['profile-wrapper']} ref={dropdownRef}>
+          <div className={styles.profile} onClick={() => setShowDropdown(!showDropdown)}>
             {right}
           </div>
           {showDropdown && (
-            <div className="dropdown-menu">
-              <div className="dropdown-item" onClick={() => {
+            <div className={styles['dropdown-menu']}>
+              <div className={styles['dropdown-item']} onClick={() => {
                 setShowDropdown(false)
-                navigate('/MyPage')
+                navigate('/mypage')
               }}>
                 마이페이지
               </div>
-              <div className="dropdown-item" onClick={() => {
+              <div className={styles['dropdown-item']} onClick={() => {
                 setShowDropdown(false)
-                navigate('/CmsHome')
+                navigate('/cmshome')
               }}>
                 홈으로
               </div>
-              <div className="dropdown-divider"></div>
-              <div className="dropdown-item logout" onClick={handleLogout}>
+              <div className={styles['dropdown-divider']}></div>
+              <div className={cx(styles['dropdown-item'], styles.logout)} onClick={handleLogout}>
                 로그아웃
               </div>
             </div>
@@ -340,10 +342,10 @@ function makeHtml(items = [], navigate, onProfileClick) {
   return items.map((item, i) => {
     if (item.type === 'img') {
       const button = (
-        <div key={i} className={item.className}>
+        <div key={i} className={styles[item.className]}>
           <img
             style={{ cursor: 'pointer' }}
-            onClick={() => navigate('/CmsHome')}
+            onClick={() => navigate('/cmshome')}
             alt={`img_${i}`}
             src={item.src}
           />
@@ -366,7 +368,7 @@ function makeHtml(items = [], navigate, onProfileClick) {
       const element = (
         <div 
           key={i} 
-          className={cx(item.className, { clickable: item.className === 'nick' })}
+          className={cx(styles[item.className], { [styles.clickable]: item.className === 'nick' })}
           style={item.className === 'nick' ? { cursor: 'pointer' } : {}}
         >
           {item.text}

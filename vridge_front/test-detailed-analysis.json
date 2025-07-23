@@ -1,0 +1,210 @@
+{
+  "timestamp": "2025-07-22T09:38:51.219Z",
+  "pages": [
+    {
+      "name": "홈페이지",
+      "path": "/",
+      "status": 200,
+      "issues": [],
+      "uiCheck": {
+        "logo": {
+          "found": true,
+          "width": null,
+          "height": null
+        },
+        "primaryButton": {
+          "found": false,
+          "count": 0
+        },
+        "header": {
+          "found": false,
+          "hasNavigation": false
+        },
+        "footer": {
+          "found": false
+        },
+        "responsiveness": {
+          "hasViewport": true,
+          "hasMobileStyles": false
+        }
+      }
+    },
+    {
+      "name": "로그인",
+      "path": "/login",
+      "status": 200,
+      "issues": [],
+      "uiCheck": {
+        "logo": {
+          "found": true,
+          "width": null,
+          "height": null
+        },
+        "primaryButton": {
+          "found": false,
+          "count": 0
+        },
+        "header": {
+          "found": false,
+          "hasNavigation": false
+        },
+        "footer": {
+          "found": false
+        },
+        "responsiveness": {
+          "hasViewport": true,
+          "hasMobileStyles": false
+        }
+      }
+    },
+    {
+      "name": "회원가입",
+      "path": "/signup",
+      "status": 200,
+      "issues": [],
+      "uiCheck": {
+        "logo": {
+          "found": true,
+          "width": null,
+          "height": null
+        },
+        "primaryButton": {
+          "found": true,
+          "count": 2
+        },
+        "header": {
+          "found": false,
+          "hasNavigation": false
+        },
+        "footer": {
+          "found": false
+        },
+        "responsiveness": {
+          "hasViewport": true,
+          "hasMobileStyles": false
+        }
+      }
+    },
+    {
+      "name": "CMS 홈",
+      "path": "/cmshome",
+      "status": 200,
+      "issues": [],
+      "uiCheck": {
+        "logo": {
+          "found": true,
+          "width": null,
+          "height": null
+        },
+        "primaryButton": {
+          "found": false,
+          "count": 0
+        },
+        "header": {
+          "found": true,
+          "hasNavigation": false
+        },
+        "footer": {
+          "found": false
+        },
+        "responsiveness": {
+          "hasViewport": true,
+          "hasMobileStyles": false
+        }
+      }
+    },
+    {
+      "name": "프로젝트 생성",
+      "path": "/project/create",
+      "status": 200,
+      "issues": [],
+      "uiCheck": {
+        "logo": {
+          "found": true,
+          "width": null,
+          "height": null
+        },
+        "primaryButton": {
+          "found": false,
+          "count": 0
+        },
+        "header": {
+          "found": true,
+          "hasNavigation": true
+        },
+        "footer": {
+          "found": false
+        },
+        "responsiveness": {
+          "hasViewport": true,
+          "hasMobileStyles": false
+        }
+      }
+    },
+    {
+      "name": "영상 기획",
+      "path": "/videoplanning",
+      "status": 200,
+      "issues": [],
+      "uiCheck": {
+        "logo": {
+          "found": true,
+          "width": null,
+          "height": null
+        },
+        "primaryButton": {
+          "found": false,
+          "count": 0
+        },
+        "header": {
+          "found": true,
+          "hasNavigation": true
+        },
+        "footer": {
+          "found": false
+        },
+        "responsiveness": {
+          "hasViewport": true,
+          "hasMobileStyles": false
+        }
+      }
+    },
+    {
+      "name": "관리자 대시보드",
+      "path": "/admin",
+      "status": 200,
+      "issues": [
+        "인증 관련 문제"
+      ],
+      "uiCheck": {
+        "logo": {
+          "found": false,
+          "width": null,
+          "height": null
+        },
+        "primaryButton": {
+          "found": true,
+          "count": 1
+        },
+        "header": {
+          "found": false,
+          "hasNavigation": false
+        },
+        "footer": {
+          "found": false
+        },
+        "responsiveness": {
+          "hasViewport": true,
+          "hasMobileStyles": false
+        }
+      }
+    }
+  ],
+  "commonIssues": [],
+  "uiConsistencyScore": "57.1",
+  "recommendations": [
+    "UI 일관성 점수가 낮습니다. 모든 페이지에 통일된 헤더, 로고, 버튼 스타일을 적용하세요.",
+    "1개 페이지에 로고가 없습니다: 관리자 대시보드",
+    "5개 페이지에 주요 버튼 스타일(#1631F8)이 없습니다. 통일성을 위해 적용을 권장합니다."
+  ]
+}

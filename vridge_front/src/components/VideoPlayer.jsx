@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } f
 import FeedbackPlayer from './FeedbackPlayer'
 import VideoJsPlayer from './VideoJsPlayer'
 // import VidstackPlayer from './VidstackPlayer' // 임시 비활성화
-import './VideoPlayer.scss'
 
 const VideoPlayer = forwardRef(({ 
   videoUrl, 

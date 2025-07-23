@@ -103,7 +103,7 @@ export function AcceptInvite(uid, token) {
   // URL에 trailing slash 추가 (중요!)
   const url = `/api/projects/invite/${uid}/${token}/`
   console.log('[API] AcceptInvite URL:', url)
-  console.log('[API] Full URL will be:', `${process.env.REACT_APP_API_URL}${url}`)
+  console.log('[API] Full URL will be:', `${process.env.NEXT_PUBLIC_API_URL}${url}`)
   
   return axiosCredentials(
     'get',

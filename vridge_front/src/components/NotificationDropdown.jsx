@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { GetNotifications, GetUnreadNotificationCount, MarkNotificationsAsRead } from 'api/notification'
 import moment from 'moment'
 import 'moment/locale/ko'
-import './NotificationDropdown.scss'
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false)
@@ -70,7 +69,7 @@ export default function NotificationDropdown() {
   // 알림 클릭 시 해당 페이지로 이동
   const handleNotificationClick = (notification) => {
     if (notification.action_url) {
-      window.location.href = notification.action_url
+      typeof window !== 'undefined' && window.location.href = notification.action_url
     }
     setIsOpen(false)
   }

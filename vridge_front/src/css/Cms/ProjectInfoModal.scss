@@ -148,7 +148,9 @@ $white: #fff;
                 border-radius: 20px;
                 font-weight: 500;
                 
-                &:has-text('일반') {
+                // Note: CSS doesn't support :has-text selector
+                // This styling should be applied via JavaScript or class names
+                &.type-general {
                   background: $text-gray;
                 }
               }

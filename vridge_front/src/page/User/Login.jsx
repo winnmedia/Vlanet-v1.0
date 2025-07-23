@@ -1,8 +1,8 @@
-import 'css/User/Auth.scss'
+
 import PageTemplate from 'components/PageTemplate'
 import queryString from 'query-string'
 import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
+import { useRouter, useSearchParams, useLocation } from '../../util/nextNavigation'
 import { useDispatch } from 'react-redux'
 import { SignIn, GoogleLoginAPI, GetUserInfo } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
@@ -11,8 +11,8 @@ import axios from 'axios'
 
 export default function Login() {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { navigate } = useRouter()
+  const router = useRouter()
   const initial_input = {
     email: '',
     password: '',
@@ -59,7 +59,7 @@ export default function Login() {
     console.log('Login success, saving token:', jwt)
     // 모바일 환경을 고려한 안전한 토큰 저장
     try {
-      window.localStorage.setItem('VGID', jwt)
+      typeof window !== 'undefined' && window.localStorage.setItem('VGID', jwt)
     } catch (e) {
       // localStorage 접근 실패 시 safeStorage 사용
       safeStorage.setItem('VGID', jwt)
@@ -71,7 +71,7 @@ export default function Login() {
         email: userData.user || userData.email,
         nickname: userData.nickname
       };
-      window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      typeof window !== 'undefined' && window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
     } else {
       // 사용자 정보 API 호출
       try {
@@ -81,7 +81,7 @@ export default function Login() {
             email: userRes.data.email || userRes.data.username,
             nickname: userRes.data.nickname
           };
-          window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          typeof window !== 'undefined' && window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
         }
       } catch (userErr) {
         console.error('Failed to fetch user info:', userErr);
@@ -100,19 +100,19 @@ export default function Login() {
         // 초대 링크 처리 페이지
         console.log('Navigating to EmailCheck with uid and token')
         navigate(`/EmailCheck?uid=${uid}&token=${token}`)
-      } else if (location.state?.returnUrl) {
+      } else if (router.query?.returnUrl) {
         // 초대 수락을 위해 로그인한 경우
-        console.log('Navigating to return URL:', location.state.returnUrl)
-        navigate(location.state.returnUrl)
+        console.log('Navigating to return URL:', router.query.returnUrl)
+        navigate(router.query.returnUrl)
       } else {
         console.log('Navigating to CmsHome')
-        navigate('/CmsHome', { replace: true })
+        navigate('/cmshome', { replace: true })
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
         console.error('Failed to load projects after login:', err)
         // Still navigate even if project loading fails
-        navigate('/CmsHome', { replace: true })
+        navigate('/cmshome', { replace: true })
       }
     }
   }
@@ -130,7 +130,7 @@ export default function Login() {
     setResendingEmail(true)
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/users/resend-verification-email/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/resend-verification-email/`,
         { email }
       )
       
@@ -159,8 +159,10 @@ export default function Login() {
       const controller = new AbortController()
       setLoginController(controller)
       
+      console.log('로그인 시도:', inputs)
       SignIn(inputs, { signal: controller.signal })
         .then((res) => {
+          console.log('로그인 성공:', res)
           setLoginController(null)
           CommonLoginSuccess(res.data.vridge_session, res.data)
         })
@@ -217,7 +219,7 @@ export default function Login() {
           <div className="title">로그인</div>
           
           {/* 초대 메시지 표시 */}
-          {location.state?.message && (
+          {router.query?.message && (
             <div style={{
               background: 'linear-gradient(135deg, #E8EBFF 0%, #D1D8FF 100%)',
               border: '1px solid #1631F8',
@@ -233,7 +235,7 @@ export default function Login() {
                 fontWeight: '600',
                 fontSize: '15px'
               }}>
-                🎬 {location.state.message}
+                🎬 {router.query.message}
               </p>
             </div>
           )}
@@ -255,7 +257,7 @@ export default function Login() {
             onChange={OnChange}
           />
           {login_message && <div className="error">{login_message}</div>}
-          <div className="find_link tr" onClick={() => navigate('/ResetPw')}>
+          <div className="find_link tr" onClick={() => navigate('/resetpw')}>
             비밀번호 찾기
           </div>
           <button className="submit mt20" onClick={Login}>
@@ -263,7 +265,7 @@ export default function Login() {
           </button>
           <div className="mt20 signup_link">
             브이래닛이 처음이신가요?{' '}
-            <span onClick={() => navigate('/Signup')}>간편 가입하기</span>
+            <span onClick={() => navigate('/signup')}>간편 가입하기</span>
           </div>
         </div>
       </div>

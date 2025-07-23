@@ -1,4 +1,4 @@
-import axios from 'config/axios'
+import axios from '../config/axios'
 
 /**
  * 이미지 URL을 프록시 URL로 변환합니다.

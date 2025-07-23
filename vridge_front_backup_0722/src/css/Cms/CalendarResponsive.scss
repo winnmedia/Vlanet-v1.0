@@ -1,0 +1,160 @@
+// Calendar 페이지 반응형 스타일
+
+// 프로젝트 카운트 버튼 반응형 디자인
+.part {
+  &.mt100 {
+    margin-top: 40px !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  ul.schedule {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    
+    li {
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
+      border-radius: 16px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      height: 120px !important;
+      padding: 20px !important;
+      color: #fff !important;
+      font-size: 16px !important;
+      font-weight: 500 !important;
+      line-height: 1.4 !important;
+      text-align: center !important;
+      box-shadow: 0 4px 12px rgba(22, 49, 248, 0.15) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      
+      &:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 8px 24px rgba(22, 49, 248, 0.25) !important;
+        
+        &::before {
+          opacity: 1;
+        }
+      }
+      
+      br {
+        display: none !important;
+      }
+      
+      span {
+        font-weight: 700 !important;
+        font-size: 36px !important;
+        margin-top: 8px !important;
+        display: block !important;
+      }
+      
+      &:first-child {
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
+      }
+      
+      &:nth-child(2) {
+        background: linear-gradient(135deg, #43A047 0%, #388E3C 100%) !important;
+      }
+      
+      &:nth-child(3) {
+        background: linear-gradient(135deg, #FFA726 0%, #F57C00 100%) !important;
+      }
+    }
+  }
+}
+
+// 프로젝트 진행현황과 동일한 너비
+.content.calendar {
+  .project-phase-board {
+    margin-top: 32px;
+  }
+  
+  .part.mt100 {
+    padding: 0 32px; // 프로젝트 진행현황과 동일한 패딩
+    
+    ul.schedule {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(22, 49, 248, 0.08);
+      border: 1px solid rgba(22, 49, 248, 0.06);
+    }
+  }
+}
+
+// 반응형 미디어 쿼리
+@media (max-width: 1200px) {
+  .part ul.schedule {
+    li {
+      font-size: 14px !important;
+      height: 110px !important;
+      padding: 16px !important;
+      
+      span {
+        font-size: 32px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .part {
+    &.mt100 {
+      margin-top: 24px !important;
+      padding: 0 16px !important;
+    }
+    
+    ul.schedule {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+      padding: 16px !important;
+      
+      li {
+        height: 80px !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        padding: 16px 20px !important;
+        
+        span {
+          font-size: 28px !important;
+          margin-top: 0 !important;
+          margin-left: 16px !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .part ul.schedule li {
+    font-size: 13px !important;
+    height: 70px !important;
+    padding: 12px 16px !important;
+    
+    span {
+      font-size: 24px !important;
+    }
+  }
+}

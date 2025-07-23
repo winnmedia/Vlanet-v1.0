@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { CreateFeedback } from 'api/feedback'
-import 'css/Cms/OpinionInputSimple.scss'
 
 export default function OpinionInput({ project_id, current_project, refetch }) {
   const { user } = useSelector((s) => s.ProjectStore)
@@ -103,7 +102,7 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
 
   // 로컬 스토리지에서 리액션 데이터 불러오기
   useEffect(() => {
-    const savedReactions = localStorage.getItem(`reactions_${project_id}`)
+    const savedReactions = typeof window !== 'undefined' && localStorage.getItem(`reactions_${project_id}`)
     if (savedReactions) {
       setCommentReactions(JSON.parse(savedReactions))
     }
@@ -113,7 +112,7 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
   const handleReaction = (commentId, type) => {
     const key = `${commentId}_${type}`
     const userReactionKey = `user_reaction_${commentId}_${user}`
-    const currentUserReaction = localStorage.getItem(userReactionKey)
+    const currentUserReaction = typeof window !== 'undefined' && localStorage.getItem(userReactionKey)
     
     setCommentReactions(prev => {
       const newReactions = { ...prev }
@@ -121,7 +120,7 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
       // 이미 같은 리액션을 클릭한 경우 취소
       if (currentUserReaction === type) {
         newReactions[key] = Math.max(0, (newReactions[key] || 0) - 1)
-        localStorage.removeItem(userReactionKey)
+        typeof window !== 'undefined' && localStorage.removeItem(userReactionKey)
       } else {
         // 기존 리액션이 있으면 제거
         if (currentUserReaction) {
@@ -130,11 +129,11 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
         }
         // 새 리액션 추가
         newReactions[key] = (newReactions[key] || 0) + 1
-        localStorage.setItem(userReactionKey, type)
+        typeof window !== 'undefined' && localStorage.setItem(userReactionKey, type)
       }
       
       // 로컬 스토리지에 저장
-      localStorage.setItem(`reactions_${project_id}`, JSON.stringify(newReactions))
+      typeof window !== 'undefined' && localStorage.setItem(`reactions_${project_id}`, JSON.stringify(newReactions))
       return newReactions
     })
   }

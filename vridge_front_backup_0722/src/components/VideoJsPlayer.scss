@@ -1,0 +1,269 @@
+.video-js-player-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: visible; // hidden에서 visible로 변경
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  // Video.js 스타일을 이 컨테이너 내부로 격리
+  isolation: isolate;
+  
+  // Video.js 컨테이너
+  [data-vjs-player] {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Video.js 커스터마이징
+  .video-js {
+    width: 100% !important;
+    height: 100% !important;
+    position: relative;
+    display: block;
+    
+    // 비디오 요소가 컨테이너를 채우도록
+    .vjs-tech {
+      object-fit: contain;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    // 큰 재생 버튼 스타일 - 정중앙 정렬 강화
+    .vjs-big-play-button {
+      font-size: 3em;
+      line-height: 1.5em;
+      height: 1.5em !important;
+      width: 3em !important;
+      border-radius: 0.3em;
+      background-color: rgba(43, 51, 63, 0.7);
+      border: 0.06666em solid #fff;
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 10;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+      
+      &:hover {
+        background-color: rgba(43, 51, 63, 0.9);
+        transform: translate(-50%, -50%) scale(1.1) !important;
+      }
+      
+      // 재생 아이콘 자체도 중앙 정렬
+      &:before {
+        position: relative !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+    }
+
+    // 재생 중일 때 big play button 숨기기
+    &.vjs-playing .vjs-big-play-button {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    // 로딩 중이거나 버퍼링 중일 때도 숨기기
+    &.vjs-seeking .vjs-big-play-button,
+    &.vjs-waiting .vjs-big-play-button,
+    &.vjs-live .vjs-big-play-button {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    // 일시정지 상태에서만 표시
+    &.vjs-paused .vjs-big-play-button {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+
+    // 비디오가 끝났을 때도 표시
+    &.vjs-ended .vjs-big-play-button {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+
+    // 컨트롤바 스타일
+    .vjs-control-bar {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      background-color: rgba(43, 51, 63, 0.7);
+      height: 3em;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+    }
+
+    // 진행바 스타일
+    .vjs-progress-control .vjs-play-progress {
+      background-color: #ff6b6b;
+    }
+
+    // 볼륨 컨트롤
+    .vjs-volume-panel {
+      &.vjs-hover .vjs-volume-control.vjs-volume-horizontal,
+      &:active .vjs-volume-control.vjs-volume-horizontal,
+      &.vjs-slider-active .vjs-volume-control.vjs-volume-horizontal {
+        width: 5em;
+        height: 3em;
+        margin-right: 0;
+      }
+    }
+
+    // 전체화면 버튼
+    .vjs-fullscreen-control {
+      cursor: pointer;
+    }
+
+    // 재생 속도 메뉴
+    .vjs-playback-rate {
+      .vjs-playback-rate-value {
+        font-size: 1.2em;
+        line-height: 3em;
+      }
+    }
+
+    // 시간 표시
+    .vjs-time-control {
+      font-size: 1em;
+      line-height: 3em;
+      min-width: 0;
+      padding: 0 0.5em;
+    }
+  }
+
+  // 키보드 단축키 안내 (숨김)
+  .keyboard-shortcuts {
+    display: none;
+
+    h4 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        kbd {
+          background: #333;
+          border: 1px solid #666;
+          border-radius: 3px;
+          padding: 2px 6px;
+          font-family: monospace;
+          font-size: 11px;
+          min-width: 40px;
+          text-align: center;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  // 호버 시 단축키 안내 표시
+  &:hover .keyboard-shortcuts {
+    opacity: 1;
+  }
+
+  // 모바일 최적화
+  @media (max-width: 768px) {
+    .keyboard-shortcuts {
+      display: none; // 모바일에서는 키보드 단축키 숨김
+    }
+
+    .video-js {
+      .vjs-big-play-button {
+        font-size: 2em !important;
+        width: 2em !important;
+        height: 1em !important;
+        line-height: 1em !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      .vjs-control-bar {
+        height: 2.5em;
+      }
+    }
+  }
+
+  // 피드백 마커 스타일 (추후 구현)
+  .vjs-feedback-marker {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+    
+    &:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    }
+  }
+
+  // 로딩 스피너 커스터마이징
+  .vjs-loading-spinner {
+    border-color: #ff6b6b;
+  }
+
+  // 에러 화면 스타일
+  .vjs-error-display {
+    background: rgba(0, 0, 0, 0.8);
+    
+    .vjs-modal-dialog-content {
+      color: #fff;
+      font-size: 1.2em;
+    }
+  }
+}
+
+// 다크 테마 지원
+@media (prefers-color-scheme: dark) {
+  .video-js-player-wrapper {
+    .video-js {
+      .vjs-control-bar {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+    }
+  }
+}

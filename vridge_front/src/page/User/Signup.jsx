@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { useRouter, useLocation } from '../../util/nextNavigation'
 
-import 'css/User/Auth.scss'
+
 import PageTemplate from 'components/PageTemplate'
 import { SignUp, CheckNickname, CheckEmail } from 'api/auth'
 import { safeStorage } from 'utils/mobile-utils'
 import { AcceptInvitation } from 'api/invitation'
 
 export default function Signup() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const invitationData = location.state || {}
+  const { navigate } = useRouter()
+  const router = useRouter()
+  const invitationData = router.query || {}
   const [errorMessage, SetErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [nicknameChecked, setNicknameChecked] = useState(false)
@@ -237,7 +238,7 @@ export default function Signup() {
         if (token) {
           // 모바일 환경을 고려한 안전한 토큰 저장
           try {
-            window.localStorage.setItem('VGID', JSON.stringify(token));
+            typeof window !== 'undefined' && window.localStorage.setItem('VGID', JSON.stringify(token));
           } catch (e) {
             // localStorage 접근 실패 시 safeStorage 사용
             safeStorage.setItem('VGID', JSON.stringify(token));
@@ -248,7 +249,7 @@ export default function Signup() {
             email: res.data.user,
             nickname: res.data.nickname
           };
-          window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          typeof window !== 'undefined' && window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
         }
         
         // 성공 메시지 표시
@@ -260,20 +261,20 @@ export default function Signup() {
             .then(() => {
               // 피드백 페이지로 이동
               setTimeout(() => {
-                navigate(`/Feedback/${invitationData.projectId}`, { replace: true });
+                navigate(`/feedback/${invitationData.projectId}`, { replace: true });
               }, 1000);
             })
             .catch((err) => {
               console.error('초대 수락 실패:', err);
               // 초대 수락에 실패해도 홈으로 이동
               setTimeout(() => {
-                navigate('/CmsHome', { replace: true });
+                navigate('/cmshome', { replace: true });
               }, 1000);
             });
         } else {
           // 일반 회원가입인 경우 홈으로 이동
           setTimeout(() => {
-            navigate('/CmsHome', { replace: true });
+            navigate('/cmshome', { replace: true });
           }, 1000);
         }
       })
@@ -779,7 +780,7 @@ export default function Signup() {
             }}>
               이미 계정이 있으신가요?{' '}
               <Link 
-                to="/login" 
+                href="/login" 
                 style={{ 
                   color: '#1631F8',
                   textDecoration: 'none',

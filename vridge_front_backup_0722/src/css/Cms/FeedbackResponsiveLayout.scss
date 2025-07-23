@@ -1,0 +1,499 @@
+// 피드백 페이지 반응형 레이아웃
+// 비디오 플레이어와 피드백 섹션의 조화로운 비율 구현
+
+// 기본 레이아웃
+.content.feedback.feedback_page {
+  display: flex;
+  gap: 24px;
+  min-height: calc(100vh - 80px); // 최소 높이로 변경
+  height: auto; // 자동 높이
+  padding: 20px;
+  overflow: visible; // 오버플로우 제한 제거
+  
+  // 비디오 섹션 (왼쪽)
+  .videobox.video_section {
+    flex: 2; // 비디오가 더 큰 공간 차지 (1.5에서 2로 증가)
+    display: flex;
+    flex-direction: column;
+    min-width: 600px; // 최소 너비 설정
+    width: 65%; // 화면의 65% 차지
+    max-width: 1000px; // 최대 너비 제한
+    height: auto; // 자동 높이로 변경
+    min-height: fit-content; // 콘텐츠에 맞춤
+    overflow: visible; // 스크롤 방지
+    
+    .video_inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+      border-radius: 12px;
+      overflow: visible; // hidden에서 visible로 변경하여 컨트롤이 잘리지 않도록 함
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      min-height: 400px; // 최소 높이 설정
+      height: 500px; // 고정 높이로 설정
+      position: relative;
+      
+      &.active {
+        // 비디오가 로드되었을 때 스타일
+        background: #000;
+      }
+      
+      // 비디오 플레이어 섹션
+      .video-player-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 100%;
+        height: 100%; // 부모 높이에 맞춤
+        min-height: 400px;
+        z-index: 1; // z-index 추가
+        pointer-events: auto; // 포인터 이벤트 활성화
+        border-radius: 12px; // 부모와 동일한 border-radius
+        overflow: hidden; // 모서리 처리
+        
+        // VideoJsPlayer 컨테이너
+        .video-js-player-wrapper {
+          flex: 1;
+          position: relative;
+          width: 100%;
+          height: 100%; // 부모의 높이를 가득 채움
+          min-height: 350px;
+          z-index: 1;
+          pointer-events: auto;
+          
+          // 디버그 메시지 숨김
+          > div:first-child {
+            display: none;
+          }
+          
+          // Video.js 플레이어
+          [data-vjs-player] {
+            height: 100% !important;
+            width: 100% !important;
+            min-height: 350px !important;
+            position: relative !important;
+            display: block !important;
+            
+            .video-js {
+              width: 100% !important;
+              height: 100% !important;
+              position: relative !important;
+              display: block !important;
+              
+              // 비디오 요소가 컨테이너를 채우도록
+              video {
+                object-fit: contain;
+                width: 100%;
+                height: 100%;
+              }
+              
+              // 빅 플레이 버튼이 보이도록
+              .vjs-big-play-button {
+                display: block !important;
+                z-index: 2 !important;
+                pointer-events: auto !important;
+              }
+              
+              // 컨트롤 바가 보이도록
+              .vjs-control-bar {
+                display: flex !important;
+                z-index: 3 !important;
+                pointer-events: auto !important;
+              }
+              
+              // 모든 컨트롤이 클릭 가능하도록
+              .vjs-control {
+                pointer-events: auto !important;
+              }
+            }
+          }
+          
+          // 키보드 단축키 안내 숨김 (필요시)
+          .keyboard-shortcuts {
+            display: none;
+          }
+        }
+      }
+      
+      // 업로드 영역 스타일
+      &:not(.active) {
+        justify-content: center;
+        align-items: center;
+        background: #f8f9fa;
+        height: 500px; // 업로드 영역도 고정 높이
+        
+        > div {
+          text-align: center;
+          
+          .feedback-upload-label {
+            display: block;
+            padding: 80px 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              transform: scale(1.02);
+              
+              svg {
+                transform: translateY(-5px);
+              }
+            }
+            
+            svg {
+              transition: transform 0.3s ease;
+            }
+          }
+        }
+      }
+    }
+    
+    // 비디오 컨트롤 버튼 영역 - 플레이어 바깥쪽에 위치
+    .video-control-buttons {
+      margin-top: 16px;
+      padding: 12px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      display: flex;
+      gap: 12px;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      flex-shrink: 0; // 버튼 영역이 축소되지 않도록
+      position: relative;
+      z-index: 2;
+      
+      button, label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        width: 130px;
+        min-width: 130px;
+        max-width: 130px;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+        
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+      }
+    }
+    
+    // etc_box (전체보기 버튼 영역)
+    .etc_box {
+      margin-top: 16px;
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      box-sizing: border-box;
+      // max-height 제거 - 콘텐츠에 따라 자동으로 늘어남
+      overflow: visible; // 오버플로우 제거
+      
+      .flex.space_between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        button.all {
+          padding: 10px 20px;
+          background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+          }
+        }
+      }
+      
+      // 피드백 상세 표시 영역
+      .feedback-detail-display {
+        animation: fadeIn 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+        
+        > div {
+          width: 100%;
+          box-sizing: border-box;
+        }
+      }
+      
+      // 피드백 리스트
+      .list {
+        width: 100%;
+        box-sizing: border-box;
+        
+        > div {
+          width: 100%;
+          box-sizing: border-box;
+        }
+      }
+    }
+  }
+  
+  // 사이드바 섹션 (오른쪽)
+  .sidebox {
+    flex: 1; // 피드백 섹션은 작은 공간
+    display: flex;
+    flex-direction: column;
+    min-width: 350px;
+    max-width: 450px;
+    height: 100%; // 전체 높이 사용
+    max-height: calc(100vh - 120px); // 화면 높이에서 여백 제외
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    
+    .b_title {
+      padding: 20px;
+      border-bottom: 1px solid #e9ecef;
+      
+      .s_title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #212529;
+        
+        > div {
+          // 피드백 타이틀과 전체보기 버튼 컨테이너
+          &:first-child {
+            > button {
+              // 전체보기 버튼 스타일
+              margin-left: auto;
+            }
+          }
+        }
+      }
+    }
+    
+    .tab_container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      
+      .tab_menu {
+        border-bottom: 1px solid #e9ecef;
+        
+        .tab_list {
+          display: flex;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+          
+          li {
+            flex: 1;
+            
+            button {
+              width: 100%;
+              padding: 12px;
+              background: none;
+              border: none;
+              border-bottom: 2px solid transparent;
+              font-size: 14px;
+              font-weight: 600;
+              color: #6c757d;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              
+              &:hover {
+                color: #1631F8;
+              }
+            }
+            
+            &.active button {
+              color: #1631F8;
+              border-bottom-color: #1631F8;
+            }
+          }
+        }
+      }
+      
+      .tab_content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        
+        // 커스텀 스크롤바
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 3px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 3px;
+          
+          &:hover {
+            background: #555;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 1400px) {
+  .content.feedback.feedback_page {
+    .sidebox {
+      min-width: 300px;
+      max-width: 400px;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .content.feedback.feedback_page {
+    flex-direction: column;
+    height: auto;
+    
+    .videobox.video_section {
+      flex: none;
+      
+      .video_inner {
+        height: 500px;
+      }
+    }
+    
+    .sidebox {
+      flex: none;
+      min-width: unset;
+      max-width: unset;
+      height: 600px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .content.feedback.feedback_page {
+    padding: 12px;
+    gap: 16px;
+    
+    .videobox.video_section {
+      .video_inner {
+        height: 300px;
+      }
+      
+      .video-control-buttons {
+        padding: 12px;
+        gap: 8px;
+        justify-content: flex-start;
+        
+        button, label {
+          padding: 8px 12px;
+          font-size: 13px;
+          min-width: 120px;
+          
+          svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+      }
+    }
+    
+    .sidebox {
+      height: 500px;
+      
+      .b_title {
+        padding: 16px;
+      }
+      
+      .tab_container {
+        .tab_content {
+          padding: 16px;
+        }
+      }
+    }
+  }
+}
+
+// 애니메이션
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 로딩 상태 개선
+.loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  
+  .loading-content {
+    text-align: center;
+    
+    .progress-container {
+      margin-bottom: 20px;
+      
+      .progress-bar {
+        width: 300px;
+        height: 4px;
+        background: #e9ecef;
+        border-radius: 2px;
+        overflow: hidden;
+        
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #1631F8 0%, #0F23C9 100%);
+          transition: width 0.3s ease;
+        }
+      }
+    }
+    
+    .loading-message {
+      font-size: 16px;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+    
+    .encoding-info {
+      font-size: 14px;
+      color: #6c757d;
+    }
+  }
+}

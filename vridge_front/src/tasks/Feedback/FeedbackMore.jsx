@@ -1,7 +1,6 @@
 import useInput from 'hooks/UseInput'
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import 'css/Cms/FeedbackMoreStyle.scss'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -47,7 +46,7 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
   useEffect(() => {
     const projectId = current_project?.id
     if (projectId) {
-      const savedReactions = localStorage.getItem(`feedback_reactions_${projectId}`)
+      const savedReactions = typeof window !== 'undefined' && localStorage.getItem(`feedback_reactions_${projectId}`)
       if (savedReactions) {
         setFeedbackReactions(JSON.parse(savedReactions))
       }
@@ -58,7 +57,7 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
   const handleReaction = (feedbackId, type) => {
     const key = `${feedbackId}_${type}`
     const userReactionKey = `user_feedback_reaction_${feedbackId}_${user}`
-    const currentUserReaction = localStorage.getItem(userReactionKey)
+    const currentUserReaction = typeof window !== 'undefined' && localStorage.getItem(userReactionKey)
     const projectId = current_project?.id
     
     setFeedbackReactions(prev => {
@@ -67,7 +66,7 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
       // 이미 같은 리액션을 클릭한 경우 취소
       if (currentUserReaction === type) {
         newReactions[key] = Math.max(0, (newReactions[key] || 0) - 1)
-        localStorage.removeItem(userReactionKey)
+        typeof window !== 'undefined' && localStorage.removeItem(userReactionKey)
       } else {
         // 기존 리액션이 있으면 제거
         if (currentUserReaction) {
@@ -76,12 +75,12 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
         }
         // 새 리액션 추가
         newReactions[key] = (newReactions[key] || 0) + 1
-        localStorage.setItem(userReactionKey, type)
+        typeof window !== 'undefined' && localStorage.setItem(userReactionKey, type)
       }
       
       // 로컬 스토리지에 저장
       if (projectId) {
-        localStorage.setItem(`feedback_reactions_${projectId}`, JSON.stringify(newReactions))
+        typeof window !== 'undefined' && localStorage.setItem(`feedback_reactions_${projectId}`, JSON.stringify(newReactions))
       }
       return newReactions
     })
@@ -171,7 +170,7 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
                     )}
                     <div className="detail-actions">
                       <button 
-                        className={`reaction-btn like ${localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? 'active' : ''}`}
+                        className={`reaction-btn like ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? 'active' : ''}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleReaction(data.id, 'like');
@@ -183,7 +182,7 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
                         <span className="count">{feedbackReactions[`${data.id}_like`] || 0}</span>
                       </button>
                       <button 
-                        className={`reaction-btn dislike ${localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? 'active' : ''}`}
+                        className={`reaction-btn dislike ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? 'active' : ''}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleReaction(data.id, 'dislike');

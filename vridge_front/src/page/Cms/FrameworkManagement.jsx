@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../../util/nextNavigation'
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
-import './FrameworkManagement.scss'
+
 import { GetFrameworks, CreateFramework, UpdateFramework, DeleteFramework, SetDefaultFramework } from 'api/framework'
 import { checkSession } from 'util/util'
 
 export default function FrameworkManagement() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const [frameworks, setFrameworks] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)

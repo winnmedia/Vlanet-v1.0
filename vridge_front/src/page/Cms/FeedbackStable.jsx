@@ -1,34 +1,33 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from 'util/util'
-import 'css/Cms/Cms.scss'
-import 'css/Cms/FeedbackOriginal.scss'
-import 'css/Cms/CommentFix.scss'
-import 'css/Cms/ButtonAlignment.scss'
-import 'css/Cms/ShareDeleteFix.scss'
-import 'css/Cms/ShareButtonFix.scss'
-import 'css/Cms/VideoPlayerButtonFix.scss'
-import 'css/Cms/UploadProgress.scss'
-import 'css/Cms/LayoutFix.scss'
-import 'css/Cms/SidebarSpacingFix.scss'
-import 'css/Cms/ModalOpacityFix.scss'
-import 'css/Cms/FeedbackSectionRedesign.scss'
-import 'css/Cms/SidebarResize.scss'
-import 'css/Cms/SidebarProjectSpacing.scss'
-import 'css/Cms/FeedbackPageSpacing.scss'
-import 'css/Cms/EncodingStatus.scss'
-import 'css/Cms/FeedbackPopup.scss'
-import 'css/Cms/OpinionInput.scss'
-import 'css/Cms/FeedbackHeader.scss'
-import 'css/Cms/ProjectInfoModal.scss'
-import 'css/Cms/FolderManagement.scss'
-import 'css/Cms/PostManagement.scss'
-import 'css/Cms/FeedbackNewLayout.scss'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
-import 'css/Cms/SubmenuFinal.scss'
-import 'css/Cms/SubmenuFeedbackFix.scss'
+
+
 import FeedbackInput from 'tasks/Feedback/FeedbackInput'
 import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
@@ -54,7 +53,7 @@ const formatTime = (seconds) => {
 
 function FeedbackStable() {
   console.log('[FeedbackStable] Component mounted')
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const { user, project_list } = useSelector((s) => s.ProjectStore)
   const { project_id } = useParams()
   console.log('[FeedbackStable] project_id:', project_id, 'user:', user, 'project_list:', project_list?.length || 0)
@@ -145,7 +144,7 @@ function FeedbackStable() {
     console.log('[FeedbackStable] Session check:', session)
     if (!session) {
       console.log('[FeedbackStable] No session, redirecting to login')
-      navigate('/Login', { replace: true })
+      navigate('/login', { replace: true })
     }
   }, [navigate])
 
@@ -228,13 +227,13 @@ function FeedbackStable() {
           } else {
             setError('프로젝트 정보를 불러오는 중 오류가 발생했습니다.')
           }
-          setTimeout(() => navigate('/CmsHome'), 2000)
+          setTimeout(() => navigate('/cmshome'), 2000)
         } else if (err.response?.status === 401) {
           setError('인증이 필요합니다. 다시 로그인해주세요.')
-          navigate('/Login', { replace: true })
+          navigate('/login', { replace: true })
         } else if (err.response?.status === 403) {
           setError('이 프로젝트에 접근할 권한이 없습니다.')
-          setTimeout(() => navigate('/CmsHome'), 2000)
+          setTimeout(() => navigate('/cmshome'), 2000)
         } else if (err.response?.data?.message) {
           setError(err.response.data.message)
         } else if (err.message === 'Network Error') {
@@ -281,7 +280,7 @@ function FeedbackStable() {
         window.alert('파일 업로드가 완료되었습니다.');
         onUploadComplete();
         // input 초기화
-        const input = document.getElementById('video-upload');
+        const input = (typeof window !== 'undefined' && document.getElementById('video-upload');
         if (input) input.value = '';
       })
       .catch((err) => {
@@ -290,7 +289,7 @@ function FeedbackStable() {
           window.alert('파일 크기가 너무 큽니다. 더 작은 파일을 선택해주세요.');
         } else if (err.response?.status === 401) {
           window.alert('인증이 필요합니다. 다시 로그인해주세요.');
-          navigate('/Login', { replace: true });
+          navigate('/login', { replace: true });
         } else {
           window.alert('파일 업로드에 실패했습니다.');
         }
@@ -373,7 +372,7 @@ function FeedbackStable() {
               <div className="error">
                 <h3>오류 발생</h3>
                 <p>{error}</p>
-                <button onClick={() => navigate('/CmsHome')}>홈으로 돌아가기</button>
+                <button onClick={() => navigate('/cmshome')}>홈으로 돌아가기</button>
               </div>
             </div>
           </main>
@@ -392,7 +391,7 @@ function FeedbackStable() {
             <div className="content">
               <div className="error">
                 <h3>프로젝트를 찾을 수 없습니다</h3>
-                <button onClick={() => navigate('/CmsHome')}>홈으로 돌아가기</button>
+                <button onClick={() => navigate('/cmshome')}>홈으로 돌아가기</button>
               </div>
             </div>
           </main>
@@ -411,7 +410,7 @@ function FeedbackStable() {
               <div className="feedback-header">
                 <div className="header-content">
                   <div className="header-left">
-                    <button className="back-button" onClick={() => navigate('/CmsHome')}>
+                    <button className="back-button" onClick={() => navigate('/cmshome')}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M15 18l-6-6 6-6" />
                       </svg>
@@ -562,7 +561,7 @@ function FeedbackStable() {
                           <button 
                             onClick={() => {
                               // 현재 페이지 URL 복사
-                              const shareUrl = window.location.href;
+                              const shareUrl = typeof window !== 'undefined' && window.location.href;
                               navigator.clipboard.writeText(shareUrl).then(() => {
                                 window.alert('피드백 페이지 링크가 복사되었습니다.');
                               }).catch(() => {

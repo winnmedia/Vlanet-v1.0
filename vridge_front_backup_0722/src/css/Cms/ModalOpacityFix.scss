@@ -1,0 +1,71 @@
+// Modal Opacity Fix - 모달/팝업 투명도 조정
+
+// Ant Design 모달 배경 투명도
+.ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.45) !important; // 기본 배경은 유지
+}
+
+.ant-modal-wrap {
+  .ant-modal {
+    .ant-modal-content {
+      background: rgba(255, 255, 255, 0.8) !important; // 80% 투명도
+      backdrop-filter: blur(10px) !important; // 배경 블러 효과
+      opacity: 1 !important;
+    }
+  }
+}
+
+// 프로젝트 관리 및 영상 피드백 모달
+.modal-overlay,
+.popup-overlay,
+.overlay {
+  .modal-content,
+  .popup-content,
+  .overlay-content {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    opacity: 1 !important;
+  }
+}
+
+// 로딩 오버레이는 제외 (약간의 투명도 유지)
+.loading-overlay {
+  // 로딩은 그대로 유지
+}
+
+// 비디오 업로드 가이드 모달
+.video-upload-guide-overlay {
+  .video-upload-guide {
+    background: #fff !important;
+    opacity: 1 !important;
+  }
+}
+
+// 커스텀 모달 스타일
+.custom-modal,
+.project-modal,
+.feedback-modal {
+  background: #fff !important;
+  opacity: 1 !important;
+  
+  &-content {
+    background: #fff !important;
+    opacity: 1 !important;
+  }
+}
+
+// 일반적인 모달 패턴
+[class*="modal"],
+[class*="Modal"] {
+  &[class*="content"],
+  &[class*="Content"],
+  &[class*="body"],
+  &[class*="Body"] {
+    opacity: 1 !important;
+    
+    // 백그라운드가 rgba인 경우 불투명하게
+    &[style*="rgba"] {
+      background: #fff !important;
+    }
+  }
+}

@@ -1,15 +1,15 @@
-import 'css/Cms/CmsCommon.scss'
-import 'css/Cms/CmsHomeEnhanced.scss'
-import 'css/Cms/HomeLayoutFix.scss'
-import 'css/Cms/HomeActivityLayout.scss'
+
+
+
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import ProjectDashboard from 'components/ProjectDashboard'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
+import ProjectScheduleSection from 'components/ProjectScheduleSection'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../../util/nextNavigation'
 import { useSelector, useDispatch } from 'react-redux'
 import { refetchProject, checkSession } from 'util/util'
 
@@ -17,9 +17,10 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import { UpdateDate } from 'api/project'
 import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
+import { updateProjectStore } from '../../redux/project'
 
 export default function CmsHome() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const dispatch = useDispatch()
   const { project_list, this_month_project, next_month_project, user } = useSelector(
     (s) => s.ProjectStore,
@@ -37,7 +38,7 @@ export default function CmsHome() {
   const [invitations, setInvitations] = useState({ sent: [], received: [], recent_accepted: [] })
   const [invitationLoading, setInvitationLoading] = useState(false)
 
-  // 인증 체크 (최초 마운트 시 한 번만)
+  // 인증 체크 및 프로젝트 데이터 로드
   useEffect(() => {
     const session = checkSession()
     if (!session) {
@@ -46,7 +47,21 @@ export default function CmsHome() {
     }
     
     console.log('[CmsHome] Component mounted')
-  }, [navigate])
+    
+    // 프로젝트 데이터 로드
+    if (project_list === null) {
+      console.log('[CmsHome] Loading project data...')
+      refetchProject(dispatch, navigate)
+        .then(() => {
+          console.log('[CmsHome] Project data loaded successfully')
+        })
+        .catch(error => {
+          console.error('[CmsHome] Failed to load projects:', error)
+          // 에러가 발생해도 빈 배열로 설정하여 무한 로딩 방지
+          dispatch(updateProjectStore({ project_list: [] }))
+        })
+    }
+  }, [navigate, dispatch, project_list])
 
   // 초대 목록 로드
   const loadInvitations = useCallback(async () => {
@@ -351,6 +366,11 @@ export default function CmsHome() {
                     nextMonth: next_month_project ? next_month_project.length : 0
                   }}
                   showTitle={true}
+                />
+                
+            {/* 프로젝트 일정 섹션 */}
+            <ProjectScheduleSection 
+                  projects={projectListData}
                 />
 
           </div>

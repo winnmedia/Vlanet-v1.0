@@ -1,0 +1,50 @@
+// Sidebar Spacing Fix - 사이드바와 콘텐츠 사이 여백 최소화
+
+// cms_wrap 레이아웃 조정
+.cms_wrap {
+  display: flex !important;
+  gap: 10px !important; // 사이드바와 메인 콘텐츠 사이 10px 간격
+  
+  // 사이드바
+  aside {
+    margin-right: 0 !important; // 오른쪽 마진 제거
+    padding-right: 0 !important;
+  }
+  
+  // 메인 콘텐츠
+  main {
+    margin-left: 0 !important; // 왼쪽 마진 제거
+    padding-left: 0 !important;
+    flex: 1 !important;
+    
+    // 피드백 페이지의 콘텐츠
+    .content.feedback.feedback_page {
+      padding-left: 15px !important; // 최소한의 왼쪽 패딩만
+      
+      @media (max-width: 1400px) {
+        padding-left: 10px !important;
+      }
+      
+      @media (max-width: 768px) {
+        padding-left: 8px !important;
+      }
+    }
+  }
+}
+
+// 사이드바 너비 고정 (변경 없음)
+aside.sidebar {
+  width: 200px !important;
+  flex-shrink: 0 !important;
+}
+
+// 작은 화면에서 사이드바 숨김 시 여백 조정
+@media (max-width: 992px) {
+  .cms_wrap {
+    main {
+      .content.feedback.feedback_page {
+        padding-left: 15px !important; // 사이드바 없을 때도 일관된 패딩
+      }
+    }
+  }
+}

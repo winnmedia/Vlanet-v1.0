@@ -1,6 +1,6 @@
 // 쿠키 관련 유틸리티 함수들
 export const getCookie = (name) => {
-  const value = `; ${document.cookie}`;
+  const value = `; ${(typeof window !== 'undefined' && document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
     return parts.pop().split(';').shift();
@@ -9,7 +9,9 @@ export const getCookie = (name) => {
 };
 
 export const deleteCookie = (name) => {
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  if (typeof window !== 'undefined') {
+          document.cookie = `${name}=;
+        } expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 };
 
 // 토큰 관리 함수들
@@ -22,7 +24,7 @@ export const getAccessToken = () => {
   
   // 하위 호환성을 위해 localStorage도 확인
   try {
-    const storageToken = window.localStorage.getItem('VGID');
+    const storageToken = typeof window !== 'undefined' && window.localStorage.getItem('VGID');
     if (storageToken) {
       try {
         const parsed = JSON.parse(storageToken);
@@ -46,8 +48,8 @@ export const clearAuth = () => {
   
   // localStorage 삭제 (하위 호환성)
   try {
-    window.localStorage.removeItem('VGID');
-    window.localStorage.removeItem('userInfo');
+    typeof window !== 'undefined' && window.localStorage.removeItem('VGID');
+    typeof window !== 'undefined' && window.localStorage.removeItem('userInfo');
   } catch (e) {
     // localStorage 접근 실패 시 무시
   }

@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
-import './FeedbackPlayer.scss'
 
 const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError, onFeedbackClick }, ref) => {
   const [isPlaying, setIsPlaying] = useState(false)

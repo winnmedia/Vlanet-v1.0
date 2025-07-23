@@ -1,0 +1,126 @@
+import React, { useEffect, useState, useRef } from 'react'
+import cx from 'classnames'
+import { SendChatMessage } from 'api/chat'
+
+export default function FeedbackMessagePolling({
+  Rating,
+  project_id,
+  socketConnected,
+  items,
+  me,
+  onMessageSent,
+}) {
+  const recent_element = useRef()
+  const { email, nickname, rating } = me
+  const [text, set_text] = useState('')
+  const [sending, setSending] = useState(false)
+
+  // 메시지 전송
+  async function SendMessage() {
+    const valid_text = text.replaceAll(' ', '')
+    if (socketConnected) {
+      if (valid_text.length > 0) {
+        setSending(true)
+        try {
+          await SendChatMessage(project_id, {
+            email: email,
+            nickname: nickname,
+            rating: rating,
+            message: text,
+          })
+          set_text('')
+          // 메시지 전송 후 부모 컴포넌트에 알림
+          if (onMessageSent) {
+            onMessageSent()
+          }
+        } catch (error) {
+          console.error('메시지 전송 실패:', error)
+          window.alert('메시지 전송에 실패했습니다.')
+        } finally {
+          setSending(false)
+        }
+      }
+    } else {
+      window.alert('채팅 서버가 불안정합니다. 재접속 해주세요.')
+    }
+  }
+
+  function enterkey() {
+    if (window.event.keyCode == 13 && !sending) {
+      SendMessage()
+    }
+  }
+
+  useEffect(() => {
+    if (recent_element.current) {
+      recent_element.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest',
+      })
+    }
+  }, [items])
+
+  return (
+    socketConnected && (
+      <>
+        <div className="comment">
+          <ul>
+            {items.length > 0 ? (
+              items.map((item, index) => (
+                <li
+                  key={item.id || index}
+                  ref={index === items.length - 1 ? recent_element : null}
+                >
+                  <div className="flex align_center">
+                    <div
+                      className={
+                        Rating(item.rating) == '관리자'
+                          ? 'img_box admin'
+                          : 'img_box basic'
+                      }
+                    ></div>
+                    <div className="txt_box">
+                      <span className="name">
+                        {item.nickname}
+                        <small
+                          className={
+                            Rating(item.rating) == '관리자' ? 'admin' : 'basic'
+                          }
+                        >
+                          {Rating(item.rating)}
+                        </small>
+                      </span>
+                      <p>{item.message}</p>
+                    </div>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <div className="empty">아직 메시지가 없습니다.</div>
+            )}
+          </ul>
+        </div>
+        <div className="send">
+          <input
+            type="text"
+            name=""
+            id=""
+            placeholder="채팅을 입력해주세요"
+            value={text}
+            onChange={(e) => set_text(e.target.value)}
+            onKeyUp={enterkey}
+            disabled={sending}
+          />
+          <button 
+            className="common send" 
+            onClick={SendMessage}
+            disabled={sending}
+          >
+            {sending ? '전송중...' : '전송'}
+          </button>
+        </div>
+      </>
+    )
+  )
+}

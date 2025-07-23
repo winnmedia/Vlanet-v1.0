@@ -1,5 +1,4 @@
 import React from 'react'
-import './UserAvatar.scss'
 
 /**
  * 사용자 아바타 컴포넌트
@@ -40,7 +39,7 @@ const UserAvatar = ({
     
     // 상대 경로인 경우 API URL 추가
     if (url.startsWith('/')) {
-      return `${process.env.REACT_APP_API_URL}${url}`
+      return `${process.env.NEXT_PUBLIC_API_URL}${url}`
     }
     
     // 절대 경로인 경우 그대로 사용

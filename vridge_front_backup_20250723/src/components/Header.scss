@@ -1,0 +1,177 @@
+.Header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 30px;
+  
+  // 알림 관련 스타일
+  .notification-wrapper {
+    position: relative;
+    
+    .notification-icon {
+      color: #666;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        color: #1631F8;
+        transform: scale(1.1);
+      }
+      
+      svg {
+        transition: all 0.2s ease;
+      }
+    }
+    
+    .notification-dropdown {
+      animation: slideDown 0.2s ease;
+      border: 1px solid #e1e5e9;
+      
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      // 스크롤바 커스터마이징
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+  .logo {
+    img {
+      width: 150px;
+    }
+  }
+  .profile-wrapper {
+    position: relative;
+    
+    .profile {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      gap: 12px; // 아이템 간 간격 추가
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      
+      &:hover {
+        background-color: #f0f0f0;
+      }
+      
+      .nick {
+        width: 40px;
+        height: 40px;
+        background: #516e8b;
+        border-radius: 100%;
+        position: relative;
+        overflow: hidden;
+        line-height: 40px;
+        text-align: Center;
+        font-size: 16px;
+        color: #fff;
+        
+        &.clickable {
+          cursor: pointer;
+        }
+      }
+      .mail {
+        font-size: 13px;
+      }
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      min-width: 200px;
+      z-index: 1000;
+      overflow: hidden;
+      
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 0;
+          background: #0058da;
+          transition: height 0.2s ease;
+        }
+        
+        &:hover {
+          background-color: #f8f9fa;
+          color: #0058da;
+          padding-left: 24px;
+          
+          &::before {
+            height: 60%;
+          }
+        }
+        
+        &.logout {
+          color: #ff4757;
+          
+          &:hover {
+            background-color: #fff1f0;
+            color: #ff4757;
+            
+            &::before {
+              background: #ff4757;
+            }
+          }
+        }
+      }
+      
+      .dropdown-divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 4px 0;
+      }
+    }
+    
+    .profile-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #0058da;
+      cursor: pointer;
+    }
+  }
+}

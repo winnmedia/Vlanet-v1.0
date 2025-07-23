@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# VideoPlanet Next.js Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+VideoPlanet 프로젝트의 Next.js 기반 프론트엔드입니다.
 
-## Available Scripts
+## 기술 스택
 
-In the project directory, you can run:
+- Next.js 15.4.2
+- React 18.3.1
+- Redux Toolkit
+- Ant Design
+- Styled Components
+- Sass/SCSS
 
-### `npm start`
+## 시작하기
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 개발 환경 설정
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. 의존성 설치
+```bash
+npm install --legacy-peer-deps
+```
 
-### `npm test`
+2. 환경 변수 설정
+`.env.local` 파일 생성:
+```
+NEXT_PUBLIC_API_URL=https://videoplanet.up.railway.app
+NEXT_PUBLIC_VERSION=1.0.0
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. 개발 서버 실행
+```bash
+npm run dev
+```
 
-### `npm run build`
+### 빌드 및 배포
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. 프로덕션 빌드
+```bash
+npm run build
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. 프로덕션 서버 실행
+```bash
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Vercel 배포
 
-### `npm run eject`
+1. Vercel CLI 설치 (선택사항)
+```bash
+npm i -g vercel
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Vercel에 배포
+```bash
+vercel
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+또는 GitHub과 연동하여 자동 배포 설정 가능
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 환경 변수
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Vercel 대시보드에서 다음 환경 변수 설정 필요:
+- `NEXT_PUBLIC_API_URL`: 백엔드 API URL
+- `NEXT_PUBLIC_VERSION`: 앱 버전
 
-## Learn More
+## 주요 페이지
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- `/` - 홈페이지
+- `/login` - 로그인
+- `/signup` - 회원가입
+- `/cmshome` - CMS 홈
+- `/project/create` - 프로젝트 생성
+- `/feedback/[id]` - 피드백 상세
+- `/videoplanning` - 비디오 기획 (임시)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 알려진 이슈
 
-### Code Splitting
+- VideoPlanning 컴포넌트는 현재 임시 버전 사용 중
+- 일부 SCSS import 경고는 무시 가능 (기능에 영향 없음)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 라이선스
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Private

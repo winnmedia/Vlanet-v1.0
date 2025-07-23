@@ -1,8 +1,8 @@
-import 'css/User/Auth.scss'
+
 import PageTemplate from 'components/PageTemplate'
 import queryString from 'query-string'
 import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useRouter, useSearchParams } from '../../util/nextNavigation'
 import { checkSession, refetchProject } from 'util/util'
 import { useDispatch } from 'react-redux'
 
@@ -10,7 +10,7 @@ import logo from 'images/Common/logo.svg'
 import { AcceptInvite } from 'api/project'
 
 export default function EmailCheck() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const dispatch = useDispatch()
   const [param] = useSearchParams()
   const { uid, token } = queryString.parse(param.toString())
@@ -18,7 +18,7 @@ export default function EmailCheck() {
 
   useEffect(() => {
     console.log('[EmailCheck] Component loaded with params:', { uid, token })
-    console.log('[EmailCheck] Full URL:', window.location.href)
+    console.log('[EmailCheck] Full URL:', typeof window !== 'undefined' && window.location.href)
     console.log('[EmailCheck] Search params:', param.toString())
     
     if (checkSession()) {
@@ -55,7 +55,7 @@ export default function EmailCheck() {
         <div className="form_wrap">
           <div className="emailcheck">
             <div className="logo">
-              <img src={logo} />
+              <img src={logo.src || logo} />
             </div>
             {/* 인증o */}
             {result === 'success' ? (
@@ -68,7 +68,7 @@ export default function EmailCheck() {
                 <button
                   onClick={() => {
                     refetchProject(dispatch, navigate)
-                    navigate('/CmsHome')
+                    navigate('/cmshome')
                   }}
                   className="submit"
                 >

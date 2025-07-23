@@ -1,50 +1,50 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../util/nextNavigation'
 import { checkSession } from 'util/util'
-import 'css/Home.scss'
-import 'css/HomeAlignment.scss'
-import logo from 'images/Common/w_logo02.svg'
-import icon01 from 'images/Home/icon01.svg'
-import icon02 from 'images/Home/icon02.svg'
-import icon03 from 'images/Home/icon03.svg'
-import icon04 from 'images/Home/icon04.svg'
-import chat from 'images/Home/chat_icon.png'
-import emoji01 from 'images/Home/emoji01.png'
-import emoji02 from 'images/Home/emoji02.png'
-import emoji03 from 'images/Home/emoji03.png'
-import emoji04 from 'images/Home/emoji04.png'
-import img08 from 'images/Home/img08.png'
-import img09 from 'images/Home/img09.png'
-import img10 from 'images/Home/img10.png'
 
-import tool from 'images/Home/new/tool.png'
-import tool02 from 'images/Home/new/tool02.png'
+// Next.js에서는 public 폴더의 이미지를 직접 경로로 참조
+const logo = '/images/Common/w_logo02.svg'
+const icon01 = '/images/Home/icon01.svg'
+const icon02 = '/images/Home/icon02.svg'
+const icon03 = '/images/Home/icon03.svg'
+const icon04 = '/images/Home/icon04.svg'
+const chat = '/images/Home/chat_icon.png'
+const emoji01 = '/images/Home/emoji01.png'
+const emoji02 = '/images/Home/emoji02.png'
+const emoji03 = '/images/Home/emoji03.png'
+const emoji04 = '/images/Home/emoji04.png'
+const img08 = '/images/Home/img08.png'
+const img09 = '/images/Home/img09.png'
+const img10 = '/images/Home/img10.png'
 
-import visual from 'images/Home/new/visual-img.png'
+const tool = '/images/Home/new/tool.png'
+const tool02 = '/images/Home/new/tool02.png'
 
-import feedback from 'images/Home/new/feedback-img.png'
+const visual = '/images/Home/new/visual-img.png'
 
-import project from 'images/Home/new/project-img.png'
+const feedback = '/images/Home/new/feedback-img.png'
 
-import comment from 'images/Home/new/comment-img.png'
+const project = '/images/Home/new/project-img.png'
 
-import identity from 'images/Home/new/identity-img.png'
-import identity02 from 'images/Home/new/identity-img02.png'
-import identity03 from 'images/Home/new/identity-img03.png'
-import identity04 from 'images/Home/new/identity-img04.png'
+const comment = '/images/Home/new/comment-img.png'
 
-import end from 'images/Home/new/end-img.png'
-import end02 from 'images/Home/new/end-img02.png'
+const identity = '/images/Home/new/identity-img.png'
+const identity02 = '/images/Home/new/identity-img02.png'
+const identity03 = '/images/Home/new/identity-img03.png'
+const identity04 = '/images/Home/new/identity-img04.png'
+
+const end = '/images/Home/new/end-img.png'
+const end02 = '/images/Home/new/end-img02.png'
 
 export default function Home() {
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   
   const handleNavigate = () => {
     const session = checkSession()
     if (session) {
-      navigate('/CmsHome')
+      navigate('/cmshome')
     } else {
-      navigate('/Login')
+      navigate('/login')
     }
   }
   
@@ -53,7 +53,7 @@ export default function Home() {
       <section id="header">
         <div className="inner flex space_between align_center">
           <h1 className="logo">
-            <img src={logo} />
+            <img src={logo} alt="VideoPlanet" />
           </h1>
           <div className="etc">
             <ul>
@@ -447,7 +447,7 @@ export default function Home() {
                   한 눈으로 보는 <br />
                   <span>캘린더</span> 기능
                   <i>
-                    <img src={icon03} />
+                    <img src={icon03} alt="icon" />
                   </i>
                 </div>
                 <p>
@@ -472,7 +472,7 @@ export default function Home() {
                   <br />
                   <span>프로젝트</span> 관리
                   <i>
-                    <img src={icon04} />
+                    <img src={icon04} alt="icon" />
                   </i>
                 </div>
                 <p>
@@ -508,7 +508,7 @@ export default function Home() {
                   쉽고, 빠르고, 정확한 <br />
                   <span>영상 피드백</span>
                   <i>
-                    <img src={icon01} />
+                    <img src={icon01} alt="icon" />
                   </i>
                 </div>
                 <p>
@@ -592,7 +592,7 @@ export default function Home() {
                   <br />
                   비법으로 <span>학습</span>
                   <i>
-                    <img src={icon02} />
+                    <img src={icon02} alt="icon" />
                   </i>
                 </div>
                 <p>
@@ -624,15 +624,15 @@ export default function Home() {
           <div>
             <div className="logo">브이래닛</div>
             <ul>
-              <li>윈앤미디어</li>
-              <li>대전광역시 서구 청사로 228 청사오피스</li>
-              <li>사업자등록번호 : 725-08-01986</li>
-              <li>대표자 : 유석근 </li>
-              <li>전화번호 : 000-000-0000</li>
+              <li>주식회사 윈앤미디어</li>
+              <li>대전광역시 대덕구 덕암로125번안길 56, 1층</li>
+              <li>사업자등록번호 : 364-88-03234</li>
+              <li>대표자 : 유석근</li>
+              <li>전화번호 : 010-4156-8865</li>
             </ul>
             <div>
-              <span onClick={() => navigate('/Terms')}>이용약관</span>
-              <span onClick={() => navigate('/Privacy')}>
+              <span onClick={() => navigate('/terms')}>이용약관</span>
+              <span onClick={() => navigate('/privacy')}>
                 개인정보 취급방침
               </span>
             </div>

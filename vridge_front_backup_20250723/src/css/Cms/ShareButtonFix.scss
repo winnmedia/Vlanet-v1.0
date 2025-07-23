@@ -1,0 +1,79 @@
+// Share Button Fix - 공유 버튼 텍스트 표시 강제
+
+// 공유 버튼 텍스트 강제 표시
+.etc_box .flex {
+  .share {
+    // 텍스트 표시 강제
+    font-size: 0 !important; // 기존 텍스트 숨기기 리셋
+    font-size: 13px !important; // 실제 크기 적용
+    
+    // 텍스트 스타일 재정의
+    &::after {
+      display: none !important;
+    }
+    
+    // Flexbox로 중앙 정렬
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    // 색상 및 스타일
+    background: #0058da !important;
+    border: 2px solid #0058da !important;
+    color: #ffffff !important;
+    padding: 0 20px !important;
+    height: 36px !important;
+    min-width: 70px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+    text-indent: 0 !important;
+    overflow: visible !important;
+    text-decoration: none !important;
+    line-height: 36px !important;
+    vertical-align: middle !important;
+    
+    // 호버 효과
+    &:hover {
+      background: #0047b8 !important;
+      border-color: #0047b8 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 88, 218, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// FeedbackOriginal.scss의 share 스타일 오버라이드
+.content.feedback.feedback_page {
+  .videobox {
+    .etc_box {
+      .flex {
+        .share {
+          // 기존 스타일 리셋
+          text-indent: 0 !important;
+          font-size: 13px !important;
+          color: #ffffff !important;
+          
+          // 아이콘이나 이미지 제거
+          &::before,
+          &::after {
+            content: none !important;
+            display: none !important;
+          }
+          
+          img,
+          svg,
+          i {
+            display: none !important;
+          }
+        }
+      }
+    }
+  }
+}

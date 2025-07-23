@@ -20,7 +20,7 @@ export default function CalendarBody({
   return (
     <div className={type === '일' ? 'caldendar_box day' : 'caldendar_box'}>
       {type === '월' &&
-        totalDate.map(
+        (totalDate || []).map(
           (week, index) =>
             Array.isArray(week) && (
               <CalendarDate
@@ -38,7 +38,7 @@ export default function CalendarBody({
               />
             ),
         )}
-      {type === '주' && Array.isArray(totalDate[week_index]) && (
+      {type === '주' && totalDate && Array.isArray(totalDate[week_index]) && (
         <CalendarDate
           index={0}
           week={totalDate[week_index]}
@@ -52,7 +52,7 @@ export default function CalendarBody({
           refetch={refetch}
         />
       )}
-      {type === '일' && totalDate[day] && (
+      {type === '일' && totalDate && totalDate[day] && (
         <CalendarDate
           index={0}
           month={month}

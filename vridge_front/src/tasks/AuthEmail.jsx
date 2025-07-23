@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { SendAuthNumber, EmailAuth } from 'api/auth'
-import { useLocation } from 'react-router-dom'
+import { useRouter } from '../util/nextNavigation'
 
 export default function AuthEmail({
   email,
@@ -14,7 +14,7 @@ export default function AuthEmail({
   const [send, set_send] = useState(false)
   const [btn_text, set_btn_text] = useState('인증번호 발송')
   const [isLoading, setIsLoading] = useState(false)
-  const pathname = useLocation().pathname
+  const { pathname } = useRouter()
 
   const types = useMemo(() => {
     let path

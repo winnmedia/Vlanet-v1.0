@@ -1,10 +1,10 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useRouter, useLocation } from '../util/nextNavigation'
 import { useNavigationStore } from 'store/navigationStore'
 import { useEffect } from 'react'
 
 export function useNavigationFlow() {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { navigate } = useRouter()
+  const router = useRouter()
   
   const {
     startFlow,
@@ -20,14 +20,14 @@ export function useNavigationFlow() {
   // 현재 경로를 히스토리에 추가
   useEffect(() => {
     useNavigationStore.setState(state => ({
-      navigationHistory: [...state.navigationHistory, location.pathname].slice(-10)
+      navigationHistory: [...state.navigationHistory, router.pathname].slice(-10)
     }))
-  }, [location.pathname])
+  }, [router.pathname])
   
   // 404 에러 처리 함수
   const handleNotFound = (error = null) => {
     console.error('[useNavigationFlow] 404 error:', error)
-    const redirectPath = handle404Error(location.pathname)
+    const redirectPath = handle404Error(router.pathname)
     navigate(redirectPath, { replace: true })
   }
   
@@ -81,7 +81,7 @@ export function useNavigationFlow() {
     
     // 유틸리티
     navigationHistory,
-    currentPath: location.pathname
+    currentPath: router.pathname
   }
 }
 

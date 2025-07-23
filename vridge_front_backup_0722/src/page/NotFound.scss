@@ -1,0 +1,32 @@
+.not-found-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2f5;
+  
+  .ant-result {
+    padding: 48px 32px;
+    
+    .ant-result-title {
+      font-size: 72px;
+      font-weight: bold;
+      color: #1631F8;
+    }
+    
+    .ant-result-subtitle {
+      font-size: 20px;
+      color: #666;
+      margin-bottom: 32px;
+    }
+    
+    .ant-result-extra {
+      .ant-btn {
+        margin: 0 8px;
+        height: 40px;
+        min-width: 120px;
+        font-size: 16px;
+      }
+    }
+  }
+}

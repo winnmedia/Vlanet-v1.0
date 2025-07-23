@@ -1,4 +1,4 @@
-import 'css/Cms/CmsCommon.scss'
+
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
@@ -8,7 +8,7 @@ import useFile from 'hooks/Usefile'
 import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '../../util/nextNavigation'
 import { CreateProjectAPI } from 'api/project'
 import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,7 +17,7 @@ import { formatProcessDatesForBackend } from 'utils/dateUtils'
 
 export default function ProjectCreateDebug() {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const { navigate } = useRouter()
   const initial = project_initial()
   const [isCreating, setIsCreating] = useState(false)
   const renderCount = useRef(0)

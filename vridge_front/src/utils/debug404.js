@@ -4,10 +4,10 @@ export const debug404 = {
   // 현재 환경 정보 로깅
   logEnvironment: () => {
     console.group('🔍 404 Debug - Environment');
-    console.log('Current URL:', window.location.href);
-    console.log('Pathname:', window.location.pathname);
-    console.log('Search:', window.location.search);
-    console.log('Hash:', window.location.hash);
+    console.log('Current URL:', typeof window !== 'undefined' && window.location.href);
+    console.log('Pathname:', typeof window !== 'undefined' && window.location.pathname);
+    console.log('Search:', typeof window !== 'undefined' && window.location.search);
+    console.log('Hash:', typeof window !== 'undefined' && window.location.hash);
     console.log('API URL:', process.env.REACT_APP_API_URL);
     console.log('Build Time:', process.env.REACT_APP_BUILD_TIME || 'unknown');
     console.groupEnd();

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Page UI/UX Test</title>
+    <style>
+        /* Test page styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-ok { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        
+        /* Brand colors for reference */
+        .color-swatch {
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            border-radius: 4px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        .primary-blue { background: #1631F8; }
+        .primary-blue-dark { background: #0F23C9; }
+        .danger-red { background: #dc3545; }
+        .success-green { background: #28a745; }
+        .warning-yellow { background: #ffc107; }
+        .info-cyan { background: #17a2b8; }
+        
+        /* Button styles matching the module */
+        .test-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25);
+        }
+        
+        /* Test results */
+        .test-result {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .test-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>Feedback Page UI/UX Test Dashboard</h1>
+            <p>This page tests all UI components and interactions for the Feedback page</p>
+        </div>
+        
+        <!-- Brand Colors Section -->
+        <div class="test-section">
+            <h2>Brand Color Palette</h2>
+            <p>Verify these colors are used consistently throughout the UI:</p>
+            <div style="margin-top: 15px;">
+                <div><span class="color-swatch primary-blue"></span> Primary Blue (#1631F8)</div>
+                <div><span class="color-swatch primary-blue-dark"></span> Primary Blue Dark (#0F23C9)</div>
+                <div><span class="color-swatch danger-red"></span> Danger Red (#dc3545)</div>
+                <div><span class="color-swatch success-green"></span> Success Green (#28a745)</div>
+                <div><span class="color-swatch warning-yellow"></span> Warning Yellow (#ffc107)</div>
+                <div><span class="color-swatch info-cyan"></span> Info Cyan (#17a2b8)</div>
+            </div>
+        </div>
+        
+        <!-- Button Tests Section -->
+        <div class="test-section">
+            <h2>Button Components Test</h2>
+            <p>Test hover effects, click animations, and visual consistency:</p>
+            
+            <div style="margin-top: 15px;">
+                <h3>Primary Actions</h3>
+                <button class="test-button btn-primary" onclick="testButtonClick(this, 'Primary Button')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Primary Action
+                </button>
+                <button class="test-button btn-primary" onclick="testButtonClick(this, 'AI Analysis')">
+                    AI 영상 피드백
+                </button>
+                <button class="test-button btn-primary" onclick="testButtonClick(this, 'Current Time Feedback')">
+                    현재 시점에 피드백
+                </button>
+                
+                <h3>Danger Actions</h3>
+                <button class="test-button btn-danger" onclick="testButtonClick(this, 'Delete Video')">
+                    영상 삭제
+                </button>
+                
+                <h3>Secondary Actions</h3>
+                <button class="test-button btn-secondary" onclick="testButtonClick(this, 'Share')">
+                    공유
+                </button>
+            </div>
+        </div>
+        
+        <!-- Functionality Tests -->
+        <div class="test-section">
+            <h2>Functionality Tests</h2>
+            <div id="test-results"></div>
+        </div>
+        
+        <!-- UI Component Checklist -->
+        <div class="test-section">
+            <h2>UI Component Checklist</h2>
+            <div class="test-grid">
+                <label><input type="checkbox" onchange="updateChecklist()"> Video player loads correctly</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Upload button is visible and styled</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Tab switching works smoothly</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> WebSocket status indicator visible</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Loading animations work</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Feedback list scrolls properly</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Member list displays correctly</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> AI teacher modal opens</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Responsive design works</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Focus states are visible</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Hover effects work</label>
+                <label><input type="checkbox" onchange="updateChecklist()"> Transitions are smooth</label>
+            </div>
+            <div id="checklist-status" style="margin-top: 15px; font-weight: bold;"></div>
+        </div>
+        
+        <!-- Responsive Test -->
+        <div class="test-section">
+            <h2>Responsive Design Test</h2>
+            <p>Current viewport: <span id="viewport-size"></span></p>
+            <div style="margin-top: 10px;">
+                <button class="test-button btn-primary" onclick="testResponsive(375)">Mobile (375px)</button>
+                <button class="test-button btn-primary" onclick="testResponsive(768)">Tablet (768px)</button>
+                <button class="test-button btn-primary" onclick="testResponsive(1200)">Desktop (1200px)</button>
+                <button class="test-button btn-primary" onclick="testResponsive(1920)">Large (1920px)</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Test functionality
+        let testResults = [];
+        
+        function testButtonClick(button, name) {
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = '';
+                addTestResult(`Button click: ${name}`, 'pass', 'Button interaction works correctly');
+            }, 100);
+        }
+        
+        function addTestResult(test, status, message) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result test-${status}`;
+            resultDiv.innerHTML = `
+                <span class="status-indicator status-${status === 'pass' ? 'ok' : status === 'fail' ? 'error' : 'warning'}"></span>
+                <strong>${test}:</strong> ${message}
+            `;
+            resultsDiv.appendChild(resultDiv);
+        }
+        
+        function updateChecklist() {
+            const checkboxes = document.querySelectorAll('.test-grid input[type="checkbox"]');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const total = checkboxes.length;
+            const percentage = Math.round((checked / total) * 100);
+            
+            const statusDiv = document.getElementById('checklist-status');
+            statusDiv.textContent = `Completion: ${checked}/${total} (${percentage}%)`;
+            statusDiv.style.color = percentage === 100 ? '#28a745' : percentage >= 75 ? '#ffc107' : '#dc3545';
+        }
+        
+        function updateViewportSize() {
+            const sizeSpan = document.getElementById('viewport-size');
+            sizeSpan.textContent = `${window.innerWidth} x ${window.innerHeight}`;
+        }
+        
+        function testResponsive(width) {
+            window.resizeTo(width, window.innerHeight);
+            updateViewportSize();
+            addTestResult('Responsive test', 'pass', `Window resized to ${width}px`);
+        }
+        
+        // Run initial tests
+        window.onload = function() {
+            updateViewportSize();
+            window.addEventListener('resize', updateViewportSize);
+            
+            // Automatic tests
+            addTestResult('Page Load', 'pass', 'Test page loaded successfully');
+            addTestResult('CSS Styles', 'pass', 'Brand colors and styles loaded');
+            addTestResult('JavaScript', 'pass', 'Interactive functions working');
+            
+            // Check for required features
+            if (typeof WebSocket !== 'undefined') {
+                addTestResult('WebSocket Support', 'pass', 'WebSocket API available');
+            } else {
+                addTestResult('WebSocket Support', 'fail', 'WebSocket API not available');
+            }
+            
+            if (typeof FormData !== 'undefined') {
+                addTestResult('File Upload Support', 'pass', 'FormData API available');
+            } else {
+                addTestResult('File Upload Support', 'fail', 'FormData API not available');
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import './CustomAlert.scss'
 
 const CustomAlert = ({ message, type = 'info', onClose, duration = 3000, actions }) => {
   const [isClosing, setIsClosing] = useState(false)

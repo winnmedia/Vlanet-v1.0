@@ -66,43 +66,38 @@ jobs:
       - name: Build project
         working-directory: ./vridge_front
         env:
-          REACT_APP_API_BASE_URL: https://videoplanet.up.railway.app
-          REACT_APP_BACKEND_API_URL: https://videoplanet.up.railway.app
-          REACT_APP_BACKEND_URI: https://videoplanet.up.railway.app
-          REACT_APP_SOCKET_URI: wss://videoplanet.up.railway.app
+          NEXT_PUBLIC_API_URL: https://videoplanet.up.railway.app
+          NEXT_PUBLIC_VERSION: 1.0.0
+          NODE_ENV: production
           CI: false
-          GENERATE_SOURCEMAP: false
         run: |
           set -e
-          echo "Starting build with environment variables:"
-          printenv | grep REACT_APP_ || true
+          echo "Starting Next.js build with environment variables:"
+          printenv | grep NEXT_PUBLIC_ || true
           
           # Show package.json scripts for debugging
           echo "Available npm scripts:"
           npm run
           
-          # Run build with verbose output
+          # Run Next.js build
           echo "Running npm build..."
-          npm run build --verbose
+          npm run build
           
-          # Verify build output
-          if [ ! -d "build" ]; then
-            echo "ERROR: Build directory not created"
+          # Verify Next.js build output
+          if [ ! -d ".next" ]; then
+            echo "ERROR: .next directory not created"
             exit 1
           fi
           
           echo "Build completed successfully"
-          ls -la build/
+          ls -la .next/
         
       - name: Prepare Vercel deployment
         run: |
           cd vridge_front
-          # Create .vercel directory structure
-          mkdir -p .vercel/output/static
-          # Copy build files
-          cp -r build/* .vercel/output/static/
-          # Create config.json
-          echo '{"version": 3}' > .vercel/output/config.json
+          # For Next.js, we don't need to prepare static files
+          # Vercel will handle the Next.js deployment automatically
+          echo "Next.js project ready for Vercel deployment"
           
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
@@ -110,7 +105,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod --prebuilt --cwd ./vridge_front'
+          vercel-args: '--prod --cwd ./vridge_front'
           
   notify:
     name: Deployment Notification

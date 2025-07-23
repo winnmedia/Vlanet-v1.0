@@ -1,0 +1,66 @@
+name: Vercel Debug Verbose
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+      
+      - name: Debug Environment
+        run: |
+          echo "=== GitHub Environment ==="
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo ""
+          echo "=== Secrets Check ==="
+          echo "VERCEL_TOKEN length: ${#VERCEL_TOKEN}"
+          echo "VERCEL_ORG_ID length: ${#VERCEL_ORG_ID}"
+          echo "VERCEL_PROJECT_ID length: ${#VERCEL_PROJECT_ID}"
+          echo ""
+          echo "=== Project Structure ==="
+          ls -la
+          echo ""
+          echo "=== vridge_front Contents ==="
+          ls -la vridge_front/
+          echo ""
+          echo "=== package.json ==="
+          cat vridge_front/package.json | head -20
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: Test Vercel CLI
+        run: |
+          npm install -g vercel@latest
+          echo "Vercel CLI version:"
+          vercel --version
+          echo ""
+          echo "Testing Vercel with token..."
+          cd vridge_front
+          vercel whoami --token="${{ secrets.VERCEL_TOKEN }}" || echo "Vercel auth failed"
+      
+      - name: Manual Build Test
+        run: |
+          cd vridge_front
+          echo "Installing dependencies..."
+          npm install --legacy-peer-deps
+          echo ""
+          echo "Building project..."
+          npm run build
+          echo ""
+          echo "Build output:"
+          ls -la .next/
+        env:
+          NEXT_PUBLIC_API_URL: https://videoplanet.up.railway.app
+          NEXT_PUBLIC_VERSION: 1.0.0

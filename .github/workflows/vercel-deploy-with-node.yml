@@ -1,0 +1,47 @@
+name: Vercel Deploy with Node Setup
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+          cache-dependency-path: 'vridge_front/package-lock.json'
+      
+      - name: Verify Setup
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Working directory contents:"
+          ls -la vridge_front/
+      
+      - name: Install Dependencies
+        working-directory: ./vridge_front
+        run: npm install --legacy-peer-deps
+      
+      - name: Build Project
+        working-directory: ./vridge_front
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://videoplanet.up.railway.app
+          NEXT_PUBLIC_VERSION: 1.0.0
+      
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./vridge_front

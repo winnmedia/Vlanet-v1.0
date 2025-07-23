@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
 import store from '../src/redux/store'
 import { ConfigProvider } from 'antd'
 import koKR from 'antd/locale/ko_KR'
 import moment from 'moment'
 import 'moment/locale/ko'
+import { useRouter } from 'next/router'
+import LoadingAnimation from '../src/components/LoadingAnimation'
 import '../src/styles/reset.scss'
 import '../src/styles/design-system.scss'
 import '../src/styles/global.scss'
@@ -57,15 +59,45 @@ import { checkSession } from '../src/util/util'
 moment.locale('ko')
 
 function MyApp({ Component, pageProps }) {
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
   useEffect(() => {
     // 세션 체크만 수행 (프로젝트 로드는 각 페이지에서 처리)
     const session = checkSession()
     console.log('App initialized with session:', !!session)
   }, [])
 
+  useEffect(() => {
+    // 라우트 변경 시 로딩 상태 관리
+    const handleStart = (url) => {
+      console.log('Loading start:', url)
+      setLoading(true)
+    }
+    const handleComplete = (url) => {
+      console.log('Loading complete:', url)
+      setLoading(false)
+    }
+    const handleError = (err, url) => {
+      console.error('Loading error:', err)
+      setLoading(false)
+    }
+
+    router.events.on('routeChangeStart', handleStart)
+    router.events.on('routeChangeComplete', handleComplete)
+    router.events.on('routeChangeError', handleError)
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart)
+      router.events.off('routeChangeComplete', handleComplete)
+      router.events.off('routeChangeError', handleError)
+    }
+  }, [router])
+
   return (
     <Provider store={store}>
       <ConfigProvider locale={koKR}>
+        {loading && <LoadingAnimation message="페이지를 불러오는 중..." />}
         <Component {...pageProps} />
       </ConfigProvider>
     </Provider>

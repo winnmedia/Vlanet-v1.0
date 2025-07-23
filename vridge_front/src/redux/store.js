@@ -5,6 +5,7 @@ import {
 } from '@reduxjs/toolkit'
 import logger from 'redux-logger'
 import ProjectStore from './project'
+import loadingReducer from './loading'
 
 let store
 if (process.env.NODE_ENV === 'production') {
@@ -12,6 +13,7 @@ if (process.env.NODE_ENV === 'production') {
   store = createStore(
     combineReducers({
       ProjectStore,
+      loading: loadingReducer,
     }),
     // Redux DevTools Extension 비활성화
   )
@@ -25,6 +27,7 @@ if (process.env.NODE_ENV === 'production') {
   store = createStore(
     combineReducers({
       ProjectStore,
+      loading: loadingReducer,
     }),
     applyMiddleware(...middleware),
   )

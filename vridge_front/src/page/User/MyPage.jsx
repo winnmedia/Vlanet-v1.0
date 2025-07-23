@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useRouter } from '../../util/nextNavigation'
+import { useRouter } from 'next/router'
 
 import PageTemplate from 'components/PageTemplate'
 import { checkSession } from 'util/util'
@@ -14,7 +14,8 @@ import 'moment/locale/ko'
 import UserAvatar from 'components/UserAvatar'
 
 export default function MyPage() {
-  const { navigate } = useRouter()
+  const router = useRouter()
+  const navigate = router.push
   const dispatch = useDispatch()
   const user = useSelector((state) => state.ProjectStore.user)
   const nickname = useSelector((state) => state.ProjectStore.nickname)

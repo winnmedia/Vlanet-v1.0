@@ -20,6 +20,40 @@ jobs:
         with:
           node-version: '18'
       
+      - name: Check project files
+        run: |
+          echo "Checking project structure..."
+          ls -la
+          echo "Checking vridge_front directory..."
+          ls -la vridge_front/
+          echo "Checking package.json..."
+          cat vridge_front/package.json | grep -E '"name"|"version"|"scripts"' || true
+      
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+        working-directory: ./vridge_front
+      
+      - name: Build project
+        run: npm run build
+        working-directory: ./vridge_front
+        env:
+          NEXT_PUBLIC_API_URL: https://videoplanet.up.railway.app
+          NEXT_PUBLIC_VERSION: 1.0.0
+      
+      - name: Check build output
+        run: |
+          echo "Checking build output..."
+          if [ -d ".next" ]; then
+            echo "✅ .next directory found"
+            ls -la .next/
+          else
+            echo "❌ ERROR: .next directory not created"
+            echo "Current directory contents:"
+            ls -la
+            exit 1
+          fi
+        working-directory: ./vridge_front
+      
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
@@ -27,7 +61,7 @@ jobs:
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: ./vridge_front
       
-      - name: Build Project Artifacts
+      - name: Build Project Artifacts with Vercel
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: ./vridge_front
       

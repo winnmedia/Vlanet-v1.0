@@ -12,7 +12,6 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
   const [SubMenu, SetSubMenu] = useState(false)
   const [tab_name, set_tab_name] = useState('')
   const [SortProject, SetSortProject] = useState([])
-  const [isAdmin, setIsAdmin] = useState(false)
   const submenuRef = useRef(null)
   const sidebarRef = useRef(null)
 
@@ -40,17 +39,6 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
     }
   }, [sortedProjects])
 
-  // 관리자 권한 확인
-  useEffect(() => {
-    // 임시로 특정 이메일로 관리자 권한 체크
-    // 실제로는 백엔드 API에서 is_superuser 확인 필요
-    const adminEmails = ['admin@vlanet.net', 'admin@example.com', 'test@example.com'] // test@example.com 임시 추가
-    if (user && adminEmails.includes(user)) {
-      setIsAdmin(true)
-    } else {
-      setIsAdmin(false)
-    }
-  }, [user])
 
   useEffect(() => {
     if (on_menu === true) {
@@ -167,28 +155,6 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
             >
               영상 피드백
             </li>
-            {isAdmin && (
-              <>
-                <li
-                  className={cx({ active: path === '/AdminDashboard' && !SubMenu })}
-                  onClick={() => {
-                    SetSubMenu(false)
-                    navigate('/AdminDashboard')
-                  }}
-                >
-                  관리자 대시보드
-                </li>
-                <li
-                  className={cx({ active: path === '/admin' && !SubMenu })}
-                  onClick={() => {
-                    SetSubMenu(false)
-                    navigate('/admin')
-                  }}
-                >
-                  Django Admin
-                </li>
-              </>
-            )}
           </ul>
         </nav>
         <div

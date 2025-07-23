@@ -1,4 +1,4 @@
-import axios from '../config/axios'
+import axios from '../config/axios-unified'
 import { updateProjectStore } from 'redux/project'
 import { ProjectList } from 'api/project'
 import { GetUserInfo } from 'api/auth'
@@ -144,7 +144,14 @@ export function refetchProject(dispatch, navigate) {
     return Promise.all([ProjectList(), getUserInfoPromise])
       .then(([projectRes, userRes]) => {
         console.log('[refetchProject] ProjectList response:', projectRes.data)
-        const data = projectRes.data.result
+        
+        // 안전한 데이터 처리
+        if (!projectRes || !projectRes.data || !projectRes.data.result) {
+          console.error('[refetchProject] Invalid project list response')
+          return Promise.reject(new Error('Invalid project list response'))
+        }
+        
+        const data = projectRes.data.result || []
         const result = data.sort((a, b) => {
           return new Date(b.created) - new Date(a.created)
         })

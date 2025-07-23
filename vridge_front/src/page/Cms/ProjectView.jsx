@@ -15,7 +15,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
-import { SafeRoute } from 'components/SafeRoute'
 
 import { Select, Space } from 'antd'
 import moment from 'moment'
@@ -92,7 +91,7 @@ export default function ProjectView() {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [project_id, navigate])
+  }, [project_id]) // navigate를 의존성에서 제거
   
   // 프로젝트 단계 업데이트 핸들러
   const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
@@ -157,7 +156,7 @@ export default function ProjectView() {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [project_id, navigate, handleNotFound])
+  }, [project_id]) // navigate와 handleNotFound를 의존성에서 제거
 
   const changeDate = (type) => {
     //이전 날짜
@@ -245,15 +244,10 @@ export default function ProjectView() {
   }
 
   return (
-    <SafeRoute
-      checkResource={GetProject}
-      resourceId={project_id}
-      resourceType="project"
-    >
-      <PageTemplate>
-        <div className="cms_wrap">
-          <SideBar />
-          <main className="project">
+    <PageTemplate>
+      <div className="cms_wrap">
+        <SideBar />
+        <main className="project">
             {current_project ? (
             <>
               <Info 
@@ -456,7 +450,6 @@ export default function ProjectView() {
         </main>
       </div>
     </PageTemplate>
-    </SafeRoute>
   )
 }
 

@@ -1,0 +1,35 @@
+name: Simple Vercel Deploy (Alternative)
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_message:
+        description: 'Deployment message'
+        required: false
+        default: 'Manual deployment'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy with Vercel Action
+        uses: amondnet/vercel-action@v25
+        id: vercel-deployment
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./vridge_front
+          alias-domains: |
+            videoplanet.vercel.app
+      
+      - name: Deployment Summary
+        run: |
+          echo "🚀 Deployment Status"
+          echo "==================="
+          echo "Preview URL: ${{ steps.vercel-deployment.outputs.preview-url }}"
+          echo "Production URL: ${{ steps.vercel-deployment.outputs.production-url }}"
+          echo "Deployment message: ${{ github.event.inputs.deploy_message }}"

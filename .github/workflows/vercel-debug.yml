@@ -1,0 +1,66 @@
+name: Vercel Debug Deployment
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Check environment
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          ls -la
+          ls -la vridge_front/
+      
+      - name: Install dependencies
+        run: |
+          cd vridge_front
+          npm install --legacy-peer-deps
+      
+      - name: Check Vercel configuration
+        run: |
+          cd vridge_front
+          echo "Checking vercel.json:"
+          cat vercel.json
+          echo ""
+          echo "Checking package.json scripts:"
+          cat package.json | grep -A5 '"scripts"'
+      
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      
+      - name: Test Vercel connection
+        run: |
+          cd vridge_front
+          vercel whoami --token=${{ secrets.VERCEL_TOKEN }} || echo "Vercel auth failed"
+      
+      - name: Pull Vercel Environment
+        run: |
+          cd vridge_front
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }} --debug
+      
+      - name: Build Project
+        run: |
+          cd vridge_front
+          echo "Building with Vercel..."
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }} --debug
+      
+      - name: Deploy to Vercel
+        run: |
+          cd vridge_front
+          echo "Deploying to Vercel..."
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} --debug

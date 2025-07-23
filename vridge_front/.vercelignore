@@ -1,0 +1,44 @@
+# Test files
+test-*.js
+*-test.js
+comprehensive-*.js
+detailed-*.js
+simple-*.js
+browser-test.js
+final-*.js
+analyze-*.js
+
+# Test outputs
+test-outputs/
+test-screenshots/
+test-results*.json
+test-report*.html
+*-test-report.md
+
+# Development logs
+*.log
+dev-server.log
+server.log
+
+# Fix scripts
+fix-*.js
+remove-*.js
+
+# Documentation
+DEVELOPMENT_LOG.md
+MIGRATION_COMPLETE.md
+comprehensive-test-report.md
+ui-ux-test-checklist.md
+
+# Backup files
+*.backup
+*.bak
+*.bak2
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

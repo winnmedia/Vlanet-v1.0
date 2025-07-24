@@ -4,15 +4,12 @@ import SideBar from 'components/SideBar'
 import LoadingAnimation from 'components/LoadingAnimation'
 import ExportModal from 'components/ExportModal'
 import VideoUploadGuide from 'components/VideoUploadGuide'
-
-
-
+// CSS imports are handled in _app.js
 import axios from '../../config/axios'
 import { checkSession } from 'util/util'
-import { useRouter } from '../../util/nextNavigation'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { getProxyImageUrl, handleImageError } from 'utils/imageProxy'
-import { useProjectData } from 'hooks/useProjectData'
 
 // 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
 const filterForbiddenWords = (text) => {
@@ -35,9 +32,8 @@ const filterForbiddenWords = (text) => {
   return filteredText.replace(/\s+/g, ' ').trim();
 };
 
-function VideoPlanning() {
-  const { navigate } = useRouter()
-  const { project_list, user } = useProjectData() // 프로젝트 데이터 로드
+export default function VideoPlanning() {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [planningData, setPlanningData] = useState({
     planning: '',
@@ -82,13 +78,13 @@ function VideoPlanning() {
       
       if (response.data && response.data.data && response.data.data.planning_logs) {
         setRecentPlannings(response.data.data.planning_logs)
-        console.log(`최근 기획 ${response.data.data.planning_logs ? response.data.data.planning_logs.length : 0}개 로드 성공`)
+        console.log(`최근 기획 ${response.data.data.planning_logs?.length || 0}개 로드 성공`)
       }
     } catch (err) {
       console.error(`최근 기획 로드 실패 (${retryCount + 1}회차):`, err)
       
       // 401 에러인 경우 재시도
-      if (err.response && err.response.status === 401 && retryCount < 2) {
+      if (err.response?.status === 401 && retryCount < 2) {
         console.log('인증 토큰이 아직 준비되지 않았을 수 있음. 재시도...')
         setTimeout(() => {
           fetchRecentPlannings(retryCount + 1)
@@ -162,7 +158,7 @@ function VideoPlanning() {
       }
     } catch (err) {
       console.error('기획 삭제 실패:', err)
-      setError((err.response && err.response.data && err.response.data.message) || '기획 삭제에 실패했습니다.')
+      setError(err.response?.data?.message || '기획 삭제에 실패했습니다.')
     }
   }
   
@@ -241,7 +237,7 @@ function VideoPlanning() {
   useEffect(() => {
     const session = checkSession()
     if (!session) {
-      navigate('/login', { replace: true })
+      router.replace('/login')
     } else {
       // 로그인 후 약간의 지연을 두고 API 호출
       setTimeout(() => {
@@ -249,7 +245,7 @@ function VideoPlanning() {
         fetchRecentPlannings()
       }, 100)
     }
-  }, [navigate])
+  }, [router])
 
   // API_BASE_URL 제거 - axios 기본 설정 사용
 
@@ -337,7 +333,7 @@ function VideoPlanning() {
         setTimeout(() => setSuccessMessage(null), 3000)
       }
     } catch (err) {
-      setError((err.response && err.response.data && err.response.data.message) || '저장에 실패했습니다.')
+      setError(err.response?.data?.message || '저장에 실패했습니다.')
     }
   }
 
@@ -440,7 +436,7 @@ function VideoPlanning() {
         setError(response.data.message || '스토리 생성에 실패했습니다.')
       }
     } catch (err) {
-      setError((err.response && err.response.data && err.response.data.message) || '서버 오류가 발생했습니다.')
+      setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
     } finally {
       setTimeout(() => {
         setLoading(false)
@@ -499,7 +495,7 @@ function VideoPlanning() {
         setError('씬 생성에 실패했습니다.')
       }
     } catch (err) {
-      setError((err.response && err.response.data && err.response.data.message) || '서버 오류가 발생했습니다.')
+      setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }
@@ -532,7 +528,7 @@ function VideoPlanning() {
         setError(response.data.message || '숏 생성에 실패했습니다.')
       }
     } catch (err) {
-      setError((err.response && err.response.data && err.response.data.message) || '서버 오류가 발생했습니다.')
+      setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }
@@ -565,7 +561,7 @@ function VideoPlanning() {
         setError(response.data.message || '콘티 생성에 실패했습니다.')
       }
     } catch (err) {
-      setError((err.response && err.response.data && err.response.data.message) || '서버 오류가 발생했습니다.')
+      setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }
@@ -616,7 +612,7 @@ function VideoPlanning() {
       // 10초 후 추가 안내 메시지
       timer1 = setTimeout(() => {
         setSceneLoadingStates(prev => {
-          if (prev[sceneIndex] && prev[sceneIndex].loading) {
+          if (prev[sceneIndex]?.loading) {
             return {
               ...prev,
               [sceneIndex]: {
@@ -633,7 +629,7 @@ function VideoPlanning() {
       // 30초 후 추가 안내
       timer2 = setTimeout(() => {
         setSceneLoadingStates(prev => {
-          if (prev[sceneIndex] && prev[sceneIndex].loading) {
+          if (prev[sceneIndex]?.loading) {
             return {
               ...prev,
               [sceneIndex]: {
@@ -715,12 +711,12 @@ function VideoPlanning() {
       
       if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
         setError('이미지 생성에 시간이 오래 걸리고 있습니다. 잠시 후 다시 시도해주세요.')
-      } else if (err.response && err.response.status === 500) {
-        setError(`서버 오류: ${(err.response.data && err.response.data.message) || '콘티 생성 중 문제가 발생했습니다.'}`)
+      } else if (err.response?.status === 500) {
+        setError(`서버 오류: ${err.response.data?.message || '콘티 생성 중 문제가 발생했습니다.'}`)
       } else if (!err.response) {
         setError('네트워크 연결을 확인해주세요.')
       } else {
-        setError((err.response && err.response.data && err.response.data.message) || '콘티 생성에 실패했습니다.')
+        setError(err.response?.data?.message || '콘티 생성에 실패했습니다.')
       }
       
       // 에러 발생 시 해당 씬의 로딩 상태 제거
@@ -801,7 +797,7 @@ function VideoPlanning() {
         })
       }
     } catch (err) {
-      setError((err.response && err.response.data && err.response.data.message) || '서버 오류가 발생했습니다.')
+      setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
       setSceneLoadingStates(prev => {
         const newState = { ...prev }
         delete newState[sceneIndex]
@@ -912,12 +908,12 @@ function VideoPlanning() {
       
       if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
         setError('이미지 생성에 시간이 오래 걸리고 있습니다. 개별적으로 생성해주세요.')
-      } else if (err.response && err.response.status === 500) {
-        setError(`서버 오류: ${(err.response.data && err.response.data.message) || '콘티 생성 중 문제가 발생했습니다.'}`)
+      } else if (err.response?.status === 500) {
+        setError(`서버 오류: ${err.response.data?.message || '콘티 생성 중 문제가 발생했습니다.'}`)
       } else if (!err.response) {
         setError('네트워크 연결을 확인해주세요.')
       } else {
-        setError((err.response && err.response.data && err.response.data.message) || '콘티 생성에 실패했습니다.')
+        setError(err.response?.data?.message || '콘티 생성에 실패했습니다.')
       }
     } finally {
       setLoading(false)
@@ -1233,7 +1229,7 @@ function VideoPlanning() {
   }
 
   const handleDeleteVideo = () => {
-    if (uploadedVideo && uploadedVideo.url) {
+    if (uploadedVideo?.url) {
       URL.revokeObjectURL(uploadedVideo.url)
     }
     setUploadedVideo(null)
@@ -1273,14 +1269,14 @@ function VideoPlanning() {
         setSuccessMessage('프로젝트가 성공적으로 완성되었습니다!')
         // 완성된 프로젝트 페이지로 이동하거나 추가 작업 수행
         setTimeout(() => {
-          navigate('/cms/projects')
+          router.push('/projects')
         }, 2000)
       } else {
         setError(response.data.message || '프로젝트 완성에 실패했습니다.')
       }
     } catch (error) {
       console.error('프로젝트 완성 오류:', error)
-      setError((error.response && error.response.data && error.response.data.message) || '서버 오류가 발생했습니다.')
+      setError(error.response?.data?.message || '서버 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }
@@ -1290,18 +1286,12 @@ function VideoPlanning() {
     switch (currentStep) {
       case 1:
         return (
-          <>
-            <div className="step-content-with-sidebar">
-              <div className="planning-input-section">
-              <div className="step-header">
-                <h2>
-                  <span className="step-icon">📝</span>
-                  1단계: 기획안 입력
-                </h2>
-                <div className="step-description">
-                  제작하고자 하는 영상의 기획안을 입력해주세요. AI가 이를 바탕으로 여러 개의 스토리를 생성합니다.
-                </div>
-              </div>
+          <div className="step-content-with-sidebar">
+            <div className="step-content">
+              <h3>1단계: 기획안 입력</h3>
+              <p className="step-description">
+                제작하고자 하는 영상의 기획안을 입력해주세요. AI가 이를 바탕으로 여러 개의 스토리를 생성합니다.
+              </p>
             
             
             {/* 톤앤매너/장르/콘셉트 선택 */}
@@ -1878,48 +1868,42 @@ function VideoPlanning() {
                 </div>
               </div>
             
-            <div className="planning-textarea">
-              <label>기획안 제목</label>
+            <textarea
+              className="planning-input"
+              value={planningData.planning}
+              onChange={(e) => setPlanningData(prev => ({ ...prev, planning: e.target.value }))}
+              placeholder="예시: 신제품 런칭을 위한 프로모션 영상을 제작하려고 합니다. 타겟은 20-30대 직장인이며, 제품의 혁신성과 실용성을 강조하고 싶습니다..."
+              rows={10}
+            />
+            <div className="planning-actions">
               <input
                 type="text"
+                className="planning-title-input"
                 placeholder="기획안 제목을 입력하세요"
                 value={planningTitle}
                 onChange={(e) => setPlanningTitle(e.target.value)}
               />
-              
-              <label className="mt-4">기획안 내용</label>
-              <textarea
-                value={planningData.planning}
-                onChange={(e) => setPlanningData(prev => ({ ...prev, planning: e.target.value }))}
-                placeholder="예시: 신제품 런칭을 위한 프로모션 영상을 제작하려고 합니다. 타겟은 20-30대 직장인이며, 제품의 혁신성과 실용성을 강조하고 싶습니다..."
-                rows={10}
-              />
-              <div className="char-count">
-                {planningData.planning.length} / 2000자
-              </div>
-            </div>
-            
-            <div className="action-buttons">
-              <button
-                className="primary"
-                onClick={generateStories}
-                disabled={loading || !planningData.planning.trim()}
-              >
-                {loading ? '생성 중...' : '스토리 생성'}
-              </button>
-              {planningData.stories.length > 0 && (
+              <div className="button-group">
                 <button
-                  className="secondary"
-                  onClick={savePlanning}
-                  disabled={loading || !planningTitle.trim()}
+                  className="generate-btn"
+                  onClick={generateStories}
+                  disabled={loading || !planningData.planning.trim()}
                 >
-                  기획안 저장
+                  {loading ? '생성 중...' : '스토리 생성'}
                 </button>
-              )}
-              {currentPlanningId && (
-                <button
-                  className="ghost"
-                  onClick={() => {
+                {planningData.stories.length > 0 && (
+                  <button
+                    className="save-btn"
+                    onClick={savePlanning}
+                    disabled={loading || !planningTitle.trim()}
+                  >
+                    기획안 저장
+                  </button>
+                )}
+                {currentPlanningId && (
+                  <button
+                    className="new-planning-btn"
+                    onClick={() => {
                       // 새 기획 시작
                       setCurrentPlanningId(null)
                       setPlanningTitle('')
@@ -2020,52 +2004,51 @@ function VideoPlanning() {
               </div>
             ) : null}
           </div>
-          </>
+          </div>
         )
 
       case 2:
         return (
-          <div className="results-section">
-            <div className="step-header">
-              <h2>
-                <span className="step-icon">📚</span>
-                2단계: 스토리 확인
-              </h2>
-              <div className="step-description">
-                기획안을 기승전결 4개의 스토리로 나누었습니다. 각 스토리마다 3개의 씬이 생성됩니다.
-              </div>
-            </div>
+          <div className="step-content">
+            <h3>2단계: 스토리 확인</h3>
+            <p className="step-description">
+              기획안을 기승전결 4개의 스토리로 나누었습니다. 각 스토리마다 3개의 씬이 생성됩니다.
+            </p>
             
             
-            <div className="results-grid">
+            <div className="stories-container">
               {planningData.stories.map((story, index) => (
                 <div 
                   key={index} 
-                  className={`result-card ${selectedStoryIndex === index ? 'selected' : ''}`}
-                  onClick={() => setSelectedStoryIndex(index)}
+                  className="story-card"
                 >
-                  <div className="card-header">
-                    <span className="card-number">{index + 1}</span>
-                    <div className="card-title">
-                      {story.stage} - {story.stage_name}
+                  <div className="story-card-header">
+                    <div className="story-stage-badge">
+                      <span className="stage-label">{story.stage}</span>
+                      <span className="stage-name">{story.stage_name}</span>
                     </div>
-                    <div className="card-actions">
+                    <div className="story-header-buttons">
                       <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startEditingStory(index);
-                        }}
+                        className="edit-story-btn"
+                        onClick={() => startEditingStory(index)}
                         disabled={editingStoryIndex === index}
+                        style={{
+                          backgroundColor: '#1631F8',
+                          color: 'white',
+                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
                       >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d={"M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"} />
-                        </svg>
+                        편집
                       </button>
                     </div>
                   </div>
-                  <div className="card-content">
-                    <p className="story-title">{story.title}</p>
-                    <div className="story-summary">
+                  <p className="story-title">{story.title}</p>
+                  {!collapsedStories.has(index) && (
+                    <>
+                      <div className="story-summary">
                         {editingStoryIndex === index ? (
                           <div className="edit-story-form">
                             <textarea
@@ -2119,38 +2102,45 @@ function VideoPlanning() {
                           </>
                         )}
                       </div>
-                    </div>
-                    <div className="card-meta">
-                      <div className="meta-item">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14L2 9.27l6.91-1.01L12 2z" />
-                        </svg>
-                        {story.key_content || story.message}
+                      <div className="story-meta">
+                        <span>핵심: {story.key_content || story.message}</span>
                       </div>
-                      {story.characters && story.characters.length > 0 && (
-                        <div className="meta-item">
-                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                          </svg>
-                          {story.characters.join(', ')}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                      <div className="story-characters">
+                        <small>등장인물: {story.characters?.join(', ')}</small>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
-            <div className="action-buttons">
-              <button className="secondary" onClick={() => goToStep(1)}>
+            <div className="button-group">
+              <button className="back-btn" onClick={() => goToStep(1)} style={{
+                backgroundColor: '#1631F8',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '600'
+              }}>
                 기획안 수정
               </button>
               <button
-                className="primary"
+                className="generate-btn"
                 onClick={generateScenes}
                 disabled={loading}
+                style={{
+                  backgroundColor: '#1631F8',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  opacity: loading ? 0.7 : 1
+                }}
               >
                 {loading ? '씬 생성 중...' : '씬 생성'}
               </button>
@@ -2160,16 +2150,11 @@ function VideoPlanning() {
 
       case 3:
         return (
-          <div className="storyboard-section">
-            <div className="step-header">
-              <h2>
-                <span className="step-icon">🎬</span>
-                3단계: 씬 구성 및 콘티 (총 12개)
-              </h2>
-              <div className="step-description">
-                기승전결 4개 스토리에서 각각 3개씩 생성된 총 12개의 씬입니다. 각 씬마다 콘티를 생성할 수 있습니다.
-              </div>
-            </div>
+          <div className="step-content">
+            <h3>3단계: 씬 구성 및 콘티 (총 12개)</h3>
+            <p className="step-description">
+              기승전결 4개 스토리에서 각각 3개씩 생성된 총 12개의 씬입니다. 각 씬마다 콘티를 생성할 수 있습니다.
+            </p>
             
             {/* 콘티 스타일 선택 */}
             <div className="storyboard-style-selector">
@@ -2233,7 +2218,7 @@ function VideoPlanning() {
               <div className="batch-info">
                 <span>
                   총 {planningData.scenes.length}개 씬 / 
-                  생성된 콘티: {planningData.scenes.filter(scene => scene.storyboard && scene.storyboard.image_url).length}개
+                  생성된 콘티: {planningData.scenes.filter(scene => scene.storyboard?.image_url).length}개
                 </span>
                 
                 {/* 실시간 진행상태 표시 */}
@@ -2363,10 +2348,10 @@ function VideoPlanning() {
                                       e.stopPropagation();
                                       regenerateStoryboardImage(index);
                                     }}
-                                    disabled={(sceneLoadingStates[index] && sceneLoadingStates[index].loading) || Object.keys(sceneLoadingStates).length > 0}
+                                    disabled={sceneLoadingStates[index]?.loading || Object.keys(sceneLoadingStates).length > 0}
                                     title="이미지 재생성"
                                   >
-                                    {(sceneLoadingStates[index] && sceneLoadingStates[index].loading) ? '재생성 중...' : '재생성'}
+                                    {sceneLoadingStates[index]?.loading ? '재생성 중...' : '재생성'}
                                   </button>
                                   <button 
                                     className="download-storyboard-btn"
@@ -2385,13 +2370,13 @@ function VideoPlanning() {
                       </div>
                     ) : (
                       <div className="storyboard-empty">
-                        {(sceneLoadingStates[index] && sceneLoadingStates[index].loading) ? (
+                        {sceneLoadingStates[index]?.loading ? (
                           <div className="scene-loading-indicator">
                             <div className="loading-spinner"></div>
                             <p className="loading-message">
-                              {(sceneLoadingStates[index] && sceneLoadingStates[index].message) || '콘티 생성 중...'}
+                              {sceneLoadingStates[index]?.message || '콘티 생성 중...'}
                             </p>
-                            {sceneLoadingStates[index] && sceneLoadingStates[index].progress > 0 && (
+                            {sceneLoadingStates[index]?.progress > 0 && (
                               <div className="loading-progress">
                                 <div 
                                   className="progress-bar" 
@@ -2504,11 +2489,7 @@ function VideoPlanning() {
                   <div className="video-actions">
                     <button 
                       className="replace-video-btn"
-                      onClick={() => {
-                        if (typeof window !== 'undefined') {
-                          document.getElementById('video-upload').click()
-                        }
-                      }}
+                      onClick={() => document.getElementById('video-upload').click()}
                     >
                       🔄 영상 교체
                     </button>
@@ -2548,100 +2529,82 @@ function VideoPlanning() {
 
   return (
     <PageTemplate>
-      <div className="cms_wrap video-planning-page">
+      <div className="cms_wrap">
         <SideBar />
         <main>
-          <div className="planning-header">
-            <div className="header-content">
-              <div className="header-left">
-                <h1>영상 기획</h1>
-                <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다</p>
-              </div>
-              <div className="header-actions">
-                <button className="secondary" onClick={() => setShowHistory(!showHistory)}>
-                  기획 기록
-                </button>
-                <button className="primary" onClick={() => setCurrentStep(1)}>
-                  새 기획 시작
-                </button>
-              </div>
+          <div className="title">영상 기획</div>
+          <div className="content video-planning">
+            <div className="planning-header">
+              <h2>영상의 씨앗을 심어보세요</h2>
+              <p>당신의 아이디어가 AI와 만나 완성된 영상 기획으로 피어납니다.</p>
             </div>
-          </div>
-          <div className="planning-content">
+
+            <div className="planning-content-wrapper">
               {/* 최근 기획안 기록 표시 */}
               <>
                 {recentPlannings.length > 0 && (
                   <div className="recent-plannings-section">
-                    <div className="section-title">
-                      최근 기획안
+                    <div className="recent-header">
+                      <h3>📋 최근 기획안</h3>
+                      <span className="recent-count">최근 {recentPlannings.length}개</span>
                     </div>
-                    <div className="recent-plannings-grid">
+                    <div className="recent-list">
                       {recentPlannings.map((planning, index) => (
                         <div 
                           key={planning.id} 
-                          className="planning-card"
-                          onClick={() => loadHistoryItem(planning.id)}
+                          className="recent-item"
                         >
-                          <div className="card-header">
-                            <h3>{planning.title}</h3>
-                            <div className="card-actions">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  downloadPlanningAsPDF(planning.id, planning.title);
-                                }}
-                                title="PDF 다운로드"
-                              >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d={"M12 2v10m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3"} />
-                                </svg>
-                              </button>
-                              <button
-                                className="delete"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deletePlanning(planning.id);
-                                }}
-                                title="삭제"
-                              >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d={"M6 18L18 6M6 6l12 12"} />
-                                </svg>
-                              </button>
+                          <div 
+                            className="recent-content"
+                            onClick={() => loadHistoryItem(planning.id)}
+                          >
+                            <div className="recent-number">{index + 1}</div>
+                            <div className="recent-info">
+                              <div className="recent-title">{planning.title}</div>
+                              <div className="recent-meta">
+                                <span className="recent-date">{planning.created_at}</span>
+                                {planning.planning_options && (
+                                  <div className="recent-tags">
+                                    {planning.planning_options.tone && (
+                                      <span className="tag tone">{planning.planning_options.tone}</span>
+                                    )}
+                                    {planning.planning_options.genre && (
+                                      <span className="tag genre">{planning.planning_options.genre}</span>
+                                    )}
+                                    <span className={`tag step step-${planning.current_step}`}>
+                                      {planning.current_step === 1 ? '기획' : 
+                                       planning.current_step === 2 ? '스토리' : 
+                                       planning.current_step === 3 ? '씬' : 
+                                       planning.current_step === 4 ? '숏' : 
+                                       planning.current_step === 5 ? '콘티' : '진행중'}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <div className="card-meta">
-                            <span>
-                              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                <line x1="16" y1="2" x2="16" y2="6"/>
-                                <line x1="8" y1="2" x2="8" y2="6"/>
-                                <line x1="3" y1="10" x2="21" y2="10"/>
-                              </svg>
-                              {planning.created_at}
-                            </span>
-                            <span>
-                              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <polyline points="12 6 12 12 16 14"/>
-                              </svg>
-                              {planning.current_step === 1 ? '기획' : 
-                               planning.current_step === 2 ? '스토리' : 
-                               planning.current_step === 3 ? '씬' : 
-                               planning.current_step === 4 ? '숏' : 
-                               planning.current_step === 5 ? '콘티' : '진행중'}
-                            </span>
+                          <div className="recent-actions">
+                            <button
+                              className="pdf-download-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                downloadPlanningAsPDF(planning.id, planning.title);
+                              }}
+                              title="PDF 다운로드"
+                            >
+                              📄 PDF
+                            </button>
+                            <button
+                              className="delete-planning-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deletePlanning(planning.id);
+                              }}
+                              title="기획 삭제"
+                            >
+                              ✕
+                            </button>
                           </div>
-                          {planning.planning_options && (
-                            <div className="card-options">
-                              {planning.planning_options.tone && (
-                                <span className="option-tag">{planning.planning_options.tone}</span>
-                              )}
-                              {planning.planning_options.genre && (
-                                <span className="option-tag">{planning.planning_options.genre}</span>
-                              )}
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -2672,9 +2635,9 @@ function VideoPlanning() {
                   </div>
                 )}
 
-                <div className="planning-navigation step-indicator">
+                <div className="planning-navigation">
               <div 
-                className={`step ${currentStep >= 1 ? 'active' : ''} ${currentStep === 1 ? 'current' : ''}`}
+                className={`nav-step ${currentStep >= 1 ? 'active' : ''} ${currentStep === 1 ? 'current' : ''}`}
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
@@ -2683,10 +2646,10 @@ function VideoPlanning() {
                 style={{ cursor: 'pointer' }}
               >
                 <span className="step-number">1</span>
-                <span className="step-label">기획안</span>
+                <span className="step-name">기획안</span>
               </div>
               <div 
-                className={`step ${currentStep >= 2 ? 'active' : ''} ${currentStep === 2 ? 'current' : ''} ${planningData.stories.length === 0 ? 'disabled' : ''}`}
+                className={`nav-step ${currentStep >= 2 ? 'active' : ''} ${currentStep === 2 ? 'current' : ''} ${planningData.stories.length === 0 ? 'disabled' : ''}`}
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
@@ -2700,10 +2663,10 @@ function VideoPlanning() {
                 style={{ cursor: planningData.stories.length === 0 ? 'not-allowed' : 'pointer' }}
               >
                 <span className="step-number">2</span>
-                <span className="step-label">스토리</span>
+                <span className="step-name">스토리</span>
               </div>
               <div 
-                className={`step ${currentStep >= 3 ? 'active' : ''} ${currentStep === 3 ? 'current' : ''} ${planningData.scenes.length === 0 ? 'disabled' : ''}`}
+                className={`nav-step ${currentStep >= 3 ? 'active' : ''} ${currentStep === 3 ? 'current' : ''} ${planningData.scenes.length === 0 ? 'disabled' : ''}`}
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
@@ -2721,7 +2684,7 @@ function VideoPlanning() {
                 style={{ cursor: planningData.scenes.length === 0 ? 'not-allowed' : 'pointer' }}
               >
                 <span className="step-number">3</span>
-                <span className="step-label">씬 & 콘티</span>
+                <span className="step-name">씬 & 콘티</span>
               </div>
             </div>
 
@@ -2794,7 +2757,7 @@ function VideoPlanning() {
                             transition: 'transform 0.3s ease'
                           }}
                         >
-                          <path d={"M3 4.5L6 7.5L9 4.5"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
                     </div>
@@ -2841,7 +2804,7 @@ function VideoPlanning() {
                             transition: 'transform 0.3s ease'
                           }}
                         >
-                          <path d={"M3 4.5L6 7.5L9 4.5"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
                     </div>
@@ -2902,7 +2865,7 @@ function VideoPlanning() {
                               {scene.characters && scene.characters.length > 0 && (
                                 <p className="scene-characters"><strong>등장인물:</strong> {scene.characters.join(', ')}</p>
                               )}
-                              {scene.storyboard && scene.storyboard.image_url && (
+                              {scene.storyboard?.image_url && (
                                 <div className="scene-storyboard-preview">
                                   <img 
                                     src={getProxyImageUrl(scene.storyboard.image_url)} 
@@ -2920,7 +2883,7 @@ function VideoPlanning() {
                             <div key={index} className="scene-preview-item">
                               <span className="scene-number">씬 {index + 1}</span>
                               <span className="scene-location">{scene.location}</span>
-                              {scene.storyboard && scene.storyboard.image_url && (
+                              {scene.storyboard?.image_url && (
                                 <span className="has-storyboard">✓ 콘티</span>
                               )}
                             </div>
@@ -2967,7 +2930,7 @@ function VideoPlanning() {
                             transition: 'transform 0.3s ease'
                           }}
                         >
-                          <path d={"M3 4.5L6 7.5L9 4.5"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </button>
                     </div>
@@ -3004,9 +2967,7 @@ function VideoPlanning() {
               </>
             </div>
 
-            <div className="step-content-wrapper">
-              {renderStepContent()}
-            </div>
+            {renderStepContent()}
             
             {loading && currentStep !== 3 && (
               <LoadingAnimation 
@@ -3036,5 +2997,3 @@ function VideoPlanning() {
     </PageTemplate>
   )
 }
-
-export default VideoPlanning

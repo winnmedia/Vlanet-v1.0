@@ -1,4 +1,13 @@
-import VideoPlanning from '../src/page/Cms/VideoPlanning-working'
+import dynamic from 'next/dynamic'
+
+// 동적 import로 변경하여 SSR 문제 해결
+const VideoPlanning = dynamic(
+  () => import('../src/page/Cms/VideoPlanning'),
+  { 
+    ssr: false,
+    loading: () => <div>Loading...</div>
+  }
+)
 
 export default VideoPlanning
 

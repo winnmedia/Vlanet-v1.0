@@ -627,28 +627,9 @@ export default function Feedback() {
             <div style={{ marginBottom: '20px', textAlign: 'right' }}>
               <button
                 onClick={handleOpenInviteModal}
-                style={{
-                  background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 4px rgba(22, 49, 248, 0.2)',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-1px)'
-                  e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)'
-                  e.target.style.boxShadow = '0 2px 4px rgba(22, 49, 248, 0.2)'
-                }}
+                className={styles.inviteButton}
               >
-                + 멤버 초대
+                멤버 초대
               </button>
             </div>
           )}
@@ -1269,7 +1250,7 @@ export default function Feedback() {
                             onChange={FileChange}
                             name="files"
                             id="video-center-upload"
-                            className="visually-hidden"
+                            className={styles.visuallyHidden}
                           />
                           <label 
                             htmlFor="video-center-upload" 
@@ -1354,7 +1335,16 @@ export default function Feedback() {
                 </div>
                 
                 {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
-                <div className="video-control-buttons">
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  marginTop: '20px',
+                  padding: '20px',
+                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                  borderRadius: '16px',
+                  flexWrap: 'wrap',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)'
+                }}>
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <button
@@ -1418,7 +1408,7 @@ export default function Feedback() {
                         onChange={FileChange}
                         name="files"
                         id="video-replace-button"
-                        className="visually-hidden"
+                        className={styles.visuallyHidden}
                       />
                       <label 
                         htmlFor="video-replace-button" 
@@ -1762,7 +1752,7 @@ export default function Feedback() {
                       <span className="text">선생님을 선택해주세요</span>
                     )}
                   </div>
-                  <div className="footer-buttons">
+                  <div className={styles.footerButtons}>
                     <button className={styles.btnCancel} onClick={() => setShowTeacherModal(false)}>
                       취소
                     </button>

@@ -1,209 +1,333 @@
 // 피드백 페이지 버튼 스타일 - CSS Modules로 격리
-.feedbackButtonPrimary,
-label.feedbackButtonPrimary {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 10px 20px !important;
-  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 8px !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25) !important;
-  min-height: 38px !important;  // 높이 통일
-  line-height: 1 !important;  // label 태그의 line-height 조정
-  min-width: 120px !important;  // 최소 너비 설정
-  justify-content: center !important;
-  
-  &:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4) !important;
-  }
-  
-  &:active {
-    transform: translateY(0) !important;
-  }
-}
+// 브랜드 색상 정의
+$brand-blue: #1631F8;
+$brand-blue-hover: #0F23C9;
+$brand-red: #dc3545;
+$brand-red-hover: #c82333;
+$brand-gray: #6c757d;
+$brand-gray-hover: #5a6268;
 
-.feedbackButtonDanger {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 10px 20px !important;  // Primary와 동일하게 수정
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 8px !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25) !important;
-  min-height: 38px !important;  // 높이 통일
-  min-width: 120px !important;  // 최소 너비 설정
-  justify-content: center !important;
-  
-  &:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
-  }
-  
-  &:active {
-    transform: translateY(0) !important;
-  }
-}
-
-.feedbackButtonSecondary {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 10px 20px !important;  // Primary와 동일하게 수정
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 8px !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25) !important;
-  min-height: 38px !important;  // 높이 통일
-  min-width: 120px !important;  // 최소 너비 설정
-  justify-content: center !important;
-  
-  &:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important;
-  }
-  
-  &:active {
-    transform: translateY(0) !important;
-  }
-}
-
-.feedbackButtonOutline {
+// 공통 버튼 믹스인
+@mixin button-base {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  padding: 12px 20px !important;
-  background: white !important;
-  color: #1631F8 !important;
-  border: 2px solid #1631F8 !important;
-  border-radius: 8px !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  
-  &:hover {
-    background: #1631F8 !important;
-    color: white !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3) !important;
-  }
-  
-  &:active {
-    transform: translateY(0) !important;
-  }
-}
-
-.feedbackButtonToggle {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 8px 16px !important;
-  background: #f8f9fa !important;
-  color: #495057 !important;
-  border: 1px solid #dee2e6 !important;
-  border-radius: 6px !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  
-  &:hover {
-    background: #e9ecef !important;
-    color: #212529 !important;
-  }
-  
-  &:active {
-    background: #dee2e6 !important;
-  }
-}
-
-// 추가 스타일
-.feedbackButtonPrimaryFull {
-  @extend .feedbackButtonPrimary;
-  width: 100% !important;
-  margin-top: 10px !important;
-}
-
-.feedbackButtonToggleRound {
-  @extend .feedbackButtonToggle;
-  border-radius: 50% !important;
-  width: 30px !important;
-  height: 30px !important;
-  padding: 0 !important;
-}
-
-// AI 선생님 모달 버튼들
-.btnCancel {
-  padding: 10px 20px !important;
-  border: 1px solid #dee2e6 !important;
-  background: white !important;
-  color: #495057 !important;
-  border-radius: 6px !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  
-  &:hover {
-    background: #f8f9fa !important;
-    border-color: #ced4da !important;
-  }
-}
-
-.btnAnalyze {
-  padding: 10px 20px !important;
-  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
-  color: white !important;
+  padding: 12px 24px !important;
   border: none !important;
-  border-radius: 6px !important;
+  border-radius: 10px !important;
   font-size: 14px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  min-height: 42px !important;
+  min-width: 110px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  overflow: hidden !important;
   
-  &:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3) !important;
+  // 리플 효과
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
+  
+  svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
   }
   
   &:disabled {
     opacity: 0.5 !important;
     cursor: not-allowed !important;
     transform: none !important;
+    box-shadow: none !important;
   }
 }
 
-// WebSocket 재연결 버튼
-.reconnectButton {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: none !important;
+.feedbackButtonPrimary,
+label.feedbackButtonPrimary {
+  @include button-base;
+  background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%) !important;
   color: white !important;
-  padding: 4px 8px !important;
-  border-radius: 12px !important;
-  font-size: 11px !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 15px rgba(22, 49, 248, 0.3) !important;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(22, 49, 248, 0.4) !important;
+    background: linear-gradient(135deg, lighten($brand-blue, 5%) 0%, $brand-blue-hover 100%) !important;
   }
+  
+  &:active {
+    transform: translateY(-1px) scale(1) !important;
+    box-shadow: 0 4px 15px rgba(22, 49, 248, 0.3) !important;
+  }
+}
+
+.feedbackButtonDanger {
+  @include button-base;
+  background: linear-gradient(135deg, $brand-red 0%, $brand-red-hover 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+  
+  &:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4) !important;
+    background: linear-gradient(135deg, lighten($brand-red, 5%) 0%, $brand-red-hover 100%) !important;
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(1) !important;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+  }
+}
+
+.feedbackButtonSecondary {
+  @include button-base;
+  background: white !important;
+  color: #495057 !important;
+  border: 2px solid #e9ecef !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  
+  &:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+    border-color: $brand-blue !important;
+    color: $brand-blue !important;
+    background: rgba($brand-blue, 0.05) !important;
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  &::before {
+    background: rgba($brand-blue, 0.2);
+  }
+}
+
+.feedbackButtonOutline {
+  @include button-base;
+  background: transparent !important;
+  color: $brand-blue !important;
+  border: 2px solid $brand-blue !important;
+  box-shadow: none !important;
+  
+  &:hover {
+    background: $brand-blue !important;
+    color: white !important;
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(22, 49, 248, 0.4) !important;
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(1) !important;
+    box-shadow: 0 4px 15px rgba(22, 49, 248, 0.3) !important;
+  }
+}
+
+.feedbackButtonIconOnly {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px !important;
+  background: transparent !important;
+  color: #6c757d !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  
+  svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  
+  &:hover {
+    background: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    transform: scale(1.1) !important;
+  }
+  
+  &:active {
+    transform: scale(1) !important;
+  }
+}
+
+// 전체 너비 버튼
+.feedbackButtonPrimaryFull {
+  @extend .feedbackButtonPrimary;
+  width: 100% !important;
+}
+
+// 작은 버튼 변형
+.feedbackButtonSmall {
+  padding: 8px 16px !important;
+  font-size: 13px !important;
+  min-height: 36px !important;
+  min-width: 90px !important;
+  
+  svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+// 모달 버튼들
+.btnCancel {
+  @extend .feedbackButtonSecondary;
+  @extend .feedbackButtonSmall;
+}
+
+.btnAnalyze {
+  @extend .feedbackButtonPrimary;
+  @extend .feedbackButtonSmall;
+}
+
+// 비디오 컨트롤 버튼 그룹 스타일 - Feedback.jsx에서 인라인 스타일로 처리
+
+// 탭 버튼 스타일
+.tabButton {
+  padding: 12px 24px;
+  background: transparent;
+  color: #6c757d;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: $brand-blue;
+    background: rgba($brand-blue, 0.05);
+  }
+  
+  &.active {
+    color: $brand-blue;
+    border-bottom-color: $brand-blue;
+    font-weight: 600;
+  }
+}
+
+// 초대 관련 버튼 스타일
+.inviteButton {
+  @extend .feedbackButtonPrimary;
+  padding-left: 36px !important;
+  position: relative;
+  
+  &::after {
+    content: '+';
+    position: absolute;
+    left: 16px;
+    font-size: 20px;
+    font-weight: bold;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+// 재전송/취소 버튼 그룹
+.invitationActions {
+  display: flex;
+  gap: 8px;
+  
+  button {
+    @extend .feedbackButtonSmall;
+    
+    &:first-child {
+      @extend .feedbackButtonSecondary;
+    }
+    
+    &:last-child {
+      @extend .feedbackButtonDanger;
+    }
+  }
+}
+
+// 피드백 액션 버튼
+.feedbackActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  
+  button {
+    @extend .feedbackButtonSecondary;
+    @extend .feedbackButtonSmall;
+  }
+}
+
+// 프로젝트 정보 토글 버튼
+.projectInfoToggle {
+  @extend .feedbackButtonIconOnly;
+  margin-left: auto;
+}
+
+// 전체보기 버튼
+.fullviewButton {
+  @extend .feedbackButtonSecondary;
+  border-style: dashed !important;
+  
+  &:hover {
+    border-style: solid !important;
+  }
+}
+
+// 파일 업로드 라벨 스타일
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// 로딩 애니메이션
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+// 모달 푸터 버튼 그룹
+.footerButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+  margin-top: 20px;
 }

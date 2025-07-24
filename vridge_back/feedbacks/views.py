@@ -144,7 +144,8 @@ class FeedbackDetail(View):
                 if project_data['feedback_id']:
                     cursor.execute("""
                         SELECT c.id, c.security, c.title, c.section, c.text,
-                               u.username, u.nickname, c.created
+                               u.username, u.nickname as user_nickname, c.created, 
+                               c.display_mode, c.nickname as custom_nickname
                         FROM feedbacks_feedbackcomment c
                         JOIN users_user u ON c.user_id = u.id
                         WHERE c.feedback_id = %s
@@ -152,6 +153,20 @@ class FeedbackDetail(View):
                     """, [project_data['feedback_id']])
                     
                     for comment_row in cursor.fetchall():
+                        display_mode = comment_row[8] if comment_row[8] else 'anonymous'
+                        custom_nickname = comment_row[9]
+                        
+                        # 표시할 이름 결정
+                        if display_mode == 'anonymous' or comment_row[1]:  # security가 True면 익명
+                            display_name = '익명'
+                            display_email = None
+                        elif display_mode == 'nickname' and custom_nickname:
+                            display_name = custom_nickname
+                            display_email = None
+                        else:  # realname 모드
+                            display_name = comment_row[6]  # 사용자 실명
+                            display_email = comment_row[5]
+                        
                         feedback_comments.append({
                             'id': comment_row[0],
                             'security': comment_row[1],
@@ -159,8 +174,11 @@ class FeedbackDetail(View):
                             'section': comment_row[3],
                             'text': comment_row[4],
                             'email': comment_row[5],
-                            'nickname': comment_row[6],
-                            'created': comment_row[7]
+                            'nickname': display_name,
+                            'created': comment_row[7],
+                            'display_mode': display_mode,
+                            'custom_nickname': custom_nickname,
+                            'display_email': display_email
                         })
             
             result = {
@@ -219,10 +237,20 @@ class FeedbackDetail(View):
                 project.save()
                 logging.info(f"Created feedback {feedback.id} for project {id}")
 
+            # display_mode와 nickname 추가 처리
+            display_mode = data.get("display_mode", "anonymous")
+            nickname = data.get("nickname", "")
+            
+            # display_mode가 nickname인 경우 nickname 검증
+            if display_mode == "nickname" and not nickname:
+                return JsonResponse({"message": "닉네임을 입력해주세요."}, status=400)
+            
             models.FeedBackComment.objects.create(
                 feedback=feedback,
                 user=user,
                 security=secret,
+                display_mode=display_mode,
+                nickname=nickname if display_mode == "nickname" else None,
                 title=title,
                 section=section,
                 text=contents,

@@ -105,6 +105,12 @@ class FeedBackMessage(core_model.TimeStampedModel):
 
 
 class FeedBackComment(core_model.TimeStampedModel):
+    DISPLAY_MODE_CHOICES = [
+        ('anonymous', '익명'),
+        ('nickname', '닉네임'),
+        ('realname', '실명'),
+    ]
+    
     feedback = models.ForeignKey(
         "FeedBack",
         related_name="comments",
@@ -120,6 +126,20 @@ class FeedBackComment(core_model.TimeStampedModel):
         verbose_name="사용자",
     )
     security = models.BooleanField(verbose_name="익명", default=False)
+    display_mode = models.CharField(
+        verbose_name="표시 모드",
+        max_length=20,
+        choices=DISPLAY_MODE_CHOICES,
+        default='anonymous',
+        help_text="피드백 작성자 표시 방식"
+    )
+    nickname = models.CharField(
+        verbose_name="닉네임",
+        max_length=20,
+        null=True,
+        blank=True,
+        help_text="닉네임 모드일 때 사용할 이름"
+    )
     title = models.TextField(verbose_name="제목", null=True, blank=False)
     section = models.TextField(verbose_name="구간", null=True, blank=False)
     text = models.TextField(verbose_name="내용", null=True, blank=False)

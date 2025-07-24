@@ -5,44 +5,94 @@
   gap: 20px;
 }
 
-// 익명/실명 선택
+// 익명/닉네임/실명 선택
 .userTypeSelector {
-  display: flex;
-  gap: 20px;
-  padding: 16px;
   background: #f8f9fa;
   border-radius: 12px;
+  padding: 16px;
   
-  .radioWrapper {
+  .feedbackModeOptions {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: #1631F8;
-      cursor: pointer;
-      position: relative;
-      
-      &:checked::before {
-        content: '✓';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-      }
-    }
+    gap: 12px;
+    justify-content: center;
     
     label {
-      font-size: 14px;
-      font-weight: 500;
-      color: #495057;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      border: 2px solid #e9ecef;
+      border-radius: 25px;
+      background: white;
       cursor: pointer;
-      user-select: none;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: #1631F8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.15);
+      }
+      
+      &.active {
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+        border-color: transparent;
+        
+        .radioLabel {
+          color: white;
+          
+          svg {
+            stroke: white;
+          }
+        }
+      }
+      
+      input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      
+      .radioLabel {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #495057;
+        transition: all 0.3s ease;
+        
+        svg {
+          width: 18px;
+          height: 18px;
+          stroke: #6c757d;
+          transition: all 0.3s ease;
+        }
+      }
+    }
+  }
+  
+  .nicknameInput {
+    margin-top: 16px;
+    
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+      transition: all 0.2s ease;
+      
+      &:focus {
+        outline: none;
+        border-color: #1631F8;
+        box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+      }
+      
+      &::placeholder {
+        color: #adb5bd;
+      }
     }
   }
 }

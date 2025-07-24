@@ -1583,27 +1583,38 @@ export default function Feedback() {
                     <button 
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
                       style={{ 
-                        background: showProjectInfo ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : '#f8f9fa',
-                        color: showProjectInfo ? 'white' : '#6c757d',
-                        border: showProjectInfo ? 'none' : '2px solid #e9ecef',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        fontSize: '13px',
+                        background: showProjectInfo ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : 'linear-gradient(135deg, #6c757d 0%, #495057 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
                         fontWeight: '600',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
+                        gap: '4px',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
-                        boxShadow: showProjectInfo ? '0 4px 12px rgba(22, 49, 248, 0.25)' : 'none'
+                        boxShadow: showProjectInfo ? '0 4px 12px rgba(22, 49, 248, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        minWidth: 'auto'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!showProjectInfo) {
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = showProjectInfo ? '0 4px 12px rgba(22, 49, 248, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.1)';
                       }}
                       title="프로젝트 정보"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
                         <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
-                      프로젝트 정보
+                      정보
                     </button>
                   </div>
                   {showProjectInfo && current_project && (

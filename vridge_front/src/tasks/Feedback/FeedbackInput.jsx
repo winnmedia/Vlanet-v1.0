@@ -6,15 +6,16 @@ import { CreateFeedback } from 'api/feedback'
 
 export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onAIFeedbackClick, onFeedbackSuccess }) {
   const initial = {
-    secret: 'true',
+    secret: 'anonymous', // 'anonymous', 'nickname', 'realname'
     title: '',
     section: initialTime || '',
     contents: '',
+    nickname: '', // 닉네임 모드일 때 사용
   }
 
   const { inputs, onChange, set_inputs } = useInput(initial)
-  const { secret, section, contents } = inputs
-  const [isAnonymousChecked, setIsAnonymousChecked] = useState(true)
+  const { secret, section, contents, nickname } = inputs
+  const [feedbackMode, setFeedbackMode] = useState('anonymous') // 기본값: 익명
   
   // initialTime이 변경될 때 section 값 업데이트
   useEffect(() => {
@@ -29,26 +30,35 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
   function SendFeedback() {
     console.log('SendFeedback called with inputs:', inputs)
     console.log('Project ID:', project_id)
+    console.log('Feedback mode:', feedbackMode)
     
-    if (secret && section && contents) {
-      console.log('Sending feedback data:', {
-        secret,
-        section,
-        contents,
-        project_id
-      })
+    // 닉네임 모드일 때 닉네임 검증
+    if (feedbackMode === 'nickname' && !nickname.trim()) {
+      window.alert('닉네임을 입력해주세요.')
+      return
+    }
+    
+    if (section && contents) {
+      const feedbackData = {
+        ...inputs,
+        secret: feedbackMode === 'anonymous' ? true : false,
+        display_mode: feedbackMode, // 백엔드에서 표시 모드 구분용
+      }
       
-      CreateFeedback(inputs, project_id)
+      console.log('Sending feedback data:', feedbackData)
+      
+      CreateFeedback(feedbackData, project_id)
         .then((res) => {
           console.log('Feedback creation success:', res)
           window.alert('피드백 등록이 되었습니다.')
           set_inputs({
-            secret: 'true',
+            secret: 'anonymous',
             title: '',
             section: '',
             contents: '',
+            nickname: '',
           })
-          setIsAnonymousChecked(true)
+          setFeedbackMode('anonymous')
           // 시간 초기화 콜백 호출
           if (onTimeChange) {
             onTimeChange('')
@@ -74,7 +84,7 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
           }
         })
     } else {
-      console.log('Validation failed:', { secret, section, contents })
+      console.log('Validation failed:', { section, contents })
       window.alert('입력란을 채워주세요.')
     }
   }
@@ -82,23 +92,88 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
   return (
     <div className={styles.feedbackForm}>
       <div className={styles.userTypeSelector}>
-        <div className={styles.radioWrapper}>
-          <input
-            type="checkbox"
-            id="anonymous_check"
-            name="secret"
-            value={true}
-            onChange={(e) => {
-              setIsAnonymousChecked(e.target.checked)
-              set_inputs(prevInputs => ({
-                ...prevInputs,
-                secret: e.target.checked ? 'true' : 'false'
-              }))
-            }}
-            checked={isAnonymousChecked}
-          />
-          <label htmlFor="anonymous_check">익명으로 등록</label>
+        <div className={styles.feedbackModeOptions}>
+          <label className={feedbackMode === 'anonymous' ? styles.active : ''}>
+            <input
+              type="radio"
+              name="feedbackMode"
+              value="anonymous"
+              checked={feedbackMode === 'anonymous'}
+              onChange={(e) => {
+                setFeedbackMode(e.target.value)
+                set_inputs(prevInputs => ({
+                  ...prevInputs,
+                  secret: 'anonymous'
+                }))
+              }}
+            />
+            <span className={styles.radioLabel}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+              익명
+            </span>
+          </label>
+          
+          <label className={feedbackMode === 'nickname' ? styles.active : ''}>
+            <input
+              type="radio"
+              name="feedbackMode"
+              value="nickname"
+              checked={feedbackMode === 'nickname'}
+              onChange={(e) => {
+                setFeedbackMode(e.target.value)
+                set_inputs(prevInputs => ({
+                  ...prevInputs,
+                  secret: 'nickname'
+                }))
+              }}
+            />
+            <span className={styles.radioLabel}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2"/>
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+              닉네임
+            </span>
+          </label>
+          
+          <label className={feedbackMode === 'realname' ? styles.active : ''}>
+            <input
+              type="radio"
+              name="feedbackMode"
+              value="realname"
+              checked={feedbackMode === 'realname'}
+              onChange={(e) => {
+                setFeedbackMode(e.target.value)
+                set_inputs(prevInputs => ({
+                  ...prevInputs,
+                  secret: 'realname'
+                }))
+              }}
+            />
+            <span className={styles.radioLabel}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+              실명
+            </span>
+          </label>
         </div>
+        
+        {/* 닉네임 모드일 때 닉네임 입력 필드 표시 */}
+        {feedbackMode === 'nickname' && (
+          <div className={styles.nicknameInput}>
+            <input
+              type="text"
+              name="nickname"
+              value={nickname}
+              onChange={onChange}
+              placeholder="사용할 닉네임을 입력하세요"
+              maxLength={20}
+            />
+          </div>
+        )}
       </div>
       <div className={styles.timeInput}>
         <label>시간</label>

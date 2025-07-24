@@ -1135,7 +1135,17 @@ export default function Feedback() {
                   }
                 >
                   {current_project.files ? (
-                    <div className="video-player-section">
+                    <div className="video-player-section" style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: '#000',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      maxHeight: '600px'
+                    }}>
                       <VideoJsPlayer
                         ref={videoPlayerRef}
                         videoUrl={(() => {
@@ -1337,13 +1347,14 @@ export default function Feedback() {
                 {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
                 <div style={{
                   display: 'flex',
-                  gap: '12px',
+                  gap: '10px',
                   marginTop: '20px',
-                  padding: '20px',
+                  padding: '16px',
                   background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
                   borderRadius: '16px',
-                  flexWrap: 'wrap',
-                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)'
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
+                  justifyContent: 'space-between',
+                  width: '100%'
                 }}>
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
@@ -1687,7 +1698,7 @@ export default function Feedback() {
                             key={index}
                             onClick={() => changeItem(index)}
                           >
-                            <button>{section.tab}</button>
+                            <button className={currentItem && currentItem.tab == section.tab ? `${styles.tabButton} ${styles.active}` : styles.tabButton}>{section.tab}</button>
                           </li>
                         ) : null
                       ))}

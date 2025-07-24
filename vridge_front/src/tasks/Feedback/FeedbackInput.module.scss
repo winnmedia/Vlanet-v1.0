@@ -1,0 +1,173 @@
+// 피드백 입력 폼 스타일
+.feedbackForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// 익명/실명 선택
+.userTypeSelector {
+  display: flex;
+  gap: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  
+  .radioWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #1631F8;
+      cursor: pointer;
+    }
+    
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #495057;
+      cursor: pointer;
+      user-select: none;
+    }
+  }
+}
+
+// 시간 입력
+.timeInput {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  input {
+    padding: 12px 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: #1631F8;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+    }
+    
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+}
+
+// 내용 입력
+.contentInput {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  textarea {
+    padding: 12px 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 120px;
+    resize: vertical;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    
+    &:focus {
+      outline: none;
+      border-color: #1631F8;
+      box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+    }
+    
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+}
+
+// 버튼 그룹
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  
+  button {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    
+    &.submitButton {
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+      color: white;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(22, 49, 248, 0.3);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+    
+    &.aiButton {
+      background: white;
+      color: #1631F8;
+      border: 2px solid #1631F8;
+      
+      &:hover {
+        background: rgba(22, 49, 248, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.15);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// 도움말 텍스트
+.helpText {
+  font-size: 13px;
+  color: #6c757d;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}

@@ -1,5 +1,6 @@
 import useInput from 'hooks/UseInput'
 import React, { useState, useEffect } from 'react'
+import styles from './FeedbackManage.module.scss'
 
 import { DeleteFeedback } from 'api/feedback'
 import { UpdateFeedback } from 'api/feedback'

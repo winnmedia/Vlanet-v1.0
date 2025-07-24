@@ -1,6 +1,6 @@
 import React from 'react'
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
 
 export default function VideoPlanning() {
   return (

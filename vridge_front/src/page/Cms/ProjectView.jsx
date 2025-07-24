@@ -27,6 +27,23 @@ import { GetProject, UpdateDate } from 'api/project'
 import InviteInput from 'tasks/Project/InviteInput'
 import { useProjectData } from 'hooks/useProjectData'
 
+// 로딩 애니메이션 스타일
+const loadingAnimationStyle = `
+  @keyframes progressAnimation {
+    0% {
+      width: 0%;
+      transform: translateX(0);
+    }
+    50% {
+      width: 70%;
+    }
+    100% {
+      width: 100%;
+      transform: translateX(100%);
+    }
+  }
+`
+
 export default function ProjectView() {
   const router = useRouter()
   const navigate = router.push
@@ -95,7 +112,7 @@ export default function ProjectView() {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [project_id, navigate])
+  }, [project_id])
   
   // 프로젝트 단계 업데이트 핸들러
   const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
@@ -231,30 +248,21 @@ export default function ProjectView() {
     changeDate(DateType)
   }, [])
   
-  // 프로젝트 로드 useEffect 추가
-  useEffect(() => {
-    if (!project_id) {
-      return
-    }
-    
-    const session = checkSession()
-    if (!session) {
-      navigate('/Login')
-      return
-    }
-    
-    refetch()
-  }, [project_id, refetch, navigate])
 
   // project_id가 없거나 로딩 중일 때
   if (!project_id || isLoading) {
     return (
       <PageTemplate>
+        <style>{loadingAnimationStyle}</style>
         <div className="cms_wrap">
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <div className="loading-spinner">
-              <div className="spinner"></div>
-              <p style={{ marginTop: '20px', color: '#666' }}>프로젝트를 불러오는 중...</p>
+            <div className="loading-box" style={{ background: 'white', padding: '40px 60px', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)', textAlign: 'center', minWidth: '300px' }}>
+              <div className="loading-progress-bar" style={{ width: '100%', height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden', margin: '20px 0' }}>
+                <div className="progress-fill" style={{ height: '100%', background: 'linear-gradient(90deg, #1631F8, #0F23C9)', borderRadius: '3px', animation: 'progressAnimation 2s ease-in-out infinite' }}></div>
+              </div>
+              <div className="loading-text">
+                <div className="loading-message" style={{ fontSize: '16px', color: '#333', marginTop: '10px', fontWeight: '500' }}>프로젝트를 불러오는 중...</div>
+              </div>
             </div>
           </div>
         </div>
@@ -464,12 +472,19 @@ export default function ProjectView() {
               </div>
             </>
           ) : (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-              <div className="loading-spinner">
-                <div className="spinner"></div>
-                <p style={{ marginTop: '20px', color: '#666' }}>프로젝트를 불러오는 중...</p>
+            <>
+              <style>{loadingAnimationStyle}</style>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <div className="loading-box" style={{ background: 'white', padding: '40px 60px', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)', textAlign: 'center', minWidth: '300px' }}>
+                  <div className="loading-progress-bar" style={{ width: '100%', height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden', margin: '20px 0' }}>
+                    <div className="progress-fill" style={{ height: '100%', background: 'linear-gradient(90deg, #1631F8, #0F23C9)', borderRadius: '3px', animation: 'progressAnimation 2s ease-in-out infinite' }}></div>
+                  </div>
+                  <div className="loading-text">
+                    <div className="loading-message" style={{ fontSize: '16px', color: '#333', marginTop: '10px', fontWeight: '500' }}>프로젝트를 불러오는 중...</div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </>
           )}
         </main>
       </div>

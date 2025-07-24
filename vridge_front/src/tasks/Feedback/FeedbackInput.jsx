@@ -112,14 +112,6 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
           <label htmlFor="user_type2">일반</label>
         </div>
       </div>
-      {/* <input
-        type="text"
-        name="title"
-        value={title}
-        placeholder="제목 입력"
-        onChange={onChange}
-        className="ty01 mt20"
-      /> */}
       <input
         type="text"
         name="section"

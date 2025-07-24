@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import videojs from 'video.js'
 // Video.js CSS 직접 import
-
+import 'video.js/dist/video-js.css'
 
 const VideoJsPlayer = forwardRef(({ 
   videoUrl, 
@@ -290,10 +290,23 @@ const VideoJsPlayer = forwardRef(({
           })
         }
 
-        // 클릭 이벤트로 피드백 추가
+        // 클릭 이벤트로 재생/일시정지 토글
         this.on('click', (e) => {
           // 컨트롤바가 아닌 비디오 영역 클릭 시
           if (e.target === this.el() || e.target.classList.contains('vjs-tech')) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // 재생/일시정지 토글
+            if (this.paused()) {
+              console.log('[VideoJS] Click to play');
+              this.play();
+            } else {
+              console.log('[VideoJS] Click to pause');
+              this.pause();
+            }
+            
+            // 피드백 클릭 이벤트 (필요한 경우)
             if (onFeedbackClick) {
               const rect = this.el().getBoundingClientRect()
               const x = ((e.clientX - rect.left) / rect.width) * 100

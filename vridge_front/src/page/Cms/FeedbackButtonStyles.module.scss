@@ -4,7 +4,7 @@ label.feedbackButtonPrimary {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  padding: 10px 16px !important;
+  padding: 10px 20px !important;
   background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
   color: white !important;
   border: none !important;
@@ -16,6 +16,8 @@ label.feedbackButtonPrimary {
   box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25) !important;
   min-height: 38px !important;  // 높이 통일
   line-height: 1 !important;  // label 태그의 line-height 조정
+  min-width: 120px !important;  // 최소 너비 설정
+  justify-content: center !important;
   
   &:hover {
     transform: translateY(-2px) !important;
@@ -31,7 +33,7 @@ label.feedbackButtonPrimary {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  padding: 10px 16px !important;  // Primary와 동일하게 수정
+  padding: 10px 20px !important;  // Primary와 동일하게 수정
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
   color: white !important;
   border: none !important;
@@ -42,6 +44,8 @@ label.feedbackButtonPrimary {
   transition: all 0.3s ease !important;
   box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25) !important;
   min-height: 38px !important;  // 높이 통일
+  min-width: 120px !important;  // 최소 너비 설정
+  justify-content: center !important;
   
   &:hover {
     transform: translateY(-2px) !important;
@@ -57,7 +61,7 @@ label.feedbackButtonPrimary {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  padding: 10px 16px !important;  // Primary와 동일하게 수정
+  padding: 10px 20px !important;  // Primary와 동일하게 수정
   background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
   color: white !important;
   border: none !important;
@@ -68,6 +72,8 @@ label.feedbackButtonPrimary {
   transition: all 0.3s ease !important;
   box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25) !important;
   min-height: 38px !important;  // 높이 통일
+  min-width: 120px !important;  // 최소 너비 설정
+  justify-content: center !important;
   
   &:hover {
     transform: translateY(-2px) !important;

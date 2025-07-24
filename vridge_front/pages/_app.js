@@ -43,6 +43,7 @@ import '../src/components/ProjectPhaseBoard.scss'
 import '../src/components/ProjectForm.scss'
 // 피드백 페이지 스타일
 import '../src/css/Cms/FeedbackPage.scss'
+import '../src/css/Cms/FeedbackPageRedesign.scss'
 import '../src/page/User/MyPage.scss'
 // Video.js 스타일
 import 'video.js/dist/video-js.css'

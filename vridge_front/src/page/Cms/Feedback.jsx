@@ -1348,7 +1348,7 @@ export default function Feedback() {
                 </div>
                 
                 {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
-                <div className="video-control-buttons" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <div className="video-control-buttons">
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <button
@@ -1405,7 +1405,7 @@ export default function Feedback() {
 
 
                     {/* 영상 업로드/교체 버튼 */}
-                    <div style={{ position: 'relative' }}>
+                    <div className="file-upload-wrapper">
                       <input
                         type="file"
                         accept="video/*"
@@ -1417,7 +1417,6 @@ export default function Feedback() {
                       <label 
                         htmlFor="video-replace-button" 
                         className={styles.feedbackButtonPrimary}
-                        style={{ cursor: 'pointer' }}
                       >
                         {current_project.files ? (
                           <>
@@ -1468,133 +1467,90 @@ export default function Feedback() {
                 </div>
                 
                 <div className="etc_box">
+                  <div className="flex space_between">
+                    <div className="s_title">
+                      {currentItem ? currentItem.tab : '피드백'}
+                    </div>
+                    <div>
+                      {/* AI 선생님 버튼 - 피드백 등록 탭에서만 표시 */}
+                      {currentItem && currentItem.tab === '피드백 등록' && current_project.files && (
+                        <button
+                          onClick={handleVideoAnalysis}
+                          className="submit"
+                          disabled={analysisLoading}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          {analysisLoading ? 'AI 분석 중...' : 'AI 피드백'}
+                        </button>
+                      )}
+                      {/* 피드백 전체보기 버튼 - 피드백 관리 탭에서만 표시 */}
+                      {currentItem && currentItem.tab === '피드백 관리' && (
+                        <button
+                          onClick={() =>
+                            navigate('/FeedbackAll', {
+                              state: { ...current_project, user: user },
+                            })
+                          }
+                          className="submit"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" strokeWidth="2"/>
+                            <line x1="9" y1="9" x2="9" y2="21" stroke="currentColor" strokeWidth="2"/>
+                          </svg>
+                          전체보기
+                        </button>
+                      )}
+                    </div>
+                  </div>
                   {/* 선택된 피드백 내용 표시 - 피드백 전체 보기 버튼 바로 아래 */}
                   {selectedFeedback && (
-                    <div 
-                      className="feedback-detail-display"
-                      style={{
-                        marginTop: '20px',
-                        marginBottom: '20px',
-                        padding: '24px',
-                        backgroundColor: '#f8f9fa',
-                        borderRadius: '16px',
-                        border: '1px solid #e9ecef',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
-                        animation: 'fadeIn 0.3s ease',
-                        position: 'relative',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      {/* 상단 액센트 바 */}
-                      <div style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: '4px',
-                        background: 'linear-gradient(90deg, #1631F8 0%, #0F23C9 100%)'
-                      }} />
-                      
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                        marginBottom: '20px'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                          {/* 프로필 아이콘 */}
-                          <div style={{
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            fontSize: '20px',
-                            fontWeight: '600'
-                          }}>
+                    <div className="feedback-detail-display">
+                      <div className="feedback-header">
+                        <div className="user-info">
+                          <div className="avatar">
                             {selectedFeedback.security ? '?' : (selectedFeedback.nickname || '').charAt(0).toUpperCase()}
                           </div>
-                          <div>
-                            <div style={{
-                              fontSize: '17px',
-                              fontWeight: '600',
-                              color: '#212529',
-                              marginBottom: '4px'
-                            }}>
+                          <div className="info">
+                            <div className="name">
                               {selectedFeedback.security ? '익명' : selectedFeedback.nickname}
                             </div>
-                            <div style={{
-                              fontSize: '13px',
-                              color: '#6c757d',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px'
-                            }}>
-                              <span>{moment(selectedFeedback.created).format('YYYY.MM.DD')}</span>
-                              <span style={{ fontSize: '10px' }}>•</span>
-                              <span>{moment(selectedFeedback.created).format('HH:mm')}</span>
+                            <div className="meta">
+                              <span>{moment(selectedFeedback.created).format('YYYY.MM.DD HH:mm')}</span>
                               {selectedFeedback.section && (
-                                <>
-                                  <span style={{ fontSize: '10px' }}>•</span>
-                                  <span style={{
-                                    background: '#e3f2fd',
-                                    color: '#1976d2',
-                                    padding: '2px 8px',
-                                    borderRadius: '12px',
-                                    fontSize: '12px',
-                                    fontWeight: '500'
-                                  }}>
-                                    {selectedFeedback.section}
-                                  </span>
-                                </>
+                                <span className="time-badge">{selectedFeedback.section}</span>
                               )}
                             </div>
                           </div>
                         </div>
                         <button
                           onClick={() => setSelectedFeedback(null)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '50%',
-                            background: 'white',
-                            border: '1px solid #e9ecef',
-                            fontSize: '20px',
-                            color: '#999',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#f8f9fa'
-                            e.currentTarget.style.borderColor = '#dee2e6'
-                            e.currentTarget.style.color = '#495057'
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'white'
-                            e.currentTarget.style.borderColor = '#e9ecef'
-                            e.currentTarget.style.color = '#999'
-                          }}
+                          className="close-btn"
                         >
-                          ×
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
                         </button>
                       </div>
-                      <div style={{
-                        fontSize: '15px',
-                        color: '#495057',
-                        lineHeight: '1.8',
-                        wordBreak: 'break-word',
-                        backgroundColor: 'white',
-                        padding: '20px',
-                        borderRadius: '12px',
-                        border: '1px solid #e9ecef'
-                      }}>
-                        {selectedFeedback.text}
+                      <div className="feedback-content">
+                        <p>{selectedFeedback.text}</p>
+                      </div>
+                      <div className="feedback-actions">
+                        <button>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <path d="M7 7H17C19 7 21 9 21 11V18C21 20 19 22 17 22H7C5 22 3 20 3 18V11C3 9 5 7 7 7Z" stroke="currentColor" strokeWidth="2"/>
+                            <path d="M8 7V5C8 3 10 1 12 1C14 1 16 3 16 5V7" stroke="currentColor" strokeWidth="2"/>
+                          </svg>
+                          답글
+                        </button>
+                        <button>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L15 9L22 10L17 15L18 22L12 18L6 22L7 15L2 10L9 9L12 2Z" stroke="currentColor" strokeWidth="2" fill="none"/>
+                          </svg>
+                          중요 표시
+                        </button>
                       </div>
                     </div>
                   )}
@@ -1724,8 +1680,8 @@ export default function Feedback() {
                   )}
                 </div>
                 <div className="tab_container">
-                  <div className="top_box tab_menu">
-                    <ul className="tab_list">
+                  <div className="tab_menu">
+                    <ul>
                       {content.map((section, index) => (
                         section && section.tab ? (
                           <li
@@ -1741,39 +1697,8 @@ export default function Feedback() {
                       ))}
                     </ul>
                   </div>
-                  <div className="tab_content">
+                  <div className="tabContent">
                     {currentItem && currentItem.content}
-                    {currentItem && currentItem.tab === '피드백 관리' && (
-                      <div style={{ 
-                        position: 'fixed',
-                        bottom: '20px',
-                        right: '20px',
-                        zIndex: 100
-                      }}>
-                        <button
-                          onClick={() =>
-                            navigate('/FeedbackAll', {
-                              state: { ...current_project, user: user },
-                            })
-                          }
-                          className={styles.feedbackButtonPrimary}
-                          style={{ 
-                            padding: '12px 24px',
-                            boxShadow: '0 4px 12px rgba(22, 49, 248, 0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                          }}
-                        >
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                            <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" strokeWidth="2"/>
-                            <line x1="9" y1="9" x2="9" y2="21" stroke="currentColor" strokeWidth="2"/>
-                          </svg>
-                          <span>피드백 전체보기</span>
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

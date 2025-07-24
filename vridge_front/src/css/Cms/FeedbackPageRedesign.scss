@@ -1,0 +1,662 @@
+// 피드백 페이지 전체 리디자인
+.feedback {
+  // 비디오 플레이어 섹션
+  .video_inner {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    
+    &.active {
+      .video-player-section {
+        min-height: 450px;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        
+        // Video.js 플레이어 스타일
+        .video-js {
+          width: 100% !important;
+          height: 100% !important;
+          
+          // 컨트롤바 디자인
+          .vjs-control-bar {
+            background: rgba(0, 0, 0, 0.8);
+            height: 45px;
+            
+            // 버튼 스타일 통일
+            .vjs-button {
+              width: 45px;
+              height: 45px;
+              
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+              }
+            }
+            
+            // 재생 버튼
+            .vjs-play-control {
+              .vjs-icon-placeholder:before {
+                font-size: 18px;
+                line-height: 45px;
+              }
+            }
+            
+            // 볼륨 패널
+            .vjs-volume-panel {
+              &:hover .vjs-volume-control {
+                display: flex;
+              }
+            }
+            
+            // 시간 표시
+            .vjs-time-control {
+              padding: 0 10px;
+              line-height: 45px;
+              font-size: 13px;
+            }
+            
+            // 프로그레스 바
+            .vjs-progress-control {
+              .vjs-progress-holder {
+                height: 6px;
+                margin-top: 19px;
+                
+                .vjs-play-progress {
+                  background: #1631F8;
+                  
+                  &:before {
+                    font-size: 12px;
+                    top: -3px;
+                  }
+                }
+              }
+            }
+            
+            // 전체화면 버튼
+            .vjs-fullscreen-control {
+              .vjs-icon-placeholder:before {
+                font-size: 18px;
+              }
+            }
+          }
+          
+          // 빅 플레이 버튼
+          .vjs-big-play-button {
+            background: rgba(22, 49, 248, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            font-size: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            
+            &:hover {
+              background: rgba(22, 49, 248, 1);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 오른쪽 박스 리디자인
+  .etc_box {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
+    
+    // 헤더 섹션
+    > .flex.space_between {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e9ecef;
+      background: #f8f9fa;
+      
+      .s_title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #212529;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        
+        &:before {
+          content: '';
+          width: 4px;
+          height: 20px;
+          background: #1631F8;
+          border-radius: 2px;
+        }
+      }
+      
+      // 버튼 그룹
+      > div:last-child {
+        display: flex;
+        gap: 12px;
+        
+        button, label {
+          min-width: 100px !important;
+          height: 38px;
+          padding: 0 20px;
+          border-radius: 8px;
+          font-size: 13px;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          border: none;
+          
+          svg {
+            width: 16px;
+            height: 16px;
+          }
+          
+          // 주요 버튼 (파란색)
+          &.submit, &[style*="background: linear-gradient"] {
+            background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+            
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+            }
+          }
+          
+          // 보조 버튼 (회색)
+          &:not(.submit):not([style*="background: linear-gradient"]) {
+            background: #6c757d;
+            color: white;
+            
+            &:hover {
+              background: #5a6268;
+              transform: translateY(-1px);
+            }
+          }
+        }
+      }
+    }
+    
+    // 탭 메뉴
+    .tab_menu {
+      border-bottom: 1px solid #e9ecef;
+      
+      ul {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        
+        li {
+          flex: 1;
+          text-align: center;
+          padding: 16px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #6c757d;
+          cursor: pointer;
+          border-bottom: 3px solid transparent;
+          transition: all 0.3s ease;
+          background: white;
+          
+          &:hover {
+            color: #495057;
+            background: #f8f9fa;
+          }
+          
+          &.active {
+            color: #1631F8;
+            border-bottom-color: #1631F8;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+    
+    // 탭 컨텐츠
+    .tabContent {
+      padding: 24px;
+      
+      // 피드백 입력 폼
+      .form {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        
+        // 익명/일반 선택
+        > .flex {
+          margin-bottom: 20px;
+          gap: 20px;
+          
+          > div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            input[type="radio"] {
+              width: 18px;
+              height: 18px;
+              accent-color: #1631F8;
+              cursor: pointer;
+            }
+            
+            label {
+              font-size: 14px;
+              font-weight: 500;
+              color: #495057;
+              cursor: pointer;
+            }
+          }
+        }
+        
+        // 입력 필드
+        input[type="text"], textarea {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1px solid #dee2e6;
+          border-radius: 8px;
+          font-size: 14px;
+          margin-bottom: 16px;
+          transition: all 0.2s ease;
+          background: white;
+          
+          &:focus {
+            outline: none;
+            border-color: #1631F8;
+            box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+          }
+          
+          &::placeholder {
+            color: #adb5bd;
+          }
+        }
+        
+        textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+        
+        // 버튼 영역
+        > div:last-child {
+          display: flex;
+          gap: 12px;
+          margin-top: 20px;
+          
+          button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            &.submit {
+              background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+              color: white;
+              box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+              
+              &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+              }
+            }
+            
+            // AI 피드백 버튼
+            &[style*="background: linear-gradient(135deg, #6f42c1"] {
+              background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) !important;
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+              
+              &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+              }
+            }
+          }
+        }
+      }
+      
+      // 피드백 리스트
+      .feedback_list {
+        max-height: 600px;
+        overflow-y: auto;
+        padding-right: 10px;
+        
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 4px;
+          
+          &:hover {
+            background: #555;
+          }
+        }
+        
+        // 피드백 아이템
+        > div {
+          background: white;
+          border: 1px solid #e9ecef;
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            border-color: #1631F8;
+            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.1);
+          }
+          
+          &.active {
+            border-color: #1631F8;
+            background: #f8f9ff;
+            box-shadow: 0 4px 16px rgba(22, 49, 248, 0.15);
+          }
+          
+          .flex {
+            align-items: flex-start;
+            gap: 12px;
+            
+            // 아바타
+            .img {
+              width: 40px;
+              height: 40px;
+              min-width: 40px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-weight: 600;
+              font-size: 16px;
+            }
+            
+            // 컨텐츠
+            .txt {
+              flex: 1;
+              
+              .name {
+                font-size: 14px;
+                font-weight: 600;
+                color: #212529;
+                margin-bottom: 4px;
+              }
+              
+              .date {
+                font-size: 12px;
+                color: #6c757d;
+                margin-bottom: 8px;
+              }
+              
+              .content {
+                font-size: 14px;
+                color: #495057;
+                line-height: 1.5;
+              }
+              
+              // 시간 태그
+              .time-tag {
+                display: inline-block;
+                background: #e3f2fd;
+                color: #1976d2;
+                padding: 4px 10px;
+                border-radius: 16px;
+                font-size: 12px;
+                font-weight: 500;
+                margin-top: 8px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 피드백 상세 표시 (플레이어 하단)
+  .feedback-detail-display {
+    background: white;
+    border: 2px solid #1631F8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+    
+    // 상단 색상 바
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1631F8 0%, #0F23C9 100%);
+    }
+    
+    .feedback-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        
+        .avatar {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: 20px;
+        }
+        
+        .info {
+          .name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 4px;
+          }
+          
+          .meta {
+            font-size: 13px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            .time-badge {
+              background: #e3f2fd;
+              color: #1976d2;
+              padding: 2px 8px;
+              border-radius: 12px;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+      
+      .close-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: #f8f9fa;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #e9ecef;
+          transform: rotate(90deg);
+        }
+        
+        svg {
+          width: 20px;
+          height: 20px;
+          color: #6c757d;
+        }
+      }
+    }
+    
+    .feedback-content {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #495057;
+      padding-left: 64px; // 아바타 너비 + gap
+      
+      p {
+        margin: 0;
+      }
+    }
+    
+    // 답글/액션 버튼
+    .feedback-actions {
+      margin-top: 16px;
+      padding-left: 64px;
+      display: flex;
+      gap: 12px;
+      
+      button {
+        padding: 6px 16px;
+        border: 1px solid #dee2e6;
+        background: white;
+        border-radius: 20px;
+        font-size: 13px;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        
+        svg {
+          width: 14px;
+          height: 14px;
+        }
+        
+        &:hover {
+          border-color: #1631F8;
+          color: #1631F8;
+          background: #f8f9ff;
+        }
+      }
+    }
+  }
+  
+  // 비디오 컨트롤 버튼 영역
+  .video-control-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 1px solid #e9ecef;
+    margin-top: 20px;
+    
+    // 모든 버튼 공통 스타일
+    button, label {
+      min-width: 140px !important;
+      height: 42px;
+      padding: 0 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      
+      svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+      
+      // 주요 액션 버튼 (파란색)
+      &.feedbackButtonPrimary, &[class*="feedbackButtonPrimary"] {
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+      }
+      
+      // 위험 액션 버튼 (빨간색)
+      &.feedbackButtonDanger, &[class*="feedbackButtonDanger"] {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+      }
+      
+      // 보조 버튼 (회색)
+      &:not([class*="feedbackButton"]) {
+        background: #6c757d;
+        color: white;
+        
+        &:hover {
+          background: #5a6268;
+          transform: translateY(-1px);
+        }
+      }
+    }
+    
+    // 숨겨진 파일 입력
+    input[type="file"] {
+      position: absolute;
+      left: -9999px;
+      visibility: hidden;
+    }
+  }
+}

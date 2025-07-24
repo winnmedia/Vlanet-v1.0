@@ -3000,8 +3000,6 @@ function VideoPlanning() {
                 </button>
               </div>
             )}
-              </>
-            </div>
 
             <div className="step-content-wrapper">
               {renderStepContent()}

@@ -680,29 +680,39 @@
           }
         }
       }
-      // 피드백 페이지 새로운 레이아웃
-      &.feedback-container {
-        min-height: 100vh;
-        padding: 0;
-        background: #f8f9fa;
-        overflow: hidden;
-        
-        .feedback-layout {
+      // 피드백 페이지 레이아웃
+      &.feedback {
+        margin: 0 0 50px;
+        .flex {
           display: flex;
-          gap: 20px;
-          height: 100vh;
-          max-width: 100%;
-          margin: 0;
-          padding: 20px;
+          gap: 30px;
+          align-items: flex-start;
           
-          .video-section {
-            flex: 1;
-            min-width: 0;
-            background: transparent;
-            display: flex;
+          // 데스크톱 (1200px+)
+          @media (min-width: 1200px) {
+            gap: 30px;
+          }
+          
+          // 태블릿 (768-1199px)
+          @media (max-width: 1199px) {
+            gap: 20px;
+          }
+          
+          // 모바일 (767px 이하)
+          @media (max-width: 767px) {
             flex-direction: column;
             gap: 20px;
-            overflow: hidden;
+          }
+          
+          .video_box {
+            flex: 1;
+            min-width: 0;
+            
+            @media (max-width: 767px) {
+              width: 100%;
+            }
+          }
+        }
           .video_inner {
             background: #f8f8f8;
             border: 3px dashed #0058da;
@@ -989,6 +999,38 @@
           display: flex;
           flex-direction: column;
           overflow: hidden;
+          
+          // 태블릿
+          @media (max-width: 1199px) {
+            width: 350px;
+            padding: 16px;
+          }
+          
+          // 모바일
+          @media (max-width: 767px) {
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 60vh;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            
+            // 모바일에서 드래그 핸들
+            &::before {
+              content: '';
+              position: absolute;
+              top: 8px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 40px;
+              height: 4px;
+              background: #dee2e6;
+              border-radius: 2px;
+            }
+          }
           // .b_title {
           //   display: flex;
           //   justify-content: space-between;
@@ -2093,22 +2135,4 @@
   }
 }
 
-// 피드백 메인 페이지 스타일
-.feedback-main {
-  width: 100%;
-  min-height: 100vh;
-  background: #f8f9fa;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  
-  // 단일 컨테이너 구조
-  .content.feedback-container {
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    background: transparent;
-  }
-}
 

@@ -1122,16 +1122,16 @@ export default function Feedback() {
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar tab="feedback" />
-        <main className="feedback-main">
-          <div className="content feedback-container">
+        <main>
+          <div className="content feedback">
             {current_project ? (
-              <div className="feedback-layout">
-                <div className="video-section">
-                <div
-                  className={
-                    current_project.files ? 'video_inner active' : 'video_inner'
-                  }
-                >
+              <div className="flex">
+                <div className="video_box">
+                  <div
+                    className={
+                      current_project.files ? 'video_inner active' : 'video_inner'
+                    }
+                  >
                   {current_project.files ? (
                     <div className="video-player-section">
                       <VideoJsPlayer
@@ -1330,20 +1330,10 @@ export default function Feedback() {
                       </div>
                     </div>
                   )}
-                </div>
-                
-                {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
-                <div style={{
-                  display: 'flex',
-                  gap: '10px',
-                  marginTop: '20px',
-                  padding: '16px',
-                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                  borderRadius: '16px',
-                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
-                  width: '100%',
-                  flexWrap: 'wrap'
-                }}>
+                  </div>
+                  
+                  {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
+                  <div className={styles.actionButtonGroup}>
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <button
@@ -1389,8 +1379,10 @@ export default function Feedback() {
                         }
                       }}
                       className={styles.feedbackButtonPrimary}
+                      aria-label="현재 시점에 피드백 추가"
+                      tabIndex={0}
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
                         <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
@@ -1437,9 +1429,11 @@ export default function Feedback() {
                       <button
                         onClick={DeleteFile}
                         className={styles.feedbackButtonDanger}
+                        aria-label="영상 삭제"
                         title="영상 삭제"
+                        tabIndex={0}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                         <span>삭제</span>
@@ -1451,17 +1445,19 @@ export default function Feedback() {
                       <button
                         onClick={() => CopyFileUrl(current_project.files)}
                         className={styles.feedbackButtonSecondary}
+                        aria-label="영상 링크 공유"
                         title="공유"
+                        tabIndex={0}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                         <span>공유</span>
                       </button>
                     )}
-                </div>
-                
-                <div className="etc_box">
+                  </div>
+                  
+                  <div className="etc_box">
                   <div className="flex space_between">
                     <div className="s_title">
                       {currentItem ? currentItem.tab : '피드백'}
@@ -1557,44 +1553,13 @@ export default function Feedback() {
                   </div>
                 </div>
                 </div>
-                <div className="feedback-sidebar">
-                <div className="b_title">
-                  <div className="s_title" style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}>
-                    <span style={{ fontWeight: '600', fontSize: '16px' }}>{current_project?.name || '프로젝트'}</span>
+                <div className="sidebox">
+                  <div className="b_title">
+                  <div className={styles.projectHeader}>
+                    <span className={styles.projectTitle}>{current_project?.name || '프로젝트'}</span>
                     <button 
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
-                      style={{ 
-                        background: showProjectInfo ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : 'linear-gradient(135deg, #6c757d 0%, #495057 100%)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px 10px',
-                        borderRadius: '16px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '3px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        boxShadow: showProjectInfo ? '0 3px 8px rgba(22, 49, 248, 0.2)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
-                        width: 'auto',
-                        minWidth: 'unset',
-                        flexShrink: 0
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!showProjectInfo) {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = showProjectInfo ? '0 4px 12px rgba(22, 49, 248, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.1)';
-                      }}
+                      className={showProjectInfo ? `${styles.infoButton} ${styles.active}` : styles.infoButton}
                       title="프로젝트 정보"
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -1701,7 +1666,6 @@ export default function Feedback() {
                   <div className="tabContent">
                     {currentItem && currentItem.content}
                   </div>
-                </div>
                 </div>
               </div>
             ) : (

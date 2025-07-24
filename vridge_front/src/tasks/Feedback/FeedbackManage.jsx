@@ -206,10 +206,33 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                   </div>
                   <button
                     onClick={() => DropFeedback(feedback.id)}
-                    className="delete"
-                    style={{ marginLeft: '12px' }}
+                    style={{ 
+                      marginLeft: '12px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#dc3545',
+                      cursor: 'pointer',
+                      padding: '8px',
+                      borderRadius: '4px',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(220, 53, 69, 0.1)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent'
+                    }}
+                    title="삭제"
                   >
-                    삭제
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 6h18" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="10" y1="11" x2="10" y2="17" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="14" y1="11" x2="14" y2="17" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </button>
                 </div>
                 

@@ -18,11 +18,23 @@
     align-items: center;
     gap: 8px;
     
-    input[type="radio"] {
+    input[type="checkbox"] {
       width: 18px;
       height: 18px;
       accent-color: #1631F8;
       cursor: pointer;
+      position: relative;
+      
+      &:checked::before {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+      }
     }
     
     label {

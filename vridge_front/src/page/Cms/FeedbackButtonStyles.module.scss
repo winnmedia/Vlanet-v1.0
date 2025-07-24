@@ -21,7 +21,7 @@ $brand-gray-hover: #5a6268;
   cursor: pointer !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   min-height: 42px !important;
-  min-width: 110px !important;
+  min-width: 90px !important;
   line-height: 1.2 !important;
   white-space: nowrap !important;
   position: relative !important;
@@ -206,26 +206,29 @@ label.feedbackButtonPrimary {
 
 // 탭 버튼 스타일
 .tabButton {
-  padding: 12px 24px;
-  background: transparent;
+  flex: 1;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   color: #6c757d;
   border: none;
-  border-bottom: 3px solid transparent;
-  border-radius: 0;
-  font-size: 15px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin: 0 4px;
   
   &:hover {
-    color: $brand-blue;
-    background: rgba($brand-blue, 0.05);
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    color: #495057;
+    transform: translateY(-1px);
   }
   
   &.active {
-    color: $brand-blue;
-    border-bottom-color: $brand-blue;
+    background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%);
+    color: white;
     font-weight: 600;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
   }
 }
 

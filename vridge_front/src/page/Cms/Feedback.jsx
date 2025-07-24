@@ -1135,17 +1135,7 @@ export default function Feedback() {
                   }
                 >
                   {current_project.files ? (
-                    <div className="video-player-section" style={{
-                      width: '100%',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: '#000',
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      maxHeight: '600px'
-                    }}>
+                    <div className="video-player-section">
                       <VideoJsPlayer
                         ref={videoPlayerRef}
                         videoUrl={(() => {
@@ -1589,28 +1579,31 @@ export default function Feedback() {
                     alignItems: 'center',
                     justifyContent: 'space-between'
                   }}>
-                    <span>프로젝트 정보</span>
+                    <span style={{ fontWeight: '600', fontSize: '16px' }}>{current_project?.name || '프로젝트'}</span>
                     <button 
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
-                      className={styles.feedbackButtonIconOnly}
                       style={{ 
-                        width: '32px',
-                        height: '32px',
-                        padding: '0',
-                        borderRadius: '50%',
+                        background: showProjectInfo ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : '#f8f9fa',
+                        color: showProjectInfo ? 'white' : '#6c757d',
+                        border: showProjectInfo ? 'none' : '2px solid #e9ecef',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: '600',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        background: showProjectInfo ? '#1631F8' : 'transparent',
-                        border: '1px solid #e9ecef',
-                        transition: 'all 0.3s ease'
+                        gap: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        boxShadow: showProjectInfo ? '0 4px 12px rgba(22, 49, 248, 0.25)' : 'none'
                       }}
                       title="프로젝트 정보"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill={showProjectInfo ? "white" : "#6c757d"} xmlns="http://www.w3.org/2000/svg">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
                         <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
+                      프로젝트 정보
                     </button>
                   </div>
                   {showProjectInfo && current_project && (
@@ -1687,22 +1680,25 @@ export default function Feedback() {
                   )}
                 </div>
                 <div className="tab_container">
-                  <div className="tab_menu">
-                    <ul>
-                      {content.map((section, index) => (
-                        section && section.tab ? (
-                          <li
-                            className={
-                              currentItem && currentItem.tab == section.tab ? 'active' : ''
-                            }
-                            key={index}
-                            onClick={() => changeItem(index)}
-                          >
-                            <button className={currentItem && currentItem.tab == section.tab ? `${styles.tabButton} ${styles.active}` : styles.tabButton}>{section.tab}</button>
-                          </li>
-                        ) : null
-                      ))}
-                    </ul>
+                  <div className="tab_menu" style={{
+                    display: 'flex',
+                    gap: '8px',
+                    padding: '16px',
+                    background: '#f8f9fa',
+                    borderRadius: '12px 12px 0 0',
+                    borderBottom: '1px solid #e9ecef'
+                  }}>
+                    {content.map((section, index) => (
+                      section && section.tab ? (
+                        <button 
+                          key={index}
+                          onClick={() => changeItem(index)}
+                          className={currentItem && currentItem.tab == section.tab ? `${styles.tabButton} ${styles.active}` : styles.tabButton}
+                        >
+                          {section.tab}
+                        </button>
+                      ) : null
+                    ))}
                   </div>
                   <div className="tabContent">
                     {currentItem && currentItem.content}

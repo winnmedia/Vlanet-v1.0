@@ -1,14 +1,19 @@
 // VideoJsPlayer 스타일
-.video-js-player-wrapper {
+.videoJsPlayerWrapper {
   width: 100%;
   height: 100%;
   position: relative;
   background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   // 비디오 플레이어 기본 스타일
-  .video-js {
-    width: 100%;
-    height: 100%;
+  :global(.video-js) {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
     
     // 큰 재생 버튼 중앙 정렬
     &.vjs-big-play-centered .vjs-big-play-button {
@@ -55,14 +60,14 @@
   }
   
   // 일시정지 아이콘 애니메이션
-  .pause-icon-overlay {
+  .pauseIconOverlay {
     pointer-events: none;
     z-index: 100;
   }
 }
 
-// 로딩 스피너 스타일
-.vjs-loading-spinner {
+// 로딩 스피너 스타일 - 전역 스타일로 video.js에서 사용
+:global(.vjs-loading-spinner) {
   border-color: rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
 }

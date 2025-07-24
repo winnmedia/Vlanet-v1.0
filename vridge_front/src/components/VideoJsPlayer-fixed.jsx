@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle, useState } from 'react'
 import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
-import './VideoJsPlayer.scss'
+import styles from './VideoJsPlayer.module.scss'
 
 // 한국어 설정
 videojs.addLanguage('ko', {
@@ -269,11 +269,14 @@ const VideoJsPlayer = forwardRef(({
   return (
     <div 
       ref={containerRef}
-      className="video-js-player-wrapper"
+      className={styles.videoJsPlayerWrapper}
       style={{
         width: '100%',
         height: '100%',
-        position: 'relative'
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}
     >
       <div data-vjs-player style={{ width: '100%', height: '100%' }}>
@@ -290,7 +293,7 @@ const VideoJsPlayer = forwardRef(({
       {/* 일시정지 아이콘 오버레이 */}
       {showPauseIcon && (
         <div 
-          className="pause-icon-overlay"
+          className={styles.pauseIconOverlay}
           style={{
             position: 'absolute',
             top: '50%',

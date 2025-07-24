@@ -707,9 +707,7 @@
             background: #f8f8f8;
             border: 3px dashed #0058da;
             width: 100%;
-            height: auto;
-            min-height: 400px;
-            max-height: 80vh;
+            height: 600px;
             border-radius: 15px;
             position: relative;
             display: flex;
@@ -785,28 +783,32 @@
             }
             &.active {
               border: 2px solid #0058da;
-              overflow: hidden;
+              background: #000;
+              padding: 0;
               
               .video-player-section {
                 width: 100%;
-                height: auto;
+                height: 100%;
                 position: relative;
                 background: #000;
-                border-radius: 12px;
                 overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 
-                // 16:9 비율 유지를 위한 패딩 트릭
-                &::before {
-                  content: '';
-                  display: block;
-                  padding-top: 56.25%; // 9/16 * 100
+                // 비디오 플레이어가 컨테이너를 꽉 채우도록
+                .video-js-player-wrapper {
+                  width: 100%;
+                  height: 100%;
+                  
+                  > div[data-vjs-player] {
+                    width: 100%;
+                    height: 100%;
+                  }
                 }
                 
                 // 비디오 플레이어 위치
                 video, .video-js {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
                   width: 100%;
                   height: 100%;
                   object-fit: contain;

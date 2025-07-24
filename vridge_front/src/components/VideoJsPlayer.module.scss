@@ -64,10 +64,10 @@
     pointer-events: none;
     z-index: 100;
   }
-}
-
-// 로딩 스피너 스타일 - 전역 스타일로 video.js에서 사용
-:global(.vjs-loading-spinner) {
-  border-color: rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
+  
+  // 로딩 스피너 스타일 - 전역 스타일로 video.js에서 사용
+  :global(.vjs-loading-spinner) {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+  }
 }

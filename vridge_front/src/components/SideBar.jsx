@@ -101,19 +101,19 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               홈
             </li>
             <li
-              className={cx({ [styles.active]: path === '/VideoPlanning' && !SubMenu })}
+              className={cx({ [styles.active]: path === '/videoplanning' && !SubMenu })}
               onClick={() => {
                 SetSubMenu(false)
-                navigate('/VideoPlanning')
+                navigate('/videoplanning')
               }}
             >
               영상 기획
             </li>
             <li
-              className={cx({ [styles.active]: path === '/Calendar' && !SubMenu })}
+              className={cx({ [styles.active]: path === '/calendar' && !SubMenu })}
               onClick={() => {
                 SetSubMenu(false)
-                navigate('/Calendar')
+                navigate('/calendar')
               }}
             >
               전체 일정
@@ -121,7 +121,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
             <li
               className={cx(styles.menu_project, styles['has-toggle'], {
                 [styles.active]:
-                  path.includes('/ProjectView') ||
+                  path.includes('/project') ||
                   (SubMenu && tab_name === 'project'),
               })}
               onClick={() => {
@@ -161,7 +161,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
           className={cx(styles.mypage, { [styles.active]: path === '/mypage' })}
           onClick={() => {
             SetSubMenu(false)
-            navigate('/MyPage')
+            navigate('/mypage')
           }}
         >
           마이페이지
@@ -228,10 +228,10 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                   }
                   
                   if (tab_name === 'project') {
-                    navigate(`/ProjectView/${item.id}`)
+                    navigate(`/project/${item.id}`)
                   } else {
                     console.log('[SideBar] Navigating to feedback:', item.id, item.name)
-                    navigate(`/Feedback/${item.id}`)
+                    navigate(`/feedback/${item.id}`)
                   }
                   SetSubMenu(false);
                 }}

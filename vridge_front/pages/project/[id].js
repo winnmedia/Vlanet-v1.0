@@ -1,4 +1,4 @@
-import ProjectView from '../../src/page/Cms/ProjectView'
+import ProjectView from '../../src/page/Cms/ProjectView-fixed'
 
 export default ProjectView
 

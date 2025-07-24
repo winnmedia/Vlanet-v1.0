@@ -23,7 +23,7 @@ import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from 'tasks/Feedback/OpinionInput'
-import VideoJsPlayer from 'components/VideoJsPlayer'
+import VideoJsPlayer from 'components/VideoJsPlayer-fixed'
 import VideoUploadGuide from 'components/VideoUploadGuide'
 import InviteInput from 'tasks/Project/InviteInput'
 

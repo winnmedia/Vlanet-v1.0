@@ -139,6 +139,8 @@
 **배포 결과**:
 - 첫 번째 빌드 실패: CSS 모듈 pure selector 오류
 - 오류 수정 후 재배포 진행
+- 두 번째 빌드 실패: Cms.scss 구문 오류
+- CmsCommon.scss에서 Cms.scss import 제거하여 순환 참조 해결
 
 ---
 

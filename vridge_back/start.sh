@@ -37,6 +37,10 @@ python manage.py migrate --noinput || echo "⚠️ Secondary migration failed, c
 echo "🛠️ Ensuring development_framework column exists..."
 python force_development_framework.py || echo "⚠️ Development framework column creation failed, continuing..."
 
+# 4-2. feedback 테이블 컬럼 확인 및 생성
+echo "🔧 Ensuring feedback columns exist..."
+python ensure_feedback_columns.py || echo "⚠️ Feedback columns creation failed, continuing..."
+
 # 5. 미디어 파일 디렉토리 생성
 echo "📁 Creating media directories..."
 mkdir -p /app/media/feedback_file || true

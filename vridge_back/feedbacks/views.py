@@ -142,44 +142,102 @@ class FeedbackDetail(View):
                 # 피드백 코멘트 가져오기
                 feedback_comments = []
                 if project_data['feedback_id']:
-                    cursor.execute("""
-                        SELECT c.id, c.security, c.title, c.section, c.text,
-                               u.username, u.nickname as user_nickname, c.created, 
-                               c.display_mode, c.nickname as custom_nickname
-                        FROM feedbacks_feedbackcomment c
-                        JOIN users_user u ON c.user_id = u.id
-                        WHERE c.feedback_id = %s
-                        ORDER BY c.created DESC
-                    """, [project_data['feedback_id']])
-                    
-                    for comment_row in cursor.fetchall():
-                        display_mode = comment_row[8] if comment_row[8] else 'anonymous'
-                        custom_nickname = comment_row[9]
+                    try:
+                        # 먼저 새로운 컬럼이 있는지 확인
+                        cursor.execute("""
+                            SELECT column_name 
+                            FROM information_schema.columns 
+                            WHERE table_name = 'feedbacks_feedbackcomment' 
+                            AND column_name IN ('display_mode', 'nickname')
+                        """)
+                        new_columns = [row[0] for row in cursor.fetchall()]
                         
-                        # 표시할 이름 결정
-                        if display_mode == 'anonymous' or comment_row[1]:  # security가 True면 익명
-                            display_name = '익명'
-                            display_email = None
-                        elif display_mode == 'nickname' and custom_nickname:
-                            display_name = custom_nickname
-                            display_email = None
-                        else:  # realname 모드
-                            display_name = comment_row[6]  # 사용자 실명
-                            display_email = comment_row[5]
+                        # 쿼리 구성
+                        if 'display_mode' in new_columns:
+                            cursor.execute("""
+                                SELECT c.id, c.security, c.title, c.section, c.text,
+                                       u.username, u.nickname as user_nickname, c.created, 
+                                       COALESCE(c.display_mode, 'anonymous') as display_mode, 
+                                       c.nickname as custom_nickname
+                                FROM feedbacks_feedbackcomment c
+                                JOIN users_user u ON c.user_id = u.id
+                                WHERE c.feedback_id = %s
+                                ORDER BY c.created DESC
+                            """, [project_data['feedback_id']])
+                            
+                            for comment_row in cursor.fetchall():
+                                display_mode = comment_row[8] if comment_row[8] else 'anonymous'
+                                custom_nickname = comment_row[9]
+                                
+                                # 표시할 이름 결정
+                                if display_mode == 'anonymous' or comment_row[1]:  # security가 True면 익명
+                                    display_name = '익명'
+                                    display_email = None
+                                elif display_mode == 'nickname' and custom_nickname:
+                                    display_name = custom_nickname
+                                    display_email = None
+                                else:  # realname 모드
+                                    display_name = comment_row[6]  # 사용자 실명
+                                    display_email = comment_row[5]
+                                
+                                feedback_comments.append({
+                                    'id': comment_row[0],
+                                    'security': comment_row[1],
+                                    'title': comment_row[2],
+                                    'section': comment_row[3],
+                                    'text': comment_row[4],
+                                    'email': comment_row[5],
+                                    'nickname': display_name,
+                                    'created': comment_row[7],
+                                    'display_mode': display_mode,
+                                    'custom_nickname': custom_nickname,
+                                    'display_email': display_email
+                                })
+                        else:
+                            # 구 버전 호환
+                            cursor.execute("""
+                                SELECT c.id, c.security, c.title, c.section, c.text,
+                                       u.username, u.nickname, c.created
+                                FROM feedbacks_feedbackcomment c
+                                JOIN users_user u ON c.user_id = u.id
+                                WHERE c.feedback_id = %s
+                                ORDER BY c.created DESC
+                            """, [project_data['feedback_id']])
+                            
+                            for comment_row in cursor.fetchall():
+                                feedback_comments.append({
+                                    'id': comment_row[0],
+                                    'security': comment_row[1],
+                                    'title': comment_row[2],
+                                    'section': comment_row[3],
+                                    'text': comment_row[4],
+                                    'email': comment_row[5],
+                                    'nickname': comment_row[6],
+                                    'created': comment_row[7]
+                                })
+                    except Exception as e:
+                        logger.error(f"Error fetching feedback comments: {str(e)}")
+                        # 기본 쿼리로 폴백
+                        cursor.execute("""
+                            SELECT c.id, c.security, c.title, c.section, c.text,
+                                   u.username, u.nickname, c.created
+                            FROM feedbacks_feedbackcomment c
+                            JOIN users_user u ON c.user_id = u.id
+                            WHERE c.feedback_id = %s
+                            ORDER BY c.created DESC
+                        """, [project_data['feedback_id']])
                         
-                        feedback_comments.append({
-                            'id': comment_row[0],
-                            'security': comment_row[1],
-                            'title': comment_row[2],
-                            'section': comment_row[3],
-                            'text': comment_row[4],
-                            'email': comment_row[5],
-                            'nickname': display_name,
-                            'created': comment_row[7],
-                            'display_mode': display_mode,
-                            'custom_nickname': custom_nickname,
-                            'display_email': display_email
-                        })
+                        for comment_row in cursor.fetchall():
+                            feedback_comments.append({
+                                'id': comment_row[0],
+                                'security': comment_row[1],
+                                'title': comment_row[2],
+                                'section': comment_row[3],
+                                'text': comment_row[4],
+                                'email': comment_row[5],
+                                'nickname': comment_row[6],
+                                'created': comment_row[7]
+                            })
             
             result = {
                 "id": project_data['id'],

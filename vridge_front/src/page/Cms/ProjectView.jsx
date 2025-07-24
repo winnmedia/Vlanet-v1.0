@@ -48,10 +48,10 @@ export default function ProjectView() {
   const router = useRouter()
   const navigate = router.push
   const { handleNotFound } = useNavigationFlow()
-  useProjectData() // 프로젝트 데이터 로드 초기화
   const { project_list, user, profileImage } = useSelector((s) => s.ProjectStore)
   const [current_project, set_current_project] = useState(null)
   const project_id = router.query.id
+  const [hasLoadedProject, setHasLoadedProject] = useState(false)
 
   const DateList = ['월', '주', '일']
   const [DateType, SetDateType] = useState('월')
@@ -152,6 +152,12 @@ export default function ProjectView() {
       return
     }
     
+    // 이미 로드한 프로젝트면 스킵
+    if (hasLoadedProject && current_project && current_project.id === project_id) {
+      console.log('Project already loaded, skipping')
+      return
+    }
+    
     // 프로젝트 로드
     console.log('Fetching project with ID:', project_id)
     setIsLoading(true)
@@ -159,6 +165,7 @@ export default function ProjectView() {
       .then((res) => {
         if (res.data && res.data.result) {
           set_current_project(res.data.result)
+          setHasLoadedProject(true)
           console.log('Project loaded:', res.data.result)
         }
       })
@@ -270,13 +277,9 @@ export default function ProjectView() {
     )
   }
 
+  // SafeRoute 제거하고 직접 렌더링
   return (
-    <SafeRoute
-      checkResource={GetProject}
-      resourceId={project_id}
-      resourceType="project"
-    >
-      <PageTemplate>
+    <PageTemplate>
         <div className="cms_wrap">
           <SideBar />
           <main className="project">
@@ -388,7 +391,7 @@ export default function ProjectView() {
                         {is_admin && (
                           <button
                             onClick={() =>
-                              navigate(`/ProjectEdit/${current_project.id}`)
+                              navigate(`/project/${current_project.id}/edit`)
                             }
                             className="submit"
                           >
@@ -489,7 +492,6 @@ export default function ProjectView() {
         </main>
       </div>
     </PageTemplate>
-    </SafeRoute>
   )
 }
 

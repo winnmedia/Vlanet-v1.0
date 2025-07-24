@@ -44,6 +44,9 @@ import '../src/components/ProjectForm.scss'
 // 피드백 페이지 스타일
 import '../src/css/Cms/FeedbackPage.scss'
 import '../src/page/User/MyPage.scss'
+// Video.js 스타일
+import 'video.js/dist/video-js.css'
+import '../src/css/Cms/VideoPlayerFix.scss'
 import { checkSession } from '../src/util/util'
 
 // 한국 시간대 설정

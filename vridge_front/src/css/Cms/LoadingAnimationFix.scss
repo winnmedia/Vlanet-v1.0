@@ -125,29 +125,80 @@
   }
 }
 
-// 페이지 전환 시 로딩 개선
+// 페이지 전환 시 로딩 개선 - 중앙 위치
 .route-loading {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: #f0f0f0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 240px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  padding: 32px;
   z-index: 9999;
+  text-align: center;
   
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    background: #1631F8;
-    animation: routeLoading 1s ease-in-out infinite;
+  // 로딩 텍스트
+  &::before {
+    content: '페이지 로딩 중...';
+    display: block;
+    font-size: 14px;
+    color: #495057;
+    margin-bottom: 16px;
+    font-weight: 500;
   }
   
-  @keyframes routeLoading {
+  // 프로그레스 바 컨테이너
+  &::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  // 애니메이션 프로그레스
+  .progress-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 10px);
+    width: 100%;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, #1631F8, transparent);
+      animation: shimmer 1.5s infinite;
+    }
+  }
+  
+  @keyframes shimmer {
     0% {
-      width: 0;
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+}
+
+// 기존 키프레임 제거하고 새로운 스타일 적용
+@keyframes routeLoading {
+  0% {
+    width: 0;
       left: 0;
     }
     50% {

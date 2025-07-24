@@ -9,13 +9,37 @@ export default function VideoPlanning() {
   const router = useRouter()
   const user = useSelector((state) => state.user)
   const [loading, setLoading] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
-    // 로그인 체크
-    if (!user || !user.email) {
-      router.push('/login')
+    // Redux 상태가 로드되지 않았으면 대기
+    if (user === undefined) {
+      return;
+    }
+    
+    // 상태가 로드되면 초기화 완료로 표시
+    setIsInitialized(true);
+    
+    // 로그인되지 않은 경우에만 리다이렉트
+    if (user === null || (user && !user.email)) {
+      console.log('[VideoPlanning] User not logged in, redirecting to login');
+      router.push('/login');
     }
   }, [user, router])
+
+  // 초기화 중이면 로딩 표시
+  if (!isInitialized) {
+    return (
+      <PageTemplate>
+        <div className="contents">
+          <SideBar />
+          <main className="main">
+            <LoadingAnimation message="페이지 로딩 중..." />
+          </main>
+        </div>
+      </PageTemplate>
+    );
+  }
 
   return (
     <PageTemplate>

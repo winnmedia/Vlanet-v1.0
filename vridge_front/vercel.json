@@ -30,7 +30,6 @@
     }
   ],
   "github": {
-    "enabled": true,
-    "autoAlias": ["videoplanet.vercel.app"]
+    "enabled": true
   }
 }

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import videojs from 'video.js'
+import 'video.js/dist/video-js.css'
 
 const VideoJsPlayer = forwardRef(({ 
   videoUrl, 

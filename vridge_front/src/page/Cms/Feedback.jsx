@@ -1122,12 +1122,11 @@ export default function Feedback() {
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar tab="feedback" />
-        <main>
-          {/* WebSocket 연결 상태 표시기 - 사용자 요청으로 삭제됨 */}
-          
-          {current_project && (
-            <div className="content feedback feedback_page flex space_between">
-              <div className="videobox video_section">
+        <main className="feedback-main">
+          <div className="content feedback-container">
+            {current_project ? (
+              <div className="feedback-layout">
+                <div className="video-section">
                 <div
                   className={
                     current_project.files ? 'video_inner active' : 'video_inner'
@@ -1342,8 +1341,8 @@ export default function Feedback() {
                   background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
                   borderRadius: '16px',
                   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
-                  justifyContent: 'space-between',
-                  width: '100%'
+                  width: '100%',
+                  flexWrap: 'wrap'
                 }}>
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
@@ -1557,8 +1556,8 @@ export default function Feedback() {
                     />
                   </div>
                 </div>
-              </div>
-              <div className="sidebox">
+                </div>
+                <div className="feedback-sidebar">
                 <div className="b_title">
                   <div className="s_title" style={{
                     display: 'flex',
@@ -1703,9 +1702,15 @@ export default function Feedback() {
                     {currentItem && currentItem.content}
                   </div>
                 </div>
+                </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p>프로젝트 데이터를 불러오는 중...</p>
+              </div>
+            )}
+          </div>
         </main>
       </div>
       {showUploadGuide && (

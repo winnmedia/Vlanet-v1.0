@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle, useState } from 'react'
 import videojs from 'video.js'
+import 'video.js/dist/video-js.css'
+import './VideoJsPlayer.scss'
 
 // 한국어 설정
 videojs.addLanguage('ko', {
@@ -319,7 +321,7 @@ const VideoJsPlayer = forwardRef(({
         </div>
       )}
       
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeInOut {
           0% {
             opacity: 0;
@@ -338,7 +340,7 @@ const VideoJsPlayer = forwardRef(({
             transform: translate(-50%, -50%) scale(0.8);
           }
         }
-      `}</style>
+      `}} />
     </div>
   )
 })

@@ -680,21 +680,29 @@
           }
         }
       }
-      &.feedback {
-        height: calc(100% - 50px);
-        margin: 0 0 50px;
-        .videobox {
-          width: calc(100% - 490px);
-          background: transparent;
-          overflow-y: auto;
+      // 피드백 페이지 새로운 레이아웃
+      &.feedback-container {
+        min-height: 100vh;
+        padding: 0;
+        background: #f8f9fa;
+        overflow: hidden;
+        
+        .feedback-layout {
           display: flex;
-          flex-direction: column;
-          padding: 15px;
-          height: 100%;
-          // -ms-overflow-style: none;
-          // &::-webkit-scrollbar {
-          //   display: none;
-          // }
+          gap: 20px;
+          height: 100vh;
+          max-width: 100%;
+          margin: 0;
+          padding: 20px;
+          
+          .video-section {
+            flex: 1;
+            min-width: 0;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow: hidden;
           .video_inner {
             background: #f8f8f8;
             border: 3px dashed #0058da;
@@ -970,12 +978,15 @@
         }
         .sidebox {
           width: 460px;
-          margin-left: 30px;
+          flex-shrink: 0;
           height: 100%;
-          padding: 0 0 0 40px;
-          position: relative;
+          padding: 20px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
           display: flex;
           flex-direction: column;
+          overflow: hidden;
           // .b_title {
           //   display: flex;
           //   justify-content: space-between;
@@ -1016,9 +1027,9 @@
             }
           }
           .tab_content {
-            margin-top: 50px;
-            height: calc(100% - 118px);
-            overflow-y: scroll;
+            margin-top: 30px;
+            flex: 1;
+            overflow-y: auto;
             -ms-overflow-style: none;
             &::-webkit-scrollbar {
               display: none;
@@ -2079,3 +2090,23 @@
     }
   }
 }
+
+// 피드백 메인 페이지 스타일
+.feedback-main {
+  width: 100%;
+  min-height: 100vh;
+  background: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  
+  // 단일 컨테이너 구조
+  .content.feedback-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: transparent;
+  }
+}
+

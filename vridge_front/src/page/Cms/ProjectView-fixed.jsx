@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setGlobalLoading } from '../../redux/loading'
 import { checkSession } from 'util/util'
 import { useProjectDetail } from 'hooks/useProjectDetail'
 
@@ -19,27 +20,12 @@ import down from 'images/Cms/down_icon.svg'
 import { UpdateDate } from 'api/project'
 import InviteInput from 'tasks/Project/InviteInput'
 
-// 로딩 애니메이션 스타일
-const loadingAnimationStyle = `
-  @keyframes progressAnimation {
-    0% {
-      width: 0%;
-      transform: translateX(0);
-    }
-    50% {
-      width: 70%;
-    }
-    100% {
-      width: 100%;
-      transform: translateX(100%);
-    }
-  }
-`
 
 export default function ProjectView() {
   const router = useRouter()
   const navigate = router.push
   const project_id = router.query.id
+  const dispatch = useDispatch()
   
   // Redux store에서 사용자 정보만 가져옴
   const { user, profileImage } = useSelector((s) => s.ProjectStore)
@@ -174,22 +160,32 @@ export default function ProjectView() {
     changeDate(DateType)
   }, [])
   
-  // 로딩 중일 때
+  // 로딩 상태 관리
+  useEffect(() => {
+    if (isLoading) {
+      dispatch(setGlobalLoading({ 
+        loading: true, 
+        message: '프로젝트를 불러오는 중',
+        variant: 'project',
+        id: 'project-view'
+      }))
+    } else {
+      dispatch(setGlobalLoading({ 
+        loading: false,
+        id: 'project-view'
+      }))
+    }
+  }, [isLoading, dispatch])
+  
+  // 로딩 중이거나 project_id가 없을 때는 빈 레이아웃만 반환 (글로벌 로딩이 표시됨)
   if (isLoading || !project_id) {
     return (
       <PageTemplate>
-        <style>{loadingAnimationStyle}</style>
         <div className="cms_wrap">
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <div className="loading-box" style={{ background: 'white', padding: '40px 60px', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)', textAlign: 'center', minWidth: '300px' }}>
-              <div className="loading-progress-bar" style={{ width: '100%', height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden', margin: '20px 0' }}>
-                <div className="progress-fill" style={{ height: '100%', background: 'linear-gradient(90deg, #1631F8, #0F23C9)', borderRadius: '3px', animation: 'progressAnimation 2s ease-in-out infinite' }}></div>
-              </div>
-              <div className="loading-text">
-                <div className="loading-message" style={{ fontSize: '16px', color: '#333', marginTop: '10px', fontWeight: '500' }}>프로젝트를 불러오는 중...</div>
-              </div>
-            </div>
-          </div>
+          <SideBar />
+          <main className="project">
+            {/* 글로벌 로딩이 표시되므로 여기서는 빈 컨테이너만 */}
+          </main>
         </div>
       </PageTemplate>
     )
@@ -332,21 +328,7 @@ export default function ProjectView() {
                 />
               </div>
             </>
-          ) : (
-            <>
-              <style>{loadingAnimationStyle}</style>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <div className="loading-box" style={{ background: 'white', padding: '40px 60px', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)', textAlign: 'center', minWidth: '300px' }}>
-                  <div className="loading-progress-bar" style={{ width: '100%', height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden', margin: '20px 0' }}>
-                    <div className="progress-fill" style={{ height: '100%', background: 'linear-gradient(90deg, #1631F8, #0F23C9)', borderRadius: '3px', animation: 'progressAnimation 2s ease-in-out infinite' }}></div>
-                  </div>
-                  <div className="loading-text">
-                    <div className="loading-message" style={{ fontSize: '16px', color: '#333', marginTop: '10px', fontWeight: '500' }}>프로젝트를 불러오는 중...</div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+          ) : null}
         </main>
       </div>
     </PageTemplate>

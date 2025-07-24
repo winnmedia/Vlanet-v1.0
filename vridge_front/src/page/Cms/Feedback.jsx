@@ -88,6 +88,7 @@ export default function Feedback() {
   const [analysisResult, setAnalysisResult] = useState(null)
   const [teacherFeedback, setTeacherFeedback] = useState(null)
   const [teachers, setTeachers] = useState([])
+  const [analysisLoading, setAnalysisLoading] = useState(false) // 분석 로딩 상태 추가
 
   // 멤버 초대 관련 상태
   const [showInviteModal, setShowInviteModal] = useState(false)
@@ -1019,6 +1020,7 @@ export default function Feedback() {
     }
     
     setAnalysisStatus('analyzing')
+    setAnalysisLoading(true)
     
     try {
       // 가장 최근 피드백 ID 찾기
@@ -1063,6 +1065,7 @@ export default function Feedback() {
         const teacherData = await teacherResponse.json()
         setTeacherFeedback(teacherData.data)
         setAnalysisStatus('completed')
+        setAnalysisLoading(false)
       } else {
         // 분석 중인 경우 - 폴링으로 상태 확인
         const checkAnalysisStatus = async () => {
@@ -1088,8 +1091,10 @@ export default function Feedback() {
                 const teacherData = teacherResponse.data
                 setTeacherFeedback(teacherData.data)
                 setAnalysisStatus('completed')
+                setAnalysisLoading(false)
               }
             } else if (statusData.data?.analysis?.status === 'failed') {
+              setAnalysisLoading(false)
               throw new Error(statusData.data.analysis.error_message || '분석 실패')
             } else {
               // 계속 폴링
@@ -1105,6 +1110,7 @@ export default function Feedback() {
       console.error('Analysis error:', error)
       window.alert(error.message || '분석 중 오류가 발생했습니다.')
       setAnalysisStatus('error')
+      setAnalysisLoading(false)
     }
   }
 

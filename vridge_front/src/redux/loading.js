@@ -3,7 +3,9 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   isGlobalLoading: false,
   loadingMessage: '',
-  componentLoading: {}
+  loadingVariant: 'default',
+  componentLoading: {},
+  loadingStack: [] // 중복 방지를 위한 스택
 }
 
 const loadingSlice = createSlice({
@@ -11,8 +13,31 @@ const loadingSlice = createSlice({
   initialState,
   reducers: {
     setGlobalLoading: (state, action) => {
-      state.isGlobalLoading = action.payload.loading
-      state.loadingMessage = action.payload.message || ''
+      const { loading, message = '', variant = 'default', id = 'global' } = action.payload
+      
+      if (loading) {
+        // 중복 방지 - 같은 ID가 이미 스택에 있으면 무시
+        if (!state.loadingStack.find(item => item.id === id)) {
+          state.loadingStack.push({ id, message, variant })
+          state.isGlobalLoading = true
+          state.loadingMessage = message
+          state.loadingVariant = variant
+        }
+      } else {
+        // 로딩 종료 시 스택에서 제거
+        state.loadingStack = state.loadingStack.filter(item => item.id !== id)
+        
+        if (state.loadingStack.length === 0) {
+          state.isGlobalLoading = false
+          state.loadingMessage = ''
+          state.loadingVariant = 'default'
+        } else {
+          // 스택에 남은 항목이 있으면 가장 최근 것으로 업데이트
+          const lastItem = state.loadingStack[state.loadingStack.length - 1]
+          state.loadingMessage = lastItem.message
+          state.loadingVariant = lastItem.variant
+        }
+      }
     },
     setComponentLoading: (state, action) => {
       const { componentName, loading } = action.payload
@@ -24,7 +49,9 @@ const loadingSlice = createSlice({
     resetLoading: (state) => {
       state.isGlobalLoading = false
       state.loadingMessage = ''
+      state.loadingVariant = 'default'
       state.componentLoading = {}
+      state.loadingStack = []
     }
   }
 })

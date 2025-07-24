@@ -8,6 +8,7 @@ import 'moment/locale/ko'
 import { useRouter } from 'next/router'
 import LoadingAnimation from '../src/components/LoadingAnimation'
 import AppInitializer from '../src/components/AppInitializer'
+import GlobalLoading from '../src/components/GlobalLoading'
 import '../src/styles/reset.scss'
 import '../src/styles/design-system.scss'
 import '../src/styles/global.scss'
@@ -97,6 +98,7 @@ function MyApp({ Component, pageProps }) {
         <AppInitializer>
           {loading && <div className="route-loading" />}
           <Component {...pageProps} />
+          <GlobalLoading />
         </AppInitializer>
       </ConfigProvider>
     </Provider>

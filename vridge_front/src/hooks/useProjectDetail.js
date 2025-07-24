@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
+import { setGlobalLoading } from '../redux/loading'
 import { GetProject } from '../api/project'
 
 // 프로젝트 상세 정보를 가져오는 커스텀 훅

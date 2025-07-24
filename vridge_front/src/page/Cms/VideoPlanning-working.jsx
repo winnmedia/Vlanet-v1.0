@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setGlobalLoading } from '../../redux/loading'
 import PageTemplate from '../../components/PageTemplate'
 import SideBar from '../../components/SideBar'
-import LoadingAnimation from '../../components/LoadingAnimation'
 
 export default function VideoPlanning() {
   const router = useRouter()
-  const user = useSelector((state) => state.user)
+  const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.ProjectStore)
   const [loading, setLoading] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
 
@@ -28,13 +29,29 @@ export default function VideoPlanning() {
   }, [user, router])
 
   // 초기화 중이면 로딩 표시
+  useEffect(() => {
+    if (!isInitialized) {
+      dispatch(setGlobalLoading({ 
+        loading: true, 
+        message: '페이지 로딩 중',
+        variant: 'default',
+        id: 'video-planning-init'
+      }))
+    } else {
+      dispatch(setGlobalLoading({ 
+        loading: false,
+        id: 'video-planning-init'
+      }))
+    }
+  }, [isInitialized, dispatch])
+  
   if (!isInitialized) {
     return (
       <PageTemplate>
         <div className="contents">
           <SideBar />
           <main className="main">
-            <LoadingAnimation message="페이지 로딩 중..." />
+            {/* 글로벌 로딩이 표시되므로 여기서는 빈 컨테이너만 */}
           </main>
         </div>
       </PageTemplate>
@@ -110,7 +127,7 @@ export default function VideoPlanning() {
             </div>
           </div>
           
-          {loading && <LoadingAnimation message="로딩 중..." />}
+          {/* 로딩은 글로벌 로딩으로 처리 */}
         </main>
       </div>
       

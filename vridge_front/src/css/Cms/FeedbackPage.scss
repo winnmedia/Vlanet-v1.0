@@ -1,0 +1,253 @@
+/* 피드백 페이지 기본 스타일 */
+.feedback-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+/* 비디오 플레이어 영역 */
+.video-section {
+  flex: 1;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+  
+  .video-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    video {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+    }
+  }
+  
+  /* 비디오 컨트롤 */
+  .video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 5px 10px;
+      font-size: 16px;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+    }
+    
+    .time-display {
+      color: white;
+      font-size: 14px;
+      margin-left: auto;
+    }
+  }
+}
+
+/* 피드백 섹션 */
+.feedback-section {
+  height: 300px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 피드백 리스트 */
+.feedback-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  
+  .feedback-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    
+    .feedback-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #1631F8;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    
+    .feedback-content {
+      flex: 1;
+      
+      .feedback-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+        
+        .feedback-author {
+          font-weight: 600;
+          color: #333;
+        }
+        
+        .feedback-time {
+          font-size: 12px;
+          color: #666;
+          background: #f0f0f0;
+          padding: 2px 8px;
+          border-radius: 12px;
+        }
+        
+        .feedback-date {
+          font-size: 12px;
+          color: #999;
+          margin-left: auto;
+        }
+      }
+      
+      .feedback-message {
+        color: #444;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+/* 피드백 입력 영역 */
+.feedback-input-section {
+  border-top: 1px solid #e0e0e0;
+  padding: 20px;
+  background: white;
+  
+  .feedback-input-wrapper {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    
+    .input-group {
+      flex: 1;
+      
+      .time-input {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        
+        label {
+          font-size: 14px;
+          color: #666;
+        }
+        
+        input {
+          width: 100px;
+          padding: 5px 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+        }
+        
+        button {
+          padding: 5px 10px;
+          background: #f0f0f0;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 12px;
+          
+          &:hover {
+            background: #e0e0e0;
+          }
+        }
+      }
+      
+      textarea {
+        width: 100%;
+        min-height: 60px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+        font-family: inherit;
+        font-size: 14px;
+        
+        &:focus {
+          outline: none;
+          border-color: #1631F8;
+        }
+      }
+    }
+    
+    .submit-button {
+      padding: 10px 20px;
+      background: linear-gradient(to bottom, #1631F8, #0F23C9);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+/* 사이드바가 있을 때 레이아웃 조정 */
+.cms_wrap {
+  display: flex;
+  height: 100vh;
+  
+  .sidebar {
+    width: 250px;
+    flex-shrink: 0;
+  }
+  
+  .feedback-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .feedback-section {
+    height: 250px;
+  }
+  
+  .feedback-input-wrapper {
+    flex-direction: column;
+    
+    .submit-button {
+      width: 100%;
+    }
+  }
+}

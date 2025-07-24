@@ -49,7 +49,7 @@ export function useProjectData() {
     }
     
     loadProjectData()
-  }, [dispatch, project_list, user])
+  }, [dispatch]) // project_list와 user를 의존성에서 제거하여 무한 루프 방지
   
   return { project_list, user }
 }

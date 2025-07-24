@@ -1668,6 +1668,7 @@ export default function Feedback() {
                   </div>
                 </div>
               </div>
+              </div>
             ) : (
               <div className="loading-container">
                 <div className="loading-spinner"></div>

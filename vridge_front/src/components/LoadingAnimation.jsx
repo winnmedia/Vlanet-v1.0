@@ -33,29 +33,27 @@ export default function LoadingAnimation({ message, progress }) {
   return (
     <div className="loading-overlay">
       <div className="loading-box">
-        <div className="loading-dots-container">
-          <div className="loading-dots">
-            <div className="dot"></div>
-            <div className="dot"></div>
-            <div className="dot"></div>
-          </div>
+        {/* 프로그레스 바로 변경 */}
+        <div className="loading-progress-bar">
+          <div className="progress-fill" />
         </div>
         
         <div className="loading-text">
-          <div className="humorous-message">{humorousMessage}</div>
           {message && (
             <div className="loading-message">{message}</div>
           )}
+          <div className="humorous-message">{humorousMessage}</div>
         </div>
         
         {progress !== undefined && progress > 0 && (
-          <div className="loading-progress">
-            <div className="progress-track">
+          <div className="upload-progress">
+            <div className="progress-bar">
               <div 
-                className="progress-bar" 
+                className="progress-fill" 
                 style={{ width: `${progress}%` }}
               />
             </div>
+            <div className="progress-text">{Math.round(progress)}%</div>
           </div>
         )}
       </div>

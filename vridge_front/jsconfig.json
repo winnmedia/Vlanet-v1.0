@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "components/*": ["components/*"],
-      "page/*": ["page/*"],
-      "store/*": ["store/*"],
-      "util/*": ["util/*"],
-      "hooks/*": ["hooks/*"],
-      "css/*": ["css/*"],
-      "images/*": ["images/*"],
-      "api/*": ["api/*"],
-      "utils/*": ["utils/*"]
+      "@/*": ["src/*"],
+      "components/*": ["src/components/*"],
+      "page/*": ["src/page/*"],
+      "store/*": ["src/store/*"],
+      "util/*": ["src/util/*"],
+      "hooks/*": ["src/hooks/*"],
+      "css/*": ["src/css/*"],
+      "images/*": ["src/images/*"],
+      "api/*": ["src/api/*"],
+      "utils/*": ["src/utils/*"],
+      "tasks/*": ["src/tasks/*"],
+      "redux/*": ["src/redux/*"],
+      "config/*": ["src/config/*"]
     }
   }
 }

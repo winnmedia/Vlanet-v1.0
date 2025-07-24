@@ -28,5 +28,9 @@
       "destination": "/cmshome",
       "permanent": true
     }
-  ]
+  ],
+  "github": {
+    "enabled": true,
+    "autoAlias": ["videoplanet.vercel.app"]
+  }
 }

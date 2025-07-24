@@ -7,6 +7,7 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import { useRouter } from 'next/router'
 import LoadingAnimation from '../src/components/LoadingAnimation'
+import AppInitializer from '../src/components/AppInitializer'
 import '../src/styles/reset.scss'
 import '../src/styles/design-system.scss'
 import '../src/styles/global.scss'
@@ -97,8 +98,10 @@ function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <ConfigProvider locale={koKR}>
-        {loading && <LoadingAnimation message="페이지를 불러오는 중..." />}
-        <Component {...pageProps} />
+        <AppInitializer>
+          {loading && <div className="route-loading" />}
+          <Component {...pageProps} />
+        </AppInitializer>
       </ConfigProvider>
     </Provider>
   )

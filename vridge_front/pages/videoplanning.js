@@ -1,4 +1,4 @@
-import VideoPlanning from '../src/page/Cms/VideoPlanning-simple'
+import VideoPlanning from '../src/page/Cms/VideoPlanning'
 
 export default VideoPlanning
 

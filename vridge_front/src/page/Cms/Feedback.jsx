@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { useRouter, useParams } from '../../util/nextNavigation'
+import { useRouter } from 'next/router'
 import { checkSession } from 'util/util'
 
 
@@ -43,10 +43,13 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
 import { SafeRoute } from 'components/SafeRoute'
+import { useProjectData } from 'hooks/useProjectData'
 
 export default function Feedback() {
-  const { navigate } = useRouter()
+  const router = useRouter()
+  const navigate = router.push
   const { handleNotFound } = useNavigationFlow()
+  useProjectData() // 프로젝트 데이터 로드 초기화
   const { user, profileImage } = useSelector((s) => s.ProjectStore)
   
   // Cleanup effect for any pending timeouts
@@ -62,7 +65,7 @@ export default function Feedback() {
     }
   }, [])
 
-  const { project_id } = useParams()
+  const project_id = router.query.id
 
   const [trigger, setTrigger] = useState(0)
   const [current_project, set_current_project] = useState(null)
@@ -175,8 +178,14 @@ export default function Feedback() {
   }, [])
 
   useEffect(() => {
+    if (!project_id) {
+      console.log('[Feedback] Project ID not available yet')
+      return
+    }
+    
     const abortController = new AbortController()
     
+    console.log('[Feedback] Loading feedback for project:', project_id)
     GetFeedBack(project_id, { signal: abortController.signal })
       .then((res) => {
         console.log('Feedback data:', res.data.result)

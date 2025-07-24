@@ -25,11 +25,13 @@ import down from 'images/Cms/down_icon.svg'
 
 import { GetProject, UpdateDate } from 'api/project'
 import InviteInput from 'tasks/Project/InviteInput'
+import { useProjectData } from 'hooks/useProjectData'
 
 export default function ProjectView() {
   const router = useRouter()
   const navigate = router.push
   const { handleNotFound } = useNavigationFlow()
+  useProjectData() // 프로젝트 데이터 로드 초기화
   const { project_list, user, profileImage } = useSelector((s) => s.ProjectStore)
   const [current_project, set_current_project] = useState(null)
   const project_id = router.query.id
@@ -228,6 +230,21 @@ export default function ProjectView() {
   useEffect(() => {
     changeDate(DateType)
   }, [])
+  
+  // 프로젝트 로드 useEffect 추가
+  useEffect(() => {
+    if (!project_id) {
+      return
+    }
+    
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login')
+      return
+    }
+    
+    refetch()
+  }, [project_id, refetch, navigate])
 
   // project_id가 없거나 로딩 중일 때
   if (!project_id || isLoading) {

@@ -12,6 +12,7 @@ import { checkSession } from 'util/util'
 import { useRouter } from '../../util/nextNavigation'
 import { useEffect } from 'react'
 import { getProxyImageUrl, handleImageError } from 'utils/imageProxy'
+import { useProjectData } from 'hooks/useProjectData'
 
 // 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
 const filterForbiddenWords = (text) => {
@@ -34,8 +35,9 @@ const filterForbiddenWords = (text) => {
   return filteredText.replace(/\s+/g, ' ').trim();
 };
 
-export default function VideoPlanning() {
+function VideoPlanning() {
   const { navigate } = useRouter()
+  const { project_list, user } = useProjectData() // 프로젝트 데이터 로드
   const [currentStep, setCurrentStep] = useState(1)
   const [planningData, setPlanningData] = useState({
     planning: '',
@@ -3034,3 +3036,5 @@ export default function VideoPlanning() {
     </PageTemplate>
   )
 }
+
+export default VideoPlanning

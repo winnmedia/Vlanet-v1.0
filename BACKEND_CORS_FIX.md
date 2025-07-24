@@ -1,55 +1,89 @@
-# 🔧 백엔드 CORS 오류 해결 가이드
+# 🔧 백엔드 데이터 로딩 문제 해결 가이드
 
-## 🚨 문제
-```
-Access to XMLHttpRequest at 'https://videoplanet.up.railway.app/users/login/' 
-from origin 'https://videoplanet-bc6or7dvz-vlanets-projects.vercel.app' 
-has been blocked by CORS policy
-```
+## 문제 상황
+- 프로젝트 관리, 피드백 페이지에서 데이터가 불러와지지 않음
+- 랜딩 페이지로 리다이렉트됨
+- CORS 또는 인증 관련 문제로 추정
 
-## ✅ 해결 방법
+## 해결 방법
 
-### 1. Railway 환경변수 업데이트
+### 1. Railway 백엔드 CORS 설정 확인
 
-1. **[Railway Dashboard](https://railway.app/dashboard)** 접속
-2. **videoplanet** 프로젝트 선택
-3. **Variables** 탭 클릭
-4. `CORS_ALLOWED_ORIGINS` 찾기
-5. 다음 값으로 업데이트:
+Railway 대시보드에서 다음 환경변수를 확인하세요:
 
 ```
-https://vlanet.net,https://www.vlanet.net,https://videoplanet-bc6or7dvz-vlanets-projects.vercel.app,https://*.vercel.app,http://localhost:3000
+CORS_ALLOWED_ORIGINS=["http://localhost:3000", "https://vlanet.net", "https://www.vlanet.net", "https://videoplanet.vercel.app", "https://videoplanet-*.vercel.app", "https://videoplanetready.vercel.app"]
 ```
 
-### 2. Railway 재배포
-환경변수 수정 후:
-1. **Deploy** 탭으로 이동
-2. **Redeploy** 클릭
-3. 또는 자동으로 재배포됨 (1-2분 대기)
+### 2. 프론트엔드 API 설정 확인
 
-### 3. 백엔드 상태 확인
-재배포 후:
-- https://videoplanet.up.railway.app/api/health/
-- 정상 응답 확인
+`vridge_front/src/config/axios.js`에서:
+- API URL이 올바르게 설정되었는지 확인
+- 인증 토큰이 올바르게 전송되는지 확인
 
-## 🎯 영구 해결책
+### 3. 디버깅 단계
 
-### Vercel 커스텀 도메인 설정
-1. Vercel 대시보드 → Settings → Domains
-2. `api.vlanet.net` 또는 원하는 도메인 추가
-3. DNS 설정 후 CORS에 고정 도메인만 사용
+#### A. 브라우저 개발자 도구에서 확인
+1. Network 탭 열기
+2. API 요청 확인
+3. 다음 사항 체크:
+   - Status Code (401, 403, 500 등)
+   - Response Headers (CORS 관련)
+   - Request Headers (Authorization 토큰)
 
-### 현재 허용된 도메인:
-- https://vlanet.net ✅
-- https://www.vlanet.net ✅
-- https://videoplanet-seven.vercel.app ✅
-- https://videoplanet-bc6or7dvz-vlanets-projects.vercel.app ❌ (추가 필요)
+#### B. Console 에러 확인
+- CORS 에러 메시지
+- 401 Unauthorized 에러
+- Network 에러
 
-## 📝 테스트
-1. Railway 환경변수 업데이트
-2. 1-2분 대기 (재배포)
-3. 로그인 페이지에서 테스트
-4. 성공!
+### 4. 일반적인 해결책
+
+#### CORS 에러의 경우:
+```python
+# Railway settings.py에서
+CORS_ALLOWED_ORIGINS = [
+    "https://vlanet.net",
+    "https://www.vlanet.net",
+    "https://videoplanet.vercel.app",
+    "https://videoplanet-seven.vercel.app",  # 스테이징
+]
+```
+
+#### 인증 에러의 경우:
+1. 로그인 상태 확인
+2. 토큰 만료 확인
+3. 쿠키 설정 확인
+
+### 5. 테스트 방법
+
+```bash
+# 로컬에서 테스트
+cd vridge_front
+npm run dev
+
+# API 직접 테스트
+curl -H "Authorization: Bearer YOUR_TOKEN" https://videoplanet.up.railway.app/api/projects/
+```
+
+### 6. Railway 로그 확인
+
+Railway 대시보드에서:
+1. Deployments → View Logs
+2. 에러 메시지 확인
+3. 특히 CORS, 인증 관련 로그 확인
+
+## 즉시 적용 가능한 해결책
+
+### Vercel 환경변수 설정
+Vercel 프로젝트 설정에서:
+```
+NEXT_PUBLIC_API_URL=https://videoplanet.up.railway.app
+```
+
+### Railway 환경변수 업데이트
+```
+CORS_ALLOWED_ORIGINS=["https://vlanet.net", "https://www.vlanet.net", "https://*.vercel.app"]
+```
 
 ---
-**즉시 해결**: Railway Variables에서 CORS_ALLOWED_ORIGINS 업데이트!
+**중요**: 변경 후 Railway와 Vercel 모두 재배포가 필요합니다!

@@ -52,6 +52,8 @@ const VideoJsPlayer = forwardRef(({
   const playerRef = useRef(null)
   const containerRef = useRef(null)
   const [isPlayerReady, setIsPlayerReady] = useState(false)
+  const [showPauseIcon, setShowPauseIcon] = useState(false)
+  const pauseIconTimeoutRef = useRef(null)
   
   console.log('[VideoJsPlayer-fixed] Rendering with videoUrl:', videoUrl)
   
@@ -188,6 +190,18 @@ const VideoJsPlayer = forwardRef(({
             this.play()
           } else {
             this.pause()
+            // 일시정지 아이콘 표시
+            setShowPauseIcon(true)
+            
+            // 기존 타이머 제거
+            if (pauseIconTimeoutRef.current) {
+              clearTimeout(pauseIconTimeoutRef.current)
+            }
+            
+            // 1초 후 아이콘 숨기기
+            pauseIconTimeoutRef.current = setTimeout(() => {
+              setShowPauseIcon(false)
+            }, 1000)
           }
         }
       })
@@ -218,6 +232,9 @@ const VideoJsPlayer = forwardRef(({
         playerRef.current.dispose()
         playerRef.current = null
         setIsPlayerReady(false)
+      }
+      if (pauseIconTimeoutRef.current) {
+        clearTimeout(pauseIconTimeoutRef.current)
       }
     }
   }, [videoUrl]) // videoUrl 변경 시에만 재초기화
@@ -267,6 +284,61 @@ const VideoJsPlayer = forwardRef(({
           }}
         />
       </div>
+      
+      {/* 일시정지 아이콘 오버레이 */}
+      {showPauseIcon && (
+        <div 
+          className="pause-icon-overlay"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '80px',
+            height: '80px',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 100,
+            animation: 'fadeInOut 1s ease-out',
+          }}
+        >
+          <svg 
+            width="40" 
+            height="40" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="6" y="4" width="4" height="16" rx="1" fill="white"/>
+            <rect x="14" y="4" width="4" height="16" rx="1" fill="white"/>
+          </svg>
+        </div>
+      )}
+      
+      <style jsx>{`
+        @keyframes fadeInOut {
+          0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+          }
+          20% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+          }
+          80% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+          }
+          100% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+          }
+        }
+      `}</style>
     </div>
   )
 })

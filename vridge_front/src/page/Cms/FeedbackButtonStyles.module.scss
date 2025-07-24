@@ -13,19 +13,20 @@ $brand-gray-hover: #5a6268;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  padding: 10px 16px !important;
+  padding: 12px 20px !important;
   border: none !important;
   border-radius: 10px !important;
   font-size: 14px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  min-height: 42px !important;
-  min-width: 90px !important;
+  min-height: 44px !important;
+  width: 110px !important;
   line-height: 1.2 !important;
   white-space: nowrap !important;
   position: relative !important;
   overflow: hidden !important;
+  flex-shrink: 0 !important;
   
   // 리플 효과
   &::before {

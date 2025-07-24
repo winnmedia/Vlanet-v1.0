@@ -1,8 +1,8 @@
 // Feedback More Component Styles
 
 // Color Variables
-$primary-color: #0058da;
-$primary-hover: #0047b8;
+$primary-color: #1631F8;
+$primary-hover: #0F23C9;
 $background-light: #f8f8f8;
 $border-color: #efefef;
 $text-dark: #000;
@@ -64,14 +64,15 @@ $warning-color: #ffc107;
             gap: 12px;
             
             .feedback-time-marker {
-              background: $primary-color;
+              background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
               color: $white;
               padding: 6px 14px;
               border-radius: 20px;
               font-size: 13px;
-              font-weight: 500;
+              font-weight: 600;
               flex-shrink: 0;
               transition: all 0.2s ease;
+              box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
             }
             
             .feedback-preview {

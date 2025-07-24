@@ -24,6 +24,14 @@
     position: relative;
     display: block;
     
+    // vjs-big-play-centered 클래스 강제 오버라이드
+    &.vjs-big-play-centered .vjs-big-play-button {
+      left: 50% !important;
+      top: 50% !important;
+      margin-left: -1.5em !important;
+      margin-top: -0.75em !important;
+    }
+    
     // 비디오 요소가 컨테이너를 채우도록
     .vjs-tech {
       object-fit: contain;
@@ -40,33 +48,43 @@
       line-height: 1.5em;
       height: 1.5em !important;
       width: 3em !important;
-      border-radius: 0.3em;
-      background-color: rgba(43, 51, 63, 0.7);
-      border: 0.06666em solid #fff;
+      border-radius: 50%;
+      background-color: rgba(22, 49, 248, 0.9);
+      border: 3px solid #fff;
       position: absolute !important;
       left: 50% !important;
       top: 50% !important;
       transform: translate(-50%, -50%) !important;
       margin: 0 !important;
+      margin-left: 0 !important;
+      margin-top: 0 !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
       z-index: 10;
       cursor: pointer !important;
       transition: all 0.3s ease !important;
+      box-shadow: 0 4px 20px rgba(22, 49, 248, 0.4);
       
       &:hover {
-        background-color: rgba(43, 51, 63, 0.9);
-        transform: translate(-50%, -50%) scale(1.1) !important;
+        background-color: rgba(15, 35, 201, 0.95);
+        transform: translate(-50%, -50%) scale(1.15) !important;
+        box-shadow: 0 6px 30px rgba(22, 49, 248, 0.6);
       }
       
       // 재생 아이콘 자체도 중앙 정렬
       &:before {
-        position: relative !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-40%, -50%) !important;
         margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        font-size: 1.8em !important;
+      }
+      
+      // 모든 하위 요소의 마진 제거
+      * {
+        margin: 0 !important;
       }
     }
 

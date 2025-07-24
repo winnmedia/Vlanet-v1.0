@@ -4,7 +4,7 @@ import styles from './FeedbackInput.module.scss'
 
 import { CreateFeedback } from 'api/feedback'
 
-export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onAIFeedbackClick, onFeedbackSuccess }) {
+export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onFeedbackSuccess }) {
   const initial = {
     secret: 'anonymous', // 'anonymous', 'nickname', 'realname'
     title: '',

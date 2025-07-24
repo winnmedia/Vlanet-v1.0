@@ -582,7 +582,6 @@ export default function Feedback() {
         refetch={refetch} 
         initialTime={feedbackTime}
         onTimeChange={setFeedbackTime}
-        onAIFeedbackClick={handleVideoAnalysis}
         onFeedbackSuccess={() => changeItem(2)} // 피드백 관리 탭으로 전환
       />,
     },
@@ -1469,19 +1468,6 @@ export default function Feedback() {
                       {currentItem ? currentItem.tab : '피드백'}
                     </div>
                     <div>
-                      {/* AI 선생님 버튼 - 피드백 등록 탭에서만 표시 */}
-                      {currentItem && currentItem.tab === '피드백 등록' && current_project.files && (
-                        <button
-                          onClick={handleVideoAnalysis}
-                          className="submit"
-                          disabled={analysisLoading}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          {analysisLoading ? 'AI 분석 중...' : 'AI 피드백'}
-                        </button>
-                      )}
                       {/* 피드백 전체보기 버튼 - 피드백 관리 탭에서만 표시 */}
                       {currentItem && currentItem.tab === '피드백 관리' && (
                         <button
@@ -1586,17 +1572,19 @@ export default function Feedback() {
                         background: showProjectInfo ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : 'linear-gradient(135deg, #6c757d 0%, #495057 100%)',
                         color: 'white',
                         border: 'none',
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        fontSize: '12px',
+                        padding: '5px 10px',
+                        borderRadius: '16px',
+                        fontSize: '11px',
                         fontWeight: '600',
-                        display: 'flex',
+                        display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '4px',
+                        gap: '3px',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
-                        boxShadow: showProjectInfo ? '0 4px 12px rgba(22, 49, 248, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
-                        minWidth: 'auto'
+                        boxShadow: showProjectInfo ? '0 3px 8px rgba(22, 49, 248, 0.2)' : '0 2px 6px rgba(0, 0, 0, 0.08)',
+                        width: 'auto',
+                        minWidth: 'unset',
+                        flexShrink: 0
                       }}
                       onMouseEnter={(e) => {
                         if (!showProjectInfo) {
@@ -1610,7 +1598,7 @@ export default function Feedback() {
                       }}
                       title="프로젝트 정보"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
                         <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>

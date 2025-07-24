@@ -1,8 +1,5 @@
 // CMS Common Styles - 모든 CMS 페이지에 적용되는 공통 스타일
 
-// 기존 Cms.scss 파일을 임포트
-@import './Cms.scss';
-
 // 레이아웃 관련 공통 스타일들을 임포트
 @import './LayoutFix.scss';
 @import './SidebarSpacingFix.scss';

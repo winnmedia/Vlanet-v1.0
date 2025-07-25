@@ -127,19 +127,23 @@ axiosInstance.interceptors.response.use(
     });
     
     if (error.response?.status === 401 && isClient) {
-      if (!window.location.pathname.includes('/Login') && !window.location.pathname.includes('/login')) {
+      // 로그인 페이지가 아니고, 이미 리다이렉트 중이 아닌 경우에만 처리
+      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/Login') && !window._redirecting) {
+        // 중복 리다이렉트 방지 플래그
+        window._redirecting = true;
+        
         try {
           localStorage.removeItem('VGID');
+          localStorage.removeItem('token');
+          localStorage.removeItem('userInfo');
           document.cookie = 'vridge_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         } catch (e) {
           console.error('Failed to clear auth data:', e);
         }
         
-        // 약간의 지연 후 리다이렉트
-        setTimeout(() => {
-          window.alert('인증이 만료되었습니다. 다시 로그인해주세요.');
-          window.location.href = '/Login';
-        }, 100);
+        // 경고 메시지 한 번만 표시하고 즉시 리다이렉트
+        window.alert('로그인이 필요합니다.');
+        window.location.href = '/login';
       }
     }
     return Promise.reject(error);

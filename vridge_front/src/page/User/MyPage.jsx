@@ -234,7 +234,7 @@ export default function MyPage() {
           // 백엔드 URL이 상대 경로인 경우 처리
           let fullImageUrl
           if (imageUrl.startsWith('/')) {
-            fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'}${imageUrl}`
+            fullImageUrl = `${process.env.NEXT_PUBLIC_API_URL || 'https://videoplanet.up.railway.app'}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
           }
@@ -388,7 +388,7 @@ export default function MyPage() {
           if (imageUrl.startsWith('http')) {
             fullImageUrl = imageUrl
           } else if (imageUrl.startsWith('/')) {
-            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://videoplanet.up.railway.app'
             fullImageUrl = `${baseUrl}${imageUrl}`
           } else {
             fullImageUrl = imageUrl
@@ -645,7 +645,7 @@ export default function MyPage() {
                               const savedImage = typeof window !== 'undefined' ? localStorage.getItem('profileImage') : null
                               const dbImage = myPageData?.profile?.profile_image ? 
                                 (myPageData.profile.profile_image.startsWith('/') ? 
-                                  `${process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net'}${myPageData.profile.profile_image}` : 
+                                  `${process.env.NEXT_PUBLIC_API_URL || 'https://videoplanet.up.railway.app'}${myPageData.profile.profile_image}` : 
                                   myPageData.profile.profile_image
                                 ) : null
                               setImagePreview(savedImage || dbImage || null)

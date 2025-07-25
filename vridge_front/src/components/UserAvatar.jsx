@@ -1,4 +1,5 @@
 import React from 'react'
+import './UserAvatar.scss'
 
 /**
  * 사용자 아바타 컴포넌트

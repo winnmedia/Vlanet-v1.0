@@ -168,10 +168,16 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
         <div
           className={styles.logout}
           onClick={() => {
-            if (checkSession() && typeof window !== 'undefined') {
+            if (typeof window !== 'undefined') {
+              // 로그아웃 처리
               localStorage.removeItem('VGID')
+              localStorage.removeItem('token')
+              localStorage.removeItem('userInfo')
+              document.cookie = 'vridge_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+              
+              // 로그인 페이지로 이동 (소문자로 통일)
+              window.location.href = '/login'
             }
-            navigate('/Login', { replace: true })
           }}
         >
           로그아웃

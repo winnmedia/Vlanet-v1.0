@@ -1,6 +1,10 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
 import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
+import 'videojs-hotkeys'
+import 'videojs-markers'
+import 'videojs-markers/dist/videojs.markers.css'
+import '../css/VideoPlayerCustom.scss'
 
 const VideoJsPlayer = forwardRef(({ 
   videoUrl, 
@@ -77,6 +81,22 @@ const VideoJsPlayer = forwardRef(({
     },
     getPlayer: () => {
       return playerRef.current
+    },
+    addMarker: (time, text, color = '#FFC107') => {
+      if (playerRef.current && playerRef.current.markers) {
+        playerRef.current.markers.add([{
+          time: time,
+          text: text,
+          overlayText: text,
+          class: 'custom-marker',
+          color: color
+        }])
+      }
+    },
+    removeAllMarkers: () => {
+      if (playerRef.current && playerRef.current.markers) {
+        playerRef.current.markers.removeAll()
+      }
     }
   }))
 
@@ -278,15 +298,136 @@ const VideoJsPlayer = forwardRef(({
           }
         })
 
-        // 피드백 마커 추가
-        if (feedbacks && feedbacks.length > 0) {
-          feedbacks.forEach(feedback => {
-            if (feedback.time_position) {
-              // 마커 추가 (플러그인 필요)
-              // 임시로 콘솔에 로그
-              console.log('Feedback at', feedback.time_position, feedback)
+        // 플러그인 초기화
+        // Hotkeys 플러그인
+        if (this.hotkeys) {
+          this.hotkeys({
+            volumeStep: 0.1,
+            seekStep: 10,
+            enableModifiersForNumbers: false,
+            alwaysCaptureHotkeys: true,
+            captureDocumentHotkeys: true,
+            documentHotkeyHandler: true,
+            customKeys: {
+              // 커스텀 단축키 정의
+              frameBackward: {
+                key: function(event) {
+                  return event.which === 188; // , 키 (프레임 뒤로)
+                },
+                handler: function(player) {
+                  player.currentTime(player.currentTime() - 1/30); // 30fps 기준 1프레임
+                }
+              },
+              frameForward: {
+                key: function(event) {
+                  return event.which === 190; // . 키 (프레임 앞으로)
+                },
+                handler: function(player) {
+                  player.currentTime(player.currentTime() + 1/30); // 30fps 기준 1프레임
+                }
+              },
+              speedDown: {
+                key: function(event) {
+                  return event.which === 188 && event.shiftKey; // Shift + ,
+                },
+                handler: function(player) {
+                  const currentRate = player.playbackRate();
+                  const newRate = Math.max(0.25, currentRate - 0.25);
+                  player.playbackRate(newRate);
+                }
+              },
+              speedUp: {
+                key: function(event) {
+                  return event.which === 190 && event.shiftKey; // Shift + .
+                },
+                handler: function(player) {
+                  const currentRate = player.playbackRate();
+                  const newRate = Math.min(4, currentRate + 0.25);
+                  player.playbackRate(newRate);
+                }
+              },
+              markPosition: {
+                key: function(event) {
+                  return event.which === 77; // M 키 (마커 추가)
+                },
+                handler: function(player) {
+                  const currentTime = player.currentTime();
+                  const minutes = Math.floor(currentTime / 60);
+                  const seconds = Math.floor(currentTime % 60);
+                  const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                  
+                  if (player.markers) {
+                    player.markers.add([{
+                      time: currentTime,
+                      text: `마커 ${timeStr}`,
+                      overlayText: `마커 ${timeStr}`,
+                      class: 'custom-marker',
+                      color: '#FFC107'
+                    }]);
+                  }
+                }
+              },
+              clearMarkers: {
+                key: function(event) {
+                  return event.which === 67 && event.shiftKey; // Shift + C
+                },
+                handler: function(player) {
+                  if (player.markers) {
+                    player.markers.removeAll();
+                  }
+                }
+              }
             }
-          })
+          });
+        }
+
+        // Markers 플러그인
+        if (this.markers) {
+          this.markers({
+            markerStyle: {
+              'width': '7px',
+              'border-radius': '30%',
+              'background-color': '#FFC107'
+            },
+            markerTip: {
+              display: true,
+              text: function(marker) {
+                return marker.text;
+              },
+              time: function(marker) {
+                return marker.time;
+              }
+            },
+            breakOverlay: {
+              display: false
+            },
+            markers: []
+          });
+        }
+
+        // 피드백 마커 추가
+        if (feedbacks && feedbacks.length > 0 && this.markers) {
+          const markerList = feedbacks
+            .filter(feedback => feedback.section && feedback.section !== '00:00')
+            .map(feedback => {
+              // section을 초 단위로 변환
+              const timeParts = feedback.section.split(':');
+              const minutes = parseInt(timeParts[0], 10) || 0;
+              const seconds = parseInt(timeParts[1], 10) || 0;
+              const timeInSeconds = minutes * 60 + seconds;
+              
+              return {
+                time: timeInSeconds,
+                text: feedback.title || '피드백',
+                overlayText: feedback.text,
+                class: 'feedback-marker',
+                color: feedback.is_important ? '#dc3545' : '#1631F8'
+              };
+            });
+          
+          if (markerList.length > 0) {
+            this.markers.add(markerList);
+          }
         }
 
         // 클릭 이벤트로 재생/일시정지 토글

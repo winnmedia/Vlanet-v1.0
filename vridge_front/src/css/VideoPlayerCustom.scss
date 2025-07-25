@@ -1,0 +1,134 @@
+// Video.js 마커 커스텀 스타일
+.video-js {
+  // 마커 기본 스타일
+  .vjs-marker {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    opacity: 1;
+    height: 100%;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    
+    &:hover {
+      opacity: 1 !important;
+    }
+    
+    // 피드백 마커 스타일
+    &.feedback-marker {
+      background-color: #1631F8 !important;
+      
+      &.important {
+        background-color: #dc3545 !important;
+      }
+    }
+    
+    // 커스텀 마커 스타일
+    &.custom-marker {
+      background-color: #FFC107 !important;
+    }
+  }
+  
+  // 마커 툴팁
+  .vjs-tip {
+    visibility: hidden;
+    position: absolute;
+    z-index: 100000;
+    bottom: 30px;
+    margin-left: -23px;
+    min-width: 100px;
+    max-width: 200px;
+    
+    .vjs-tip-arrow {
+      visibility: hidden;
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid rgba(0, 0, 0, 0.9);
+      bottom: -5px;
+      left: 50%;
+      margin-left: -5px;
+    }
+    
+    .vjs-tip-inner {
+      visibility: visible;
+      border-radius: 3px;
+      padding: 5px 8px 4px 8px;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: white;
+      font-size: 12px;
+      word-wrap: break-word;
+    }
+  }
+  
+  // 마커에 hover 시 툴팁 표시
+  .vjs-marker:hover .vjs-tip {
+    visibility: visible;
+    
+    .vjs-tip-arrow {
+      visibility: visible;
+    }
+  }
+  
+  // 프로그레스바에서 마커 표시
+  .vjs-progress-holder {
+    .vjs-marker {
+      height: 100%;
+      top: 0;
+    }
+  }
+}
+
+// 단축키 가이드 모달 스타일 (향후 사용)
+.shortcut-guide-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .shortcut-section {
+    margin-bottom: 20px;
+    
+    h4 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #666;
+    }
+    
+    .shortcut-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+      
+      .key {
+        font-family: monospace;
+        background: #f0f0f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+      
+      .description {
+        color: #666;
+      }
+    }
+  }
+}

@@ -198,4 +198,16 @@
   - 0026 마이그레이션 파일 생성 및 적용
   - Railway 배포를 통해 프로덕션 환경에 마이그레이션 자동 적용
 
+### 로그아웃 및 프로필 이미지 문제 수정
+- **로그아웃 무한 경고 문제**:
+  - 원인: axios 인터셉터에서 401 에러 시 중복 alert 발생
+  - 해결: window._redirecting 플래그로 중복 리다이렉트 방지
+  - SideBar 컴포넌트에서 window.location.href 사용하여 직접 이동
+  
+- **프로필 이미지 표시 문제**:
+  - 원인: 잘못된 API URL 사용 (api.vlanet.net)
+  - 해결: 모든 프로필 이미지 URL을 videoplanet.up.railway.app로 수정
+  - UserAvatar 컴포넌트에 SCSS import 추가
+  - util.js, MyPage.jsx의 프로필 이미지 URL 처리 수정
+
 [이전 기록들...]

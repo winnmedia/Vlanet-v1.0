@@ -69,7 +69,14 @@ function MyApp({ Component, pageProps }) {
     // 라우트 변경 시 로딩 상태 관리
     const handleStart = (url) => {
       console.log('Loading start:', url)
-      setLoading(true)
+      // 로그인에서 홈으로 이동하는 경우 로딩 표시하지 않음
+      const currentPath = router.pathname.toLowerCase()
+      const targetPath = url.toLowerCase()
+      if (currentPath === '/login' && (targetPath === '/cmshome' || targetPath === '/')) {
+        setLoading(false)
+      } else {
+        setLoading(true)
+      }
     }
     const handleComplete = (url) => {
       console.log('Loading complete:', url)

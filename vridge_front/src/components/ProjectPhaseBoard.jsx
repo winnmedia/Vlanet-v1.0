@@ -131,12 +131,56 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
   return (
     <>
       {showTitle && (
-        <div className="title" style={{ marginTop: '40px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          프로젝트 진행 현황
+        <div className="title" style={{ 
+          marginTop: '40px', 
+          marginBottom: '20px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between'
+        }}>
+          <span style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#1a1a1a',
+            letterSpacing: '-0.5px'
+          }}>
+            프로젝트 진행 현황
+          </span>
           <button 
-            className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
             onClick={() => setIsCollapsed(!isCollapsed)}
-          />
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              border: 'none',
+              background: isCollapsed ? '#f5f5f5' : '#1631F8',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              boxShadow: isCollapsed ? 'none' : '0 2px 8px rgba(22, 49, 248, 0.2)'
+            }}
+          >
+            <svg 
+              width="16" 
+              height="16" 
+              viewBox="0 0 16 16" 
+              fill="none"
+              style={{
+                transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s ease'
+              }}
+            >
+              <path 
+                d="M4 6L8 10L12 6" 
+                stroke={isCollapsed ? '#666' : '#fff'} 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         </div>
       )}
       <div className="project-phase-board" style={{ marginTop: showTitle ? 0 : '32px' }}>

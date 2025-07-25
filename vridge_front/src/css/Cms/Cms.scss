@@ -696,12 +696,31 @@
           // 태블릿 (768-1199px)
           @media (max-width: 1199px) {
             gap: 20px;
+            
+            .video_box {
+              flex: 1.5;
+            }
+            
+            .sidebox {
+              width: 400px !important;
+            }
           }
           
           // 모바일 (767px 이하)
           @media (max-width: 767px) {
             flex-direction: column;
             gap: 20px;
+            
+            .video_box {
+              width: 100%;
+            }
+            
+            .sidebox {
+              width: 100% !important;
+              position: relative;
+              right: auto;
+              bottom: auto;
+            }
           }
           
           .video_box {

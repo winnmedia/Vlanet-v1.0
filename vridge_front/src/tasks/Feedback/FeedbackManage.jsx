@@ -8,6 +8,9 @@ import { UpdateFeedback } from 'api/feedback'
 export default function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   const [reactions, setReactions] = useState({})
   const [reactionCounts, setReactionCounts] = useState({})
+  const [showReplyInput, setShowReplyInput] = useState({})
+  const [replyTexts, setReplyTexts] = useState({})
+  const [importantFeedbacks, setImportantFeedbacks] = useState({})
   
   // 기존 반응 상태 초기화 및 카운트 계산
   useEffect(() => {
@@ -348,7 +351,139 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                       </span>
                     )}
                   </button>
+                  
+                  {/* 답글 버튼 */}
+                  <button
+                    onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      border: '1px solid #e9ecef',
+                      backgroundColor: showReplyInput[feedback.id] ? '#f5f5f5' : 'white',
+                      color: '#666',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <span>💬</span> 답글
+                    {feedback.replies?.length > 0 && (
+                      <span style={{ marginLeft: '4px', fontWeight: '600' }}>
+                        ({feedback.replies.length})
+                      </span>
+                    )}
+                  </button>
+                  
+                  {/* 중요표시 버튼 */}
+                  <button
+                    onClick={() => {
+                      setImportantFeedbacks(prev => ({
+                        ...prev,
+                        [feedback.id]: !prev[feedback.id]
+                      }))
+                      console.log('Important feedback toggled:', feedback.id)
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      border: '1px solid #e9ecef',
+                      backgroundColor: importantFeedbacks[feedback.id] ? '#fff3cd' : 'white',
+                      color: importantFeedbacks[feedback.id] ? '#856404' : '#666',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span> 중요
+                  </button>
                 </div>
+                
+                {/* 답글 입력 필드 */}
+                {showReplyInput[feedback.id] && (
+                  <div style={{
+                    marginTop: '12px',
+                    padding: '12px',
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '8px'
+                  }}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input
+                        type="text"
+                        placeholder="답글을 입력하세요..."
+                        value={replyTexts[feedback.id] || ''}
+                        onChange={(e) => setReplyTexts(prev => ({ ...prev, [feedback.id]: e.target.value }))}
+                        style={{
+                          flex: 1,
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          border: '1px solid #ddd',
+                          fontSize: '14px'
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && replyTexts[feedback.id]?.trim()) {
+                            console.log('Reply submitted:', feedback.id, replyTexts[feedback.id])
+                            // TODO: API 호출로 답글 저장
+                            setReplyTexts(prev => ({ ...prev, [feedback.id]: '' }))
+                            setShowReplyInput(prev => ({ ...prev, [feedback.id]: false }))
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          if (replyTexts[feedback.id]?.trim()) {
+                            console.log('Reply submitted:', feedback.id, replyTexts[feedback.id])
+                            // TODO: API 호출로 답글 저장
+                            setReplyTexts(prev => ({ ...prev, [feedback.id]: '' }))
+                            setShowReplyInput(prev => ({ ...prev, [feedback.id]: false }))
+                          }
+                        }}
+                        style={{
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          backgroundColor: '#1631F8',
+                          color: 'white',
+                          border: 'none',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        답글
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* 답글 표시 */}
+                {feedback.replies?.length > 0 && (
+                  <div style={{
+                    marginTop: '12px',
+                    paddingLeft: '24px'
+                  }}>
+                    {feedback.replies.map((reply, idx) => (
+                      <div key={idx} style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#f1f3f5',
+                        borderRadius: '6px',
+                        marginBottom: '4px',
+                        fontSize: '13px'
+                      }}>
+                        <div style={{ fontWeight: '500', marginBottom: '4px' }}>
+                          {reply.nickname || '익명'}
+                        </div>
+                        <div>{reply.text}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </li>
           ))

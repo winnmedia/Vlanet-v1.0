@@ -1403,23 +1403,18 @@ export default function Feedback() {
                       />
                       <label 
                         htmlFor="video-replace-button" 
-                        className={styles.feedbackButtonPrimary}
+                        className={styles.feedbackButtonIconOnly}
+                        title={current_project.files ? "영상 교체" : "영상 업로드"}
                       >
                         {current_project.files ? (
-                          <>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            <span>영상 교체</span>
-                          </>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
                         ) : (
-                          <>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
-                            <span>영상 업로드</span>
-                          </>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
                         )}
                       </label>
                     </div>
@@ -1428,15 +1423,14 @@ export default function Feedback() {
                     {current_project.files && (
                       <button
                         onClick={DeleteFile}
-                        className={styles.feedbackButtonDanger}
+                        className={styles.feedbackButtonIconOnly}
                         aria-label="영상 삭제"
                         title="영상 삭제"
                         tabIndex={0}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>삭제</span>
                       </button>
                     )}
                     
@@ -1444,15 +1438,57 @@ export default function Feedback() {
                     {current_project.files && (
                       <button
                         onClick={() => CopyFileUrl(current_project.files)}
-                        className={styles.feedbackButtonSecondary}
+                        className={styles.feedbackButtonIconOnly}
                         aria-label="영상 링크 공유"
                         title="공유"
                         tabIndex={0}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>공유</span>
+                      </button>
+                    )}
+                    
+                    {/* 스크린샷 버튼 - 영상이 있을 때만 표시 */}
+                    {current_project.files && (
+                      <button
+                        onClick={() => {
+                          if (videoPlayerRef.current) {
+                            // 비디오 일시정지
+                            videoPlayerRef.current.pause();
+                            
+                            // 스크린샷 캡처 기능 구현
+                            const video = videoPlayerRef.current.el().querySelector('video');
+                            if (video) {
+                              const canvas = document.createElement('canvas');
+                              canvas.width = video.videoWidth;
+                              canvas.height = video.videoHeight;
+                              const ctx = canvas.getContext('2d');
+                              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                              
+                              // 이미지 다운로드
+                              canvas.toBlob((blob) => {
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                const currentTime = videoPlayerRef.current.getCurrentTime();
+                                const timeStr = `${Math.floor(currentTime / 60)}m${Math.floor(currentTime % 60)}s`;
+                                a.href = url;
+                                a.download = `screenshot_${current_project.project_name}_${timeStr}.png`;
+                                a.click();
+                                URL.revokeObjectURL(url);
+                              });
+                            }
+                          }
+                        }}
+                        className={styles.feedbackButtonIconOnly}
+                        aria-label="스크린샷 캡처"
+                        title="스크린샷"
+                        tabIndex={0}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <circle cx="12" cy="13" r="4" stroke="currentColor" strokeWidth="2"/>
+                        </svg>
                       </button>
                     )}
                   </div>

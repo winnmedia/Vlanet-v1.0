@@ -1,44 +1,58 @@
-# Test files
-test-*.js
-*-test.js
-comprehensive-*.js
-detailed-*.js
-simple-*.js
-browser-test.js
-final-*.js
-analyze-*.js
+# Dependencies
+node_modules
+.pnp
+.pnp.js
 
-# Test outputs
-test-outputs/
-test-screenshots/
-test-results*.json
-test-report*.html
-*-test-report.md
+# Testing
+coverage
+.nyc_output
+test-*
+*-test*
+tests
 
-# Development logs
-*.log
-dev-server.log
-server.log
+# Next.js
+.next
+out
+build
 
-# Fix scripts
-fix-*.js
-remove-*.js
+# Production
+dist
 
-# Documentation
-DEVELOPMENT_LOG.md
-MIGRATION_COMPLETE.md
-comprehensive-test-report.md
-ui-ux-test-checklist.md
+# Misc
+.DS_Store
+*.pem
+.env*.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
 
 # Backup files
-*.backup
+*backup*
 *.bak
-*.bak2
+*.backup
 
-# IDE
-.vscode/
-.idea/
+# Log files
+*.log
 
-# OS
-.DS_Store
-Thumbs.db
+# Scripts
+scripts/
+fix-*.js
+remove-*.js
+analyze-*.js
+
+# Test reports
+*-report.*
+test-results*
+
+# Screenshots
+test-screenshots/

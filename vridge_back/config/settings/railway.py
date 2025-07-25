@@ -107,6 +107,11 @@ CORS_ALLOW_ALL_ORIGINS = False
 # OPTIONS 요청에 대한 특별 처리
 CORS_REPLACE_HTTPS_REFERER = True
 
+# 디버그 모드에서 모든 origin 허용 (테스트용)
+if os.environ.get('CORS_DEBUG', 'False').lower() == 'true':
+    CORS_ALLOW_ALL_ORIGINS = True
+    print("WARNING: CORS_ALLOW_ALL_ORIGINS is True - This should only be used for debugging!")
+
 # 중요 도메인 명시적 추가 확인
 if "https://www.vlanet.net" not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append("https://www.vlanet.net")
@@ -333,11 +338,7 @@ if IS_RAILWAY or DEBUG:
     # MIDDLEWARE 리스트에 로깅 미들웨어 추가
     MIDDLEWARE.insert(0, 'config.logging_middleware.DetailedLoggingMiddleware')
 
-# 강제 CORS 미들웨어 추가 (CORS 헤더가 제대로 설정되지 않는 경우를 위해)
-if IS_RAILWAY:
-    # corsheaders 미들웨어 바로 뒤에 추가
-    cors_index = MIDDLEWARE.index('corsheaders.middleware.CorsMiddleware')
-    MIDDLEWARE.insert(cors_index + 1, 'middleware.force_cors.ForceCorsMiddleware')
+# 강제 CORS 미들웨어는 제거 (Django CORS 미들웨어 우선 사용)
 
 # 프로덕션 보안 설정 적용
 if not DEBUG:

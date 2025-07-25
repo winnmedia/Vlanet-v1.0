@@ -41,7 +41,7 @@ def simple_health(request):
 
 # CORS 테스트 뷰
 def cors_test_view(request):
-    return JsonResponse({
+    response = JsonResponse({
         "status": "ok",
         "message": "CORS test successful",
         "method": request.method,
@@ -50,6 +50,16 @@ def cors_test_view(request):
             "Host": request.headers.get("Host")
         }
     })
+    
+    # OPTIONS 요청에 대한 명시적 CORS 헤더 추가
+    if request.method == "OPTIONS":
+        origin = request.headers.get("Origin", "*")
+        response["Access-Control-Allow-Origin"] = origin
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response["Access-Control-Allow-Credentials"] = "true"
+    
+    return response
 
 # 공개 프로젝트 목록 뷰 (임시)
 from django.views import View

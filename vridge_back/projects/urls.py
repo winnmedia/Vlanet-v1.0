@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import debug_views
 # 아래 모듈들은 아직 구현되지 않음
 # from . import views_improved
 # from . import views_fixed
@@ -58,4 +59,7 @@ urlpatterns = [
     path("frameworks/", views.DevelopmentFrameworkList.as_view()),  # 프레임워크 목록 조회/생성
     path("frameworks/<int:framework_id>/", views.DevelopmentFrameworkDetail.as_view()),  # 프레임워크 상세/수정/삭제
     path("frameworks/<int:framework_id>/set-default/", views.SetDefaultFramework.as_view()),  # 기본 프레임워크 설정
+    
+    # 디버그 URL
+    path("debug/project-list/", debug_views.debug_project_list),  # 프로젝트 목록 디버깅
 ]

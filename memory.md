@@ -172,4 +172,19 @@
   - .env.local의 API URL을 production 주소로 수정
   - localhost:8000 → https://videoplanet.up.railway.app
 
+### API 경로 수정 및 UI 개선 (v1.0.22)
+- **API 경로 수정**:
+  - 모든 auth.js API 경로에 /api 접두사 추가
+  - 로그인 404 오류 해결 (/users/login/ → /api/users/login/)
+  
+- **UI 개선**:
+  - 로그인에서 홈으로 이동 시 로딩 애니메이션 제거
+  - _app.js에서 조건부 로딩 표시 구현
+  
+- **프로젝트 진행 현황 UI 개선**:
+  - 토글 버튼을 원형 디자인(32x32px)으로 변경
+  - 활성 상태: 파란색 배경(#1631F8)에 흰색 화살표
+  - 비활성 상태: 회색 배경(#f5f5f5)에 회색 화살표
+  - 제목 스타일 개선 (font-size: 24px, font-weight: 700)
+
 [이전 기록들...]

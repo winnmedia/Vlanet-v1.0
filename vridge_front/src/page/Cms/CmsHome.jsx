@@ -59,6 +59,11 @@ export default function CmsHome() {
           console.error('[CmsHome] Failed to load projects:', error)
           // 에러가 발생해도 빈 배열로 설정하여 무한 로딩 방지
           dispatch(updateProjectStore({ project_list: [] }))
+          
+          // 데이터베이스 업데이트 중인 경우 사용자에게 알림
+          if (error.response?.data?.message?.includes('데이터베이스')) {
+            alert('서버 업데이트 중입니다. 잠시 후 다시 시도해주세요.')
+          }
         })
     }
   }, [navigate, dispatch, project_list])

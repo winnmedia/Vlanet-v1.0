@@ -1,3 +1,39 @@
+// 완료 버튼 스타일
+.complete-btn {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #f8f9fa;
+    border-color: #1631F8;
+    color: #1631F8;
+  }
+  
+  &.completed {
+    background: #1631F8;
+    color: white;
+    border-color: #1631F8;
+    box-shadow: 0 2px 8px rgba(22, 49, 248, 0.2);
+    
+    &:hover {
+      background: #0F23C9;
+      border-color: #0F23C9;
+      transform: translateY(-1px);
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .project-phase-board {
   margin-top: 32px;
   background: transparent;

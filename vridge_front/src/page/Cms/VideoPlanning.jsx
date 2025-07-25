@@ -37,12 +37,12 @@ const getStageLabel = (framework, index) => {
   const labels = {
     'hook_immersion': ['훅', '몰입', '반전', '떡밥'],
     'classic': ['기', '승', '전', '결'],
-    'pixar': ['1단계', '2단계', '3단계', '4단계', '5단계', '6단계'],
+    'pixar': ['', '', '', '', '', ''],  // 픽사는 단계 레이블 없이 단계명만 표시
     'save_the_cat': ['오프닝', '설정', '촉매', 'B스토리', '재미와 게임', '중간점', '악당 접근', '모두 잃음', '어둠의 영혼', '3막 전환', '피날레', '최종 이미지'],
     'star_moment': ['평범한 시작', '문제 발생', '위기 고조', '스타 모멘트', '해결과 여운']
   };
   
-  return labels[framework]?.[index] || `${index + 1}단계`;
+  return labels[framework]?.[index] || '';
 };
 
 // 스토리 프레임워크에 따른 단계명 반환
@@ -452,9 +452,16 @@ export default function VideoPlanning() {
         setLoadingMessage(`${frameworkName} 스토리 생성 완료!`)
         
         setTimeout(async () => {
+          // 스토리에 프레임워크별 stage 정보 추가
+          const storiesWithStages = (response.data.data.stories || []).map((story, index) => ({
+            ...story,
+            stage: getStageLabel(planningOptions.storyFramework, index),
+            stage_name: getStageName(planningOptions.storyFramework, index)
+          }))
+          
           setPlanningData(prev => ({
             ...prev,
-            stories: response.data.data.stories || []
+            stories: storiesWithStages
           }))
           setCurrentStep(2)
           setLoadingProgress(100)
@@ -2114,7 +2121,9 @@ export default function VideoPlanning() {
                 >
                   <div className="story-card-header">
                     <div className="story-stage-badge">
-                      <span className="stage-label">{getStageLabel(planningOptions.storyFramework, index)}</span>
+                      {getStageLabel(planningOptions.storyFramework, index) && (
+                        <span className="stage-label">{getStageLabel(planningOptions.storyFramework, index)}</span>
+                      )}
                       <span className="stage-name">{getStageName(planningOptions.storyFramework, index)}</span>
                     </div>
                     <div className="story-header-buttons">
@@ -2864,7 +2873,7 @@ export default function VideoPlanning() {
                         <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
                       )}
                       <button 
-                        className="toggle-section-btn" 
+                        className={`collapse-btn ${expandedSections.planning ? '' : 'collapsed'}`}
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
@@ -2873,36 +2882,7 @@ export default function VideoPlanning() {
                             planning: !prev.planning
                           }))
                         }}
-                        style={{
-                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {expandedSections.planning ? '접기' : '펼치기'}
-                        <svg 
-                          width="12" 
-                          height="12" 
-                          viewBox="0 0 12 12" 
-                          fill="none" 
-                          xmlns="http://www.w3.org/2000/svg"
-                          style={{
-                            transform: expandedSections.planning ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 0.3s ease'
-                          }}
-                        >
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
+                      />
                     </div>
                   </div>
                 )}
@@ -2913,7 +2893,7 @@ export default function VideoPlanning() {
                     <div className="preview-header">
                       <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
                       <button 
-                        className="toggle-section-btn" 
+                        className={`collapse-btn ${expandedSections.stories ? '' : 'collapsed'}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           setExpandedSections(prev => ({
@@ -2921,35 +2901,7 @@ export default function VideoPlanning() {
                             stories: !prev.stories
                           }));
                         }}
-                        style={{
-                          background: 'white',
-                          border: '1px solid #e0e0e0',
-                          borderRadius: '6px',
-                          padding: '6px 12px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {expandedSections.stories ? '접기' : '펼치기'}
-                        <svg 
-                          width="12" 
-                          height="12" 
-                          viewBox="0 0 12 12" 
-                          fill="none" 
-                          xmlns="http://www.w3.org/2000/svg"
-                          style={{
-                            transform: expandedSections.stories ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 0.3s ease'
-                          }}
-                        >
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
+                      />
                     </div>
                     <div className="preview-content">
                       {expandedSections.stories ? (
@@ -3037,7 +2989,7 @@ export default function VideoPlanning() {
                         </div>
                       )}
                       <button 
-                        className="toggle-section-btn" 
+                        className={`collapse-btn ${expandedSections.scenes ? '' : 'collapsed'}`}
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
@@ -3046,36 +2998,7 @@ export default function VideoPlanning() {
                             scenes: !prev.scenes
                           }))
                         }}
-                        style={{
-                          background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {expandedSections.scenes ? '접기' : '펼치기'}
-                        <svg 
-                          width="12" 
-                          height="12" 
-                          viewBox="0 0 12 12" 
-                          fill="none" 
-                          xmlns="http://www.w3.org/2000/svg"
-                          style={{
-                            transform: expandedSections.scenes ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 0.3s ease'
-                          }}
-                        >
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
+                      />
                     </div>
                   </div>
                 )}

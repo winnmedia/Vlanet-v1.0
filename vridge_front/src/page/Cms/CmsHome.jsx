@@ -46,14 +46,11 @@ export default function CmsHome() {
       return
     }
     
-    console.log('[CmsHome] Component mounted')
     
     // 프로젝트 데이터 로드
     if (project_list === null) {
-      console.log('[CmsHome] Loading project data...')
       refetchProject(dispatch, navigate)
         .then(() => {
-          console.log('[CmsHome] Project data loaded successfully')
         })
         .catch(error => {
           console.error('[CmsHome] Failed to load projects:', error)
@@ -73,7 +70,6 @@ export default function CmsHome() {
     try {
       setInvitationLoading(true)
       const response = await GetMyInvitations()
-      console.log('GetMyInvitations response:', response)
       if (response && response.data) {
         setInvitations(response.data)
       } else {
@@ -350,12 +346,12 @@ export default function CmsHome() {
             {/* 프로젝트 단계별 진행 현황 - Calendar 페이지와 동일한 디자인 */}
             <ProjectPhaseBoard 
                   projects={[...projectListData]} 
-                  onPhaseUpdate={(projectId, phase, startDate, endDate, completed) => {
+                  onPhaseUpdate={(projectId, phaseKey, updatedPhase) => {
                     const data = {
-                      type: phase,
-                      start_date: startDate,
-                      end_date: endDate,
-                      completed: completed !== undefined ? completed : false
+                      type: phaseKey,
+                      start_date: updatedPhase.start_date,
+                      end_date: updatedPhase.end_date,
+                      completed: updatedPhase.completed || false
                     }
                     UpdateDate(data, projectId)
                       .then(() => {
@@ -363,6 +359,7 @@ export default function CmsHome() {
                       })
                       .catch(err => {
                         console.error('Failed to update phase:', err)
+                        alert('단계 업데이트에 실패했습니다.')
                       })
                   }}
                   projectCounts={{

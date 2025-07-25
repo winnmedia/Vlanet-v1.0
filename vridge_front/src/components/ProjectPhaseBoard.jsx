@@ -102,10 +102,9 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
     return grouped
   }, [projects])
   
-  // 완료된 프로젝트 개수 계산
-  const completedCount = useMemo(() => {
-    return projects.filter(project => getProjectProgress(project) === 100).length
-  }, [projects])
+  if (!projects || projects.length === 0) {
+    return null
+  }
   
   const toggleProject = (projectId) => {
     setExpandedProjects(prev => ({
@@ -147,43 +146,13 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
             프로젝트 진행 현황
           </span>
           <button 
+            className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
             onClick={() => setIsCollapsed(!isCollapsed)}
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              border: 'none',
-              background: isCollapsed ? '#f5f5f5' : '#1631F8',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s ease',
-              boxShadow: isCollapsed ? 'none' : '0 2px 8px rgba(22, 49, 248, 0.2)'
-            }}
-          >
-            <svg 
-              width="20" 
-              height="20" 
-              viewBox="0 0 20 20" 
-              fill="none"
-              style={{
-                transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.3s ease'
-              }}
-            >
-              <path 
-                d="M5 7.5L10 12.5L15 7.5" 
-                stroke={isCollapsed ? '#666' : '#fff'} 
-                strokeWidth="2.5" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          />
         </div>
       )}
-      <div className="project-phase-board" style={{ marginTop: showTitle ? 0 : '32px' }}>
+      
+      <div className="project-phase-board">
         {!showTitle && (
           <div className="board-header">
             <button 
@@ -193,111 +162,87 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
             />
           </div>
         )}
-      
-      {!isCollapsed && projectCounts && (
-        <div className="project-counts-section">
-          <ul className="schedule">
-            <li>
-              전체 <br />
-              프로젝트 <span>{projectCounts.total}</span>
-            </li>
-            <li>
-              이번 달 <br />
-              프로젝트 <span>{projectCounts.thisMonth}</span>
-            </li>
-            <li>
-              다음 달 <br />
-              프로젝트 <span>{projectCounts.nextMonth}</span>
-            </li>
-          </ul>
-        </div>
-      )}
-      
-      {!isCollapsed && (
-        <div className="project-sections">
-          {/* 진행중인 프로젝트 */}
-          {projectsByStatus.active.length > 0 && (
-          <div className="project-section">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h4 className="section-title" style={{ margin: 0 }}>
-                진행중 ({projectsByStatus.active.length})
-              </h4>
-              <div className="status-legend" style={{ display: 'flex', gap: '16px' }}>
-                {Object.entries(statusNames).map(([key, name]) => (
-                  <div key={key} className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span 
-                      className="status-dot" 
-                      style={{ 
-                        backgroundColor: statusColors[key],
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        display: 'inline-block'
-                      }}
-                    />
-                    <span style={{ fontSize: '13px', color: '#495057' }}>{name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {projectsByStatus.active.map(project => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                phases={phases}
-                expanded={expandedProjects[project.id]}
-                onToggle={() => toggleProject(project.id)}
-                getPhaseStatus={getPhaseStatus}
-                getProjectProgress={getProjectProgress}
-                statusColors={statusColors}
-                onPhaseUpdate={onPhaseUpdate}
-              />
-            ))}
-          </div>
-        )}
         
-        {/* 지연된 프로젝트 */}
-        {projectsByStatus.delayed.length > 0 && (
-          <div className="project-section delayed-section">
-            <h4 className="section-title">
-              지연됨 ({projectsByStatus.delayed.length})
-            </h4>
-            {projectsByStatus.delayed.map(project => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                phases={phases}
-                expanded={expandedProjects[project.id]}
-                onToggle={() => toggleProject(project.id)}
-                getPhaseStatus={getPhaseStatus}
-                getProjectProgress={getProjectProgress}
-                statusColors={statusColors}
-                onPhaseUpdate={onPhaseUpdate}
-              />
-            ))}
+        {!isCollapsed && (
+          <div className="board-content">
+            {/* 지연된 프로젝트 */}
+            {projectsByStatus.delayed.length > 0 && (
+              <div className="status-section delayed-section">
+                <div className="section-header">
+                  <h4 className="section-title">
+                    지연 프로젝트
+                    <span className="count delayed">{projectsByStatus.delayed.length}</span>
+                  </h4>
+                </div>
+                <div className="projects-grid">
+                  {projectsByStatus.delayed.map(project => (
+                    <ProjectPhaseCard
+                      key={project.id}
+                      project={project}
+                      phases={phases}
+                      getPhaseStatus={getPhaseStatus}
+                      getProjectProgress={getProjectProgress}
+                      expandedProjects={expandedProjects}
+                      toggleProject={toggleProject}
+                      statusColors={statusColors}
+                      statusNames={statusNames}
+                      onPhaseUpdate={onPhaseUpdate}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* 진행중인 프로젝트 */}
+            {projectsByStatus.active.length > 0 && (
+              <div className="status-section active-section">
+                <div className="section-header">
+                  <h4 className="section-title">
+                    진행중 프로젝트
+                    <span className="count active">{projectsByStatus.active.length}</span>
+                  </h4>
+                </div>
+                <div className="projects-grid">
+                  {projectsByStatus.active.map(project => (
+                    <ProjectPhaseCard
+                      key={project.id}
+                      project={project}
+                      phases={phases}
+                      getPhaseStatus={getPhaseStatus}
+                      getProjectProgress={getProjectProgress}
+                      expandedProjects={expandedProjects}
+                      toggleProject={toggleProject}
+                      statusColors={statusColors}
+                      statusNames={statusNames}
+                      onPhaseUpdate={onPhaseUpdate}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
-        </div>
-      )}
       </div>
     </>
   )
 }
 
-// 프로젝트 카드 컴포넌트
-function ProjectCard({ 
+// 프로젝트 단계 카드 컴포넌트
+function ProjectPhaseCard({ 
   project, 
   phases, 
-  expanded, 
-  onToggle, 
   getPhaseStatus, 
   getProjectProgress,
+  expandedProjects,
+  toggleProject,
   statusColors,
-  onPhaseUpdate 
+  statusNames,
+  onPhaseUpdate
 }) {
   const progress = getProjectProgress(project)
+  const isExpanded = expandedProjects[project.id]
   
-  // 단계 완료 처리 함수
+  // 단계 완료 처리
   const handlePhaseComplete = (phase) => {
     if (onPhaseUpdate) {
       const phaseData = project[phase.key]
@@ -307,103 +252,86 @@ function ProjectCard({
           ...phaseData,
           completed: !phaseData.completed
         }
-        onPhaseUpdate(project.id, phase.key, updatedPhase.start_date, updatedPhase.end_date, updatedPhase.completed)
+        onPhaseUpdate(project.id, phase.key, updatedPhase)
       }
     }
   }
   
   return (
-    <div className="project-card">
-      <div className="project-header">
+    <div className="project-card" data-expanded={isExpanded}>
+      {/* 프로젝트 헤더 */}
+      <div className="project-header" onClick={() => toggleProject(project.id)}>
         <div className="project-info">
-          <div 
-            className="project-color-bar" 
-            style={{ backgroundColor: project.color }}
-          />
-          <h5 className="project-name">{project.name}</h5>
-          <span className="project-consumer">({project.consumer})</span>
-        </div>
-        <div className="project-meta">
-          <div className="progress-info">
-            <div className="progress-bar">
-              <div 
-                className="progress-fill"
-                style={{ 
-                  width: `${progress}%`,
-                  backgroundColor: progress === 100 ? statusColors.completed : statusColors.in_progress
-                }}
-              />
+          <h3 className="project-name">{project.name}</h3>
+          <div className="project-meta">
+            <span className="project-dates">
+              {moment(project.start_date).format('YYYY.MM.DD')} - {moment(project.end_date).format('YYYY.MM.DD')}
+            </span>
+            <div className={`progress-badge ${progress === 100 ? 'completed' : progress >= 70 ? 'high' : progress >= 30 ? 'medium' : 'low'}`}>
+              {progress}%
             </div>
-            <span className="progress-text">{progress}%</span>
           </div>
         </div>
+        <button className="expand-toggle">
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor">
+            <path d={isExpanded ? 'M6 0l6 8H0z' : 'M6 8l6-8H0z'} />
+          </svg>
+        </button>
       </div>
       
-      <div className="project-phases">
+      {/* 단계 그리드 - 펼쳐진 경우에만 표시 */}
+      {isExpanded && (
+        <div className="phases-grid">
           {phases.map(phase => {
             const phaseData = project[phase.key]
             const status = getPhaseStatus(phaseData, project.end_date)
+            const hasData = phaseData && phaseData.start_date
             
             return (
-              <div key={phase.key} className={`phase-item ${status} ${phaseData && phaseData.completed ? 'phase-manually-completed' : ''}`}>
+              <div key={phase.key} className={`phase-item ${status} ${!hasData ? 'no-data' : ''}`}>
                 <div className="phase-header">
                   <span className="phase-name">{phase.name}</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {phaseData && phaseData.start_date && status !== 'pending' && (
-                      <button
-                        onClick={() => handlePhaseComplete(phase)}
-                        style={{
-                          padding: '4px 8px',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          borderRadius: '4px',
-                          border: 'none',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          backgroundColor: phaseData.completed ? '#43A047' : '#e0e0e0',
-                          color: phaseData.completed ? 'white' : '#666'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!phaseData.completed) {
-                            e.target.style.backgroundColor = '#bdbdbd';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!phaseData.completed) {
-                            e.target.style.backgroundColor = '#e0e0e0';
-                          }
-                        }}
-                      >
-                        {phaseData.completed ? '완료됨' : '완료'}
-                      </button>
-                    )}
-                    <span 
-                      className="phase-status"
-                      style={{ backgroundColor: statusColors[status] }}
+                  {hasData && status !== 'pending' && (
+                    <button 
+                      className={`complete-btn ${phaseData.completed ? 'completed' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handlePhaseComplete(phase)
+                      }}
+                      title={phaseData.completed ? '완료 취소' : '완료 처리'}
                     >
-                      {status === 'completed' ? '✓' : 
-                       status === 'in_progress' ? '●' :
-                       status === 'delayed' ? '!' : '○'}
-                    </span>
-                  </div>
+                      완료
+                    </button>
+                  )}
                 </div>
-                {phaseData && phaseData.start_date && (
+                {hasData && (
                   <div className="phase-dates">
-                    <span className="date-range">
-                      {moment(phaseData.start_date).format('MM/DD')} - 
-                      {moment(phaseData.end_date).format('MM/DD')}
-                    </span>
-                    {status === 'delayed' && (
-                      <span className="delay-days">
-                        ({moment().diff(moment(phaseData.end_date), 'days')}일 지연)
-                      </span>
-                    )}
+                    <div className="date-row">
+                      <span className="label">시작:</span>
+                      <span className="date">{moment(phaseData.start_date).format('MM.DD')}</span>
+                    </div>
+                    <div className="date-row">
+                      <span className="label">종료:</span>
+                      <span className="date">{moment(phaseData.end_date).format('MM.DD')}</span>
+                    </div>
                   </div>
                 )}
+                {!hasData && (
+                  <div className="no-data-message">일정 미정</div>
+                )}
+                <div className="status-indicator" style={{ backgroundColor: statusColors[status] }}>
+                  {statusNames[status]}
+                </div>
               </div>
             )
           })}
         </div>
+      )}
+      
+      {/* 진행률 바 */}
+      <div className="progress-bar">
+        <div className="progress-fill" style={{ width: `${progress}%` }} />
+      </div>
     </div>
   )
 }

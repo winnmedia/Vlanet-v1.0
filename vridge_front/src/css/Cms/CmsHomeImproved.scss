@@ -3,6 +3,76 @@
 @import '../../styles/variables';
 @import '../../styles/design-system';
 
+// 원형 토글 버튼 스타일
+.collapse-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: 2px solid #e9ecef;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0;
+  
+  // 플러스/마이너스 아이콘
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    background: #6c757d;
+    transition: all 0.3s ease;
+  }
+  
+  // 가로선 (항상 표시)
+  &::before {
+    width: 14px;
+    height: 2px;
+  }
+  
+  // 세로선 (접혔을 때만 표시)
+  &::after {
+    width: 2px;
+    height: 14px;
+    opacity: 1;
+  }
+  
+  // 펼쳐진 상태 (마이너스만 표시)
+  &.collapsed {
+    &::after {
+      opacity: 0;
+      transform: rotate(90deg);
+    }
+  }
+  
+  // 호버 효과
+  &:hover {
+    background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+    border-color: #1631F8;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+    
+    &::before,
+    &::after {
+      background: white;
+    }
+  }
+  
+  // 활성 상태
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  // 포커스 시 아웃라인 제거
+  &:focus {
+    outline: none;
+  }
+}
+
 .cms_wrap {
   main {
     .content.home {

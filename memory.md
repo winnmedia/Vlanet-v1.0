@@ -210,4 +210,34 @@
   - UserAvatar 컴포넌트에 SCSS import 추가
   - util.js, MyPage.jsx의 프로필 이미지 URL 처리 수정
 
+### 보안 및 UI/UX 대규모 개선 (v1.0.20)
+- **보안 문제 해결**:
+  - 콘솔 로그에서 비밀번호 노출 문제 수정
+  - Login.jsx, axios.js, util.js, feedback.js 등에서 민감 정보 로깅 제거
+  - 토큰, 비밀번호 등의 민감 데이터 로깅 완전 차단
+
+- **백엔드 CORS 문제 해결**:
+  - Railway 환경에서 CORS 설정 강화
+  - CustomCORSMiddleware 생성하여 OPTIONS 요청 명시적 처리
+  - www.vlanet.net 도메인 추가
+
+- **GitHub Actions 배포 개선**:
+  - Vercel GitHub Action v25 사용으로 단순화
+  - "spawn sh ENOENT" 오류 해결
+  - Root Directory 설정 문제 수정
+
+- **is_important 컬럼 문제 해결**:
+  - feedbacks_feedbackcomment 테이블의 누락된 컬럼 문제
+  - ensure_is_important_column.py 스크립트 생성
+  - apply_feedback_migrations.py로 마이그레이션 순차 적용
+  - start.sh에 자동 실행 로직 추가
+
+- **UI/UX 통합 개선**:
+  - UnifiedLoading 컴포넌트 생성으로 로딩 애니메이션 통일
+  - 홈 화면 토글 버튼 화살표 크기 20x20으로 확대
+  - 프로젝트 진행 현황 완료 버튼 클릭 시 파란색 테두리 효과
+  - 영상 기획 프레임워크 레이블 수정 (훅/몰입/반전/떡밥)
+  - 인서트 샷 5개 추천 및 구체적 내용 요청 기능
+  - 캘린더 기능 정상 작동 확인
+
 [이전 기록들...]

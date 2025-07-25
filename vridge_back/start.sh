@@ -41,6 +41,14 @@ python force_development_framework.py || echo "⚠️ Development framework colu
 echo "🔧 Ensuring feedback columns exist..."
 python ensure_feedback_columns.py || echo "⚠️ Feedback columns creation failed, continuing..."
 
+# 4-3. 피드백 마이그레이션 순차 적용
+echo "🔄 Applying feedback migrations..."
+python apply_feedback_migrations.py || echo "⚠️ Feedback migrations failed, continuing..."
+
+# 4-4. is_important 컬럼 확인 및 생성
+echo "🔧 Ensuring is_important column exists..."
+python ensure_is_important_column.py || echo "⚠️ is_important column creation failed, continuing..."
+
 # 5. 미디어 파일 디렉토리 생성
 echo "📁 Creating media directories..."
 mkdir -p /app/media/feedback_file || true

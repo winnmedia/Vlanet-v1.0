@@ -40,6 +40,9 @@ def simple_health(request):
     return JsonResponse({"status": "ok"})
 
 # CORS 테스트 뷰
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def cors_test_view(request):
     response = JsonResponse({
         "status": "ok",
@@ -51,13 +54,12 @@ def cors_test_view(request):
         }
     })
     
-    # OPTIONS 요청에 대한 명시적 CORS 헤더 추가
-    if request.method == "OPTIONS":
-        origin = request.headers.get("Origin", "*")
-        response["Access-Control-Allow-Origin"] = origin
-        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        response["Access-Control-Allow-Credentials"] = "true"
+    # 항상 CORS 헤더 추가
+    origin = request.headers.get("Origin", "*")
+    response["Access-Control-Allow-Origin"] = origin
+    response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response["Access-Control-Allow-Credentials"] = "true"
     
     return response
 

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Test</title>
+</head>
+<body>
+    <h1>CORS Test</h1>
+    <button onclick="testCORS()">Test CORS</button>
+    <button onclick="testLogin()">Test Login</button>
+    <pre id="result"></pre>
+
+    <script>
+        const API_URL = 'https://videoplanet.up.railway.app';
+        
+        async function testCORS() {
+            const result = document.getElementById('result');
+            result.textContent = 'Testing CORS...\n';
+            
+            try {
+                const response = await fetch(`${API_URL}/cors-test/`, {
+                    method: 'GET',
+                    headers: {
+                        'Origin': 'https://www.vlanet.net'
+                    }
+                });
+                const data = await response.json();
+                result.textContent += 'CORS Test Success:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent += 'CORS Test Failed:\n' + error.message;
+            }
+        }
+        
+        async function testLogin() {
+            const result = document.getElementById('result');
+            result.textContent = 'Testing Login...\n';
+            
+            try {
+                // First, OPTIONS request
+                result.textContent += '\n1. Sending OPTIONS request...\n';
+                const optionsResponse = await fetch(`${API_URL}/api/users/login/`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': 'https://www.vlanet.net',
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                result.textContent += `OPTIONS Response Status: ${optionsResponse.status}\n`;
+                result.textContent += `Headers:\n`;
+                for (let [key, value] of optionsResponse.headers) {
+                    result.textContent += `  ${key}: ${value}\n`;
+                }
+                
+                // Then, POST request
+                result.textContent += '\n2. Sending POST request...\n';
+                const response = await fetch(`${API_URL}/api/users/login/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': 'https://www.vlanet.net'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'test123'
+                    })
+                });
+                
+                const data = await response.json();
+                result.textContent += 'Login Response:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent += 'Login Test Failed:\n' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

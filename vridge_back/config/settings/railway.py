@@ -340,7 +340,15 @@ if IS_RAILWAY or DEBUG:
     # MIDDLEWARE 리스트에 로깅 미들웨어 추가
     MIDDLEWARE.insert(0, 'config.logging_middleware.DetailedLoggingMiddleware')
 
-# 강제 CORS 미들웨어는 제거 (Django CORS 미들웨어 우선 사용)
+# Custom CORS 미들웨어 추가 (corsheaders 대체)
+if IS_RAILWAY:
+    # corsheaders.middleware.CorsMiddleware를 제거하고 커스텀 미들웨어로 대체
+    try:
+        cors_index = MIDDLEWARE.index('corsheaders.middleware.CorsMiddleware')
+        MIDDLEWARE[cors_index] = 'config.cors_middleware.CustomCORSMiddleware'
+    except ValueError:
+        # corsheaders가 없으면 맨 앞에 추가
+        MIDDLEWARE.insert(1, 'config.cors_middleware.CustomCORSMiddleware')
 
 # 프로덕션 보안 설정 적용
 if not DEBUG:

@@ -187,4 +187,15 @@
   - 비활성 상태: 회색 배경(#f5f5f5)에 회색 화살표
   - 제목 스타일 개선 (font-size: 24px, font-weight: 700)
 
+### development_framework 필드 활성화 및 500 에러 해결
+- **문제**: 백엔드에서 500 에러 발생 ("데이터베이스 구조 업데이트 중" 메시지)
+- **원인**: 
+  - models.py에서 development_framework 필드가 주석 처리되어 있었음
+  - views.py에서 development_framework를 select_related에서 제외하고 있었음
+- **해결**:
+  - Project 모델의 development_framework 필드 주석 해제
+  - ProjectList 뷰의 select_related에 development_framework 추가
+  - 0026 마이그레이션 파일 생성 및 적용
+  - Railway 배포를 통해 프로덕션 환경에 마이그레이션 자동 적용
+
 [이전 기록들...]

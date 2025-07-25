@@ -93,6 +93,8 @@ CORS_ALLOWED_ORIGINS_DEFAULT = [
     "https://vridge-front-production.up.railway.app",
     "https://videoplanetready.vercel.app",
     "https://vlanet-v1-0.vercel.app",
+    "https://videoplanet.vercel.app",
+    "https://videoplanet-seven.vercel.app",
 ]
 
 # 환경변수와 기본값 병합
@@ -101,6 +103,33 @@ CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS_DEFAULT + CORS_ALLOWED_ORIG
 # CORS 추가 설정
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
+
+# Vercel 배포를 위한 regex 패턴
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",  # 모든 Vercel 배포 도메인 허용
+]
+
+# CORS 헤더 설정
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 # CSRF 신뢰할 수 있는 도메인
 CSRF_TRUSTED_ORIGINS = [

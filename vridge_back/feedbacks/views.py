@@ -158,16 +158,27 @@ class FeedbackDetail(View):
                                 SELECT c.id, c.security, c.title, c.section, c.text,
                                        u.username, u.nickname as user_nickname, c.created, 
                                        COALESCE(c.display_mode, 'anonymous') as display_mode, 
-                                       c.nickname as custom_nickname
+                                       c.nickname as custom_nickname,
+                                       c.is_important, c.parent_id,
+                                       (SELECT COUNT(*) FROM feedbacks_feedbackreaction 
+                                        WHERE comment_id = c.id AND reaction = 'like') as like_count,
+                                       (SELECT COUNT(*) FROM feedbacks_feedbackreaction 
+                                        WHERE comment_id = c.id AND reaction = 'dislike') as dislike_count,
+                                       (SELECT reaction FROM feedbacks_feedbackreaction 
+                                        WHERE comment_id = c.id AND user_id = %s) as user_reaction
                                 FROM feedbacks_feedbackcomment c
                                 JOIN users_user u ON c.user_id = u.id
-                                WHERE c.feedback_id = %s
+                                WHERE c.feedback_id = %s AND c.parent_id IS NULL
                                 ORDER BY c.created DESC
-                            """, [project_data['feedback_id']])
+                            """, [user.id, project_data['feedback_id']])
                             
                             for comment_row in cursor.fetchall():
                                 display_mode = comment_row[8] if comment_row[8] else 'anonymous'
                                 custom_nickname = comment_row[9]
+                                is_important = comment_row[10] if len(comment_row) > 10 else False
+                                like_count = comment_row[12] if len(comment_row) > 12 else 0
+                                dislike_count = comment_row[13] if len(comment_row) > 13 else 0
+                                user_reaction = comment_row[14] if len(comment_row) > 14 else None
                                 
                                 # 표시할 이름 결정
                                 if display_mode == 'anonymous' or comment_row[1]:  # security가 True면 익명
@@ -180,7 +191,7 @@ class FeedbackDetail(View):
                                     display_name = comment_row[6]  # 사용자 실명
                                     display_email = comment_row[5]
                                 
-                                feedback_comments.append({
+                                comment_data = {
                                     'id': comment_row[0],
                                     'security': comment_row[1],
                                     'title': comment_row[2],
@@ -191,8 +202,47 @@ class FeedbackDetail(View):
                                     'created': comment_row[7],
                                     'display_mode': display_mode,
                                     'custom_nickname': custom_nickname,
-                                    'display_email': display_email
-                                })
+                                    'display_email': display_email,
+                                    'is_important': is_important,
+                                    'like_count': like_count,
+                                    'dislike_count': dislike_count,
+                                    'user_reaction': user_reaction
+                                }
+                                
+                                # 답글 가져오기
+                                cursor.execute("""
+                                    SELECT c.id, c.text, u.username, u.nickname, c.created,
+                                           c.display_mode, c.nickname as custom_nickname
+                                    FROM feedbacks_feedbackcomment c
+                                    JOIN users_user u ON c.user_id = u.id
+                                    WHERE c.parent_id = %s
+                                    ORDER BY c.created ASC
+                                """, [comment_row[0]])
+                                
+                                comment_data['replies'] = []
+                                for reply_row in cursor.fetchall():
+                                    reply_display_mode = reply_row[5] if reply_row[5] else 'anonymous'
+                                    reply_custom_nickname = reply_row[6]
+                                    
+                                    # 답글 표시 이름 결정
+                                    if reply_display_mode == 'anonymous':
+                                        reply_display_name = '익명'
+                                    elif reply_display_mode == 'nickname' and reply_custom_nickname:
+                                        reply_display_name = reply_custom_nickname
+                                    else:
+                                        reply_display_name = reply_row[3] or reply_row[2]
+                                    
+                                    comment_data['replies'].append({
+                                        'id': reply_row[0],
+                                        'text': reply_row[1],
+                                        'username': reply_row[2],
+                                        'nickname': reply_display_name,
+                                        'created': reply_row[4],
+                                        'display_mode': reply_display_mode,
+                                        'custom_nickname': reply_custom_nickname
+                                    })
+                                
+                                feedback_comments.append(comment_data)
                         else:
                             # 구 버전 호환
                             cursor.execute("""

@@ -143,6 +143,21 @@ class FeedBackComment(core_model.TimeStampedModel):
     title = models.TextField(verbose_name="제목", null=True, blank=False)
     section = models.TextField(verbose_name="구간", null=True, blank=False)
     text = models.TextField(verbose_name="내용", null=True, blank=False)
+    
+    # 새로운 필드 추가
+    is_important = models.BooleanField(
+        verbose_name="중요표시", 
+        default=False,
+        help_text="중요한 피드백 표시"
+    )
+    parent = models.ForeignKey(
+        'self',
+        related_name='replies',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="부모 댓글"
+    )
 
     class Meta:
         verbose_name = "피드백 등록"
@@ -151,9 +166,47 @@ class FeedBackComment(core_model.TimeStampedModel):
         indexes = [
             models.Index(fields=['feedback', '-created']),  # 피드백별 코멘트 조회 최적화
             models.Index(fields=['user']),  # 사용자별 코멘트 조회
+            models.Index(fields=['parent']),  # 답글 조회 최적화
+            models.Index(fields=['is_important']),  # 중요 피드백 조회
         ]
 
     def __str__(self):
         if self.feedback and hasattr(self.feedback, 'projects') and self.feedback.projects:
             return f"프로젝트 명 : {self.feedback.projects.name}"
         return f"피드백 댓글 #{self.id}"
+
+
+class FeedbackReaction(core_model.TimeStampedModel):
+    REACTION_CHOICES = [
+        ('like', '좋아요'),
+        ('dislike', '싫어요'),
+    ]
+    
+    comment = models.ForeignKey(
+        FeedBackComment,
+        related_name='reactions',
+        on_delete=models.CASCADE,
+        verbose_name="피드백 댓글"
+    )
+    user = models.ForeignKey(
+        "users.User",
+        related_name='feedback_reactions',
+        on_delete=models.CASCADE,
+        verbose_name="사용자"
+    )
+    reaction = models.CharField(
+        max_length=10,
+        choices=REACTION_CHOICES,
+        verbose_name="반응"
+    )
+    
+    class Meta:
+        verbose_name = "피드백 반응"
+        verbose_name_plural = "피드백 반응"
+        unique_together = ['comment', 'user']  # 사용자당 하나의 반응만
+        indexes = [
+            models.Index(fields=['comment', 'user']),  # 반응 조회 최적화
+        ]
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.comment.id} - {self.reaction}"

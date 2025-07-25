@@ -20,15 +20,40 @@ class FeedBackCommentAdmin(admin.ModelAdmin):
         "id",
         "__str__",
         "security",
+        "is_important",
         "title",
         "section",
         "text",
+        "parent",
         "created",
     )
 
-    list_display_links = list_display
+    list_display_links = ("id", "__str__")
+    list_filter = ("is_important", "security", "display_mode", "created")
+    search_fields = ("title", "text", "user__username", "user__nickname")
 
     autocomplete_fields = (
         # "feedback",
         "user",
+        "parent",
+    )
+
+
+@admin.register(models.FeedbackReaction)
+class FeedbackReactionAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "comment",
+        "reaction",
+        "created",
+    )
+    
+    list_display_links = ("id", "user")
+    list_filter = ("reaction", "created")
+    search_fields = ("user__username", "user__nickname", "comment__text")
+    
+    autocomplete_fields = (
+        "user",
+        "comment",
     )

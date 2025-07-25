@@ -124,7 +124,7 @@ MIDDLEWARE = [
     "config.middleware.RailwayHealthCheckMiddleware",  # 가장 위에 배치
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # 기존 CORS 미들웨어 유지
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

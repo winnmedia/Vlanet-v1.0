@@ -104,6 +104,12 @@ CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS_DEFAULT + CORS_ALLOWED_ORIG
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 
+# www.vlanet.net 명시적 추가 확인
+if "https://www.vlanet.net" not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append("https://www.vlanet.net")
+if "http://www.vlanet.net" not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append("http://www.vlanet.net")
+
 # Vercel 배포를 위한 regex 패턴
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",  # 모든 Vercel 배포 도메인 허용
@@ -130,6 +136,9 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+# Preflight 캐시 설정 (1시간)
+CORS_PREFLIGHT_MAX_AGE = 3600
 
 # CSRF 신뢰할 수 있는 도메인
 CSRF_TRUSTED_ORIGINS = [

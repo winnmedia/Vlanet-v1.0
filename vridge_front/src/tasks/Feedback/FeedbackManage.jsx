@@ -2,8 +2,14 @@ import useInput from 'hooks/UseInput'
 import React, { useState, useEffect } from 'react'
 import styles from './FeedbackManage.module.scss'
 
-import { DeleteFeedback } from 'api/feedback'
-import { UpdateFeedback } from 'api/feedback'
+import { 
+  DeleteFeedback, 
+  UpdateFeedback,
+  CreateFeedbackReply,
+  DeleteFeedbackReply,
+  ToggleFeedbackImportant,
+  UpdateFeedbackReaction
+} from 'api/feedback'
 
 export default function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   const [reactions, setReactions] = useState({})
@@ -20,10 +26,16 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
     if (Array.isArray(feedbackList)) {
       const initialReactions = {}
       const counts = {}
+      const initialImportant = {}
       
       feedbackList.forEach(feedback => {
         if (feedback.reaction) {
           initialReactions[feedback.id] = feedback.reaction
+        }
+        
+        // 중요표시 상태 초기화
+        if (feedback.is_important) {
+          initialImportant[feedback.id] = true
         }
         
         // 반응 카운트 계산 (백엔드에서 제공하는 경우)
@@ -41,11 +53,13 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       
       setReactions(initialReactions)
       setReactionCounts(counts)
+      setImportantFeedbacks(initialImportant)
     } else {
       // feedback이 없거나 배열이 아닌 경우
       console.warn('[FeedbackManage] feedback is not an array:', feedbackList)
       setReactions({})
       setReactionCounts({})
+      setImportantFeedbacks({})
     }
   }, [current_project])
   
@@ -113,42 +127,81 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       }
     })
     
-    // API 호출로 반응 저장 (백엔드 API 준비 후 활성화)
-    console.log('Reaction toggled:', feedbackId, 'with reaction:', newReaction)
-    
-    // TODO: 백엔드에 PATCH 메서드 구현 후 아래 코드 활성화
-    // UpdateFeedback(feedbackId, { reaction: newReaction })
-    //   .then((response) => {
-    //     console.log('Reaction updated successfully', response)
-    //     refetch()
-    //   })
-    //   .catch(err => {
-    //     console.error('Failed to update reaction:', err)
-    //     console.error('Error details:', err.response)
-    //     // 실패 시 원래 상태로 되돌리기
-    //     setReactions(prev => ({
-    //       ...prev,
-    //       [feedbackId]: currentReaction
-    //     }))
+    // API 호출로 반응 저장
+    UpdateFeedbackReaction(feedbackId, newReaction)
+      .then((response) => {
+        console.log('Reaction updated successfully', response)
+        refetch()
+      })
+      .catch(err => {
+        console.error('Failed to update reaction:', err)
+        // 실패 시 원래 상태로 되돌리기
+        setReactions(prev => ({
+          ...prev,
+          [feedbackId]: currentReaction
+        }))
         
-    //     // 카운트도 원래대로 되돌리기
-    //     setReactionCounts(prev => {
-    //       const counts = { ...prev[feedbackId] } || { like: 0, dislike: 0, needExplanation: 0 }
+        // 카운트도 원래대로 되돌리기
+        setReactionCounts(prev => {
+          const counts = { ...prev[feedbackId] } || { like: 0, dislike: 0, needExplanation: 0 }
           
-    //       if (newReaction) {
-    //         counts[newReaction] = Math.max(0, (counts[newReaction] || 0) - 1)
-    //       }
+          if (newReaction) {
+            counts[newReaction] = Math.max(0, (counts[newReaction] || 0) - 1)
+          }
           
-    //       if (currentReaction) {
-    //         counts[currentReaction] = (counts[currentReaction] || 0) + 1
-    //       }
+          if (currentReaction) {
+            counts[currentReaction] = (counts[currentReaction] || 0) + 1
+          }
           
-    //       return {
-    //         ...prev,
-    //         [feedbackId]: counts
-    //       }
-    //     })
-    //   })
+          return {
+            ...prev,
+            [feedbackId]: counts
+          }
+        })
+      })
+  }
+  
+  // 답글 제출 함수
+  const submitReply = (feedbackId) => {
+    const replyText = replyTexts[feedbackId]?.trim()
+    if (!replyText) return
+    
+    CreateFeedbackReply(feedbackId, { text: replyText })
+      .then((response) => {
+        console.log('Reply created successfully', response)
+        setReplyTexts(prev => ({ ...prev, [feedbackId]: '' }))
+        setShowReplyInput(prev => ({ ...prev, [feedbackId]: false }))
+        refetch()
+      })
+      .catch(err => {
+        console.error('Failed to create reply:', err)
+        window.alert('답글 등록에 실패했습니다.')
+      })
+  }
+  
+  // 중요표시 토글 함수
+  const toggleImportant = (feedbackId) => {
+    const wasImportant = importantFeedbacks[feedbackId]
+    
+    // 로컬 상태 즉시 업데이트
+    setImportantFeedbacks(prev => ({
+      ...prev,
+      [feedbackId]: !wasImportant
+    }))
+    
+    ToggleFeedbackImportant(feedbackId)
+      .then((response) => {
+        console.log('Important status toggled successfully', response)
+        refetch()
+      })
+      .catch(err => {
+        console.error('Failed to toggle important status:', err)
+        // 실패 시 원래 상태로 되돌리기
+        setImportantFeedbacks(prev => ({
+          ...prev,
+          [feedbackId]: wasImportant
+        }))
+      })
   }
 
   // 디버깅 로그 추가
@@ -380,13 +433,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                   
                   {/* 중요표시 버튼 */}
                   <button
-                    onClick={() => {
-                      setImportantFeedbacks(prev => ({
-                        ...prev,
-                        [feedback.id]: !prev[feedback.id]
-                      }))
-                      console.log('Important feedback toggled:', feedback.id)
-                    }}
+                    onClick={() => toggleImportant(feedback.id)}
                     style={{
                       padding: '6px 12px',
                       borderRadius: '20px',
@@ -428,23 +475,13 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                           fontSize: '14px'
                         }}
                         onKeyPress={(e) => {
-                          if (e.key === 'Enter' && replyTexts[feedback.id]?.trim()) {
-                            console.log('Reply submitted:', feedback.id, replyTexts[feedback.id])
-                            // TODO: API 호출로 답글 저장
-                            setReplyTexts(prev => ({ ...prev, [feedback.id]: '' }))
-                            setShowReplyInput(prev => ({ ...prev, [feedback.id]: false }))
+                          if (e.key === 'Enter') {
+                            submitReply(feedback.id)
                           }
                         }}
                       />
                       <button
-                        onClick={() => {
-                          if (replyTexts[feedback.id]?.trim()) {
-                            console.log('Reply submitted:', feedback.id, replyTexts[feedback.id])
-                            // TODO: API 호출로 답글 저장
-                            setReplyTexts(prev => ({ ...prev, [feedback.id]: '' }))
-                            setShowReplyInput(prev => ({ ...prev, [feedback.id]: false }))
-                          }
-                        }}
+                        onClick={() => submitReply(feedback.id)}
                         style={{
                           padding: '8px 16px',
                           borderRadius: '6px',

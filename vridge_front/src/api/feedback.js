@@ -90,3 +90,37 @@ export function GetEncodingStatus(projectId) {
     `/api/projects/${projectId}/feedback/encoding-status/`,
   )
 }
+
+// 피드백에 답글 추가
+export function CreateFeedbackReply(feedbackId, data) {
+  return axiosCredentials(
+    'post',
+    `/api/feedbacks/${feedbackId}/replies`,
+    data,
+  )
+}
+
+// 피드백 답글 삭제
+export function DeleteFeedbackReply(feedbackId, replyId) {
+  return axiosCredentials(
+    'delete',
+    `/api/feedbacks/${feedbackId}/replies/${replyId}`,
+  )
+}
+
+// 피드백 중요표시 토글
+export function ToggleFeedbackImportant(feedbackId) {
+  return axiosCredentials(
+    'post',
+    `/api/feedbacks/${feedbackId}/toggle-important`,
+  )
+}
+
+// 피드백 반응 추가/변경
+export function UpdateFeedbackReaction(feedbackId, reactionType) {
+  return axiosCredentials(
+    'post',
+    `/api/feedbacks/${feedbackId}/reaction`,
+    { reaction: reactionType }
+  )
+}

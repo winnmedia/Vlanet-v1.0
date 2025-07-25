@@ -45,26 +45,18 @@ export function axiosCredentials(method, url, data, config) {
     ...config,
   };
   
-  console.log('[axiosCredentials] === REQUEST ===');
-  console.log('[axiosCredentials] Method:', method);
-  console.log('[axiosCredentials] URL:', url);
-  console.log('[axiosCredentials] Headers:', axiosConfig.headers);
-  console.log('[axiosCredentials] Timestamp:', new Date().toISOString());
+  // 보안: 요청 로깅 시 헤더 제외 (토큰 등 민감정보 포함)
+  // console.log('[axiosCredentials] Request:', method, url);
   
   return axios(axiosConfig)
     .then(response => {
-      console.log('[axiosCredentials] === RESPONSE SUCCESS ===');
-      console.log('[axiosCredentials] URL:', url);
-      console.log('[axiosCredentials] Status:', response.status);
-      console.log('[axiosCredentials] Data:', response.data);
-      console.log('[axiosCredentials] Timestamp:', new Date().toISOString());
+      // 보안: 응답 데이터 로깅 제외
+      // console.log('[axiosCredentials] Response:', url, response.status);
       return response;
     })
     .catch(error => {
-      console.log('[axiosCredentials] === RESPONSE ERROR ===');
-      console.log('[axiosCredentials] URL:', url);
-      console.log('[axiosCredentials] Error:', error.response?.data || error.message);
-      console.log('[axiosCredentials] Timestamp:', new Date().toISOString());
+      // 보안: 에러 상세 정보 로깅 제외
+      // console.log('[axiosCredentials] Error:', url, error.response?.status);
       throw error;
     });
 }
@@ -131,7 +123,7 @@ export function refetchProject(dispatch, navigate) {
     return;
   }
   
-  console.log('[refetchProject] Called at:', new Date().toISOString())
+  // console.log('[refetchProject] Called at:', new Date().toISOString())
   
   if (checkSession()) {
     const date = new Date()
@@ -144,18 +136,18 @@ export function refetchProject(dispatch, navigate) {
         userInfo = JSON.parse(storedUserInfo);
       }
     } catch (e) {
-      console.error('Failed to parse userInfo from localStorage:', e);
+      // console.error('Failed to parse userInfo from localStorage:', e);
     }
     
     // 사용자 정보가 없으면 API 호출
     const getUserInfoPromise = userInfo ? Promise.resolve({ data: userInfo }) : GetUserInfo().catch(err => {
-      console.error('Failed to fetch user info:', err);
+      // console.error('Failed to fetch user info:', err);
       return null;
     });
     
     return Promise.all([ProjectList(), getUserInfoPromise])
       .then(([projectRes, userRes]) => {
-        console.log('[refetchProject] ProjectList response:', projectRes.data)
+        // console.log('[refetchProject] ProjectList response:', projectRes.data)
         const data = projectRes.data.result
         const result = data.sort((a, b) => {
           return new Date(b.created) - new Date(a.created)
@@ -217,19 +209,14 @@ export function refetchProject(dispatch, navigate) {
           user_memos: projectRes.data.user_memos,
         }
         
-        console.log('[refetchProject] Updating Redux store with:', {
-          projectCount: result.length,
-          thisMonthCount: this_month_project.length,
-          nextMonthCount: next_month_project.length,
-          user: user,
-          profileImage: profileImage
-        })
+        // 보안: Redux 상태 로깅 제한
+        // console.log('[refetchProject] Projects loaded:', result.length)
         
         dispatch(updateProjectStore(storeData))
         return projectRes
       })
       .catch((error) => {
-        console.log(error)
+        // console.error('[refetchProject] Error:', error.message)
         if (
           error.response &&
           error.response.data &&

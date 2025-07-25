@@ -89,14 +89,10 @@ axiosInstance.interceptors.request.use(
       config.headers['Content-Type'] = 'application/json';
     }
     
-    // 디버깅을 위한 요청 로깅
+    // 보안: 민감한 데이터를 로깅하지 않음
     if (process.env.NODE_ENV === 'development') {
-      console.log('API Request:', {
-        url: config.url,
-        method: config.method,
-        headers: config.headers,
-        data: config.data
-      });
+      // 헤더와 데이터는 로깅하지 않음 (토큰, 비밀번호 등이 포함될 수 있음)
+      // console.log('API Request:', config.method, config.url);
     }
     
     return config;
@@ -107,24 +103,23 @@ axiosInstance.interceptors.request.use(
 // 응답 인터셉터
 axiosInstance.interceptors.response.use(
   (response) => {
-    // 디버깅을 위한 응답 로깅
+    // 보안: 응답 데이터를 로깅하지 않음
     if (process.env.NODE_ENV === 'development') {
-      console.log('API Response:', {
-        url: response.config.url,
-        status: response.status,
-        data: response.data
-      });
+      // 응답 데이터는 로깅하지 않음 (개인정보가 포함될 수 있음)
+      // console.log('API Response:', response.config.url, response.status);
     }
     return response;
   },
   (error) => {
-    // 디버깅을 위한 에러 로깅
-    console.error('API Error:', {
-      url: error.config?.url,
-      status: error.response?.status,
-      message: error.response?.data?.message || error.message,
-      data: error.response?.data
-    });
+    // 보안: 에러 로깅 시 민감한 데이터 제외
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        message: error.response?.data?.message || error.message
+        // data는 로깅하지 않음 (민감한 정보가 포함될 수 있음)
+      });
+    }
     
     if (error.response?.status === 401 && isClient) {
       // 로그인 페이지가 아니고, 이미 리다이렉트 중이 아닌 경우에만 처리

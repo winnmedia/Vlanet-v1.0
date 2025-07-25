@@ -18,7 +18,7 @@ class ForceCorsMiddleware:
             "http://localhost:3000",
             "http://127.0.0.1:3000",
             "https://videoplanet.up.railway.app",
-            "https://videoplanetready.vercel.app",
+            "https://vridgefront.vercel.app",  # 실제 Vercel 배포 도메인
             "https://vlanet-v1-0.vercel.app",
         ]
 

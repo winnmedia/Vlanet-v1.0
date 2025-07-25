@@ -11,21 +11,18 @@ export function GetFeedBack(projectId) {
 
 // 피드백 create
 export function CreateFeedback(data, projectId) {
-  console.log('CreateFeedback API called with:', {
-    method: 'PUT',
-    url: `/api/feedbacks/${projectId}`,
-    data: data
-  });
+  // 보안: API 호출 로깅 시 데이터 제외
+  // console.log('CreateFeedback API called:', `/api/feedbacks/${projectId}`);
   
   return axiosCredentials(
     'put',
     `/api/feedbacks/${projectId}`,
     data,
   ).then(response => {
-    console.log('CreateFeedback API success:', response);
+    // console.log('CreateFeedback API success');
     return response;
   }).catch(error => {
-    console.error('CreateFeedback API error:', error);
+    // console.error('CreateFeedback API error:', error.message);
     throw error;
   });
 }
@@ -52,8 +49,8 @@ export function FeedbackFile(data, projectId, onUploadProgress) {
   // 직접 axios 사용하여 업로드
   const token = typeof window !== 'undefined' && localStorage.getItem('VGID')?.replace(/"/g, '');
   
-  console.log('File upload token:', token);
-  console.log('Axios base URL:', axios.defaults.baseURL);
+  // 보안: 토큰 로깅 제거
+  // console.log('File upload to:', `/api/feedbacks/upload_s3/`);
   
   const config = {
     method: 'post',
@@ -68,8 +65,7 @@ export function FeedbackFile(data, projectId, onUploadProgress) {
     withCredentials: true,
   };
   
-  console.log('Upload config:', config);
-  console.log('Full upload URL:', axios.defaults.baseURL + config.url);
+  // 보안: 업로드 설정 로깅 제거
   
   return axios(config);
 }

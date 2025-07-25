@@ -28,9 +28,8 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
   }, [initialTime, set_inputs])
 
   function SendFeedback() {
-    console.log('SendFeedback called with inputs:', inputs)
-    console.log('Project ID:', project_id)
-    console.log('Feedback mode:', feedbackMode)
+    // 보안: 사용자 입력 데이터 로깅 제거
+    // console.log('SendFeedback called')
     
     // 닉네임 모드일 때 닉네임 검증
     if (feedbackMode === 'nickname' && !nickname.trim()) {

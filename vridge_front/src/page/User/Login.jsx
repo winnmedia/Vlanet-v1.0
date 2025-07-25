@@ -56,7 +56,7 @@ export default function Login() {
   // Social login code removed
 
   const CommonLoginSuccess = async (jwt, userData = null) => {
-    console.log('Login success, saving token:', jwt)
+    // 보안: 토큰을 로깅하지 않음
     // 모바일 환경을 고려한 안전한 토큰 저장
     try {
       typeof window !== 'undefined' && window.localStorage.setItem('VGID', jwt)
@@ -159,10 +159,11 @@ export default function Login() {
       const controller = new AbortController()
       setLoginController(controller)
       
-      console.log('로그인 시도:', inputs)
+      // 보안: 비밀번호가 포함된 객체를 로깅하지 않음
+      console.log('로그인 시도:', { email: inputs.email })
       SignIn(inputs, { signal: controller.signal })
         .then((res) => {
-          console.log('로그인 성공:', res)
+          console.log('로그인 성공')
           setLoginController(null)
           CommonLoginSuccess(res.data.vridge_session, res.data)
         })

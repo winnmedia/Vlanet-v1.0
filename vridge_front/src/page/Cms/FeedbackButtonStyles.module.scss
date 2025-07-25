@@ -346,16 +346,31 @@ label.feedbackButtonPrimary {
   border-radius: 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   width: 100%;
-  flex-wrap: wrap;
+  flex-wrap: nowrap !important; // 한 줄 유지
+  overflow-x: auto; // 필요시 스크롤
+  
+  // 버튼 스타일 조정
+  button {
+    flex: 0 0 auto !important; // 자동 크기
+    min-width: fit-content !important;
+  }
   
   // 반응형
   @media (max-width: 768px) {
     gap: 8px;
-    padding: 12px;
+    padding: 12px 8px;
     
     button {
-      flex: 1 1 calc(50% - 4px);
-      min-width: 120px;
+      padding: 10px 12px !important;
+      font-size: 13px !important;
+      
+      span {
+        display: none; // 모바일에서 텍스트 숨김
+      }
+      
+      svg {
+        margin: 0 !important;
+      }
     }
   }
 }
@@ -365,40 +380,80 @@ label.feedbackButtonPrimary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+  margin-bottom: 8px;
   
   .projectTitle {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 22px;
     color: #212529;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    
+    // 긴 프로젝트명 처리
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100% - 50px);
   }
 }
 
-// 정보 버튼 (작은 크기)
+// 정보 버튼 (원형)
 .infoButton {
-  @include button-base;
-  background: linear-gradient(135deg, $brand-gray 0%, darken($brand-gray, 10%) 100%) !important;
-  color: white !important;
-  padding: 5px 10px !important;
-  font-size: 11px !important;
-  min-height: 28px !important;
-  min-width: auto !important;
-  flex: none !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f8f9fa !important;
+  border: 2px solid #e9ecef !important;
+  color: #6c757d !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
   
   svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 18px !important;
+    height: 18px !important;
   }
   
+  // 호버 효과
   &:hover {
-    background: linear-gradient(135deg, lighten($brand-gray, 5%) 0%, darken($brand-gray, 5%) 100%) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    background: white !important;
+    border-color: $brand-blue !important;
+    color: $brand-blue !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.2) !important;
   }
   
+  // 활성 상태
   &.active {
-    background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%) !important;
-    box-shadow: 0 3px 8px rgba(22, 49, 248, 0.2) !important;
+    background: $brand-blue !important;
+    border-color: $brand-blue !important;
+    color: white !important;
+    box-shadow: 0 4px 16px rgba(22, 49, 248, 0.3) !important;
+    
+    &:hover {
+      background: $brand-blue-hover !important;
+      border-color: $brand-blue-hover !important;
+      transform: scale(1.05) !important;
+    }
+  }
+  
+  // 클릭 효과
+  &:active {
+    transform: scale(0.95) !important;
+  }
+  
+  // 리플 효과 제거 (원형 버튼에는 불필요)
+  &::before {
+    display: none;
   }
 }
 

@@ -240,4 +240,19 @@
   - 인서트 샷 5개 추천 및 구체적 내용 요청 기능
   - 캘린더 기능 정상 작동 확인
 
+### 피드백 페이지 UI/UX 개선 시작
+- **왼쪽 플레이어 섹션 개선**:
+  - FeedbackPageRedesign.scss에 비디오 플레이어 테두리 추가 (2px solid #e9ecef)
+  - 배경색 #f8f9fa 및 border-radius 12px 적용
+  - Video.js 플레이어 재생 버튼 정중앙 배치 (absolute positioning)
+  - 컨트롤바 높이 45px, 버튼 크기 통일
+  - 프로그레스 바 색상 브랜드 블루(#1631F8) 적용
+
+- **액션 버튼 그룹 개선**:
+  - FeedbackButtonStyles.module.scss의 actionButtonGroup 수정
+  - flex-wrap: nowrap으로 한 줄 유지
+  - overflow-x: auto 추가로 필요시 가로 스크롤
+  - 버튼 크기 자동 조정 (flex: 0 0 auto)
+  - 모바일 반응형 대응 (768px 이하에서 텍스트 숨김)
+
 [이전 기록들...]

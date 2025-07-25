@@ -174,7 +174,7 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
           </div>
         )}
       </div>
-      <div className={styles.timeInput}>
+      <div className={`${styles.timeInput} input-group`}>
         <label>시간</label>
         <input
           type="text"
@@ -190,7 +190,7 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
           현재 영상 시간이 자동으로 입력됩니다
         </div>
       </div>
-      <div className={styles.contentInput}>
+      <div className={`${styles.contentInput} input-group`}>
         <label>내용</label>
         <textarea
           name="contents"

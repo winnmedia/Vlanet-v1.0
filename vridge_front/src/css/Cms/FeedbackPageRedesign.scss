@@ -6,6 +6,7 @@
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 30px;
+    border: 2px solid #e9ecef;
     
     &.active {
       .video-player-section {
@@ -14,75 +15,169 @@
         border-radius: 8px;
         overflow: hidden;
         position: relative;
+        border: 3px solid #dee2e6;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         
         // Video.js 플레이어 스타일
         .video-js {
           width: 100% !important;
           height: 100% !important;
           
-          // 컨트롤바 디자인
+          // 컨트롤바 디자인 개선
           .vjs-control-bar {
-            background: rgba(0, 0, 0, 0.8);
-            height: 45px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+            height: 48px;
+            padding: 0 15px;
             
             // 버튼 스타일 통일
             .vjs-button {
-              width: 45px;
-              height: 45px;
+              width: 40px;
+              height: 48px;
+              border: none;
+              background: transparent;
+              position: relative;
               
               &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(255, 255, 255, 0.15);
+              }
+              
+              &:focus {
+                outline: none;
+              }
+              
+              &::before {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
               }
             }
             
             // 재생 버튼
             .vjs-play-control {
+              order: 1;
               .vjs-icon-placeholder:before {
-                font-size: 18px;
-                line-height: 45px;
+                font-size: 20px;
               }
             }
             
             // 볼륨 패널
             .vjs-volume-panel {
+              order: 2;
+              margin-left: 5px;
+              
               &:hover .vjs-volume-control {
                 display: flex;
               }
+              
+              .vjs-mute-control {
+                .vjs-icon-placeholder:before {
+                  font-size: 18px;
+                }
+              }
             }
             
-            // 시간 표시
+            // 시간 표시 개선
             .vjs-time-control {
-              padding: 0 10px;
-              line-height: 45px;
+              padding: 0 8px;
+              line-height: 48px;
               font-size: 13px;
+              font-weight: 500;
+              min-width: auto;
+              width: auto;
             }
             
-            // 프로그레스 바
+            .vjs-current-time {
+              order: 3;
+              margin-left: 10px;
+            }
+            
+            .vjs-time-divider {
+              order: 4;
+              padding: 0 3px;
+              line-height: 48px;
+            }
+            
+            .vjs-duration {
+              order: 5;
+            }
+            
+            // 프로그레스 바 개선
             .vjs-progress-control {
+              order: 6;
+              flex: 1;
+              margin: 0 15px;
+              
               .vjs-progress-holder {
-                height: 6px;
-                margin-top: 19px;
+                height: 4px;
+                margin-top: 22px;
+                background-color: rgba(255, 255, 255, 0.2);
+                border-radius: 2px;
+                
+                .vjs-load-progress {
+                  background: rgba(255, 255, 255, 0.3);
+                  
+                  div {
+                    background: rgba(255, 255, 255, 0.3);
+                  }
+                }
                 
                 .vjs-play-progress {
                   background: #1631F8;
+                  border-radius: 2px;
                   
                   &:before {
-                    font-size: 12px;
-                    top: -3px;
+                    content: '•';
+                    font-size: 16px;
+                    top: -6px;
+                    right: -8px;
+                    width: 16px;
+                    height: 16px;
+                    background: #1631F8;
+                    border-radius: 50%;
+                    box-shadow: 0 0 6px rgba(22, 49, 248, 0.6);
                   }
                 }
+                
+                &:hover .vjs-play-progress:before {
+                  font-size: 20px;
+                  top: -8px;
+                  right: -10px;
+                  width: 20px;
+                  height: 20px;
+                }
+              }
+            }
+            
+            // 남은 시간
+            .vjs-remaining-time-display {
+              order: 7;
+              margin-right: 10px;
+            }
+            
+            // 재생 속도
+            .vjs-playback-rate {
+              order: 8;
+              margin-right: 5px;
+              
+              .vjs-playback-rate-value {
+                font-size: 13px;
+                font-weight: 500;
               }
             }
             
             // 전체화면 버튼
             .vjs-fullscreen-control {
+              order: 9;
+              margin-right: 0;
+              
               .vjs-icon-placeholder:before {
-                font-size: 18px;
+                font-size: 20px;
               }
             }
           }
           
-          // 빅 플레이 버튼
+          // 빅 플레이 버튼 - 정중앙 배치
           .vjs-big-play-button {
             background: rgba(22, 49, 248, 0.9);
             border: none;
@@ -91,12 +186,15 @@
             height: 80px;
             line-height: 80px;
             font-size: 40px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            margin: 0 !important;
             
             &:hover {
               background: rgba(22, 49, 248, 1);
+              transform: translate(-50%, -50%) scale(1.1) !important;
             }
           }
         }
@@ -119,19 +217,21 @@
       background: #f8f9fa;
       
       .s_title {
-        font-size: 18px;
-        font-weight: 600;
+        font-size: 20px;
+        font-weight: 700;
         color: #212529;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        letter-spacing: -0.5px;
         
         &:before {
           content: '';
-          width: 4px;
-          height: 20px;
-          background: #1631F8;
-          border-radius: 2px;
+          width: 5px;
+          height: 24px;
+          background: linear-gradient(180deg, #1631F8 0%, #0F23C9 100%);
+          border-radius: 3px;
+          box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
         }
       }
       
@@ -257,25 +357,50 @@
           }
         }
         
+        // 입력 필드 레이블
+        .input-group {
+          margin-bottom: 20px;
+          
+          label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            
+            &:before {
+              content: '•';
+              color: #1631F8;
+              margin-right: 6px;
+              font-size: 16px;
+              vertical-align: middle;
+            }
+          }
+        }
+        
         // 입력 필드
         input[type="text"], textarea {
           width: 100%;
           padding: 12px 16px;
-          border: 1px solid #dee2e6;
+          border: 2px solid #e9ecef;
           border-radius: 8px;
           font-size: 14px;
-          margin-bottom: 16px;
           transition: all 0.2s ease;
           background: white;
+          
+          &:hover {
+            border-color: #dee2e6;
+          }
           
           &:focus {
             outline: none;
             border-color: #1631F8;
-            box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+            box-shadow: 0 0 0 4px rgba(22, 49, 248, 0.1);
           }
           
           &::placeholder {
             color: #adb5bd;
+            font-style: italic;
           }
         }
         
@@ -340,38 +465,52 @@
         }
         
         &::-webkit-scrollbar-track {
-          background: #f1f1f1;
+          background: #f8f9fa;
           border-radius: 4px;
         }
         
         &::-webkit-scrollbar-thumb {
-          background: #888;
+          background: #cbd5e0;
           border-radius: 4px;
           
           &:hover {
-            background: #555;
+            background: #94a3b8;
           }
         }
         
         // 피드백 아이템
         > div {
           background: white;
-          border: 1px solid #e9ecef;
-          border-radius: 8px;
-          padding: 16px;
-          margin-bottom: 12px;
+          border: 2px solid #e9ecef;
+          border-radius: 12px;
+          padding: 18px;
+          margin-bottom: 14px;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
           
           &:hover {
-            border-color: #1631F8;
-            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.1);
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
           }
           
           &.active {
             border-color: #1631F8;
-            background: #f8f9ff;
-            box-shadow: 0 4px 16px rgba(22, 49, 248, 0.15);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+            box-shadow: 0 8px 24px rgba(22, 49, 248, 0.2);
+            transform: translateY(-2px);
+            
+            &::before {
+              content: '';
+              position: absolute;
+              left: 0;
+              top: 0;
+              bottom: 0;
+              width: 4px;
+              background: linear-gradient(180deg, #1631F8 0%, #0F23C9 100%);
+              border-radius: 4px 0 0 4px;
+            }
           }
           
           .flex {
@@ -380,17 +519,22 @@
             
             // 아바타
             .img {
-              width: 40px;
-              height: 40px;
-              min-width: 40px;
+              width: 44px;
+              height: 44px;
+              min-width: 44px;
               border-radius: 50%;
               background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
               display: flex;
               align-items: center;
               justify-content: center;
               color: white;
-              font-weight: 600;
-              font-size: 16px;
+              font-weight: 700;
+              font-size: 18px;
+              box-shadow: 0 4px 12px rgba(22, 49, 248, 0.2);
+              
+              &.anonymous {
+                background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+              }
             }
             
             // 컨텐츠
@@ -398,34 +542,55 @@
               flex: 1;
               
               .name {
-                font-size: 14px;
-                font-weight: 600;
+                font-size: 15px;
+                font-weight: 700;
                 color: #212529;
                 margin-bottom: 4px;
+                letter-spacing: -0.3px;
               }
               
               .date {
-                font-size: 12px;
+                font-size: 13px;
                 color: #6c757d;
-                margin-bottom: 8px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                
+                &:before {
+                  content: '';
+                  width: 3px;
+                  height: 3px;
+                  background: #6c757d;
+                  border-radius: 50%;
+                }
               }
               
               .content {
-                font-size: 14px;
+                font-size: 15px;
                 color: #495057;
-                line-height: 1.5;
+                line-height: 1.6;
+                letter-spacing: -0.2px;
               }
               
               // 시간 태그
               .time-tag {
-                display: inline-block;
-                background: #e3f2fd;
-                color: #1976d2;
-                padding: 4px 10px;
-                border-radius: 16px;
-                font-size: 12px;
-                font-weight: 500;
-                margin-top: 8px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                color: #1565c0;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 600;
+                margin-top: 10px;
+                box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+                
+                &:before {
+                  content: '⏱';
+                  font-size: 14px;
+                }
               }
             }
           }
@@ -436,13 +601,14 @@
   
   // 피드백 상세 표시 (플레이어 하단)
   .feedback-detail-display {
-    background: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
     border: 2px solid #1631F8;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 24px;
     margin: 20px 0;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 8px 24px rgba(22, 49, 248, 0.15);
     
     // 상단 색상 바
     &:before {
@@ -579,17 +745,19 @@
   .video-control-buttons {
     display: flex;
     gap: 12px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     padding: 20px 0;
     border-top: 1px solid #e9ecef;
     margin-top: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     
     // 모든 버튼 공통 스타일
     button, label {
-      min-width: 140px !important;
+      min-width: 120px !important;
       height: 42px;
-      padding: 0 24px;
+      padding: 0 20px;
       border-radius: 8px;
       font-size: 14px;
       font-weight: 600;
@@ -601,6 +769,7 @@
       cursor: pointer;
       border: none;
       white-space: nowrap;
+      flex-shrink: 0;
       
       svg {
         width: 18px;

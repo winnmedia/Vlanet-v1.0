@@ -1493,45 +1493,6 @@ export default function Feedback() {
                       </button>
                     )}
                     
-                    {/* 단축키 가이드 버튼 */}
-                    {current_project.files && (
-                      <button
-                        onClick={() => {
-                          const shortcuts = `🎬 비디오 플레이어 단축키 가이드
-
-기본 제어:
-• Space: 재생/일시정지
-• ← / →: 10초 뒤로/앞으로
-• ↑ / ↓: 볼륨 증가/감소
-• F: 전체화면
-• S: 스크린샷
-
-프레임 제어:
-• , (쉼표): 1프레임 뒤로
-• . (마침표): 1프레임 앞으로
-
-재생 속도:
-• Shift + ,: 속도 감소 (0.25x씩)
-• Shift + .: 속도 증가 (0.25x씩)
-
-마커 기능:
-• M: 현재 위치에 마커 추가
-• Shift + C: 모든 마커 삭제
-
-💡 Tip: 피드백이 있는 위치는 타임라인에 자동으로 표시됩니다.`;
-                          alert(shortcuts);
-                        }}
-                        className={styles.feedbackButtonIconOnly}
-                        aria-label="단축키 가이드"
-                        title="단축키 가이드"
-                        tabIndex={0}
-                      >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path d="M2 4a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2V4z" stroke="currentColor" strokeWidth="2"/>
-                          <path d="M7 15h10M7 19h10M12 11v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                      </button>
-                    )}
                   </div>
                   
                   <div className="etc_box">
@@ -1638,12 +1599,13 @@ export default function Feedback() {
                       onClick={() => setShowProjectInfo(!showProjectInfo)}
                       className={showProjectInfo ? `${styles.infoButton} ${styles.active}` : styles.infoButton}
                       title="프로젝트 정보"
+                      aria-label="프로젝트 정보"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
-                        <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <circle cx="12" cy="8" r="1" fill="currentColor"/>
+                        <rect x="11" y="11" width="2" height="6" fill="currentColor"/>
                       </svg>
-                      정보
                     </button>
                   </div>
                   {showProjectInfo && current_project && (

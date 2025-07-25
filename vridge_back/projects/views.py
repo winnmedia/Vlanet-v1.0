@@ -77,7 +77,7 @@ class ProjectList(View):
                 "video_delivery",
                 "feedback",
             ).prefetch_related(
-                'feedback__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
+                'feedback__comments',  # 피드백 코멘트 정보 미리 로드 (user 제외)
                 'members__user',  # 프로젝트 멤버 정보 미리 로드
                 'invitations'  # 초대 정보 미리 로드
             )

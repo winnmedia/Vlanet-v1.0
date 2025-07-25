@@ -93,7 +93,7 @@ export default function Login() {
     
     try {
       // refetchProject를 기다린 후 navigate
-      console.log('[Login] Loading project list after successful login')
+      // console.log('[Login] Loading project list after successful login')
       await refetchProject(dispatch, navigate, { signal: controller.signal })
       
       if (uid && token) {

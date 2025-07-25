@@ -1,5 +1,5 @@
 import React from 'react'
-import './UserAvatar.scss'
+import styles from './UserAvatar.module.scss'
 
 /**
  * 사용자 아바타 컴포넌트
@@ -55,7 +55,7 @@ const UserAvatar = ({
 
   return (
     <div
-      className={`user-avatar ${className} ${showBorder ? 'with-border' : ''} ${onClick ? 'clickable' : ''}`}
+      className={`${styles['user-avatar']} ${className} ${showBorder ? styles['with-border'] : ''} ${onClick ? styles.clickable : ''}`}
       style={{ width: size, height: size }}
       onClick={onClick}
     >
@@ -63,7 +63,7 @@ const UserAvatar = ({
         <img 
           src={imageUrl} 
           alt={name}
-          className="user-avatar-image"
+          className={styles['user-avatar-image']}
           onError={(e) => {
             // 이미지 로드 실패 시 이니셜 표시
             e.target.style.display = 'none'
@@ -73,7 +73,7 @@ const UserAvatar = ({
       ) : null}
       
       <div 
-        className="user-avatar-initial"
+        className={styles['user-avatar-initial']}
         style={{ 
           fontSize: `${fontSize}px`,
           display: imageUrl ? 'none' : 'flex'

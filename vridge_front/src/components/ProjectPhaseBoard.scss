@@ -10,6 +10,40 @@
     margin-bottom: 0;
     
     .collapse-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(22, 49, 248, 0.25);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.35);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
+      }
+      
+      &::after {
+        content: '−';
+        font-size: 20px;
+        font-weight: 600;
+        color: white;
+        line-height: 1;
+      }
+      
+      &.collapsed::after {
+        content: '+';
+      }
+      
       &:focus {
         outline: none;
       }

@@ -231,10 +231,15 @@
               box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
               transition: all 0.3s ease;
               
-              // UserAvatar의 기본 border 유지하고 추가 스타일링
-              .user-avatar-wrapper {
-                border-radius: 50%;
-                overflow: hidden;
+              // 원형 프레임이 보이도록 스타일 강화
+              &.user-avatar {
+                border-radius: 50% !important;
+                overflow: hidden !important;
+                
+                &.with-border {
+                  border: 3px solid #1631F8 !important;
+                  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25) !important;
+                }
               }
 
               &:hover {

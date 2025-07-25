@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import moment from 'moment'
 import 'moment/locale/ko'
+import './ProjectScheduleSection.scss'
 
 moment.locale('ko')
 

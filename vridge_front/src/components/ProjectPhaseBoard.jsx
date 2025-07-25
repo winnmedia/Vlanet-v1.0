@@ -80,8 +80,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
   const projectsByStatus = useMemo(() => {
     const grouped = {
       active: [],
-      delayed: [],
-      completed: []
+      delayed: []
     }
     
     projects.forEach(project => {
@@ -90,8 +89,9 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
         getPhaseStatus(project[phase.key], project.end_date) === 'delayed'
       )
       
+      // 완료된 프로젝트는 제외
       if (progress === 100) {
-        grouped.completed.push(project)
+        return
       } else if (hasDelayed) {
         grouped.delayed.push(project)
       } else {
@@ -100,6 +100,11 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
     })
     
     return grouped
+  }, [projects])
+  
+  // 완료된 프로젝트 개수 계산
+  const completedCount = useMemo(() => {
+    return projects.filter(project => getProjectProgress(project) === 100).length
   }, [projects])
   
   const toggleProject = (projectId) => {
@@ -162,7 +167,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
             </li>
             <li>
               완료된 <br />
-              프로젝트 <span>{projectsByStatus.completed?.length || 0}</span>
+              프로젝트 <span>{completedCount}</span>
             </li>
           </ul>
         </div>
@@ -218,28 +223,6 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
               지연됨 ({projectsByStatus.delayed.length})
             </h4>
             {projectsByStatus.delayed.map(project => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                phases={phases}
-                expanded={expandedProjects[project.id]}
-                onToggle={() => toggleProject(project.id)}
-                getPhaseStatus={getPhaseStatus}
-                getProjectProgress={getProjectProgress}
-                statusColors={statusColors}
-                onPhaseUpdate={onPhaseUpdate}
-              />
-            ))}
-          </div>
-        )}
-        
-        {/* 완료된 프로젝트 */}
-        {projectsByStatus.completed.length > 0 && (
-          <div className="project-section completed-section">
-            <h4 className="section-title">
-              완료됨 ({projectsByStatus.completed.length})
-            </h4>
-            {projectsByStatus.completed.map(project => (
               <ProjectCard
                 key={project.id}
                 project={project}

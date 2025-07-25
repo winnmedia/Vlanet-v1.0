@@ -134,8 +134,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                 // navigate('/ProjectView')
               }}
             >
-              프로젝트 관리
-              <span>{project_list ? project_list.length : 0}</span>
+              프로젝트 관리 <span>{project_list ? project_list.length : 0}</span>
             </li>
             <li
               className={cx(styles['has-toggle'], {

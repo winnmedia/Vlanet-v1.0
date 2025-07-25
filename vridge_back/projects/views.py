@@ -65,22 +65,42 @@ class ProjectList(View):
                 nickname = user.username
 
             # 최적화: feedback__comments__user를 추가하여 N+1 문제 해결
-            project_list = user.projects.all().select_related(
-                "basic_plan",
-                "story_board",
-                "filming",
-                "video_edit",
-                "post_work",
-                "video_preview",
-                "confirmation",
-                "video_delivery",
-                "feedback",
-                "development_framework",
-            ).prefetch_related(
-                'feedback__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
-                'members__user',  # 프로젝트 멤버 정보 미리 로드
-                'invitations'  # 초대 정보 미리 로드
-            )
+            try:
+                # development_framework가 있는 경우
+                project_list = user.projects.all().select_related(
+                    "basic_plan",
+                    "story_board",
+                    "filming",
+                    "video_edit",
+                    "post_work",
+                    "video_preview",
+                    "confirmation",
+                    "video_delivery",
+                    "feedback",
+                ).prefetch_related(
+                    'development_framework',  # development_framework는 prefetch_related로 처리
+                    'feedback__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
+                    'members__user',  # 프로젝트 멤버 정보 미리 로드
+                    'invitations'  # 초대 정보 미리 로드
+                )
+            except Exception as e:
+                logger.warning(f"Development framework field not available: {str(e)}")
+                # development_framework 없이 재시도
+                project_list = user.projects.all().select_related(
+                    "basic_plan",
+                    "story_board",
+                    "filming",
+                    "video_edit",
+                    "post_work",
+                    "video_preview",
+                    "confirmation",
+                    "video_delivery",
+                    "feedback",
+                ).prefetch_related(
+                    'feedback__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
+                    'members__user',  # 프로젝트 멤버 정보 미리 로드
+                    'invitations'  # 초대 정보 미리 로드
+                )
             result = []
             for i in project_list:
                 if i.video_delivery and i.video_delivery.end_date:

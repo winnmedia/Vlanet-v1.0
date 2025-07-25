@@ -16,18 +16,22 @@ const loadingSlice = createSlice({
       const { loading, message = '', variant = 'default', id = 'global' } = action.payload
       
       if (loading) {
-        // 중복 방지 - 같은 ID가 이미 스택에 있으면 무시
-        if (!state.loadingStack.find(item => item.id === id)) {
+        // 중복 방지 - 같은 ID가 이미 스택에 있으면 업데이트만
+        const existingIndex = state.loadingStack.findIndex(item => item.id === id)
+        if (existingIndex >= 0) {
+          state.loadingStack[existingIndex] = { id, message, variant }
+        } else {
           state.loadingStack.push({ id, message, variant })
-          state.isGlobalLoading = true
-          state.loadingMessage = message
-          state.loadingVariant = variant
         }
+        state.isGlobalLoading = true
+        state.loadingMessage = message
+        state.loadingVariant = variant
       } else {
         // 로딩 종료 시 스택에서 제거
         state.loadingStack = state.loadingStack.filter(item => item.id !== id)
         
         if (state.loadingStack.length === 0) {
+          // 모든 로딩이 끝나면 즉시 false로 설정
           state.isGlobalLoading = false
           state.loadingMessage = ''
           state.loadingVariant = 'default'

@@ -32,6 +32,32 @@ const filterForbiddenWords = (text) => {
   return filteredText.replace(/\s+/g, ' ').trim();
 };
 
+// 스토리 프레임워크에 따른 단계 레이블 반환
+const getStageLabel = (framework, index) => {
+  const labels = {
+    'hook_immersion': ['1단계', '2단계', '3단계', '4단계'],
+    'classic': ['기', '승', '전', '결'],
+    'pixar': ['1단계', '2단계', '3단계', '4단계', '5단계', '6단계'],
+    'save_the_cat': ['오프닝', '설정', '촉매', 'B스토리', '재미와 게임', '중간점', '악당 접근', '모두 잃음', '어둠의 영혼', '3막 전환', '피날레', '최종 이미지'],
+    'star_moment': ['평범한 시작', '문제 발생', '위기 고조', '스타 모멘트', '해결과 여운']
+  };
+  
+  return labels[framework]?.[index] || `${index + 1}단계`;
+};
+
+// 스토리 프레임워크에 따른 단계명 반환
+const getStageName = (framework, index) => {
+  const names = {
+    'hook_immersion': ['훅', '몰입', '반전', '떡밥'],
+    'classic': ['도입', '발전', '절정', '결말'],
+    'pixar': ['옛날 옛적에', '매일매일', '어느 날', '그래서', '그래서', '마침내'],
+    'save_the_cat': ['오프닝 이미지', '테마 제시', '설정', 'B스토리', '재미와 게임', '중간점', '악당의 접근', '모든 것을 잃음', '어둠의 영혼', '3막 전환', '피날레', '최종 이미지'],
+    'star_moment': ['일상', '갈등', '절정', '하이라이트', '마무리']
+  };
+  
+  return names[framework]?.[index] || '';
+};
+
 export default function VideoPlanning() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
@@ -416,7 +442,14 @@ export default function VideoPlanning() {
 
       if (response.data.status === 'success') {
         setLoadingProgress(80)
-        setLoadingMessage('기승전결 스토리 생성 완료!')
+        const frameworkName = {
+          'hook_immersion': '훅-몰입-반전-떡밥',
+          'classic': '기승전결',
+          'pixar': '픽사 스토리텔링',
+          'save_the_cat': 'Save the Cat',
+          'star_moment': '스타 모멘트'
+        }[planningOptions.storyFramework] || '스토리';
+        setLoadingMessage(`${frameworkName} 스토리 생성 완료!`)
         
         setTimeout(async () => {
           setPlanningData(prev => ({
@@ -2077,8 +2110,8 @@ export default function VideoPlanning() {
                 >
                   <div className="story-card-header">
                     <div className="story-stage-badge">
-                      <span className="stage-label">{story.stage}</span>
-                      <span className="stage-name">{story.stage_name}</span>
+                      <span className="stage-label">{getStageLabel(planningOptions.storyFramework, index)}</span>
+                      <span className="stage-name">{getStageName(planningOptions.storyFramework, index)}</span>
                     </div>
                     <div className="story-header-buttons">
                       <button 
@@ -2485,7 +2518,7 @@ export default function VideoPlanning() {
                           style={{
                             marginTop: '12px',
                             padding: '8px 16px',
-                            backgroundColor: '#28a745',
+                            backgroundColor: '#1631F8',
                             color: 'white',
                             border: 'none',
                             borderRadius: '4px',
@@ -2494,7 +2527,7 @@ export default function VideoPlanning() {
                             fontWeight: '500'
                           }}
                         >
-                          {scene.insertShotsLoading ? '추천 중...' : '인서트 샷 추천'}
+                          {scene.insertShotsLoading ? '생성 중...' : '인서트 샷 생성'}
                         </button>
                         
                         {scene.insertShots && scene.insertShots.length > 0 && (
@@ -2522,7 +2555,16 @@ export default function VideoPlanning() {
               ))}
             </div>
             <div className="button-group">
-              <button className="back-btn" onClick={() => goToStep(2)}>
+              <button className="back-btn" onClick={() => goToStep(2)} style={{
+                backgroundColor: '#000000',
+                color: '#ffffff',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '600'
+              }}>
                 스토리 다시 선택
               </button>
               <button className="export-btn" onClick={() => setShowExportModal(true)}>

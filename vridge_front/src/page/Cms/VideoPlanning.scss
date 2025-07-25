@@ -1618,12 +1618,12 @@
     }
 
     .character-settings {
-      background: #ffffff;
-      padding: 36px;
-      border-radius: 16px;
-      border: 2px solid #e9ecef;
+      background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(22, 49, 248, 0.1);
       margin-top: 32px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 8px 24px rgba(22, 49, 248, 0.08);
       position: relative;
       overflow: hidden;
       transition: all 0.3s ease;

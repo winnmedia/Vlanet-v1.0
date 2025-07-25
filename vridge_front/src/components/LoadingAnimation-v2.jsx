@@ -47,7 +47,7 @@ export default function LoadingAnimationV2({ message = '로딩 중...', variant 
           align-items: center;
           justify-content: center;
           background: rgba(255, 255, 255, 0.95);
-          z-index: 9999;
+          z-index: 999999;
           animation: fadeIn 0.2s ease;
         }
         

@@ -379,6 +379,15 @@
           }
         }
         
+        &.phase-manually-completed {
+          border: 2px solid #1631F8 !important;
+          background: linear-gradient(135deg, #E8EBFF 0%, #D1D8FF 100%) !important;
+          
+          .phase-status {
+            background: #1631F8 !important;
+          }
+        }
+        
         .phase-header {
           display: flex;
           align-items: center;

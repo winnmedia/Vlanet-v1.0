@@ -163,9 +163,9 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
             }}
           >
             <svg 
-              width="16" 
-              height="16" 
-              viewBox="0 0 16 16" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 20 20" 
               fill="none"
               style={{
                 transform: isCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -173,9 +173,9 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
               }}
             >
               <path 
-                d="M4 6L8 10L12 6" 
+                d="M5 7.5L10 12.5L15 7.5" 
                 stroke={isCollapsed ? '#666' : '#fff'} 
-                strokeWidth="2" 
+                strokeWidth="2.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
               />
@@ -345,7 +345,7 @@ function ProjectCard({
             const status = getPhaseStatus(phaseData, project.end_date)
             
             return (
-              <div key={phase.key} className={`phase-item ${status}`}>
+              <div key={phase.key} className={`phase-item ${status} ${phaseData && phaseData.completed ? 'phase-manually-completed' : ''}`}>
                 <div className="phase-header">
                   <span className="phase-name">{phase.name}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

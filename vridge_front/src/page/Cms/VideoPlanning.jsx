@@ -35,7 +35,7 @@ const filterForbiddenWords = (text) => {
 // 스토리 프레임워크에 따른 단계 레이블 반환
 const getStageLabel = (framework, index) => {
   const labels = {
-    'hook_immersion': ['1단계', '2단계', '3단계', '4단계'],
+    'hook_immersion': ['훅', '몰입', '반전', '떡밥'],
     'classic': ['기', '승', '전', '결'],
     'pixar': ['1단계', '2단계', '3단계', '4단계', '5단계', '6단계'],
     'save_the_cat': ['오프닝', '설정', '촉매', 'B스토리', '재미와 게임', '중간점', '악당 접근', '모두 잃음', '어둠의 영혼', '3막 전환', '피날레', '최종 이미지'],
@@ -1099,7 +1099,11 @@ export default function VideoPlanning() {
         `/api/video-planning/generate/insert-shots/`,
         { 
           scene_data: planningData.scenes[sceneIndex],
-          planning_options: planningOptions
+          planning_options: {
+            ...planningOptions,
+            insertShotCount: 5,
+            insertShotStyle: 'specific' // 구체적인 내용 요청
+          }
         }
       )
       

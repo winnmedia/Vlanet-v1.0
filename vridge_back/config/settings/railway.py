@@ -104,6 +104,9 @@ CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS_DEFAULT + CORS_ALLOWED_ORIG
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 
+# OPTIONS 요청에 대한 특별 처리
+CORS_REPLACE_HTTPS_REFERER = True
+
 # 중요 도메인 명시적 추가 확인
 if "https://www.vlanet.net" not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append("https://www.vlanet.net")
@@ -141,6 +144,14 @@ CORS_ALLOW_METHODS = [
 
 # Preflight 캐시 설정 (1시간)
 CORS_PREFLIGHT_MAX_AGE = 3600
+
+# CORS 응답 헤더 강제 추가 (OPTIONS 요청 처리)
+CORS_EXPOSE_HEADERS = [
+    'Content-Type',
+    'X-CSRFToken',
+    'Authorization',
+    'Set-Cookie',
+]
 
 # CSRF 신뢰할 수 있는 도메인
 CSRF_TRUSTED_ORIGINS = [
@@ -321,6 +332,12 @@ if DEBUG:
 if IS_RAILWAY or DEBUG:
     # MIDDLEWARE 리스트에 로깅 미들웨어 추가
     MIDDLEWARE.insert(0, 'config.logging_middleware.DetailedLoggingMiddleware')
+
+# 강제 CORS 미들웨어 추가 (CORS 헤더가 제대로 설정되지 않는 경우를 위해)
+if IS_RAILWAY:
+    # corsheaders 미들웨어 바로 뒤에 추가
+    cors_index = MIDDLEWARE.index('corsheaders.middleware.CorsMiddleware')
+    MIDDLEWARE.insert(cors_index + 1, 'middleware.force_cors.ForceCorsMiddleware')
 
 # 프로덕션 보안 설정 적용
 if not DEBUG:

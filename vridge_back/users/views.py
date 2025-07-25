@@ -173,6 +173,16 @@ class SignUp(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class SignIn(View):
+    def options(self, request, *args, **kwargs):
+        """Handle CORS preflight requests"""
+        response = JsonResponse({})
+        response['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        response['Access-Control-Max-Age'] = '86400'
+        return response
+    
     def post(self, request):
         try:
             data = json.loads(request.body)

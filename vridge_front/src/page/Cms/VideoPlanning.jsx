@@ -1052,6 +1052,54 @@ export default function VideoPlanning() {
     }
   }
 
+  const generateInsertShots = async (sceneIndex) => {
+    try {
+      // 씬에 로딩 상태 추가
+      const updatedScenes = [...planningData.scenes]
+      updatedScenes[sceneIndex] = {
+        ...updatedScenes[sceneIndex],
+        insertShotsLoading: true
+      }
+      setPlanningData(prev => ({ ...prev, scenes: updatedScenes }))
+      
+      const response = await axios.post(
+        `/api/video-planning/generate/insert-shots/`,
+        { 
+          scene_data: planningData.scenes[sceneIndex],
+          planning_options: planningOptions
+        }
+      )
+      
+      if (response.data.status === 'success') {
+        const insertShots = response.data.data.insert_shots || []
+        
+        // 씬에 인서트 샷 추가
+        updatedScenes[sceneIndex] = {
+          ...updatedScenes[sceneIndex],
+          insertShots: insertShots,
+          insertShotsLoading: false
+        }
+        
+        setPlanningData(prev => ({ ...prev, scenes: updatedScenes }))
+        
+        // 자동 저장
+        await autoSavePlanning()
+      }
+    } catch (err) {
+      console.error('인서트 샷 생성 실패:', err)
+      
+      // 로딩 상태 제거
+      const updatedScenes = [...planningData.scenes]
+      updatedScenes[sceneIndex] = {
+        ...updatedScenes[sceneIndex],
+        insertShotsLoading: false
+      }
+      setPlanningData(prev => ({ ...prev, scenes: updatedScenes }))
+      
+      setError('인서트 샷 추천에 실패했습니다.')
+    }
+  }
+
   const startEditingStoryboard = (sceneIndex) => {
     const scene = planningData.scenes[sceneIndex]
     if (scene && scene.storyboard) {
@@ -2010,9 +2058,14 @@ export default function VideoPlanning() {
       case 2:
         return (
           <div className="step-content">
-            <h3>2단계: 스토리 확인</h3>
+            <h3>2단계: 스토리 전개</h3>
             <p className="step-description">
-              기획안을 기승전결 4개의 스토리로 나누었습니다. 각 스토리마다 3개의 씬이 생성됩니다.
+              {planningOptions.storyFramework === 'hook_immersion' && '훅-몰입-반전-떡밥 구조로 스토리가 전개됩니다.'}
+              {planningOptions.storyFramework === 'classic' && '기승전결 구조로 스토리가 전개됩니다.'}
+              {planningOptions.storyFramework === 'pixar' && '픽사 스토리텔링 구조로 스토리가 전개됩니다.'}
+              {planningOptions.storyFramework === 'save_the_cat' && 'Save the Cat 구조로 스토리가 전개됩니다.'}
+              {planningOptions.storyFramework === 'star_moment' && '스타 모멘트 구조로 스토리가 전개됩니다.'}
+              {' '}각 단계마다 3개의 씬이 생성됩니다.
             </p>
             
             
@@ -2419,6 +2472,50 @@ export default function VideoPlanning() {
                       {scene.purpose && <p><strong>목적:</strong> {scene.purpose}</p>}
                       {scene.characters && <p><strong>등장인물:</strong> {scene.characters.join(', ')}</p>}
                       {scene.mood && <p><strong>분위기:</strong> {scene.mood}</p>}
+                      
+                      {/* 인서트 샷 추천 */}
+                      <div className="insert-shot-section">
+                        <button
+                          className="insert-shot-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            generateInsertShots(index);
+                          }}
+                          disabled={scene.insertShotsLoading}
+                          style={{
+                            marginTop: '12px',
+                            padding: '8px 16px',
+                            backgroundColor: '#28a745',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: scene.insertShotsLoading ? 'not-allowed' : 'pointer',
+                            fontSize: '14px',
+                            fontWeight: '500'
+                          }}
+                        >
+                          {scene.insertShotsLoading ? '추천 중...' : '인서트 샷 추천'}
+                        </button>
+                        
+                        {scene.insertShots && scene.insertShots.length > 0 && (
+                          <div className="insert-shots-list" style={{
+                            marginTop: '12px',
+                            padding: '12px',
+                            backgroundColor: '#f8f9fa',
+                            borderRadius: '8px',
+                            border: '1px solid #e9ecef'
+                          }}>
+                            <h5 style={{ marginBottom: '8px', fontSize: '14px', fontWeight: '600' }}>추천 인서트 샷:</h5>
+                            <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                              {scene.insertShots.map((shot, shotIndex) => (
+                                <li key={shotIndex} style={{ marginBottom: '4px', fontSize: '13px', lineHeight: '1.5' }}>
+                                  {shot}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

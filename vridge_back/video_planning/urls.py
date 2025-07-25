@@ -27,6 +27,7 @@ urlpatterns = [
     path('generate/shots/', views.generate_shots, name='generate_shots'),
     path('generate/storyboards/', views.generate_storyboards, name='generate_storyboards'),
     path('generate/all-storyboards/', views.generate_all_storyboards, name='generate_all_storyboards'),
+    path('generate/insert-shots/', views.generate_insert_shots, name='generate_insert_shots'),
     
     # 이미지 관련 API
     path('regenerate/storyboard-image/', views.regenerate_storyboard_image, name='regenerate_storyboard_image'),

@@ -165,10 +165,6 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
               다음 달 <br />
               프로젝트 <span>{projectCounts.nextMonth}</span>
             </li>
-            <li>
-              완료된 <br />
-              프로젝트 <span>{completedCount}</span>
-            </li>
           </ul>
         </div>
       )}

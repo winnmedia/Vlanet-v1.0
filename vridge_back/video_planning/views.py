@@ -501,6 +501,49 @@ def generate_all_storyboards(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def generate_insert_shots(request):
+    """
+    씬 데이터를 기반으로 인서트 샷을 추천합니다.
+    """
+    try:
+        scene_data = request.data.get('scene_data', {})
+        planning_options = request.data.get('planning_options', {})
+        
+        if not scene_data:
+            return Response({
+                'status': 'error',
+                'message': '씬 데이터가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Gemini 서비스 초기화
+        service = GeminiService()
+        
+        # 인서트 샷 생성
+        insert_shots = service.generate_insert_shots(scene_data, planning_options)
+        
+        if insert_shots:
+            return Response({
+                'status': 'success',
+                'data': {
+                    'insert_shots': insert_shots
+                }
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'status': 'error',
+                'message': '인서트 샷 생성에 실패했습니다.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    except Exception as e:
+        logger.error(f"Error in generate_insert_shots: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': '인서트 샷 추천 중 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def regenerate_storyboard_image(request):
     """
     스토리보드 이미지를 재생성합니다.

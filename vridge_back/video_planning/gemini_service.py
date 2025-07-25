@@ -234,6 +234,61 @@ class GeminiService:
         
         return structures.get(framework, structures['classic'])
     
+    def generate_insert_shots(self, scene_data, planning_options=None):
+        """씬 데이터를 기반으로 인서트 샷을 추천합니다."""
+        prompt = f"""
+        당신은 전문 영상 촬영 감독입니다. 다음 씬의 내용을 보고, 이 씬에서 확보할 수 있는 인서트 샷 3가지를 추천해주세요.
+        
+        인서트 샷이란 주요 장면 사이에 삽입되어 이야기의 흐름을 돕고, 감정을 강조하거나 정보를 제공하는 짧은 컷입니다.
+        
+        씬 정보:
+        - 장소: {scene_data.get('location', '')}
+        - 시간: {scene_data.get('time', '') or scene_data.get('time_of_day', '')}
+        - 설명: {scene_data.get('description', '') or scene_data.get('action', '')}
+        - 등장인물: {', '.join(scene_data.get('characters', []))}
+        - 분위기: {scene_data.get('mood', '')}
+        - 대사: {scene_data.get('dialogue', '')}
+        
+        인서트 샷 추천 기준:
+        1. 감정 강조: 인물의 표정, 손동작, 발걸음 등 디테일
+        2. 환경 묘사: 장소의 특징적인 요소, 시간대를 나타내는 요소
+        3. 소품/오브젝트: 이야기와 연관된 의미있는 사물
+        4. 분위기 조성: 빛, 그림자, 질감 등 시각적 요소
+        
+        정확히 3개의 구체적이고 실용적인 인서트 샷을 추천해주세요.
+        각 샷은 한 문장으로 명확하게 설명해주세요.
+        
+        JSON 형식으로 응답해주세요:
+        {{
+            "insert_shots": [
+                "첫 번째 인서트 샷 설명",
+                "두 번째 인서트 샷 설명",
+                "세 번째 인서트 샷 설명"
+            ]
+        }}
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            response_text = response.text.strip()
+            
+            if response_text.startswith('```json'):
+                response_text = response_text[7:]
+            if response_text.endswith('```'):
+                response_text = response_text[:-3]
+            
+            result = json.loads(response_text)
+            return result.get('insert_shots', [])
+            
+        except Exception as e:
+            logger.error(f"Error generating insert shots: {e}")
+            # 에러 발생 시 기본 인서트 샷 제공
+            return [
+                f"{scene_data.get('location', '장소')}의 전체적인 분위기를 보여주는 와이드 샷",
+                "주요 인물의 표정이나 손동작을 클로즈업하는 디테일 샷",
+                "씬의 시간대나 분위기를 나타내는 환경 요소 샷"
+            ]
+    
     def _get_framework_json_template(self, framework):
         """프레임워크별 JSON 템플릿 반환"""
         templates = {

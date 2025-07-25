@@ -2,5 +2,10 @@
   "buildCommand": "cd vridge_front && npm run build",
   "outputDirectory": "vridge_front/.next",
   "installCommand": "cd vridge_front && npm install --legacy-peer-deps",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "rootDirectory": ".",
+  "regions": ["icn1"],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://videoplanet.up.railway.app"
+  }
 }

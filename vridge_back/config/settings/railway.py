@@ -56,7 +56,9 @@ else:
 
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-WHITENOISE_ROOT = BASE_DIR / 'frontend_build'
+# Railway에서는 프론트엔드를 별도로 배포하므로 WHITENOISE_ROOT 제거
+if os.path.exists(BASE_DIR / 'frontend_build'):
+    WHITENOISE_ROOT = BASE_DIR / 'frontend_build'
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = DEBUG
 

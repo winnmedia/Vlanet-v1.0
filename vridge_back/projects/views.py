@@ -64,7 +64,6 @@ class ProjectList(View):
             else:
                 nickname = user.username
 
-            # development_framework는 아직 데이터베이스에 없으므로 제외
             # 최적화: feedback__comments__user를 추가하여 N+1 문제 해결
             project_list = user.projects.all().select_related(
                 "basic_plan",
@@ -76,6 +75,7 @@ class ProjectList(View):
                 "confirmation",
                 "video_delivery",
                 "feedback",
+                "development_framework",
             ).prefetch_related(
                 'feedback__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
                 'members__user',  # 프로젝트 멤버 정보 미리 로드
@@ -359,8 +359,11 @@ class ProjectList(View):
             error_detail = str(e)
             
             # development_framework 관련 에러 처리
-            if "development_framework" in error_detail or "column" in error_detail:
-                error_message = "데이터베이스 구조 업데이트 중입니다. 잠시 후 다시 시도해주세요."
+            if "development_framework" in error_detail:
+                error_message = "프로젝트 설정을 불러오는 중 오류가 발생했습니다."
+                logger.error("Development framework error - check if field exists in model")
+            elif "column" in error_detail and "development_framework" in error_detail:
+                error_message = "데이터베이스 마이그레이션이 필요합니다. 관리자에게 문의하세요."
                 logger.error("Development framework column missing - migration needed")
             elif "nickname" in error_detail:
                 error_message = "사용자 정보 오류가 발생했습니다."

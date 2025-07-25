@@ -88,6 +88,7 @@ CORS_ALLOWED_ORIGINS_DEFAULT = [
     "https://www.vlanet.net",
     "http://vlanet.net",
     "http://www.vlanet.net",
+    "https://vridgefront.vercel.app",  # 실제 Vercel 배포 도메인
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://vridge-front-production.up.railway.app",
@@ -104,11 +105,13 @@ CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS_DEFAULT + CORS_ALLOWED_ORIG
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 
-# www.vlanet.net 명시적 추가 확인
+# 중요 도메인 명시적 추가 확인
 if "https://www.vlanet.net" not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append("https://www.vlanet.net")
 if "http://www.vlanet.net" not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append("http://www.vlanet.net")
+if "https://vridgefront.vercel.app" not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append("https://vridgefront.vercel.app")
 
 # Vercel 배포를 위한 regex 패턴
 CORS_ALLOWED_ORIGIN_REGEXES = [

@@ -72,11 +72,15 @@ function MyApp({ Component, pageProps }) {
       // 로그인에서 홈으로 이동하는 경우 로딩 표시하지 않음
       const currentPath = router.pathname.toLowerCase()
       const targetPath = url.toLowerCase()
-      if (currentPath === '/login' && (targetPath === '/cmshome' || targetPath === '/')) {
+      
+      // 로그인 페이지에서 나가는 모든 경우 로딩 표시 안함
+      if (currentPath === '/login') {
         setLoading(false)
-      } else {
-        setLoading(true)
+        return
       }
+      
+      // 그 외의 경우에만 로딩 표시
+      setLoading(true)
     }
     const handleComplete = (url) => {
       console.log('Loading complete:', url)

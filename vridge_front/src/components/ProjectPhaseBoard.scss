@@ -32,17 +32,7 @@
         box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
       }
       
-      &::after {
-        content: '−';
-        font-size: 20px;
-        font-weight: 600;
-        color: white;
-        line-height: 1;
-      }
-      
-      &.collapsed::after {
-        content: '+';
-      }
+      // Remove ::after pseudo-element to avoid conflict with SVG arrow
       
       &:focus {
         outline: none;

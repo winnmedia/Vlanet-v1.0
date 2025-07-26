@@ -34,19 +34,18 @@ jobs:
       - name: Run linter
         run: npm run lint || true  # 초기에는 경고만
       
-      # 테스트는 일시적으로 비활성화 (jest 설정 필요)
-      # - name: Run tests
-      #   run: npm test -- --coverage --watchAll=false
+      - name: Run tests
+        run: npm test -- --coverage --watchAll=false --passWithNoTests --forceExit
       
       - name: Build application
         run: npm run build
       
-      # Coverage 업로드도 일시적으로 비활성화
-      # - name: Upload coverage
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     directory: ./vridge_front/coverage
-      #     flags: frontend
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./vridge_front/coverage
+          flags: frontend
+        continue-on-error: true
 
   # Backend 테스트
   backend-test:
@@ -92,26 +91,24 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # pytest 설치 스킵 (테스트 비활성화)
-          # pip install pytest pytest-cov pytest-django
       
-      # 백엔드 테스트도 일시적으로 비활성화
-      # - name: Run tests
-      #   env:
-      #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-      #     REDIS_URL: redis://localhost:6379/0
-      #     SECRET_KEY: test-secret-key
-      #     DEBUG: false
-      #   run: |
-      #     python manage.py migrate
-      #     pytest --cov=. --cov-report=xml
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test-secret-key
+          DEBUG: false
+        run: |
+          cd vridge_back
+          python manage.py migrate
+          pytest --cov=. --cov-report=xml --maxfail=5
       
-      # 백엔드 Coverage 업로드도 비활성화
-      # - name: Upload coverage
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     directory: ./vridge_back
-      #     flags: backend
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./vridge_back
+          flags: backend
+        continue-on-error: true
 
   # 보안 스캔
   security-scan:

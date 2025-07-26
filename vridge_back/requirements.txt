@@ -32,3 +32,8 @@ reportlab==4.0.4
 
 # Video Analysis
 twelvelabs==0.2.0
+# Testing dependencies
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov==4.1.0
+factory-boy==3.3.0

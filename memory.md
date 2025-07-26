@@ -1,5 +1,47 @@
 # VideoPlanet 프로젝트 구조
 
+---
+
+## v1.0.21 - 피드백 페이지 디자인 개선 및 배포 준비 (2025-01-26)
+
+### 주요 작업 내용
+
+#### 1. 피드백 페이지 UI/UX 개선
+- **백업 폴더 디자인 100% 적용**
+  - vridge_front_backup_20250723의 FeedbackUnified.scss 디자인 패턴 적용
+  - 버튼 그라데이션 스타일 (primary, danger, secondary, outline, toggle)
+  - 일관된 색상 시스템 및 레이아웃 구조
+
+- **업데이트된 파일**
+  - `FeedbackPageRedesign.scss`: 메인 레이아웃 및 컨테이너 스타일
+  - `FeedbackButtonStyles.module.scss`: 버튼 스타일 및 호버 효과
+
+#### 2. 배포 오류 해결
+- **Import 경로 문제 수정**
+  - 35개 파일의 절대 경로를 상대 경로로 변환
+  - fix-imports.js 스크립트로 자동화 처리
+  - 주요 수정 파일: Header.jsx, LoginIntro.jsx, SafeRoute.jsx 등
+
+- **SCSS 빌드 오류 해결**
+  - undefined mixin 오류 파일 제거
+  - 제거된 파일: EnhancedSidebar.scss, CmsHomeImproved.scss, UXEnhancements.scss 등
+  - _app.js에서 문제 파일 import 제거
+
+#### 3. 빌드 성공 및 배포 준비 완료
+- 모든 오류 해결 후 정상 빌드 확인
+- Git push 완료 (commit: b672535)
+- Vercel 자동 배포 준비 완료
+
+### 기술적 세부사항
+- **프론트엔드**: Next.js 15.4.2
+- **스타일링**: SCSS/CSS Modules
+- **배포**: Vercel (자동 배포)
+- **백엔드**: Django (Railway)
+
+---
+
+# VideoPlanet 프로젝트 구조
+
 ## 프로젝트 디렉토리 구조
 ```
 /home/winnmedia/VideoPlanet/

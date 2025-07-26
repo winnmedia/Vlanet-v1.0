@@ -107,12 +107,12 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 
 # OPTIONS 요청에 대한 특별 처리
-CORS_REPLACE_HTTPS_REFERER = True
+# CORS_REPLACE_HTTPS_REFERER는 django-cors-headers 3.0+에서 제거됨
 
-# 디버그 모드에서 모든 origin 허용 (테스트용)
-if os.environ.get('CORS_DEBUG', 'False').lower() == 'true':
-    CORS_ALLOW_ALL_ORIGINS = True
-    print("WARNING: CORS_ALLOW_ALL_ORIGINS is True - This should only be used for debugging!")
+# 디버그 모드에서 모든 origin 허용 (테스트용) - 프로덕션에서는 비활성화
+# if os.environ.get('CORS_DEBUG', 'False').lower() == 'true':
+#     CORS_ALLOW_ALL_ORIGINS = True
+#     print("WARNING: CORS_ALLOW_ALL_ORIGINS is True - This should only be used for debugging!")
 
 # 중요 도메인 명시적 추가 확인
 if "https://www.vlanet.net" not in CORS_ALLOWED_ORIGINS:

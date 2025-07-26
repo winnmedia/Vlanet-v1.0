@@ -1,0 +1,71 @@
+name: Simple Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # Frontend 빌드 테스트
+  frontend-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          cd vridge_front
+          npm install --legacy-peer-deps
+      
+      - name: Build application
+        run: |
+          cd vridge_front
+          npm run build
+      
+      - name: Build success notification
+        run: echo "Frontend build successful! ✅"
+
+  # 백엔드 문법 검사
+  backend-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          cd vridge_back
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Check Django project
+        run: |
+          cd vridge_back
+          python manage.py check
+      
+      - name: Backend check success
+        run: echo "Backend check successful! ✅"
+
+  # 배포 알림
+  deploy-notification:
+    needs: [frontend-build, backend-check]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deployment notification
+        run: |
+          echo "🚀 All checks passed!"
+          echo "Frontend: Vercel will auto-deploy"
+          echo "Backend: Railway will auto-deploy"
+          echo "Deployment time: $(date)"

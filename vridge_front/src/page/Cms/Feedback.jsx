@@ -623,12 +623,15 @@ export default function Feedback() {
         <div className="member">
           {/* 관리자만 초대 버튼 표시 */}
           {is_admin && (
-            <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+            <div className="member_header">
               <button
                 onClick={handleOpenInviteModal}
                 className={styles.inviteButton}
               >
-                멤버 초대
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+                <span>멤버 초대</span>
               </button>
             </div>
           )}
@@ -640,7 +643,7 @@ export default function Feedback() {
                   backgroundImage: `url(${profileImage})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
-                } : {}
+                } : undefined
               }></div>
               <div className="txt">
                 {current_project.owner_nickname}(관리자)
@@ -657,7 +660,7 @@ export default function Feedback() {
                     backgroundImage: `url(${profileImage})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
-                  } : {}
+                  } : undefined
                 }></div>
                 <div className="txt">
                   {member.nickname}({Rating(member.rating)})
@@ -669,45 +672,20 @@ export default function Feedback() {
 
           {/* 초대 현황 표시 (관리자만) */}
           {is_admin && projectInvitations.length > 0 && (
-            <div style={{ marginTop: '30px' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '15px', color: '#333' }}>
-                초대 현황
-              </h4>
-              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px' }}>
+            <div className="invitation_section">
+              <h4 className="section_title">초대 현황</h4>
+              <div className="invitation_list">
                 {projectInvitations.map((invitation, index) => (
                   <div 
                     key={index}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '8px 0',
-                      borderBottom: index < projectInvitations.length - 1 ? '1px solid #e9ecef' : 'none'
-                    }}
+                    className="invitation_item"
                   >
-                    <div>
-                      <div style={{ fontSize: '14px', fontWeight: '500' }}>
-                        {invitation.invitee_email}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#6c757d' }}>
-                        {moment(invitation.created).format('YYYY.MM.DD HH:mm')}
-                      </div>
+                    <div className="invitation_info">
+                      <div className="invitation_email">{invitation.invitee_email}</div>
+                      <div className="invitation_date">{moment(invitation.created).format('YYYY.MM.DD HH:mm')}</div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{
-                        padding: '4px 8px',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        backgroundColor: invitation.status === 'pending' ? '#fff3cd' : 
-                                      invitation.status === 'accepted' ? '#d4edda' : 
-                                      invitation.status === 'cancelled' ? '#f8d7da' :
-                                      invitation.status === 'declined' ? '#f8d7da' : '#e9ecef',
-                        color: invitation.status === 'pending' ? '#856404' : 
-                               invitation.status === 'accepted' ? '#155724' : 
-                               invitation.status === 'cancelled' ? '#721c24' :
-                               invitation.status === 'declined' ? '#721c24' : '#6c757d'
-                      }}>
+                    <div className="invitation_actions">
+                      <span className={`invitation_status ${invitation.status}`}>
                         {invitation.status === 'pending' ? '대기중' :
                          invitation.status === 'accepted' ? '수락됨' :
                          invitation.status === 'declined' ? '거절됨' :
@@ -1225,10 +1203,7 @@ export default function Feedback() {
                       }}
                       />
                       
-                      {/* 플레이어 컨트롤 버튼들 - 플레이어 바로 아래 */}
-                      <div className="player-controls">
-                        {/* 여기에 플레이어 전용 컨트롤 추가 가능 */}
-                      </div>
+                      {/* 플레이어 컨트롤 버튼들 - 플레이어 바로 아래 - 삭제함 */}
                     </div>
                   ) : (
                     // 영상이 없을 때 업로드 UI - 플레이어 중앙에 위치
@@ -1333,7 +1308,7 @@ export default function Feedback() {
                   )}
                   </div>
                   
-                  {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
+                  {/* 피드백 관련 버튼들 - 플레이어 바로 아래 위치 */}
                   <div className={styles.actionButtonGroup}>
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
@@ -1381,7 +1356,6 @@ export default function Feedback() {
                       }}
                       className={styles.feedbackButtonPrimary}
                       aria-label="현재 시점에 피드백 추가"
-                      tabIndex={0}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -1427,7 +1401,6 @@ export default function Feedback() {
                         className={styles.feedbackButtonIconOnly}
                         aria-label="영상 삭제"
                         title="영상 삭제"
-                        tabIndex={0}
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1441,8 +1414,7 @@ export default function Feedback() {
                         onClick={() => CopyFileUrl(current_project.files)}
                         className={styles.feedbackButtonIconOnly}
                         aria-label="영상 링크 공유"
-                        title="공유"
-                        tabIndex={0}
+                        title="링크 복사"
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1483,8 +1455,7 @@ export default function Feedback() {
                         }}
                         className={styles.feedbackButtonIconOnly}
                         aria-label="스크린샷 캡처"
-                        title="스크린샷 (S)"
-                        tabIndex={0}
+                        title="스크린샷"
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1496,11 +1467,11 @@ export default function Feedback() {
                   </div>
                   
                   <div className="etc_box">
-                  <div className="flex space_between">
+                  <div className="header_section">
                     <div className="s_title">
                       {currentItem ? currentItem.tab : '피드백'}
                     </div>
-                    <div>
+                    <div className="header_actions">
                       {/* 피드백 전체보기 버튼 - 피드백 관리 탭에서만 표시 */}
                       {currentItem && currentItem.tab === '피드백 관리' && (
                         <button
@@ -1509,7 +1480,7 @@ export default function Feedback() {
                               state: { ...current_project, user: user },
                             })
                           }
-                          className="submit"
+                          className={styles.feedbackButtonSecondary}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
@@ -1571,7 +1542,7 @@ export default function Feedback() {
                     </div>
                   )}
                   
-                  <div className="list">
+                  <div className="feedback_list_container">
                     <FeedbackMore 
                       current_project={current_project} 
                       onTimeClick={(timeStr) => {
@@ -1673,7 +1644,6 @@ export default function Feedback() {
                         <button
                           className={styles.feedbackButtonPrimaryFull}
                           onClick={() => navigate(`/ProjectEdit/${project_id}`)}
-                          style={{ marginTop: '8px' }}
                         >
                           프로젝트 관리
                         </button>
@@ -1682,20 +1652,13 @@ export default function Feedback() {
                   )}
                 </div>
                 <div className="tab_container">
-                  <div className="tab_menu" style={{
-                    display: 'flex',
-                    gap: '8px',
-                    padding: '16px',
-                    background: '#f8f9fa',
-                    borderRadius: '12px 12px 0 0',
-                    borderBottom: '1px solid #e9ecef'
-                  }}>
+                  <div className="tab_menu">
                     {content.map((section, index) => (
                       section && section.tab ? (
                         <button 
                           key={index}
                           onClick={() => changeItem(index)}
-                          className={currentItem && currentItem.tab == section.tab ? `${styles.tabButton} ${styles.active}` : styles.tabButton}
+                          className={currentItem && currentItem.tab === section.tab ? `${styles.tabButton} ${styles.active}` : styles.tabButton}
                         >
                           {section.tab}
                         </button>

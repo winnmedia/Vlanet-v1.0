@@ -277,7 +277,9 @@
   &::-webkit-scrollbar {
     display: none;
   }
-  -ms-overflow-style: none;
+  & {
+    -ms-overflow-style: none;
+  }
   .etc {
     padding: 50px 40px 20px 40px; // 사이드바 홈버튼 위치와 맞춤
     text-align: right;

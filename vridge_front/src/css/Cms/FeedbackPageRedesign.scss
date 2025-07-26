@@ -563,9 +563,9 @@ $info-color: #17a2b8;
       
       // 피드백 리스트
       .feedback_list {
-        max-height: 600px;
+        max-height: 500px;
         overflow-y: auto;
-        padding-right: 10px;
+        padding-right: 8px;
         
         &::-webkit-scrollbar {
           width: 8px;
@@ -939,91 +939,172 @@ $info-color: #17a2b8;
     }
   }
   
-  // 비디오 컨트롤 버튼 영역 (백업 폴더 버튼 스타일 완전 적용)
-  .video-control-buttons {
-    display: flex;
-    gap: 12px;
-    flex-wrap: nowrap;
-    align-items: center;
-    padding: 20px 0;
-    border-top: 1px solid #e9ecef;
-    margin-top: 20px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  // 피드백 리스트 컨테이너 추가
+  .feedback_list_container {
+    padding: 16px;
+    max-height: 500px;
+    overflow-y: auto;
     
-    // 모든 버튼 공통 스타일
-    button, label {
-      min-width: 120px !important;
-      height: 42px;
-      padding: 0 20px;
-      border-radius: 8px;
-      font-size: 14px;
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f8f9fa;
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e0;
+      border-radius: 3px;
+      
+      &:hover {
+        background: #94a3b8;
+      }
+    }
+  }
+  
+  // 초대 현황 섹션
+  .invitation_section {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e9ecef;
+    
+    .section_title {
+      font-size: 16px;
       font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
-      white-space: nowrap;
-      flex-shrink: 0;
+      color: #212529;
+      margin-bottom: 16px;
+    }
+    
+    .invitation_list {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
       
-      svg {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-      }
-      
-      // 주요 액션 버튼 (파란색)
-      &.feedbackButtonPrimary, &[class*="feedbackButtonPrimary"] {
-        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
-        color: white;
-        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+      .invitation_item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
         
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+        &:not(:last-child) {
+          border-bottom: 1px solid #e9ecef;
         }
         
-        &:active {
-          transform: translateY(0);
-        }
-      }
-      
-      // 위험 액션 버튼 (빨간색)
-      &.feedbackButtonDanger, &[class*="feedbackButtonDanger"] {
-        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-        color: white;
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
-        
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        .invitation_info {
+          .invitation_email {
+            font-size: 14px;
+            font-weight: 500;
+            color: #212529;
+            margin-bottom: 4px;
+          }
+          
+          .invitation_date {
+            font-size: 12px;
+            color: #6c757d;
+          }
         }
         
-        &:active {
-          transform: translateY(0);
-        }
-      }
-      
-      // 보조 버튼 (회색)
-      &:not([class*="feedbackButton"]) {
-        background: #6c757d;
-        color: white;
-        
-        &:hover {
-          background: #5a6268;
-          transform: translateY(-1px);
+        .invitation_actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .invitation_status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            
+            &.pending {
+              background: #fff3cd;
+              color: #856404;
+            }
+            
+            &.accepted {
+              background: #d4edda;
+              color: #155724;
+            }
+            
+            &.cancelled,
+            &.declined {
+              background: #f8d7da;
+              color: #721c24;
+            }
+          }
+          
+          .btn_resend,
+          .btn_cancel {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid;
+          }
+          
+          .btn_resend {
+            background: transparent;
+            color: #ffc107;
+            border-color: #ffc107;
+            
+            &:hover {
+              background: #ffc107;
+              color: white;
+            }
+          }
+          
+          .btn_cancel {
+            background: transparent;
+            color: #dc3545;
+            border-color: #dc3545;
+            
+            &:hover {
+              background: #dc3545;
+              color: white;
+            }
+          }
         }
       }
     }
+  }
+  
+  // 프로젝트 정보 패널
+  .project_info_panel {
+    margin-top: 16px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    font-size: 14px;
     
-    // 숨겨진 파일 입력
-    input[type="file"] {
-      position: absolute;
-      left: -9999px;
-      visibility: hidden;
+    .info_row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+      
+      label {
+        min-width: 80px;
+        font-weight: 600;
+        color: #495057;
+        flex-shrink: 0;
+        
+        &::after {
+          content: ':';
+        }
+      }
+      
+      span {
+        color: #212529;
+        word-break: break-word;
+        line-height: 1.5;
+      }
+    }
+    
+    button {
+      margin-top: 16px;
     }
   }
 }

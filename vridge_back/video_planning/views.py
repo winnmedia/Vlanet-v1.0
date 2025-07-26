@@ -55,19 +55,31 @@ def get_recent_plannings(request):
             try:
                 # planning_options 가져오기
                 planning_options = {}
-                if planning.selected_story and isinstance(planning.selected_story, dict):
+                if hasattr(planning, 'planning_options') and planning.planning_options:
+                    planning_options = planning.planning_options
+                elif planning.selected_story and isinstance(planning.selected_story, dict):
                     planning_options = planning.selected_story.get('planning_options', {})
+                
+                # stories에서 프레임워크 정보 확인
+                stories = planning.stories or []
+                story_framework = planning_options.get('story_framework', 'classic')
+                
+                # 각 스토리에 planning_options가 없으면 추가
+                for story in stories:
+                    if 'planning_options' not in story:
+                        story['planning_options'] = planning_options
                 
                 planning_logs.append({
                     'id': planning.id,
                     'title': planning.title or '제목 없음',
                     'created_at': planning.created_at.strftime('%Y-%m-%d %H:%M') if planning.created_at else '',
-                    'planning_options': planning.planning_options if hasattr(planning, 'planning_options') else planning_options,
+                    'planning_options': planning_options,
                     'current_step': planning.current_step or 1,
                     'is_completed': planning.is_completed or False,
+                    'story_framework': story_framework,
                     'planning_data': {
                         'planning': planning.planning_text,
-                        'stories': planning.stories,
+                        'stories': stories,
                         'scenes': planning.scenes,
                         'shots': planning.shots,
                         'storyboards': planning.storyboards
@@ -183,15 +195,6 @@ def generate_story(request):
                 if not title:
                     title = planning_text[:50] + "..." if len(planning_text) > 50 else planning_text[:50]
                 
-                # VideoPanning 생성
-                video_planning = VideoPlanning.objects.create(
-                    user=request.user,
-                    title=title,
-                    planning_text=planning_text,
-                    stories=stories_data.get('stories', []),
-                    current_step=1
-                )
-                
                 # planning_data에 옵션 정보 저장
                 planning_data = {
                     'tone': tone,
@@ -206,9 +209,26 @@ def generate_story(request):
                     'character_description': character_description,
                     'character_image': character_image
                 }
-                # JSON 필드에 추가 데이터 저장 (모델 확장 없이)
-                video_planning.selected_story = {'planning_options': planning_data}
-                video_planning.save()
+                
+                # stories_data의 각 스토리에 planning_options 추가
+                stories_with_options = stories_data.get('stories', [])
+                for story in stories_with_options:
+                    story['planning_options'] = planning_data
+                
+                # VideoPanning 생성
+                video_planning = VideoPlanning.objects.create(
+                    user=request.user,
+                    title=title,
+                    planning_text=planning_text,
+                    stories=stories_with_options,
+                    planning_options=planning_data,
+                    current_step=1
+                )
+                
+                # selected_story에도 planning_options 포함
+                if stories_with_options:
+                    video_planning.selected_story = stories_with_options[0]
+                    video_planning.save()
                 
                 logger.info(f"VideoPanning log created for user {request.user.email}")
             except Exception as e:

@@ -1,5 +1,7 @@
-// 피드백 페이지 버튼 스타일 - CSS Modules로 격리
-// 브랜드 색상 정의
+// 피드백 페이지 버튼 스타일 - 백업 폴더 디자인 100% 참고
+// Version: 3.0 - 버튼 스타일 인라인에서 CSS로 변경
+
+// ===== 브랜드 색상 정의 (백업 폴더 기준) =====
 $brand-blue: #1631F8;
 $brand-blue-hover: #0F23C9;
 $brand-red: #dc3545;
@@ -7,24 +9,19 @@ $brand-red-hover: #c82333;
 $brand-gray: #6c757d;
 $brand-gray-hover: #5a6268;
 
-// 공통 버튼 믹스인
+// 공통 버튼 믹스인 (백업 폴더에서 참고)
 @mixin button-base {
   display: inline-flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  padding: 12px 16px !important;
+  gap: 6px !important;
+  padding: 10px 16px !important;
   border: none !important;
-  border-radius: 10px !important;
-  font-size: 14px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  min-height: 44px !important; // 터치 타겟 최소 크기
-  flex: 1 !important;
-  min-width: 0 !important;
-  line-height: 1.2 !important;
-  white-space: nowrap !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   position: relative !important;
   overflow: hidden !important;
   
@@ -61,101 +58,125 @@ $brand-gray-hover: #5a6268;
   }
 }
 
+// 파란색 버튼 (기본) - 백업 폴더 스타일
 .feedbackButtonPrimary,
 label.feedbackButtonPrimary {
   @include button-base;
-  background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%) !important;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
   color: white !important;
-  box-shadow: 0 4px 15px rgba(22, 49, 248, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25) !important;
   
   &:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 8px 25px rgba(22, 49, 248, 0.4) !important;
-    background: linear-gradient(135deg, lighten($brand-blue, 5%) 0%, $brand-blue-hover 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4) !important;
   }
   
   &:active {
-    transform: translateY(-1px) scale(1) !important;
-    box-shadow: 0 4px 15px rgba(22, 49, 248, 0.3) !important;
+    transform: translateY(0) !important;
   }
 }
 
+// 빨간색 버튼 (삭제/취소) - 백업 폴더 스타일
 .feedbackButtonDanger {
   @include button-base;
-  background: linear-gradient(135deg, $brand-red 0%, $brand-red-hover 100%) !important;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
   color: white !important;
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25) !important;
   
   &:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4) !important;
-    background: linear-gradient(135deg, lighten($brand-red, 5%) 0%, $brand-red-hover 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
   }
   
   &:active {
-    transform: translateY(-1px) scale(1) !important;
-    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+    transform: translateY(0) !important;
   }
 }
 
+// 회색 버튼 (공유) - 백업 폴더 스타일
 .feedbackButtonSecondary {
   @include button-base;
-  background: white !important;
-  color: #495057 !important;
-  border: 2px solid #e9ecef !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25) !important;
   
   &:hover {
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
-    border-color: $brand-blue !important;
-    color: $brand-blue !important;
-    background: rgba($brand-blue, 0.05) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important;
   }
   
   &:active {
-    transform: translateY(-1px) scale(1) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-  }
-  
-  &::before {
-    background: rgba($brand-blue, 0.2);
+    transform: translateY(0) !important;
   }
 }
 
+// 아웃라인 버튼 (업로드 가이드) - 백업 폴더 스타일
 .feedbackButtonOutline {
-  @include button-base;
-  background: transparent !important;
-  color: $brand-blue !important;
-  border: 2px solid $brand-blue !important;
-  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 12px 20px !important;
+  background: white !important;
+  color: #1631F8 !important;
+  border: 2px solid #1631F8 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
   
   &:hover {
-    background: $brand-blue !important;
+    background: #1631F8 !important;
     color: white !important;
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 8px 25px rgba(22, 49, 248, 0.4) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3) !important;
   }
   
   &:active {
-    transform: translateY(-1px) scale(1) !important;
-    box-shadow: 0 4px 15px rgba(22, 49, 248, 0.3) !important;
+    transform: translateY(0) !important;
   }
 }
 
+// 토글 버튼 - 백업 폴더 스타일
+.feedbackButtonToggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 16px !important;
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    background: #e9ecef !important;
+    color: #212529 !important;
+  }
+  
+  &:active {
+    background: #dee2e6 !important;
+  }
+}
+
+// 아이콘 전용 버튼
 .feedbackButtonIconOnly {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 10px !important;
-  background: transparent !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  background: white !important;
   color: #6c757d !important;
-  border: 1px solid transparent !important;
+  border: 1px solid #dee2e6 !important;
   border-radius: 8px !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  min-width: auto !important;
-  min-height: auto !important;
+  transition: all 0.3s ease !important;
   
   svg {
     width: 20px !important;
@@ -163,13 +184,14 @@ label.feedbackButtonPrimary {
   }
   
   &:hover {
-    background: #f8f9fa !important;
-    border-color: #dee2e6 !important;
-    transform: scale(1.1) !important;
+    border-color: $brand-blue !important;
+    color: $brand-blue !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.15) !important;
   }
   
   &:active {
-    transform: scale(1) !important;
+    transform: translateY(0) !important;
   }
 }
 

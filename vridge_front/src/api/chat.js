@@ -1,4 +1,4 @@
-import { axiosCredentials } from 'util/util'
+import { axiosCredentials } from '../util/util'
 
 // 채팅 메시지 목록 조회
 export function GetChatMessages(feedbackId) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { checkSession } from 'util/util'
+import { checkSession } from '../util/util'
 import LoadingAnimation from './LoadingAnimation'
 import { useRouter } from 'next/router'
 

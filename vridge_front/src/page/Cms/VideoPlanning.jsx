@@ -1,15 +1,15 @@
 import React, { useState, Fragment } from 'react'
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
-import LoadingAnimation from 'components/LoadingAnimation'
-import ExportModal from 'components/ExportModal'
-import VideoUploadGuide from 'components/VideoUploadGuide'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
+import LoadingAnimation from '../../components/LoadingAnimation'
+import ExportModal from '../../components/ExportModal'
+import VideoUploadGuide from '../../components/VideoUploadGuide'
 // CSS imports are handled in _app.js
 import axios from '../../config/axios'
-import { checkSession } from 'util/util'
+import { checkSession } from '../../util/util'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { getProxyImageUrl, handleImageError } from 'utils/imageProxy'
+import { getProxyImageUrl, handleImageError } from '../../utils/imageProxy'
 
 // 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
 const filterForbiddenWords = (text) => {

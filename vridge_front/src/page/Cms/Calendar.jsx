@@ -3,25 +3,25 @@
 
 
 /* 상단 이미지 - 샘플, 기본 */
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
-import CalendarBody from 'tasks/Calendar/CalendarBody'
-import CalendarHeader from 'tasks/Calendar/CalendarHeader'
-import CalendarTotal from 'tasks/Calendar/CalendarTotal'
-import ProjectList from 'tasks/Calendar/ProjectList'
-import CalendarEnhanced from 'components/CalendarEnhanced'
-import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
+import CalendarBody from '../../tasks/Calendar/CalendarBody'
+import CalendarHeader from '../../tasks/Calendar/CalendarHeader'
+import CalendarTotal from '../../tasks/Calendar/CalendarTotal'
+import ProjectList from '../../tasks/Calendar/ProjectList'
+import CalendarEnhanced from '../../components/CalendarEnhanced'
+import ProjectPhaseBoard from '../../components/ProjectPhaseBoard'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useRouter, useLocation } from 'util/nextNavigation'
+import { useRouter, useLocation } from '../../util/nextNavigation'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { Select, Space } from 'antd'
 
 import moment from 'moment'
 import 'moment/locale/ko'
-import { refetchProject, checkSession } from 'util/util'
-import { UpdateDate, WriteMemo } from 'api/project'
+import { refetchProject, checkSession } from '../../util/util'
+import { UpdateDate, WriteMemo } from '../../api/project'
 
 export default function Calendar() {
   const router = useRouter()

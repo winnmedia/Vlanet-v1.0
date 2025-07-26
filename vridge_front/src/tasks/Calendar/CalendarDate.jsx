@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { WriteMemo, DeleteMemo, UpdateDate } from 'api/project'
-import { WriteUserMemo, DeleteUserMemo } from 'api/auth'
+import { WriteMemo, DeleteMemo, UpdateDate } from '../../api/project'
+import { WriteUserMemo, DeleteUserMemo } from '../../api/auth'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import moment from 'moment'
 import 'moment/locale/ko'

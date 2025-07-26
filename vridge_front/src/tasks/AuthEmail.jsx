@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { SendAuthNumber, EmailAuth } from 'api/auth'
+import { SendAuthNumber, EmailAuth } from '../api/auth'
 import { useRouter } from '../util/nextNavigation'
 
 export default function AuthEmail({

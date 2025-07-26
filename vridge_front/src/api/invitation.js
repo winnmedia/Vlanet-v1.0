@@ -1,4 +1,4 @@
-import { axiosCredentials } from 'util/util'
+import { axiosCredentials } from '../util/util'
 
 // 프로젝트 멤버 초대
 export function InviteProjectMember(projectId, data) {

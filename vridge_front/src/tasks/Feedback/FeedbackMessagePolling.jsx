@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import cx from 'classnames'
-import { SendChatMessage } from 'api/chat'
+import { SendChatMessage } from '../../api/chat'
 
 export default function FeedbackMessagePolling({
   Rating,

@@ -3,10 +3,10 @@ import Link from 'next/link'
 import { useRouter, useLocation } from '../../util/nextNavigation'
 
 
-import PageTemplate from 'components/PageTemplate'
-import { SignUp, CheckNickname, CheckEmail } from 'api/auth'
-import { safeStorage } from 'utils/mobile-utils'
-import { AcceptInvitation } from 'api/invitation'
+import PageTemplate from '../../components/PageTemplate'
+import { SignUp, CheckNickname, CheckEmail } from '../../api/auth'
+import { safeStorage } from '../../utils/mobile-utils'
+import { AcceptInvitation } from '../../api/invitation'
 
 export default function Signup() {
   const { navigate } = useRouter()

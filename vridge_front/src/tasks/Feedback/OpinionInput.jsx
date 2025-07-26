@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { CreateFeedback } from 'api/feedback'
+import { CreateFeedback } from '../../api/feedback'
 
 export default function OpinionInput({ project_id, current_project, refetch }) {
   const { user } = useSelector((s) => s.ProjectStore)

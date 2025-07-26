@@ -2,21 +2,21 @@
 
 
 /* 상단 이미지 - 샘플, 기본 */
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
-import ProjectDashboard from 'components/ProjectDashboard'
-import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
-import ProjectScheduleSection from 'components/ProjectScheduleSection'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
+import ProjectDashboard from '../../components/ProjectDashboard'
+import ProjectPhaseBoard from '../../components/ProjectPhaseBoard'
+import ProjectScheduleSection from '../../components/ProjectScheduleSection'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from '../../util/nextNavigation'
 import { useSelector, useDispatch } from 'react-redux'
-import { refetchProject, checkSession } from 'util/util'
+import { refetchProject, checkSession } from '../../util/util'
 
 import moment from 'moment'
 import 'moment/locale/ko'
-import { UpdateDate } from 'api/project'
-import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
+import { UpdateDate } from '../../api/project'
+import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from '../../api/invitation'
 import { updateProjectStore } from '../../redux/project'
 
 export default function CmsHome() {

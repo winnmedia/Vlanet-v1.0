@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { addMobileHeaders, safeStorage } from 'utils/mobile-utils';
+import { addMobileHeaders, safeStorage } from '../../utils/mobile-utils';
 
 // 환경에 따라 API URL 설정
 let API_BASE_URL;
@@ -21,7 +21,7 @@ if (isProduction) {
 
 // 쿠키 가져오기 헬퍼 함수
 const getCookie = (name) => {
-  const value = `; ${(typeof window !== 'undefined' && document.cookie}`;
+  const value = `; ${(typeof window !== 'undefined' && document.cookie) || ''}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
     return parts.pop().split(';').shift();

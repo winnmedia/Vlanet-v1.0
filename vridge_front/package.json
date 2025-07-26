@@ -6,7 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:headless": "cypress run --headless",
+    "test:e2e": "start-server-and-test dev http://localhost:3000 cy:run",
+    "test:e2e:open": "start-server-and-test dev http://localhost:3000 cy:open",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@ant-design/plots": "^2.6.1",
@@ -43,6 +54,7 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^2.1.4"
+    "babel-plugin-styled-components": "^2.1.4",
+    "typescript": "5.8.3"
   }
 }

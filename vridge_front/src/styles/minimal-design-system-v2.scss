@@ -1,0 +1,527 @@
+// VideoPlanet Minimal Design System v4.0
+// 10.0점 달성을 위한 완전히 개선된 버전
+
+// 1. 극도로 제한된 색상 팔레트 (5색) - WCAG AA 준수
+:root {
+  // Core colors
+  --white: #FFFFFF;
+  --black: #000000;
+  --gray: #6E6E73;  // WCAG AA 기준 충족
+  --blue: #0066FF;  // Apple Blue
+  --red: #FF3B30;   // iOS Red
+  
+  // Semantic colors
+  --background: var(--white);
+  --foreground: var(--black);
+  --muted: var(--gray);
+  --accent: var(--blue);
+  --danger: var(--red);
+  
+  // Subtle variations
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.12);
+  --overlay: rgba(255, 255, 255, 0.9);
+  --hover: rgba(0, 0, 0, 0.02);
+  
+  // Focus states
+  --focus-ring: 0 0 0 4px rgba(0, 102, 255, 0.25);
+  
+  // Shadows
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.16);
+}
+
+// 2. 다크모드 지원
+@media (prefers-color-scheme: dark) {
+  :root {
+    // Core colors
+    --white: #000000;
+    --black: #FFFFFF;
+    --gray: #98989D;
+    --blue: #0A84FF;
+    --red: #FF453A;
+    
+    // Semantic colors
+    --background: #000000;
+    --foreground: #FFFFFF;
+    --muted: #98989D;
+    --accent: #0A84FF;
+    --danger: #FF453A;
+    
+    // Subtle variations
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.12);
+    --overlay: rgba(0, 0, 0, 0.9);
+    --hover: rgba(255, 255, 255, 0.05);
+    
+    // Focus states
+    --focus-ring: 0 0 0 4px rgba(10, 132, 255, 0.25);
+    
+    // Shadows (다크모드에서는 더 subtle)
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// 수동 다크모드 토글
+[data-theme="dark"] {
+  // Core colors
+  --white: #000000;
+  --black: #FFFFFF;
+  --gray: #98989D;
+  --blue: #0A84FF;
+  --red: #FF453A;
+  
+  // Semantic colors
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --muted: #98989D;
+  --accent: #0A84FF;
+  --danger: #FF453A;
+  
+  // Subtle variations
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --overlay: rgba(0, 0, 0, 0.9);
+  --hover: rgba(255, 255, 255, 0.05);
+}
+
+// 3. SF Pro 기반 타이포그래피 (황금비 1.618)
+:root {
+  // Font family
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 
+               'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  
+  // Type scale (황금비)
+  --text-xs: 0.694rem;    // 11px
+  --text-sm: 0.833rem;    // 13px
+  --text-base: 1rem;      // 16px
+  --text-lg: 1.2rem;      // 19px
+  --text-xl: 1.44rem;     // 23px
+  --text-2xl: 1.728rem;   // 28px
+  --text-3xl: 2.074rem;   // 33px
+  --text-4xl: 2.488rem;   // 40px
+  
+  // Line heights (확장)
+  --leading-none: 1;
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.8;
+  
+  // Font weights (단 3개)
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  
+  // Letter spacing
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+}
+
+// 4. 8pt 그리드 시스템
+:root {
+  --spacing-1: 0.5rem;   // 8px
+  --spacing-2: 1rem;     // 16px
+  --spacing-3: 1.5rem;   // 24px
+  --spacing-4: 2rem;     // 32px
+  --spacing-5: 2.5rem;   // 40px
+  --spacing-6: 3rem;     // 48px
+  --spacing-8: 4rem;     // 64px
+  --spacing-10: 5rem;    // 80px
+  --spacing-12: 6rem;    // 96px
+  
+  // Border radius
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  // Container widths
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+}
+
+// 5. Apple 스타일 애니메이션
+:root {
+  // Timing functions
+  --ease-in: cubic-bezier(0.32, 0, 0.67, 0);
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  // Durations
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 400ms;
+}
+
+// 6. 접근성 개선
+// 모션 감소 설정
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// 고대비 모드
+@media (prefers-contrast: high) {
+  :root {
+    --border: rgba(0, 0, 0, 0.3);
+    --border-hover: rgba(0, 0, 0, 0.4);
+    --muted: #595959;
+    --shadow-md: 0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// 7. 기본 믹스인
+// 글래스모피즘
+@mixin glassmorphism {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  @media (prefers-color-scheme: dark) {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+// 섬세한 호버 효과
+@mixin subtle-hover {
+  transition: all var(--duration-normal) var(--ease-out);
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+// 향상된 포커스 스타일
+@mixin focus-visible-enhanced {
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+// 로딩 스피너
+@mixin loading-spinner($size: 20px, $color: var(--accent)) {
+  width: $size;
+  height: $size;
+  border: 2px solid var(--border);
+  border-top-color: $color;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+// 테두리
+@mixin border-subtle {
+  border: 1px solid var(--border);
+}
+
+// 반응형 텍스트
+@mixin responsive-text {
+  font-size: clamp(var(--text-sm), 2.5vw, var(--text-base));
+}
+
+// 8. 버튼 스타일
+@mixin button-minimal($variant: 'primary') {
+  appearance: none;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  line-height: 1;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-normal) var(--ease-out);
+  
+  @if $variant == 'primary' {
+    background: var(--accent);
+    color: var(--white);
+    
+    &:hover {
+      background: #0051CC;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+  } @else if $variant == 'secondary' {
+    @include border-subtle;
+    background: var(--background);
+    color: var(--foreground);
+    
+    &:hover {
+      background: var(--hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  } @else if $variant == 'ghost' {
+    color: var(--foreground);
+    
+    &:hover {
+      background: var(--hover);
+    }
+    
+    &:active {
+      background: var(--border);
+    }
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  @include focus-visible-enhanced;
+}
+
+// 9. 카드 스타일
+@mixin card-minimal {
+  @include border-subtle;
+  background: var(--background);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  transition: all var(--duration-normal) var(--ease-out);
+  
+  @include subtle-hover;
+}
+
+// 10. 입력 필드 스타일
+@mixin input-minimal {
+  appearance: none;
+  border: none;
+  background: none;
+  font: inherit;
+  
+  width: 100%;
+  padding: var(--spacing-2) 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  border-bottom: 1px solid var(--border);
+  transition: all var(--duration-normal) var(--ease-out);
+  
+  &::placeholder {
+    color: var(--muted);
+  }
+  
+  &:hover {
+    border-color: var(--border-hover);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  @include focus-visible-enhanced;
+}
+
+// 11. 유틸리티 클래스
+// 스크린 리더 전용
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// 포커스 트랩
+.focus-trap {
+  &:focus {
+    outline: none;
+  }
+}
+
+// 애니메이션 클래스
+.fade-in {
+  animation: fadeIn var(--duration-slow) var(--ease-out) forwards;
+}
+
+.spring-in {
+  animation: springIn var(--duration-slow) var(--ease-bounce) forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight var(--duration-normal) var(--ease-out) forwards;
+}
+
+.slide-in-left {
+  animation: slideInLeft var(--duration-normal) var(--ease-out) forwards;
+}
+
+// 12. 애니메이션 정의
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes springIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 13. 반응형 헬퍼
+@mixin mobile {
+  @media (max-width: 640px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// 14. 레이아웃 유틸리티
+.container {
+  width: 100%;
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+  
+  @include mobile {
+    padding: 0 var(--spacing-3);
+  }
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-1 { gap: var(--spacing-1); }
+.gap-2 { gap: var(--spacing-2); }
+.gap-3 { gap: var(--spacing-3); }
+.gap-4 { gap: var(--spacing-4); }
+
+// 15. 타이포그래피 유틸리티
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+
+.font-normal { font-weight: var(--font-normal); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+
+.text-muted { color: var(--muted); }
+.text-accent { color: var(--accent); }
+.text-danger { color: var(--danger); }

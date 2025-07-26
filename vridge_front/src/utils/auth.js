@@ -1,6 +1,6 @@
 // 쿠키 관련 유틸리티 함수들
 export const getCookie = (name) => {
-  const value = `; ${(typeof window !== 'undefined' && document.cookie}`;
+  const value = `; ${(typeof window !== 'undefined' && document.cookie) || ''}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
     return parts.pop().split(';').shift();

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { GetProject } from 'api/project'
-import { InviteProjectMember, CancelInvitation, GetProjectInvitations } from 'api/invitation'
-import { axiosCredentials } from 'util/util'
-import { alertSuccess, alertError, confirm } from 'util/alert'
+import { GetProject } from '../../api/project'
+import { InviteProjectMember, CancelInvitation, GetProjectInvitations } from '../../api/invitation'
+import { axiosCredentials } from '../../util/util'
+import { alertSuccess, alertError, confirm } from '../../util/alert'
 
 export default function InviteInput({
   project_id,

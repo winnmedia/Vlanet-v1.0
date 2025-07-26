@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker'
 import { ko } from 'date-fns/locale'
 import { format, addDays, differenceInDays, addHours, isValid } from 'date-fns'
 import moment from 'moment'
-import { setDefaultTime } from 'utils/dateUtils'
+import { setDefaultTime } from '../../utils/dateUtils'
 
 // 아이콘 컴포넌트
 const CalendarIcon = () => (

@@ -1,0 +1,196 @@
+@import '../../styles/minimal-design-system';
+
+// 입력 컨테이너
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  width: 100%;
+}
+
+// 레이블
+.label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--foreground);
+  letter-spacing: var(--tracking-tight);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.required {
+  color: var(--danger);
+  font-weight: var(--font-normal);
+}
+
+// 입력 래퍼
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+// 입력 필드
+.input {
+  @include input-minimal;
+  width: 100%;
+  
+  // 타입별 스타일
+  &[type="number"] {
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+  
+  &[type="search"] {
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+    }
+  }
+}
+
+// 텍스트 영역
+.textarea {
+  @include input-minimal;
+  width: 100%;
+  min-height: 100px;
+  padding: var(--spacing-2);
+  line-height: var(--leading-normal);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  
+  &.resize-none {
+    resize: none;
+  }
+  
+  &.resize-vertical {
+    resize: vertical;
+  }
+  
+  &.resize-horizontal {
+    resize: horizontal;
+  }
+  
+  &.resize-both {
+    resize: both;
+  }
+}
+
+// 에러 상태
+.error {
+  border-color: var(--danger) !important;
+  
+  &:focus {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1);
+  }
+}
+
+.hasError {
+  .label {
+    color: var(--danger);
+  }
+}
+
+// 비활성 상태
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--hover);
+}
+
+// 읽기 전용 상태
+.readOnly {
+  cursor: default;
+  background-color: var(--hover);
+  
+  &:focus {
+    border-color: var(--border);
+  }
+}
+
+// 글자 수 카운터
+.charCount {
+  position: absolute;
+  bottom: var(--spacing-1);
+  right: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  pointer-events: none;
+  
+  .textarea ~ & {
+    bottom: var(--spacing-2);
+    right: var(--spacing-2);
+  }
+}
+
+// 에러 메시지
+.errorMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-1);
+  font-size: var(--text-sm);
+  color: var(--danger);
+  margin-top: var(--spacing-1);
+  animation: fadeIn var(--duration-fast) var(--ease-out);
+}
+
+.errorIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+// 도움말 텍스트
+.helperText {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-top: var(--spacing-1);
+  line-height: var(--leading-normal);
+}
+
+// 포커스 상태 개선
+.input:focus-visible,
+.textarea:focus-visible {
+  @include focus-visible-enhanced;
+}
+
+// 자동완성 스타일
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0px 1000px var(--background) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+// 다크모드 대응
+@media (prefers-color-scheme: dark) {
+  .input:-webkit-autofill,
+  .input:-webkit-autofill:hover,
+  .input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--foreground);
+    -webkit-box-shadow: 0 0 0px 1000px var(--background) inset;
+  }
+  
+  .disabled,
+  .readOnly {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// 애니메이션
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

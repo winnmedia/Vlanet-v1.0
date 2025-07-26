@@ -1,21 +1,21 @@
 
 
 /* 상단 이미지 - 샘플, 기본 */
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
-import ProjectInput from 'tasks/Project/ProjectInput'
-import useInput from 'hooks/UseInput'
-import useFile from 'hooks/Usefile'
-import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
+import ProjectInput from '../../tasks/Project/ProjectInput'
+import useInput from '../../hooks/UseInput'
+import useFile from '../../hooks/Usefile'
+import ProcessDateEnhanced from '../../tasks/Project/ProcessDateEnhanced'
 
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from '../../util/nextNavigation'
-import { CreateProjectAPI } from 'api/project'
-import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
+import { CreateProjectAPI } from '../../api/project'
+import { refetchProject, project_initial, project_dateRange, checkSession } from '../../util/util'
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { formatProcessDatesForBackend } from 'utils/dateUtils'
-import { checkDomain, detectDuplicateTabs } from 'utils/domainCheck'
+import { formatProcessDatesForBackend } from '../../utils/dateUtils'
+import { checkDomain, detectDuplicateTabs } from '../../utils/domainCheck'
 
 export default function ProjectCreate() {
   const dispatch = useDispatch()

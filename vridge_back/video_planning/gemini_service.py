@@ -237,7 +237,7 @@ class GeminiService:
     def generate_insert_shots(self, scene_data, planning_options=None):
         """씬 데이터를 기반으로 인서트 샷을 추천합니다."""
         prompt = f"""
-        당신은 전문 영상 촬영 감독입니다. 다음 씬의 내용을 보고, 이 씬에서 확보할 수 있는 인서트 샷 3가지를 추천해주세요.
+        당신은 전문 영상 촬영 감독입니다. 다음 씬의 내용을 보고, 이 씬에서 확보할 수 있는 인서트 샷 5가지를 추천해주세요.
         
         인서트 샷이란 주요 장면 사이에 삽입되어 이야기의 흐름을 돕고, 감정을 강조하거나 정보를 제공하는 짧은 컷입니다.
         
@@ -254,16 +254,23 @@ class GeminiService:
         2. 환경 묘사: 장소의 특징적인 요소, 시간대를 나타내는 요소
         3. 소품/오브젝트: 이야기와 연관된 의미있는 사물
         4. 분위기 조성: 빛, 그림자, 질감 등 시각적 요소
+        5. 시간 경과: 시계, 태양, 그림자 변화 등
         
-        정확히 3개의 구체적이고 실용적인 인서트 샷을 추천해주세요.
-        각 샷은 한 문장으로 명확하게 설명해주세요.
+        매우 구체적이고 실제 촬영 가능한 인서트 샷 5개를 추천해주세요.
+        추상적인 표현을 피하고, 카메라맨이 바로 이해할 수 있는 구체적인 샷을 설명하세요.
+        
+        예시:
+        - 나쁜 예: "감정 표현"
+        - 좋은 예: "주인공이 창문에 비친 자신의 모습을 바라보는 클로즈업"
         
         JSON 형식으로 응답해주세요:
         {{
             "insert_shots": [
                 "첫 번째 인서트 샷 설명",
                 "두 번째 인서트 샷 설명",
-                "세 번째 인서트 샷 설명"
+                "세 번째 인서트 샷 설명",
+                "네 번째 인서트 샷 설명",
+                "다섯 번째 인서트 샷 설명"
             ]
         }}
         """
@@ -283,10 +290,13 @@ class GeminiService:
         except Exception as e:
             logger.error(f"Error generating insert shots: {e}")
             # 에러 발생 시 기본 인서트 샷 제공
+            location = scene_data.get('location', '장소')
             return [
-                f"{scene_data.get('location', '장소')}의 전체적인 분위기를 보여주는 와이드 샷",
-                "주요 인물의 표정이나 손동작을 클로즈업하는 디테일 샷",
-                "씬의 시간대나 분위기를 나타내는 환경 요소 샷"
+                f"{location}의 입구나 상징적인 부분을 천천히 패닝하는 와이드 샷",
+                "주인공의 손이 무언가를 만지거나 집는 순간의 익스트림 클로즈업",
+                f"{location}에서 빛이 들어오는 창문이나 문틈의 클로즈업 샷",
+                "주인공의 발걸음이나 그림자가 바닥에 드리워지는 로우앵글 샷",
+                "씬의 핵심 소품이나 오브젝트를 포커스 랙으로 강조하는 샷"
             ]
     
     def _get_framework_json_template(self, framework):
@@ -693,6 +703,11 @@ class GeminiService:
         target = planning_options.get('target', '')
         purpose = planning_options.get('purpose', '')
         duration = planning_options.get('duration', '')
+        story_framework = planning_options.get('story_framework', 'classic')
+        
+        # 스토리의 stage 정보 추출
+        stage = story_data.get('stage', '')
+        stage_name = story_data.get('stage_name', '')
         
         prompt = f"""
         당신은 전문 영상 씬 구성 작가입니다. 아래 스토리를 정확히 3개의 씬으로 나누어주세요.
@@ -705,6 +720,7 @@ class GeminiService:
         - 콘셉트: {concept if concept else '기본'}
         - 영상 목적: {purpose if purpose else '정보 전달'}
         - 영상 길이: {duration if duration else '3-5분'}
+        - 스토리 프레임워크: {story_framework}
         
         각 씬은 다음 정보를 포함해야 합니다:
         1. 씬 번호 (1, 2, 3)
@@ -716,7 +732,7 @@ class GeminiService:
         
         스토리:
         제목: {story_data.get('title', '')}
-        단계: {story_data.get('stage', '')} - {story_data.get('stage_name', '')}
+        단계: {stage} - {stage_name}
         등장인물: {', '.join(story_data.get('characters', []))}
         핵심 내용: {story_data.get('key_content', '')}
         요약: {story_data.get('summary', '')}
@@ -763,7 +779,17 @@ class GeminiService:
             if response_text.endswith('```'):
                 response_text = response_text[:-3]
             
-            return json.loads(response_text)
+            result = json.loads(response_text)
+            
+            # 각 씬에 planning_options와 story 메타데이터 추가
+            scenes = result.get('scenes', [])
+            for scene in scenes:
+                scene['planning_options'] = planning_options
+                scene['story_stage'] = stage
+                scene['story_stage_name'] = stage_name
+                scene['story_framework'] = story_framework
+            
+            return result
         except Exception as e:
             return {
                 "error": str(e),
@@ -775,7 +801,11 @@ class GeminiService:
                             "time": "아침",
                             "action": "주인공이 일상적인 업무를 시작하는 모습",
                             "dialogue": "또 하루가 시작되었다. 늘 똑같은 일상이지만...",
-                            "purpose": "인물 소개와 현재 상황 설정"
+                            "purpose": "인물 소개와 현재 상황 설정",
+                            "planning_options": planning_options,
+                            "story_stage": stage,
+                            "story_stage_name": stage_name,
+                            "story_framework": story_framework
                         },
                         {
                             "scene_number": 2,
@@ -783,7 +813,11 @@ class GeminiService:
                             "time": "오후",
                             "action": "중요한 프로젝트 회의 중 갈등 발생",
                             "dialogue": "이대로는 안 됩니다. 새로운 접근이 필요해요.",
-                            "purpose": "갈등 제시와 변화의 필요성 강조"
+                            "purpose": "갈등 제시와 변화의 필요성 강조",
+                            "planning_options": planning_options,
+                            "story_stage": stage,
+                            "story_stage_name": stage_name,
+                            "story_framework": story_framework
                         },
                         {
                             "scene_number": 3,
@@ -791,7 +825,11 @@ class GeminiService:
                             "time": "저녁",
                             "action": "해결책을 찾고 새로운 비전을 공유하는 팀",
                             "dialogue": "우리가 함께라면 할 수 있습니다.",
-                            "purpose": "희망적 메시지와 미래 방향 제시"
+                            "purpose": "희망적 메시지와 미래 방향 제시",
+                            "planning_options": planning_options,
+                            "story_stage": stage,
+                            "story_stage_name": stage_name,
+                            "story_framework": story_framework
                         }
                     ]
                 }

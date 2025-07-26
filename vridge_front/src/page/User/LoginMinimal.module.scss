@@ -1,0 +1,235 @@
+@import '../../styles/minimal-design-system';
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+}
+
+.loginBox {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--spacing-4);
+  position: relative;
+  z-index: 1;
+  
+  @media (min-width: 768px) {
+    padding: var(--spacing-6);
+  }
+}
+
+// 로고
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
+  
+  svg {
+    flex-shrink: 0;
+  }
+  
+  h1 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-tight);
+    margin: 0;
+  }
+}
+
+// 환영 메시지
+.welcome {
+  margin-bottom: var(--spacing-5);
+  
+  h2 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
+    letter-spacing: var(--tracking-tight);
+    margin: 0 0 var(--spacing-1) 0;
+  }
+  
+  p {
+    font-size: var(--text-base);
+    color: var(--muted);
+    margin: 0;
+  }
+}
+
+// 폼
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+// 비밀번호 옵션
+.passwordOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-2);
+  font-size: var(--text-sm);
+}
+
+.showPassword {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  cursor: pointer;
+  color: var(--muted);
+  
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+  
+  &:hover {
+    color: var(--foreground);
+  }
+}
+
+// 에러 메시지
+.error {
+  font-size: var(--text-sm);
+  color: var(--danger);
+  padding: var(--spacing-2);
+  background: rgba(255, 59, 48, 0.05);
+  border-radius: var(--radius-md);
+  animation: fadeIn var(--duration-normal) var(--ease-out);
+}
+
+.errorWithAction {
+  p {
+    margin: 0 0 var(--spacing-1) 0;
+  }
+}
+
+.errorDesc {
+  font-size: var(--text-xs);
+  opacity: 0.8;
+}
+
+.resendButton {
+  @include button-minimal('secondary');
+  height: 32px;
+  padding: 0 var(--spacing-2);
+  font-size: var(--text-sm);
+  margin-top: var(--spacing-2);
+}
+
+// 비밀번호 찾기
+.forgotPassword {
+  text-align: right;
+  margin-top: calc(var(--spacing-1) * -1);
+}
+
+// 링크
+.link {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+  
+  &:hover {
+    color: var(--black);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+// 제출 버튼
+.submitButton {
+  @include button-minimal('primary');
+  width: 100%;
+  margin-top: var(--spacing-2);
+  
+  &:disabled {
+    background: var(--muted);
+  }
+}
+
+// 로딩 애니메이션
+.loading {
+  display: flex;
+  gap: 4px;
+  
+  span {
+    width: 4px;
+    height: 4px;
+    background: var(--white);
+    border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite;
+    
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// 회원가입 링크
+.signupLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+// 배경 그라데이션 (매우 미세한)
+.backgroundGradient {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 102, 255, 0.02) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-10%, -10%) rotate(120deg);
+  }
+  66% {
+    transform: translate(10%, -10%) rotate(240deg);
+  }
+}
+
+// 다크모드 지원 준비
+@media (prefers-color-scheme: dark) {
+  // 추후 다크모드 스타일 추가
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
-import { checkSession } from 'util/util'
+import { checkSession } from '../../util/util'
 
 
 
@@ -21,24 +21,24 @@ import { checkSession } from 'util/util'
 
 
 
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
 
 
-import FeedbackInput from 'tasks/Feedback/FeedbackInput'
-import FeedbackManage from 'tasks/Feedback/FeedbackManage'
-import FeedbackMore from 'tasks/Feedback/FeedbackMore'
-import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
-import OpinionInput from 'tasks/Feedback/OpinionInput'
-import VideoPlayer from 'components/VideoPlayer'
-import VideoUploadGuide from 'components/VideoUploadGuide'
+import FeedbackInput from '../../tasks/Feedback/FeedbackInput'
+import FeedbackManage from '../../tasks/Feedback/FeedbackManage'
+import FeedbackMore from '../../tasks/Feedback/FeedbackMore'
+import FeedbackMessagePolling from '../../tasks/Feedback/FeedbackMessagePolling'
+import OpinionInput from '../../tasks/Feedback/OpinionInput'
+import VideoPlayer from '../../components/VideoPlayer'
+import VideoUploadGuide from '../../components/VideoUploadGuide'
 
-import useTab from 'hooks/UseTab'
-import down from 'images/Cms/down_icon.svg'
+import useTab from '../../hooks/UseTab'
+import down from '../../images/Cms/down_icon.svg'
 import { useSelector } from 'react-redux'
 
-import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from 'api/feedback'
-import { GetChatMessages } from 'api/chat'
+import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from '../../api/feedback'
+import { GetChatMessages } from '../../api/chat'
 
 import moment from 'moment'
 import 'moment/locale/ko'

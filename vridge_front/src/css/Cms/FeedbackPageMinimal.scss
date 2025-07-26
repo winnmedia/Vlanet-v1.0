@@ -1,0 +1,514 @@
+// Feedback Page - Minimal Design
+// "The details are not the details. They make the design." - Charles Eames
+
+@import '../../styles/minimal-design-system';
+
+// ============================================
+// FEEDBACK PAGE LAYOUT
+// ============================================
+
+.feedback {
+  // Video Section - 본질에 집중
+  .video_inner {
+    padding: map-get($spacing, 3);
+    margin-bottom: map-get($spacing, 4);
+    
+    &.active {
+      .video-player-section {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        background: map-get($colors, black);
+        border-radius: map-get(map-get($borders, radius), lg);
+        overflow: hidden;
+        
+        // Video.js - 최소한의 컨트롤
+        .video-js {
+          width: 100% !important;
+          height: 100% !important;
+          
+          // Control Bar - 투명하고 가벼운
+          .vjs-control-bar {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            height: 44px; // Apple 표준
+            padding: 0 map-get($spacing, 2);
+            
+            // Buttons - 아이콘만
+            .vjs-button {
+              width: 44px;
+              height: 44px;
+              border: none;
+              background: transparent;
+              position: relative;
+              transition: opacity map-get(map-get($motion, duration), fast);
+              
+              &:hover {
+                opacity: 0.7;
+              }
+              
+              &:focus {
+                outline: none;
+              }
+              
+              .vjs-icon-placeholder:before {
+                font-size: 18px;
+              }
+            }
+            
+            // Time Display - 모노스페이스
+            .vjs-time-control {
+              @include caption;
+              font-variant-numeric: tabular-nums;
+              padding: 0 map-get($spacing, 1);
+              line-height: 44px;
+              min-width: auto;
+            }
+            
+            // Progress Bar - 극도로 얇은
+            .vjs-progress-control {
+              flex: 1;
+              margin: 0 map-get($spacing, 2);
+              
+              .vjs-progress-holder {
+                height: 2px;
+                margin-top: 21px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 1px;
+                
+                .vjs-play-progress {
+                  background: map-get($colors, blue);
+                  
+                  &:before {
+                    content: '';
+                    position: absolute;
+                    right: -6px;
+                    top: -5px;
+                    width: 12px;
+                    height: 12px;
+                    background: map-get($colors, blue);
+                    border-radius: 50%;
+                    transition: transform map-get(map-get($motion, duration), fast);
+                  }
+                }
+                
+                &:hover .vjs-play-progress:before {
+                  transform: scale(1.2);
+                }
+              }
+            }
+          }
+          
+          // Big Play Button - 단순한 삼각형
+          .vjs-big-play-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 72px;
+            height: 72px;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            margin: 0 !important;
+            transition: all map-get(map-get($motion, duration), normal) map-get(map-get($motion, easing), out);
+            
+            &:before {
+              content: '';
+              position: absolute;
+              left: 52%;
+              top: 50%;
+              transform: translate(-40%, -50%);
+              width: 0;
+              height: 0;
+              border-style: solid;
+              border-width: 12px 0 12px 20px;
+              border-color: transparent transparent transparent map-get($colors, black);
+            }
+            
+            &:hover {
+              transform: translate(-50%, -50%) scale(1.1) !important;
+              background: map-get($colors, white);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Feedback Box - 미니멀 패널
+  .etc_box {
+    @include card-minimal;
+    padding: 0;
+    overflow: hidden;
+    
+    // Header - 깨끗한 구분
+    > .flex.space_between {
+      padding: map-get($spacing, 3);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      
+      .s_title {
+        @include heading('lg');
+        margin: 0;
+      }
+      
+      // Action Buttons
+      > div:last-child {
+        @include cluster(2);
+        
+        button, label {
+          @include button-minimal;
+          
+          &.submit, &[style*="background: linear-gradient"] {
+            background: map-get($colors, blue);
+            color: map-get($colors, white);
+            
+            &:hover {
+              background: darken(map-get($colors, blue), 8%);
+              @include hover-lift;
+            }
+          }
+          
+          &:not(.submit):not([style*="background: linear-gradient"]) {
+            @include button-minimal('secondary');
+          }
+        }
+      }
+    }
+    
+    // Tabs - 밑줄만
+    .tab_menu {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      
+      ul {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        
+        li {
+          flex: 1;
+          text-align: center;
+          padding: map-get($spacing, 2);
+          @include body-text('sm');
+          color: map-get($colors, gray);
+          cursor: pointer;
+          border-bottom: 2px solid transparent;
+          transition: all map-get(map-get($motion, duration), fast);
+          position: relative;
+          
+          &:hover {
+            color: map-get($colors, black);
+          }
+          
+          &.active {
+            color: map-get($colors, black);
+            font-weight: map-get(map-get($typography, weight), medium);
+            
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -1px;
+              left: 0;
+              right: 0;
+              height: 2px;
+              background: map-get($colors, black);
+            }
+          }
+        }
+      }
+    }
+    
+    // Tab Content
+    .tabContent {
+      padding: map-get($spacing, 3);
+      
+      // Form - 최소한의 입력
+      .form {
+        @include stack(3);
+        
+        // Radio Group
+        > .flex {
+          @include cluster(3);
+          
+          > div {
+            @include cluster(1);
+            
+            input[type="radio"] {
+              width: 16px;
+              height: 16px;
+              accent-color: map-get($colors, blue);
+              cursor: pointer;
+            }
+            
+            label {
+              @include body-text('sm');
+              cursor: pointer;
+            }
+          }
+        }
+        
+        // Input Group
+        .input-group {
+          @include stack(1);
+          
+          label {
+            @include body-text('sm');
+            font-weight: map-get(map-get($typography, weight), medium);
+          }
+        }
+        
+        // Inputs - 하단 보더만
+        input[type="text"], 
+        textarea {
+          @include input-minimal;
+          
+          &::placeholder {
+            font-style: normal;
+          }
+        }
+        
+        textarea {
+          min-height: 120px;
+          resize: vertical;
+          padding: map-get($spacing, 2) 0;
+        }
+        
+        // Actions
+        > div:last-child {
+          @include cluster(2);
+          margin-top: map-get($spacing, 3);
+          
+          button {
+            @include button-minimal;
+            flex: 1;
+            
+            &.submit {
+              background: map-get($colors, blue);
+              color: map-get($colors, white);
+              
+              &:hover {
+                background: darken(map-get($colors, blue), 8%);
+              }
+            }
+            
+            // AI Button
+            &[style*="background: linear-gradient(135deg, #6f42c1"] {
+              @include button-minimal('secondary');
+              
+              &::before {
+                content: '✨';
+                margin-right: map-get($spacing, 1);
+              }
+            }
+          }
+        }
+      }
+      
+      // Feedback List - 시간순 나열
+      .feedback_list {
+        max-height: 600px;
+        overflow-y: auto;
+        
+        // Minimal Scrollbar
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 2px;
+          
+          &:hover {
+            background: rgba(0, 0, 0, 0.3);
+          }
+        }
+        
+        // Feedback Item - 텍스트 중심
+        > div {
+          padding: map-get($spacing, 3);
+          margin-bottom: map-get($spacing, 2);
+          cursor: pointer;
+          transition: all map-get(map-get($motion, duration), fast);
+          border-left: 2px solid transparent;
+          
+          &:hover {
+            background: rgba(0, 0, 0, 0.02);
+            padding-left: map-get($spacing, 4);
+          }
+          
+          &.active {
+            border-left-color: map-get($colors, blue);
+            background: rgba(0, 102, 255, 0.02);
+          }
+          
+          .flex {
+            @include cluster(2, flex-start);
+            
+            // Avatar - 이니셜만
+            .img {
+              width: 40px;
+              height: 40px;
+              min-width: 40px;
+              border-radius: 50%;
+              background: map-get($colors, black);
+              color: map-get($colors, white);
+              @include cluster;
+              justify-content: center;
+              font-weight: map-get(map-get($typography, weight), medium);
+              font-size: map-get(map-get($typography, scale), sm);
+              
+              &.anonymous {
+                background: map-get($colors, gray);
+              }
+            }
+            
+            // Content
+            .txt {
+              flex: 1;
+              @include stack(1);
+              
+              .name {
+                @include body-text('sm');
+                font-weight: map-get(map-get($typography, weight), medium);
+              }
+              
+              .date {
+                @include caption;
+                font-variant-numeric: tabular-nums;
+              }
+              
+              .content {
+                @include body-text('sm');
+                color: map-get($colors, gray);
+                line-height: map-get(map-get($typography, leading), normal);
+              }
+              
+              // Time Tag - 단순한 텍스트
+              .time-tag {
+                @include caption;
+                color: map-get($colors, blue);
+                font-variant-numeric: tabular-nums;
+                margin-top: map-get($spacing, 1);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Feedback Detail - 플레이어 하단
+  .feedback-detail-display {
+    @include card-minimal;
+    border-color: rgba(0, 0, 0, 0.12);
+    margin: map-get($spacing, 3) 0;
+    
+    .feedback-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: map-get($spacing, 3);
+      
+      .user-info {
+        @include cluster(2);
+        
+        .avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: map-get($colors, black);
+          color: map-get($colors, white);
+          @include cluster;
+          justify-content: center;
+          font-weight: map-get(map-get($typography, weight), medium);
+        }
+        
+        .info {
+          @include stack(0);
+          
+          .name {
+            @include body-text;
+            font-weight: map-get(map-get($typography, weight), medium);
+          }
+          
+          .meta {
+            @include caption;
+            
+            .time-badge {
+              font-variant-numeric: tabular-nums;
+            }
+          }
+        }
+      }
+      
+      .close-btn {
+        @include button-minimal('ghost');
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        
+        &::after {
+          content: '×';
+          font-size: 24px;
+          line-height: 1;
+        }
+      }
+    }
+    
+    .feedback-content {
+      @include body-text;
+      line-height: map-get(map-get($typography, leading), normal);
+      padding-left: calc(40px + #{map-get($spacing, 2)});
+    }
+    
+    .feedback-actions {
+      margin-top: map-get($spacing, 3);
+      padding-left: calc(40px + #{map-get($spacing, 2)});
+      @include cluster(2);
+      
+      button {
+        @include button-minimal('ghost');
+        padding: map-get($spacing, 1) map-get($spacing, 2);
+        height: 32px;
+        font-size: map-get(map-get($typography, scale), sm);
+      }
+    }
+  }
+  
+  // Video Control Buttons
+  .video-control-buttons {
+    @include cluster(2);
+    padding: map-get($spacing, 3) 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-top: map-get($spacing, 3);
+    
+    button, label {
+      @include button-minimal('secondary');
+      
+      &.feedbackButtonPrimary {
+        background: map-get($colors, blue);
+        color: map-get($colors, white);
+        border-color: map-get($colors, blue);
+        
+        &:hover {
+          background: darken(map-get($colors, blue), 8%);
+        }
+      }
+      
+      &.feedbackButtonDanger {
+        color: map-get($colors, red);
+        border-color: map-get($colors, red);
+        
+        &:hover {
+          background: rgba(255, 59, 48, 0.08);
+        }
+      }
+    }
+    
+    input[type="file"] {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,330 @@
+// CMS Home - Minimal Design
+// "Perfection is achieved when there is nothing left to take away" - Antoine de Saint-Exupéry
+
+@import '../../styles/minimal-design-system';
+
+// ============================================
+// HOME LAYOUT
+// ============================================
+
+.cms_wrap {
+  main {
+    .content.home {
+      padding: map-get($spacing, 6) map-get($spacing, 4);
+      background: map-get($colors, white);
+      min-height: 100vh;
+      
+      // Clock - 시간은 본질
+      .today {
+        margin-bottom: map-get($spacing, 10);
+        
+        .clock {
+          @include heading('3xl');
+          display: flex;
+          align-items: baseline;
+          gap: map-get($spacing, 2);
+          font-variant-numeric: tabular-nums; // 숫자 정렬
+          
+          small {
+            @include caption;
+            margin-left: 0;
+          }
+        }
+      }
+      
+      // Activity Grid - 2 Column Layout
+      .home-activity-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: map-get($spacing, 3);
+        margin-bottom: map-get($spacing, 8);
+        
+        @include responsive(md) {
+          grid-template-columns: 3fr 2fr;
+          gap: map-get($spacing, 4);
+        }
+        
+        // Cards - 미세한 경계만
+        .activity-card,
+        .invitation-card {
+          @include card-minimal;
+          @include fade-in;
+          
+          .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: map-get($spacing, 3);
+            
+            .card-title {
+              @include heading('lg');
+              margin: 0;
+            }
+            
+            // Toggle Button - 극도로 단순한 원형
+            .collapse-btn {
+              width: 32px;
+              height: 32px;
+              padding: 0;
+              border: 1px solid rgba(0, 0, 0, 0.08);
+              border-radius: 50%;
+              background: transparent;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all map-get(map-get($motion, duration), fast) map-get(map-get($motion, easing), default);
+              
+              // Plus/Minus Icon
+              &::before,
+              &::after {
+                content: '';
+                position: absolute;
+                background: map-get($colors, gray);
+                transition: all map-get(map-get($motion, duration), fast);
+              }
+              
+              &::before {
+                width: 12px;
+                height: 1.5px;
+              }
+              
+              &::after {
+                width: 1.5px;
+                height: 12px;
+                opacity: 1;
+              }
+              
+              &.collapsed::after {
+                opacity: 0;
+                transform: rotate(90deg);
+              }
+              
+              &:hover {
+                border-color: map-get($colors, black);
+                
+                &::before,
+                &::after {
+                  background: map-get($colors, black);
+                }
+              }
+              
+              @include focus-minimal;
+            }
+          }
+        }
+        
+        // Feedback Items - 호버만으로 충분
+        .feedback-item {
+          padding: map-get($spacing, 2);
+          margin-bottom: map-get($spacing, 2);
+          cursor: pointer;
+          transition: all map-get(map-get($motion, duration), fast);
+          border-radius: map-get(map-get($borders, radius), base);
+          
+          &:hover {
+            background: rgba(0, 0, 0, 0.02);
+            transform: translateX(4px);
+          }
+          
+          .project-info {
+            margin-bottom: map-get($spacing, 1);
+            
+            .project-name {
+              @include body-text('sm');
+              font-weight: map-get(map-get($typography, weight), medium);
+            }
+          }
+          
+          .feedback-content {
+            .feedback-author {
+              @include caption;
+              margin-bottom: map-get($spacing, 1);
+              
+              span {
+                color: map-get($colors, black);
+                font-weight: map-get(map-get($typography, weight), medium);
+              }
+            }
+            
+            .feedback-text {
+              @include body-text('sm');
+              color: map-get($colors, gray);
+              margin-bottom: map-get($spacing, 1);
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+            
+            .feedback-time {
+              @include caption;
+              font-variant-numeric: tabular-nums;
+            }
+          }
+        }
+        
+        // Invitation Items - 액션 중심
+        .invitation-item {
+          padding: map-get($spacing, 3);
+          margin-bottom: map-get($spacing, 2);
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          border-radius: map-get(map-get($borders, radius), base);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          transition: all map-get(map-get($motion, duration), fast);
+          
+          &:hover {
+            border-color: rgba(0, 0, 0, 0.12);
+            @include hover-lift;
+          }
+          
+          .invitation-info {
+            flex: 1;
+            
+            .project-name {
+              @include body-text;
+              font-weight: map-get(map-get($typography, weight), medium);
+              margin-bottom: 4px;
+            }
+            
+            .inviter-name {
+              @include caption;
+            }
+          }
+          
+          .invitation-actions {
+            @include cluster(2);
+            
+            .btn-accept {
+              @include button-minimal('primary');
+              padding: 0 map-get($spacing, 2);
+              height: 36px;
+              font-size: map-get(map-get($typography, scale), sm);
+            }
+            
+            .btn-decline {
+              @include button-minimal('ghost');
+              padding: 0 map-get($spacing, 2);
+              height: 36px;
+              font-size: map-get(map-get($typography, scale), sm);
+            }
+          }
+        }
+        
+        // Stats - 숫자가 스스로 말하게
+        .invitation-stats {
+          @include cluster(4);
+          padding-top: map-get($spacing, 3);
+          border-top: 1px solid rgba(0, 0, 0, 0.08);
+          margin-top: map-get($spacing, 3);
+          
+          .stat-item {
+            @include caption;
+            
+            .stat-number {
+              @include body-text('lg');
+              font-weight: map-get(map-get($typography, weight), semibold);
+              color: map-get($colors, blue);
+              display: block;
+              font-variant-numeric: tabular-nums;
+            }
+          }
+        }
+        
+        // Empty State - 여백의 미
+        .empty-state {
+          @include stack(2);
+          align-items: center;
+          padding: map-get($spacing, 10) map-get($spacing, 4);
+          
+          .empty-title {
+            @include heading('lg');
+          }
+          
+          .empty-description {
+            @include caption;
+            text-align: center;
+          }
+        }
+        
+        // Loading - 단순한 점 3개
+        .loading-state {
+          @include cluster(1);
+          justify-content: center;
+          padding: map-get($spacing, 8);
+          
+          &::after {
+            content: '•••';
+            @include body-text;
+            color: map-get($colors, gray);
+            letter-spacing: 0.5em;
+            animation: pulse 1.5s ease-in-out infinite;
+          }
+        }
+      }
+      
+      // Project Progress Section
+      .project-progress-enhanced {
+        @include card-minimal;
+        
+        .s_title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: map-get($spacing, 4);
+          padding-bottom: map-get($spacing, 3);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+          
+          h2 {
+            @include heading('xl');
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+// ============================================
+// DARK MODE READY
+// ============================================
+
+@media (prefers-color-scheme: dark) {
+  .cms_wrap main .content.home {
+    background: map-get($colors, black);
+    color: map-get($colors, white);
+    
+    .activity-card,
+    .invitation-card,
+    .project-progress-enhanced {
+      background: map-get($colors, black);
+      border-color: rgba(255, 255, 255, 0.08);
+      
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+    
+    .card-title,
+    h2 {
+      color: map-get($colors, white);
+    }
+    
+    .feedback-item:hover,
+    .invitation-item {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+}

@@ -8,7 +8,7 @@ const profile = '/images/Cms/profie_sample.png'
 import Header from './Header'
 import LoginIntro from './LoginIntro'
 import { useEffect } from 'react'
-import { checkSession } from 'util/util'
+import { checkSession } from '../util/util'
 import { useSelector } from 'react-redux'
 
 export default function PageTemplate({

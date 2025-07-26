@@ -1,4 +1,4 @@
-import useInput from 'hooks/UseInput'
+import useInput from '../../hooks/UseInput'
 import React, { useState, useEffect } from 'react'
 import styles from './FeedbackManage.module.scss'
 
@@ -9,7 +9,7 @@ import {
   DeleteFeedbackReply,
   ToggleFeedbackImportant,
   UpdateFeedbackReaction
-} from 'api/feedback'
+} from '../../api/feedback'
 
 export default function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   const [reactions, setReactions] = useState({})

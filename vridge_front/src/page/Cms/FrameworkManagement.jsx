@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from '../../util/nextNavigation'
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
 
-import { GetFrameworks, CreateFramework, UpdateFramework, DeleteFramework, SetDefaultFramework } from 'api/framework'
-import { checkSession } from 'util/util'
+import { GetFrameworks, CreateFramework, UpdateFramework, DeleteFramework, SetDefaultFramework } from '../../api/framework'
+import { checkSession } from '../../util/util'
 
 export default function FrameworkManagement() {
   const { navigate } = useRouter()

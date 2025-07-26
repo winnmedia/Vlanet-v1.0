@@ -1,4 +1,4 @@
-import { axiosOpts, axiosCredentials } from 'util/util'
+import { axiosOpts, axiosCredentials } from '../util/util'
 
 // 프로젝트 리스트
 export function ProjectList() {

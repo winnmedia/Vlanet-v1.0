@@ -1,4 +1,4 @@
-import useInput from 'hooks/UseInput'
+import useInput from '../../hooks/UseInput'
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 

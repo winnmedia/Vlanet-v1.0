@@ -1,4 +1,4 @@
-import { axiosOpts, axiosCredentials } from 'util/util'
+import { axiosOpts, axiosCredentials } from '../util/util'
 import axios from 'axios'
 
 // 피드백 detail - feedbacks 엔드포인트 사용 (기존과 동일하게 유지)

@@ -1,0 +1,471 @@
+// Minimal Components Showcase
+// A living style guide for VideoPlanet's minimal design system
+
+@import './minimal-design-system';
+
+// ============================================
+// COMPONENT LIBRARY
+// ============================================
+
+// 1. BUTTONS
+// ============================================
+
+.btn {
+  @include button-minimal;
+  
+  // Primary
+  &.btn-primary {
+    background: map-get($colors, blue);
+    color: map-get($colors, white);
+    
+    &:hover {
+      background: darken(map-get($colors, blue), 8%);
+      @include hover-lift;
+    }
+  }
+  
+  // Secondary
+  &.btn-secondary {
+    @include button-minimal('secondary');
+  }
+  
+  // Ghost
+  &.btn-ghost {
+    @include button-minimal('ghost');
+  }
+  
+  // Danger
+  &.btn-danger {
+    color: map-get($colors, red);
+    border: 1px solid map-get($colors, red);
+    
+    &:hover {
+      background: rgba(255, 59, 48, 0.08);
+    }
+  }
+  
+  // Sizes
+  &.btn-sm {
+    height: 36px;
+    padding: 0 map-get($spacing, 2);
+    font-size: map-get(map-get($typography, scale), sm);
+  }
+  
+  &.btn-lg {
+    height: 52px;
+    padding: 0 map-get($spacing, 4);
+    font-size: map-get(map-get($typography, scale), md);
+  }
+  
+  // Icon Button
+  &.btn-icon {
+    width: 44px;
+    padding: 0;
+    
+    &.btn-sm {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// 2. FORM ELEMENTS
+// ============================================
+
+// Text Input
+.input {
+  @include input-minimal;
+  
+  &.input-error {
+    border-color: map-get($colors, red);
+  }
+}
+
+// Label
+.label {
+  @include body-text('sm');
+  font-weight: map-get(map-get($typography, weight), medium);
+  display: block;
+  margin-bottom: map-get($spacing, 1);
+}
+
+// Form Group
+.form-group {
+  @include stack(1);
+  margin-bottom: map-get($spacing, 3);
+}
+
+// Checkbox & Radio
+.checkbox,
+.radio {
+  @include cluster(1);
+  cursor: pointer;
+  
+  input {
+    width: 16px;
+    height: 16px;
+    accent-color: map-get($colors, blue);
+    cursor: pointer;
+  }
+  
+  label {
+    @include body-text('sm');
+    cursor: pointer;
+    user-select: none;
+  }
+}
+
+// Toggle Switch
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    
+    &:checked + .toggle-slider {
+      background: map-get($colors, blue);
+      
+      &::before {
+        transform: translateX(20px);
+      }
+    }
+  }
+  
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 34px;
+    transition: all map-get(map-get($motion, duration), fast);
+    
+    &::before {
+      position: absolute;
+      content: '';
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: map-get($colors, white);
+      border-radius: 50%;
+      transition: all map-get(map-get($motion, duration), fast);
+    }
+  }
+}
+
+// 3. CARDS
+// ============================================
+
+.card {
+  @include card-minimal;
+  
+  .card-header {
+    margin-bottom: map-get($spacing, 3);
+    padding-bottom: map-get($spacing, 2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    
+    .card-title {
+      @include heading('lg');
+      margin: 0;
+    }
+    
+    .card-subtitle {
+      @include caption;
+      margin-top: map-get($spacing, 1);
+    }
+  }
+  
+  .card-body {
+    @include body-text;
+  }
+  
+  .card-footer {
+    margin-top: map-get($spacing, 3);
+    padding-top: map-get($spacing, 2);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+}
+
+// 4. LISTS
+// ============================================
+
+.list {
+  @include stack(0);
+  
+  .list-item {
+    padding: map-get($spacing, 2) 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all map-get(map-get($motion, duration), fast);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &.list-item-clickable {
+      cursor: pointer;
+      
+      &:hover {
+        padding-left: map-get($spacing, 1);
+        background: rgba(0, 0, 0, 0.02);
+      }
+    }
+  }
+}
+
+// 5. BADGES
+// ============================================
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px map-get($spacing, 1);
+  font-size: map-get(map-get($typography, scale), xs);
+  font-weight: map-get(map-get($typography, weight), medium);
+  border-radius: map-get(map-get($borders, radius), sm);
+  background: rgba(0, 0, 0, 0.08);
+  color: map-get($colors, black);
+  
+  &.badge-primary {
+    background: rgba(0, 102, 255, 0.1);
+    color: map-get($colors, blue);
+  }
+  
+  &.badge-danger {
+    background: rgba(255, 59, 48, 0.1);
+    color: map-get($colors, red);
+  }
+}
+
+// 6. ALERTS
+// ============================================
+
+.alert {
+  @include card-minimal;
+  border-left-width: 3px;
+  
+  .alert-title {
+    @include body-text;
+    font-weight: map-get(map-get($typography, weight), medium);
+    margin-bottom: map-get($spacing, 1);
+  }
+  
+  .alert-description {
+    @include body-text('sm');
+    color: map-get($colors, gray);
+  }
+  
+  &.alert-info {
+    border-left-color: map-get($colors, blue);
+  }
+  
+  &.alert-error {
+    border-left-color: map-get($colors, red);
+  }
+}
+
+// 7. MODALS
+// ============================================
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn map-get(map-get($motion, duration), fast);
+}
+
+.modal {
+  @include card-minimal;
+  width: 90%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp map-get(map-get($motion, duration), normal) map-get(map-get($motion, easing), out);
+  
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: map-get($spacing, 3);
+    
+    .modal-title {
+      @include heading('xl');
+      margin: 0;
+    }
+    
+    .modal-close {
+      @include button-minimal('ghost');
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      
+      &::after {
+        content: '×';
+        font-size: 24px;
+        line-height: 1;
+      }
+    }
+  }
+  
+  .modal-body {
+    @include body-text;
+    margin-bottom: map-get($spacing, 4);
+  }
+  
+  .modal-footer {
+    @include cluster(2);
+    justify-content: flex-end;
+  }
+}
+
+// 8. NAVIGATION
+// ============================================
+
+.nav {
+  @include cluster(1);
+  
+  .nav-item {
+    @include body-text('sm');
+    padding: map-get($spacing, 1) map-get($spacing, 2);
+    color: map-get($colors, gray);
+    text-decoration: none;
+    border-radius: map-get(map-get($borders, radius), sm);
+    transition: all map-get(map-get($motion, duration), fast);
+    
+    &:hover {
+      color: map-get($colors, black);
+      background: rgba(0, 0, 0, 0.04);
+    }
+    
+    &.nav-item-active {
+      color: map-get($colors, black);
+      font-weight: map-get(map-get($typography, weight), medium);
+    }
+  }
+}
+
+// 9. TABLES
+// ============================================
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    
+    th {
+      @include body-text('sm');
+      font-weight: map-get(map-get($typography, weight), medium);
+      text-align: left;
+      padding: map-get($spacing, 2);
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      transition: all map-get(map-get($motion, duration), fast);
+      
+      &:hover {
+        background: rgba(0, 0, 0, 0.02);
+      }
+    }
+    
+    td {
+      @include body-text('sm');
+      padding: map-get($spacing, 2);
+    }
+  }
+}
+
+// 10. PROGRESS
+// ============================================
+
+.progress {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  
+  .progress-bar {
+    height: 100%;
+    background: map-get($colors, blue);
+    transition: width map-get(map-get($motion, duration), slow) map-get(map-get($motion, easing), out);
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// UTILITY CLASSES
+// ============================================
+
+// Spacing
+@each $size, $value in $spacing {
+  .m-#{$size} { margin: $value; }
+  .mt-#{$size} { margin-top: $value; }
+  .mr-#{$size} { margin-right: $value; }
+  .mb-#{$size} { margin-bottom: $value; }
+  .ml-#{$size} { margin-left: $value; }
+  .mx-#{$size} { margin-left: $value; margin-right: $value; }
+  .my-#{$size} { margin-top: $value; margin-bottom: $value; }
+  
+  .p-#{$size} { padding: $value; }
+  .pt-#{$size} { padding-top: $value; }
+  .pr-#{$size} { padding-right: $value; }
+  .pb-#{$size} { padding-bottom: $value; }
+  .pl-#{$size} { padding-left: $value; }
+  .px-#{$size} { padding-left: $value; padding-right: $value; }
+  .py-#{$size} { padding-top: $value; padding-bottom: $value; }
+}
+
+// Typography
+.text-xs { font-size: map-get(map-get($typography, scale), xs); }
+.text-sm { font-size: map-get(map-get($typography, scale), sm); }
+.text-base { font-size: map-get(map-get($typography, scale), base); }
+.text-lg { font-size: map-get(map-get($typography, scale), lg); }
+.text-xl { font-size: map-get(map-get($typography, scale), xl); }
+.text-2xl { font-size: map-get(map-get($typography, scale), 2xl); }
+.text-3xl { font-size: map-get(map-get($typography, scale), 3xl); }
+
+.font-regular { font-weight: map-get(map-get($typography, weight), regular); }
+.font-medium { font-weight: map-get(map-get($typography, weight), medium); }
+.font-semibold { font-weight: map-get(map-get($typography, weight), semibold); }
+
+// Layout
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: map-get($spacing, 1); }
+.gap-2 { gap: map-get($spacing, 2); }
+.gap-3 { gap: map-get($spacing, 3); }
+.gap-4 { gap: map-get($spacing, 4); }

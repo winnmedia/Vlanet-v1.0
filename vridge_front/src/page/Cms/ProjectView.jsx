@@ -2,30 +2,30 @@
 
 
 /* 상단 이미지 - 샘플, 기본 */
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
-import CalendarHeader from 'tasks/Calendar/CalendarHeader'
-import CalendarBody from 'tasks/Calendar/CalendarBody'
-import ProjectList from 'tasks/Calendar/ProjectList'
-import CalendarEnhanced from 'components/CalendarEnhanced'
-import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
+import CalendarHeader from '../../tasks/Calendar/CalendarHeader'
+import CalendarBody from '../../tasks/Calendar/CalendarBody'
+import ProjectList from '../../tasks/Calendar/ProjectList'
+import CalendarEnhanced from '../../components/CalendarEnhanced'
+import ProjectPhaseBoard from '../../components/ProjectPhaseBoard'
 
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
-import { checkSession } from 'util/util'
-import { useNavigationFlow } from 'hooks/useNavigationFlow'
-import { SafeRoute } from 'components/SafeRoute'
+import { checkSession } from '../../util/util'
+import { useNavigationFlow } from '../../hooks/useNavigationFlow'
+import { SafeRoute } from '../../components/SafeRoute'
 
 import { Select, Space } from 'antd'
 import moment from 'moment'
 import 'moment/locale/ko'
 
-import down from 'images/Cms/down_icon.svg'
+import down from '../../images/Cms/down_icon.svg'
 
-import { GetProject, UpdateDate } from 'api/project'
-import InviteInput from 'tasks/Project/InviteInput'
-import { useProjectData } from 'hooks/useProjectData'
+import { GetProject, UpdateDate } from '../../api/project'
+import InviteInput from '../../tasks/Project/InviteInput'
+import { useProjectData } from '../../hooks/useProjectData'
 
 // 로딩 애니메이션 스타일
 const loadingAnimationStyle = `

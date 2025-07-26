@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { checkSession } from 'util/util'
+import { checkSession } from '../../util/util'
 
 
 
@@ -15,35 +15,35 @@ import { checkSession } from 'util/util'
 import styles from './FeedbackButtonStyles.module.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
 
-import FeedbackInput from 'tasks/Feedback/FeedbackInput'
-import FeedbackManage from 'tasks/Feedback/FeedbackManage'
-import FeedbackMore from 'tasks/Feedback/FeedbackMore'
-import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
-import OpinionInput from 'tasks/Feedback/OpinionInput'
-import VideoJsPlayer from 'components/VideoJsPlayer-fixed'
-import VideoUploadGuide from 'components/VideoUploadGuide'
-import InviteInput from 'tasks/Project/InviteInput'
+import FeedbackInput from '../../tasks/Feedback/FeedbackInput'
+import FeedbackManage from '../../tasks/Feedback/FeedbackManage'
+import FeedbackMore from '../../tasks/Feedback/FeedbackMore'
+import FeedbackMessagePolling from '../../tasks/Feedback/FeedbackMessagePolling'
+import OpinionInput from '../../tasks/Feedback/OpinionInput'
+import VideoJsPlayer from '../../components/VideoJsPlayer-fixed'
+import VideoUploadGuide from '../../components/VideoUploadGuide'
+import InviteInput from '../../tasks/Project/InviteInput'
 
-import useTab from 'hooks/UseTab'
+import useTab from '../../hooks/UseTab'
 
-import down from 'images/Cms/down_icon.svg'
+import down from '../../images/Cms/down_icon.svg'
 
 import { useSelector } from 'react-redux'
 
-import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from 'api/feedback'
-import { GetChatMessages, SendChatMessage } from 'api/chat'
-import { InviteProjectMember, GetProjectInvitations, CancelInvitation } from 'api/invitation'
-import { GetFriends, GetRecentInvitations } from 'api/friends'
+import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from '../../api/feedback'
+import { GetChatMessages, SendChatMessage } from '../../api/chat'
+import { InviteProjectMember, GetProjectInvitations, CancelInvitation } from '../../api/invitation'
+import { GetFriends, GetRecentInvitations } from '../../api/friends'
 import axios from '../../config/axios'
 
 import moment from 'moment'
 import 'moment/locale/ko'
-import { useNavigationFlow } from 'hooks/useNavigationFlow'
-import { SafeRoute } from 'components/SafeRoute'
-import { useProjectData } from 'hooks/useProjectData'
+import { useNavigationFlow } from '../../hooks/useNavigationFlow'
+import { SafeRoute } from '../../components/SafeRoute'
+import { useProjectData } from '../../hooks/useProjectData'
 
 export default function Feedback() {
   const router = useRouter()

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from '../../util/nextNavigation';
-import { SendAuthNumber, EmailAuth, SignUp, CheckNickname } from "api/auth";
+import { SendAuthNumber, EmailAuth, SignUp, CheckNickname } from '../../api/auth";
 import PasswordInput from "component/PasswordInput";
 import { CircularProgress } from "@material-ui/core";
 

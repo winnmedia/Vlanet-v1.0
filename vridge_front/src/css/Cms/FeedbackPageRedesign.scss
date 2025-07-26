@@ -1,5 +1,42 @@
-// 피드백 페이지 전체 리디자인
+// 피드백 페이지 전체 리디자인 - 백업 폴더 디자인 100% 적용
+// Version: 2.0 - 백업 폴더의 FeedbackUnified.scss 디자인 통합
+
+// ===== 색상 변수 정의 (백업 폴더 기준) =====
+$primary-color: #1631F8;
+$primary-gradient: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+$danger-color: #dc3545;
+$danger-gradient: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+$secondary-color: #6c757d;
+$secondary-gradient: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+$success-color: #28a745;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+
 .feedback {
+  // 전체 레이아웃 구조 (백업 폴더 스타일)
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  
+  // 메인 컨텐츠 래퍼
+  .flex {
+    gap: 24px;
+    
+    @media (max-width: 1024px) {
+      flex-direction: column;
+    }
+  }
+  
+  // 비디오 박스 영역 (왼쪽)
+  .video_box {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
   // 비디오 플레이어 섹션
   .video_inner {
     background: #f8f9fa;
@@ -202,7 +239,45 @@
     }
   }
   
-  // 오른쪽 박스 리디자인
+  // 사이드박스 영역 (오른쪽) - 백업 폴더 스타일
+  .sidebox {
+    width: 320px;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    
+    @media (max-width: 1024px) {
+      width: 100%;
+    }
+    
+    // 프로젝트 헤더
+    .b_title {
+      margin-bottom: 24px;
+      
+      h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+      }
+      
+      p {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+  }
+  
+  // 탭 컨테이너 영역 - 백업 폴더 스타일 적용
+  .tab_container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  // 액션 버튼 영역 (백업 폴더 스타일)
   .etc_box {
     background: white;
     border: 1px solid #e9ecef;
@@ -286,37 +361,34 @@
       }
     }
     
-    // 탭 메뉴
+    // 탭 메뉴 - 백업 폴더의 통합 탭 스타일
     .tab_menu {
+      display: flex;
+      gap: 8px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 12px 12px 0 0;
       border-bottom: 1px solid #e9ecef;
       
-      ul {
-        display: flex;
-        margin: 0;
-        padding: 0;
+      // 탭 버튼 스타일 (백업 폴더 기준)
+      button, li {
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #666;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
         
-        li {
-          flex: 1;
-          text-align: center;
-          padding: 16px;
-          font-size: 14px;
-          font-weight: 500;
-          color: #6c757d;
-          cursor: pointer;
-          border-bottom: 3px solid transparent;
-          transition: all 0.3s ease;
-          background: white;
-          
-          &:hover {
-            color: #495057;
-            background: #f8f9fa;
-          }
-          
-          &.active {
-            color: #1631F8;
-            border-bottom-color: #1631F8;
-            font-weight: 600;
-          }
+        &:hover {
+          color: $primary-color;
+        }
+        
+        &.active {
+          color: $primary-color;
+          border-bottom-color: $primary-color;
         }
       }
     }
@@ -325,7 +397,42 @@
     .tabContent {
       padding: 24px;
       
-      // 피드백 입력 폼
+      // 피드백 입력 폼 - 백업 폴더 스타일
+      .form, .feedback-form {
+        .form-group {
+          margin-bottom: 20px;
+          
+          label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+          }
+          
+          input,
+          textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            
+            &:focus {
+              outline: none;
+              border-color: $primary-color;
+            }
+          }
+          
+          textarea {
+            min-height: 120px;
+            resize: vertical;
+          }
+        }
+      }
+      
+      // 기존 form 스타일 유지
       .form {
         background: #f8f9fa;
         border-radius: 8px;
@@ -741,7 +848,98 @@
     }
   }
   
-  // 비디오 컨트롤 버튼 영역
+  // 멤버 리스트 (백업 폴더 스타일)
+  .member {
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+        
+        &:hover {
+          background: #f8f9fa;
+        }
+        
+        &.admin {
+          .img {
+            background: $primary-gradient;
+          }
+        }
+        
+        .img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #e9ecef;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          color: #666;
+          flex-shrink: 0;
+          background-size: cover;
+          background-position: center;
+        }
+        
+        .txt {
+          flex: 1;
+          
+          font-weight: 600;
+          color: #333;
+          font-size: 14px;
+          
+          span {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            font-weight: normal;
+            margin-top: 2px;
+          }
+        }
+      }
+    }
+  }
+  
+  // 업로드 영역 (백업 폴더 스타일)
+  .feedback-upload-label {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 48px;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-color: $primary-color;
+      background: #f0f4ff;
+    }
+    
+    svg {
+      margin-bottom: 16px;
+    }
+    
+    div {
+      &:first-child {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+      
+      &:last-child {
+        font-size: 14px;
+        color: #999;
+      }
+    }
+  }
+  
+  // 비디오 컨트롤 버튼 영역 (백업 폴더 버튼 스타일 완전 적용)
   .video-control-buttons {
     display: flex;
     gap: 12px;

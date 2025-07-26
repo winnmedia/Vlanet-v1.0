@@ -1,4 +1,4 @@
-import { axiosCredentials } from 'util/util'
+import { axiosCredentials } from '../util/util'
 
 // 알림 목록 조회
 export function GetNotifications(unreadOnly = false, limit = 20) {

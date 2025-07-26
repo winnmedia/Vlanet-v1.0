@@ -1,11 +1,11 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react'
-import { useRouter } from 'util/nextNavigation'
+import { useRouter } from '../../util/nextNavigation'
 import { useSelector } from 'react-redux'
 import dynamic from 'next/dynamic'
 
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
-import { checkSession } from 'util/util'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
+import { checkSession } from '../../util/util'
 import { Card, Row, Col, Statistic, Button, Table, Tag, Space, Alert, Spin, Tabs, Input, Select, Badge, Progress, Empty, Divider } from 'antd'
 import { 
   UserOutlined, 
@@ -29,7 +29,7 @@ import {
   EyeOutlined,
   EditOutlined
 } from '@ant-design/icons'
-import { axiosCredentials } from 'util/util'
+import { axiosCredentials } from '../../util/util'
 import moment from 'moment'
 import 'moment/locale/ko'
 // Dynamic import for chart components to avoid SSR issues

@@ -1,5 +1,5 @@
 import { useRouter, useLocation } from '../util/nextNavigation'
-import { useNavigationStore } from 'store/navigationStore'
+import { useNavigationStore } from '../store/navigationStore'
 import { useEffect } from 'react'
 
 export function useNavigationFlow() {

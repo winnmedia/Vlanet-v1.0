@@ -1,5 +1,5 @@
 import React from 'react'
-import PageTemplate from 'components/PageTemplate'
+import PageTemplate from '../../components/PageTemplate'
 
 export default function PrivacyPolicy() {
   return (

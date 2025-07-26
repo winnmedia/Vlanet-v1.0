@@ -16,5 +16,6 @@
       "redux/*": ["src/redux/*"],
       "config/*": ["src/config/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", ".next", "build", "dist"]
 }

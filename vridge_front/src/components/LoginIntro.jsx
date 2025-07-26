@@ -1,6 +1,6 @@
 import { useRouter } from '../util/nextNavigation'
 
-import w_logo from 'images/Common/w_logo02.svg'
+import w_logo from '../images/Common/w_logo02.svg'
 
 export default function LoginIntro() {
   const { navigate } = useRouter()

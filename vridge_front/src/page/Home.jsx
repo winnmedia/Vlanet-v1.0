@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from '../util/nextNavigation'
-import { checkSession } from 'util/util'
+import { checkSession } from '../util/util'
 
 // Next.js에서는 public 폴더의 이미지를 직접 경로로 참조
 const logo = '/images/Common/w_logo02.svg'

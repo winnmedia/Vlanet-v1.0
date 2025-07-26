@@ -1,13 +1,13 @@
 
-import PageTemplate from 'components/PageTemplate'
+import PageTemplate from '../../components/PageTemplate'
 import queryString from 'query-string'
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from '../../util/nextNavigation'
-import { checkSession, refetchProject } from 'util/util'
+import { checkSession, refetchProject } from '../../util/util'
 import { useDispatch } from 'react-redux'
 
-import logo from 'images/Common/logo.svg'
-import { AcceptInvite } from 'api/project'
+import logo from '../../images/Common/logo.svg'
+import { AcceptInvite } from '../../api/project'
 
 export default function EmailCheck() {
   const { navigate } = useRouter()

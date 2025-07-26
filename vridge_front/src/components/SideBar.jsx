@@ -4,7 +4,7 @@ import cx from 'classnames'
 import React, { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react'
 import { useRouter, useLocation } from '../util/nextNavigation'
 import { useSelector } from 'react-redux'
-import { checkSession } from 'util/util'
+import { checkSession } from '../util/util'
 
 const SideBar = memo(function SideBar({ tab, on_menu }) {
   const { navigate } = useRouter()

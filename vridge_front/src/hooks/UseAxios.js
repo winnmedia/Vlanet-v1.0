@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
-import { checkSession } from 'util/util'
+import { checkSession } from '../util/util'
 import { useRouter } from '../util/nextNavigation'
 
 axios.defaults.withCredentials = true

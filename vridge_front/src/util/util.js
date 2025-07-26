@@ -1,10 +1,10 @@
 import axios from '../config/axios'
 import { updateProjectStore } from '../redux/project'
-import { ProjectList } from 'api/project'
-import { GetUserInfo } from 'api/auth'
+import { ProjectList } from '../api/project'
+import { GetUserInfo } from '../api/auth'
 import moment from 'moment'
 import 'moment/locale/ko'
-import { safeStorage } from 'utils/mobile-utils'
+import { safeStorage } from '../utils/mobile-utils'
 
 export function axiosOpts(method, url, data, config) {
   // 인증이 필요없는 요청 (로그인, 회원가입 등)

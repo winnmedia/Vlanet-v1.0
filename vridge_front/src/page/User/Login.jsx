@@ -1,12 +1,12 @@
 
-import PageTemplate from 'components/PageTemplate'
+import PageTemplate from '../../components/PageTemplate'
 import queryString from 'query-string'
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams, useLocation } from '../../util/nextNavigation'
 import { useDispatch } from 'react-redux'
-import { SignIn, GoogleLoginAPI, GetUserInfo } from 'api/auth'
-import { checkSession, refetchProject } from 'util/util'
-import { safeStorage } from 'utils/mobile-utils'
+import { SignIn, GoogleLoginAPI, GetUserInfo } from '../../api/auth'
+import { checkSession, refetchProject } from '../../util/util'
+import { safeStorage } from '../../utils/mobile-utils'
 import axios from 'axios'
 
 export default function Login() {

@@ -1,4 +1,4 @@
-import { axiosCredentials, axiosFormData } from 'util/util'
+import { axiosCredentials, axiosFormData } from '../util/util'
 
 // 마이페이지 종합 정보 조회
 export function getMyPageInfo() {

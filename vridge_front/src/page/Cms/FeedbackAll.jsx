@@ -3,8 +3,8 @@ import { useRouter, useLocation } from '../../util/nextNavigation'
 
 /* 상단 이미지 - 샘플, 기본 */
 /* 상단 이미지 - 샘플, 기본 */
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
 
 import moment from 'moment'
 import 'moment/locale/ko'

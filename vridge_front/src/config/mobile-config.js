@@ -15,14 +15,14 @@ export const isAndroid = () => {
 export const setupMobileConfig = () => {
   if (isMobile()) {
     // 모바일 뷰포트 설정
-    const viewport = (typeof window !== 'undefined' && document.querySelector('meta[name="viewport"]');
+    const viewport = typeof window !== 'undefined' && document.querySelector('meta[name="viewport"]');
     if (viewport) {
       viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }
 
     // iOS 상태바 스타일
     if (isIOS()) {
-      const statusBar = (typeof window !== 'undefined' && document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+      const statusBar = typeof window !== 'undefined' && document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
       if (statusBar) {
         statusBar.setAttribute('content', 'black-translucent');
       }

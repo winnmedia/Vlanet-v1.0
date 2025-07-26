@@ -1,25 +1,25 @@
 
 /* 상단 이미지 - 샘플, 기본 */
-import PageTemplate from 'components/PageTemplate'
-import SideBar from 'components/SideBar'
-import InviteInput from 'tasks/Project/InviteInput'
-import ProjectInput from 'tasks/Project/ProjectInput'
-import useInput from 'hooks/UseInput'
-import useFile from 'hooks/Usefile'
-import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
-import { formatProcessDatesForBackend } from 'utils/dateUtils'
+import PageTemplate from '../../components/PageTemplate'
+import SideBar from '../../components/SideBar'
+import InviteInput from '../../tasks/Project/InviteInput'
+import ProjectInput from '../../tasks/Project/ProjectInput'
+import useInput from '../../hooks/UseInput'
+import useFile from '../../hooks/Usefile'
+import ProcessDateEnhanced from '../../tasks/Project/ProcessDateEnhanced'
+import { formatProcessDatesForBackend } from '../../utils/dateUtils'
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { produce } from 'immer'
 import { useSelector, useDispatch } from 'react-redux'
-import { project_initial, project_dateRange, refetchProject, checkSession } from 'util/util'
+import { project_initial, project_dateRange, refetchProject, checkSession } from '../../util/util'
 import {
   GetProject,
   UpdateProjectAPI,
   FileDeleteAPI,
   DeleteProjectAPI,
-} from 'api/project'
+} from '../../api/project'
 
 export default function ProjectEdit() {
   const { navigate } = useRouter()

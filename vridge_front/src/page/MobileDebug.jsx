@@ -20,10 +20,10 @@ const MobileDebug = () => {
       devicePixelRatio: window.devicePixelRatio,
       currentURL: typeof window !== 'undefined' && window.location.href,
       hostname: typeof window !== 'undefined' && window.location.hostname,
-      protocol: (typeof window !== 'undefined' && window.location.protocol,
+      protocol: typeof window !== 'undefined' && window.location.protocol,
       apiBaseURL: axios.defaults.baseURL || 'Not set',
       localStorage: {
-        hasSession: !!typeof window !== 'undefined' && localStorage.getItem('vridge_session'),
+        hasSession: !!(typeof window !== 'undefined' && localStorage.getItem('vridge_session')),
         itemCount: localStorage.length
       },
       network: navigator.connection ? {

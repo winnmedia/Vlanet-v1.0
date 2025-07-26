@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 
-import PageTemplate from 'components/PageTemplate'
-import { checkSession } from 'util/util'
-import { getMyPageInfo, uploadProfileImage, updateProfile } from 'api/user'
+import PageTemplate from '../../components/PageTemplate'
+import { checkSession } from '../../util/util'
+import { getMyPageInfo, uploadProfileImage, updateProfile } from '../../api/user'
 import { useSelector, useDispatch } from 'react-redux'
 import { updateProjectStore } from '../../redux/project'
-import ImageCropper from 'components/ImageCropper'
-import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
-import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest, DeleteFriend, BlockFriend } from 'api/friends'
+import ImageCropper from '../../components/ImageCropper'
+import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from '../../api/invitation'
+import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest, DeleteFriend, BlockFriend } from '../../api/friends'
 import moment from 'moment'
 import 'moment/locale/ko'
-import UserAvatar from 'components/UserAvatar'
+import UserAvatar from '../../components/UserAvatar'
 
 export default function MyPage() {
   const router = useRouter()

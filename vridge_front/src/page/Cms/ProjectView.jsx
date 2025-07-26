@@ -307,16 +307,17 @@ export default function ProjectView() {
                         className={`view-btn ${viewMode === 'month' ? 'active' : ''}`}
                         onClick={() => setViewMode('month')}
                         style={{
-                          padding: '5px 15px',
-                          border: '1px solid #012fff',
-                          background: viewMode === 'month' ? '#012fff' : 'white',
-                          color: viewMode === 'month' ? 'white' : '#012fff',
-                          borderRadius: '4px',
+                          padding: '8px 20px',
+                          border: '1px solid #dee2e6',
+                          background: viewMode === 'month' ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : 'white',
+                          color: viewMode === 'month' ? 'white' : '#495057',
+                          borderRadius: '6px',
                           cursor: 'pointer',
-                          fontSize: '12px',
+                          fontSize: '14px',
                           fontWeight: '500',
-                          transition: 'all 0.3s ease',
-                          whiteSpace: 'nowrap'
+                          transition: 'all 0.2s ease',
+                          whiteSpace: 'nowrap',
+                          boxShadow: viewMode === 'month' ? '0 2px 4px rgba(22, 49, 248, 0.2)' : 'none'
                         }}
                       >
                         월간보기
@@ -325,16 +326,17 @@ export default function ProjectView() {
                         className={`view-btn ${viewMode === 'timeline' ? 'active' : ''}`}
                         onClick={() => setViewMode('timeline')}
                         style={{
-                          padding: '5px 15px',
-                          border: '1px solid #012fff',
-                          background: viewMode === 'timeline' ? '#012fff' : 'white',
-                          color: viewMode === 'timeline' ? 'white' : '#012fff',
-                          borderRadius: '4px',
+                          padding: '8px 20px',
+                          border: '1px solid #dee2e6',
+                          background: viewMode === 'timeline' ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : 'white',
+                          color: viewMode === 'timeline' ? 'white' : '#495057',
+                          borderRadius: '6px',
                           cursor: 'pointer',
-                          fontSize: '12px',
+                          fontSize: '14px',
                           fontWeight: '500',
-                          transition: 'all 0.3s ease',
-                          whiteSpace: 'nowrap'
+                          transition: 'all 0.2s ease',
+                          whiteSpace: 'nowrap',
+                          boxShadow: viewMode === 'timeline' ? '0 2px 4px rgba(22, 49, 248, 0.2)' : 'none'
                         }}
                       >
                         타임라인
@@ -343,16 +345,17 @@ export default function ProjectView() {
                         className={`view-btn ${viewMode === 'gantt' ? 'active' : ''}`}
                         onClick={() => setViewMode('gantt')}
                         style={{
-                          padding: '5px 15px',
-                          border: '1px solid #012fff',
-                          background: viewMode === 'gantt' ? '#012fff' : 'white',
-                          color: viewMode === 'gantt' ? 'white' : '#012fff',
-                          borderRadius: '4px',
+                          padding: '8px 20px',
+                          border: '1px solid #dee2e6',
+                          background: viewMode === 'gantt' ? 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)' : 'white',
+                          color: viewMode === 'gantt' ? 'white' : '#495057',
+                          borderRadius: '6px',
                           cursor: 'pointer',
-                          fontSize: '12px',
+                          fontSize: '14px',
                           fontWeight: '500',
-                          transition: 'all 0.3s ease',
-                          whiteSpace: 'nowrap'
+                          transition: 'all 0.2s ease',
+                          whiteSpace: 'nowrap',
+                          boxShadow: viewMode === 'gantt' ? '0 2px 4px rgba(22, 49, 248, 0.2)' : 'none'
                         }}
                       >
                         간트차트
@@ -465,7 +468,14 @@ export default function ProjectView() {
               </div>
               
               {/* 프로젝트 단계 보드 추가 */}
-              <div className="content" style={{ marginTop: '30px' }}>
+              <div className="content phase-board" style={{ 
+                marginTop: '30px',
+                background: 'white',
+                padding: '24px',
+                borderRadius: '12px',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                border: '1px solid #e9ecef'
+              }}>
                 <ProjectPhaseBoard 
                   projects={[current_project]}
                   isAdmin={is_admin}
@@ -560,15 +570,20 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                     background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                     color: 'white',
                     border: 'none',
-                    padding: '6px 10px',
-                    borderRadius: '4px',
-                    fontSize: '11px',
+                    padding: '6px 14px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: '600',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
                     minWidth: '70px',
                     width: 'auto',
+                    boxShadow: '0 2px 4px rgba(22, 49, 248, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = 'translateY(-2px)'
@@ -576,10 +591,10 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = 'translateY(0)'
-                    e.target.style.boxShadow = 'none'
+                    e.target.style.boxShadow = '0 2px 4px rgba(22, 49, 248, 0.2)'
                   }}
                 >
-                  + 초대
+                  <span style={{ fontSize: '16px', lineHeight: '1' }}>+</span> 초대
                 </button>
               )}
             </div>
@@ -664,41 +679,55 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 1000
+            zIndex: 1000,
+            backdropFilter: 'blur(4px)'
           }}
           onClick={() => setShowInviteModal(false)}
         >
           <div 
             style={{
               backgroundColor: 'white',
-              padding: '30px',
-              borderRadius: '8px',
+              padding: '32px',
+              borderRadius: '16px',
               maxWidth: '500px',
               width: '90%',
               maxHeight: '80vh',
-              overflowY: 'auto'
+              overflowY: 'auto',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              border: '1px solid #e9ecef'
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ margin: 0 }}>멤버 초대</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '700', color: '#212529' }}>멤버 초대</h3>
               <button
                 onClick={() => setShowInviteModal(false)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
+                  background: '#f8f9fa',
+                  border: '1px solid #dee2e6',
+                  borderRadius: '8px',
+                  fontSize: '20px',
                   cursor: 'pointer',
                   padding: '0',
-                  width: '30px',
-                  height: '30px',
+                  width: '36px',
+                  height: '36px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                  color: '#495057'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = '#e9ecef'
+                  e.target.style.color = '#212529'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = '#f8f9fa'
+                  e.target.style.color = '#495057'
                 }}
               >
                 ×

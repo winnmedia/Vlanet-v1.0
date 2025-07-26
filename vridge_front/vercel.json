@@ -1,5 +1,9 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "regions": ["icn1"],
+  "git": {
+    "deploymentEnabled": false
+  },
   "functions": {
     "pages/api/**.js": {
       "maxDuration": 30

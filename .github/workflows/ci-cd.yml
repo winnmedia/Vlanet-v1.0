@@ -96,7 +96,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379/0
-          SECRET_KEY: test-secret-key
+          SECRET_KEY: QY7vEOjBYBjg0ITmtBbABrVGmBB6Of1_4CiRO_lMJkDVe8XlLpIcNAmJPuPUi402DqZ4_oX9musY6Emq
           DEBUG: false
         run: |
           python manage.py migrate
@@ -155,19 +155,21 @@ jobs:
     needs: [backend-test, security-scan]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: ./vridge_back
     
     steps:
       - uses: actions/checkout@v4
       
       - name: Install Railway CLI
         run: npm install -g @railway/cli
+        working-directory: .
       
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          cd vridge_back
-          railway up
+        run: railway up
 
   # 배포 후 헬스체크
   post-deploy-check:

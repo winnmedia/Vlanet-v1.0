@@ -19,6 +19,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import '../src/css/Home.scss'
 import '../src/css/HomeAlignment.scss'
 import '../src/css/User/Auth.scss'
+import '../src/css/Cms/Cms.scss'
 import '../src/css/Cms/CmsCommon.scss'
 import '../src/css/Cms/CmsHomeEnhanced.scss'
 // import '../src/css/Cms/CmsHomeImproved.scss' // removed - undefined mixins

@@ -2435,13 +2435,14 @@
       }
     }
   }
+}
 
-  .db {
-    display: none;
-  }
+.db {
+  display: none;
+}
 
-  // 공통 토글 버튼 스타일
-  .collapse-btn {
+// 공통 토글 버튼 스타일
+.collapse-btn {
   width: 24px !important;
   height: 24px !important;
   min-width: 24px !important;
@@ -2498,6 +2499,7 @@
       stroke: white !important;
     }
   }
+}
 } // .cms_wrap 종료
 
 

@@ -62,13 +62,11 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     // 세션 체크만 수행 (프로젝트 로드는 각 페이지에서 처리)
     const session = checkSession()
-    console.log('App initialized with session:', !!session)
   }, [])
 
   useEffect(() => {
     // 라우트 변경 시 로딩 상태 관리
     const handleStart = (url) => {
-      console.log('Loading start:', url)
       // 로그인에서 홈으로 이동하는 경우 로딩 표시하지 않음
       const currentPath = router.pathname.toLowerCase()
       const targetPath = url.toLowerCase()
@@ -83,7 +81,6 @@ function MyApp({ Component, pageProps }) {
       setLoading(true)
     }
     const handleComplete = (url) => {
-      console.log('Loading complete:', url)
       setLoading(false)
     }
     const handleError = (err, url) => {

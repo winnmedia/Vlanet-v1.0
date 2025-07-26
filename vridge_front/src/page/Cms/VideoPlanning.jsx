@@ -93,25 +93,25 @@ export default function VideoPlanning() {
   // 최근 기획 불러오기
   const fetchRecentPlannings = async (retryCount = 0) => {
     try {
-      console.log('최근 기획 로드 시작...')
+      // 최근 기획 로드 시작
       const token = checkSession()
       if (!token) return
       
       const response = await axios.get('/api/video-planning/recent/', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
-      console.log('최근 기획 응답:', response.data)
+      // 최근 기획 응답 받음
       
       if (response.data && response.data.data && response.data.data.planning_logs) {
         setRecentPlannings(response.data.data.planning_logs)
-        console.log(`최근 기획 ${response.data.data.planning_logs?.length || 0}개 로드 성공`)
+        // 최근 기획 로드 성공
       }
     } catch (err) {
       console.error(`최근 기획 로드 실패 (${retryCount + 1}회차):`, err)
       
       // 401 에러인 경우 재시도
       if (err.response?.status === 401 && retryCount < 2) {
-        console.log('인증 토큰이 아직 준비되지 않았을 수 있음. 재시도...')
+        // 인증 토큰이 아직 준비되지 않았을 수 있음. 재시도
         setTimeout(() => {
           fetchRecentPlannings(retryCount + 1)
         }, 1000) // 1초 후 재시도

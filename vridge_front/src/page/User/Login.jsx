@@ -98,14 +98,14 @@ export default function Login() {
       
       if (uid && token) {
         // 초대 링크 처리 페이지
-        console.log('Navigating to EmailCheck with uid and token')
+        // Navigating to EmailCheck with uid and token
         navigate(`/EmailCheck?uid=${uid}&token=${token}`)
       } else if (router.query?.returnUrl) {
         // 초대 수락을 위해 로그인한 경우
-        console.log('Navigating to return URL:', router.query.returnUrl)
+        // Navigating to return URL
         navigate(router.query.returnUrl)
       } else {
-        console.log('Navigating to CmsHome')
+        // Navigating to CmsHome
         navigate('/cmshome', { replace: true })
       }
     } catch (err) {
@@ -160,10 +160,10 @@ export default function Login() {
       setLoginController(controller)
       
       // 보안: 비밀번호가 포함된 객체를 로깅하지 않음
-      console.log('로그인 시도:', { email: inputs.email })
+      // 로그인 시도
       SignIn(inputs, { signal: controller.signal })
         .then((res) => {
-          console.log('로그인 성공')
+          // 로그인 성공
           setLoginController(null)
           CommonLoginSuccess(res.data.vridge_session, res.data)
         })

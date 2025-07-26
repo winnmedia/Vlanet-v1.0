@@ -31,10 +31,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
     if (sortedProjects.length > 0) {
       SetSortProject(sortedProjects)
       
-      console.log('[SideBar] Project list updated:', {
-        totalProjects: sortedProjects.length,
-        projectNames: sortedProjects.slice(0, 5).map(p => p.name)
-      })
+      // Project list updated
     } else {
       SetSortProject([])
     }
@@ -235,7 +232,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                   if (tab_name === 'project') {
                     navigate(`/project/${item.id}`)
                   } else {
-                    console.log('[SideBar] Navigating to feedback:', item.id, item.name)
+                    // Navigating to feedback
                     navigate(`/feedback/${item.id}`)
                   }
                   SetSubMenu(false);

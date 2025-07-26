@@ -219,7 +219,7 @@ export default function MyPage() {
   const fetchMyPageData = async () => {
     try {
       const response = await getMyPageInfo()
-      console.log('MyPage API response:', response)
+      // MyPage API response received
       if (response.data && response.data.status === 'success') {
         setMyPageData(response.data.data)
         setProfileForm({
@@ -369,11 +369,11 @@ export default function MyPage() {
     const formData = new FormData()
     formData.append('profile_image', profileImage)
     
-    console.log('Uploading profile image:', profileImage.name, profileImage.size, profileImage.type)
+    // Uploading profile image
 
     try {
       const response = await uploadProfileImage(formData)
-      console.log('Upload response:', response)
+      // Upload response received
       
       if (response.data && response.data.status === 'success') {
         alert('프로필 이미지가 업로드되었습니다.')
@@ -394,7 +394,7 @@ export default function MyPage() {
             fullImageUrl = imageUrl
           }
           
-          console.log('Setting preview image:', fullImageUrl)
+          // Setting preview image
           setImagePreview(fullImageUrl)
           
           // Redux store와 localStorage에 프로필 이미지 저장

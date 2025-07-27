@@ -37,7 +37,7 @@ export const MinimalInput = React.memo(({
   const inputId = props.id || id
   const [charCount, setCharCount] = useState(value?.length || defaultValue?.length || 0)
   const [isFocused, setIsFocused] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef(null)
   
   useEffect(() => {
     if (autoFocus && inputRef.current) {
@@ -184,7 +184,7 @@ export const MinimalTextarea = React.memo(({
   const textareaId = props.id || id
   const [charCount, setCharCount] = useState(value?.length || defaultValue?.length || 0)
   const [isFocused, setIsFocused] = useState(false)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const textareaRef = useRef(null)
   
   useEffect(() => {
     if (autoFocus && textareaRef.current) {

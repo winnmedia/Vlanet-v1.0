@@ -14,7 +14,7 @@ export const measureComponentPerformance = (componentName) => {
       performance.measure(componentName, startMark, endMark)
       
       const measures = performance.getEntriesByName(componentName)
-      const measure = measures[measures.length - 1] as PerformanceMeasure
+      const measure = measures[measures.length - 1]
       
       if (measure) {
         console.log(`⚡ ${componentName} rendered in ${measure.duration.toFixed(2)}ms`)

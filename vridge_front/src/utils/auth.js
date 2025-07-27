@@ -10,8 +10,8 @@ export const getCookie = (name) => {
 
 export const deleteCookie = (name) => {
   if (typeof window !== 'undefined') {
-          document.cookie = `${name}=;
-        } expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  }
 };
 
 // 토큰 관리 함수들

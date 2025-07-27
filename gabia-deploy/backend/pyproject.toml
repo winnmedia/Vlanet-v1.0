@@ -71,7 +71,7 @@ skip_gitignore = true
 skip = ["migrations"]
 
 [tool.coverage.run]
-source = "."
+source = ["."]
 omit = [
     "manage.py",
     "*/settings*",

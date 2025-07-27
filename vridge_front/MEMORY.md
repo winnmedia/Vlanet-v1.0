@@ -340,6 +340,38 @@
 - 답글 및 중요표시는 UI만 구현 (백엔드 API 연동 필요)
 - 비디오 플레이어 업그레이드는 차후 진행 예정
 
+### 세션 12: Jest 설정 수정 및 백업 파일 정리
+**시간**: 2025-01-27 오후
+
+**사용자 요청**:
+- Jest 설정에서 백업 디렉토리가 테스트 대상에 포함되는 문제 해결
+- 불필요한 백업 파일들 정리
+
+**구현 내용**:
+1. **Jest 설정 수정** (jest.config.js)
+   - testPathIgnorePatterns에 백업 디렉토리 패턴 추가
+   - *.bak, *.backup 디렉토리 제외 설정
+
+2. **백업 파일 정리**
+   - 제거된 디렉토리:
+     - src/components/__tests__.bak/
+     - src/components/minimal/__tests__.bak/
+     - cypress.bak/
+   - 제거된 파일:
+     - cypress.config.ts.bak
+     - VideoPlanning.jsx.backup
+     - VideoPlanning.jsx.bak2
+     - Cms.scss.backup
+     - tsconfig.json.backup
+
+3. **테스트 실행 확인**
+   - Jest 테스트 정상 실행 확인
+   - 2개 테스트 통과
+
+**추가 발견사항**:
+- index-simple.js, *-working.jsx, *-fixed.jsx 등 임시 파일들 존재
+- 추후 정리 필요한 파일들 식별
+
 ---
 
-*마지막 업데이트: 2025-01-24*
+*마지막 업데이트: 2025-01-27*

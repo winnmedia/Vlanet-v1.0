@@ -2,6 +2,45 @@
 
 ---
 
+## v1.0.26 - Frontend 배포 오류 수정 (2025-01-27)
+
+### 문제 상황
+- **원인**: Jest가 백업 디렉토리(__tests__.bak) 내의 TypeScript 구문을 파싱하지 못함
+- **오류 파일**: `vridge_front/src/utils/__tests__.bak/performance.test.js`
+- **구체적 문제**: .js 파일에 TypeScript 타입 주석(: jest.Mock) 포함
+
+### 5 Whys 분석
+1. Jest가 파일을 파싱하지 못하는 이유? → .js 파일에 TypeScript 구문 존재
+2. .js 파일에 TypeScript 구문이 있는 이유? → TypeScript 파일에서 복사/변환 과정에서 구문 미제거
+3. TypeScript 구문이 제거되지 않은 이유? → 백업 디렉토리(__tests__.bak)의 임시 파일
+4. Jest가 백업 디렉토리를 실행하는 이유? → Jest 기본 설정이 *.test.js 패턴의 모든 파일 매칭
+5. 백업 디렉토리가 테스트에 포함된 이유? → Jest 설정에서 백업 디렉토리 제외 미설정
+
+### 해결 방안
+1. **Jest 설정 업데이트** (jest.config.js)
+   - testPathIgnorePatterns에 백업 디렉토리 패턴 추가
+   - collectCoverageFrom에서도 백업 디렉토리 제외
+   ```javascript
+   testPathIgnorePatterns: [
+     '<rootDir>/node_modules/',
+     '<rootDir>/.next/',
+     '<rootDir>/build/',
+     '<rootDir>/coverage/',
+     '\\.bak',
+     '__tests__\\.bak'
+   ]
+   ```
+
+2. **백업 디렉토리 정리**
+   - src/utils/__tests__.bak 디렉토리 삭제
+
+### 결과
+- 테스트가 정상적으로 실행됨
+- 배포 프로세스 정상화
+- 향후 유사한 문제 방지를 위한 설정 완료
+
+---
+
 ## v1.0.22 - 프로젝트 진행현황 페이지 디자인 복구 (2025-01-26)
 
 ### 주요 작업 내용

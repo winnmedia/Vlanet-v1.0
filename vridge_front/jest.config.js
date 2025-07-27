@@ -40,7 +40,9 @@ module.exports = {
     '<rootDir>/node_modules/',
     '<rootDir>/.next/',
     '<rootDir>/build/',
-    '<rootDir>/coverage/'
+    '<rootDir>/coverage/',
+    '\\.bak',
+    '__tests__\\.bak'
   ],
   
   // 커버리지 설정
@@ -51,7 +53,9 @@ module.exports = {
     '!src/**/__tests__/**',
     '!src/**/__mocks__/**',
     '!src/types/**',
-    '!src/**/index.{js,ts}'
+    '!src/**/index.{js,ts}',
+    '!src/**/*.bak/**',
+    '!src/**/__tests__.bak/**'
   ],
   
   // 커버리지 임계값 (초기에는 낮게 설정)

@@ -2,6 +2,31 @@
 
 ---
 
+## v1.0.27 - UserAvatar 컴포넌트 및 마이페이지 UI 수정 (2025-01-27)
+
+### 문제 상황
+- **UserAvatar 컴포넌트**: 프로필 이미지와 이니셜 레이어의 z-index 우선순위 문제
+- **마이페이지**: profile-image-wrapper 레이아웃 불안정 및 텍스트 오버플로우 발생
+
+### 해결 방안
+1. **UserAvatar 컴포넌트 수정**
+   - 이니셜 레이어를 먼저 렌더링하고 이미지를 나중에 렌더링하도록 순서 변경
+   - z-index 명확하게 설정 (이미지: 10, 이니셜: 1)
+   - 이미지가 로드되면 항상 이니셜 위에 표시되도록 보장
+
+2. **MyPage.scss 수정**
+   - profile-image-wrapper에 box-sizing: border-box 추가
+   - overflow: hidden으로 컨텐츠 오버플로우 방지
+   - profile-info-summary에 max-width: 100% 및 text-overflow: ellipsis 추가
+   - 긴 텍스트 처리를 위한 스타일 개선
+
+### 결과
+- 프로필 이미지가 정상적으로 이니셜 위에 표시됨
+- 마이페이지 레이아웃 안정성 확보
+- 텍스트 오버플로우 문제 해결
+
+---
+
 ## v1.0.26 - Frontend 배포 오류 수정 (2025-01-27)
 
 ### 문제 상황
@@ -678,3 +703,87 @@
 - src/css/Cms/FeedbackPageRedesign.scss - 백업 폴더 디자인 적용
 - src/page/Cms/FeedbackButtonStyles.module.scss - 버튼 스타일 개선
 - 35개 파일에서 import 경로 수정
+
+---
+
+## 2025-07-27 - UI 문제 해결 작업 (v1.0.27)
+
+### 작업 내용
+- **담당**: ux-researcher-uxi (UX 연구원)
+- **작업 일시**: 2025-07-27
+
+### 문제 분석
+1. **마이페이지 프로필 사진 문제**:
+   - 업로드 시 인터페이스 깨짐 현상
+   - 프로필 사진이 다른 페이지에 표시되지 않음
+   - 원인: UserAvatar 컴포넌트의 이미지 레이어링 문제
+
+2. **피드백 페이지 레이아웃 문제**:
+   - 버튼과 레이아웃 정렬 불일치
+   - 반응형 디자인 미흡
+
+### 해결 내용
+1. **UserAvatar 컴포넌트 개선**:
+   - 이미지와 이니셜 표시 로직 수정
+   - z-index 레이어링으로 이미지 우선 표시
+   - 이미지 로드 실패 시 이니셜 폴백 개선
+
+2. **마이페이지 레이아웃 안정화**:
+   - profile-image-wrapper 최소 높이 설정 (214px)
+   - 텍스트 오버플로우 방지 (word-wrap)
+   - 모바일 반응형 개선
+
+3. **피드백 페이지 개선**:
+   - 그리드 레이아웃 반응형 처리 (auto-fill, minmax)
+   - 카드 호버 효과 및 인터랙션 개선
+   - 버튼 정렬 및 간격 통일
+
+### 수정 파일
+- `src/components/UserAvatar.jsx` - 이미지 렌더링 로직 개선
+- `src/components/UserAvatar.module.scss` - z-index 레이어링 추가
+- `src/page/User/MyPage.scss` - 레이아웃 안정성 개선
+- `src/css/Cms/Cms.scss` - 피드백 페이지 반응형 개선
+
+### UX 개선 효과
+- 프로필 이미지 표시 안정성 향상
+- 레이아웃 일관성 개선
+- 모바일 사용성 향상
+
+---
+
+## 2025-07-27 - 프론트엔드 배포 오류 해결 (Jest TypeScript 구문)
+
+### 문제 상황
+- **오류**: Jest가 .js 파일 내의 TypeScript 구문을 파싱하지 못함
+- **파일**: `vridge_front/src/utils/__tests__.bak/performance.test.js`
+- **원인**: .js 파일에 TypeScript 타입 주석(`: jest.Mock`) 포함
+
+### 해결 과정
+1. **Jest 설정 수정** (`jest.config.js`):
+   - `testPathIgnorePatterns`에 백업 디렉토리 패턴 추가
+   - `.bak`, `.backup` 디렉토리 및 파일 제외
+
+2. **백업 파일 정리**:
+   - 14개의 백업 파일/디렉토리 제거
+   - 코드베이스 약 10,689줄 감소
+   - 테스트 성공 확인 (2 tests passed)
+
+3. **배포 완료**:
+   - Git 커밋: "fix: 프론트엔드 테스트 오류 수정" (de08fe0)
+   - Vercel 프론트엔드: https://www.vlanet.net ✅
+   - Railway 백엔드: https://videoplanet.up.railway.app ✅
+
+### AI 에이전트 협업
+- **architect-aki**: 문제 분석 및 5 Whys 근본 원인 분석
+- **frontend-designer-fronty**: Jest 설정 수정 및 백업 파일 정리
+- **devops-commander-devy**: Git 커밋 및 배포 프로세스 관리
+- **qa-gatekeeper-q**: 배포 검증 및 성능 측정
+
+### 성능 측정 결과
+- **프론트엔드**: 평균 응답 시간 128ms, TTFB 180ms
+- **백엔드**: 헬스체크 응답 478ms (Railway 무료 플랜)
+
+### 후속 권장사항
+- 백엔드 응답 시간 최적화 (목표: 200ms 이내)
+- 테스트 커버리지 측정 및 목표 설정
+- 모니터링 시스템 강화 (Sentry 통합 고려)

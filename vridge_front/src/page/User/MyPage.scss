@@ -215,6 +215,11 @@
             border-radius: 16px;
             border: 1px solid rgba($mypage-primary, 0.1);
             margin-bottom: 24px;
+            min-height: 214px; // 150px 이미지 + 32px*2 패딩
+            position: relative;
+            // 레이아웃 안정성 확보
+            box-sizing: border-box;
+            overflow: hidden; // 컨텐츠 오버플로우 방지
           }
 
           .profile-image-container {
@@ -231,17 +236,6 @@
               box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
               transition: all 0.3s ease;
               
-              // 원형 프레임이 보이도록 스타일 강화
-              &.user-avatar {
-                border-radius: 50% !important;
-                overflow: hidden !important;
-                
-                &.with-border {
-                  border: 3px solid #1631F8 !important;
-                  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25) !important;
-                }
-              }
-
               &:hover {
                 transform: scale(1.05);
               }
@@ -279,18 +273,28 @@
           
           .profile-info-summary {
             flex: 1;
+            min-width: 0; // 텍스트 오버플로우 방지
+            max-width: 100%; // 최대 너비 제한
             
             h3 {
               font-size: 28px;
               font-weight: 700;
               color: $mypage-text-dark;
               margin: 0 0 8px 0;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              text-overflow: ellipsis; // 긴 텍스트 처리
+              max-width: 100%;
             }
             
             p {
               font-size: 16px;
               color: $mypage-text-gray;
               margin: 0 0 4px 0;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              text-overflow: ellipsis; // 긴 텍스트 처리
+              max-width: 100%;
               
               &.company-info {
                 font-size: 15px;
@@ -305,6 +309,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            width: 100%;
             
             .upload-area {
               border: 2px dashed $mypage-primary;
@@ -927,8 +932,24 @@
 
         .profile-section {
           .profile-image-section {
-            flex-direction: column;
-            text-align: center;
+            .profile-image-wrapper {
+              flex-direction: column;
+              text-align: center;
+              gap: 24px;
+              padding: 24px;
+            }
+            
+            .profile-info-summary {
+              text-align: center;
+              
+              h3 {
+                font-size: 24px;
+              }
+              
+              p {
+                font-size: 15px;
+              }
+            }
           }
 
           .profile-info {

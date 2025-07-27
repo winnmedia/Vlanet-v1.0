@@ -59,28 +59,28 @@ const UserAvatar = ({
       style={{ width: size, height: size }}
       onClick={onClick}
     >
-      {imageUrl ? (
+      <div 
+        className={styles['user-avatar-initial']}
+        style={{ 
+          fontSize: `${fontSize}px`,
+          display: 'flex'
+        }}
+      >
+        {initial}
+      </div>
+      
+      {imageUrl && (
         <img 
           src={imageUrl} 
           alt={name}
           className={styles['user-avatar-image']}
           onError={(e) => {
-            // 이미지 로드 실패 시 이니셜 표시
+            // 이미지 로드 실패 시 숨김
             e.target.style.display = 'none'
-            e.target.nextSibling.style.display = 'flex'
           }}
+          style={{ display: 'block' }}
         />
-      ) : null}
-      
-      <div 
-        className={styles['user-avatar-initial']}
-        style={{ 
-          fontSize: `${fontSize}px`,
-          display: imageUrl ? 'none' : 'flex'
-        }}
-      >
-        {initial}
-      </div>
+      )}
     </div>
   )
 }

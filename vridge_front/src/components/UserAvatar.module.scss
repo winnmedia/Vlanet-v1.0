@@ -26,6 +26,10 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10; // 이미지가 항상 위에 표시되도록 높은 z-index
   }
   
   .user-avatar-initial {
@@ -41,6 +45,7 @@
     color: white;
     font-weight: 600;
     user-select: none;
+    z-index: 1; // 이니셜은 기본 백그라운드 레이어
     
     // 다양한 배경색 옵션 (이름 해시값 기반으로 선택 가능)
     &.bg-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }

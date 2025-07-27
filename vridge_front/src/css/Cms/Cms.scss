@@ -1,5 +1,6 @@
 /* 공통 */
 @import './PageTitleUnified.scss';
+@import './FeedbackGridLayout.scss';
 
 .ant-modal-body {
   padding: 0 !important;
@@ -854,6 +855,10 @@
       // 피드백 페이지 레이아웃
       &.feedback {
         margin: 0 0 50px;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+        border: none;
         .flex {
           display: flex;
           gap: 30px;
@@ -1679,6 +1684,11 @@
       &.feedbackall {
         margin: 0 0 50px;
         .title {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 24px;
+          
           span {
             background: #efefef url('../../images/Common/back_icon.png')
               no-repeat;
@@ -1692,7 +1702,13 @@
             text-indent: -99999px;
             cursor: pointer;
             vertical-align: middle;
-            margin: -4px 20px 0 0;
+            margin: 0;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              background-color: #e0e0e0;
+              transform: scale(1.1);
+            }
           }
         }
         .list {
@@ -1727,12 +1743,33 @@
             ul {
               margin-top: 30px;
               display: grid;
-              grid-gap: 30px;
-              grid-template-columns: repeat(4, 1fr);
+              grid-gap: 24px;
+              grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+              
+              @media (max-width: 1400px) {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+              }
+              
+              @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+                grid-gap: 16px;
+              }
+              
               li {
                 background: #edf0f5;
-                padding: 20px;
-                border-radius: 30px;
+                padding: 24px;
+                border-radius: 16px;
+                border: 1px solid transparent;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                position: relative;
+                
+                &:hover {
+                  background: #fff;
+                  border-color: #1631F8;
+                  box-shadow: 0 8px 24px rgba(22, 49, 248, 0.15);
+                  transform: translateY(-4px);
+                }
                 .img_box {
                   width: 40px;
                   height: 40px;
@@ -1790,18 +1827,25 @@
                   font-weight: bold;
                   font-size: 16px;
                   max-width: 160px;
+                  word-break: break-word;
+                  line-height: 1.4;
                 }
                 .time {
-                  font-weight: bold;
                   display: inline-block;
                   background: #0032fc;
                   color: #fff;
-                  padding: 2px 4px;
-                  border-radius: 5px;
-                  font-weight: normal;
+                  padding: 4px 8px;
+                  border-radius: 12px;
+                  font-weight: 500;
+                  font-size: 12px;
+                  white-space: nowrap;
                 }
                 p {
                   margin-top: 20px;
+                  line-height: 1.6;
+                  color: #495057;
+                  word-break: break-word;
+                  overflow-wrap: break-word;
                 }
               }
             }

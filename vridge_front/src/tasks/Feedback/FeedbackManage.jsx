@@ -1,6 +1,7 @@
 import useInput from '../../hooks/UseInput'
 import React, { useState, useEffect } from 'react'
 import styles from './FeedbackManage.module.scss'
+import '../../css/Cms/FeedbackGridLayout.scss'
 
 import { 
   DeleteFeedback, 
@@ -220,314 +221,136 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   const displayFeedbacks = All_Feedback.length > 0 ? All_Feedback : My_Feedback
 
   return (
-    <div className="history">
-      <ul>
+    <div className="feedback-grid-container">
+      <div className="feedback-grid">
         {displayFeedbacks.length > 0 ? (
           displayFeedbacks.map((feedback, index) => (
-            <li key={index} style={{ marginBottom: '20px', padding: '16px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-              <div>
-                <div className="flex align_center space_between" style={{ marginBottom: '12px' }}>
-                  <div className="txt_box" style={{ flex: 1 }}>
-                    <div 
-                      className="time" 
-                      style={{ 
-                        cursor: 'pointer', 
-                        backgroundColor: '#2B56D1',
-                        color: '#ffffff',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        fontSize: '13px',
-                        fontWeight: '500',
-                        display: 'inline-block',
-                        transition: 'all 0.2s ease',
-                        marginBottom: '8px'
-                      }}
-                      onClick={() => {
-                        if (onTimeClick && feedback.section) {
-                          onTimeClick(feedback.section)
-                        }
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = '#1E3A8A'
-                        e.target.style.transform = 'scale(1.05)'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = '#2B56D1'
-                        e.target.style.transform = 'scale(1)'
-                      }}
-                    >
-                      {feedback.section}
-                    </div>
-                    <p style={{ marginBottom: '0' }}>{feedback.text}</p>
-                  </div>
-                  <button
-                    onClick={() => DropFeedback(feedback.id)}
-                    style={{ 
-                      marginLeft: '12px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: '#dc3545',
-                      cursor: 'pointer',
-                      padding: '8px',
-                      borderRadius: '4px',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(220, 53, 69, 0.1)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent'
-                    }}
-                    title="삭제"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3 6h18" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <line x1="10" y1="11" x2="10" y2="17" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <line x1="14" y1="11" x2="14" y2="17" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
+            <div key={feedback.id || index} className="feedback-card">
+              <div className="card-header">
+                <div 
+                  className="time-badge" 
+                  onClick={() => {
+                    if (onTimeClick && feedback.section) {
+                      onTimeClick(feedback.section)
+                    }
+                  }}
+                >
+                  {feedback.section || '시간 미지정'}
                 </div>
+                <button
+                  className="delete-btn"
+                  onClick={() => DropFeedback(feedback.id)}
+                  title="삭제"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="card-content">
+                <p>{feedback.text}</p>
+              </div>
+              
+              <div className="card-actions">
+                <button
+                  className={`action-btn like ${reactions[feedback.id] === 'like' ? 'active' : ''}`}
+                  onClick={() => toggleReaction(feedback.id, 'like')}
+                >
+                  <span>👍</span> 좋아요
+                  {reactionCounts[feedback.id]?.like > 0 && (
+                    <span className="count">({reactionCounts[feedback.id].like})</span>
+                  )}
+                </button>
                 
-                {/* 반응 버튼들 */}
-                <div style={{ 
-                  display: 'flex', 
-                  gap: '8px', 
-                  marginTop: '12px',
-                  paddingTop: '12px',
-                  borderTop: '1px solid #e9ecef'
-                }}>
-                  <button
-                    onClick={() => toggleReaction(feedback.id, 'like')}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      border: '1px solid #e9ecef',
-                      backgroundColor: reactions[feedback.id] === 'like' ? '#e3f2fd' : 'white',
-                      color: reactions[feedback.id] === 'like' ? '#1976d2' : '#666',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (reactions[feedback.id] !== 'like') {
-                        e.currentTarget.style.backgroundColor = '#f5f5f5'
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (reactions[feedback.id] !== 'like') {
-                        e.currentTarget.style.backgroundColor = 'white'
-                      }
-                    }}
-                  >
-                    <span>👍</span> 좋아요
-                    {reactionCounts[feedback.id]?.like > 0 && (
-                      <span style={{ marginLeft: '4px', fontWeight: '600' }}>
-                        ({reactionCounts[feedback.id].like})
-                      </span>
-                    )}
-                  </button>
-                  
-                  <button
-                    onClick={() => toggleReaction(feedback.id, 'dislike')}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      border: '1px solid #e9ecef',
-                      backgroundColor: reactions[feedback.id] === 'dislike' ? '#ffebee' : 'white',
-                      color: reactions[feedback.id] === 'dislike' ? '#d32f2f' : '#666',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (reactions[feedback.id] !== 'dislike') {
-                        e.currentTarget.style.backgroundColor = '#f5f5f5'
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (reactions[feedback.id] !== 'dislike') {
-                        e.currentTarget.style.backgroundColor = 'white'
-                      }
-                    }}
-                  >
-                    <span>👎</span> 싫어요
-                    {reactionCounts[feedback.id]?.dislike > 0 && (
-                      <span style={{ marginLeft: '4px', fontWeight: '600' }}>
-                        ({reactionCounts[feedback.id].dislike})
-                      </span>
-                    )}
-                  </button>
-                  
-                  <button
-                    onClick={() => toggleReaction(feedback.id, 'needExplanation')}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      border: '1px solid #e9ecef',
-                      backgroundColor: reactions[feedback.id] === 'needExplanation' ? '#fff3e0' : 'white',
-                      color: reactions[feedback.id] === 'needExplanation' ? '#f57c00' : '#666',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (reactions[feedback.id] !== 'needExplanation') {
-                        e.currentTarget.style.backgroundColor = '#f5f5f5'
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (reactions[feedback.id] !== 'needExplanation') {
-                        e.currentTarget.style.backgroundColor = 'white'
-                      }
-                    }}
-                  >
-                    <span>❓</span> 설명필요
-                    {reactionCounts[feedback.id]?.needExplanation > 0 && (
-                      <span style={{ marginLeft: '4px', fontWeight: '600' }}>
-                        ({reactionCounts[feedback.id].needExplanation})
-                      </span>
-                    )}
-                  </button>
-                  
-                  {/* 답글 버튼 */}
-                  <button
-                    onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      border: '1px solid #e9ecef',
-                      backgroundColor: showReplyInput[feedback.id] ? '#f5f5f5' : 'white',
-                      color: '#666',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    <span>💬</span> 답글
-                    {feedback.replies?.length > 0 && (
-                      <span style={{ marginLeft: '4px', fontWeight: '600' }}>
-                        ({feedback.replies.length})
-                      </span>
-                    )}
-                  </button>
-                  
-                  {/* 중요표시 버튼 */}
-                  <button
-                    onClick={() => toggleImportant(feedback.id)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      border: '1px solid #e9ecef',
-                      backgroundColor: importantFeedbacks[feedback.id] ? '#fff3cd' : 'white',
-                      color: importantFeedbacks[feedback.id] ? '#856404' : '#666',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span> 중요
-                  </button>
-                </div>
+                <button
+                  className={`action-btn dislike ${reactions[feedback.id] === 'dislike' ? 'active' : ''}`}
+                  onClick={() => toggleReaction(feedback.id, 'dislike')}
+                >
+                  <span>👎</span> 싫어요
+                  {reactionCounts[feedback.id]?.dislike > 0 && (
+                    <span className="count">({reactionCounts[feedback.id].dislike})</span>
+                  )}
+                </button>
                 
-                {/* 답글 입력 필드 */}
-                {showReplyInput[feedback.id] && (
-                  <div style={{
-                    marginTop: '12px',
-                    padding: '12px',
-                    backgroundColor: '#f8f9fa',
-                    borderRadius: '8px'
-                  }}>
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  className={`action-btn needExplanation ${reactions[feedback.id] === 'needExplanation' ? 'active' : ''}`}
+                  onClick={() => toggleReaction(feedback.id, 'needExplanation')}
+                >
+                  <span>❓</span> 설명필요
+                  {reactionCounts[feedback.id]?.needExplanation > 0 && (
+                    <span className="count">({reactionCounts[feedback.id].needExplanation})</span>
+                  )}
+                </button>
+                
+                <button
+                  className={`action-btn reply ${showReplyInput[feedback.id] ? 'active' : ''}`}
+                  onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
+                >
+                  <span>💬</span> 답글
+                  {feedback.replies?.length > 0 && (
+                    <span className="count">({feedback.replies.length})</span>
+                  )}
+                </button>
+                
+                <button
+                  className={`action-btn important ${importantFeedbacks[feedback.id] ? 'active' : ''}`}
+                  onClick={() => toggleImportant(feedback.id)}
+                >
+                  <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span> 중요
+                </button>
+              </div>
+              
+              {/* 답글 섹션 */}
+              {(showReplyInput[feedback.id] || feedback.replies?.length > 0) && (
+                <div className="reply-section">
+                  {showReplyInput[feedback.id] && (
+                    <div className="reply-input-wrapper">
                       <input
                         type="text"
                         placeholder="답글을 입력하세요..."
                         value={replyTexts[feedback.id] || ''}
                         onChange={(e) => setReplyTexts(prev => ({ ...prev, [feedback.id]: e.target.value }))}
-                        style={{
-                          flex: 1,
-                          padding: '8px 12px',
-                          borderRadius: '6px',
-                          border: '1px solid #ddd',
-                          fontSize: '14px'
-                        }}
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             submitReply(feedback.id)
                           }
                         }}
                       />
-                      <button
-                        onClick={() => submitReply(feedback.id)}
-                        style={{
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          backgroundColor: '#1631F8',
-                          color: 'white',
-                          border: 'none',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          cursor: 'pointer'
-                        }}
-                      >
+                      <button onClick={() => submitReply(feedback.id)}>
                         답글
                       </button>
                     </div>
-                  </div>
-                )}
-                
-                {/* 답글 표시 */}
-                {feedback.replies?.length > 0 && (
-                  <div style={{
-                    marginTop: '12px',
-                    paddingLeft: '24px'
-                  }}>
-                    {feedback.replies.map((reply, idx) => (
-                      <div key={idx} style={{
-                        padding: '8px 12px',
-                        backgroundColor: '#f1f3f5',
-                        borderRadius: '6px',
-                        marginBottom: '4px',
-                        fontSize: '13px'
-                      }}>
-                        <div style={{ fontWeight: '500', marginBottom: '4px' }}>
-                          {reply.nickname || '익명'}
+                  )}
+                  
+                  {feedback.replies?.length > 0 && (
+                    <div className="replies-list">
+                      {feedback.replies.map((reply, idx) => (
+                        <div key={idx} className="reply-item">
+                          <div className="reply-author">
+                            {reply.nickname || '익명'}
+                          </div>
+                          <div className="reply-text">{reply.text}</div>
                         </div>
-                        <div>{reply.text}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </li>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           ))
         ) : (
-          <div className="flex mt50 justify_center">피드백이 없습니다.</div>
+          <div className="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <h3>피드백이 없습니다</h3>
+            <p>첫 번째 피드백을 남겨보세요</p>
+          </div>
         )}
-      </ul>
+      </div>
     </div>
   )
 }

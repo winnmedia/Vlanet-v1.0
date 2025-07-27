@@ -1,0 +1,455 @@
+// 피드백 페이지 그리드 레이아웃 시스템
+// Version: 1.0 - 반응형 그리드 구현
+
+// 브랜드 색상 (디자인 시스템 준수)
+$brand-blue: #1631F8;
+$brand-blue-hover: #0F23C9;
+$brand-red: #dc3545;
+$brand-gray: #6c757d;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+
+// 간격 시스템
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// 피드백 관리 그리드 시스템
+.feedback-grid-container {
+  width: 100%;
+  
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-lg;
+    padding: $spacing-md 0;
+    width: 100%;
+    
+    // 태블릿 (768px - 1024px)
+    @media (min-width: 768px) and (max-width: 1024px) {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: $spacing-md;
+    }
+    
+    // 모바일 (767px 이하)
+    @media (max-width: 767px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+    }
+  }
+  
+  // 피드백 카드 스타일
+  .feedback-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: $spacing-lg;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    
+    // 호버 효과
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(22, 49, 248, 0.12);
+      border-color: rgba($brand-blue, 0.3);
+      
+      .card-actions {
+        opacity: 1;
+      }
+    }
+    
+    // 카드 헤더
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: $spacing-md;
+      
+      .time-badge {
+        background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 8px rgba(22, 49, 248, 0.3);
+        }
+      }
+      
+      .delete-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: transparent;
+        color: $brand-gray;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        opacity: 0;
+        
+        &:hover {
+          background: rgba($brand-red, 0.1);
+          color: $brand-red;
+          transform: rotate(90deg);
+        }
+        
+        svg {
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+    
+    // 카드 콘텐츠
+    .card-content {
+      margin-bottom: $spacing-md;
+      
+      p {
+        margin: 0;
+        color: #495057;
+        font-size: 14px;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    
+    // 카드 액션 버튼들
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-sm;
+      padding-top: $spacing-md;
+      border-top: 1px solid #f0f0f0;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      
+      .action-btn {
+        flex: 0 0 auto;
+        padding: 6px 12px;
+        border-radius: 20px;
+        border: 1px solid #e9ecef;
+        background: white;
+        color: #6c757d;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+        
+        // 반응 상태별 스타일
+        &.like {
+          &.active {
+            background: rgba($brand-blue, 0.1);
+            border-color: $brand-blue;
+            color: $brand-blue;
+          }
+          
+          &:hover:not(.active) {
+            border-color: $brand-blue;
+            color: $brand-blue;
+          }
+        }
+        
+        &.dislike {
+          &.active {
+            background: rgba($brand-red, 0.1);
+            border-color: $brand-red;
+            color: $brand-red;
+          }
+          
+          &:hover:not(.active) {
+            border-color: $brand-red;
+            color: $brand-red;
+          }
+        }
+        
+        &.needExplanation {
+          &.active {
+            background: rgba($warning-color, 0.1);
+            border-color: $warning-color;
+            color: darken($warning-color, 10%);
+          }
+          
+          &:hover:not(.active) {
+            border-color: $warning-color;
+            color: darken($warning-color, 10%);
+          }
+        }
+        
+        &.reply {
+          &:hover {
+            border-color: $info-color;
+            color: $info-color;
+          }
+        }
+        
+        &.important {
+          &.active {
+            background: rgba($warning-color, 0.1);
+            border-color: $warning-color;
+            color: darken($warning-color, 15%);
+          }
+          
+          &:hover:not(.active) {
+            border-color: $warning-color;
+            color: darken($warning-color, 15%);
+          }
+        }
+        
+        .count {
+          font-weight: 600;
+          margin-left: 2px;
+        }
+      }
+    }
+    
+    // 답글 섹션
+    .reply-section {
+      margin-top: $spacing-md;
+      padding: $spacing-md;
+      background: #f8f9fa;
+      border-radius: 8px;
+      
+      .reply-input-wrapper {
+        display: flex;
+        gap: $spacing-sm;
+        
+        input {
+          flex: 1;
+          padding: 8px 12px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 14px;
+          transition: all 0.2s ease;
+          
+          &:focus {
+            outline: none;
+            border-color: $brand-blue;
+            box-shadow: 0 0 0 3px rgba($brand-blue, 0.1);
+          }
+        }
+        
+        button {
+          padding: 8px 16px;
+          background: $brand-blue;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+          
+          &:hover {
+            background: $brand-blue-hover;
+            transform: translateY(-1px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+      
+      .replies-list {
+        margin-top: $spacing-md;
+        
+        .reply-item {
+          padding: $spacing-sm $spacing-md;
+          background: white;
+          border-radius: 6px;
+          margin-bottom: $spacing-sm;
+          
+          .reply-author {
+            font-weight: 500;
+            font-size: 13px;
+            color: #495057;
+            margin-bottom: 4px;
+          }
+          
+          .reply-text {
+            font-size: 13px;
+            color: #6c757d;
+            line-height: 1.5;
+          }
+        }
+      }
+    }
+    
+    // 로딩 상태
+    &.loading {
+      pointer-events: none;
+      opacity: 0.6;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+        animation: shimmer 1.5s infinite;
+      }
+    }
+  }
+  
+  // 빈 상태
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    
+    svg {
+      width: 64px;
+      height: 64px;
+      color: #dee2e6;
+      margin-bottom: $spacing-md;
+    }
+    
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: $spacing-sm;
+    }
+    
+    p {
+      font-size: 14px;
+      color: #6c757d;
+      margin-bottom: $spacing-lg;
+    }
+    
+    button {
+      padding: 10px 20px;
+      background: $brand-blue;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: $brand-blue-hover;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+      }
+    }
+  }
+}
+
+// 애니메이션
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// 날짜별 그룹 스타일 (FeedbackMore용)
+.feedback-date-group {
+  margin-bottom: $spacing-xl;
+  
+  .date-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: $spacing-lg;
+    padding-left: 8px;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 20px;
+      background: $brand-blue;
+      border-radius: 2px;
+    }
+    
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #e9ecef 0%, transparent 100%);
+    }
+  }
+  
+  .feedback-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: $spacing-md;
+  }
+}
+
+// 스크롤바 스타일링
+.feedback-grid-container {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+// 태블릿과 데스크탑에서 호버 효과 강화
+@media (min-width: 768px) {
+  .feedback-grid-container {
+    .feedback-card {
+      &:hover {
+        .card-header .delete-btn {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

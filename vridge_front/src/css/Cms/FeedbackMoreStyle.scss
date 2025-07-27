@@ -1,4 +1,4 @@
-// Feedback More Component Styles
+// Feedback More Component Styles - Legacy support for existing components
 
 // Color Variables
 $primary-color: #1631F8;
@@ -11,6 +11,7 @@ $white: #fff;
 $success-color: #28a745;
 $warning-color: #ffc107;
 
+// Legacy styles - kept for backward compatibility
 .feedback-list-container {
   .box {
     margin-bottom: 20px;
@@ -263,6 +264,31 @@ $warning-color: #ffc107;
     padding: 40px 20px;
     color: $text-gray;
     font-size: 14px;
+  }
+}
+
+// Additional author info styles for grid layout
+.feedback-grid-container {
+  .author-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #6c757d;
+    margin-left: auto;
+    
+    .dot {
+      font-weight: 700;
+    }
+  }
+  
+  .privacy-badge {
+    font-size: 12px;
+    color: #856404;
+    background: #fff3cd;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
   }
 }
 

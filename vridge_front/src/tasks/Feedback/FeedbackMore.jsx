@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 
 import moment from 'moment'
 import 'moment/locale/ko'
+import '../../css/Cms/FeedbackGridLayout.scss'
 
 export default function FeedbackMore({ current_project, onTimeClick, onFeedbackSelect }) {
   const { user } = useSelector((s) => s.ProjectStore)
@@ -32,6 +33,12 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
     }
     
     feedback_data.forEach((obj) => {
+      // 안전한 날짜 처리 - null/undefined 체크
+      if (!obj || !obj.created) {
+        console.warn('[FeedbackMore] Invalid feedback object or missing created date:', obj)
+        return
+      }
+      
       const createdDate = moment(obj.created).format('YYYY.MM.DD.dd')
       if (groupedObjects.hasOwnProperty(createdDate)) {
         groupedObjects[createdDate].push(obj)
@@ -106,99 +113,75 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
   }
 
   return (
-    <div className="feedback-list-container">
+    <div className="feedback-grid-container">
       {feedback.length === 0 ? (
-        <div className="no-feedback-message" style={{
-          textAlign: 'center',
-          padding: '40px 20px',
-          color: '#666',
-          fontSize: '14px'
-        }}>
-          <p>등록된 피드백이 없습니다.</p>
-          <p style={{ marginTop: '10px', fontSize: '13px' }}>
-            피드백 등록 탭에서 새로운 피드백을 추가해보세요.
-          </p>
+        <div className="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <h3>등록된 피드백이 없습니다</h3>
+          <p>피드백 등록 탭에서 새로운 피드백을 추가해보세요</p>
         </div>
       ) : (
         feedback.map((item, index) => (
-        <div key={index} className="box">
-          <div className="day">{item[0]}</div>
-          <ul>
+        <div key={index} className="feedback-date-group">
+          <div className="date-header">{item[0]}</div>
+          <div className="feedback-list">
             {item[1].map((data, i) => (
-              <li key={i} className="feedback-item-wrapper">
-                <div 
-                  className={`feedback-item ${expandedId === data.id ? 'expanded' : ''}`}
-                  onClick={() => handleFeedbackClick(data)}
-                >
-                  <div className="feedback-summary">
-                    <span className="feedback-time-marker">
-                      {data.section || '시간 미지정'}
-                    </span>
-                    <span className="feedback-preview">
-                      {data.text?.substring(0, 50) || data.contents?.substring(0, 50) || '내용 없음'}
-                      {(data.text?.length > 50 || data.contents?.length > 50) && '...'}
-                    </span>
-                    <svg 
-                      className="expand-icon"
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2"
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
+              <div key={data.id || i} className="feedback-card" onClick={() => handleFeedbackClick(data)}>
+                <div className="card-header">
+                  <div 
+                    className="time-badge"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onTimeClick && data.section) {
+                        onTimeClick(data.section);
+                      }
+                    }}
+                  >
+                    {data.section || '시간 미지정'}
+                  </div>
+                  {data.security && (
+                    <div className="privacy-badge">🔒 비공개</div>
+                  )}
+                </div>
+                <div className="card-content">
+                  <p>
+                    {data.text || data.contents || '내용 없음'}
+                  </p>
+                </div>
+                <div className="card-actions">
+                  <button 
+                    className={`action-btn like ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReaction(data.id, 'like');
+                    }}
+                  >
+                    <span>👍</span>
+                    <span className="count">{feedbackReactions[`${data.id}_like`] || 0}</span>
+                  </button>
+                  <button 
+                    className={`action-btn dislike ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReaction(data.id, 'dislike');
+                    }}
+                  >
+                    <span>👎</span>
+                    <span className="count">{feedbackReactions[`${data.id}_dislike`] || 0}</span>
+                  </button>
+                  <div className="author-info">
+                    <span>{data.nickname || data.email || '익명'}</span>
+                    <span className="dot">·</span>
+                    <span>{moment(data.created).format('MM.DD HH:mm')}</span>
                   </div>
                 </div>
-                {expandedId === data.id && (
-                  <div className="feedback-detail">
-                    <div className="detail-header">
-                      <div className="author-info">
-                        <span className="author-name">{data.nickname || data.email || '익명'}</span>
-                        <span className="created-date">{moment(data.created).format('YYYY.MM.DD HH:mm')}</span>
-                      </div>
-                      <div className={`feedback-type ${data.security ? 'private' : 'public'}`}>
-                        {data.security ? '비공개' : '공개'}
-                      </div>
-                    </div>
-                    <div className="detail-content">
-                      <p>{data.text || data.contents || '내용 없음'}</p>
-                    </div>
-                    {data.title && (
-                      <div className="detail-title">
-                        <strong>제목:</strong> {data.title}
-                      </div>
-                    )}
-                    <div className="detail-actions">
-                      <button 
-                        className={`reaction-btn like ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReaction(data.id, 'like');
-                        }}
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
-                        </svg>
-                        <span className="count">{feedbackReactions[`${data.id}_like`] || 0}</span>
-                      </button>
-                      <button 
-                        className={`reaction-btn dislike ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReaction(data.id, 'dislike');
-                        }}
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" />
-                        </svg>
-                        <span className="count">{feedbackReactions[`${data.id}_dislike`] || 0}</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )))}
     </div>

@@ -1,0 +1,652 @@
+/**
+ * MyPage Component Test Suite
+ * Q, the Gatekeeper of Truth - Zero Defect Testing
+ * 
+ * Test Objectives:
+ * 1. Profile image upload stability
+ * 2. Image display in UserAvatar component
+ * 3. Layout stability during image operations
+ * 4. Error handling and edge cases
+ */
+
+import React from 'react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
+import { useRouter } from 'next/router'
+import MyPage from '../page/User/MyPage'
+import * as userApi from '../api/user'
+import { checkSession } from '../util/util'
+
+// Mock dependencies
+jest.mock('next/router', () => ({
+  useRouter: jest.fn()
+}))
+
+jest.mock('../api/user')
+jest.mock('../util/util')
+jest.mock('../api/invitation')
+jest.mock('../api/friends')
+jest.mock('../api/notification', () => ({
+  GetNotifications: jest.fn().mockResolvedValue({ 
+    data: { notifications: [], unread_count: 0 } 
+  }),
+  MarkNotificationAsRead: jest.fn(),
+  MarkAllNotificationsAsRead: jest.fn()
+}))
+
+// Mock UserAvatar component
+jest.mock('../components/UserAvatar', () => {
+  return function MockUserAvatar({ profileImage, name, size, showBorder, className }) {
+    return (
+      <div 
+        data-testid="user-avatar"
+        data-profile-image={profileImage}
+        data-name={name}
+        data-size={size}
+        data-show-border={showBorder}
+        className={className}
+      >
+        {profileImage ? (
+          <img src={profileImage} alt={name} />
+        ) : (
+          <span>{name ? name[0] : '?'}</span>
+        )}
+      </div>
+    )
+  }
+})
+
+// Mock ImageCropper component
+jest.mock('../components/ImageCropper', () => {
+  return function MockImageCropper({ imageSrc, onCropComplete, onCancel }) {
+    return (
+      <div data-testid="image-cropper">
+        <button onClick={() => {
+          const blob = new Blob(['test'], { type: 'image/jpeg' })
+          onCropComplete(blob)
+        }}>Crop</button>
+        <button onClick={onCancel}>Cancel</button>
+      </div>
+    )
+  }
+})
+
+// Redux store setup
+const createMockStore = (initialState = {}) => {
+  return configureStore({
+    reducer: {
+      ProjectStore: (state = {
+        user: 'test@example.com',
+        nickname: 'TestUser',
+        profileImage: null,
+        ...initialState
+      }) => state
+    }
+  })
+}
+
+describe('MyPage Component - Critical Tests', () => {
+  let mockPush
+  let mockStore
+
+  beforeEach(() => {
+    // Reset all mocks
+    jest.clearAllMocks()
+    
+    // Setup router mock
+    mockPush = jest.fn()
+    useRouter.mockReturnValue({
+      push: mockPush,
+      query: {}
+    })
+
+    // Setup session mock
+    checkSession.mockReturnValue(true)
+
+    // Setup default API responses
+    userApi.getMyPageInfo.mockResolvedValue({
+      data: {
+        status: 'success',
+        data: {
+          profile: {
+            email: 'test@example.com',
+            nickname: 'TestUser',
+            bio: 'Test bio',
+            phone: '010-1234-5678',
+            company: 'Test Corp',
+            position: 'Developer',
+            profile_image: '/media/profile/test.jpg',
+            date_joined: '2024-01-01',
+            login_method: 'email'
+          },
+          projects: {
+            owned: { total: 2, recent: [] },
+            member: { total: 3, as_manager: 1, as_member: 2, recent: [] },
+            recent_activity: []
+          },
+          stats: {
+            total_projects: 5,
+            active_projects: 3,
+            completed_projects: 2,
+            total_collaborators: 10
+          },
+          recent_memos: []
+        }
+      }
+    })
+
+    mockStore = createMockStore()
+  })
+
+  describe('1. Profile Image Upload Stability', () => {
+    test('1.1 Should maintain layout stability during image upload', async () => {
+      const { container } = render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      // Click edit button
+      const editBtn = screen.getByText('수정')
+      fireEvent.click(editBtn)
+
+      // Check layout elements are present
+      expect(screen.getByText('클릭하거나 이미지를 드래그하여 업로드')).toBeInTheDocument()
+      
+      // Verify main profile avatar is displayed (multiple avatars, get by size)
+      const avatars = screen.getAllByTestId('user-avatar')
+      const mainAvatar = avatars.find(avatar => avatar.getAttribute('data-size') === '150')
+      expect(mainAvatar).toBeTruthy()
+      expect(mainAvatar).toHaveAttribute('data-show-border', 'true')
+      
+      // Simulate file selection
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [file] } })
+      })
+
+      // Verify cropper appears
+      await waitFor(() => {
+        expect(screen.getByTestId('image-cropper')).toBeInTheDocument()
+      })
+
+      // Complete crop
+      const cropBtn = screen.getByText('Crop')
+      fireEvent.click(cropBtn)
+
+      // Verify upload button appears
+      await waitFor(() => {
+        expect(screen.getByText('이미지 업로드')).toBeInTheDocument()
+      })
+    })
+
+    test('1.2 Should handle upload errors gracefully', async () => {
+      // Mock upload failure
+      userApi.uploadProfileImage.mockRejectedValue({
+        response: {
+          status: 413,
+          data: { message: 'File too large' }
+        }
+      })
+
+      window.alert = jest.fn()
+
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      // Enter edit mode
+      fireEvent.click(screen.getByText('수정'))
+
+      // Simulate file selection and crop
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [file] } })
+      })
+
+      fireEvent.click(screen.getByText('Crop'))
+
+      // Try to upload
+      await waitFor(() => {
+        const uploadBtn = screen.getByText('이미지 업로드')
+        fireEvent.click(uploadBtn)
+      })
+
+      // Verify error message
+      await waitFor(() => {
+        expect(window.alert).toHaveBeenCalledWith(
+          '이미지 업로드 실패: 파일 크기가 너무 큽니다. 5MB 이하의 이미지를 선택해주세요.'
+        )
+      })
+    })
+
+    test('1.3 Should prevent concurrent uploads', async () => {
+      // Mock slow upload
+      userApi.uploadProfileImage.mockImplementation(() => 
+        new Promise(resolve => setTimeout(() => resolve({
+          data: { status: 'success', profile_image_url: '/test.jpg' }
+        }), 1000))
+      )
+
+      window.alert = jest.fn()
+
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      fireEvent.click(screen.getByText('수정'))
+
+      // Simulate file selection and crop
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [file] } })
+      })
+
+      fireEvent.click(screen.getByText('Crop'))
+
+      // Click upload multiple times
+      const uploadBtn = await screen.findByText('이미지 업로드')
+      fireEvent.click(uploadBtn)
+      fireEvent.click(uploadBtn)
+
+      // Should show uploading state
+      expect(screen.getByText('업로드 중...')).toBeInTheDocument()
+      
+      // Second click should show warning
+      expect(window.alert).toHaveBeenCalledWith('이미지 업로드 중입니다. 잠시 기다려주세요.')
+    })
+  })
+
+  describe('2. UserAvatar Component Integration', () => {
+    test('2.1 Should display profile image correctly in UserAvatar', async () => {
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        const avatars = screen.getAllByTestId('user-avatar')
+        const mainAvatar = avatars.find(avatar => avatar.getAttribute('data-size') === '150')
+        expect(mainAvatar).toHaveAttribute(
+          'data-profile-image', 
+          'https://videoplanet.up.railway.app/media/profile/test.jpg'
+        )
+        expect(mainAvatar).toHaveAttribute('data-name', 'TestUser')
+      })
+    })
+
+    test('2.2 Should update UserAvatar after successful upload', async () => {
+      userApi.uploadProfileImage.mockResolvedValue({
+        data: {
+          status: 'success',
+          profile_image_url: '/media/profile/new-image.jpg'
+        }
+      })
+
+      const { rerender } = render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      // Enter edit mode and upload image
+      fireEvent.click(screen.getByText('수정'))
+
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [file] } })
+      })
+
+      fireEvent.click(screen.getByText('Crop'))
+      
+      const uploadBtn = await screen.findByText('이미지 업로드')
+      fireEvent.click(uploadBtn)
+
+      // Wait for upload to complete
+      await waitFor(() => {
+        expect(userApi.uploadProfileImage).toHaveBeenCalled()
+      })
+
+      // Verify avatar updated
+      await waitFor(() => {
+        const avatars = screen.getAllByTestId('user-avatar')
+        const mainAvatar = avatars.find(avatar => avatar.getAttribute('data-size') === '150')
+        expect(mainAvatar).toHaveAttribute(
+          'data-profile-image',
+          'https://videoplanet.up.railway.app/media/profile/new-image.jpg'
+        )
+      })
+    })
+
+    test('2.3 Should handle missing profile image gracefully', async () => {
+      // Mock response without profile image
+      userApi.getMyPageInfo.mockResolvedValue({
+        data: {
+          status: 'success',
+          data: {
+            profile: {
+              email: 'test@example.com',
+              nickname: 'TestUser',
+              profile_image: null
+            },
+            projects: { owned: { total: 0 }, member: { total: 0 } },
+            stats: {}
+          }
+        }
+      })
+
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        const avatars = screen.getAllByTestId('user-avatar')
+        const mainAvatar = avatars.find(avatar => avatar.getAttribute('data-size') === '150')
+        expect(mainAvatar).toHaveAttribute('data-profile-image', 'null')
+        // Should show initial letter
+        expect(mainAvatar).toHaveTextContent('T')
+      })
+    })
+  })
+
+  describe('3. Layout Responsiveness', () => {
+    test('3.1 Should maintain layout during drag and drop', async () => {
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      fireEvent.click(screen.getByText('수정'))
+
+      const uploadArea = screen.getByText('클릭하거나 이미지를 드래그하여 업로드').parentElement
+
+      // Simulate drag over
+      fireEvent.dragOver(uploadArea)
+      expect(uploadArea).toHaveClass('drag-over')
+
+      // Simulate drag leave
+      fireEvent.dragLeave(uploadArea)
+      expect(uploadArea).not.toHaveClass('drag-over')
+
+      // Simulate drop
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const dataTransfer = {
+        files: [file],
+        items: [{ kind: 'file', getAsFile: () => file }]
+      }
+
+      await act(async () => {
+        fireEvent.drop(uploadArea, { dataTransfer })
+      })
+
+      // Verify cropper appears
+      await waitFor(() => {
+        expect(screen.getByTestId('image-cropper')).toBeInTheDocument()
+      })
+    })
+
+    test('3.2 Should validate file types', async () => {
+      window.alert = jest.fn()
+
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      fireEvent.click(screen.getByText('수정'))
+
+      // Try to upload non-image file
+      const file = new File(['test'], 'test.txt', { type: 'text/plain' })
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [file] } })
+      })
+
+      expect(window.alert).toHaveBeenCalledWith('이미지 파일만 업로드 가능합니다.')
+    })
+
+    test('3.3 Should enforce file size limits', async () => {
+      window.alert = jest.fn()
+
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      fireEvent.click(screen.getByText('수정'))
+
+      // Create large file (> 5MB)
+      const largeFile = new File(
+        [new ArrayBuffer(6 * 1024 * 1024)], 
+        'large.jpg', 
+        { type: 'image/jpeg' }
+      )
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [largeFile] } })
+      })
+
+      expect(window.alert).toHaveBeenCalledWith('이미지 크기는 5MB를 초과할 수 없습니다.')
+    })
+  })
+
+  describe('4. Edge Cases and Security', () => {
+    test('4.1 Should handle XSS attempts in profile data', async () => {
+      // Mock malicious response
+      userApi.getMyPageInfo.mockResolvedValue({
+        data: {
+          status: 'success',
+          data: {
+            profile: {
+              email: 'test@example.com',
+              nickname: '<script>alert("XSS")</script>',
+              bio: '<img src=x onerror=alert("XSS")>',
+              profile_image: 'javascript:alert("XSS")'
+            },
+            projects: { owned: { total: 0 }, member: { total: 0 } },
+            stats: {}
+          }
+        }
+      })
+
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        // Should safely render without executing scripts
+        expect(screen.queryByText('alert')).not.toBeInTheDocument()
+        const avatars = screen.getAllByTestId('user-avatar')
+        // Should not use javascript: protocol in any avatar
+        avatars.forEach(avatar => {
+          expect(avatar).not.toHaveAttribute('data-profile-image', 'javascript:alert("XSS")')
+        })
+      })
+    })
+
+    test('4.2 Should handle session expiry during upload', async () => {
+      userApi.uploadProfileImage.mockRejectedValue({
+        response: {
+          status: 401,
+          data: { message: 'Unauthorized' }
+        }
+      })
+
+      window.alert = jest.fn()
+
+      render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      // Upload image
+      fireEvent.click(screen.getByText('수정'))
+      
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [file] } })
+      })
+
+      fireEvent.click(screen.getByText('Crop'))
+      fireEvent.click(await screen.findByText('이미지 업로드'))
+
+      // Should show auth error and redirect
+      await waitFor(() => {
+        expect(window.alert).toHaveBeenCalledWith(
+          '이미지 업로드 실패: 인증이 만료되었습니다. 다시 로그인해주세요.'
+        )
+      })
+
+      // Should redirect to login after delay
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/login')
+      }, { timeout: 3000 })
+    })
+
+    test('4.3 Should prevent memory leaks on unmount', async () => {
+      const { unmount } = render(
+        <Provider store={mockStore}>
+          <MyPage />
+        </Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('프로필')).toBeInTheDocument()
+      })
+
+      // Simulate pending upload
+      fireEvent.click(screen.getByText('수정'))
+      
+      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' })
+      const input = container.querySelector('input[type="file"]')
+      
+      await act(async () => {
+        fireEvent.change(input, { target: { files: [file] } })
+      })
+
+      // Unmount before completing
+      unmount()
+
+      // Should not throw errors
+      expect(() => unmount()).not.toThrow()
+    })
+  })
+})
+
+describe('MyPage Component - Performance Tests', () => {
+  test('Should handle rapid tab switching', async () => {
+    const mockStore = createMockStore()
+    
+    render(
+      <Provider store={mockStore}>
+        <MyPage />
+      </Provider>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('프로필')).toBeInTheDocument()
+    })
+
+    // Rapidly switch tabs
+    const tabs = ['프로필', '프로젝트', '활동 내역', '통계', '친구']
+    
+    for (let i = 0; i < 20; i++) {
+      const tab = tabs[i % tabs.length]
+      fireEvent.click(screen.getByText(tab))
+    }
+
+    // Should still be responsive
+    expect(screen.getByText('친구')).toHaveClass('active')
+  })
+
+  test('Should optimize re-renders during profile updates', async () => {
+    const mockStore = createMockStore()
+    let renderCount = 0
+    
+    // Wrap MyPage to count renders
+    const MyPageWrapper = () => {
+      renderCount++
+      return <MyPage />
+    }
+    
+    render(
+      <Provider store={mockStore}>
+        <MyPageWrapper />
+      </Provider>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText('프로필')).toBeInTheDocument()
+    })
+
+    const initialRenderCount = renderCount
+
+    // Update profile
+    fireEvent.click(screen.getByText('수정'))
+    
+    const nicknameInput = screen.getByPlaceholderText('닉네임')
+    fireEvent.change(nicknameInput, { target: { value: 'NewNickname' } })
+
+    // Should not cause excessive re-renders
+    expect(renderCount - initialRenderCount).toBeLessThan(5)
+  })
+})

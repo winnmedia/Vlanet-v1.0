@@ -44,8 +44,9 @@ describe('ErrorBoundary', () => {
 
   test('새로고침 버튼이 작동한다', () => {
     // window.location.reload mock
+    const mockReload = jest.fn();
     delete window.location;
-    window.location = { reload: jest.fn() };
+    window.location = { reload: mockReload };
 
     render(
       <ErrorBoundary>
@@ -56,7 +57,7 @@ describe('ErrorBoundary', () => {
     const refreshButton = screen.getByText('새로고침');
     fireEvent.click(refreshButton);
 
-    expect(window.location.reload).toHaveBeenCalled();
+    expect(mockReload).toHaveBeenCalled();
   });
 
   test('홈으로 가기 버튼이 작동한다', () => {

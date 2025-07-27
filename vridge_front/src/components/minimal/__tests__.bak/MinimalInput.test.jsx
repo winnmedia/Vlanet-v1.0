@@ -122,12 +122,14 @@ describe('MinimalInput', () => {
     })
 
     it('handles different input types', () => {
-      const { rerender } = render(<MinimalInput type="email" />)
+      const { container, rerender } = render(<MinimalInput type="email" />)
       expect(screen.getByRole('textbox')).toHaveAttribute('type', 'email')
       
       rerender(<MinimalInput type="password" />)
-      // Password inputs don't have textbox role
-      expect(screen.getByLabelText('')).toHaveAttribute('type', 'password')
+      // Password inputs don't have textbox role, query by container
+      const passwordInput = container.querySelector('input[type="password"]')
+      expect(passwordInput).toBeInTheDocument()
+      expect(passwordInput).toHaveAttribute('type', 'password')
       
       rerender(<MinimalInput type="number" />)
       expect(screen.getByRole('spinbutton')).toHaveAttribute('type', 'number')

@@ -18,7 +18,7 @@ const mockPerformance = {
   getEntriesByName: jest.fn(() => [{ duration: 123.45 }])
 }
 
-global.performance = mockPerformance as any
+global.performance = mockPerformance
 
 describe('performance utilities', () => {
   beforeEach(() => {

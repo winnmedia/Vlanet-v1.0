@@ -1,0 +1,43 @@
+/**
+ * Test Setup Verification
+ * Q, the Gatekeeper of Truth - Verifying all mocks are properly configured
+ */
+
+import React from 'react'
+import { render } from '@testing-library/react'
+import { useRouter } from 'next/router'
+import { axiosCredentials } from '../util/util'
+import * as notificationApi from '../api/notification'
+
+describe('Test Setup Verification', () => {
+  test('Router mock should work', () => {
+    const router = useRouter()
+    expect(router).toBeDefined()
+    expect(router.push).toBeDefined()
+    expect(typeof router.push).toBe('function')
+  })
+
+  test('axiosCredentials mock should work', () => {
+    expect(axiosCredentials).toBeDefined()
+    expect(typeof axiosCredentials).toBe('function')
+    
+    const mockAxios = axiosCredentials()
+    expect(mockAxios.get).toBeDefined()
+    expect(mockAxios.post).toBeDefined()
+  })
+
+  test('Notification API mock should work', async () => {
+    const result = await notificationApi.GetNotifications()
+    expect(result).toBeDefined()
+    expect(result.data).toBeDefined()
+    expect(result.data.notifications).toEqual([])
+    expect(result.data.unread_count).toBe(0)
+  })
+
+  test('React component should render', () => {
+    const TestComponent = () => <div>Test</div>
+    const { container } = render(<TestComponent />)
+    expect(container.firstChild).toBeDefined()
+    expect(container.firstChild.textContent).toBe('Test')
+  })
+})

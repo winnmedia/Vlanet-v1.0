@@ -1,5 +1,5 @@
 /**
- * MyPage Component Test Suite
+ * MyPage Component Test Suite - Fixed Version
  * Q, the Gatekeeper of Truth - Zero Defect Testing
  * 
  * Test Objectives:
@@ -199,7 +199,7 @@ describe('MyPage Component - Critical Tests', () => {
 
       window.alert = jest.fn()
 
-      render(
+      const { container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>
@@ -246,7 +246,7 @@ describe('MyPage Component - Critical Tests', () => {
 
       window.alert = jest.fn()
 
-      render(
+      const { container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>
@@ -308,7 +308,7 @@ describe('MyPage Component - Critical Tests', () => {
         }
       })
 
-      const { rerender } = render(
+      const { container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>
@@ -384,7 +384,7 @@ describe('MyPage Component - Critical Tests', () => {
 
   describe('3. Layout Responsiveness', () => {
     test('3.1 Should maintain layout during drag and drop', async () => {
-      render(
+      const { container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>
@@ -426,7 +426,7 @@ describe('MyPage Component - Critical Tests', () => {
     test('3.2 Should validate file types', async () => {
       window.alert = jest.fn()
 
-      render(
+      const { container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>
@@ -452,7 +452,7 @@ describe('MyPage Component - Critical Tests', () => {
     test('3.3 Should enforce file size limits', async () => {
       window.alert = jest.fn()
 
-      render(
+      const { container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>
@@ -526,7 +526,7 @@ describe('MyPage Component - Critical Tests', () => {
 
       window.alert = jest.fn()
 
-      render(
+      const { container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>
@@ -563,7 +563,7 @@ describe('MyPage Component - Critical Tests', () => {
     })
 
     test('4.3 Should prevent memory leaks on unmount', async () => {
-      const { unmount } = render(
+      const { unmount, container } = render(
         <Provider store={mockStore}>
           <MyPage />
         </Provider>

@@ -43,8 +43,36 @@ jest.mock('../../api/friends', () => ({
 
 jest.mock('../../util/util', () => ({
   checkSession: jest.fn().mockReturnValue(true),
-  axiosCredentials: jest.fn().mockRejectedValue(new Error('Not mocked'))
+  axiosCredentials: jest.fn().mockImplementation(() => ({
+    get: jest.fn().mockResolvedValue({ data: {} }),
+    post: jest.fn().mockResolvedValue({ data: {} }),
+    put: jest.fn().mockResolvedValue({ data: {} }),
+    delete: jest.fn().mockResolvedValue({ data: {} }),
+    patch: jest.fn().mockResolvedValue({ data: {} })
+  }))
 }))
+
+// Mock UserAvatar
+jest.mock('../../components/UserAvatar', () => {
+  return function MockUserAvatar({ profileImage, name, size, showBorder, className }) {
+    return (
+      <div 
+        data-testid="user-avatar"
+        data-profile-image={profileImage}
+        data-name={name}
+        data-size={size}
+        data-show-border={showBorder}
+        className={className}
+      >
+        {profileImage ? (
+          <img src={profileImage} alt={name} />
+        ) : (
+          <span>{name ? name[0] : '?'}</span>
+        )}
+      </div>
+    )
+  }
+})
 
 // Mock ImageCropper
 jest.mock('../../components/ImageCropper', () => {

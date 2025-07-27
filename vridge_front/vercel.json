@@ -1,8 +1,15 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs",
   "regions": ["icn1"],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://videoplanet.up.railway.app"
+  },
   "git": {
-    "deploymentEnabled": false
+    "deploymentEnabled": true
   },
   "functions": {
     "pages/api/**.js": {

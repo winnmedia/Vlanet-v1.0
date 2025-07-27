@@ -1,6 +1,6 @@
 /* 공통 */
 @import './PageTitleUnified.scss';
-@import './FeedbackGridLayout.scss';
+// FeedbackGridLayout.scss는 이제 CSS Module로 사용됨
 
 .ant-modal-body {
   padding: 0 !important;

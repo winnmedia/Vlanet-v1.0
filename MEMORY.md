@@ -55,3 +55,29 @@ VideoPlanet/
 - 브랜드 색상 엄격 준수 (#1631F8, #dc3545 등)
 - 이모지 사용하되 폰트 대신 유니코드 직접 사용
 - 기존 레거시 스타일과의 호환성 유지
+
+### 2025-01-27 - Vercel 배포 오류 해결
+**요청 내용**: Vercel 배포 시 "The specified Root Directory 'vridge_front' does not exist" 오류 해결
+
+**문제 분석**:
+- 루트 디렉토리와 vridge_front 디렉토리에 각각 vercel.json 파일이 존재
+- 루트의 vercel.json에 `rootDirectory: "vridge_front"` 설정이 있어 충돌 발생
+- Vercel이 어떤 설정을 우선시해야 할지 혼란
+
+**해결 방법**:
+1. 루트 디렉토리의 vercel.json 파일 삭제
+2. vridge_front/vercel.json 파일 업데이트:
+   - buildCommand, outputDirectory, installCommand 추가
+   - framework: "nextjs" 명시
+   - env 변수 설정 (NEXT_PUBLIC_API_URL)
+   - git.deploymentEnabled: true로 변경
+
+**배포 파이프라인**:
+- GitHub push → Vercel 자동 배포 트리거
+- vridge_front 디렉토리를 프로젝트 루트로 인식
+- Next.js 프로젝트로 정상 빌드 및 배포
+
+**주요 결정사항**:
+- 단일 vercel.json 파일 유지 (vridge_front 내부)
+- 자동 배포 활성화로 CI/CD 파이프라인 간소화
+- 환경 변수는 vercel.json에서 관리

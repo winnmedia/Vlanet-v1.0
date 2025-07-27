@@ -1,7 +1,7 @@
 import useInput from '../../hooks/UseInput'
 import React, { useState, useEffect } from 'react'
 import styles from './FeedbackManage.module.scss'
-import '../../css/Cms/FeedbackGridLayout.scss'
+import gridStyles from '../../css/Cms/FeedbackGridLayout.module.scss'
 
 import { 
   DeleteFeedback, 
@@ -221,14 +221,14 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   const displayFeedbacks = All_Feedback.length > 0 ? All_Feedback : My_Feedback
 
   return (
-    <div className="feedback-grid-container">
-      <div className="feedback-grid">
+    <div className={gridStyles['feedback-grid-container']}>
+      <div className={gridStyles['feedback-grid']}>
         {displayFeedbacks.length > 0 ? (
           displayFeedbacks.map((feedback, index) => (
-            <div key={feedback.id || index} className="feedback-card">
-              <div className="card-header">
+            <div key={feedback.id || index} className={gridStyles['feedback-card']}>
+              <div className={gridStyles['card-header']}>
                 <div 
-                  className="time-badge" 
+                  className={gridStyles['time-badge']} 
                   onClick={() => {
                     if (onTimeClick && feedback.section) {
                       onTimeClick(feedback.section)
@@ -238,7 +238,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                   {feedback.section || '시간 미지정'}
                 </div>
                 <button
-                  className="delete-btn"
+                  className={gridStyles['delete-btn']}
                   onClick={() => DropFeedback(feedback.id)}
                   title="삭제"
                 >
@@ -248,53 +248,53 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 </button>
               </div>
               
-              <div className="card-content">
+              <div className={gridStyles['card-content']}>
                 <p>{feedback.text}</p>
               </div>
               
-              <div className="card-actions">
+              <div className={gridStyles['card-actions']}>
                 <button
-                  className={`action-btn like ${reactions[feedback.id] === 'like' ? 'active' : ''}`}
+                  className={`${gridStyles['action-btn']} ${gridStyles.like} ${reactions[feedback.id] === 'like' ? gridStyles.active : ''}`}
                   onClick={() => toggleReaction(feedback.id, 'like')}
                 >
                   <span>👍</span> 좋아요
                   {reactionCounts[feedback.id]?.like > 0 && (
-                    <span className="count">({reactionCounts[feedback.id].like})</span>
+                    <span className={gridStyles.count}>({reactionCounts[feedback.id].like})</span>
                   )}
                 </button>
                 
                 <button
-                  className={`action-btn dislike ${reactions[feedback.id] === 'dislike' ? 'active' : ''}`}
+                  className={`${gridStyles['action-btn']} ${gridStyles.dislike} ${reactions[feedback.id] === 'dislike' ? gridStyles.active : ''}`}
                   onClick={() => toggleReaction(feedback.id, 'dislike')}
                 >
                   <span>👎</span> 싫어요
                   {reactionCounts[feedback.id]?.dislike > 0 && (
-                    <span className="count">({reactionCounts[feedback.id].dislike})</span>
+                    <span className={gridStyles.count}>({reactionCounts[feedback.id].dislike})</span>
                   )}
                 </button>
                 
                 <button
-                  className={`action-btn needExplanation ${reactions[feedback.id] === 'needExplanation' ? 'active' : ''}`}
+                  className={`${gridStyles['action-btn']} ${gridStyles.needExplanation} ${reactions[feedback.id] === 'needExplanation' ? gridStyles.active : ''}`}
                   onClick={() => toggleReaction(feedback.id, 'needExplanation')}
                 >
                   <span>❓</span> 설명필요
                   {reactionCounts[feedback.id]?.needExplanation > 0 && (
-                    <span className="count">({reactionCounts[feedback.id].needExplanation})</span>
+                    <span className={gridStyles.count}>({reactionCounts[feedback.id].needExplanation})</span>
                   )}
                 </button>
                 
                 <button
-                  className={`action-btn reply ${showReplyInput[feedback.id] ? 'active' : ''}`}
+                  className={`${gridStyles['action-btn']} ${gridStyles.reply} ${showReplyInput[feedback.id] ? gridStyles.active : ''}`}
                   onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
                 >
                   <span>💬</span> 답글
                   {feedback.replies?.length > 0 && (
-                    <span className="count">({feedback.replies.length})</span>
+                    <span className={gridStyles.count}>({feedback.replies.length})</span>
                   )}
                 </button>
                 
                 <button
-                  className={`action-btn important ${importantFeedbacks[feedback.id] ? 'active' : ''}`}
+                  className={`${gridStyles['action-btn']} ${gridStyles.important} ${importantFeedbacks[feedback.id] ? gridStyles.active : ''}`}
                   onClick={() => toggleImportant(feedback.id)}
                 >
                   <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span> 중요
@@ -303,9 +303,9 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
               
               {/* 답글 섹션 */}
               {(showReplyInput[feedback.id] || feedback.replies?.length > 0) && (
-                <div className="reply-section">
+                <div className={gridStyles['reply-section']}>
                   {showReplyInput[feedback.id] && (
-                    <div className="reply-input-wrapper">
+                    <div className={gridStyles['reply-input-wrapper']}>
                       <input
                         type="text"
                         placeholder="답글을 입력하세요..."
@@ -324,13 +324,13 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                   )}
                   
                   {feedback.replies?.length > 0 && (
-                    <div className="replies-list">
+                    <div className={gridStyles['replies-list']}>
                       {feedback.replies.map((reply, idx) => (
-                        <div key={idx} className="reply-item">
-                          <div className="reply-author">
+                        <div key={idx} className={gridStyles['reply-item']}>
+                          <div className={gridStyles['reply-author']}>
                             {reply.nickname || '익명'}
                           </div>
-                          <div className="reply-text">{reply.text}</div>
+                          <div className={gridStyles['reply-text']}>{reply.text}</div>
                         </div>
                       ))}
                     </div>
@@ -340,7 +340,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
             </div>
           ))
         ) : (
-          <div className="empty-state">
+          <div className={gridStyles['empty-state']}>
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 
 import moment from 'moment'
 import 'moment/locale/ko'
-import '../../css/Cms/FeedbackGridLayout.scss'
+import styles from '../../css/Cms/FeedbackGridLayout.module.scss'
 
 export default function FeedbackMore({ current_project, onTimeClick, onFeedbackSelect }) {
   const { user } = useSelector((s) => s.ProjectStore)
@@ -113,9 +113,9 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
   }
 
   return (
-    <div className="feedback-grid-container">
+    <div className={styles['feedback-grid-container']}>
       {feedback.length === 0 ? (
-        <div className="empty-state">
+        <div className={styles['empty-state']}>
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -126,14 +126,14 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
         </div>
       ) : (
         feedback.map((item, index) => (
-        <div key={index} className="feedback-date-group">
-          <div className="date-header">{item[0]}</div>
-          <div className="feedback-list">
+        <div key={index} className={styles['feedback-date-group']}>
+          <div className={styles['date-header']}>{item[0]}</div>
+          <div className={styles['feedback-list']}>
             {item[1].map((data, i) => (
-              <div key={data.id || i} className="feedback-card" onClick={() => handleFeedbackClick(data)}>
-                <div className="card-header">
+              <div key={data.id || i} className={styles['feedback-card']} onClick={() => handleFeedbackClick(data)}>
+                <div className={styles['card-header']}>
                   <div 
-                    className="time-badge"
+                    className={styles['time-badge']}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (onTimeClick && data.section) {
@@ -144,38 +144,38 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
                     {data.section || '시간 미지정'}
                   </div>
                   {data.security && (
-                    <div className="privacy-badge">🔒 비공개</div>
+                    <div className={styles['privacy-badge']}>🔒 비공개</div>
                   )}
                 </div>
-                <div className="card-content">
+                <div className={styles['card-content']}>
                   <p>
                     {data.text || data.contents || '내용 없음'}
                   </p>
                 </div>
-                <div className="card-actions">
+                <div className={styles['card-actions']}>
                   <button 
-                    className={`action-btn like ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? 'active' : ''}`}
+                    className={`${styles['action-btn']} ${styles.like} ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? styles.active : ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleReaction(data.id, 'like');
                     }}
                   >
                     <span>👍</span>
-                    <span className="count">{feedbackReactions[`${data.id}_like`] || 0}</span>
+                    <span className={styles.count}>{feedbackReactions[`${data.id}_like`] || 0}</span>
                   </button>
                   <button 
-                    className={`action-btn dislike ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? 'active' : ''}`}
+                    className={`${styles['action-btn']} ${styles.dislike} ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? styles.active : ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleReaction(data.id, 'dislike');
                     }}
                   >
                     <span>👎</span>
-                    <span className="count">{feedbackReactions[`${data.id}_dislike`] || 0}</span>
+                    <span className={styles.count}>{feedbackReactions[`${data.id}_dislike`] || 0}</span>
                   </button>
-                  <div className="author-info">
+                  <div className={styles['author-info']}>
                     <span>{data.nickname || data.email || '익명'}</span>
-                    <span className="dot">·</span>
+                    <span className={styles.dot}>·</span>
                     <span>{moment(data.created).format('MM.DD HH:mm')}</span>
                   </div>
                 </div>

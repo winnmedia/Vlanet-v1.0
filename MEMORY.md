@@ -15,6 +15,25 @@ VideoPlanet/
 
 ## 작업 히스토리
 
+### 2025-01-27 - Vercel 빌드 오류 재해결
+**요청 내용**: 루트 디렉토리의 package.json으로 인한 Vercel 빌드 오류 해결
+
+**문제 분석**:
+- 루트 디렉토리에 간단한 package.json 파일이 다시 생성되어 있음
+- Vercel이 루트의 package.json을 읽고 build 스크립트를 찾지 못해 오류 발생
+- 실제 프론트엔드 package.json은 vridge_front 디렉토리에 위치
+
+**해결 방법**:
+1. 루트 디렉토리의 package.json 파일 백업 및 삭제
+   - 백업: package.json.backup_20250727_130043
+   - 삭제 완료
+2. vercel.json은 vridge_front 디렉토리에만 유지 (올바른 상태)
+
+**주요 결정사항**:
+- 루트 디렉토리에는 package.json을 두지 않음
+- 모든 프론트엔드 관련 설정은 vridge_front 디렉토리에서 관리
+- Vercel은 vridge_front를 프로젝트 루트로 인식하도록 유지
+
 ### 2025-01-27 - 피드백 페이지 레이아웃 개선
 **요청 내용**: 영상 피드백 페이지의 버튼과 레이아웃 정렬 문제 수정
 - 반응형 그리드 시스템 구현

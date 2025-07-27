@@ -13,9 +13,9 @@ $info-color: #17a2b8;
 // 간격 시스템
 $spacing-xs: 4px;
 $spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
 
 // 피드백 관리 그리드 시스템
 .feedback-grid-container {
@@ -23,21 +23,21 @@ $spacing-xl: 32px;
   
   .feedback-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: $spacing-lg;
-    padding: $spacing-md 0;
+    padding: $spacing-sm 0;
     width: 100%;
     
     // 태블릿 (768px - 1024px)
     @media (min-width: 768px) and (max-width: 1024px) {
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: $spacing-md;
     }
     
     // 모바일 (767px 이하)
     @media (max-width: 767px) {
       grid-template-columns: 1fr;
-      gap: $spacing-md;
+      gap: $spacing-sm;
     }
   }
   
@@ -45,7 +45,7 @@ $spacing-xl: 32px;
   .feedback-card {
     background: white;
     border: 1px solid #e9ecef;
-    border-radius: 12px;
+    border-radius: 10px;
     padding: $spacing-lg;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -54,8 +54,8 @@ $spacing-xl: 32px;
     
     // 호버 효과
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(22, 49, 248, 0.12);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(22, 49, 248, 0.12);
       border-color: rgba($brand-blue, 0.3);
       
       .card-actions {
@@ -68,28 +68,28 @@ $spacing-xl: 32px;
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: $spacing-md;
+      margin-bottom: $spacing-sm;
       
       .time-badge {
         background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%);
         color: white;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 12px;
         font-weight: 600;
-        box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
+        box-shadow: 0 1px 3px rgba(22, 49, 248, 0.2);
         transition: all 0.2s ease;
         white-space: nowrap;
         
         &:hover {
-          transform: scale(1.05);
-          box-shadow: 0 4px 8px rgba(22, 49, 248, 0.3);
+          transform: scale(1.02);
+          box-shadow: 0 2px 6px rgba(22, 49, 248, 0.3);
         }
       }
       
       .delete-btn {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         border: none;
         background: transparent;
@@ -108,23 +108,23 @@ $spacing-xl: 32px;
         }
         
         svg {
-          width: 18px;
-          height: 18px;
+          width: 16px;
+          height: 16px;
         }
       }
     }
     
     // 카드 콘텐츠
     .card-content {
-      margin-bottom: $spacing-md;
+      margin-bottom: $spacing-sm;
       
       p {
         margin: 0;
         color: #495057;
-        font-size: 14px;
-        line-height: 1.6;
+        font-size: 13px;
+        line-height: 1.5;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -135,31 +135,31 @@ $spacing-xl: 32px;
     .card-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: $spacing-sm;
-      padding-top: $spacing-md;
+      gap: 6px;
+      padding-top: $spacing-sm;
       border-top: 1px solid #f0f0f0;
       opacity: 0.7;
       transition: opacity 0.2s ease;
       
       .action-btn {
         flex: 0 0 auto;
-        padding: 6px 12px;
-        border-radius: 20px;
+        padding: 4px 10px;
+        border-radius: 16px;
         border: 1px solid #e9ecef;
         background: white;
         color: #6c757d;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 3px;
         white-space: nowrap;
         
         &:hover {
           transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
         
         // 반응 상태별 스타일
@@ -231,37 +231,37 @@ $spacing-xl: 32px;
     
     // 답글 섹션
     .reply-section {
-      margin-top: $spacing-md;
-      padding: $spacing-md;
+      margin-top: $spacing-sm;
+      padding: $spacing-sm;
       background: #f8f9fa;
-      border-radius: 8px;
+      border-radius: 6px;
       
       .reply-input-wrapper {
         display: flex;
-        gap: $spacing-sm;
+        gap: 6px;
         
         input {
           flex: 1;
-          padding: 8px 12px;
+          padding: 6px 10px;
           border: 1px solid #ddd;
-          border-radius: 6px;
-          font-size: 14px;
+          border-radius: 4px;
+          font-size: 12px;
           transition: all 0.2s ease;
           
           &:focus {
             outline: none;
             border-color: $brand-blue;
-            box-shadow: 0 0 0 3px rgba($brand-blue, 0.1);
+            box-shadow: 0 0 0 2px rgba($brand-blue, 0.1);
           }
         }
         
         button {
-          padding: 8px 16px;
+          padding: 6px 12px;
           background: $brand-blue;
           color: white;
           border: none;
-          border-radius: 6px;
-          font-size: 14px;
+          border-radius: 4px;
+          font-size: 12px;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -279,25 +279,25 @@ $spacing-xl: 32px;
       }
       
       .replies-list {
-        margin-top: $spacing-md;
+        margin-top: $spacing-sm;
         
         .reply-item {
-          padding: $spacing-sm $spacing-md;
+          padding: 6px 10px;
           background: white;
-          border-radius: 6px;
-          margin-bottom: $spacing-sm;
+          border-radius: 4px;
+          margin-bottom: 4px;
           
           .reply-author {
             font-weight: 500;
-            font-size: 13px;
+            font-size: 12px;
             color: #495057;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
           }
           
           .reply-text {
-            font-size: 13px;
+            font-size: 12px;
             color: #6c757d;
-            line-height: 1.5;
+            line-height: 1.4;
           }
         }
       }
@@ -325,43 +325,43 @@ $spacing-xl: 32px;
   .empty-state {
     grid-column: 1 / -1;
     text-align: center;
-    padding: 60px 20px;
+    padding: 40px 20px;
     
     svg {
-      width: 64px;
-      height: 64px;
+      width: 48px;
+      height: 48px;
       color: #dee2e6;
-      margin-bottom: $spacing-md;
-    }
-    
-    h3 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #495057;
       margin-bottom: $spacing-sm;
     }
     
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: $spacing-xs;
+    }
+    
     p {
-      font-size: 14px;
+      font-size: 13px;
       color: #6c757d;
-      margin-bottom: $spacing-lg;
+      margin-bottom: $spacing-md;
     }
     
     button {
-      padding: 10px 20px;
+      padding: 8px 16px;
       background: $brand-blue;
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
       
       &:hover {
         background: $brand-blue-hover;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
       }
     }
   }
@@ -379,17 +379,17 @@ $spacing-xl: 32px;
 
 // 날짜별 그룹 스타일 (FeedbackMore용)
 .feedback-date-group {
-  margin-bottom: $spacing-xl;
+  margin-bottom: $spacing-lg;
   
   .date-header {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: #495057;
-    margin-bottom: $spacing-lg;
-    padding-left: 8px;
+    margin-bottom: $spacing-md;
+    padding-left: 6px;
     display: flex;
     align-items: center;
-    gap: $spacing-md;
+    gap: $spacing-sm;
     position: relative;
     
     &::before {
@@ -398,10 +398,10 @@ $spacing-xl: 32px;
       left: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: 3px;
-      height: 20px;
+      width: 2px;
+      height: 16px;
       background: $brand-blue;
-      border-radius: 2px;
+      border-radius: 1px;
     }
     
     &::after {
@@ -414,8 +414,8 @@ $spacing-xl: 32px;
   
   .feedback-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: $spacing-md;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-sm;
   }
 }
 

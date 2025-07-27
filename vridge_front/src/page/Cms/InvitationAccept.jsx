@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { AcceptInvitation, DeclineInvitation } from '../../api/invitation'
+import { CreateGuestSession } from '../../api/feedback'
 import { checkSession } from '../../util/util'
 import axios from '../../config/axios'
 import moment from 'moment'
@@ -17,6 +18,9 @@ export default function InvitationAccept() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [processing, setProcessing] = useState(false)
+  const [showGuestOptions, setShowGuestOptions] = useState(false)
+  const [guestName, setGuestName] = useState('')
+  const [guestLoading, setGuestLoading] = useState(false)
 
   useEffect(() => {
     const fetchInvitation = async () => {
@@ -78,35 +82,73 @@ export default function InvitationAccept() {
     }
   }, [token, uid])
 
+  // 게스트로 계속하기 처리
+  const handleGuestContinue = async () => {
+    if (!guestName.trim()) {
+      alert('이름을 입력해주세요.')
+      return
+    }
+
+    setGuestLoading(true)
+    try {
+      // 게스트 세션 생성 API 호출
+      const response = await CreateGuestSession(invitation.id, guestName)
+
+      if (response.data.status === 'success') {
+        // 게스트 세션 정보를 localStorage에 저장
+        localStorage.setItem('guestSession', JSON.stringify({
+          sessionId: response.data.session_id,
+          guestName: response.data.guest_name,
+          projectId: invitation.project.id,
+          expiresAt: response.data.expires_at
+        }))
+
+        // 게스트 피드백 페이지로 이동
+        navigate(`/feedback/${invitation.project.id}?guest=true&session=${response.data.session_id}`)
+      } else {
+        alert('게스트 세션 생성에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('게스트 세션 생성 실패:', error)
+      alert(error.response?.data?.message || '게스트 세션 생성 중 오류가 발생했습니다.')
+    } finally {
+      setGuestLoading(false)
+    }
+  }
+
+  // 회원가입으로 이동
+  const handleSignupRedirect = () => {
+    // 초대 플로우 시작
+    startFlow('invitation', {
+      token: token,
+      invitationId: invitation.id,
+      projectId: invitation.project.id,
+      projectName: invitation.project.name,
+      inviterName: invitation.inviter.nickname
+    })
+    
+    // 회원가입 페이지로 이동
+    navigate('/signup', { 
+      state: { 
+        invitationToken: token,
+        invitationId: invitation.id,
+        projectId: invitation.project.id,
+        projectName: invitation.project.name,
+        inviterName: invitation.inviter.nickname,
+        returnUrl: `/Feedback/${invitation.project.id}`,
+        message: `${invitation.inviter.nickname}님이 "${invitation.project.name}" 프로젝트에 초대했습니다.`
+      }
+    })
+  }
+
   const handleResponse = async (action) => {
     // 로그인 확인
     const session = checkSession()
     if (!session) {
-      // 비회원이 수락하려는 경우 회원가입으로 유도
+      // 비회원이 수락하려는 경우 옵션 제공
       if (action === 'accept') {
-        alert('프로젝트에 참여하려면 회원가입이 필요합니다.')
-        
-        // 초대 플로우 시작
-        startFlow('invitation', {
-          token: token,
-          invitationId: invitation.id,
-          projectId: invitation.project.id,
-          projectName: invitation.project.name,
-          inviterName: invitation.inviter.nickname
-        })
-        
-        // 회원가입 페이지로 이동
-        navigate('/signup', { 
-          state: { 
-            invitationToken: token,
-            invitationId: invitation.id,
-            projectId: invitation.project.id,
-            projectName: invitation.project.name,
-            inviterName: invitation.inviter.nickname,
-            returnUrl: `/Feedback/${invitation.project.id}`,
-            message: `${invitation.inviter.nickname}님이 "${invitation.project.name}" 프로젝트에 초대했습니다.`
-          }
-        })
+        setShowGuestOptions(true)
+        return
       } else {
         // 거절은 로그인 없이도 가능
         setProcessing(true)
@@ -428,6 +470,217 @@ export default function InvitationAccept() {
           </p>
         </div>
       </div>
+
+      {/* 게스트 옵션 모달 */}
+      {showGuestOptions && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.6)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '40px',
+            maxWidth: '500px',
+            width: '100%',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+          }}>
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              color: '#212529',
+              marginBottom: '16px',
+              textAlign: 'center'
+            }}>
+              프로젝트 참여 방법 선택
+            </h2>
+            
+            <p style={{
+              color: '#6c757d',
+              textAlign: 'center',
+              marginBottom: '32px',
+              fontSize: '16px'
+            }}>
+              프로젝트에 참여하려면 아래 옵션 중 하나를 선택해주세요.
+            </p>
+
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+              marginBottom: '24px'
+            }}>
+              {/* 회원가입 옵션 */}
+              <div 
+                onClick={handleSignupRedirect}
+                style={{
+                  padding: '20px',
+                  border: '2px solid #1631F8',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  background: 'white'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f8f9fa'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'white'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#1631F8',
+                  marginBottom: '8px'
+                }}>
+                  회원가입하기
+                </h3>
+                <p style={{
+                  color: '#6c757d',
+                  fontSize: '14px',
+                  margin: 0
+                }}>
+                  모든 기능을 이용하고 프로젝트를 관리할 수 있습니다.
+                </p>
+              </div>
+
+              {/* 로그인 옵션 */}
+              <div 
+                onClick={() => navigate('/login')}
+                style={{
+                  padding: '20px',
+                  border: '2px solid #28a745',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  background: 'white'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f8f9fa'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'white'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#28a745',
+                  marginBottom: '8px'
+                }}>
+                  로그인하기
+                </h3>
+                <p style={{
+                  color: '#6c757d',
+                  fontSize: '14px',
+                  margin: 0
+                }}>
+                  이미 계정이 있다면 로그인하여 참여하세요.
+                </p>
+              </div>
+
+              {/* 게스트 옵션 */}
+              <div style={{
+                padding: '20px',
+                border: '2px solid #6c757d',
+                borderRadius: '12px',
+                background: 'white'
+              }}>
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#6c757d',
+                  marginBottom: '12px'
+                }}>
+                  게스트로 계속하기
+                </h3>
+                <p style={{
+                  color: '#6c757d',
+                  fontSize: '14px',
+                  marginBottom: '16px'
+                }}>
+                  회원가입 없이 피드백만 작성할 수 있습니다.
+                </p>
+                <input
+                  type="text"
+                  placeholder="이름을 입력해주세요"
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    marginBottom: '12px'
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleGuestContinue()
+                    }
+                  }}
+                />
+                <button
+                  onClick={handleGuestContinue}
+                  disabled={guestLoading || !guestName.trim()}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: guestLoading || !guestName.trim() ? '#e9ecef' : '#6c757d',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: guestLoading || !guestName.trim() ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {guestLoading ? '처리 중...' : '게스트로 시작'}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowGuestOptions(false)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: 'white',
+                color: '#6c757d',
+                border: '1px solid #dee2e6',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#f8f9fa'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'white'
+              }}
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes spin {

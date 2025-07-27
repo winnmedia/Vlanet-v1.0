@@ -210,3 +210,78 @@ class FeedbackReaction(core_model.TimeStampedModel):
     
     def __str__(self):
         return f"{self.user.username} - {self.comment.id} - {self.reaction}"
+
+
+class GuestFeedbackSession(core_model.TimeStampedModel):
+    """게스트 피드백 세션 모델"""
+    token = models.CharField(
+        verbose_name="세션 토큰",
+        max_length=100,
+        unique=True,
+        help_text="게스트 세션 식별 토큰"
+    )
+    project = models.ForeignKey(
+        "projects.Project",
+        related_name="guest_sessions",
+        on_delete=models.CASCADE,
+        verbose_name="프로젝트"
+    )
+    invitation = models.ForeignKey(
+        "projects.ProjectInvitation",
+        related_name="guest_sessions",
+        on_delete=models.CASCADE,
+        verbose_name="초대",
+        null=True,
+        blank=True
+    )
+    guest_name = models.CharField(
+        verbose_name="게스트 이름",
+        max_length=100,
+        help_text="게스트가 입력한 이름"
+    )
+    guest_email = models.EmailField(
+        verbose_name="게스트 이메일",
+        null=True,
+        blank=True,
+        help_text="게스트가 입력한 이메일"
+    )
+    ip_address = models.GenericIPAddressField(
+        verbose_name="IP 주소",
+        null=True,
+        blank=True
+    )
+    user_agent = models.TextField(
+        verbose_name="User Agent",
+        null=True,
+        blank=True
+    )
+    expires_at = models.DateTimeField(
+        verbose_name="만료 시간",
+        help_text="세션 만료 시간"
+    )
+    is_active = models.BooleanField(
+        verbose_name="활성 상태",
+        default=True
+    )
+    last_activity = models.DateTimeField(
+        verbose_name="마지막 활동",
+        auto_now=True
+    )
+    
+    class Meta:
+        verbose_name = "게스트 피드백 세션"
+        verbose_name_plural = "게스트 피드백 세션"
+        indexes = [
+            models.Index(fields=['token']),
+            models.Index(fields=['project']),
+            models.Index(fields=['expires_at']),
+            models.Index(fields=['is_active']),
+        ]
+    
+    def __str__(self):
+        return f"{self.guest_name} - {self.project.name}"
+    
+    def is_expired(self):
+        """세션이 만료되었는지 확인"""
+        from django.utils import timezone
+        return timezone.now() > self.expires_at

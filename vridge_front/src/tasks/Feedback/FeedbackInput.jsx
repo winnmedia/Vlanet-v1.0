@@ -2,9 +2,9 @@ import useInput from '../../hooks/UseInput'
 import React, { useState, useEffect } from 'react'
 import styles from './FeedbackInput.module.scss'
 
-import { CreateFeedback } from '../../api/feedback'
+import { CreateFeedback, CreateGuestFeedback } from '../../api/feedback'
 
-export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onFeedbackSuccess }) {
+export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onFeedbackSuccess, isGuestMode, guestSession }) {
   const initial = {
     secret: 'anonymous', // 'anonymous', 'nickname', 'realname'
     title: '',
@@ -31,8 +31,8 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
     // 보안: 사용자 입력 데이터 로깅 제거
     // console.log('SendFeedback called')
     
-    // 닉네임 모드일 때 닉네임 검증
-    if (feedbackMode === 'nickname' && !nickname.trim()) {
+    // 게스트 모드가 아닐 때만 닉네임 검증
+    if (!isGuestMode && feedbackMode === 'nickname' && !nickname.trim()) {
       window.alert('닉네임을 입력해주세요.')
       return
     }
@@ -46,7 +46,12 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
       
       console.log('Sending feedback data:', feedbackData)
       
-      CreateFeedback(feedbackData, project_id)
+      // 게스트 모드와 일반 모드 구분
+      const createFeedbackPromise = isGuestMode && guestSession
+        ? CreateGuestFeedback(project_id, guestSession.sessionId, feedbackData)
+        : CreateFeedback(feedbackData, project_id)
+      
+      createFeedbackPromise
         .then((res) => {
           console.log('Feedback creation success:', res)
           window.alert('피드백 등록이 되었습니다.')
@@ -91,6 +96,15 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
   return (
     <div className={styles.feedbackForm}>
       <div className={styles.userTypeSelector}>
+        {isGuestMode && guestSession ? (
+          <div className={styles.guestInfo}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
+              <circle cx="12" cy="8" r="3" stroke="#6c757d" strokeWidth="2"/>
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#6c757d" strokeWidth="2"/>
+            </svg>
+            <span>게스트: {guestSession.guestName}</span>
+          </div>
+        ) : (
         <div className={styles.feedbackModeOptions}>
           <label className={feedbackMode === 'anonymous' ? styles.active : ''}>
             <input
@@ -159,9 +173,10 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
             </span>
           </label>
         </div>
+        )}
         
-        {/* 닉네임 모드일 때 닉네임 입력 필드 표시 */}
-        {feedbackMode === 'nickname' && (
+        {/* 닉네임 모드일 때 닉네임 입력 필드 표시 (게스트 모드가 아닐 때만) */}
+        {!isGuestMode && feedbackMode === 'nickname' && (
           <div className={styles.nicknameInput}>
             <input
               type="text"

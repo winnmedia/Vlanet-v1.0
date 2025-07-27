@@ -1364,8 +1364,12 @@ class ProjectFeedback(View):
                     file_url = feedback.files.url
                     # URL이 상대 경로인 경우 전체 URL로 변환
                     if file_url and not file_url.startswith('http'):
-                        # 환경 변수에서 도메인 가져오기
-                        if settings.DEBUG:
+                        # Request에서 호스트 정보 가져오기
+                        if hasattr(request, 'get_host'):
+                            host = request.get_host()
+                            protocol = 'https' if request.is_secure() else 'http'
+                            file_url = f"{protocol}://{host}{file_url}"
+                        elif settings.DEBUG:
                             file_url = f"http://localhost:8000{file_url}"
                         else:
                             # Railway 또는 프로덕션 환경
@@ -1469,6 +1473,15 @@ class ProjectFeedbackComments(View):
 class ProjectFeedbackUpload(View):
     """프로젝트 피드백 파일 업로드"""
     
+    def options(self, request, *args, **kwargs):
+        """CORS preflight 요청 처리"""
+        response = JsonResponse({"status": "ok"})
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response["Access-Control-Max-Age"] = "3600"
+        return response
+    
     @user_validator
     def post(self, request, project_id):
         try:
@@ -1478,20 +1491,83 @@ class ProjectFeedbackUpload(View):
             if project is None:
                 return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
             
-            # 권한 확인 - 매니저 이상만 업로드 가능
-            is_manager = models.Members.objects.filter(
+            # 권한 확인 - 프로젝트 소유자 또는 멤버면 업로드 가능
+            is_member = models.Members.objects.filter(
                 project=project, 
-                user=user, 
-                rating="manager"
+                user=user
             ).exists()
             
-            if project.user != user and not is_manager:
+            if project.user != user and not is_member:
                 return JsonResponse({"message": "권한이 없습니다."}, status=403)
             
             # 파일 처리
             file = request.FILES.get("files") or request.FILES.get("file")
             if not file:
                 return JsonResponse({"message": "파일이 없습니다."}, status=400)
+            
+            # 파일 크기 검사 (600MB 제한)
+            max_size = 600 * 1024 * 1024  # 600MB
+            if file.size > max_size:
+                size_mb = file.size / (1024 * 1024)
+                return JsonResponse({
+                    "message": f"파일 크기가 너무 큽니다. (현재: {size_mb:.1f}MB, 최대: 600MB)"
+                }, status=413)
+            
+            # 파일 형식 검사
+            allowed_extensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv']
+            import os
+            name, ext = os.path.splitext(file.name.lower())
+            if ext not in allowed_extensions:
+                return JsonResponse({
+                    "message": f"지원하지 않는 파일 형식입니다. ({', '.join(allowed_extensions)} 형식만 가능)"
+                }, status=400)
+            
+            # MIME 타입 검증 - python-magic을 사용한 실제 파일 내용 검증
+            try:
+                import magic
+                # 파일의 첫 부분을 읽어서 MIME 타입 확인
+                file_content = file.read(1024 * 1024)  # 첫 1MB만 읽기
+                file.seek(0)  # 파일 포인터를 다시 처음으로
+                
+                # MIME 타입 검증
+                mime = magic.Magic(mime=True)
+                detected_mime = mime.from_buffer(file_content)
+                
+                # 허용된 비디오 MIME 타입 목록
+                allowed_mime_types = [
+                    'video/mp4',
+                    'video/webm',
+                    'video/ogg',
+                    'video/quicktime',  # .mov
+                    'video/x-msvideo',  # .avi
+                    'video/x-matroska', # .mkv
+                    'application/x-matroska'  # .mkv alternative
+                ]
+                
+                # MIME 타입이 비디오가 아닌 경우
+                if not any(detected_mime.startswith(mime_type.split('/')[0]) for mime_type in allowed_mime_types):
+                    logger.warning(f"Invalid file type detected. Expected video, got: {detected_mime} for file: {file.name}")
+                    return JsonResponse({
+                        "message": "업로드된 파일이 비디오 파일이 아닙니다."
+                    }, status=400)
+                
+                # 정확한 MIME 타입 검증
+                if detected_mime not in allowed_mime_types:
+                    logger.warning(f"Unsupported video format detected: {detected_mime} for file: {file.name}")
+                    return JsonResponse({
+                        "message": f"지원하지 않는 비디오 형식입니다. (감지된 형식: {detected_mime})"
+                    }, status=400)
+                
+                logger.info(f"File MIME type validated: {detected_mime} for file: {file.name}")
+                
+            except ImportError:
+                logger.error("python-magic library not installed. Please install it using: pip install python-magic")
+                # python-magic이 설치되지 않은 경우에도 업로드는 허용하되 경고 로그 남김
+                logger.warning("MIME type validation skipped - python-magic not available")
+            except Exception as e:
+                logger.error(f"Error during MIME type validation: {str(e)}")
+                # MIME 검증 중 오류가 발생해도 확장자 검증은 통과했으므로 계속 진행
+                logger.warning("MIME type validation failed, proceeding with extension-based validation only")
             
             # 피드백이 없으면 생성
             if not project.feedback:
@@ -1505,14 +1581,47 @@ class ProjectFeedbackUpload(View):
             if feedback.files:
                 feedback.files.delete()
             
+            # 파일명 안전하게 변환
+            from django.utils.text import slugify
+            import uuid
+            import re
+            
+            original_name = file.name
+            # 한글이 포함된 경우 처리
+            if re.search(r'[가-힣]', name):
+                # 프로젝트 ID와 타임스탬프를 사용한 고유한 파일명 생성
+                import time
+                timestamp = int(time.time())
+                safe_name = f"project_{project.id}_video_{timestamp}_{uuid.uuid4().hex[:8]}"
+                logger.info(f"Korean filename detected, converting '{original_name}' to '{safe_name}{ext}'")
+            else:
+                # 영문 파일명은 slugify 처리
+                safe_name = slugify(name, allow_unicode=False)
+                if not safe_name or safe_name == 'mp4' or safe_name == 'video':
+                    safe_name = f"video_{uuid.uuid4().hex[:8]}"
+            
+            # 특수문자 제거 및 공백을 언더스코어로 변환
+            safe_name = re.sub(r'[^\w\-_]', '_', safe_name)
+            safe_name = re.sub(r'_+', '_', safe_name)  # 연속된 언더스코어 제거
+            safe_name = safe_name.strip('_')  # 앞뒤 언더스코어 제거
+            
+            file.name = f"{safe_name}{ext}"
+            
             # 새 파일 저장
             feedback.files = file
             feedback.save()
             
+            logger.info(f"File saved: {file.name} (original: {original_name})")
+            
             # 파일 URL 생성 - 전체 URL 반환
             file_url = feedback.files.url
             if file_url and not file_url.startswith('http'):
-                if settings.DEBUG:
+                # Request에서 호스트 정보 가져오기
+                if hasattr(request, 'get_host'):
+                    host = request.get_host()
+                    protocol = 'https' if request.is_secure() else 'http'
+                    file_url = f"{protocol}://{host}{file_url}"
+                elif settings.DEBUG:
                     file_url = f"http://localhost:8000{file_url}"
                 else:
                     backend_url = os.environ.get('BACKEND_URL', 'https://videoplanet.up.railway.app')
@@ -1522,10 +1631,15 @@ class ProjectFeedbackUpload(View):
             
             logger.info(f"Upload complete. File URL: {file_url}")
             
+            # GetFeedBack과 동일한 형식으로 응답 반환
             return JsonResponse({
+                "message": "파일이 성공적으로 업로드되었습니다.",
                 "result": {
                     "id": feedback.id,
-                    "file_url": file_url
+                    "project": project_id,
+                    "files": file_url,  # 'file_url' 대신 'files' 키 사용
+                    "created": feedback.created.isoformat() if feedback.created else None,
+                    "updated": feedback.updated.isoformat() if feedback.updated else None
                 }
             }, status=200)
             

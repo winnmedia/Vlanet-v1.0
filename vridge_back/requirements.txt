@@ -32,6 +32,9 @@ reportlab==4.0.4
 
 # Video Analysis
 twelvelabs==0.2.0
+
+# File type validation
+python-magic==0.4.27
 # Testing dependencies
 pytest==7.4.3
 pytest-django==4.7.0

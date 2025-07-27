@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from '../../util/util'
+import '../../css/Cms/FeedbackVideoResponsive.scss'
 
 
 
@@ -290,8 +291,12 @@ function FeedbackStable() {
         } else if (err.response?.status === 401) {
           window.alert('인증이 필요합니다. 다시 로그인해주세요.');
           navigate('/login', { replace: true });
+        } else if (err.response?.status === 405) {
+          window.alert('파일 업로드 기능이 현재 지원되지 않습니다. 서버 설정을 확인해주세요.');
+        } else if (err.response?.status === 404) {
+          window.alert('업로드 경로를 찾을 수 없습니다. 프로젝트가 존재하는지 확인해주세요.');
         } else {
-          window.alert('파일 업로드에 실패했습니다.');
+          window.alert(`파일 업로드에 실패했습니다. (오류 코드: ${err.response?.status || '네트워크 오류'})`);
         }
       })
       .finally(() => {

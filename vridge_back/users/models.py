@@ -10,6 +10,7 @@ class User(AbstractUser):
         ("google", "Google"),
         ("kakao", "Kakao"),
         ("naver", "Naver"),
+        ("guest", "Guest"),
     )
 
     nickname = models.CharField(verbose_name="닉네임", max_length=100, blank=True)

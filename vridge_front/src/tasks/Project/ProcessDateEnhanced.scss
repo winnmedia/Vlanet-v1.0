@@ -1,5 +1,5 @@
 // VideoPlanet 브랜드 대표 색상
-@import '../../styles/variables';
+@import '../../styles/_variables';
 
 .process-date-enhanced {
   padding: 24px;
@@ -67,7 +67,7 @@
           }
           
           &:checked + .toggle-switch {
-            background: $primary-gradient;
+            background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
             
             &::after {
               transform: translateX(20px);

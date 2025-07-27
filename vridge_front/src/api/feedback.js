@@ -44,17 +44,52 @@ export function DeleteFeedback(id) {
   )
 }
 
+// 게스트 세션 생성
+export function CreateGuestSession(invitationId, guestName) {
+  return axios.post('/api/feedbacks/guest/session/create/', {
+    invitation_id: invitationId,
+    guest_name: guestName
+  })
+}
+
+// 게스트 피드백 작성
+export function CreateGuestFeedback(feedbackId, sessionId, data) {
+  return axios.put(`/api/feedbacks/guest/${feedbackId}`, {
+    session_id: sessionId,
+    ...data
+  })
+}
+
 // 피드백 file uploads
 export function FeedbackFile(data, projectId, onUploadProgress) {
-  // 직접 axios 사용하여 업로드
-  const token = typeof window !== 'undefined' && localStorage.getItem('VGID')?.replace(/"/g, '');
+  // axios 인스턴스 import 또는 기본 axios 사용
+  const axiosInstance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+    withCredentials: true,
+  });
   
-  // 보안: 토큰 로깅 제거
-  // console.log('File upload to:', `/api/feedbacks/upload_s3/`);
+  // 토큰 가져오기 - 쿠키 우선, localStorage 폴백
+  let token = null;
+  if (typeof window !== 'undefined') {
+    // 쿠키에서 토큰 확인
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'vridge_session') {
+        token = value;
+        break;
+      }
+    }
+    
+    // 쿠키에 없으면 localStorage 확인
+    if (!token) {
+      token = localStorage.getItem('VGID')?.replace(/"/g, '');
+    }
+  }
   
   const config = {
     method: 'post',
-    url: `/api/projects/${projectId}/feedback/upload/`,  // baseURL을 사용하도록 상대 경로로 변경
+    url: `/api/projects/${projectId}/feedback/upload/`,
     data: data,
     headers: {
       'Authorization': token ? `Bearer ${token}` : '',
@@ -62,12 +97,11 @@ export function FeedbackFile(data, projectId, onUploadProgress) {
     },
     onUploadProgress: onUploadProgress,
     timeout: 300000, // 5분 타임아웃
-    withCredentials: true,
+    maxBodyLength: Infinity,
+    maxContentLength: Infinity,
   };
   
-  // 보안: 업로드 설정 로깅 제거
-  
-  return axios(config);
+  return axiosInstance(config);
 }
 
 

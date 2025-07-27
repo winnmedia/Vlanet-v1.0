@@ -349,9 +349,17 @@ class FeedbackDetail(View):
             display_mode = data.get("display_mode", "anonymous")
             nickname = data.get("nickname", "")
             
-            # display_mode가 nickname인 경우 nickname 검증
-            if display_mode == "nickname" and not nickname:
-                return JsonResponse({"message": "닉네임을 입력해주세요."}, status=400)
+            # display_mode가 nickname인 경우 처리
+            if display_mode == "nickname":
+                if not nickname:
+                    # 사용자의 기본 닉네임 사용
+                    if user.nickname:
+                        nickname = user.nickname
+                    else:
+                        # 닉네임이 없으면 자동 생성
+                        import random
+                        random_suffix = random.randint(1000, 9999)
+                        nickname = f"익명사용자_{random_suffix}"
             
             models.FeedBackComment.objects.create(
                 feedback=feedback,

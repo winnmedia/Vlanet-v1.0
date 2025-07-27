@@ -910,14 +910,20 @@
         }
           .video_inner {
             background: #f8f8f8;
-            border: 3px dashed #0058da;
+            border: 2px dashed #dee2e6;
             width: 100%;
-            height: 600px;
-            border-radius: 15px;
+            height: 450px;
+            border-radius: 12px;
             position: relative;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              border-color: #1631F8;
+              background: #f0f4ff;
+            }
             .loading {
               position: absolute;
               left: 0;
@@ -1035,7 +1041,54 @@
             }
           }
           .etc_box {
-            margin-top: 30px;
+            margin-top: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            
+            .header_section {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 16px;
+              
+              .s_title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #212529;
+              }
+              
+              .header_actions {
+                display: flex;
+                gap: 8px;
+              }
+            }
+            
+            .feedback_list_container {
+              max-height: 400px;
+              overflow-y: auto;
+              padding-right: 8px;
+              
+              &::-webkit-scrollbar {
+                width: 6px;
+              }
+              
+              &::-webkit-scrollbar-track {
+                background: #f8f9fa;
+                border-radius: 3px;
+              }
+              
+              &::-webkit-scrollbar-thumb {
+                background: #dee2e6;
+                border-radius: 3px;
+                
+                &:hover {
+                  background: #ced4da;
+                }
+              }
+            }
+            
             .flex {
               button {
                 background: none;
@@ -1184,9 +1237,10 @@
           }
         }
         .sidebox {
-          width: 460px;
+          width: 420px;
           flex-shrink: 0;
-          height: 100%;
+          height: fit-content;
+          max-height: calc(100vh - 200px);
           padding: 20px;
           background: white;
           border-radius: 12px;
@@ -2543,5 +2597,40 @@
     }
   }
 } // .cms_wrap 종료
+
+// 피드백 페이지 탭 컨테이너 스타일
+.feedback {
+  .tab_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-top: 16px;
+    
+    .tabContent {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+      
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f8f9fa;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #dee2e6;
+        border-radius: 3px;
+        
+        &:hover {
+          background: #ced4da;
+        }
+      }
+    }
+  }
+}
 
 

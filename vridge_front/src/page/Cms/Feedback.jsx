@@ -52,6 +52,11 @@ export default function Feedback() {
   useProjectData() // 프로젝트 데이터 로드 초기화
   const { user, profileImage } = useSelector((s) => s.ProjectStore)
   
+  // 게스트 모드 확인
+  const isGuestMode = router.query.guest === 'true'
+  const guestSessionId = router.query.session
+  const [guestSession, setGuestSession] = useState(null)
+  
   // Cleanup effect for any pending timeouts
   useEffect(() => {
     return () => {
@@ -170,13 +175,37 @@ export default function Feedback() {
     }
   }, [encodingCheckInterval])
 
-  // 인증 체크
+  // 게스트 세션 확인
   useEffect(() => {
-    const session = checkSession()
-    if (!session) {
-      navigate('/Login', { replace: true })
+    if (isGuestMode && guestSessionId) {
+      // localStorage에서 게스트 세션 정보 가져오기
+      const storedSession = localStorage.getItem('guestSession')
+      if (storedSession) {
+        const sessionData = JSON.parse(storedSession)
+        // 세션 ID가 일치하고 만료되지 않았는지 확인
+        if (sessionData.sessionId === guestSessionId && 
+            new Date(sessionData.expiresAt) > new Date()) {
+          setGuestSession(sessionData)
+        } else {
+          alert('게스트 세션이 만료되었습니다.')
+          navigate('/')
+        }
+      } else {
+        alert('유효하지 않은 게스트 세션입니다.')
+        navigate('/')
+      }
     }
-  }, [])
+  }, [isGuestMode, guestSessionId])
+
+  // 인증 체크 (게스트가 아닌 경우에만)
+  useEffect(() => {
+    if (!isGuestMode) {
+      const session = checkSession()
+      if (!session) {
+        navigate('/Login', { replace: true })
+      }
+    }
+  }, [isGuestMode])
 
   useEffect(() => {
     if (!project_id) {
@@ -574,7 +603,7 @@ export default function Feedback() {
     }
   }, [project_id, is_admin])
 
-  const content = [
+  const allContent = [
     {
       tab: '피드백 등록',
       content: <FeedbackInput 
@@ -583,6 +612,8 @@ export default function Feedback() {
         initialTime={feedbackTime}
         onTimeChange={setFeedbackTime}
         onFeedbackSuccess={() => changeItem(2)} // 피드백 관리 탭으로 전환
+        isGuestMode={isGuestMode}
+        guestSession={guestSession}
       />,
     },
     {
@@ -802,6 +833,11 @@ export default function Feedback() {
     }
   ]
   const { currentTab, changeTab } = useTab(0)
+  // 게스트 모드에서는 피드백 등록 탭만 표시
+  const content = isGuestMode 
+    ? allContent.filter(item => item.tab === '피드백 등록')
+    : allContent
+    
   const currentItem = content[currentTab]
   const changeItem = changeTab
 
@@ -1099,8 +1135,8 @@ export default function Feedback() {
   return (
     <PageTemplate>
       <div className="cms_wrap">
-        <SideBar tab="feedback" />
-        <main>
+        {!isGuestMode && <SideBar tab="feedback" />}
+        <main style={isGuestMode ? { marginLeft: 0, width: '100%' } : {}}>
           <div className="content feedback">
             {current_project ? (
               <div className="flex">
@@ -1354,14 +1390,13 @@ export default function Feedback() {
                           window.alert('피드백 버튼 클릭 중 오류가 발생했습니다: ' + error.message);
                         }
                       }}
-                      className={styles.feedbackButtonPrimary}
+                      className={styles.feedbackButtonIconOnly}
                       aria-label="현재 시점에 피드백 추가"
+                      title="현재 시점에 피드백 추가"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                        <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13v6l5.25 3.15.75-1.23-4.5-2.67V7h-1.5z" fill="currentColor"/>
                       </svg>
-                      <span>시점 피드백</span>
                       </button>
                     )}
 
@@ -1652,7 +1687,7 @@ export default function Feedback() {
                   )}
                 </div>
                 <div className="tab_container">
-                  <div className="tab_menu">
+                  <div className={styles.tabMenu}>
                     {content.map((section, index) => (
                       section && section.tab ? (
                         <button 

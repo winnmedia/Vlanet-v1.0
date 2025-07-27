@@ -35,11 +35,11 @@ const filterForbiddenWords = (text) => {
 // 스토리 프레임워크에 따른 단계 레이블 반환
 const getStageLabel = (framework, index) => {
   const labels = {
-    'hook_immersion': ['훅', '몰입', '반전', '떡밥'],
+    'hook_immersion': ['1단계', '2단계', '3단계', '4단계'],
     'classic': ['기', '승', '전', '결'],
     'pixar': ['', '', '', '', '', ''],  // 픽사는 단계 레이블 없이 단계명만 표시
-    'save_the_cat': ['오프닝', '설정', '촉매', 'B스토리', '재미와 게임', '중간점', '악당 접근', '모두 잃음', '어둠의 영혼', '3막 전환', '피날레', '최종 이미지'],
-    'star_moment': ['평범한 시작', '문제 발생', '위기 고조', '스타 모멘트', '해결과 여운']
+    'save_the_cat': ['1막', '1막', '1막', '2막A', '2막A', '중간점', '2막B', '2막B', '2막B', '3막', '3막', '3막'],
+    'star_moment': ['1단계', '2단계', '3단계', '4단계', '5단계']
   };
   
   return labels[framework]?.[index] || '';
@@ -213,7 +213,19 @@ export default function VideoPlanning() {
         setPlanningTitle(planning.title)
       }
       
-      setCurrentStep(planning.current_step || 1)
+      // 로드한 데이터에 따라 적절한 스텝으로 이동
+      let detectedStep = 1
+      if (planning.planning_data.storyboards && planning.planning_data.storyboards.length > 0) {
+        detectedStep = 5
+      } else if (planning.planning_data.shots && planning.planning_data.shots.length > 0) {
+        detectedStep = 4
+      } else if (planning.planning_data.scenes && planning.planning_data.scenes.length > 0) {
+        detectedStep = 3
+      } else if (planning.planning_data.stories && planning.planning_data.stories.length > 0) {
+        detectedStep = 2
+      }
+      
+      setCurrentStep(planning.current_step || detectedStep)
       setSuccessMessage('기획이 불러와졌습니다.')
       
       // 성공 메시지 3초 후 사라짐
@@ -715,11 +727,16 @@ export default function VideoPlanning() {
           }
         }))
         
-        // 씬에 스토리보드 정보 추가
+        // 씬에 스토리보드 정보 추가 (프롬프트 정보 포함)
         const updatedScenes = [...planningData.scenes]
+        const storyboardData = response.data.data.storyboards[0] || {}
+        // 프롬프트 정보가 있으면 추가
+        if (response.data.data.prompt_summary) {
+          storyboardData.prompt_summary = response.data.data.prompt_summary
+        }
         updatedScenes[sceneIndex] = {
           ...updatedScenes[sceneIndex],
-          storyboard: response.data.data.storyboards[0] || {}
+          storyboard: storyboardData
         }
         
         setPlanningData(prev => ({
@@ -2420,6 +2437,16 @@ export default function VideoPlanning() {
                                     scene.storyboard.description_kr) :
                                   (scene.storyboard.visual_description || scene.storyboard.description || '').substring(0, 50) + '...'}
                               </p>
+                              {scene.storyboard.prompt_summary && (
+                                <p className="storyboard-prompt-summary" style={{
+                                  fontSize: '12px',
+                                  color: '#666',
+                                  marginTop: '4px',
+                                  fontStyle: 'italic'
+                                }}>
+                                  프롬프트: {scene.storyboard.prompt_summary}
+                                </p>
+                              )}
                               {scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' && (
                                 <div className="storyboard-actions">
                                   <button 

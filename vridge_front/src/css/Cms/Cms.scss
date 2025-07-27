@@ -1511,6 +1511,16 @@
             }
             .member {
               padding: 8px 0 0;
+              
+              .member_header {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 12px 0;
+                margin-bottom: 16px;
+                border-bottom: 1px solid #e9ecef;
+              }
+              
               ul {
                 li {
                   display: flex;

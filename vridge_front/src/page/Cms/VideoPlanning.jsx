@@ -1832,7 +1832,7 @@ export default function VideoPlanning() {
             
             {/* 스토리 전개 강도 - 전개 방식 위로 이동 */}
             <div className="development-level">
-              <label>스토리 전개 강도</label>
+              <h4 className="section-title">스토리 전개 강도</h4>
               <div className="level-buttons">
                 <button
                   className={`level-btn ${planningOptions.developmentLevel === 'minimal' ? 'active' : ''}`}
@@ -1867,7 +1867,7 @@ export default function VideoPlanning() {
             
             {/* 스토리 전개 방식 선택 */}
             <div className="story-framework-section">
-              <h4>스토리 전개 방식</h4>
+              <h4 className="section-title">스토리 전개 방식</h4>
               <div className="framework-options">
                 <div 
                   className={`framework-card ${planningOptions.storyFramework === 'hook_immersion' ? 'active' : ''}`}
@@ -1914,7 +1914,7 @@ export default function VideoPlanning() {
             
             {/* 주인공 설정 섹션 */}
             <div className="character-settings">
-              <label>주인공 설정</label>
+              <h4 className="section-title">주인공 설정</h4>
               <div className="character-settings-content">
                 <div className="character-input-group">
                     <input
@@ -1977,14 +1977,18 @@ export default function VideoPlanning() {
                 </div>
               </div>
             
-            <textarea
-              className="planning-input"
-              value={planningData.planning}
-              onChange={(e) => setPlanningData(prev => ({ ...prev, planning: e.target.value }))}
-              placeholder="예시: 신제품 런칭을 위한 프로모션 영상을 제작하려고 합니다. 타겟은 20-30대 직장인이며, 제품의 혁신성과 실용성을 강조하고 싶습니다..."
-              rows={10}
-            />
+            <div className="planning-content-section">
+              <h4 className="section-title">기획안 내용</h4>
+              <textarea
+                className="planning-input"
+                value={planningData.planning}
+                onChange={(e) => setPlanningData(prev => ({ ...prev, planning: e.target.value }))}
+                placeholder="예시: 신제품 런칭을 위한 프로모션 영상을 제작하려고 합니다. 타겟은 20-30대 직장인이며, 제품의 혁신성과 실용성을 강조하고 싶습니다..."
+                rows={10}
+              />
+            </div>
             <div className="planning-actions">
+              <h4 className="section-title">기획안 제목</h4>
               <input
                 type="text"
                 className="planning-title-input"

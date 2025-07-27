@@ -944,6 +944,55 @@ def export_to_pdf(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def export_planning_to_pdf(request, planning_id):
+    """특정 기획을 PDF로 내보내기 (GET 방식)"""
+    try:
+        # 기획 조회
+        planning = VideoPlanning.objects.filter(
+            id=planning_id,
+            user=request.user
+        ).first()
+        
+        if not planning:
+            return Response({
+                'status': 'error',
+                'message': '기획을 찾을 수 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 기획 데이터 직렬화
+        serializer = VideoPlanningSerializer(planning)
+        planning_data = serializer.data
+        
+        # PDF 생성 서비스
+        pdf_service = PDFExportService()
+        
+        # PDF 생성
+        pdf_buffer = pdf_service.generate_pdf(planning_data)
+        
+        # 파일명 생성
+        title = planning_data.get('title', '영상기획안')
+        safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        filename = f"{safe_title}_기획안.pdf"
+        
+        # PDF 반환
+        response = HttpResponse(
+            pdf_buffer.getvalue(),
+            content_type='application/pdf'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error in export_planning_to_pdf: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'PDF 내보내기 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def export_to_google_slides(request):

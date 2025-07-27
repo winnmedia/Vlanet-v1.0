@@ -320,6 +320,35 @@
     }
   }
   
+  // 통일된 섹션 타이틀 스타일
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1f36;
+    margin-bottom: 24px;
+    position: relative;
+    padding-left: 16px;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, #1631F8 0%, #4318FF 100%);
+      border-radius: 2px;
+    }
+  }
+
+  .planning-content-section {
+    margin-bottom: 32px;
+    
+    .planning-input {
+      margin-top: -8px;
+    }
+  }
 
   .planning-header {
     text-align: center;
@@ -919,6 +948,7 @@
         width: 100%;
         padding: 12px 16px;
         margin-bottom: 16px;
+        margin-top: -8px;
         border: 2px solid #e0e0e0;
         border-radius: 8px;
         font-size: 15px;
@@ -1478,13 +1508,6 @@
     background: #f8f9fa;
     border-radius: 12px;
 
-    h4 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 20px;
-    }
-
     .framework-options {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1558,14 +1581,6 @@
       padding: 24px;
       border-radius: 10px;
       border: 1px solid #e0e0e0;
-
-      label {
-        display: block;
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 20px;
-      }
 
       .level-buttons {
         display: grid;
@@ -1715,39 +1730,6 @@
         background: linear-gradient(90deg, #1631F8 0%, #4318FF 100%);
       }
 
-      > label {
-        display: block;
-        font-size: 20px;
-        font-weight: 700;
-        color: #1a1f36;
-        margin-bottom: 28px;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding-bottom: 20px;
-        border-bottom: 3px solid #f0f4ff;
-        position: relative;
-
-        &::before {
-          content: "";
-          width: 40px;
-          height: 40px;
-          background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        &::after {
-          content: "👤";
-          position: absolute;
-          left: 12px;
-          top: 2px;
-          font-size: 20px;
-          filter: brightness(0) invert(1);
-        }
-      }
 
       .character-settings-content {
         display: flex;

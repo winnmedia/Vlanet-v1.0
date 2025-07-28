@@ -120,35 +120,47 @@ class FeedbackToggleImportant(View):
 class FeedbackReactionView(View):
     @user_validator
     def post(self, request, feedback_id):
-        """피드백에 반응 추가/변경"""
+        """피드백에 반응 추가/변경/삭제"""
         try:
             user = request.user
             data = json.loads(request.body)
             reaction_type = data.get('reaction')
             
-            if reaction_type not in ['like', 'dislike']:
+            # reaction_type이 None이면 반응 제거
+            valid_reactions = ['like', 'dislike', 'needExplanation', None]
+            if reaction_type not in valid_reactions:
                 return JsonResponse({"message": "잘못된 반응 타입입니다."}, status=400)
             
             comment = models.FeedBackComment.objects.get_or_none(id=feedback_id)
             if not comment:
                 return JsonResponse({"message": "존재하지 않는 피드백입니다."}, status=404)
             
-            # 기존 반응 확인
-            reaction, created = models.FeedbackReaction.objects.update_or_create(
-                comment=comment,
-                user=user,
-                defaults={'reaction': reaction_type}
-            )
+            # 반응 처리
+            if reaction_type is None:
+                # 반응 제거
+                models.FeedbackReaction.objects.filter(
+                    comment=comment,
+                    user=user
+                ).delete()
+            else:
+                # 반응 추가/업데이트
+                reaction, created = models.FeedbackReaction.objects.update_or_create(
+                    comment=comment,
+                    user=user,
+                    defaults={'reaction': reaction_type}
+                )
             
             # 반응 수 계산
             like_count = comment.reactions.filter(reaction='like').count()
             dislike_count = comment.reactions.filter(reaction='dislike').count()
+            need_explanation_count = comment.reactions.filter(reaction='needExplanation').count()
             
             return JsonResponse({
-                "message": "반응이 등록되었습니다.",
+                "message": "반응이 처리되었습니다.",
                 "reaction": reaction_type,
                 "like_count": like_count,
-                "dislike_count": dislike_count
+                "dislike_count": dislike_count,
+                "need_explanation_count": need_explanation_count
             }, status=200)
             
         except Exception as e:

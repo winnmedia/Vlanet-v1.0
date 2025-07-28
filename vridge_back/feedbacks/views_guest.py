@@ -182,7 +182,8 @@ class GuestFeedbackDetail(View):
                         SELECT c.id, c.security, c.title, c.section, c.text,
                                u.username, u.nickname, c.created,
                                COALESCE(c.display_mode, 'anonymous') as display_mode,
-                               c.nickname as custom_nickname
+                               c.nickname as custom_nickname,
+                               CONCAT(u.first_name, ' ', u.last_name) as full_name
                         FROM feedbacks_feedbackcomment c
                         JOIN users_user u ON c.user_id = u.id
                         WHERE c.feedback_id = %s AND c.parent_id IS NULL
@@ -192,6 +193,7 @@ class GuestFeedbackDetail(View):
                     for comment_row in cursor.fetchall():
                         display_mode = comment_row[8]
                         custom_nickname = comment_row[9]
+                        full_name = comment_row[10] if len(comment_row) > 10 else None
                         
                         # 표시 이름 결정
                         if display_mode == 'anonymous' or comment_row[1]:
@@ -199,7 +201,12 @@ class GuestFeedbackDetail(View):
                         elif display_mode == 'nickname' and custom_nickname:
                             display_name = custom_nickname
                         else:
-                            display_name = comment_row[6] or comment_row[5]
+                            # realname 모드
+                            if full_name and full_name.strip():
+                                display_name = full_name.strip()
+                            else:
+                                # 실명이 없으면 username 사용
+                                display_name = comment_row[5]
                         
                         feedback_comments.append({
                             'id': comment_row[0],

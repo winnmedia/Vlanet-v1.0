@@ -11,6 +11,7 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
   const [feedback, setFeedback] = useState([])
   const [expandedId, setExpandedId] = useState(null)
   const [feedbackReactions, setFeedbackReactions] = useState({}) // 피드백별 리액션 상태
+  const [importantFeedbacks, setImportantFeedbacks] = useState({}) // 중요 표시 상태
 
   useEffect(() => {
     let groupedObjects = {}
@@ -47,6 +48,15 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
       }
     })
     setFeedback(Object.entries(groupedObjects))
+    
+    // 중요 표시 초기화
+    const initialImportant = {}
+    feedback_data.forEach(obj => {
+      if (obj?.is_important) {
+        initialImportant[obj.id] = true
+      }
+    })
+    setImportantFeedbacks(initialImportant)
   }, [current_project])
   
   // 로컬 스토리지에서 리액션 데이터 불러오기
@@ -143,9 +153,14 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
                   >
                     {data.section || '시간 미지정'}
                   </div>
-                  {data.security && (
-                    <div className={styles['privacy-badge']}>🔒 비공개</div>
-                  )}
+                  <div className={styles['header-badges']}>
+                    {importantFeedbacks[data.id] && (
+                      <div className={styles['important-badge']}>⭐ 중요</div>
+                    )}
+                    {data.security && (
+                      <div className={styles['privacy-badge']}>🔒 비공개</div>
+                    )}
+                  </div>
                 </div>
                 <div className={styles['card-content']}>
                   <p>
@@ -174,7 +189,7 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
                     <span className={styles.count}>{feedbackReactions[`${data.id}_dislike`] || 0}</span>
                   </button>
                   <div className={styles['author-info']}>
-                    <span>{data.nickname || data.email || '익명'}</span>
+                    <span>{data.nickname || '익명'}</span>
                     <span className={styles.dot}>·</span>
                     <span>{moment(data.created).format('MM.DD HH:mm')}</span>
                   </div>

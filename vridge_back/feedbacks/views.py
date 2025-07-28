@@ -165,7 +165,8 @@ class FeedbackDetail(View):
                                        (SELECT COUNT(*) FROM feedbacks_feedbackreaction 
                                         WHERE comment_id = c.id AND reaction = 'dislike') as dislike_count,
                                        (SELECT reaction FROM feedbacks_feedbackreaction 
-                                        WHERE comment_id = c.id AND user_id = %s) as user_reaction
+                                        WHERE comment_id = c.id AND user_id = %s) as user_reaction,
+                                       CONCAT(u.first_name, ' ', u.last_name) as full_name
                                 FROM feedbacks_feedbackcomment c
                                 JOIN users_user u ON c.user_id = u.id
                                 WHERE c.feedback_id = %s AND c.parent_id IS NULL
@@ -179,6 +180,7 @@ class FeedbackDetail(View):
                                 like_count = comment_row[12] if len(comment_row) > 12 else 0
                                 dislike_count = comment_row[13] if len(comment_row) > 13 else 0
                                 user_reaction = comment_row[14] if len(comment_row) > 14 else None
+                                full_name = comment_row[15] if len(comment_row) > 15 else None
                                 
                                 # 표시할 이름 결정
                                 if display_mode == 'anonymous' or comment_row[1]:  # security가 True면 익명
@@ -188,8 +190,13 @@ class FeedbackDetail(View):
                                     display_name = custom_nickname
                                     display_email = None
                                 else:  # realname 모드
-                                    display_name = comment_row[6]  # 사용자 실명
-                                    display_email = comment_row[5]
+                                    # full_name이 빈 문자열이거나 공백만 있는 경우 처리
+                                    if full_name and full_name.strip():
+                                        display_name = full_name.strip()
+                                    else:
+                                        # 실명이 없으면 username 사용
+                                        display_name = comment_row[5]  # username
+                                    display_email = None
                                 
                                 comment_data = {
                                     'id': comment_row[0],
@@ -212,7 +219,8 @@ class FeedbackDetail(View):
                                 # 답글 가져오기
                                 cursor.execute("""
                                     SELECT c.id, c.text, u.username, u.nickname, c.created,
-                                           c.display_mode, c.nickname as custom_nickname
+                                           c.display_mode, c.nickname as custom_nickname,
+                                           CONCAT(u.first_name, ' ', u.last_name) as full_name
                                     FROM feedbacks_feedbackcomment c
                                     JOIN users_user u ON c.user_id = u.id
                                     WHERE c.parent_id = %s
@@ -223,6 +231,7 @@ class FeedbackDetail(View):
                                 for reply_row in cursor.fetchall():
                                     reply_display_mode = reply_row[5] if reply_row[5] else 'anonymous'
                                     reply_custom_nickname = reply_row[6]
+                                    reply_full_name = reply_row[7] if len(reply_row) > 7 else None
                                     
                                     # 답글 표시 이름 결정
                                     if reply_display_mode == 'anonymous':
@@ -230,7 +239,12 @@ class FeedbackDetail(View):
                                     elif reply_display_mode == 'nickname' and reply_custom_nickname:
                                         reply_display_name = reply_custom_nickname
                                     else:
-                                        reply_display_name = reply_row[3] or reply_row[2]
+                                        # realname 모드
+                                        if reply_full_name and reply_full_name.strip():
+                                            reply_display_name = reply_full_name.strip()
+                                        else:
+                                            # 실명이 없으면 username 사용
+                                            reply_display_name = reply_row[2]
                                     
                                     comment_data['replies'].append({
                                         'id': reply_row[0],
@@ -349,6 +363,14 @@ class FeedbackDetail(View):
             display_mode = data.get("display_mode", "anonymous")
             nickname = data.get("nickname", "")
             
+            # 코멘트 타입 처리 (코멘트 탭에서 사용)
+            comment_type = data.get("comment_type")
+            comment_field = data.get("comment")
+            
+            # comment 필드가 있으면 contents로 사용
+            if comment_field and not contents:
+                contents = comment_field
+            
             # display_mode가 nickname인 경우 처리
             if display_mode == "nickname":
                 if not nickname:
@@ -360,6 +382,9 @@ class FeedbackDetail(View):
                         import random
                         random_suffix = random.randint(1000, 9999)
                         nickname = f"익명사용자_{random_suffix}"
+            
+            # 타입 필드 처리
+            feed_type = data.get("type", "feedback")
             
             models.FeedBackComment.objects.create(
                 feedback=feedback,

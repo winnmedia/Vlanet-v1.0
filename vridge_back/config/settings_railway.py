@@ -17,7 +17,7 @@ IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
 
 # 보안 설정
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'  # 디버깅을 위해 임시로 True
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-railway-temp-key')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-F7Pkb5YWgLtMfrFpl6XA9N8P47OyYfjHdwpzzmkLfCVq-e5-te0OOfqdCH4KRm6-474')
 
 # 기본 Django 설정
 LANGUAGE_CODE = 'ko-kr'

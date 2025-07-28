@@ -2,24 +2,26 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
   padding: 0;
 
   // 코멘트 작성 섹션
   .opinion-input-section {
     .opinion-input-header {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e9ecef;
 
       .section-title {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 700;
         color: #1a1f36;
-        margin: 0 0 8px 0;
+        margin: 0 0 4px 0;
         letter-spacing: -0.02em;
       }
 
       .section-description {
-        font-size: 14px;
+        font-size: 13px;
         color: #6c757d;
         margin: 0;
         font-weight: 400;
@@ -29,27 +31,35 @@
 
   .opinion-input-area {
     .comment-type-selector {
-      margin-bottom: 20px;
+      margin-bottom: 12px;
       
       .type-buttons {
         display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
+        gap: 4px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        
+        &::-webkit-scrollbar {
+          height: 0;
+        }
       }
       
       .type-button {
         position: relative;
-        padding: 8px 16px;
+        padding: 6px 12px;
         border: 1px solid #e9ecef;
-        border-radius: 24px;
+        border-radius: 20px;
         background: white;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
+        white-space: nowrap;
+        min-width: fit-content;
         
         &:hover {
           transform: translateY(-1px);
@@ -65,8 +75,8 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
           
           svg {
             width: 100%;
@@ -75,34 +85,34 @@
         }
         
         .type-label {
-          font-size: 14px;
+          font-size: 13px;
         }
       }
     }
     
     .input-wrapper {
       position: relative;
-      background: #f8f9fa;
-      border-radius: 16px;
-      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      padding: 14px;
       border: 1px solid #e9ecef;
       transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
       
       &:focus-within {
-        background: white;
         border-color: #1631F8;
-        box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+        box-shadow: 0 0 0 2px rgba(22, 49, 248, 0.08), 0 2px 6px rgba(22, 49, 248, 0.1);
       }
     }
 
     .opinion-textarea {
       width: 100%;
-      min-height: 120px;
-      max-height: 300px;
+      min-height: 80px;
+      max-height: 200px;
       padding: 0;
       border: none;
       background: transparent;
-      font-size: 15px;
+      font-size: 14px;
       font-family: inherit;
       resize: vertical;
       line-height: 1.6;
@@ -119,6 +129,7 @@
 
       &::placeholder {
         color: #adb5bd;
+        font-size: 14px;
       }
     }
 
@@ -126,8 +137,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 12px;
-      padding-top: 12px;
+      margin-top: 8px;
+      padding-top: 8px;
       border-top: 1px solid #e9ecef;
 
       .input-info {
@@ -152,22 +163,22 @@
       }
 
       .submit-button {
-        padding: 8px 20px;
+        padding: 6px 16px;
         background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
         color: white;
         border: none;
-        border-radius: 20px;
-        font-size: 14px;
+        border-radius: 18px;
+        font-size: 13px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         
         svg {
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
         }
         
         .spinner {
@@ -201,14 +212,20 @@
 
   // 코멘트 목록 섹션
   .opinions-list {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 24px;
+    
     .list-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e9ecef;
       
       .list-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         color: #1a1f36;
         margin: 0;
@@ -216,33 +233,57 @@
       }
       
       .comment-count {
-        font-size: 14px;
-        font-weight: 500;
-        color: #6c757d;
-        background: #f8f9fa;
-        padding: 4px 12px;
-        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: white;
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+        padding: 4px 10px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(22, 49, 248, 0.15);
       }
     }
     
     .comments-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 8px;
+      
+      // 커스텀 스크롤바
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f0f1f3;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+        
+        &:hover {
+          background: #9ca3af;
+        }
+      }
     }
     
     .comment-item {
       position: relative;
-      background: white;
-      border: 1px solid #e9ecef;
+      background: #fafbfc;
+      border: 1px solid transparent;
       border-radius: 12px;
-      padding: 20px;
-      padding-left: 24px;
+      padding: 16px;
+      padding-left: 20px;
       transition: all 0.2s ease;
       
       &:hover {
-        border-color: #dee2e6;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        background: white;
+        border-color: #e9ecef;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       }
       
       .comment-type-indicator {
@@ -250,8 +291,9 @@
         left: 0;
         top: 0;
         bottom: 0;
-        width: 4px;
+        width: 3px;
         border-radius: 12px 0 0 12px;
+        opacity: 0.8;
       }
       
       .comment-content {
@@ -267,36 +309,38 @@
             gap: 12px;
             
             .comment-type-badge {
-              display: flex;
+              display: inline-flex;
               align-items: center;
-              gap: 4px;
-              padding: 4px 10px;
-              border-radius: 16px;
-              font-size: 12px;
+              gap: 3px;
+              padding: 3px 8px;
+              border-radius: 12px;
+              font-size: 11px;
               font-weight: 600;
+              letter-spacing: -0.01em;
               
               svg {
-                width: 12px;
-                height: 12px;
+                width: 11px;
+                height: 11px;
               }
             }
             
             .comment-author {
-              font-size: 14px;
-              font-weight: 500;
-              color: #495057;
+              font-size: 13px;
+              font-weight: 600;
+              color: #1a1f36;
             }
           }
           
           .comment-time {
-            font-size: 12px;
+            font-size: 11px;
             color: #adb5bd;
+            font-weight: 400;
           }
         }
         
         .comment-text {
-          font-size: 15px;
-          line-height: 1.6;
+          font-size: 14px;
+          line-height: 1.7;
           color: #212529;
           margin: 0 0 12px 0;
           white-space: pre-wrap;
@@ -308,14 +352,14 @@
           gap: 8px;
           
           .reaction-button {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 12px;
-            border: 1px solid #e9ecef;
-            background: white;
-            border-radius: 16px;
-            font-size: 13px;
+            gap: 3px;
+            padding: 3px 10px;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 14px;
+            font-size: 12px;
             font-weight: 500;
             color: #6c757d;
             cursor: pointer;
@@ -327,15 +371,21 @@
             }
             
             &:hover {
-              border-color: #1631F8;
+              border-color: #e9ecef;
               color: #1631F8;
-              background: #f0f4ff;
+              background: white;
+              transform: translateY(-1px);
             }
             
             &.active {
               border-color: #1631F8;
-              color: #1631F8;
-              background: #f0f4ff;
+              color: white;
+              background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+              box-shadow: 0 2px 6px rgba(22, 49, 248, 0.2);
+              
+              svg {
+                stroke: white;
+              }
             }
           }
         }

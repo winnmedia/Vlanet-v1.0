@@ -180,6 +180,7 @@ class FeedbackReaction(core_model.TimeStampedModel):
     REACTION_CHOICES = [
         ('like', '좋아요'),
         ('dislike', '싫어요'),
+        ('needExplanation', '추가설명필요'),
     ]
     
     comment = models.ForeignKey(
@@ -195,7 +196,7 @@ class FeedbackReaction(core_model.TimeStampedModel):
         verbose_name="사용자"
     )
     reaction = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=REACTION_CHOICES,
         verbose_name="반응"
     )

@@ -114,6 +114,31 @@ $spacing-xl: 24px;
           height: 16px;
         }
       }
+      
+      .header-badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      
+      .privacy-badge,
+      .important-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+      
+      .privacy-badge {
+        color: #868e96;
+        background: #f8f9fa;
+      }
+      
+      .important-badge {
+        color: #f59f00;
+        background: #fff3cd;
+        font-weight: 500;
+      }
     }
     
     // 카드 콘텐츠

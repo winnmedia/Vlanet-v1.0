@@ -84,18 +84,17 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   // 현재 사용자의 피드백만 필터링
   const My_Feedback = Array.isArray(feedbackList) 
     ? feedbackList.filter((i) => {
-        // 디버깅을 위해 상세 정보 출력
-        console.log('[FeedbackManage] Checking feedback:', i)
-        console.log('[FeedbackManage] Feedback email:', i.email)
-        console.log('[FeedbackManage] Current user:', user)
-        console.log('[FeedbackManage] Match result:', i.email === user)
         // email 필드로 필터링
         return i.email === user
       })
     : []
   
-  // 디버깅을 위해 모든 피드백도 표시
-  const All_Feedback = Array.isArray(feedbackList) ? feedbackList : []
+  // 프로젝트 관리자인 경우 모든 피드백 표시
+  const isProjectOwner = current_project?.owner_email === user
+  const isProjectManager = current_project?.manager === user
+  const showAllFeedbacks = isProjectOwner || isProjectManager
+  
+  const displayFeedbacks = showAllFeedbacks ? feedbackList : My_Feedback
 
   // 반응 토글 함수
   const toggleReaction = (feedbackId, reactionType) => {
@@ -205,20 +204,6 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       })
   }
 
-  // 디버깅 로그 추가
-  console.log('[FeedbackManage] Current project:', current_project)
-  console.log('[FeedbackManage] Feedback list:', feedbackList)
-  console.log('[FeedbackManage] My feedback:', My_Feedback)
-  console.log('[FeedbackManage] User:', user)
-  
-  // 첫 번째 피드백의 구조 확인
-  if (feedbackList.length > 0) {
-    console.log('[FeedbackManage] First feedback structure:', feedbackList[0])
-    console.log('[FeedbackManage] Feedback fields:', Object.keys(feedbackList[0]))
-  }
-
-  // 디버깅을 위해 일시적으로 모든 피드백 표시
-  const displayFeedbacks = All_Feedback.length > 0 ? All_Feedback : My_Feedback
 
   return (
     <div className={gridStyles['feedback-grid-container']}>
@@ -249,7 +234,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
               </div>
               
               <div className={gridStyles['card-content']}>
-                <p>{feedback.text}</p>
+                <p>{feedback.text || feedback.contents || feedback.comment}</p>
               </div>
               
               <div className={gridStyles['card-actions']}>
@@ -277,7 +262,8 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                   className={`${gridStyles['action-btn']} ${gridStyles.needExplanation} ${reactions[feedback.id] === 'needExplanation' ? gridStyles.active : ''}`}
                   onClick={() => toggleReaction(feedback.id, 'needExplanation')}
                 >
-                  <span>❓</span> 설명필요
+                  <span>❓</span>
+                  <span>추가설명필요</span>
                   {reactionCounts[feedback.id]?.needExplanation > 0 && (
                     <span className={gridStyles.count}>({reactionCounts[feedback.id].needExplanation})</span>
                   )}
@@ -296,8 +282,10 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 <button
                   className={`${gridStyles['action-btn']} ${gridStyles.important} ${importantFeedbacks[feedback.id] ? gridStyles.active : ''}`}
                   onClick={() => toggleImportant(feedback.id)}
+                  title={importantFeedbacks[feedback.id] ? '중요 해제' : '중요 표시'}
                 >
-                  <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span> 중요
+                  <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span>
+                  <span>중요</span>
                 </button>
               </div>
               

@@ -387,7 +387,6 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
         <video
           ref={videoRef}
           className={isLoading ? 'loading' : ''}
-          onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           crossOrigin="anonymous"
@@ -439,7 +438,11 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
           controls={false}
           preload="metadata"
         />
-        <div className="video-overlay" onClick={togglePlay}>
+        <div 
+          className="video-overlay" 
+          onClick={togglePlay}
+          style={{ cursor: 'pointer' }}
+        >
           {!isPlaying && (
             <div className="play-button">
               <svg viewBox="0 0 24 24" width="60" height="60">

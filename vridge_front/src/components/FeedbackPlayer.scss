@@ -4,7 +4,7 @@
   height: 100%;
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   border-radius: 16px;
-  overflow: hidden;
+  overflow: visible; // 콘솔이 잘리지 않도록 수정
   box-shadow: 0 8px 32px rgba(22, 49, 248, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -36,6 +36,7 @@
     align-items: center;
     justify-content: center;
     min-height: 0; // flexbox 높이 제한 해제
+    border-radius: 16px 16px 0 0; // 상단만 둥글게
 
     video {
       width: 100%;
@@ -60,12 +61,12 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      background: rgba(0, 0, 0, 0.2);
-      opacity: 0;
-      transition: opacity 0.3s;
+      background: transparent; // 항상 클릭 가능하도록 투명 배경
+      transition: background-color 0.3s;
+      z-index: 1; // 비디오 위에 표시
 
       &:hover {
-        opacity: 1;
+        background: rgba(0, 0, 0, 0.3); // 호버 시에만 어두운 배경
       }
 
       .play-button {
@@ -75,6 +76,8 @@
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         box-shadow: 0 4px 20px rgba(22, 49, 248, 0.4);
         position: relative;
+        opacity: 1;
+        transition: opacity 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         
         &::after {
           content: '';
@@ -232,6 +235,8 @@
     backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
+    z-index: 2; // 콘솔이 항상 위에 표시되도록
+    border-radius: 0 0 16px 16px; // 하단 모서리만 둥글게
     
     &::before {
       content: '';
@@ -329,6 +334,7 @@
       padding: 12px 20px;
       gap: 10px;
       color: white;
+      flex-wrap: nowrap; // 버튼이 줄바꿈되지 않도록
 
       .left-controls {
         display: flex;
@@ -416,6 +422,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        flex-shrink: 0; // 오른쪽 컨트롤이 축소되지 않도록
 
         // 통일된 아이콘 버튼 스타일 - VideoPlanet Design System
         .icon-button {
@@ -482,6 +489,7 @@
             color: white;
             font-weight: 600;
             box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
+            white-space: nowrap; // 텍스트 줄바꿈 방지
             
             &::after {
               content: '';
@@ -654,7 +662,13 @@
   .feedback-player {
     border-radius: 12px;
     
+    .video-container {
+      border-radius: 12px 12px 0 0;
+    }
+    
     .controls {
+      border-radius: 0 0 12px 12px;
+      
       .control-buttons {
         padding: 8px 12px;
         

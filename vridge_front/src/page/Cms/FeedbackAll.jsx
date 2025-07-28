@@ -20,7 +20,18 @@ export default function FeedbackAll() {
   const [projectData, setProjectData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const { user } = useSelector((s) => s.ProjectStore)
-  const projectId = router.query.projectId
+  
+  // URL에서 projectId 가져오기
+  const [projectId, setProjectId] = useState(null)
+  
+  useEffect(() => {
+    if (router.isReady) {
+      const id = router.query.projectId
+      console.log('[FeedbackAll] Router query:', router.query)
+      console.log('[FeedbackAll] Project ID from query:', id)
+      setProjectId(id)
+    }
+  }, [router.isReady, router.query])
 
   // 인증 체크
   useEffect(() => {
@@ -90,7 +101,40 @@ export default function FeedbackAll() {
     }
   }
 
-  if (isLoading) {
+  if (!projectId && router.isReady) {
+    return (
+      <PageTemplate>
+        <div className="cms_wrap">
+          <SideBar />
+          <main>
+            <div className="content feedbackall">
+              <div className="flex justify_center mt100">
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ marginBottom: '20px', color: '#dc3545', fontSize: '18px' }}>프로젝트를 찾을 수 없습니다</div>
+                  <p style={{ marginBottom: '20px' }}>유효한 프로젝트 ID가 필요합니다.</p>
+                  <button 
+                    onClick={() => navigate('/CmsHome')}
+                    style={{
+                      padding: '10px 20px',
+                      background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    홈으로 돌아가기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </PageTemplate>
+    )
+  }
+
+  if (isLoading || !router.isReady) {
     return (
       <PageTemplate>
         <div className="cms_wrap">
@@ -117,8 +161,11 @@ export default function FeedbackAll() {
         <main>
           <div className="content feedbackall">
             <div className="title">
-              <span onClick={() => navigate(`/Feedback/${projectId}`)}>
-                뒤로가기
+              <span 
+                onClick={() => navigate(`/Feedback/${projectId}`)}
+                style={{ cursor: 'pointer', marginRight: '10px' }}
+              >
+                ← 뒤로가기
               </span>
               {projectData?.name ? `${projectData.name} - 전체 피드백` : '전체 피드백'}
             </div>
@@ -169,24 +216,17 @@ export default function FeedbackAll() {
                           </div>
                           <p>{data.text}</p>
                           
-                          {/* 반응 표시 */}
-                          {data.reaction && (
+                          {/* 반응 카운트 표시 */}
+                          {(data.like_count > 0 || data.dislike_count > 0) && (
                             <div style={{ 
                               marginTop: '12px',
                               paddingTop: '12px',
                               borderTop: '1px solid #e9ecef',
                               display: 'flex',
-                              gap: '12px',
+                              gap: '16px',
                               alignItems: 'center'
                             }}>
-                              <span style={{ 
-                                fontSize: '12px', 
-                                color: '#666',
-                                fontWeight: '500' 
-                              }}>
-                                반응:
-                              </span>
-                              {data.reaction === 'like' && (
+                              {data.like_count > 0 && (
                                 <span style={{
                                   padding: '4px 12px',
                                   borderRadius: '16px',
@@ -198,10 +238,10 @@ export default function FeedbackAll() {
                                   alignItems: 'center',
                                   gap: '4px'
                                 }}>
-                                  <span>👍</span> 좋아요
+                                  <span>👍</span> {data.like_count}
                                 </span>
                               )}
-                              {data.reaction === 'dislike' && (
+                              {data.dislike_count > 0 && (
                                 <span style={{
                                   padding: '4px 12px',
                                   borderRadius: '16px',
@@ -213,10 +253,10 @@ export default function FeedbackAll() {
                                   alignItems: 'center',
                                   gap: '4px'
                                 }}>
-                                  <span>👎</span> 싫어요
+                                  <span>👎</span> {data.dislike_count}
                                 </span>
                               )}
-                              {data.reaction === 'needExplanation' && (
+                              {data.is_important && (
                                 <span style={{
                                   padding: '4px 12px',
                                   borderRadius: '16px',
@@ -228,9 +268,54 @@ export default function FeedbackAll() {
                                   alignItems: 'center',
                                   gap: '4px'
                                 }}>
-                                  <span>❓</span> 설명필요
+                                  <span>⭐</span> 중요
                                 </span>
                               )}
+                            </div>
+                          )}
+                          
+                          {/* 답글 표시 */}
+                          {data.replies && data.replies.length > 0 && (
+                            <div style={{
+                              marginTop: '16px',
+                              paddingLeft: '20px',
+                              borderLeft: '3px solid #e9ecef'
+                            }}>
+                              {data.replies.map((reply, replyIndex) => (
+                                <div key={replyIndex} style={{
+                                  padding: '8px 0',
+                                  borderBottom: replyIndex < data.replies.length - 1 ? '1px solid #f5f5f5' : 'none'
+                                }}>
+                                  <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    marginBottom: '4px'
+                                  }}>
+                                    <span style={{
+                                      fontWeight: '600',
+                                      fontSize: '14px',
+                                      color: '#495057'
+                                    }}>
+                                      {reply.nickname || '익명'}
+                                    </span>
+                                    <span style={{
+                                      fontSize: '12px',
+                                      color: '#6c757d'
+                                    }}>
+                                      {moment(reply.created).fromNow()}
+                                    </span>
+                                  </div>
+                                  <p style={{
+                                    margin: 0,
+                                    fontSize: '14px',
+                                    color: '#495057',
+                                    lineHeight: '1.5'
+                                  }}>
+                                    {reply.text}
+                                  </p>
+                                </div>
+                              ))}
                             </div>
                           )}
                         </li>

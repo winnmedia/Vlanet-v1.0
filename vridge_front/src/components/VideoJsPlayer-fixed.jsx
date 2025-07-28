@@ -218,6 +218,18 @@ const VideoJsPlayer = forwardRef(({
     
     playerRef.current = player
     
+    // 비디오 화면 클릭 시 play/pause 토글
+    player.tech_.on('click', function(e) {
+      // 컨트롤바 클릭은 무시
+      if (e.target.closest('.vjs-control-bar')) return
+      
+      if (player.paused()) {
+        player.play()
+      } else {
+        player.pause()
+      }
+    })
+    
     // 자동 재생 처리
     if (autoplay && player.readyState() >= 2) {
       setTimeout(() => {

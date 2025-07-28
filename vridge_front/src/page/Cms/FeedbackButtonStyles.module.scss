@@ -295,7 +295,87 @@ label.feedbackButtonPrimary {
   @extend .feedbackButtonSmall;
 }
 
+// 액션 버튼 그룹 스타일
+.actionButtonGroup {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+  margin-top: 16px;
+  border-top: 1px solid #e9ecef;
+  flex-wrap: nowrap;
+  
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 20px;
+    
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 2px;
+    }
+  }
+}
+
 // 비디오 컨트롤 버튼 그룹 스타일 - Feedback.jsx에서 인라인 스타일로 처리
+
+// 프로젝트 헤더 스타일
+.projectHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 20px;
+}
+
+.projectTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1f36;
+  letter-spacing: -0.5px;
+}
+
+.infoButton {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: #f8f9fa !important;
+  border: 1px solid #e0e0e0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  
+  svg {
+    width: 16px !important;
+    height: 16px !important;
+    color: #6c757d !important;
+  }
+  
+  &:hover {
+    background: #ffffff !important;
+    border-color: #1631F8 !important;
+    transform: scale(1.05) !important;
+    
+    svg {
+      color: #1631F8 !important;
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95) !important;
+  }
+}
 
 // 탭 메뉴 컨테이너
 .tabMenu {

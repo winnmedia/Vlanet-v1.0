@@ -44,7 +44,8 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
         comment_type: commentType, // 세부 코멘트 타입
         contents: trimmedOpinion, // contents 필드 추가
         title: '', // 빈 제목
-        secret: false // 기본값
+        secret: false, // 기본값
+        display_mode: 'anonymous' // 익명 모드 추가
       }, project_id)
 
       // 입력 필드 초기화
@@ -195,164 +196,149 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
 
   return (
     <div className="opinion-input-container">
-      <div className="opinion-input-area">
-        <div className="comment-type-selector">
-          <select 
-            value={commentType} 
-            onChange={(e) => setCommentType(e.target.value)}
-            className="comment-type-select"
-          >
-            {commentTypes.map(type => (
-              <option key={type.value} value={type.value}>
-                {type.label} 코멘트
-              </option>
-            ))}
-          </select>
+      <div className="opinion-input-section">
+        <div className="opinion-input-header">
+          <h3 className="section-title">코멘트 작성</h3>
+          <p className="section-description">프로젝트에 대한 의견을 자유롭게 남겨주세요</p>
         </div>
         
-        <textarea
-          value={opinion}
-          onChange={(e) => setOpinion(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="프로젝트에 대한 전반적인 의견을 작성해주세요.&#10;&#10;개선사항, 좋았던 점, 추가 요청사항 등 자유롭게 의견을 남겨주세요."
-          maxLength={500}
-          className="opinion-textarea"
-          autoFocus
-        />
-        
-        <div className="button-area">
-          <span className={`char-count ${opinion.length > 450 ? 'warning' : ''}`}>
-            {opinion.length} / 500
-          </span>
-          <button 
-            onClick={handleSubmit}
-            disabled={submitting || !opinion.trim()}
-            className="submit-button"
-          >
-            {submitting ? '등록 중...' : '코멘트 등록'}
-          </button>
+        <div className="opinion-input-area">
+          <div className="comment-type-selector">
+            <div className="type-buttons">
+              {commentTypes.map(type => (
+                <button
+                  key={type.value}
+                  onClick={() => setCommentType(type.value)}
+                  className={`type-button ${commentType === type.value ? 'active' : ''}`}
+                  style={{ 
+                    '--type-color': getCommentTypeColor(type.value),
+                    borderColor: commentType === type.value ? getCommentTypeColor(type.value) : '#e9ecef',
+                    backgroundColor: commentType === type.value ? `${getCommentTypeColor(type.value)}10` : 'white',
+                    color: commentType === type.value ? getCommentTypeColor(type.value) : '#6c757d'
+                  }}
+                >
+                  <span className="type-icon">{getCommentIcon(type.value)}</span>
+                  <span className="type-label">{type.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="input-wrapper">
+            <textarea
+              value={opinion}
+              onChange={(e) => setOpinion(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder={`${commentTypes.find(t => t.value === commentType)?.label || '일반'} 코멘트를 작성해주세요...`}
+              maxLength={500}
+              className="opinion-textarea"
+              autoFocus
+            />
+            
+            <div className="input-footer">
+              <div className="input-info">
+                <span className={`char-count ${opinion.length > 450 ? 'warning' : ''}`}>
+                  {opinion.length}/500
+                </span>
+                <span className="info-text">Shift + Enter로 줄바꿈</span>
+              </div>
+              <button 
+                onClick={handleSubmit}
+                disabled={submitting || !opinion.trim()}
+                className="submit-button"
+              >
+                {submitting ? (
+                  <>
+                    <span className="spinner"></span>
+                    등록 중
+                  </>
+                ) : (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    등록
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* 코멘트 목록 표시 */}
       {opinions.length > 0 && (
-        <div className="opinions-list" style={{ marginTop: '24px' }}>
-          <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', color: '#212529' }}>
-            등록된 코멘트 ({opinions.length})
-          </h4>
-          {opinions.map((comment, index) => {
-            const commentTypeValue = comment.comment_type || 'general'
-            const typeIcon = getCommentIcon(commentTypeValue)
-            const typeColor = getCommentTypeColor(commentTypeValue)
-            const typeLabel = commentTypes.find(t => t.value === commentTypeValue)?.label || '일반'
-            
-            return (
-              <div key={comment.id || index} style={{
-                padding: '16px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '12px',
-                marginBottom: '12px',
-                border: '1px solid #e9ecef',
-                transition: 'all 0.2s ease'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  {/* 코멘트 타입 아이콘 */}
-                  <div style={{
-                    minWidth: '32px',
-                    height: '32px',
-                    backgroundColor: `${typeColor}20`,
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: typeColor
-                  }}>
-                    {typeIcon}
-                  </div>
+        <div className="opinions-list">
+          <div className="list-header">
+            <h3 className="list-title">등록된 코멘트</h3>
+            <span className="comment-count">{opinions.length}개</span>
+          </div>
+          
+          <div className="comments-container">
+            {opinions.map((comment, index) => {
+              const commentTypeValue = comment.comment_type || 'general'
+              const typeIcon = getCommentIcon(commentTypeValue)
+              const typeColor = getCommentTypeColor(commentTypeValue)
+              const typeLabel = commentTypes.find(t => t.value === commentTypeValue)?.label || '일반'
+              const userReactionKey = `user_reaction_${comment.id}_${user}`
+              const currentUserReaction = typeof window !== 'undefined' && localStorage.getItem(userReactionKey)
+              
+              return (
+                <div key={comment.id || index} className="comment-item">
+                  <div className="comment-type-indicator" style={{ backgroundColor: typeColor }}></div>
                   
-                  <div style={{ flex: 1 }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '8px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          color: typeColor,
-                          backgroundColor: `${typeColor}10`,
-                          padding: '2px 8px',
-                          borderRadius: '12px'
-                        }}>
-                          {typeLabel}
+                  <div className="comment-content">
+                    <div className="comment-header">
+                      <div className="comment-meta">
+                        <span className="comment-type-badge" style={{ color: typeColor, backgroundColor: `${typeColor}10` }}>
+                          {typeIcon}
+                          <span>{typeLabel}</span>
                         </span>
-                        <span style={{ fontSize: '13px', color: '#6c757d' }}>
-                          {comment.nickname || '익명'}
-                        </span>
+                        <span className="comment-author">{comment.nickname || '익명'}</span>
                       </div>
-                      <span style={{ fontSize: '12px', color: '#adb5bd' }}>
-                        {new Date(comment.created).toLocaleString('ko-KR')}
-                      </span>
+                      <time className="comment-time">
+                        {new Date(comment.created).toLocaleString('ko-KR', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </time>
                     </div>
                     
-                    <p style={{ 
-                      margin: '0',
-                      fontSize: '14px',
-                      lineHeight: '1.6',
-                      color: '#495057',
-                      whiteSpace: 'pre-wrap'
-                    }}>
+                    <p className="comment-text">
                       {comment.text || comment.comment || comment.contents}
                     </p>
                     
-                    {/* 리액션 버튼들 */}
-                    <div style={{ 
-                      display: 'flex', 
-                      gap: '8px', 
-                      marginTop: '12px'
-                    }}>
+                    <div className="comment-actions">
                       <button
                         onClick={() => handleReaction(comment.id, 'like')}
-                        style={{
-                          background: 'white',
-                          border: '1px solid #e9ecef',
-                          borderRadius: '16px',
-                          padding: '4px 12px',
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          transition: 'all 0.2s ease'
-                        }}
+                        className={`reaction-button ${currentUserReaction === 'like' ? 'active' : ''}`}
                       >
-                        👍 {commentReactions[`${comment.id}_like`] || 0}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                          <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" 
+                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>{commentReactions[`${comment.id}_like`] || 0}</span>
                       </button>
+                      
                       <button
                         onClick={() => handleReaction(comment.id, 'love')}
-                        style={{
-                          background: 'white',
-                          border: '1px solid #e9ecef',
-                          borderRadius: '16px',
-                          padding: '4px 12px',
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          transition: 'all 0.2s ease'
-                        }}
+                        className={`reaction-button ${currentUserReaction === 'love' ? 'active' : ''}`}
                       >
-                        ❤️ {commentReactions[`${comment.id}_love`] || 0}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" 
+                                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>{commentReactions[`${comment.id}_love`] || 0}</span>
                       </button>
                     </div>
                   </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       )}
     </div>

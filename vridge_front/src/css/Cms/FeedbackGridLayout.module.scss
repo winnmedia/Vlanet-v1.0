@@ -1,6 +1,8 @@
 // 피드백 페이지 그리드 레이아웃 시스템
 // Version: 1.0 - 반응형 그리드 구현
 
+@use 'sass:color';
+
 // 브랜드 색상 (디자인 시스템 준수)
 $brand-blue: #1631F8;
 $brand-blue-hover: #0F23C9;
@@ -143,7 +145,9 @@ $spacing-xl: 24px;
       
       .action-btn {
         flex: 0 0 auto;
-        padding: 4px 10px;
+        min-width: 60px; // 최소 너비 설정
+        width: 60px; // 고정 너비 설정
+        padding: 4px 0; // 좌우 패딩 제거, 상하만 유지
         border-radius: 16px;
         border: 1px solid #e9ecef;
         background: white;
@@ -154,6 +158,7 @@ $spacing-xl: 24px;
         transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
+        justify-content: center; // 중앙 정렬
         gap: 3px;
         white-space: nowrap;
         
@@ -190,15 +195,17 @@ $spacing-xl: 24px;
         }
         
         &.needExplanation {
+          width: 110px; // 텍스트가 긴 버튼은 더 넓게
+          
           &.active {
             background: rgba($warning-color, 0.1);
             border-color: $warning-color;
-            color: darken($warning-color, 10%);
+            color: color.adjust($warning-color, $lightness: -10%);
           }
           
           &:hover:not(.active) {
             border-color: $warning-color;
-            color: darken($warning-color, 10%);
+            color: color.adjust($warning-color, $lightness: -10%);
           }
         }
         
@@ -210,15 +217,17 @@ $spacing-xl: 24px;
         }
         
         &.important {
+          width: 70px; // 중요 버튼은 조금 더 넓게
+          
           &.active {
             background: rgba($warning-color, 0.1);
             border-color: $warning-color;
-            color: darken($warning-color, 15%);
+            color: color.adjust($warning-color, $lightness: -15%);
           }
           
           &:hover:not(.active) {
             border-color: $warning-color;
-            color: darken($warning-color, 15%);
+            color: color.adjust($warning-color, $lightness: -15%);
           }
         }
         
@@ -256,7 +265,8 @@ $spacing-xl: 24px;
         }
         
         button {
-          padding: 6px 12px;
+          width: 60px; // 고정 너비 설정
+          padding: 6px 0; // 좌우 패딩 제거
           background: $brand-blue;
           color: white;
           border: none;
@@ -266,6 +276,7 @@ $spacing-xl: 24px;
           cursor: pointer;
           transition: all 0.2s ease;
           white-space: nowrap;
+          text-align: center;
           
           &:hover {
             background: $brand-blue-hover;

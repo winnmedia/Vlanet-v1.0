@@ -11,6 +11,15 @@
   border-radius: 12px;
   padding: 16px;
   
+  .guestInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
   .feedbackModeOptions {
     display: flex;
     gap: 12px;

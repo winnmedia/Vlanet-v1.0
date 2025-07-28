@@ -1,13 +1,25 @@
-// Modern Video Player Styles
+// Modern Video Player Styles - VideoPlanet Brand
 .feedback-player {
   width: 100%;
   height: 100%;
-  background: #000;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 32px rgba(22, 49, 248, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(22, 49, 248, 0.5), transparent);
+    opacity: 0.6;
+  }
   
   // 모바일에서 터치 제스처 지원
   @media (max-width: 768px) {
@@ -31,6 +43,11 @@
       max-width: 100%;
       max-height: 100%;
       object-fit: contain; // 비디오 비율 유지하며 컨테이너에 맞춤
+      transition: opacity 0.3s ease-out;
+      
+      &.loading {
+        opacity: 0.5;
+      }
     }
 
     .video-overlay {
@@ -52,13 +69,39 @@
       }
 
       .play-button {
-        background: rgba(0, 0, 0, 0.7);
+        background: linear-gradient(135deg, #1631F8 0%, #0f23c4 100%);
         border-radius: 50%;
         padding: 20px;
-        transition: transform 0.3s;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 4px 20px rgba(22, 49, 248, 0.4);
+        position: relative;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          border-radius: 50%;
+          padding: 2px;
+          background: linear-gradient(135deg, #1631F8, #4a5eff);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
 
         &:hover {
           transform: scale(1.1);
+          box-shadow: 0 6px 30px rgba(22, 49, 248, 0.6);
+          
+          &::after {
+            opacity: 1;
+          }
+        }
+        
+        &:active {
+          transform: scale(1.05);
         }
       }
     }
@@ -82,15 +125,18 @@
       .spinner {
         width: 50px;
         height: 50px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        border-top-color: white;
+        border: 3px solid rgba(22, 49, 248, 0.2);
+        border-top-color: #1631F8;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        box-shadow: 0 0 20px rgba(22, 49, 248, 0.3);
       }
       
       p {
         margin-top: 20px;
         font-size: 16px;
+        font-weight: 500;
+        animation: fadeIn 0.5s ease-out;
       }
       
       .error-url {
@@ -104,6 +150,28 @@
     
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+    
+    // Smooth fade-in animation
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    // Pulse animation for loading
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
     }
     
     // Keyboard help overlay
@@ -160,18 +228,55 @@
   }
 
   .controls {
-    background: rgba(0, 0, 0, 0.9);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.98), rgba(20, 20, 20, 0.95));
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(22, 49, 248, 0.3), transparent);
+    }
 
     .progress-bar {
       position: relative;
       height: 4px;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
       cursor: pointer;
-      transition: height 0.2s;
+      transition: height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transform: translateX(-100%);
+        animation: shimmer 2s infinite;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
 
       &:hover {
-        height: 6px;
+        height: 8px;
+        
+        &::before {
+          opacity: 1;
+        }
+      }
+      
+      @keyframes shimmer {
+        to {
+          transform: translateX(100%);
+        }
       }
 
       .seek-slider {
@@ -191,9 +296,29 @@
         top: 0;
         left: 0;
         height: 100%;
-        background: #0058da;
+        background: linear-gradient(90deg, #1631F8 0%, #4a5eff 100%);
         pointer-events: none;
         transition: width 0.1s;
+        box-shadow: 0 0 8px rgba(22, 49, 248, 0.6);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          right: -4px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 12px;
+          height: 12px;
+          background: #fff;
+          border-radius: 50%;
+          box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.3), 0 2px 8px rgba(22, 49, 248, 0.6);
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+      }
+      
+      &:hover .progress-fill::after {
+        opacity: 1;
       }
     }
 
@@ -212,20 +337,40 @@
         flex: 1;
 
         .play-pause {
-          background: none;
-          border: none;
-          padding: 8px;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          padding: 10px;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           border-radius: 50%;
-          transition: all 0.3s;
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           color: white;
+          position: relative;
+          overflow: hidden;
+          
+          &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(22, 49, 248, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
 
           &:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(22, 49, 248, 0.15);
+            border-color: rgba(22, 49, 248, 0.5);
             transform: scale(1.05);
+            
+            &::before {
+              opacity: 1;
+            }
+          }
+          
+          &:active {
+            transform: scale(0.95);
           }
         }
 
@@ -258,9 +403,12 @@
 
         .time-display {
           font-size: 14px;
-          color: #ccc;
+          color: rgba(255, 255, 255, 0.8);
           font-variant-numeric: tabular-nums;
           user-select: none;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
         }
       }
 
@@ -269,21 +417,25 @@
         align-items: center;
         gap: 8px;
 
-        // 통일된 아이콘 버튼 스타일
+        // 통일된 아이콘 버튼 스타일 - VideoPlanet Design System
         .icon-button {
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          color: white;
-          padding: 8px;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: rgba(255, 255, 255, 0.9);
+          padding: 8px 12px;
           cursor: pointer;
-          border-radius: 6px;
-          transition: all 0.3s;
+          border-radius: 8px;
+          transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 6px;
+          gap: 8px;
           font-size: 13px;
+          font-weight: 500;
           min-height: 36px;
+          position: relative;
+          overflow: hidden;
+          backdrop-filter: blur(10px);
           
           svg {
             display: block;
@@ -296,35 +448,88 @@
               display: block;
             }
           }
+          
+          &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
 
           &:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            color: white;
+            
+            &::before {
+              opacity: 1;
+            }
           }
           
           &:active {
             transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
           }
           
-          // 코멘트 버튼은 강조
-          &:first-child {
-            background: #0058da;
-            border-color: #0058da;
+          // 코멘트 버튼은 브랜드 색상으로 강조
+          &.comment-button {
+            background: linear-gradient(135deg, #1631F8 0%, #0f23c4 100%);
+            border: 1px solid transparent;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
+            
+            &::after {
+              content: '';
+              position: absolute;
+              inset: -1px;
+              border-radius: 8px;
+              padding: 1px;
+              background: linear-gradient(135deg, #4a5eff, #1631F8);
+              -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+              mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+              -webkit-mask-composite: xor;
+              mask-composite: exclude;
+              opacity: 0;
+              transition: opacity 0.3s;
+            }
             
             &:hover {
-              background: #0047b8;
-              border-color: #0047b8;
+              background: linear-gradient(135deg, #1a35ff 0%, #1127d8 100%);
+              transform: translateY(-2px) scale(1.02);
+              box-shadow: 0 6px 20px rgba(22, 49, 248, 0.4);
+              
+              &::after {
+                opacity: 1;
+              }
+            }
+            
+            &:active {
+              transform: translateY(0) scale(0.98);
             }
           }
           
           &.rate-button {
-            padding: 8px 12px;
-            min-width: 60px;
+            padding: 8px 14px;
+            min-width: 65px;
+            background: rgba(255, 255, 255, 0.08);
             
             .rate-text {
               font-weight: 600;
               font-size: 13px;
+              background: linear-gradient(135deg, #fff, #e0e0e0);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+            }
+            
+            &:hover {
+              background: rgba(22, 49, 248, 0.15);
+              border-color: rgba(22, 49, 248, 0.3);
             }
           }
         }
@@ -408,9 +613,47 @@
   }
 }
 
+// 툴팁 스타일
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.95);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  margin-bottom: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(20, 20, 20, 0.95);
+  }
+}
+
+// 호버 시 툴팁 표시
+.icon-button:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
 // 모바일 반응형
 @media (max-width: 768px) {
   .feedback-player {
+    border-radius: 12px;
+    
     .controls {
       .control-buttons {
         padding: 8px 12px;
@@ -429,7 +672,24 @@
           .icon-button {
             padding: 6px;
             min-height: 32px;
+            
+            .button-text {
+              display: none !important;
+            }
           }
+        }
+      }
+    }
+  }
+}
+
+// 다크 모드 지원
+@media (prefers-color-scheme: dark) {
+  .feedback-player {
+    .controls {
+      .icon-button {
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
         }
       }
     }

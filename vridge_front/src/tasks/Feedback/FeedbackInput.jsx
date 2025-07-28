@@ -105,88 +105,90 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
             <span>게스트: {guestSession.guestName}</span>
           </div>
         ) : (
-        <div className={styles.feedbackModeOptions}>
-          <label className={feedbackMode === 'anonymous' ? styles.active : ''}>
-            <input
-              type="radio"
-              name="feedbackMode"
-              value="anonymous"
-              checked={feedbackMode === 'anonymous'}
-              onChange={(e) => {
-                setFeedbackMode(e.target.value)
-                set_inputs(prevInputs => ({
-                  ...prevInputs,
-                  secret: 'anonymous'
-                }))
-              }}
-            />
-            <span className={styles.radioLabel}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-              익명
-            </span>
-          </label>
-          
-          <label className={feedbackMode === 'nickname' ? styles.active : ''}>
-            <input
-              type="radio"
-              name="feedbackMode"
-              value="nickname"
-              checked={feedbackMode === 'nickname'}
-              onChange={(e) => {
-                setFeedbackMode(e.target.value)
-                set_inputs(prevInputs => ({
-                  ...prevInputs,
-                  secret: 'nickname'
-                }))
-              }}
-            />
-            <span className={styles.radioLabel}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2"/>
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-              닉네임
-            </span>
-          </label>
-          
-          <label className={feedbackMode === 'realname' ? styles.active : ''}>
-            <input
-              type="radio"
-              name="feedbackMode"
-              value="realname"
-              checked={feedbackMode === 'realname'}
-              onChange={(e) => {
-                setFeedbackMode(e.target.value)
-                set_inputs(prevInputs => ({
-                  ...prevInputs,
-                  secret: 'realname'
-                }))
-              }}
-            />
-            <span className={styles.radioLabel}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-              실명
-            </span>
-          </label>
-        </div>
-        )}
-        
-        {/* 닉네임 모드일 때 닉네임 입력 필드 표시 (게스트 모드가 아닐 때만) */}
-        {!isGuestMode && feedbackMode === 'nickname' && (
-          <div className={styles.nicknameInput}>
-            <input
-              type="text"
-              name="nickname"
-              value={nickname}
-              onChange={onChange}
-              placeholder="사용할 닉네임을 입력하세요"
-              maxLength={20}
-            />
-          </div>
+          <>
+            <div className={styles.feedbackModeOptions}>
+              <label className={feedbackMode === 'anonymous' ? styles.active : ''}>
+                <input
+                  type="radio"
+                  name="feedbackMode"
+                  value="anonymous"
+                  checked={feedbackMode === 'anonymous'}
+                  onChange={(e) => {
+                    setFeedbackMode(e.target.value)
+                    set_inputs(prevInputs => ({
+                      ...prevInputs,
+                      secret: 'anonymous'
+                    }))
+                  }}
+                />
+                <span className={styles.radioLabel}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  익명
+                </span>
+              </label>
+              
+              <label className={feedbackMode === 'nickname' ? styles.active : ''}>
+                <input
+                  type="radio"
+                  name="feedbackMode"
+                  value="nickname"
+                  checked={feedbackMode === 'nickname'}
+                  onChange={(e) => {
+                    setFeedbackMode(e.target.value)
+                    set_inputs(prevInputs => ({
+                      ...prevInputs,
+                      secret: 'nickname'
+                    }))
+                  }}
+                />
+                <span className={styles.radioLabel}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  닉네임
+                </span>
+              </label>
+              
+              <label className={feedbackMode === 'realname' ? styles.active : ''}>
+                <input
+                  type="radio"
+                  name="feedbackMode"
+                  value="realname"
+                  checked={feedbackMode === 'realname'}
+                  onChange={(e) => {
+                    setFeedbackMode(e.target.value)
+                    set_inputs(prevInputs => ({
+                      ...prevInputs,
+                      secret: 'realname'
+                    }))
+                  }}
+                />
+                <span className={styles.radioLabel}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  실명
+                </span>
+              </label>
+            </div>
+            
+            {/* 닉네임 모드일 때 닉네임 입력 필드 표시 */}
+            {feedbackMode === 'nickname' && (
+              <div className={styles.nicknameInput}>
+                <input
+                  type="text"
+                  name="nickname"
+                  value={nickname}
+                  onChange={onChange}
+                  placeholder="사용할 닉네임을 입력하세요"
+                  maxLength={20}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
       <div className={`${styles.timeInput} input-group`}>

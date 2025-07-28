@@ -1511,9 +1511,7 @@ export default function Feedback() {
                       {currentItem && currentItem.tab === '피드백 관리' && (
                         <button
                           onClick={() =>
-                            navigate('/FeedbackAll', {
-                              state: { ...current_project, user: user },
-                            })
+                            navigate(`/FeedbackAll?projectId=${project_id}`)
                           }
                           className={styles.feedbackButtonSecondary}
                         >

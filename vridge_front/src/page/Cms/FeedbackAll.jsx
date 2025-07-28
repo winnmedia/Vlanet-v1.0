@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useLocation } from '../../util/nextNavigation'
+import { useSelector } from 'react-redux'
+import { GetFeedBack } from '../../api/feedback'
+import { checkSession } from '../../util/util'
 
 /* 상단 이미지 - 샘플, 기본 */
 /* 상단 이미지 - 샘플, 기본 */
@@ -10,37 +13,101 @@ import moment from 'moment'
 import 'moment/locale/ko'
 
 export default function FeedbackAll() {
-  const { navigate } = useRouter()
+  const router = useRouter()
+  const { navigate } = router
   const [feedback, setFeedback] = useState([])
   const [reactions, setReactions] = useState({})
-  const state = useLocation().state || {}
-  const { user } = state
+  const [projectData, setProjectData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const { user } = useSelector((s) => s.ProjectStore)
+  const projectId = router.query.projectId
 
+  // 인증 체크
   useEffect(() => {
-    let groupedObjects = {}
-    const feedback_data = state.feedback || []
-    feedback_data.forEach((obj) => {
-      const createdDate = moment(obj.created).format('YYYY.MM.DD.dd')
-      if (groupedObjects.hasOwnProperty(createdDate)) {
-        groupedObjects[createdDate].push(obj)
-      } else {
-        groupedObjects[createdDate] = [obj]
-      }
-    })
-    setFeedback(Object.entries(groupedObjects))
+    const session = checkSession()
+    if (!session) {
+      navigate('/Login', { replace: true })
+    }
   }, [])
 
+  // 프로젝트 데이터 가져오기
+  useEffect(() => {
+    if (!projectId) {
+      console.log('[FeedbackAll] No project ID')
+      return
+    }
+
+    console.log('[FeedbackAll] Loading project data for ID:', projectId)
+    setIsLoading(true)
+    
+    GetFeedBack(projectId)
+      .then((res) => {
+        console.log('[FeedbackAll] Project data loaded:', res.data)
+        setProjectData(res.data.result)
+        
+        // 피드백 데이터 그룹화
+        let groupedObjects = {}
+        const feedback_data = res.data.result?.feedback || []
+        feedback_data.forEach((obj) => {
+          const createdDate = moment(obj.created).format('YYYY.MM.DD.dd')
+          if (groupedObjects.hasOwnProperty(createdDate)) {
+            groupedObjects[createdDate].push(obj)
+          } else {
+            groupedObjects[createdDate] = [obj]
+          }
+        })
+        setFeedback(Object.entries(groupedObjects))
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        console.error('[FeedbackAll] Failed to load project:', err)
+        if (err.response?.status === 401) {
+          window.alert('로그인이 필요합니다.')
+          navigate('/Login')
+        } else if (err.response?.status === 404) {
+          window.alert('프로젝트를 찾을 수 없습니다.')
+          navigate('/CmsHome')
+        } else {
+          window.alert('데이터를 불러오는 중 오류가 발생했습니다.')
+        }
+        setIsLoading(false)
+      })
+  }, [projectId])
+
   function IsAdmin(project) {
+    if (!project || !user) return false
+    
     if (
       user === project.owner_email ||
-      project.member_list.filter(
+      (project.member_list && Array.isArray(project.member_list) && 
+       project.member_list.filter(
         (member, index) => member.email === user && member.rating === 'manager',
-      ).length > 0
+      ).length > 0)
     ) {
       return true
     } else {
       return false
     }
+  }
+
+  if (isLoading) {
+    return (
+      <PageTemplate>
+        <div className="cms_wrap">
+          <SideBar />
+          <main>
+            <div className="content feedbackall">
+              <div className="flex justify_center mt100">
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ marginBottom: '20px' }}>로딩 중...</div>
+                  <p>피드백 데이터를 불러오는 중입니다.</p>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </PageTemplate>
+    )
   }
 
   return (
@@ -50,10 +117,10 @@ export default function FeedbackAll() {
         <main>
           <div className="content feedbackall">
             <div className="title">
-              <span onClick={() => navigate(`/Feedback/${state.id}`)}>
+              <span onClick={() => navigate(`/Feedback/${projectId}`)}>
                 뒤로가기
               </span>
-              전체 피드백
+              {projectData?.name ? `${projectData.name} - 전체 피드백` : '전체 피드백'}
             </div>
             <div className="list">
               {feedback.length > 0 ? (
@@ -68,7 +135,8 @@ export default function FeedbackAll() {
                           <div className="flex align_center">
                             <div
                               className={
-                                IsAdmin(state)
+                                data.email === projectData?.owner_email || 
+                                projectData?.member_list?.find(m => m.email === data.email && m.rating === 'manager')
                                   ? 'img_box admin'
                                   : 'img_box basic'
                               }
@@ -78,10 +146,14 @@ export default function FeedbackAll() {
                                 <>
                                   <span className="name">
                                     {data.nickname}
-                                    {IsAdmin(state) ? (
+                                    {data.email === projectData?.owner_email ? (
                                       <small className="admin">(관리자)</small>
                                     ) : (
-                                      <small className="basic">(일반)</small>
+                                      projectData?.member_list?.find(m => m.email === data.email && m.rating === 'manager') ? (
+                                        <small className="admin">(관리자)</small>
+                                      ) : (
+                                        <small className="basic">(일반)</small>
+                                      )
                                     )}
                                   </span>
                                   <span className="email">{data.email}</span>

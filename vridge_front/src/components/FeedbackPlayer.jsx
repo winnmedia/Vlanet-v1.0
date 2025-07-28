@@ -386,6 +386,7 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
         )}
         <video
           ref={videoRef}
+          className={isLoading ? 'loading' : ''}
           onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
@@ -488,13 +489,15 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
               </svg>
-              <span className="button-text">현재 시점에 피드백</span>
+              <span className="button-text">피드백 추가</span>
+              <span className="tooltip">현재 시점에 피드백 추가 (C)</span>
             </button>
             
             <button onClick={handleScreenshot} className="icon-button" title="스크린샷 찍기">
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path fill="currentColor" d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
               </svg>
+              <span className="tooltip">스크린샷 (S)</span>
             </button>
 
             <div className="volume-control" onMouseEnter={() => setShowVolumeSlider(true)} onMouseLeave={() => setShowVolumeSlider(false)}>
@@ -508,6 +511,7 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
                     <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
                   )}
                 </svg>
+                <span className="tooltip">볼륨 (↑/↓)</span>
               </button>
               <div className={`volume-slider-container ${showVolumeSlider ? 'show' : ''}`}>
                 <input
@@ -529,6 +533,7 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
                 handlePlaybackRateChange(rates[nextIndex]);
               }}>
                 <span className="rate-text">{playbackRate}x</span>
+                <span className="tooltip">재생 속도</span>
               </button>
             </div>
 
@@ -550,6 +555,7 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
                   <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
                 )}
               </svg>
+              <span className="tooltip">전체화면 (F)</span>
             </button>
           </div>
         </div>

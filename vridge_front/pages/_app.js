@@ -40,7 +40,7 @@ import '../src/tasks/Project/ProcessDateEnhanced.scss'
 // import '../src/css/Cms/UXEnhancements.scss' // removed - undefined mixins
 import '../src/css/Cms/ProjectInfoModal.scss'
 import '../src/components/ProjectDashboard.scss'
-import '../src/components/ProjectPhaseBoard.scss'
+// import '../src/components/ProjectPhaseBoard.scss' // Now using CSS Module
 import '../src/components/ProjectForm.scss'
 // 피드백 페이지 스타일
 import '../src/css/Cms/FeedbackPage.scss'

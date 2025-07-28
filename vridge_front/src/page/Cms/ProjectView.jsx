@@ -512,6 +512,8 @@ export default function ProjectView() {
 }
 
 const Info = React.memo(function ({ current_project, user, profileImage, is_admin, refetch, project_id }) {
+  const router = useRouter()
+  const navigate = router.push
   const [isExpanded, setIsExpanded] = useState(false)
   const contentRef = useRef()
   const [contentHeight, setContentHeight] = useState(0)
@@ -553,6 +555,34 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
             최종 업데이트 날짜 |{' '}
             {moment(current_project.updated).format('YYYY.MM.DD')}
           </div>
+          {is_admin && (
+            <button 
+              onClick={() => navigate(`/project/${project_id}/edit`)}
+              style={{
+                background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(22, 49, 248, 0.2)',
+                whiteSpace: 'nowrap'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = '0 2px 4px rgba(22, 49, 248, 0.2)'
+              }}
+            >
+              프로젝트 설정
+            </button>
+          )}
           <button className={isExpanded ? 'on' : ''} onClick={toggleBox}>
             프로젝트 정보
           </button>

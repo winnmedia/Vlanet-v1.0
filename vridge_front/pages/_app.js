@@ -29,6 +29,7 @@ import '../src/page/Cms/VideoPlanning.scss'
 // import '../src/css/Cms/VideoPlanningImproved.scss' // removed - undefined mixins
 import '../src/css/Cms/VideoPlanningEnhanced.scss'
 import '../src/page/Cms/VideoPlanningButtons.scss'
+import '../src/css/Cms/VideoPlanning.scss'
 import '../src/css/Cms/CalendarLayout.scss'
 import '../src/css/Cms/CalendarToolbar.scss'
 import '../src/css/Cms/CalendarResponsive.scss'

@@ -2,6 +2,28 @@
 
 ---
 
+## v1.0.29 - 영상기획 스토리 프레임워크 동기화 수정 (2025-07-28)
+
+### 문제 상황
+- 1단계에서 선택한 스토리 프레임워크(훅-몰입-반전-떡밥 등)가 2단계와 3단계에 반영되지 않고 '기승전결'로만 표시됨
+
+### 해결 내용
+1. **백엔드 수정**:
+   - `gemini_service.py`: `generate_stories_from_planning` 함수에서 응답에 planning_options 포함하도록 수정
+   - `views.py`: generate_story API 응답에 planning_options 추가
+   
+2. **프론트엔드 수정**:
+   - `VideoPlanning.jsx`: 
+     - 스토리 생성 응답에서 planning_options를 상태에 저장
+     - 최근 기획 로드 시 story_framework/storyFramework 호환성 처리
+     - 3단계 설명에서 선택한 프레임워크 이름 동적으로 표시
+
+### 기술적 세부사항
+- 백엔드는 `story_framework` 키를 사용하고 프론트엔드는 `storyFramework` 키를 사용하는 차이 해결
+- 각 스토리 객체에 planning_options를 포함하여 일관성 유지
+
+---
+
 ## v1.0.28 - 백엔드 피드백 기능 개선 (2025-01-27)
 
 ### 구현 내용

@@ -648,7 +648,17 @@ class GeminiService:
             if response_text.endswith('```'):
                 response_text = response_text[:-3]
             
-            return json.loads(response_text)
+            result = json.loads(response_text)
+            
+            # 각 스토리에 planning_options 추가
+            if 'stories' in result:
+                for story in result['stories']:
+                    story['planning_options'] = context
+            
+            # 결과에 planning_options 추가
+            result['planning_options'] = context
+            
+            return result
         except Exception as e:
             return {
                 "error": str(e),

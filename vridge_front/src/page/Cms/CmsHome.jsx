@@ -7,6 +7,7 @@ import SideBar from '../../components/SideBar'
 import ProjectDashboard from '../../components/ProjectDashboard'
 import ProjectPhaseBoard from '../../components/ProjectPhaseBoard'
 import ProjectScheduleSection from '../../components/ProjectScheduleSection'
+import ToggleButton from '../../components/ToggleButton'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from '../../util/nextNavigation'
@@ -164,8 +165,8 @@ export default function CmsHome() {
               <div className="activity-card">
                 <div className="card-header">
                   <h3 className="card-title">최근 활동</h3>
-                  <button 
-                    className={`collapse-btn ${showRecentActivity ? 'collapsed' : ''}`}
+                  <ToggleButton 
+                    isExpanded={!showRecentActivity}
                     onClick={() => setShowRecentActivity(!showRecentActivity)}
                   />
                 </div>
@@ -242,8 +243,8 @@ export default function CmsHome() {
               <div className="invitation-card">
                 <div className="card-header">
                   <h3 className="card-title">초대 현황</h3>
-                  <button 
-                    className={`collapse-btn ${showInvitations ? 'collapsed' : ''}`}
+                  <ToggleButton 
+                    isExpanded={!showInvitations}
                     onClick={() => setShowInvitations(!showInvitations)}
                   />
                 </div>
@@ -346,12 +347,12 @@ export default function CmsHome() {
             {/* 프로젝트 단계별 진행 현황 - Calendar 페이지와 동일한 디자인 */}
             <ProjectPhaseBoard 
                   projects={[...projectListData]} 
-                  onPhaseUpdate={(projectId, phaseKey, updatedPhase) => {
+                  onPhaseUpdate={(projectId, phaseKey, start_date, end_date, completed) => {
                     const data = {
                       type: phaseKey,
-                      start_date: updatedPhase.start_date,
-                      end_date: updatedPhase.end_date,
-                      completed: updatedPhase.completed || false
+                      start_date: start_date,
+                      end_date: end_date,
+                      completed: completed || false
                     }
                     UpdateDate(data, projectId)
                       .then(() => {

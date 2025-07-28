@@ -62,16 +62,15 @@
       
       .filterTabs {
         display: flex;
-        gap: 4px;
-        background: #F8F9FA;
-        padding: 4px;
-        border-radius: 12px;
+        gap: 12px;
+        background: transparent;
+        padding: 0;
         
         .filterTab {
-          padding: 8px 16px;
-          border: none;
-          background: transparent;
-          color: #6C757D;
+          padding: 10px 20px;
+          border: 1px solid #e0e0e0;
+          background: #ffffff;
+          color: #495057;
           font-size: 14px;
           font-weight: 500;
           cursor: pointer;
@@ -79,40 +78,46 @@
           transition: all 0.2s ease;
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
           
           .count {
-            font-size: 12px;
+            font-size: 16px;
             font-weight: 700;
-            padding: 2px 6px;
-            background: rgba(108, 117, 125, 0.1);
-            border-radius: 10px;
-            min-width: 20px;
+            padding: 4px 10px;
+            background: #f0f1f3;
+            border-radius: 6px;
+            min-width: 32px;
             text-align: center;
+            color: #495057;
             
             &.delayed {
-              background: rgba(220, 53, 69, 0.1);
+              background: #fee;
               color: #dc3545;
             }
           }
           
           &:hover {
-            background: rgba(22, 49, 248, 0.05);
-            color: #1631F8;
+            background: #f8f9fa;
+            border-color: #1631F8;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(22, 49, 248, 0.15);
             
             .count {
-              background: rgba(22, 49, 248, 0.1);
+              background: #e8ecff;
+              color: #1631F8;
             }
           }
           
           &.active {
-            background: white;
-            color: #1631F8;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            background: #1631F8;
+            color: white;
+            border-color: #1631F8;
+            box-shadow: 0 2px 8px rgba(22, 49, 248, 0.25);
             
             .count {
-              background: rgba(22, 49, 248, 0.1);
-              color: #1631F8;
+              background: rgba(255, 255, 255, 0.2);
+              color: white;
             }
           }
         }

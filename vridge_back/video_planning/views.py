@@ -234,9 +234,13 @@ def generate_story(request):
             except Exception as e:
                 logger.error(f"Failed to create VideoPanning log: {e}")
         
+        # planning_options를 응답에 포함
+        response_data = stories_data.copy() if isinstance(stories_data, dict) else {'stories': stories_data}
+        response_data['planning_options'] = context
+        
         return Response({
             'status': 'success',
-            'data': stories_data
+            'data': response_data
         }, status=status.HTTP_200_OK)
         
     except Exception as e:

@@ -4,6 +4,7 @@ import SideBar from '../../components/SideBar'
 import LoadingAnimation from '../../components/LoadingAnimation'
 import ExportModal from '../../components/ExportModal'
 import VideoUploadGuide from '../../components/VideoUploadGuide'
+import ToggleButton from '../../components/ToggleButton'
 // CSS imports are handled in _app.js
 import axios from '../../config/axios'
 import { checkSession } from '../../util/util'
@@ -200,7 +201,12 @@ export default function VideoPlanning() {
       })
       
       if (planning.planning_options) {
-        setPlanningOptions(planning.planning_options)
+        // 백엔드에서 story_framework을 storyFramework으로 변환
+        const options = {
+          ...planning.planning_options,
+          storyFramework: planning.planning_options.storyFramework || planning.planning_options.story_framework || 'classic'
+        }
+        setPlanningOptions(options)
       }
       
       // 기획 ID 설정 (계속 자동 저장이 가능하도록)
@@ -464,11 +470,17 @@ export default function VideoPlanning() {
         setLoadingMessage(`${frameworkName} 스토리 생성 완료!`)
         
         setTimeout(async () => {
+          // 응답에서 planning_options 가져오기
+          const responsePlanningOptions = response.data.data.planning_options || planningOptions
+          
+          // planning_options 업데이트
+          setPlanningOptions(responsePlanningOptions)
+          
           // 스토리에 프레임워크별 stage 정보 추가
           const storiesWithStages = (response.data.data.stories || []).map((story, index) => ({
             ...story,
-            stage: getStageLabel(planningOptions.storyFramework, index),
-            stage_name: getStageName(planningOptions.storyFramework, index)
+            stage: getStageLabel(responsePlanningOptions.story_framework || responsePlanningOptions.storyFramework, index),
+            stage_name: getStageName(responsePlanningOptions.story_framework || responsePlanningOptions.storyFramework, index)
           }))
           
           setPlanningData(prev => ({
@@ -2276,9 +2288,21 @@ export default function VideoPlanning() {
       case 3:
         return (
           <div className="step-content">
-            <h3>3단계: 씬 구성 및 콘티 (총 12개)</h3>
+            <h3>3단계: 씬 구성 및 콘티 (총 {planningData.scenes.length || 12}개)</h3>
             <p className="step-description">
-              기승전결 4개 스토리에서 각각 3개씩 생성된 총 12개의 씬입니다. 각 씬마다 콘티를 생성할 수 있습니다.
+              {(() => {
+                const framework = planningOptions.storyFramework || planningOptions.story_framework || 'classic'
+                const frameworkNames = {
+                  'hook_immersion': '훅-몰입-반전-떡밥',
+                  'classic': '기승전결',
+                  'pixar': '픽사 스토리텔링',
+                  'save_the_cat': 'Save the Cat',
+                  'star_moment': '스타 모먼트'
+                }
+                const frameworkName = frameworkNames[framework] || '스토리'
+                const storyCount = planningData.stories.length || 4
+                return `${frameworkName} ${storyCount}개 스토리에서 각각 3개씩 생성된 총 ${planningData.scenes.length || storyCount * 3}개의 씬입니다. 각 씬마다 콘티를 생성할 수 있습니다.`
+              })()}
             </p>
             
             {/* 콘티 스타일 선택 */}
@@ -2908,8 +2932,8 @@ export default function VideoPlanning() {
                       ) : (
                         <p>{planningData.planning.substring(0, 150)}{planningData.planning.length > 150 ? '...' : ''}</p>
                       )}
-                      <button 
-                        className={`collapse-btn ${expandedSections.planning ? '' : 'collapsed'}`}
+                      <ToggleButton 
+                        isExpanded={expandedSections.planning}
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
@@ -2928,8 +2952,8 @@ export default function VideoPlanning() {
                   <div className={`step-preview ${currentStep === 2 ? 'active' : ''}`}>
                     <div className="preview-header">
                       <h4>스토리 (기승전결 {planningData.stories.length}개)</h4>
-                      <button 
-                        className={`collapse-btn ${expandedSections.stories ? '' : 'collapsed'}`}
+                      <ToggleButton 
+                        isExpanded={expandedSections.stories}
                         onClick={(e) => {
                           e.stopPropagation();
                           setExpandedSections(prev => ({
@@ -3024,8 +3048,8 @@ export default function VideoPlanning() {
                           )}
                         </div>
                       )}
-                      <button 
-                        className={`collapse-btn ${expandedSections.scenes ? '' : 'collapsed'}`}
+                      <ToggleButton 
+                        isExpanded={expandedSections.scenes}
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()

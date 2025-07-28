@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import './ProjectPhaseBoard.scss'
+import styles from './ProjectPhaseBoard.module.scss'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -135,34 +135,34 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
   return (
     <>
       {showTitle && (
-        <div className="phase-board-header">
-          <h2 className="phase-board-title">프로젝트 진행 현황</h2>
-          <div className="phase-board-controls">
-            <div className="filter-tabs">
+        <div className={styles.phaseBoardHeader}>
+          <h2 className={styles.phaseBoardTitle}>프로젝트 진행 현황</h2>
+          <div className={styles.phaseBoardControls}>
+            <div className={styles.filterTabs}>
               <button 
-                className={`filter-tab ${selectedFilter === 'all' ? 'active' : ''}`}
+                className={`${styles.filterTab} ${selectedFilter === 'all' ? styles.active : ''}`}
                 onClick={() => setSelectedFilter('all')}
               >
                 전체
-                <span className="count">{projectsByStatus.all.length}</span>
+                <span className={styles.count}>{projectsByStatus.all.length}</span>
               </button>
               <button 
-                className={`filter-tab ${selectedFilter === 'active' ? 'active' : ''}`}
+                className={`${styles.filterTab} ${selectedFilter === 'active' ? styles.active : ''}`}
                 onClick={() => setSelectedFilter('active')}
               >
                 진행중
-                <span className="count">{projectsByStatus.active.length}</span>
+                <span className={styles.count}>{projectsByStatus.active.length}</span>
               </button>
               <button 
-                className={`filter-tab ${selectedFilter === 'delayed' ? 'active' : ''}`}
+                className={`${styles.filterTab} ${selectedFilter === 'delayed' ? styles.active : ''}`}
                 onClick={() => setSelectedFilter('delayed')}
               >
                 지연
-                <span className="count delayed">{projectsByStatus.delayed.length}</span>
+                <span className={`${styles.count} ${styles.delayed}`}>{projectsByStatus.delayed.length}</span>
               </button>
             </div>
             <button 
-              className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
+              className={`${styles.collapseBtn} ${isCollapsed ? styles.collapsed : ''}`}
               onClick={() => setIsCollapsed(!isCollapsed)}
               title={isCollapsed ? '펼치기' : '접기'}
             >
@@ -183,11 +183,11 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
         </div>
       )}
       
-      <div className="project-phase-board">
+      <div className={styles.projectPhaseBoard}>
         {!showTitle && (
-          <div className="board-header">
+          <div className={styles.boardHeader}>
             <button 
-              className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
+              className={`${styles.collapseBtn} ${isCollapsed ? styles.collapsed : ''}`}
               onClick={() => setIsCollapsed(!isCollapsed)}
               style={{ marginBottom: '20px' }}
             />
@@ -195,8 +195,8 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
         )}
         
         {!isCollapsed && (
-          <div className="board-content">
-            <div className="projects-container">
+          <div className={styles.boardContent}>
+            <div className={styles.projectsContainer}>
               {projectsByStatus[selectedFilter].map(project => (
                 <ProjectPhaseCard
                   key={project.id}
@@ -212,7 +212,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
                 />
               ))}
               {projectsByStatus[selectedFilter].length === 0 && (
-                <div className="empty-state">
+                <div className={styles.emptyState}>
                   <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
                     <circle cx="32" cy="32" r="32" fill="#F8F9FA"/>
                     <path d="M22 28H42M22 36H42" stroke="#DEE2E6" strokeWidth="2" strokeLinecap="round"/>
@@ -261,14 +261,14 @@ function ProjectPhaseCard({
   }
   
   return (
-    <div className={`project-card ${hasDelayed ? 'has-delayed' : ''}`} data-expanded={isExpanded}>
+    <div className={`${styles.projectCard} ${hasDelayed ? styles.hasDelayed : ''}`} data-expanded={isExpanded}>
       {/* 프로젝트 헤더 */}
-      <div className="project-header" onClick={() => toggleProject(project.id)}>
-        <div className="project-main-info">
-          <div className="project-title-row">
-            <h3 className="project-name">{project.name}</h3>
+      <div className={styles.projectHeader} onClick={() => toggleProject(project.id)}>
+        <div className={styles.projectMainInfo}>
+          <div className={styles.projectTitleRow}>
+            <h3 className={styles.projectName}>{project.name}</h3>
             {hasDelayed && (
-              <span className="delay-indicator" title="지연된 단계가 있습니다">
+              <span className={styles.delayIndicator} title="지연된 단계가 있습니다">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M8 2V8L11 11" stroke="#dc3545" strokeWidth="2" strokeLinecap="round"/>
                   <circle cx="8" cy="8" r="7" stroke="#dc3545" strokeWidth="2" fill="none"/>
@@ -276,18 +276,18 @@ function ProjectPhaseCard({
               </span>
             )}
           </div>
-          <div className="project-details">
-            <span className="project-dates">
+          <div className={styles.projectDetails}>
+            <span className={styles.projectDates}>
               {moment(project.start_date).format('MM.DD')} - {moment(project.end_date).format('MM.DD')}
             </span>
-            <span className="project-duration">
+            <span className={styles.projectDuration}>
               {moment(project.end_date).diff(moment(project.start_date), 'days')}일
             </span>
           </div>
         </div>
-        <div className="project-actions">
-          <div className="progress-indicator">
-            <svg className="progress-ring" width="48" height="48" viewBox="0 0 48 48">
+        <div className={styles.projectActions}>
+          <div className={styles.progressIndicator}>
+            <svg className={styles.progressRing} width="48" height="48" viewBox="0 0 48 48">
               <circle 
                 cx="24" 
                 cy="24" 
@@ -309,9 +309,9 @@ function ProjectPhaseCard({
                 style={{ transition: 'stroke-dashoffset 0.5s ease' }}
               />
             </svg>
-            <span className="progress-text">{progress}%</span>
+            <span className={styles.progressText}>{progress}%</span>
           </div>
-          <button className="expand-toggle">
+          <button className={styles.expandToggle}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path 
                 d={isExpanded ? 'M6 12L10 8L14 12' : 'M6 8L10 12L14 8'} 
@@ -327,31 +327,31 @@ function ProjectPhaseCard({
       
       {/* 단계 타임라인 - 펼쳐진 경우에만 표시 */}
       {isExpanded && (
-        <div className="phases-timeline">
+        <div className={styles.phasesTimeline}>
           {phases.map((phase, index) => {
             const phaseData = project[phase.key]
             const status = getPhaseStatus(phaseData, project.end_date)
             const hasData = phaseData && phaseData.start_date
             
             return (
-              <div key={phase.key} className={`phase-item ${status} ${!hasData ? 'no-data' : ''}`}>
-                <div className="phase-dot">
+              <div key={phase.key} className={`${styles.phaseItem} ${styles[status]} ${!hasData ? styles.noData : ''}`}>
+                <div className={styles.phaseDot}>
                   {status === 'completed' && (
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                       <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   )}
                   {status === 'in_progress' && (
-                    <div className="pulse-dot"></div>
+                    <div className={styles.pulseDot}></div>
                   )}
                 </div>
-                {index < phases.length - 1 && <div className="phase-line"></div>}
-                <div className="phase-content">
-                  <div className="phase-header">
-                    <span className="phase-name">{phase.name}</span>
+                {index < phases.length - 1 && <div className={styles.phaseLine}></div>}
+                <div className={styles.phaseContent}>
+                  <div className={styles.phaseHeader}>
+                    <span className={styles.phaseName}>{phase.name}</span>
                     {hasData && status !== 'pending' && (
                       <button 
-                        className={`complete-btn ${phaseData.completed ? 'completed' : ''}`}
+                        className={`${styles.completeBtn} ${phaseData.completed ? styles.completed : ''}`}
                         onClick={(e) => {
                           e.stopPropagation()
                           handlePhaseComplete(phase)
@@ -371,18 +371,18 @@ function ProjectPhaseCard({
                     )}
                   </div>
                   {hasData ? (
-                    <div className="phase-dates">
-                      <span className="date-range">
+                    <div className={styles.phaseDates}>
+                      <span className={styles.dateRange}>
                         {moment(phaseData.start_date).format('MM.DD')} - {moment(phaseData.end_date).format('MM.DD')}
                       </span>
                       {status === 'delayed' && (
-                        <span className="delay-badge">
+                        <span className={styles.delayBadge}>
                           {moment().diff(moment(phaseData.end_date), 'days')}일 지연
                         </span>
                       )}
                     </div>
                   ) : (
-                    <div className="no-data-message">일정 미정</div>
+                    <div className={styles.noDataMessage}>일정 미정</div>
                   )}
                 </div>
               </div>

@@ -583,7 +583,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               프로젝트 설정
             </button>
           )}
-          <button className={isExpanded ? 'on' : ''} onClick={toggleBox}>
+          <button className={`project-info-toggle ${isExpanded ? 'on' : ''}`} onClick={toggleBox}>
             프로젝트 정보
           </button>
         </div>

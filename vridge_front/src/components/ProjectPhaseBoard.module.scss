@@ -1,5 +1,5 @@
 // 완료 버튼 스타일
-.complete-btn {
+.completeBtn {
   width: 20px;
   height: 20px;
   padding: 0;
@@ -30,7 +30,7 @@
   }
 }
 
-.project-phase-board {
+.projectPhaseBoard {
   margin-top: 32px;
   background: transparent;
   border-radius: 0;
@@ -39,7 +39,7 @@
   border: none;
   
   // 헤더 스타일
-  .phase-board-header {
+  .phaseBoardHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -47,7 +47,7 @@
     padding-bottom: 16px;
     border-bottom: 1px solid #E9ECEF;
     
-    .phase-board-title {
+    .phaseBoardTitle {
       font-size: 24px;
       font-weight: 700;
       color: #1a1f36;
@@ -55,19 +55,19 @@
       letter-spacing: -0.5px;
     }
     
-    .phase-board-controls {
+    .phaseBoardControls {
       display: flex;
       align-items: center;
       gap: 24px;
       
-      .filter-tabs {
+      .filterTabs {
         display: flex;
         gap: 4px;
         background: #F8F9FA;
         padding: 4px;
         border-radius: 12px;
         
-        .filter-tab {
+        .filterTab {
           padding: 8px 16px;
           border: none;
           background: transparent;
@@ -118,7 +118,7 @@
         }
       }
       
-      .collapse-btn {
+      .collapseBtn {
         width: 36px;
         height: 36px;
         border: none;
@@ -150,10 +150,10 @@
     }
   }
   
-  .board-header {
+  .boardHeader {
     margin-bottom: 0;
     
-    .collapse-btn {
+    .collapseBtn {
       width: 32px;
       height: 32px;
       border: none;
@@ -183,7 +183,7 @@
   }
 
   // 프로젝트 카운트 섹션 - 백업과 동일한 스타일
-  .project-counts-section {
+  .projectCountsSection {
     margin-bottom: 30px;
     
     ul.schedule {
@@ -222,16 +222,16 @@
     }
   }
   
-  .board-content {
+  .boardContent {
     animation: fadeIn 0.3s ease;
     
-    .projects-container {
+    .projectsContainer {
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
     
-    .empty-state {
+    .emptyState {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -251,7 +251,7 @@
     }
   }
   
-  .project-card {
+  .projectCard {
     background: white;
     border: 1px solid #E9ECEF;
     border-radius: 16px;
@@ -259,7 +259,7 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     
-    &.has-delayed {
+    &.hasDelayed {
       border-color: rgba(220, 53, 69, 0.2);
       
       &:hover {
@@ -274,7 +274,7 @@
       transform: translateY(-2px);
     }
     
-    .project-header {
+    .projectHeader {
       padding: 20px 24px;
       cursor: pointer;
       display: flex;
@@ -286,16 +286,16 @@
         background: #FAFBFD;
       }
       
-      .project-main-info {
+      .projectMainInfo {
         flex: 1;
         
-        .project-title-row {
+        .projectTitleRow {
           display: flex;
           align-items: center;
           gap: 12px;
           margin-bottom: 8px;
           
-          .project-name {
+          .projectName {
             font-size: 16px;
             font-weight: 600;
             color: #1a1f36;
@@ -303,7 +303,7 @@
             letter-spacing: -0.3px;
           }
           
-          .delay-indicator {
+          .delayIndicator {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -316,18 +316,18 @@
           }
         }
         
-        .project-details {
+        .projectDetails {
           display: flex;
           align-items: center;
           gap: 16px;
           
-          .project-dates {
+          .projectDates {
             font-size: 13px;
             color: #6C757D;
             font-weight: 500;
           }
           
-          .project-duration {
+          .projectDuration {
             font-size: 13px;
             color: #6C757D;
             padding: 2px 8px;
@@ -338,21 +338,21 @@
         }
       }
       
-      .project-actions {
+      .projectActions {
         display: flex;
         align-items: center;
         gap: 16px;
         
-        .progress-indicator {
+        .progressIndicator {
           position: relative;
           width: 48px;
           height: 48px;
           
-          .progress-ring {
+          .progressRing {
             transform: rotate(-90deg);
           }
           
-          .progress-text {
+          .progressText {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -363,7 +363,7 @@
           }
         }
         
-        .expand-toggle {
+        .expandToggle {
           width: 32px;
           height: 32px;
           border: none;
@@ -389,21 +389,21 @@
     }
     
     // 타임라인 스타일
-    .phases-timeline {
+    .phasesTimeline {
       padding: 24px;
       background: #FAFBFD;
       border-top: 1px solid #E9ECEF;
       
-      .phase-item {
+      .phaseItem {
         display: flex;
         align-items: flex-start;
         position: relative;
         
-        &:last-child .phase-line {
+        &:last-child .phaseLine {
           display: none;
         }
         
-        .phase-dot {
+        .phaseDot {
           width: 24px;
           height: 24px;
           border-radius: 50%;
@@ -416,7 +416,7 @@
           z-index: 2;
           transition: all 0.3s ease;
           
-          .pulse-dot {
+          .pulseDot {
             width: 8px;
             height: 8px;
             background: white;
@@ -425,7 +425,7 @@
           }
         }
         
-        .phase-line {
+        .phaseLine {
           position: absolute;
           left: 11px;
           top: 24px;
@@ -436,29 +436,29 @@
         }
         
         &.completed {
-          .phase-dot {
+          .phaseDot {
             background: #28a745;
             box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
           }
           
-          .phase-line {
+          .phaseLine {
             background: #28a745;
           }
         }
         
-        &.in_progress {
-          .phase-dot {
+        &.inProgress {
+          .phaseDot {
             background: #1631F8;
             box-shadow: 0 0 0 4px rgba(22, 49, 248, 0.1);
           }
           
-          .phase-line {
+          .phaseLine {
             background: linear-gradient(to bottom, #1631F8 0%, #E9ECEF 100%);
           }
         }
         
         &.delayed {
-          .phase-dot {
+          .phaseDot {
             background: #dc3545;
             box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
           }
@@ -468,20 +468,20 @@
           opacity: 0.6;
         }
         
-        .phase-content {
+        .phaseContent {
           flex: 1;
           margin-left: 16px;
           padding-bottom: 24px;
         }
         
-        .phase-header {
+        .phaseHeader {
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 8px;
           margin-bottom: 4px;
           
-          .phase-name {
+          .phaseName {
             font-size: 14px;
             font-weight: 600;
             color: #1a1f36;
@@ -489,18 +489,18 @@
           }
         }
         
-        .phase-dates {
+        .phaseDates {
           display: flex;
           align-items: center;
           gap: 8px;
           
-          .date-range {
+          .dateRange {
             font-size: 12px;
             color: #6C757D;
             font-weight: 500;
           }
           
-          .delay-badge {
+          .delayBadge {
             font-size: 11px;
             color: #dc3545;
             font-weight: 600;
@@ -510,7 +510,7 @@
           }
         }
         
-        .no-data-message {
+        .noDataMessage {
           font-size: 12px;
           color: #ADB5BD;
           font-style: italic;
@@ -523,30 +523,30 @@
   @media (max-width: 768px) {
     padding: 16px;
     
-    .board-header {
+    .boardHeader {
       flex-direction: column;
       align-items: flex-start;
       gap: 12px;
     }
     
-    .project-card {
-      .project-header {
+    .projectCard {
+      .projectHeader {
         flex-wrap: wrap;
         
-        .project-info {
+        .projectInfo {
           flex: 100%;
           margin-bottom: 8px;
         }
       }
       
-      .project-phases {
+      .projectPhases {
         grid-template-columns: 1fr;
       }
     }
   }
   
     // 프로젝트 카운트 섹션 스타일
-  .project-counts-section {
+  .projectCountsSection {
     margin: 24px 0;
     animation: fadeIn 0.3s ease;
     
@@ -630,8 +630,8 @@
 
 // 반응형 스타일 추가
 @media (max-width: 1200px) {
-  .project-phase-board {
-    .project-counts-section {
+  .projectPhaseBoard {
+    .projectCountsSection {
       ul.schedule li {
         font-size: 13px !important;
         height: 90px !important;
@@ -646,8 +646,8 @@
 }
 
 @media (max-width: 768px) {
-  .project-phase-board {
-    .project-counts-section {
+  .projectPhaseBoard {
+    .projectCountsSection {
       ul.schedule {
         grid-template-columns: 1fr !important;
         gap: 12px !important;

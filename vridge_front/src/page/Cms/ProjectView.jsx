@@ -115,12 +115,18 @@ export default function ProjectView() {
   }, [project_id])
   
   // 프로젝트 단계 업데이트 핸들러
-  const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
+  const handlePhaseUpdate = (projectId, phase, startDate, endDate, completed = null) => {
     const data = {
       type: phase,
       start_date: startDate,
       end_date: endDate
     }
+    
+    // 완료 상태가 전달된 경우 추가
+    if (completed !== null) {
+      data.completed = completed
+    }
+    
     UpdateDate(data, projectId)
       .then(() => {
         refetch()
@@ -394,7 +400,7 @@ export default function ProjectView() {
                         {is_admin && (
                           <button
                             onClick={() =>
-                              navigate(`/project/${current_project.id}/edit`)
+                              navigate(`/ProjectEdit/${current_project.id}`)
                             }
                             className="submit"
                           >

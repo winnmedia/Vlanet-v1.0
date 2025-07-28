@@ -2043,6 +2043,12 @@
                 }
               }
               &.member {
+                .ss_title {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                }
+                
                 ul {
                   list-style: none;
                   padding: 0;

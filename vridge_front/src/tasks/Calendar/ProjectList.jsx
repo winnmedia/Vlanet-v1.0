@@ -1,6 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import 'moment/locale/ko'
+import { useRouter } from 'next/router'
 
 // import Swiper core and required modules
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
@@ -10,6 +11,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 
 export default function ProjectList({ project_list }) {
+  const router = useRouter()
   const sort_basic_plan = project_list.sort((a, b) => {
     return new Date(a.basic_plan.end_date) - new Date(b.basic_plan.end_date)
   })
@@ -61,7 +63,11 @@ export default function ProjectList({ project_list }) {
                 new Date(project.basic_plan.end_date).setHours(0, 0, 0, 0) >=
                   new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.basic_plan.start_date &&
                       project.basic_plan.end_date ? (
@@ -107,7 +113,11 @@ export default function ProjectList({ project_list }) {
                 new Date(project.story_board.end_date).setHours(0, 0, 0, 0) >=
                   new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.story_board.start_date &&
                       project.story_board.end_date ? (
@@ -154,7 +164,11 @@ export default function ProjectList({ project_list }) {
                 new Date(project.filming.end_date).setHours(0, 0, 0, 0) >=
                   new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.filming.start_date &&
                       project.filming.end_date ? (
@@ -197,7 +211,11 @@ export default function ProjectList({ project_list }) {
                 new Date(project.video_edit.end_date).setHours(0, 0, 0, 0) >=
                   new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.video_edit.start_date &&
                       project.video_edit.end_date ? (
@@ -240,7 +258,11 @@ export default function ProjectList({ project_list }) {
                 new Date(project.post_work.end_date).setHours(0, 0, 0, 0) >=
                   new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.post_work.start_date &&
                       project.post_work.end_date ? (
@@ -286,7 +308,11 @@ export default function ProjectList({ project_list }) {
                 new Date(project.video_preview.end_date).setHours(0, 0, 0, 0) >=
                   new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.video_preview.start_date &&
                       project.video_preview.end_date ? (
@@ -329,7 +355,11 @@ export default function ProjectList({ project_list }) {
                 new Date(project.confirmation.end_date).setHours(0, 0, 0, 0) >=
                   new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.confirmation.start_date &&
                       project.confirmation.end_date ? (
@@ -376,7 +406,11 @@ export default function ProjectList({ project_list }) {
                   0,
                 ) >= new Date().setHours(0, 0, 0, 0) && (
                   <SwiperSlide key={index}>
-                    <div className="inner03">
+                    <div 
+                      className="inner03"
+                      onClick={() => router.push(`/ProjectView/${project.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="name">{project.name}</div>
                       {project.video_delivery.start_date &&
                       project.video_delivery.end_date ? (

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
+import './ProjectPhaseBoard.scss'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -252,11 +253,9 @@ function ProjectPhaseCard({
       const phaseData = project[phase.key]
       if (phaseData && phaseData.start_date) {
         // 완료 상태를 토글
-        const updatedPhase = {
-          ...phaseData,
-          completed: !phaseData.completed
-        }
-        onPhaseUpdate(project.id, phase.key, updatedPhase)
+        const completed = !phaseData.completed
+        // 백엔드 API 호출을 위해 시작일과 종료일을 함께 전달
+        onPhaseUpdate(project.id, phase.key, phaseData.start_date, phaseData.end_date, completed)
       }
     }
   }

@@ -143,6 +143,38 @@ VideoPlanet/
 - 미니멀 디자인 원칙 적용으로 사용성 향상
 - Next.js 특성을 고려한 라우팅 방식 채택
 
+### 2025-01-28: 배포 및 추가 문제 해결
+**요청**: 프로젝트 배포 및 발견된 추가 UI 문제 해결
+
+**수행 작업**:
+1. **배포 프로세스**:
+   - v1.0.26 버전 태그 생성 및 배포
+   - Django 마이그레이션 3개 적용 (feedbacks, projects, users)
+   - SCSS deprecated 함수 수정 (darken → color.adjust)
+   - 성능 테스트 체크리스트 작성
+
+2. **Vercel 배포 문제 해결**:
+   - 루트 디렉토리 package.json 찾지 못하는 문제
+   - vercel.json에 빌드 경로 수정 (cd vridge_front)
+   - ProjectPhaseBoard.scss를 CSS 모듈로 변환
+   - _app.js에서 전역 import 제거
+
+3. **프로젝트 관리 페이지 추가 수정**:
+   - 멤버 초대 기능 표시 문제 (CSS .ss_title 스타일 추가)
+   - ProjectPhaseBoard.scss import 누락 수정
+   - 프로젝트 단계 업데이트 API 파라미터 수정
+   - 프로젝트 카드 클릭 이벤트로 상세 페이지 진입 경로 추가
+
+**배포 결과**:
+- 백엔드 (Railway): ✅ 정상 작동
+- 프론트엔드 (Vercel): 빌드 오류 해결 중
+- 최종 커밋: ebdb84d
+
+**주요 결정사항**:
+- CSS 모듈 사용으로 스타일 캡슐화 및 충돌 방지
+- Vercel 중복 프로젝트 문제는 Root Directory 설정 차이로 확인
+- 성능 최적화를 위한 체계적인 테스트 준비
+
 ### 2025-01-27: 영상기획 PDF 내보내기 기능 수정
 **문제**: 영상기획 페이지의 PDF 내보내기 기능이 작동하지 않음
 

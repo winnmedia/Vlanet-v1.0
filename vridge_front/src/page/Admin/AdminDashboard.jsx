@@ -493,8 +493,10 @@ export default function AdminDashboard() {
           <Button
             size="small"
             type="link"
-            icon={<EyeOutlined / aria-label="Click">}
-            onClick={() => navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${record.id}`)}
+            icon={<EyeOutlined />}
+            aria-label="View project"
+            onClick={() => navigate(`/ProjectView/${record.id}`)}
+            onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${record.id}`)}
           />
           <Button
             size="small"

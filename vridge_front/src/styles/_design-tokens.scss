@@ -203,6 +203,9 @@ $border-radius-xl: 16px;
 $border-radius-2xl: 24px;
 $border-radius-full: 9999px;
 
+// Alias for backward compatibility
+$radius-full: $border-radius-full;
+
 // Component Border Radius
 $border-radius-button: $border-radius-md;
 $border-radius-card: $border-radius-lg;

@@ -784,8 +784,58 @@ vridge_front/
 
 ---
 
+### 세션 37: Vercel 빌드 오류 수정 (v2.1.5)
+
+**날짜**: 2025년 1월 29일
+**시간**: 오후 9:30
+**요청**: 4개의 Vercel 빌드 오류 해결
+**버전**: 2.1.4 → 2.1.5
+
+#### 해결한 빌드 오류들
+
+1. **CSS Modules :root 선택자 오류**
+   - 문제: UnifiedModal.module.scss에서 CSS 변수를 사용하는 전역 스타일
+   - 해결: 365-442 라인의 전역 미디어 쿼리 제거 (CSS Modules는 순수 선택자만 허용)
+
+2. **_effects.scss import 경로 오류**
+   - 문제: 잘못된 import 경로 '../styles/design-tokens'
+   - 해결: '../../styles/design-tokens'로 수정
+   - 추가 수정:
+     - $radius-full: 9$color-gray-500; → $radius-full: 9999px;
+     - $z-dropdown: 1$color-black; → $z-dropdown: 1000;
+     - :root 선택자와 전역 미디어 쿼리 제거
+
+3. **FeedbackButtonStyles $radius-full 변수 미정의**
+   - 문제: FeedbackButtonStyles.module.responsive.part2.scss에 import 누락
+   - 해결: 
+     - @import '../../styles/design-tokens'; 추가
+     - _design-tokens.scss에 $radius-full alias 추가 (backward compatibility)
+
+4. **AdminDashboard.jsx JSX 구문 오류 (라인 496)**
+   - 문제: 심각하게 손상된 JSX 구문
+   - 해결:
+     ```jsx
+     // Before:
+     icon={<EyeOutlined / aria-label="Click">}
+     onClick={() => navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${record.id}`)}
+     
+     // After:
+     icon={<EyeOutlined />}
+     aria-label="View project"
+     onClick={() => navigate(`/ProjectView/${record.id}`)}
+     onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${record.id}`)}
+     ```
+
+#### 기술적 개선사항
+- CSS Modules 규칙 준수
+- SCSS 변수 일관성 확보
+- JSX 구문 정리
+- 접근성 속성 추가
+
+---
+
 **마지막 업데이트**: 2025-01-29
-**버전**: 2.1.4
+**버전**: 2.1.5
    - 문제: 잘못된 JSX 속성 구문
    - 해결: onClick, onKeyDown, type, aria-label 속성 올바르게 분리
 

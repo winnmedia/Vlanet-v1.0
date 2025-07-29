@@ -63,7 +63,7 @@
 // 텍스트
 .text {
   position: relative;
-  z-index: $z-index-default;
+  z-index: 1;
 }
 
 // 아이콘
@@ -130,7 +130,7 @@
 .variant-primary {
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
   color: $color-white;
-  box-shadow: $shadow;
+  box-shadow: $shadow-md;
   
   &:hover:not(:disabled) {
     transform: translateY(-$spacing-2xs);
@@ -151,7 +151,7 @@
     background: $color-gray-50;
     border-color: $color-gray-400;
     transform: translateY(-$spacing-2xs);
-    box-shadow: $shadow;
+    box-shadow: $shadow-md;
   }
   
   &:active:not(:disabled) {
@@ -162,7 +162,7 @@
 .variant-danger {
   background: linear-gradient(135deg, $color-danger 0%, darken($color-danger, 10%) 100%);
   color: $color-white;
-  box-shadow: $shadow;
+  box-shadow: $shadow-md;
   
   &:hover:not(:disabled) {
     transform: translateY(-$spacing-2xs);
@@ -183,7 +183,7 @@
     background: $color-primary;
     color: $color-white;
     transform: translateY(-$spacing-2xs);
-    box-shadow: $shadow;
+    box-shadow: $shadow-md;
   }
   
   &:active:not(:disabled) {
@@ -218,7 +218,7 @@
   }
   
   &:active:not(:disabled) {
-    color: $color-primary-darker;
+    color: $color-primary-dark;
   }
 }
 
@@ -248,10 +248,10 @@
   }
 }
 
-@media (min-width: 76calc(8px + 4px)) and (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 1024px) {
   .container {
     padding: $spacing-lg;
-    max-width: 960;
+    max-width: 960px;
   }
   
   .grid {
@@ -259,9 +259,9 @@
   }
 }
 
-@media (min-width: 102calc(8px - 4px)) {
+@media (min-width: 1025px) {
   .container {
-    max-width: 1200;
+    max-width: 1200px;
     margin: 0 auto;
   }
 }

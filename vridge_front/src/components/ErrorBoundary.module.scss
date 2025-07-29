@@ -13,7 +13,7 @@
   background: $color-white;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-2xl;
-  max-width: 600;
+  max-width: 600px;
   width: 100%;
   padding: $spacing-2xl;
   text-align: center;
@@ -32,7 +32,7 @@
 .errorTitle {
   font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
-  color: $color-text-primary;
+  color: $color-text;
   margin-bottom: $spacing-md;
 }
 
@@ -40,7 +40,7 @@
   font-size: $font-size-lg;
   color: $color-text-secondary;
   margin-bottom: $spacing-xl;
-  line-height: $line-height-base;
+  line-height: $line-height-normal;
 }
 
 .errorDetails {
@@ -48,7 +48,7 @@
   text-align: left;
   
   details {
-    background: $color-background-light;
+    background: $color-background-secondary;
     border: $border-width-thin solid $color-border;
     border-radius: $border-radius-md;
     padding: $spacing-lg;
@@ -60,7 +60,7 @@
       user-select: none;
       
       &:hover {
-        color: $color-text-primary;
+        color: $color-text;
       }
     }
   }
@@ -74,19 +74,19 @@
     color: $color-text-secondary;
     
     strong {
-      color: $color-text-primary;
+      color: $color-text;
     }
   }
   
   pre {
-    background: $color-background-dark;
+    background: $color-gray-900;
     color: $color-danger;
     padding: $spacing-md;
     border-radius: $border-radius-sm;
     overflow-x: auto;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: $font-size-sm;
-    line-height: $line-height-base;
+    line-height: $line-height-normal;
     margin: $spacing-sm 0;
   }
 }
@@ -109,7 +109,7 @@
 
 .errorId {
   font-size: $font-size-sm;
-  color: $color-text-muted;
+  color: $color-text-tertiary;
   margin-top: $spacing-md;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 }

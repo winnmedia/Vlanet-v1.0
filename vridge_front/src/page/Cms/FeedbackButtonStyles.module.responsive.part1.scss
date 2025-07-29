@@ -1,6 +1,8 @@
-  @media (max-width: $breakpoint-md) { -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-  }
+// Mobile touch-friendly styles
+.touch-friendly {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
 
   .video-container {
     position: relative;
@@ -38,7 +40,7 @@
       cursor: pointer;
       background: transparent; // 항상 클릭 가능하도록 투명 배경
       transition: background-color 0.3s;
-      z-index: $z-index-base; // 비디오 위에 표시
+      z-index: 10; // 비디오 위에 표시
 
       &:hover {
         background: rgba($color-black, 0.3); // 호버 시에만 어두운 배경
@@ -98,7 +100,7 @@
       justify-content: center;
       background: rgba($color-black, 0.8);
       color: $color-white;
-      z-index: $z-index-fixed;
+      z-index: 1030;
       
       .spinner {
         width: $spacing-3xl + $spacing-2xs;
@@ -426,7 +428,8 @@
           .button-text {
             display: none;
             
-            @media (min-width: $breakpoint-md) { display: block;
+            @media (min-width: $breakpoint-md) {
+              display: block;
             }
           }
           
@@ -600,7 +603,7 @@
   // 사이드박스 컨테이너
   .sidebox {
     background: $color-white;
-    border-radius: $radius-lg;
+    border-radius: $border-radius-lg;
     box-shadow: $shadow-card;
     overflow: hidden;
     display: flex;
@@ -615,7 +618,8 @@
       border-bottom: $spacing-2xs solid $color-border-light;
       
       .s_title {
-        @include heading-3;
+        font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
         color: $color-text-primary;
         letter-spacing: -0.5px;
       }
@@ -656,7 +660,7 @@
               border: $spacing-2xs solid transparent;
               border-radius: $radius-full;
               text-decoration: none;
-              transition: $transition-button;
+              transition: $transition-base;
               white-space: nowrap;
               
               &:hover {
@@ -704,13 +708,13 @@
   .feedback-item {
     background: $color-white;
     border: $spacing-2xs solid $color-border-light;
-    border-radius: $radius-md;
+    border-radius: $border-radius-md;
     padding: $spacing-xl;
     margin-bottom: $spacing-lg;
-    transition: $transition-all;
+    transition: $transition-base;
     
     &:hover {
-      box-shadow: $shadow-hover;
+      box-shadow: $shadow-lg;
       border-color: $color-primary-light;
     }
     
@@ -752,5 +756,21 @@
         gap: $spacing-sm;
         
         button {
-          @include button-ghost;
-}}}}
+          padding: $spacing-xs $spacing-sm;
+          background: transparent;
+          border: 1px solid $color-gray-300;
+          color: $color-gray-700;
+          font-size: $font-size-sm;
+          border-radius: $border-radius-sm;
+          cursor: pointer;
+          transition: $transition-base;
+          
+          &:hover {
+            background: $color-gray-100;
+            border-color: $color-gray-400;
+          }
+        }
+      }
+    }
+  }
+}

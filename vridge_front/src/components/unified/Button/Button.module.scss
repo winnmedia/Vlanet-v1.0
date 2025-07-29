@@ -96,7 +96,7 @@
   
   @include mobile {
     padding: $spacing-lg $spacing-xl;
-    min-height: 5$spacing-2xs;
+    min-height: $spacing-4xl;
   }
 }
 
@@ -105,11 +105,11 @@
   background: $gradient-primary;
   color: $color-white;
   border-color: $color-primary-dark;
-  box-shadow: $shadow-md-button;
+  box-shadow: $shadow-md;
   
   &:hover:not(:disabled) {
     background: linear-gradient(135deg, $color-primary-light 0%, $color-primary 100%);
-    box-shadow: $shadow-md-button-hover;
+    box-shadow: $shadow-lg;
   }
   
   &:active:not(:disabled) {
@@ -121,12 +121,12 @@
   background: $color-white;
   color: $color-text;
   border-color: $color-border;
-  box-shadow: $shadow-md-sm;
+  box-shadow: $shadow-sm;
   
   &:hover:not(:disabled) {
     background: $color-background-secondary;
     border-color: $color-border-dark;
-    box-shadow: $shadow-md-button-hover;
+    box-shadow: $shadow-lg;
   }
   
   &:active:not(:disabled) {
@@ -138,11 +138,11 @@
   background: $gradient-danger;
   color: $color-white;
   border-color: $color-danger;
-  box-shadow: $shadow-md-button;
+  box-shadow: $shadow-md;
   
   &:hover:not(:disabled) {
     background: linear-gradient(135deg, $color-danger-light 0%, $color-danger 100%);
-    box-shadow: $shadow-md-button-hover;
+    box-shadow: $shadow-lg;
   }
   
   &:active:not(:disabled) {
@@ -154,11 +154,11 @@
   background: $gradient-success;
   color: $color-white;
   border-color: $color-success;
-  box-shadow: $shadow-md-button;
+  box-shadow: $shadow-md;
   
   &:hover:not(:disabled) {
     background: linear-gradient(135deg, $color-success-light 0%, $color-success 100%);
-    box-shadow: $shadow-md-button-hover;
+    box-shadow: $shadow-lg;
   }
   
   &:active:not(:disabled) {
@@ -170,11 +170,11 @@
   background: $color-warning;
   color: $color-gray-900;
   border-color: $color-warning;
-  box-shadow: $shadow-md-button;
+  box-shadow: $shadow-md;
   
   &:hover:not(:disabled) {
     background: $color-warning-light;
-    box-shadow: $shadow-md-button-hover;
+    box-shadow: $shadow-lg;
   }
   
   &:active:not(:disabled) {
@@ -204,7 +204,7 @@
   padding: $spacing-0;
   min-height: auto;
   text-decoration: underline;
-  box-shadow: $shadow-md-none;
+  box-shadow: $shadow-none;
   
   &:hover:not(:disabled) {
     color: $color-primary-dark;
@@ -217,7 +217,7 @@
   }
   
   &:focus-visible {
-    box-shadow: $shadow-md-none;
+    box-shadow: $shadow-none;
     outline: $spacing-2xs solid $color-primary;
     outline-offset: $spacing-2xs;
   }
@@ -309,7 +309,9 @@
 }
 
 // Responsive adjustments
-@media (max-width: $breakpoint-sm) { .button--md, .button--lg, .button--xl { padding-left: $spacing-md;
+@media (max-width: $breakpoint-sm) {
+  .button--md, .button--lg, .button--xl {
+    padding-left: $spacing-md;
     padding-right: $spacing-md;
   }
 }

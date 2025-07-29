@@ -1,53 +1,52 @@
-
 // VideoPlanet 색상 토큰 시스템
 // 모든 색상을 중앙에서 관리
 
 // ========== 브랜드 색상 ==========
-$color-primary: $color-primary;
-$color-primary-hover: $color-primary-dark;
-$color-primary-light: $color-vp-blue-bg-2;
-$color-primary-dark: $color-info-dark;
+$color-primary: #1631F8;
+$color-primary-hover: #0F1C9E;
+$color-primary-light: #E8EBFF;
+$color-primary-dark: #0F1C9E;
 
 // 그라데이션
 $gradient-primary: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
 $gradient-primary-reverse: linear-gradient(135deg, $color-primary-hover 0%, $color-primary 100%);
 
 // ========== 시스템 색상 ==========
-$color-success: $color-success;
-$color-success-hover: $color-success-dark;
-$color-success-light: $color-success;
-$color-success-dark: $color-success-dark;
+$color-success: #28a745;
+$color-success-hover: #218838;
+$color-success-light: #48b461;
+$color-success-dark: #1e7e34;
 
-$color-danger: $color-danger;
-$color-danger-hover: $color-gray-800;
-$color-danger-light: $color-danger;
-$color-danger-dark: $color-danger-dark;
+$color-danger: #dc3545;
+$color-danger-hover: #c82333;
+$color-danger-light: #e25563;
+$color-danger-dark: #bd2130;
 
-$color-warning: $color-warning;
-$color-warning-hover: $color-warning-dark;
-$color-warning-light: $color-danger;
-$color-warning-dark: $color-warning-dark;
+$color-warning: #ffc107;
+$color-warning-hover: #e0a800;
+$color-warning-light: #ffcd39;
+$color-warning-dark: #d39e00;
 
-$color-info: $color-info;
-$color-info-hover: $color-info-dark;
-$color-info-light: $color-info;
-$color-info-dark: $color-info-dark;
+$color-info: #17a2b8;
+$color-info-hover: #138496;
+$color-info-light: #3ab0c3;
+$color-info-dark: #117a8b;
 
 // ========== 중성 색상 ==========
-$color-white: $color-white;
-$color-black: $color-black;
+$color-white: #ffffff;
+$color-black: #000000;
 
 // Gray Scale
-$color-gray-50: $color-background-secondary;
-$color-gray-100: $color-gray-100;
-$color-gray-200: $color-vp-gray-light-2;
-$color-gray-300: $color-vp-gray-light-3;
-$color-gray-400: $color-gray-400;
-$color-gray-500: $color-gray-500;
-$color-gray-600: $color-gray-600;
-$color-gray-700: $color-gray-700;
-$color-gray-800: $color-gray-800;
-$color-gray-900: $color-gray-900;
+$color-gray-50: #f8f9fa;
+$color-gray-100: #f7fafc;
+$color-gray-200: #edf2f7;
+$color-gray-300: #e2e8f0;
+$color-gray-400: #cbd5e0;
+$color-gray-500: #a0aec0;
+$color-gray-600: #718096;
+$color-gray-700: #4a5568;
+$color-gray-800: #2d3748;
+$color-gray-900: #1a1f36;
 
 // ========== 텍스트 색상 ==========
 $color-text-primary: $color-gray-900;
@@ -60,14 +59,14 @@ $color-text-link-hover: $color-primary-hover;
 
 // ========== 배경 색상 ==========
 $color-background: $color-gray-100;
-$color-background-light: $color-background-secondary;
-$color-background-dark: $color-vp-gray-light-2;
-$color-background-overlay: rgba($color-black, $opacity-50);
+$color-background-light: $color-gray-50;
+$color-background-dark: $color-gray-200;
+$color-background-overlay: rgba($color-black, 0.5);
 $color-background-modal: rgba($color-black, 0.8);
 
 // ========== 테두리 색상 ==========
-$color-border-light: $color-vp-gray-light-2;
-$color-border: $color-vp-gray-light-3;
+$color-border-light: $color-gray-200;
+$color-border: $color-gray-300;
 $color-border-dark: $color-gray-400;
 $color-border-focus: $color-primary;
 $color-border-error: $color-danger;
@@ -86,8 +85,8 @@ $color-calendar-weekend: $color-danger;
 $color-calendar-other-month: $color-gray-100;
 
 // 피드백
-$color-feedback-bg: $color-background-secondary;
-$color-feedback-hover: $color-vp-blue-bg-1;
+$color-feedback-bg: $color-gray-50;
+$color-feedback-hover: $color-primary-light;
 $color-feedback-selected: $color-primary-light;
 $color-feedback-time-badge: $color-primary;
 
@@ -97,6 +96,14 @@ $color-status-delayed: $color-warning;
 $color-status-completed: $color-info;
 $color-status-pending: $color-gray-500;
 $color-status-error: $color-danger;
+
+// VideoPlanet 특수 색상
+$color-vp-blue-bg-1: #f0f4ff;
+$color-vp-blue-bg-2: #e8ebff;
+$color-vp-gray-light-2: #e8e8e8;
+$color-vp-gray-light-3: #e2e8f0;
+$color-background-secondary: #f7fafc;
+$opacity-50: 0.5;
 
 // ========== CSS 변수 정의 ==========
 :root {
@@ -155,90 +162,20 @@ $color-status-error: $color-danger;
   --color-border-focus: #{$color-border-focus};
   --color-border-error: #{$color-border-error};
   --color-border-success: #{$color-border-success};
+  
+  // spacing 변수 추가
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-xl: 20px;
 }
 
 // 다크모드 지원 (향후 확장)
 @media (prefers-color-scheme: dark) {
   :root {
     // 다크모드 색상 정의
-  }
-}
-
-@media (max-width: 1024px) {
-  .container {
-    padding: var(--spacing-lg);
-  }
-  
-  .grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: var(--spacing-md);
-  }
-  
-  .grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-md);
-  }
-  
-  .flex-row {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-  }
-  
-  .sidebar {
-    position: fixed;
-    transform: translateX(-100%);
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  
-  .hide-mobile {
-    display: none;
-  }
-  
-  .show-mobile {
-    display: block;
-  }
-  
-  table {
-    font-size: var(--font-size-sm);
-  }
-  
-  .button {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-sm);
-  }
-  
-  .title {
-    font-size: var(--font-size-xl);
-  }
-  
-  .subtitle {
-    font-size: var(--font-size-md);
-  }
-  
-  .card {
-    padding: var(--spacing-sm);
-  }
-  
-  .modal {
-    margin: var(--spacing-sm);
-    max-height: calc(100vh - var(--spacing-lg));
-  }
-  
-  input, select, textarea {
-    font-size: var(--spacing-lg); 
   }
 }

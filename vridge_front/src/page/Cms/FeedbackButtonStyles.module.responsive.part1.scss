@@ -51,7 +51,7 @@
         background: linear-gradient(135deg, $color-primary 0%, $color-info 100%);
         border-radius: $border-radius-full;
         padding: $spacing-lg - $spacing-xs;
-        transition: $transition-base-bezier(0.34, 1.56, 0.64, 1);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         box-shadow: $shadow;
         position: relative;
         opacity: 1;
@@ -329,7 +329,7 @@
           align-items: center;
           justify-content: center;
           border-radius: $border-radius-full;
-          transition: $transition-base-bezier(0.25, 0.46, 0.45, 0.94);
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           color: $color-white;
           position: relative;
           overflow: hidden;
@@ -410,7 +410,7 @@
           padding: $spacing-sm $spacing-sm + $spacing-xs;
           cursor: pointer;
           border-radius: $border-radius-md;
-          transition: $transition-base-bezier(0.25, 0.46, 0.45, 0.94);
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           display: flex;
           align-items: center;
           justify-content: center;

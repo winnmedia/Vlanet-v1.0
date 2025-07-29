@@ -391,6 +391,42 @@ VideoPlanet/
 
 ---
 
+### 세션 32: Vercel 빌드 오류 수정 및 배포 (v2.1.1)
+
+**날짜**: 2025년 1월 29일
+**시간**: 오후 7:30 - 7:45
+**요청**: Vercel 빌드 오류 해결 및 배포
+**버전**: 2.1.0 → 2.1.1
+
+#### 해결한 빌드 오류들
+1. **SCSS 변수명 오류** (_typography.scss:41)
+   - 문제: `$font-weight-$color-black: 900;` 잘못된 변수명
+   - 해결: `$font-weight-black: 900;`로 수정
+
+2. **SCSS 중괄호 오류** (FeedbackButtonStyles.module.responsive.part1.scss:601)
+   - 문제: 중복된 닫는 중괄호
+   - 해결: 불필요한 `}` 제거
+
+3. **UnifiedModal.jsx JSX 구문 오류** (라인 285)
+   - 문제: 잘못된 속성 구문
+   - 해결: onClick과 onKeyDown 분리, type과 aria-label 정리
+
+4. **AdminDashboard.jsx JSX 구문 오류** (라인 314)
+   - 문제: onClick 속성 내부에 onKeyDown이 잘못 포함됨
+   - 해결: 각 속성을 별도 라인으로 분리, role과 tabIndex 추가
+
+5. **AdminRedirect.jsx JSX 구문 오류** (라인 80)
+   - 문제: icon prop에 잘못된 구문
+   - 해결: `<DashboardOutlined />` 올바른 형식으로 수정
+
+#### 배포 정보
+- Git 커밋: a29ddd3
+- Git 태그: v2.1.1
+- 푸시 완료: main 브랜치 및 태그
+- Vercel 자동 배포 트리거됨
+
+---
+
 ### 세션 31: 100점 달성 도전
 
 **날짜**: 2025년 1월 29일 
@@ -641,3 +677,63 @@ vridge_front/
 #### 배포 상태
 - Vercel 자동 배포 진행 중
 - 빌드 오류 해결로 성공적인 배포 예상
+
+---
+
+### 세션 35: Vercel 빌드 오류 수정 (v2.1.2)
+
+**날짜**: 2025년 1월 29일
+**시간**: 오후 8:00
+**요청**: 추가 Vercel 빌드 오류 해결
+**버전**: 2.1.1 → 2.1.2
+
+#### 해결한 빌드 오류들
+1. **UnifiedCard.module.scss - z-index 변수 누락**
+   - 문제: `$z-index-default` 변수가 정의되지 않음
+   - 해결: `_design-tokens.scss`에 `$z-index-default: 1;` 추가
+
+2. **_typography.scss - 변수명 구문 오류**
+   - 문제: `--font-weight-$color-black` 잘못된 변수명 구문
+   - 해결: `$font-weight-black`로 수정
+
+3. **FeedbackButtonStyles - transition 함수 오류**
+   - 문제: `$transition-base-bezier()` 함수가 정의되지 않음
+   - 해결: 표준 CSS transition으로 변경: `transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);`
+
+4. **UnifiedModal.jsx - JSX 구문 오류 (라인 377)**
+   - 문제: onClick과 onKeyDown이 잘못 결합된 구문
+   - 해결: 각 이벤트 핸들러를 별도 속성으로 분리
+
+5. **AdminDashboard.jsx - JSX 구문 오류 (라인 354)**
+   - 문제: 여러 속성이 잘못 결합된 심각한 구문 오류
+   - 해결: onClick, onKeyDown을 각각 분리하고 올바른 화살표 함수로 수정
+
+#### 기술적 개선사항
+- 모든 SCSS 컴파일 오류 해결
+- JSX 구문 오류 정리
+- 빌드 프로세스 정상화
+
+---
+
+**마지막 업데이트**: 2025-01-29
+**버전**: 2.1.2
+   - 문제: 정의되지 않은 Sass 함수 호출
+   - 해결: `transition: all 0.3s cubic-bezier(...)` 표준 CSS로 변경
+
+4. **UnifiedModal.jsx - 라인 377 JSX 구문 오류**
+   - 문제: 잘못된 JSX 속성 구문
+   - 해결: onClick, onKeyDown, type, aria-label 속성 올바르게 분리
+
+5. **AdminDashboard.jsx - 라인 354 JSX 구문 오류**
+   - 문제: 심각하게 손상된 JSX 속성 구문
+   - 해결: onClick과 onKeyDown 이벤트 핸들러 올바르게 수정
+
+#### 기술적 변경사항
+- SCSS 변수 일관성 확보
+- JSX 구문 오류 제거
+- 표준 CSS transition 문법 사용
+- 접근성 속성 (aria-label) 추가
+
+#### 배포 정보
+- 모든 빌드 오류 해결 완료
+- Vercel 자동 배포 대기 중

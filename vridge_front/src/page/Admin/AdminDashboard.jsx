@@ -351,7 +351,9 @@ export default function AdminDashboard() {
           <Button 
             size="small" 
             type="link"
-            onClick={() = aria-label="Click"> navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/ProjectView/${record.id}`)}
+            onClick={() => navigate(`/ProjectView/${record.id}`)}
+            onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${record.id}`)}
+            aria-label="프로젝트 보기"
           >
             보기
           </Button>

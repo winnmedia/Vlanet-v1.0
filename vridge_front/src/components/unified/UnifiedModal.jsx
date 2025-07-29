@@ -374,7 +374,9 @@ export const ImagePreviewModal = ({
         {onPrev && currentIndex > 0 && (
           <UnifiedButton
             className={styles.prevButton}
-            onClick={onPrev} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && onPrev}
+            onClick={onPrev}
+            onKeyDown={(e) => e.key === 'Enter' && onPrev()}
+            type="button"
             aria-label="이전 이미지"
           >
             ‹

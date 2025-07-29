@@ -1,4 +1,4 @@
-@import '../styles/design-tokens';
+@import '../../styles/design-tokens';
 
 // VideoPlanet 간격 토큰 시스템
 // 일관된 간격 시스템 제공
@@ -75,47 +75,6 @@ $form-label-margin: $spacing-xs;
 $form-help-margin: $spacing-xs;
 $form-error-margin: $spacing-xs;
 
-// ========== CSS 변수 정의 ==========
-:root {
-  // 기본 간격
-  --spacing-0: #{$spacing-0};
-  --spacing-xs: #{$spacing-xs};
-  --spacing-sm: #{$spacing-sm};
-  --spacing-md: #{$spacing-md};
-  --spacing-lg: #{$spacing-lg};
-  --spacing-xl: #{$spacing-xl};
-  --spacing-2xl: #{$spacing-2xl};
-  --spacing-3xl: #{$spacing-3xl};
-  --spacing-4xl: #{$spacing-4xl};
-  --spacing-5xl: #{$spacing-5xl};
-  
-  // 패딩
-  --padding-button-sm: #{$padding-button-sm};
-  --padding-button-md: #{$padding-button-md};
-  --padding-button-lg: #{$padding-button-lg};
-  --padding-input-sm: #{$padding-input-sm};
-  --padding-input-md: #{$padding-input-md};
-  --padding-input-lg: #{$padding-input-lg};
-  --padding-card: #{$padding-card};
-  --padding-section: #{$padding-section};
-  --padding-page: #{$padding-page};
-  
-  // 마진
-  --margin-element: #{$margin-element};
-  --margin-section: #{$margin-section};
-  --margin-page: #{$margin-page};
-  
-  // 갭
-  --gap-xs: #{$gap-xs};
-  --gap-sm: #{$gap-sm};
-  --gap-md: #{$gap-md};
-  --gap-lg: #{$gap-lg};
-  --gap-xl: #{$gap-xl};
-  
-  // 레이아웃
-  --layout-gutter: #{$layout-gutter};
-  --grid-gap: #{$grid-gap};
-}
 
 // ========== 유틸리티 믹스인 ==========
 @mixin spacing($property, $size) {
@@ -154,81 +113,3 @@ $form-error-margin: $spacing-xs;
   gap: var(--spacing-#{$size});
 }
 
-@media (max-width: 1024px) {
-  .container {
-    padding: var(--spacing-lg);
-  }
-  
-  .grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: var(--spacing-md);
-  }
-  
-  .grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-md);
-  }
-  
-  .flex-row {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-  }
-  
-  .sidebar {
-    position: fixed;
-    transform: translateX(-100%);
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  
-  .hide-mobile {
-    display: none;
-  }
-  
-  .show-mobile {
-    display: block;
-  }
-  
-  table {
-    font-size: var(--font-size-sm);
-  }
-  
-  .button {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-sm);
-  }
-  
-  .title {
-    font-size: var(--font-size-xl);
-  }
-  
-  .subtitle {
-    font-size: var(--font-size-md);
-  }
-  
-  .card {
-    padding: var(--spacing-sm);
-  }
-  
-  .modal {
-    margin: var(--spacing-sm);
-    max-height: calc(100vh - var(--spacing-lg));
-  }
-  
-  input, select, textarea {
-    font-size: var(--spacing-lg); 
-  }
-}

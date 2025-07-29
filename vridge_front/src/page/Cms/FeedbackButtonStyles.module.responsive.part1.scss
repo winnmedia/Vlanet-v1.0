@@ -4,6 +4,7 @@
   touch-action: manipulation;
 }
 
+.video-player-container {
   .video-container {
     position: relative;
     width: 100%;
@@ -596,6 +597,7 @@
       }
     }
   }
+}
 }
 
 // Source: FeedbackSectionRedesign-improved.scss

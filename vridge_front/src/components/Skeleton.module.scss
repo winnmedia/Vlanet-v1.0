@@ -1,4 +1,5 @@
 @import '../styles/design-tokens';
+@import '../design-system/tokens/breakpoints';
 
 // 기본 스켈레톤
 .skeleton {
@@ -195,7 +196,7 @@
 }
 
 // 반응형
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: $breakpoint-sm) {
   .cardSkeleton {
     .cardContent {
       padding: $spacing-md;
@@ -204,7 +205,7 @@
   
   .videoSkeleton {
     .videoPlayer {
-      height: 200;
+      height: 200px;
     }
   }
 }
@@ -285,6 +286,6 @@
   }
   
   input, select, textarea {
-    font-size: $spacing-md; /* Prevent zoom on iOS */
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 }

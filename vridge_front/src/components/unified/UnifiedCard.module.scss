@@ -1,4 +1,5 @@
 @import '../../styles/design-tokens';
+@import '../../design-system/tokens/breakpoints';
 
 // 기본 카드 스타일
 .card {
@@ -421,7 +422,7 @@
 }
 
 // 반응형
-@media (max-width: $breakpoint-tablet) {
+@media (max-width: $breakpoint-md) {
   .cardGroup {
     &.columns-4,
     &.columns-3 {
@@ -430,7 +431,7 @@
   }
 }
 
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: $breakpoint-sm) {
   .card {
     &.padding-large {
       .body { padding: $spacing-md; }

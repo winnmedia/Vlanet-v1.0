@@ -436,7 +436,7 @@ export default function AdminDashboard() {
       render: (text, record) => (
         <Space>
           <div style={{ width: 12, height: 12, backgroundColor: record.color, borderRadius: '50%' }} />
-          <a onClick={() => navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${record.id}`)}>{text}</a>
+          <a onClick={() => navigate(`/ProjectView/${record.id}`)} onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${record.id}`)}>{text}</a>
         </Space>
       )
     },

@@ -1,15 +1,17 @@
-@import '../styles/design-tokens';
-
 // ========== 브레이크포인트 시스템 ==========
 // VideoPlanet 반응형 디자인을 위한 통합 브레이크포인트
 
 // 기본 브레이크포인트 값
-$breakpoint-xs: 0;        // Extra Small: $spacing-0 이상
-$breakpoint-sm: $breakpoint-md;    // Small: $breakpoint-md 이상 (태블릿)
-$breakpoint-md: $breakpoint-lg;   // Medium: $breakpoint-lg 이상 (소형 데스크톱)
-$breakpoint-lg: $breakpoint-xl + $spacing-5xl;   // Large: $breakpoint-xl + $spacing-5xl 이상 (대형 데스크톱)
-$breakpoint-xl: 153calc(8px - 4px);   // Extra Large: 153calc(8px - 4px) 이상
-$breakpoint-2xl: 1920;  // 2X Large: 1920 이상
+$breakpoint-xs: 0;        // Extra Small: 0 이상
+$breakpoint-sm: 576px;    // Small: 576px 이상 (모바일)
+$breakpoint-md: 768px;    // Medium: 768px 이상 (태블릿)
+$breakpoint-lg: 992px;    // Large: 992px 이상 (데스크톱)
+$breakpoint-xl: 1200px;   // Extra Large: 1200px 이상
+$breakpoint-2xl: 1920px;  // 2X Large: 1920px 이상
+
+// 레거시 변수명 지원
+$breakpoint-mobile: $breakpoint-sm;
+$breakpoint-tablet: $breakpoint-md;
 
 // 브레이크포인트 맵 (반복문 사용을 위해)
 $breakpoints: (
@@ -22,11 +24,11 @@ $breakpoints: (
 );
 
 // 컨테이너 최대 너비
-$container-max-width-sm: 640;
-$container-max-width-md: $breakpoint-md;
-$container-max-width-lg: $breakpoint-lg;
-$container-max-width-xl: $breakpoint-xl + $spacing-5xl;
-$container-max-width-2xl: 153calc(8px - 4px);
+$container-max-width-sm: 640px;
+$container-max-width-md: 720px;
+$container-max-width-lg: 960px;
+$container-max-width-xl: 1140px;
+$container-max-width-2xl: 1320px;
 
 // ========== 미디어 쿼리 믹스인 ==========
 
@@ -36,7 +38,8 @@ $container-max-width-2xl: 153calc(8px - 4px);
   @if $value == 0 {
     @content;
   } @else {
-    @media (min-width: $value) { @content;
+    @media (min-width: $value) { 
+      @content;
     }
   }
 }
@@ -45,7 +48,8 @@ $container-max-width-2xl: 153calc(8px - 4px);
 @mixin media-down($breakpoint) {
   $value: map-get($breakpoints, $breakpoint);
   @if $value > 0 {
-    @media (max-width: ($value - $spacing-2xs)) { @content;
+    @media (max-width: ($value - 1px)) { 
+      @content;
     }
   }
 }
@@ -56,7 +60,8 @@ $container-max-width-2xl: 153calc(8px - 4px);
   $max-value: map-get($breakpoints, $max);
   
   @if $min-value and $max-value {
-    @media (min-width: $min-value) and (max-width: ($max-value - $spacing-2xs)) { @content;
+    @media (min-width: $min-value) and (max-width: ($max-value - 1px)) { 
+      @content;
     }
   }
 }
@@ -72,14 +77,17 @@ $container-max-width-2xl: 153calc(8px - 4px);
     $next: map-get($breakpoints, $next-key);
     
     @if $current == 0 {
-      @media (max-width: ($next - $spacing-2xs)) { @content;
+      @media (max-width: ($next - 1px)) { 
+        @content;
       }
     } @else {
-      @media (min-width: $current) and (max-width: ($next - $spacing-2xs)) { @content;
+      @media (min-width: $current) and (max-width: ($next - 1px)) { 
+        @content;
       }
     }
   } @else {
-    @media (min-width: $current) { @content;
+    @media (min-width: $current) { 
+      @content;
     }
   }
 }

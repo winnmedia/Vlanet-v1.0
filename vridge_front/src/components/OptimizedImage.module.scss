@@ -1,4 +1,5 @@
 @import '../styles/design-tokens';
+@import '../design-system/tokens/breakpoints';
 
 // 컨테이너
 .container {
@@ -111,7 +112,7 @@
 }
 
 // 반응형
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: $breakpoint-sm) {
   .thumbnail {
     &:hover {
       transform: none;
@@ -195,6 +196,6 @@
   }
   
   input, select, textarea {
-    font-size: $spacing-md; /* Prevent zoom on iOS */
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 }

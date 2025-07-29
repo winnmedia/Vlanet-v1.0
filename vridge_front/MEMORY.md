@@ -70,6 +70,31 @@ VideoPlanet/
 
 ## 개발 히스토리 요약
 
+### 2025-01-29: Vercel 빌드 오류 수정 (v2.1.2)
+**문제 해결:**
+1. **breakpoints.scss 순환 참조 문제**
+   - $breakpoint-sm이 $breakpoint-md를 참조하고, $breakpoint-md가 $breakpoint-lg를 참조하는 순환 참조 수정
+   - 올바른 브레이크포인트 값으로 변경: sm(576px), md(768px), lg(992px), xl(1200px), 2xl(1920px)
+   - 레거시 변수명 지원 추가: $breakpoint-mobile, $breakpoint-tablet
+
+2. **SCSS import 경로 문제**
+   - UnifiedCard.module.scss, UnifiedModal.module.scss에 breakpoints import 추가
+   - OptimizedImage.module.scss, Skeleton.module.scss에 breakpoints import 추가
+   - $breakpoint-mobile → $breakpoint-sm, $breakpoint-tablet → $breakpoint-md로 변경
+
+3. **CSS 단위 누락 문제**
+   - UnifiedModal: width 속성에 px 단위 추가 (400px, 600px, 800px)
+   - UnifiedModal: min-width 속성에 px 단위 추가 (80px)
+   - Skeleton: height 속성에 px 단위 추가 (200px)
+   - 모든 파일: font-size iOS 방지 코드를 16px로 통일
+
+4. **FeedbackButtonStyles.module.responsive.part1.scss import 누락**
+   - design-tokens import 추가 ($radius-full 변수 사용을 위해)
+
+5. **AdminDashboard.jsx JSX 구문 오류**
+   - 라인 439의 잘못된 <a> 태그 구문 수정
+   - onClick과 onKeyDown 속성 올바르게 분리
+
 ### 2025년 1월 24일 - UI/UX 개선 작업
 
 #### 주요 작업 내용
@@ -717,10 +742,50 @@ vridge_front/
 
 **마지막 업데이트**: 2025-01-29
 **버전**: 2.1.2
-   - 문제: 정의되지 않은 Sass 함수 호출
-   - 해결: `transition: all 0.3s cubic-bezier(...)` 표준 CSS로 변경
 
-4. **UnifiedModal.jsx - 라인 377 JSX 구문 오류**
+---
+
+### 세션 36: 추가 Vercel 빌드 오류 수정 (v2.1.4)
+
+**날짜**: 2025년 1월 29일
+**시간**: 오후 8:50
+**요청**: 추가 Vercel 빌드 오류 해결
+**버전**: 2.1.3 → 2.1.4
+
+#### 해결한 빌드 오류들
+1. **Breakpoints 순환 참조 문제**
+   - 문제: _breakpoints.scss에서 자기 자신을 import하는 순환 참조
+   - 해결: 순환 참조 제거하고 직접 값 정의
+   - 표준 브레이크포인트 값 설정 (sm: 576px, md: 768px, lg: 992px 등)
+
+2. **SCSS 변수 누락 문제**
+   - 문제: UnifiedCard, UnifiedModal 등에서 $breakpoint-tablet, $breakpoint-mobile 변수 미정의
+   - 해결: 각 파일에 @import '../../design-system/tokens/breakpoints' 추가
+   - 레거시 변수명 지원 추가
+
+3. **CSS 단위 누락**
+   - 문제: width: 400, height: 200 등 px 단위 누락
+   - 해결: 모든 숫자값에 px 단위 추가
+   - iOS zoom 방지 코드의 font-size 수정
+
+4. **Design Tokens Import**
+   - 문제: FeedbackButtonStyles에서 $radius-full 변수 미정의
+   - 해결: @import '../../styles/design-tokens' 추가
+
+5. **AdminDashboard.jsx JSX 구문 오류 (라인 439)**
+   - 문제: <a> 태그 내부에 잘못된 이벤트 핸들러 구문
+   - 해결: onClick과 onKeyDown 속성 올바르게 분리
+
+#### 기술적 개선사항
+- 순환 참조 제거로 빌드 안정성 향상
+- 일관된 브레이크포인트 시스템 구축
+- CSS 단위 일관성 확보
+- JSX 구문 정리
+
+---
+
+**마지막 업데이트**: 2025-01-29
+**버전**: 2.1.4
    - 문제: 잘못된 JSX 속성 구문
    - 해결: onClick, onKeyDown, type, aria-label 속성 올바르게 분리
 

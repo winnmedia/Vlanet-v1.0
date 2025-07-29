@@ -387,12 +387,15 @@ export const ImagePreviewModal = ({
           src={images[currentIndex]?.url || images[currentIndex]}
           alt={images[currentIndex]?.alt || `이미지 ${currentIndex + 1}`}
           className={styles.previewImage}
-        / loading="lazy">
+          loading="lazy"
+        />
         
         {onNext && currentIndex < images.length - 1 && (
           <UnifiedButton
             className={styles.nextButton}
-            onClick={onNext} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && onNext}
+            onClick={onNext}
+            onKeyDown={(e) => e.key === 'Enter' && onNext}
+            type="button"
             aria-label="다음 이미지"
           >
             ›

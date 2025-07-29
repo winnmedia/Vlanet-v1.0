@@ -417,7 +417,9 @@ export default function AdminDashboard() {
           <Button
             size="small"
             type="link"
-            onClick={() = aria-label="Click"> handleUserAction(record.id, 'toggle_active')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleUserAction(record.id, 'toggle_active')}
+            onClick={() => handleUserAction(record.id, 'toggle_active')}
+            onKeyDown={(e) => e.key === 'Enter' && handleUserAction(record.id, 'toggle_active')}
+            aria-label={record.is_active ? '사용자 비활성화' : '사용자 활성화'}
           >
             {record.is_active ? '비활성화' : '활성화'}
           </Button>

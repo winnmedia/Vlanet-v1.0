@@ -246,7 +246,6 @@ export default function CmsHome() {
                     </div>
                   }
                 </div>
-                }
               </UnifiedCard>
 
               {/* 초대 현황 섹션 */}

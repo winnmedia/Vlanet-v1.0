@@ -611,7 +611,7 @@ export default function AdminDashboard() {
                             </UnifiedCard>
                           </Col>
                           <Col xs={24} sm={12} lg={6}>
-                            <Card>
+                            <UnifiedCard>
                               <Statistic
                                 title="총 피드백"
                                 value={stats?.feedbacks?.total || 0}
@@ -624,7 +624,7 @@ export default function AdminDashboard() {
                             </UnifiedCard>
                           </Col>
                           <Col xs={24} sm={12} lg={6}>
-                            <Card>
+                            <UnifiedCard>
                               <Statistic
                                 title="영상 기획"
                                 value={stats?.planning?.total || 0}

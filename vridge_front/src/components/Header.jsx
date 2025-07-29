@@ -341,13 +341,17 @@ const Header = memo(function Header({
               }}>
                 마이페이지
               </div>
-              <div className={styles['dropdown-item']} onClick={() => {
-                setShowDropdown(false)
-                navigate('/cmshome')
-              } onKeyDown={(e) => e.key === 'Enter' && () => {
-                setShowDropdown(false)
-                navigate('/cmshome')
-              }}>
+              <div className={styles['dropdown-item']} 
+                onClick={() => {
+                  setShowDropdown(false)
+                  navigate('/cmshome')
+                }} 
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setShowDropdown(false)
+                    navigate('/cmshome')
+                  }
+                }}>
                 홈으로
               </div>
               <div className={styles['dropdown-divider']}></div>

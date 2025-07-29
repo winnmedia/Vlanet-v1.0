@@ -1,6 +1,9 @@
 @import './FeedbackButtonStyles.module.responsive.part1';
 @import './FeedbackButtonStyles.module.responsive.part2';
 @media (max-width: 768px) {
-  * { box-sizing: border-box; }
-  .container, .wrapper, .content { width: 100%; padding: 0 1rem; }
+  .container, .wrapper, .content { 
+    box-sizing: border-box;
+    width: 100%; 
+    padding: 0 1rem; 
+  }
 }

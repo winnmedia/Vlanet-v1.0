@@ -170,14 +170,21 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               onClick={() => {
                 if (tab_name === 'project') {
                   SetSubMenu(true);
-                } onKeyDown={(e) => e.key === 'Enter' && () => {
-                if (tab_name === 'project') {
-                  SetSubMenu(true);
                 } else {
                   SetSubMenu(!SubMenu);
                 }
                 set_tab_name('feedback');
                 // navigate('/Feedback')
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (tab_name === 'project') {
+                    SetSubMenu(true);
+                  } else {
+                    SetSubMenu(!SubMenu);
+                  }
+                  set_tab_name('feedback');
+                }
               }}>
 
               영상 피드백

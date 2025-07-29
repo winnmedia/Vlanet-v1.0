@@ -50,6 +50,12 @@ fix-*.js
 remove-*.js
 analyze-*.js
 
+# Husky
+.husky
+
+# Disabled pages
+pages/style-comparison.disabled
+
 # Test reports
 *-report.*
 test-results*

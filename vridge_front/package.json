@@ -35,7 +35,7 @@
     "analyze:buttons": "grep -r 'button\\|btn\\|Button' src --include='*.scss' --include='*.css' | wc -l",
     "setup:linter": "npm install --save-dev stylelint stylelint-config-standard-scss stylelint-config-prettier-scss stylelint-scss stylelint-order",
     "lint:styles": "stylelint 'src/**/*.scss' --fix",
-    "prepare": "husky install",
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production' && !process.env.CI) { require('child_process').execSync('husky install', {stdio: 'inherit'}); }\"",
     "console:analyze": "node scripts/console-log-analyzer.js",
     "console:remove-debug": "node scripts/console-log-analyzer.js --remove --no-dry-run",
     "console:remove-all": "node scripts/console-log-analyzer.js --remove-all --no-dry-run",

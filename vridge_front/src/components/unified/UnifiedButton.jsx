@@ -1,6 +1,4 @@
 import React from 'react';
-import { UnifiedButton } from '../../components/unified/UnifiedButton';
-
 import styles from './UnifiedButton.module.scss';
 
 /**
@@ -57,18 +55,20 @@ const UnifiedButton = ({
   );
 
   return (
-    <UnifiedButton
+    <button
       type={type}
       className={classNames}
-      onClick={onClick} onKeyDown={(e) = aria-label="Click"> e.key === 'Enter' && onClick}
+      onClick={onClick}
+      onKeyDown={(e) => e.key === 'Enter' && onClick && onClick(e)}
       disabled={disabled || loading}
       style={style}
+      aria-label={children || 'Click'}
       {...rest}
-     aria-label="Click">
+    >
       {iconPosition === 'left' && (loading ? spinner : iconElement)}
       {children && <span className={styles.text}>{children}</span>}
       {iconPosition === 'right' && (loading ? spinner : iconElement)}
-    </UnifiedButton>
+    </button>
   );
 };
 

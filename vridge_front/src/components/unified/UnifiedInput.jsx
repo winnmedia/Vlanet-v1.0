@@ -1,6 +1,4 @@
 import React, { useState, forwardRef } from 'react';
-import { UnifiedInput } from '../../components/unified/UnifiedInput';
-
 import styles from './UnifiedInput.module.scss';
 
 /**
@@ -101,7 +99,7 @@ const UnifiedInput = forwardRef(({
           <span className={styles.leftIcon}>{leftIcon}</span>
         )}
         
-        <UnifiedInput
+        <input
           ref={ref}
           type={type}
           value={value}
@@ -115,8 +113,9 @@ const UnifiedInput = forwardRef(({
           required={required}
           autoFocus={autoFocus}
           className={inputClasses}
+          aria-label="Input field"
           {...inputProps}
-        / aria-label="Input field" />
+        />
         
         {rightIcon && (
           <span className={styles.rightIcon}>{rightIcon}</span>

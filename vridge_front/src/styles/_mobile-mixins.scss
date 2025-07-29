@@ -14,7 +14,7 @@
 
 // Mobile only (max-width: 767px)
 @mixin mobile {
-  @media (max-width: #{$breakpoint-md - $border-width-thin}) {
+  @media (max-width: 767px) {
     @content;
   }
 }
@@ -26,7 +26,7 @@
 
 // Tablet only (768px - 1023px)
 @mixin tablet {
-  @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - $border-width-thin}) {
+  @media (min-width: #{$breakpoint-md}) and (max-width: 1023px) {
     @content;
   }
 }
@@ -40,7 +40,7 @@
 
 // Desktop only (1024px - 1279px)
 @mixin desktop {
-  @media (min-width: #{$breakpoint-lg}) and (max-width: #{$breakpoint-xl - $border-width-thin}) {
+  @media (min-width: #{$breakpoint-lg}) and (max-width: 1279px) {
     @content;
   }
 }

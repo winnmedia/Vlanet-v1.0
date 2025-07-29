@@ -1,6 +1,5 @@
 import React from 'react';
-import { UnifiedButton } from '../../components/unified/UnifiedButton';
-
+import { UnifiedButton } from './UnifiedButton';
 import classNames from 'classnames';
 import styles from './UnifiedCard.module.scss';
 
@@ -89,7 +88,7 @@ const UnifiedCard = ({
       {cover && (
         <div className={styles.cover}>
           {typeof cover === 'string' ? (
-            <img src={cover} alt="" / loading="lazy">
+            <img src={cover} alt="" loading="lazy" />
           ) : (
             cover
           )}
@@ -190,7 +189,7 @@ export const ProjectCard = ({
         onClick={onView}
         className={styles.actionButton}
         aria-label={`${project.title} 보기`}
-       type="button">
+        type="button">
         보기
       </UnifiedButton>
     );
@@ -203,7 +202,7 @@ export const ProjectCard = ({
         onClick={onEdit}
         className={styles.actionButton}
         aria-label={`${project.title} 수정`}
-       type="button">
+        type="button">
         수정
       </UnifiedButton>
     );
@@ -216,7 +215,7 @@ export const ProjectCard = ({
         onClick={onDelete}
         className={styles.actionButtonDanger}
         aria-label={`${project.title} 삭제`}
-       type="button">
+        type="button">
         삭제
       </UnifiedButton>
     );

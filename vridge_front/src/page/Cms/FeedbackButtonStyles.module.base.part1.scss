@@ -20,6 +20,11 @@ $border-color: $color-border;
 $text-dark: $color-text;
 $text-gray: $color-text-secondary;
 
+// Additional variables for FeedbackMoreStyle
+$success-color: $color-success;
+$warning-color: $color-warning;
+$line-height-base: $line-height-normal;
+
 // Placeholder styles to fix compilation
 .feedback-placeholder {
   display: block;

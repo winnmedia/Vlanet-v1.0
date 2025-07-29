@@ -1,105 +1,107 @@
+@import '../styles/design-tokens';
+
 .image-cropper-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  z-index: 9999;
+  top: $spacing-0;
+  left: $spacing-0;
+  right: $spacing-0;
+  bottom: $spacing-0;
+  background: rgba($color-black, 0.9);
+  z-index: 9$color-gray-500;
   display: flex;
   align-items: center;
   justify-content: center;
 
   .cropper-container {
-    background: white;
-    border-radius: 16px;
+    background: $color-white;
+    border-radius: $border-radius-xl;
     width: 90%;
-    max-width: 400px;
+    max-width: $spacing-6xl * 4 + $spacing-md;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: $shadow-xl;
 
     .cropper-header {
-      padding: 20px;
+      padding: $spacing-lg - $spacing-xs;
       text-align: center;
-      border-bottom: 1px solid #eee;
+      border-bottom: $spacing-2xs solid $color-gray-200;
 
       h3 {
-        margin: 0 0 6px 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: #1a1a1a;
+        margin: $spacing-0 0 $spacing-xs + $spacing-2xs 0;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        color: $color-gray-900;
       }
 
       p {
-        margin: 0;
-        font-size: 13px;
-        color: #666;
+        margin: $spacing-0;
+        font-size: $spacing-md - $spacing-xs;
+        color: $color-gray-600;
       }
     }
 
     .cropper-wrapper {
       position: relative;
       width: 100%;
-      height: 300px;
-      background: #f5f5f5;
+      height: $spacing-6xl * 3 + $spacing-sm + $spacing-xs;
+      background: $color-gray-100;
     }
 
     .cropper-controls {
-      padding: 16px 20px;
-      background: #f9f9f9;
-      border-top: 1px solid #eee;
+      padding: $spacing-md $spacing-lg - $spacing-xs;
+      background: $color-gray-100;
+      border-top: $spacing-2xs solid $color-gray-200;
 
       .zoom-control {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: $spacing-md;
 
         span {
-          font-size: 14px;
-          color: #666;
-          font-weight: 500;
-          min-width: 80px;
+          font-size: $font-size-sm;
+          color: $color-gray-600;
+          font-weight: $font-weight-medium;
+          min-width: $spacing-5xl;
         }
 
         .zoom-slider {
           flex: 1;
-          height: 4px;
+          height: $spacing-xs;
           -webkit-appearance: none;
           appearance: none;
-          background: #e0e0e0;
-          border-radius: 2px;
+          background: $color-gray-300;
+          border-radius: $border-radius-sm / 2;
           outline: none;
           cursor: pointer;
 
           &::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #0058da;
-            border-radius: 50%;
+            width: $spacing-lg - $spacing-xs;
+            height: $spacing-lg - $spacing-xs;
+            background: $color-vp-blue-2;
+            border-radius: $border-radius-full;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease;
+            box-shadow: $shadow-sm;
+            transition: $transition-base;
 
             &:hover {
               transform: scale(1.1);
-              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+              box-shadow: $shadow;
             }
           }
 
           &::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #0058da;
-            border-radius: 50%;
+            width: $spacing-lg - $spacing-xs;
+            height: $spacing-lg - $spacing-xs;
+            background: $color-vp-blue-2;
+            border-radius: $border-radius-full;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease;
+            box-shadow: $shadow-sm;
+            transition: $transition-base;
 
             &:hover {
               transform: scale(1.1);
-              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+              box-shadow: $shadow;
             }
           }
         }
@@ -107,21 +109,21 @@
     }
 
     .cropper-actions {
-      padding: 16px 20px;
+      padding: $spacing-md $spacing-lg - $spacing-xs;
       display: flex;
-      gap: 12px;
+      gap: $spacing-sm + $spacing-xs;
       justify-content: flex-end;
-      background: white;
-      border-top: 1px solid #eee;
+      background: $color-white;
+      border-top: $spacing-2xs solid $color-gray-200;
 
       button {
-        padding: 8px 20px;
+        padding: $spacing-sm $spacing-lg - $spacing-xs;
         border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
+        border-radius: $border-radius-md - $border-radius-sm / 2;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: $transition-base;
 
         &:disabled {
           opacity: 0.6;
@@ -130,22 +132,22 @@
       }
 
       .cancel-btn {
-        background: #f0f0f0;
-        color: #666;
+        background: $color-gray-200;
+        color: $color-gray-600;
 
         &:hover:not(:disabled) {
-          background: #e0e0e0;
+          background: $color-gray-300;
         }
       }
 
       .confirm-btn {
-        background: #0058da;
-        color: white;
+        background: $color-vp-blue-2;
+        color: $color-white;
 
         &:hover:not(:disabled) {
-          background: #0047b8;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0, 88, 218, 0.3);
+          background: $color-vp-blue-2-dark;
+          transform: translateY(-$spacing-2xs);
+          box-shadow: $shadow;
         }
       }
     }
@@ -153,42 +155,118 @@
 }
 
 // 반응형
-@media (max-width: 600px) {
-  .image-cropper-modal {
-    .cropper-container {
-      width: 95%;
-      max-width: 350px;
+@media (max-width: $spacing-6xl * 6.25) { .image-cropper-modal { .cropper-container { width: 95%;
+      max-width: $spacing-6xl * 3.65;
       margin: auto;
 
       .cropper-wrapper {
         height: 40vh;
-        max-height: 250px;
+        max-height: 250;
       }
 
       .cropper-header {
-        padding: 16px;
+        padding: $spacing-md;
 
         h3 {
-          font-size: 16px;
+          font-size: $font-size-base;
         }
 
         p {
-          font-size: 12px;
+          font-size: $font-size-xs;
         }
       }
 
       .cropper-controls {
-        padding: 12px 16px;
+        padding: $spacing-sm + $spacing-xs $spacing-md;
       }
 
       .cropper-actions {
-        padding: 12px 16px;
+        padding: $spacing-sm + $spacing-xs $spacing-md;
 
         button {
-          padding: 8px 16px;
-          font-size: 13px;
+          padding: $spacing-sm $spacing-md;
+          font-size: $spacing-md - $spacing-xs;
         }
       }
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

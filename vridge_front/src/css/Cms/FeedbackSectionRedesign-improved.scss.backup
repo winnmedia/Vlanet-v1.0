@@ -1,0 +1,416 @@
+// Feedback Section Redesign - 디자인 토큰 적용 버전
+// 피드백 섹션 재디자인 (CSS 특정성과 격리를 통한 !important 제거)
+
+@use '@/design-system/tokens' as *;
+
+// 피드백 페이지 전용 네임스페이스로 격리
+.feedback-redesign {
+  // 사이드박스 컨테이너
+  .sidebox {
+    background: $color-white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-card;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid $color-border-light;
+    isolation: isolate;
+    
+    // 상단 타이틀
+    .b_title {
+      padding: $spacing-xl $spacing-2xl;
+      background: transparent;
+      border-bottom: 1px solid $color-border-light;
+      
+      .s_title {
+        @include heading-3;
+        color: $color-text-primary;
+        letter-spacing: -0.3px;
+      }
+    }
+    
+    // 탭 컨테이너
+    .tab_container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      
+      // 탭 메뉴
+      .top_box.tab_menu {
+        padding: $spacing-lg $spacing-xl;
+        background: transparent;
+        border-bottom: 1px solid $color-border-light;
+        
+        .tab_list {
+          display: flex;
+          gap: $spacing-sm;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+          flex-wrap: wrap;
+          
+          li {
+            margin: 0;
+            
+            a {
+              display: inline-flex;
+              align-items: center;
+              padding: $spacing-sm $spacing-lg;
+              font-size: $font-size-base;
+              font-weight: $font-weight-medium;
+              color: $color-text-secondary;
+              background: $color-gray-50;
+              border: 1px solid transparent;
+              border-radius: $radius-full;
+              text-decoration: none;
+              transition: $transition-button;
+              white-space: nowrap;
+              
+              &:hover {
+                background: $color-gray-100;
+                color: $color-text-primary;
+              }
+              
+              &.active {
+                background: $color-primary;
+                color: $color-white;
+                font-weight: $font-weight-semibold;
+                
+                &:hover {
+                  background: $color-primary-hover;
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // 탭 컨텐츠
+      .tab-content {
+        flex: 1;
+        overflow-y: auto;
+        background: $color-gray-50;
+        
+        // 컨텐츠 내부 패딩
+        .tab-pane {
+          padding: $spacing-2xl;
+          
+          &.active {
+            display: block;
+          }
+          
+          &:not(.active) {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  
+  // 피드백 아이템
+  .feedback-item {
+    background: $color-white;
+    border: 1px solid $color-border-light;
+    border-radius: $radius-md;
+    padding: $spacing-xl;
+    margin-bottom: $spacing-lg;
+    transition: $transition-all;
+    
+    &:hover {
+      box-shadow: $shadow-hover;
+      border-color: $color-primary-light;
+    }
+    
+    // 피드백 헤더
+    .feedback-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: $spacing-md;
+      
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        
+        .avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: $radius-full;
+          background: $color-gray-200;
+        }
+        
+        .user-details {
+          .name {
+            font-weight: $font-weight-semibold;
+            color: $color-text-primary;
+            font-size: $font-size-base;
+          }
+          
+          .date {
+            font-size: $font-size-sm;
+            color: $color-text-muted;
+          }
+        }
+      }
+      
+      .feedback-actions {
+        display: flex;
+        gap: $spacing-sm;
+        
+        button {
+          @include button-ghost;
+          padding: $spacing-xs $spacing-sm;
+          font-size: $font-size-sm;
+        }
+      }
+    }
+    
+    // 피드백 내용
+    .feedback-content {
+      margin-bottom: $spacing-lg;
+      
+      .content-text {
+        @include body-text;
+        color: $color-text-primary;
+        line-height: $line-height-relaxed;
+      }
+      
+      // 첨부 파일
+      .attachments {
+        margin-top: $spacing-md;
+        display: flex;
+        gap: $spacing-sm;
+        flex-wrap: wrap;
+        
+        .attachment {
+          display: inline-flex;
+          align-items: center;
+          gap: $spacing-xs;
+          padding: $spacing-xs $spacing-sm;
+          background: $color-gray-100;
+          border-radius: $radius-sm;
+          font-size: $font-size-sm;
+          color: $color-text-secondary;
+          text-decoration: none;
+          transition: $transition-button;
+          
+          &:hover {
+            background: $color-gray-200;
+            color: $color-text-primary;
+          }
+          
+          .icon {
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+    }
+    
+    // 피드백 상태
+    .feedback-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: $spacing-md;
+      border-top: 1px solid $color-border-light;
+      
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-xs;
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        
+        &.pending {
+          background: $color-warning-light;
+          color: $color-warning-dark;
+        }
+        
+        &.in-progress {
+          background: $color-info-light;
+          color: $color-info-dark;
+        }
+        
+        &.completed {
+          background: $color-success-light;
+          color: $color-success-dark;
+        }
+        
+        &.rejected {
+          background: $color-danger-light;
+          color: $color-danger-dark;
+        }
+      }
+      
+      .priority {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        font-size: $font-size-sm;
+        
+        &.high {
+          color: $color-danger;
+        }
+        
+        &.medium {
+          color: $color-warning;
+        }
+        
+        &.low {
+          color: $color-text-muted;
+        }
+      }
+    }
+  }
+  
+  // 빈 상태
+  .empty-state {
+    text-align: center;
+    padding: $spacing-4xl $spacing-2xl;
+    
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto $spacing-xl;
+      opacity: 0.5;
+    }
+    
+    .empty-title {
+      @include heading-4;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-sm;
+    }
+    
+    .empty-description {
+      @include body-text;
+      color: $color-text-muted;
+    }
+  }
+  
+  // 로딩 상태
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-4xl;
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid $color-gray-200;
+      border-top-color: $color-primary;
+      border-radius: $radius-full;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+// 반응형 디자인
+@include media-down('md') {
+  .feedback-redesign {
+    .sidebox {
+      border-radius: 0;
+      
+      .b_title {
+        padding: $spacing-lg $spacing-xl;
+      }
+      
+      .tab_container {
+        .top_box.tab_menu {
+          padding: $spacing-md $spacing-lg;
+          
+          .tab_list {
+            gap: $spacing-xs;
+            
+            li a {
+              padding: $spacing-xs $spacing-md;
+              font-size: $font-size-sm;
+            }
+          }
+        }
+        
+        .tab-content .tab-pane {
+          padding: $spacing-lg;
+        }
+      }
+    }
+    
+    .feedback-item {
+      padding: $spacing-lg;
+      
+      .feedback-header {
+        flex-direction: column;
+        gap: $spacing-md;
+        
+        .feedback-actions {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+    }
+  }
+}
+
+// 다크 모드 지원 (옵션)
+@media (prefers-color-scheme: dark) {
+  .feedback-redesign {
+    .sidebox {
+      background: $color-gray-900;
+      border-color: $color-gray-700;
+      
+      .b_title {
+        border-color: $color-gray-700;
+        
+        .s_title {
+          color: $color-gray-100;
+        }
+      }
+    }
+    
+    .feedback-item {
+      background: $color-gray-800;
+      border-color: $color-gray-700;
+      
+      &:hover {
+        border-color: $color-primary;
+      }
+    }
+  }
+}
+
+// 애니메이션
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 유틸리티 믹스인
+@mixin button-ghost {
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: $transition-button;
+  
+  &:hover {
+    background: $color-gray-50;
+    border-color: $color-border-dark;
+    color: $color-text-primary;
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+  
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}

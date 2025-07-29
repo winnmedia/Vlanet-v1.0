@@ -1,0 +1,335 @@
+// Button Alignment System - 전역 버튼 정렬 및 크기 표준화
+// 백업에서 복원된 핵심 버튼 스타일 + 디자인 토큰 통합
+
+@import '../../design-system/tokens/design-tokens';
+
+// 전역 버튼 정렬 시스템
+button,
+.button,
+.btn,
+[type="button"],
+[type="submit"],
+[type="reset"],
+.all,
+.share,
+.video_upload_label div,
+.change_btn_wrap div,
+.guide_btn,
+.project_btn,
+.submit,
+.cert {
+  // 중앙 정렬 기본값
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  // 일관된 텍스트 렌더링
+  line-height: 1;
+  white-space: nowrap;
+  font-family: inherit;
+  
+  // 트랜지션
+  transition: $transition-button;
+}
+
+// 버튼 크기 표준화
+.btn-size {
+  &-sm {
+    min-width: $spacing-5xl;
+    height: $spacing-xl;
+    padding: $spacing-0 $spacing-md;
+    font-size: $font-size-sm;
+  }
+  
+  &-md {
+    min-width: $spacing-6xl + $spacing-lg;
+    height: $spacing-2xl;
+    padding: $spacing-0 $spacing-lg;
+    font-size: $font-size-base;
+  }
+  
+  &-lg {
+    min-width: $spacing-6xl + $spacing-4xl;
+    height: $spacing-3xl;
+    padding: $spacing-0 $spacing-xl;
+    font-size: $font-size-lg;
+  }
+}
+
+// 피드백 페이지 버튼 정렬
+.feedback_wrap,
+.feedback_section {
+  .etc_box {
+    .flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing-sm + $spacing-2xs;
+      
+      // 액션 버튼 통일
+      button,
+      .all,
+      .share {
+        min-width: $spacing-6xl + $spacing-lg;
+        height: $spacing-2xl;
+        padding: $spacing-0 $spacing-lg - $spacing-xs;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+      }
+      
+      // 중간 버튼 그룹
+      .good {
+        display: flex;
+        gap: $spacing-sm;
+        
+        .change_btn_wrap {
+          div {
+            height: $spacing-2xl;
+            padding: $spacing-0 $spacing-md;
+            min-width: auto;
+          }
+        }
+      }
+    }
+  }
+  
+  // 좋아요/싫어요 버튼 고정 크기
+  .action-btn {
+    &.like-btn,
+    &.dislike-btn,
+    &.reply-btn {
+      width: $spacing-4xl - $spacing-xs;
+    }
+    
+    &.need-explanation-btn {
+      width: 110;
+    }
+    
+    &.important-btn {
+      width: $spacing-4xl + $spacing-xs + $spacing-2xs;
+    }
+  }
+}
+
+// 비디오 플레이어 컨트롤 버튼
+.video_player_section,
+.feedback-player {
+  .control_btn_wrap,
+  .control-buttons {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm + $spacing-2xs;
+    
+    button {
+      min-width: $spacing-2xl;
+      height: $spacing-2xl;
+      padding: $spacing-0;
+      border-radius: $border-radius-base;
+      
+      // 아이콘 중앙 정렬
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      svg {
+        width: $spacing-lg - $spacing-xs;
+        height: $spacing-lg - $spacing-xs;
+      }
+    }
+  }
+  
+  // 코멘트 버튼 특별 처리
+  .comment-button {
+    min-width: $spacing-5xl;
+    padding: $spacing-0 $spacing-sm + $spacing-xs;
+  }
+}
+
+// CMS 페이지 버튼 정렬
+.project_card,
+.project-info {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    button {
+      height: $spacing-xl + $spacing-xs;
+      padding: $spacing-0 $spacing-md;
+    }
+  }
+  
+  .btn-group {
+    display: flex;
+    gap: $spacing-sm;
+    
+    button {
+      min-width: $spacing-6xl + $spacing-xs;
+    }
+  }
+}
+
+// 영상기획 페이지 버튼
+.video-planning {
+  .button-container {
+    display: flex;
+    gap: $spacing-sm + $spacing-xs;
+    justify-content: flex-end;
+    margin-top: $spacing-lg;
+    
+    button {
+      min-width: $spacing-6xl + $spacing-lg;
+      height: $spacing-2xl + $spacing-xs;
+    }
+  }
+}
+
+// 모달 버튼 정렬
+.modal,
+.popup {
+  .modal-footer,
+  .popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-sm + $spacing-xs;
+    padding-top: $spacing-lg - $spacing-xs;
+    
+    button {
+      min-width: $spacing-6xl + $spacing-xs;
+      height: $spacing-2xl;
+    }
+  }
+}
+
+// 폼 제출 버튼
+form {
+  .submit-wrapper,
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing-lg + $spacing-xs + $spacing-2xs;
+    
+    .submit,
+    button[type="submit"] {
+      min-width: $spacing-6xl * 2 + $spacing-sm;
+      height: $spacing-3xl;
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+// 반응형 버튼 조정
+@media (max-width: $breakpoint-md) { // 모바일에서 버튼 크기 조정 .btn-size { &-md { min-width: $spacing-6xl + $spacing-xs;
+      height: $spacing-xl + $spacing-xs;
+      font-size: $font-size-sm;
+    }
+    
+    &-lg {
+      min-width: 140;
+      height: $spacing-2xl + $spacing-xs;
+      font-size: $font-size-base;
+    }
+  }
+  
+  // 피드백 버튼 모바일 최적화
+  .feedback_wrap .etc_box {
+    .flex {
+      flex-wrap: wrap;
+      
+      button {
+        min-width: $spacing-5xl;
+        height: $spacing-xl + $spacing-xs;
+        font-size: $spacing-md - $spacing-xs;
+      }
+    }
+  }
+  
+  // 폼 버튼 전체 너비
+  form .submit-wrapper {
+    .submit {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

@@ -1,3 +1,5 @@
+@import '../styles/design-tokens';
+
 .resizable-panel {
   display: flex;
   width: 100%;
@@ -22,7 +24,7 @@
   }
   
   .resize-handle {
-    width: 8px;
+    width: $spacing-sm;
     cursor: col-resize;
     position: relative;
     user-select: none;
@@ -32,7 +34,7 @@
     flex-shrink: 0;
     
     &:hover {
-      background: rgba(0, 88, 218, 0.05);
+      background: rgba($color-vp-blue-2, 0.05);
       
       .handle-bar {
         opacity: 1;
@@ -40,11 +42,11 @@
     }
     
     &.resizing {
-      background: rgba(0, 88, 218, 0.1);
+      background: rgba($color-vp-blue-2, 0.1);
       
       .handle-bar {
         opacity: 1;
-        background: #0058da;
+        background: $color-vp-blue-2;
       }
     }
     
@@ -53,45 +55,40 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: 3px;
-      height: 40px;
-      background: #ddd;
-      border-radius: 2px;
+      width: $spacing-xs - $spacing-2xs;
+      height: $spacing-2xl;
+      background: $color-gray-300;
+      border-radius: $border-radius-sm / 2;
       opacity: 0.5;
-      transition: all 0.2s;
+      transition: $transition-base;
       
       &::before,
       &::after {
         content: '';
         position: absolute;
-        width: 8px;
-        height: 8px;
+        width: $spacing-sm;
+        height: $spacing-sm;
         background: inherit;
-        border-radius: 50%;
+        border-radius: $border-radius-full;
         left: 50%;
         transform: translateX(-50%);
       }
       
       &::before {
-        top: -2px;
+        top: -$spacing-2xs;
       }
       
       &::after {
-        bottom: -2px;
+        bottom: -$spacing-2xs;
       }
     }
   }
-}
-
-// 모바일에서는 리사이즈 비활성화
-@media (max-width: 768px) {
-  .resizable-panel {
-    flex-direction: column;
+}.resizable-panel { flex-direction: column;
     
     .panel-left,
     .panel-right {
-      width: 100% !important;
-    }
+      // 모바일에서는 리사이즈 비활성화
+@media (max-width: $breakpoint-md):not(#\9) { width: 100%; }
     
     .panel-left {
       height: 60%;
@@ -104,5 +101,84 @@
     .resize-handle {
       display: none;
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

@@ -135,8 +135,11 @@ MIDDLEWARE = [
     "config.rate_limit_middleware.RateLimitMiddleware",  # Rate Limiting 추가
     "config.rate_limit_middleware.SecurityAuditMiddleware",  # 보안 감사 추가
     "config.middleware.PerformanceMiddleware",
+    "config.middleware.CSRFMigrationMiddleware",  # CSRF 단계적 마이그레이션
     "feedbacks.middleware.MediaHeadersMiddleware",
     "projects.middleware.IdempotencyMiddleware",
+    "middleware.error_handler.ErrorHandlerMiddleware",  # 전역 에러 처리
+    "middleware.error_handler.StandardizedResponseMiddleware",  # 응답 표준화
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -172,6 +175,20 @@ CHANNEL_LAYERS = {
     },
 }
 
+# CSRF 단계적 마이그레이션 설정
+CSRF_ACTIVE_PHASES = ['phase1']  # 인증 관련 엔드포인트부터 시작
+CSRF_TRUSTED_ORIGINS = [
+    'https://vlanet.net',
+    'https://www.vlanet.net',
+    'https://videoplanet-seven.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:3001',
+]
+CSRF_COOKIE_HTTPONLY = False  # JavaScript에서 CSRF 토큰을 읽을 수 있도록
+CSRF_COOKIE_SECURE = not DEBUG  # 프로덕션에서는 HTTPS only
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = False  # 쿠키 기반 CSRF 토큰 사용
+
 # Database
 import dj_database_url
 
@@ -180,8 +197,17 @@ DATABASE_URL = env('DATABASE_URL', default=None)
 if DATABASE_URL:
     # Railway나 Heroku 같은 플랫폼에서 DATABASE_URL 사용
     DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=60,
+            conn_health_checks=True,
+            options={
+                'connect_timeout': 10,
+                'options': '-c statement_timeout=30s',
+            }
+        )
     }
+    DATABASES['default']['ATOMIC_REQUESTS'] = True
 else:
     # 개발 환경에서 개별 환경변수 사용
     DATABASES = {
@@ -194,7 +220,11 @@ else:
             "PORT": os.environ.get('DB_PORT', '5432'),
             "OPTIONS": {
                 "connect_timeout": 10,
-            }
+                "options": "-c statement_timeout=30s",
+            },
+            "CONN_MAX_AGE": 60,
+            "CONN_HEALTH_CHECKS": True,
+            "ATOMIC_REQUESTS": True,
         }
     }
 

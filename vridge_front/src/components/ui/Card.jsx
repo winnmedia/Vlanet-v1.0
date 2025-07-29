@@ -1,4 +1,6 @@
 import React from 'react'
+import UnifiedCard from '../../components/unified/UnifiedCard';
+
 import classNames from 'classnames'
 
 export default function Card({
@@ -36,7 +38,9 @@ export function CardHeader({
   return (
     <div className={classNames('card-header', className)}>
       {title ? <h3>{title}</h3> : children}
-      {action && <div className="card-header-action">{action}</div>}
+      {action && <UnifiedCard variant="default">
+{action}
+</UnifiedCard>}
     </div>
   )
 }

@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef , Suspense } from 'react'
+import dynamic from 'next/dynamic';
+;
+
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { useRouter } from 'next/router'
 
 import PageTemplate from '../../components/PageTemplate'
@@ -6,12 +13,27 @@ import { checkSession } from '../../util/util'
 import { getMyPageInfo, uploadProfileImage, updateProfile } from '../../api/user'
 import { useSelector, useDispatch } from 'react-redux'
 import { updateProjectStore } from '../../redux/project'
-import ImageCropper from '../../components/ImageCropper'
+
 import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from '../../api/invitation'
 import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, SendFriendRequest, DeleteFriend, BlockFriend } from '../../api/friends'
 import moment from 'moment'
 import 'moment/locale/ko'
-import UserAvatar from '../../components/UserAvatar'
+
+import { Button } from '../../components/unified/Button'
+import { Input } from '../../components/unified/Input'
+const UserAvatar = dynamic(() => import('../../components/UserAvatar'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const ImageCropper = dynamic(() => import('../../components/ImageCropper'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const UnifiedCard = dynamic(() => import('../../components/unified/UnifiedCard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+
 
 export default function MyPage() {
   const router = useRouter()
@@ -83,9 +105,7 @@ export default function MyPage() {
       setInvitationLoading(true)
       const response = await GetMyInvitations()
       setInvitations(response.data)
-    } catch (error) {
-      console.error('초대 목록 로드 실패:', error)
-    } finally {
+    } catch (error) {} finally {
       setInvitationLoading(false)
     }
   }
@@ -97,7 +117,6 @@ export default function MyPage() {
       loadInvitations() // 목록 새로고침
       alert('초대를 수락했습니다.')
     } catch (error) {
-      console.error('초대 수락 실패:', error)
       alert('초대 수락에 실패했습니다.')
     }
   }
@@ -109,7 +128,6 @@ export default function MyPage() {
       loadInvitations() // 목록 새로고침
       alert('초대를 거절했습니다.')
     } catch (error) {
-      console.error('초대 거절 실패:', error)
       alert('초대 거절에 실패했습니다.')
     }
   }
@@ -120,9 +138,7 @@ export default function MyPage() {
     try {
       // 친구 기능 임시 비활성화
       setFriends([])
-    } catch (error) {
-      console.error('친구 목록 조회 실패:', error)
-    } finally {
+    } catch (error) {} finally {
       setFriendLoading(false)
     }
   }
@@ -131,9 +147,7 @@ export default function MyPage() {
     try {
       // 친구 기능 임시 비활성화
       setFriendRequests([])
-    } catch (error) {
-      console.error('친구 요청 목록 조회 실패:', error)
-    }
+    } catch (error) {}
   }
 
   const handleFriendSearch = async () => {
@@ -145,7 +159,6 @@ export default function MyPage() {
       setFriendSearchResults(response.data.users || [])
       setShowFriendSearch(true)
     } catch (error) {
-      console.error('친구 검색 실패:', error)
       alert('친구 검색 중 오류가 발생했습니다.')
     } finally {
       setFriendLoading(false)
@@ -158,7 +171,6 @@ export default function MyPage() {
       alert('친구 요청을 보냈습니다.')
       handleFriendSearch() // 검색 결과 새로고침
     } catch (error) {
-      console.error('친구 요청 실패:', error)
       alert(error.response?.data?.message || '친구 요청 중 오류가 발생했습니다.')
     }
   }
@@ -172,7 +184,6 @@ export default function MyPage() {
         loadFriends()
       }
     } catch (error) {
-      console.error('친구 요청 응답 실패:', error)
       alert('친구 요청 처리 중 오류가 발생했습니다.')
     }
   }
@@ -188,7 +199,6 @@ export default function MyPage() {
       alert('친구가 삭제되었습니다.')
       loadFriends() // 목록 새로고침
     } catch (error) {
-      console.error('친구 삭제 실패:', error)
       alert(error.response?.data?.message || '친구 삭제 중 오류가 발생했습니다.')
     }
   }
@@ -204,7 +214,6 @@ export default function MyPage() {
       alert('사용자를 차단했습니다.')
       loadFriends() // 목록 새로고침
     } catch (error) {
-      console.error('친구 차단 실패:', error)
       alert(error.response?.data?.message || '사용자 차단 중 오류가 발생했습니다.')
     }
   }
@@ -245,12 +254,9 @@ export default function MyPage() {
         }
         setLoading(false) // 성공 시에도 로딩 종료
       } else {
-        console.error('마이페이지 데이터 형식 오류:', response)
         setLoading(false)
       }
     } catch (error) {
-      console.error('마이페이지 데이터 로드 실패:', error)
-      console.error('Error response:', error.response)
       // 에러가 발생해도 기본 데이터로 표시
       setMyPageData({
         profile: {
@@ -409,13 +415,9 @@ export default function MyPage() {
       } else {
         // 응답은 받았지만 성공이 아닌 경우
         const errorMsg = response.data?.message || '이미지 업로드에 실패했습니다.'
-        console.error('Upload failed with response:', response.data)
         alert(errorMsg)
       }
     } catch (error) {
-      console.error('Image upload error:', error)
-      console.error('Error response:', error.response)
-      
       // 에러 메시지 처리
       let errorMessage = '이미지 업로드 실패: '
       if (error.response?.data?.message) {
@@ -450,7 +452,6 @@ export default function MyPage() {
         fetchMyPageData()
       }
     } catch (error) {
-      console.error('Profile update error:', error)
       alert('프로필 업데이트 실패: ' + (error.response?.data?.message || error.message || '알 수 없는 오류'))
     } finally {
       setIsSaving(false)
@@ -486,7 +487,7 @@ export default function MyPage() {
   if (loading) {
     return (
       <PageTemplate>
-        <main className="mypage-container">
+        <main className="mypage-container responsive-container" role="main">
           <div className="loading">
             <div className="loading-spinner"></div>
             <span className="loading-text">마이페이지 불러오는 중...</span>
@@ -507,7 +508,7 @@ export default function MyPage() {
           onCancel={handleCropCancel}
         />
       )}
-      <main className="mypage-container">
+      <main className="mypage-container responsive-container" role="main">
         <div className="mypage">
           <div className="mypage-header">
             <h1>마이페이지</h1>
@@ -517,39 +518,39 @@ export default function MyPage() {
           </div>
 
           <div className="mypage-tabs">
-            <button 
+            <UnifiedButton 
               className={activeTab === 'profile' ? 'active' : ''}
-              onClick={() => setActiveTab('profile')}
+              onClick={() = aria-label="Click" type="button"> setActiveTab('profile')}
             >
               프로필
-            </button>
-            <button 
+            </UnifiedButton>
+            <UnifiedButton 
               className={activeTab === 'projects' ? 'active' : ''}
-              onClick={() => setActiveTab('projects')}
+              onClick={() = aria-label="Click" type="button"> setActiveTab('projects')}
             >
               프로젝트
-            </button>
-            <button 
+            </UnifiedButton>
+            <UnifiedButton 
               className={activeTab === 'activity' ? 'active' : ''}
-              onClick={() => setActiveTab('activity')}
+              onClick={() = aria-label="Click" type="button"> setActiveTab('activity')}
             >
               활동 내역
-            </button>
-            <button 
+            </UnifiedButton>
+            <UnifiedButton 
               className={activeTab === 'stats' ? 'active' : ''}
-              onClick={() => setActiveTab('stats')}
+              onClick={() = aria-label="Click" type="button"> setActiveTab('stats')}
             >
               통계
-            </button>
-            <button 
+            </UnifiedButton>
+            <UnifiedButton 
               className={activeTab === 'friends' ? 'active' : ''}
-              onClick={() => setActiveTab('friends')}
+              onClick={() = aria-label="Click" type="button"> setActiveTab('friends')}
             >
               친구
               {friendRequests.length > 0 && (
                 <span className="badge">{friendRequests.length}</span>
               )}
-            </button>
+            </UnifiedButton>
           </div>
 
           <div className="mypage-content">
@@ -558,15 +559,15 @@ export default function MyPage() {
                 <div className="profile-header">
                   <h2>프로필 정보</h2>
                   {!isEditing && (
-                    <button className="edit-btn" onClick={() => setIsEditing(true)}>
+                    <Button variant="secondary" aria-label="Click"> setIsEditing(true)}>
                       수정
-                    </button>
+                    </Button>
                   )}
                 </div>
 
                 <div className="profile-image-section">
                   <div className="profile-image-wrapper">
-                    <div className="profile-image-container">
+                    <div className="profile-image-container responsive-container">
                       <UserAvatar 
                         profileImage={imagePreview}
                         name={myPageData?.profile?.nickname || nickname || 'U'}
@@ -612,20 +613,15 @@ export default function MyPage() {
                         <p>클릭하거나 이미지를 드래그하여 업로드</p>
                         <p className="upload-hint">JPG, PNG, GIF (최대 5MB)</p>
                       </div>
-                      <input 
-                        ref={fileInputRef}
+                      <UnifiedInput ref={fileInputRef}
                         type="file" 
                         accept="image/*"
                         onChange={handleImageChange}
                         style={{ display: 'none' }}
-                      />
+                       / aria-label="file input">
                       {profileImage && (
                         <div className="upload-actions">
-                          <button 
-                            onClick={handleImageUpload} 
-                            className="upload-confirm-btn"
-                            disabled={isUploading}
-                          >
+                          <Button onClick={handleImageUpload} disabled aria-label="Click">
                             {isUploading ? (
                               <>
                                 <svg className="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -637,9 +633,9 @@ export default function MyPage() {
                             ) : (
                               '이미지 업로드'
                             )}
-                          </button>
-                          <button 
-                            onClick={() => {
+                          </Button>
+                          <UnifiedButton 
+                            onClick={() = aria-label="Click" type="button"> {
                               setProfileImage(null)
                               // localStorage에서 이미지 복원 또는 DB 이미지 사용
                               const savedImage = typeof window !== 'undefined' ? localStorage.getItem('profileImage') : null
@@ -653,7 +649,7 @@ export default function MyPage() {
                             className="cancel-upload-btn"
                           >
                             취소
-                          </button>
+                          </UnifiedButton>
                         </div>
                       )}
                     </div>
@@ -681,13 +677,12 @@ export default function MyPage() {
                       닉네임
                     </label>
                     {isEditing ? (
-                      <input 
-                        type="text" 
+                      <UnifiedInput type="text" 
                         name="nickname"
                         value={profileForm.nickname}
                         onChange={handleInputChange}
                         placeholder="닉네임"
-                      />
+                       / aria-label="닉네임">
                     ) : (
                       <div className="info-value">{myPageData?.profile?.nickname || nickname || '-'}</div>
                     )}
@@ -725,13 +720,12 @@ export default function MyPage() {
                       전화번호
                     </label>
                     {isEditing ? (
-                      <input 
-                        type="tel" 
+                      <UnifiedInput type="tel" 
                         name="phone"
                         value={profileForm.phone}
                         onChange={handleInputChange}
                         placeholder="전화번호"
-                      />
+                       / aria-label="전화번호">
                     ) : (
                       <div className="info-value">{myPageData?.profile?.phone || '-'}</div>
                     )}
@@ -749,13 +743,12 @@ export default function MyPage() {
                       회사/소속
                     </label>
                     {isEditing ? (
-                      <input 
-                        type="text" 
+                      <UnifiedInput type="text" 
                         name="company"
                         value={profileForm.company}
                         onChange={handleInputChange}
                         placeholder="회사/소속"
-                      />
+                       / aria-label="회사/소속">
                     ) : (
                       <div className="info-value">{myPageData?.profile?.company || '-'}</div>
                     )}
@@ -770,13 +763,12 @@ export default function MyPage() {
                       직책
                     </label>
                     {isEditing ? (
-                      <input 
-                        type="text" 
+                      <UnifiedInput type="text" 
                         name="position"
                         value={profileForm.position}
                         onChange={handleInputChange}
                         placeholder="직책"
-                      />
+                       / aria-label="직책">
                     ) : (
                       <div className="info-value">{myPageData?.profile?.position || '-'}</div>
                     )}
@@ -809,14 +801,10 @@ export default function MyPage() {
 
                   {isEditing && (
                     <div className="profile-actions">
-                      <button 
-                        onClick={handleProfileUpdate} 
-                        className="save-btn"
-                        disabled={isSaving}
-                      >
+                      <Button onClick={handleProfileUpdate} disabled aria-label="Click">
                         {isSaving ? '저장 중...' : '저장'}
-                      </button>
-                      <button onClick={() => {
+                      </Button>
+                      <UnifiedButton onClick={() = aria-label="Click" type="button"> {
                         setIsEditing(false)
                         setProfileForm({
                           nickname: myPageData?.profile?.nickname || '',
@@ -827,7 +815,7 @@ export default function MyPage() {
                         })
                       }} className="cancel-btn">
                         취소
-                      </button>
+                      </UnifiedButton>
                     </div>
                   )}
                 </div>
@@ -852,12 +840,10 @@ export default function MyPage() {
                             </span>
                           </div>
                         </div>
-                        <button 
-                          className="view-project-btn"
-                          onClick={() => navigate(`/ProjectView/${project.id}`)}
+                        <Button variant="secondary" aria-label="Click"> navigate(`/ProjectView/${project.id}`)}
                         >
                           보기
-                        </button>
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -881,12 +867,10 @@ export default function MyPage() {
                             </span>
                           </div>
                         </div>
-                        <button 
-                          className="view-project-btn"
-                          onClick={() => navigate(`/ProjectView/${project.id}`)}
+                        <Button variant="secondary" aria-label="Click"> navigate(`/ProjectView/${project.id}`)}
                         >
                           보기
-                        </button>
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -926,23 +910,23 @@ export default function MyPage() {
             {activeTab === 'stats' && (
               <div className="stats-section">
                 <h2>통계</h2>
-                <div className="stats-grid">
-                  <div className="stat-card">
+                <div className="stats-grid responsive-grid">
+                  <UnifiedCard className="stat-card">
                     <div className="stat-label">전체 프로젝트</div>
                     <div className="stat-value">{myPageData?.stats?.total_projects || 0}</div>
-                  </div>
-                  <div className="stat-card">
+                  </UnifiedCard>
+                  <UnifiedCard className="stat-card">
                     <div className="stat-label">진행 중인 프로젝트</div>
                     <div className="stat-value">{myPageData?.stats?.active_projects || 0}</div>
-                  </div>
-                  <div className="stat-card">
+                  </UnifiedCard>
+                  <UnifiedCard className="stat-card">
                     <div className="stat-label">완료된 프로젝트</div>
                     <div className="stat-value">{myPageData?.stats?.completed_projects || 0}</div>
-                  </div>
-                  <div className="stat-card">
+                  </UnifiedCard>
+                  <UnifiedCard className="stat-card">
                     <div className="stat-label">협업자 수</div>
                     <div className="stat-value">{myPageData?.stats?.total_collaborators || 0}</div>
-                  </div>
+                  </UnifiedCard>
                 </div>
               </div>
             )}
@@ -952,21 +936,21 @@ export default function MyPage() {
                 <div className="friends-header">
                   <h2>친구 관리</h2>
                   <div className="friend-search">
-                    <div className="search-box">
-                      <input
+                    <UnifiedCard className="search-box">
+                      <UnifiedInput
                         type="text"
                         placeholder="이메일 또는 닉네임으로 검색"
                         value={friendSearchQuery}
-                        onChange={(e) => setFriendSearchQuery(e.target.value)}
+                        onChange={(e) = aria-label="이메일 또는 닉네임으로 검색" /> setFriendSearchQuery(e.target.value)}
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             handleFriendSearch()
                           }
                         }}
                       />
-                      <button onClick={handleFriendSearch} disabled={friendLoading}>
+                      <Button onClick={handleFriendSearch} disabled={friendLoading} aria-label="Click">
                         {friendLoading ? '검색 중...' : '검색'}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -995,18 +979,18 @@ export default function MyPage() {
                             </div>
                           </div>
                           <div className="friend-actions">
-                            <button
-                              onClick={() => handleFriendRequestResponse(request.id, 'accept')}
+                            <UnifiedButton
+                              onClick={() = aria-label="Click" type="button"> handleFriendRequestResponse(request.id, 'accept')}
                               className="accept-btn"
                             >
                               수락
-                            </button>
-                            <button
-                              onClick={() => handleFriendRequestResponse(request.id, 'decline')}
+                            </UnifiedButton>
+                            <UnifiedButton
+                              onClick={() = aria-label="Click" type="button"> handleFriendRequestResponse(request.id, 'decline')}
                               className="decline-btn"
                             >
                               거절
-                            </button>
+                            </UnifiedButton>
                           </div>
                         </div>
                       ))}
@@ -1042,12 +1026,12 @@ export default function MyPage() {
                             </div>
                             <div className="friend-actions">
                               {user.friendship_status === 'none' && (
-                                <button
-                                  onClick={() => handleSendFriendRequest(user.email)}
+                                <UnifiedButton
+                                  onClick={() = aria-label="Click" type="button"> handleSendFriendRequest(user.email)}
                                   className="add-friend-btn"
                                 >
                                   친구 추가
-                                </button>
+                                </UnifiedButton>
                               )}
                               {user.friendship_status === 'pending' && (
                                 <span className="status-pending">요청됨</span>
@@ -1094,11 +1078,9 @@ export default function MyPage() {
                             </div>
                           </div>
                           <div className="friend-actions">
-                            <button className="message-btn" disabled title="준비 중">메시지</button>
-                            <button className="invite-btn" disabled title="준비 중">프로젝트 초대</button>
-                            <button 
-                              className="delete-btn"
-                              onClick={() => handleDeleteFriend(friendship.friend.email)}
+                            <Button variant="secondary" disabled title="준비 중" aria-label="Click">메시지</Button>
+                            <Button variant="secondary" disabled title="준비 중" aria-label="Click">프로젝트 초대</Button>
+                            <Button variant="danger" aria-label="Click"> handleDeleteFriend(friendship.friend.email)}
                               style={{
                                 backgroundColor: '#dc3545',
                                 color: 'white',
@@ -1118,10 +1100,8 @@ export default function MyPage() {
                               }}
                             >
                               삭제
-                            </button>
-                            <button 
-                              className="block-btn"
-                              onClick={() => handleBlockFriend(friendship.friend.email)}
+                            </Button>
+                            <Button variant="danger" aria-label="Click"> handleBlockFriend(friendship.friend.email)}
                               style={{
                                 backgroundColor: '#6c757d',
                                 color: 'white',
@@ -1141,7 +1121,7 @@ export default function MyPage() {
                               }}
                             >
                               차단
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       ))}

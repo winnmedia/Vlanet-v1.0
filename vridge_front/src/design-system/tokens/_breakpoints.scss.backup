@@ -1,0 +1,103 @@
+// ========== 브레이크포인트 시스템 ==========
+// VideoPlanet 반응형 디자인을 위한 통합 브레이크포인트
+
+// 기본 브레이크포인트 값
+$breakpoint-xs: 0;        // Extra Small: 0px 이상
+$breakpoint-sm: 768px;    // Small: 768px 이상 (태블릿)
+$breakpoint-md: 1024px;   // Medium: 1024px 이상 (소형 데스크톱)
+$breakpoint-lg: 1280px;   // Large: 1280px 이상 (대형 데스크톱)
+$breakpoint-xl: 1536px;   // Extra Large: 1536px 이상
+$breakpoint-2xl: 1920px;  // 2X Large: 1920px 이상
+
+// 브레이크포인트 맵 (반복문 사용을 위해)
+$breakpoints: (
+  'xs': $breakpoint-xs,
+  'sm': $breakpoint-sm,
+  'md': $breakpoint-md,
+  'lg': $breakpoint-lg,
+  'xl': $breakpoint-xl,
+  '2xl': $breakpoint-2xl
+);
+
+// 컨테이너 최대 너비
+$container-max-width-sm: 640px;
+$container-max-width-md: 768px;
+$container-max-width-lg: 1024px;
+$container-max-width-xl: 1280px;
+$container-max-width-2xl: 1536px;
+
+// ========== 미디어 쿼리 믹스인 ==========
+
+// 최소 너비 미디어 쿼리 (모바일 퍼스트)
+@mixin media-up($breakpoint) {
+  $value: map-get($breakpoints, $breakpoint);
+  @if $value == 0 {
+    @content;
+  } @else {
+    @media (min-width: $value) {
+      @content;
+    }
+  }
+}
+
+// 최대 너비 미디어 쿼리
+@mixin media-down($breakpoint) {
+  $value: map-get($breakpoints, $breakpoint);
+  @if $value > 0 {
+    @media (max-width: ($value - 1px)) {
+      @content;
+    }
+  }
+}
+
+// 범위 미디어 쿼리
+@mixin media-between($min, $max) {
+  $min-value: map-get($breakpoints, $min);
+  $max-value: map-get($breakpoints, $max);
+  
+  @if $min-value and $max-value {
+    @media (min-width: $min-value) and (max-width: ($max-value - 1px)) {
+      @content;
+    }
+  }
+}
+
+// 특정 브레이크포인트만 타겟
+@mixin media-only($breakpoint) {
+  $current: map-get($breakpoints, $breakpoint);
+  $keys: map-keys($breakpoints);
+  $index: index($keys, $breakpoint);
+  
+  @if $index and $index < length($keys) {
+    $next-key: nth($keys, $index + 1);
+    $next: map-get($breakpoints, $next-key);
+    
+    @if $current == 0 {
+      @media (max-width: ($next - 1px)) {
+        @content;
+      }
+    } @else {
+      @media (min-width: $current) and (max-width: ($next - 1px)) {
+        @content;
+      }
+    }
+  } @else {
+    @media (min-width: $current) {
+      @content;
+    }
+  }
+}
+
+// ========== CSS 변수 정의 ==========
+:root {
+  // 브레이크포인트 값을 CSS 변수로도 제공
+  --breakpoint-xs: #{$breakpoint-xs};
+  --breakpoint-sm: #{$breakpoint-sm};
+  --breakpoint-md: #{$breakpoint-md};
+  --breakpoint-lg: #{$breakpoint-lg};
+  --breakpoint-xl: #{$breakpoint-xl};
+  --breakpoint-2xl: #{$breakpoint-2xl};
+  
+  // 컨테이너 최대 너비
+  --container-max-width: 100%;
+}

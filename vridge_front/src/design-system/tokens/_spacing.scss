@@ -1,0 +1,234 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 간격 토큰 시스템
+// 일관된 간격 시스템 제공
+
+// ========== 기본 간격 단위 ==========
+$spacing-unit: $spacing-xs;
+
+// ========== 간격 스케일 ==========
+$spacing-0: 0;
+$spacing-xs: $spacing-unit * 1;   // $spacing-xs
+$spacing-sm: $spacing-unit * 2;   // $spacing-sm
+$spacing-md: $spacing-unit * 3;   // $spacing-sm + $spacing-xs
+$spacing-lg: $spacing-unit * 4;   // $spacing-md
+$spacing-xl: $spacing-unit * 5;   // $spacing-md + $spacing-xs
+$spacing-2xl: $spacing-unit * 6;  // $spacing-lg
+$spacing-3xl: $spacing-unit * 8;  // $spacing-xl
+$spacing-4xl: $spacing-unit * 10; // $spacing-2xl
+$spacing-5xl: $spacing-unit * 12; // $spacing-3xl
+
+// ========== 컴포넌트별 간격 ==========
+// 패딩
+$padding-button-sm: $spacing-xs $spacing-sm;
+$padding-button-md: $spacing-sm $spacing-md;
+$padding-button-lg: $spacing-md $spacing-lg;
+
+$padding-input-sm: $spacing-xs $spacing-sm;
+$padding-input-md: $spacing-sm $spacing-md;
+$padding-input-lg: $spacing-md $spacing-lg;
+
+$padding-card: $spacing-lg;
+$padding-section: $spacing-xl;
+$padding-page: $spacing-2xl;
+
+// 마진
+$margin-element: $spacing-md 0;
+$margin-section: $spacing-xl 0;
+$margin-page: $spacing-2xl 0;
+
+// 갭
+$gap-xs: $spacing-xs;
+$gap-sm: $spacing-sm;
+$gap-md: $spacing-md;
+$gap-lg: $spacing-lg;
+$gap-xl: $spacing-xl;
+
+// ========== 레이아웃 간격 ==========
+$layout-gutter: $spacing-lg;
+$layout-gutter-sm: $spacing-md;
+$layout-gutter-lg: $spacing-xl;
+
+$grid-gap: $spacing-lg;
+$grid-gap-sm: $spacing-md;
+$grid-gap-lg: $spacing-xl;
+
+// ========== 특수 간격 ==========
+// 모달
+$modal-padding: $spacing-xl;
+$modal-header-padding: $spacing-lg $spacing-xl;
+$modal-body-padding: $spacing-xl;
+$modal-footer-padding: $spacing-lg $spacing-xl;
+
+// 툴바
+$toolbar-padding: $spacing-md $spacing-lg;
+$toolbar-gap: $spacing-md;
+
+// 리스트
+$list-item-padding: $spacing-md;
+$list-item-gap: $spacing-sm;
+$list-group-gap: $spacing-lg;
+
+// 폼
+$form-group-margin: $spacing-lg;
+$form-label-margin: $spacing-xs;
+$form-help-margin: $spacing-xs;
+$form-error-margin: $spacing-xs;
+
+// ========== CSS 변수 정의 ==========
+:root {
+  // 기본 간격
+  --spacing-0: #{$spacing-0};
+  --spacing-xs: #{$spacing-xs};
+  --spacing-sm: #{$spacing-sm};
+  --spacing-md: #{$spacing-md};
+  --spacing-lg: #{$spacing-lg};
+  --spacing-xl: #{$spacing-xl};
+  --spacing-2xl: #{$spacing-2xl};
+  --spacing-3xl: #{$spacing-3xl};
+  --spacing-4xl: #{$spacing-4xl};
+  --spacing-5xl: #{$spacing-5xl};
+  
+  // 패딩
+  --padding-button-sm: #{$padding-button-sm};
+  --padding-button-md: #{$padding-button-md};
+  --padding-button-lg: #{$padding-button-lg};
+  --padding-input-sm: #{$padding-input-sm};
+  --padding-input-md: #{$padding-input-md};
+  --padding-input-lg: #{$padding-input-lg};
+  --padding-card: #{$padding-card};
+  --padding-section: #{$padding-section};
+  --padding-page: #{$padding-page};
+  
+  // 마진
+  --margin-element: #{$margin-element};
+  --margin-section: #{$margin-section};
+  --margin-page: #{$margin-page};
+  
+  // 갭
+  --gap-xs: #{$gap-xs};
+  --gap-sm: #{$gap-sm};
+  --gap-md: #{$gap-md};
+  --gap-lg: #{$gap-lg};
+  --gap-xl: #{$gap-xl};
+  
+  // 레이아웃
+  --layout-gutter: #{$layout-gutter};
+  --grid-gap: #{$grid-gap};
+}
+
+// ========== 유틸리티 믹스인 ==========
+@mixin spacing($property, $size) {
+  #{$property}: var(--spacing-#{$size});
+}
+
+@mixin padding($size) {
+  padding: var(--spacing-#{$size});
+}
+
+@mixin padding-x($size) {
+  padding-left: var(--spacing-#{$size});
+  padding-right: var(--spacing-#{$size});
+}
+
+@mixin padding-y($size) {
+  padding-top: var(--spacing-#{$size});
+  padding-bottom: var(--spacing-#{$size});
+}
+
+@mixin margin($size) {
+  margin: var(--spacing-#{$size});
+}
+
+@mixin margin-x($size) {
+  margin-left: var(--spacing-#{$size});
+  margin-right: var(--spacing-#{$size});
+}
+
+@mixin margin-y($size) {
+  margin-top: var(--spacing-#{$size});
+  margin-bottom: var(--spacing-#{$size});
+}
+
+@mixin gap($size) {
+  gap: var(--spacing-#{$size});
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

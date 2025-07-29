@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect , Suspense } from 'react'
+import dynamic from 'next/dynamic';
+;
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import { setGlobalLoading } from '../../redux/loading'
@@ -16,6 +21,11 @@ export default function VideoPlanning() {
     // Redux 상태가 로드되지 않았으면 대기
     if (user === undefined) {
       return;
+import { Button } from '../../components/unified/Button'
+const UnifiedCard = dynamic(() => import('../../components/unified/UnifiedCard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
     }
     
     // 상태가 로드되면 초기화 완료로 표시
@@ -23,7 +33,7 @@ export default function VideoPlanning() {
     
     // 로그인되지 않은 경우에만 리다이렉트
     if (user === null || (user && !user.email)) {
-      console.log('[VideoPlanning] User not logged in, redirecting to login');
+      
       router.push('/login');
     }
   }, [user, router])
@@ -50,7 +60,7 @@ export default function VideoPlanning() {
       <PageTemplate>
         <div className="contents">
           <SideBar />
-          <main className="main">
+          <main className="main" role="main">
             {/* 글로벌 로딩이 표시되므로 여기서는 빈 컨테이너만 */}
           </main>
         </div>
@@ -62,7 +72,7 @@ export default function VideoPlanning() {
     <PageTemplate>
       <div className="contents">
         <SideBar />
-        <main className="main">
+        <main className="main" role="main">
           <div className="video-planning-page">
             <div className="page-header">
               <h1>🎬 영상 기획</h1>
@@ -71,47 +81,41 @@ export default function VideoPlanning() {
             
             <div className="planning-container">
               <div className="feature-cards">
-                <div className="feature-card">
-                  <div className="card-icon">🤖</div>
+                <UnifiedCard variant="default" className="feature-card" >
+                  <div className="card-icon">🤖</UnifiedCard>
                   <h3>AI 기획 생성</h3>
                   <p>인공지능이 영상 기획안을 자동으로 생성합니다.</p>
-                  <button 
-                    className="btn-primary"
-                    onClick={() => {
+                  <Button  aria-label="Click"> {
                       // AI 기획 생성 기능
                       alert('AI 기획 생성 기능은 곧 활성화됩니다.')
                     }}
                   >
                     시작하기
-                  </button>
+                  </Button>
                 </div>
                 
-                <div className="feature-card">
-                  <div className="card-icon">📝</div>
+                <UnifiedCard variant="default" className="feature-card" >
+                  <div className="card-icon">📝</UnifiedCard>
                   <h3>템플릿 활용</h3>
                   <p>다양한 영상 템플릿을 활용해 빠르게 기획하세요.</p>
-                  <button 
-                    className="btn-secondary"
-                    onClick={() => {
+                  <Button variant="secondary" aria-label="Click"> {
                       alert('템플릿 기능은 곧 활성화됩니다.')
                     }}
                   >
                     템플릿 보기
-                  </button>
+                  </Button>
                 </div>
                 
-                <div className="feature-card">
-                  <div className="card-icon">📊</div>
+                <UnifiedCard variant="default" className="feature-card" >
+                  <div className="card-icon">📊</UnifiedCard>
                   <h3>기획안 관리</h3>
                   <p>생성된 기획안을 관리하고 수정할 수 있습니다.</p>
-                  <button 
-                    className="btn-secondary"
-                    onClick={() => {
+                  <Button variant="secondary" aria-label="Click"> {
                       alert('기획안 관리 기능은 곧 활성화됩니다.')
                     }}
                   >
                     관리하기
-                  </button>
+                  </Button>
                 </div>
               </div>
               

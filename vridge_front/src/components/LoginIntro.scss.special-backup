@@ -1,0 +1,51 @@
+@import '../styles/design-tokens';
+
+.LoginIntro {
+  height: 100%;
+  padding: $spacing-3xl + 2px;
+  position: relative;
+  background: url('../images/User/bg.png') no-repeat;
+  background-size: cover;
+  .intro_wrap {
+    .logo {
+      img {
+        width: 120px;
+        cursor: pointer;
+      }
+    }
+    .slogun {
+      color: $color-white;
+      font-size: 57px;
+      line-height: 1.24;
+      margin-top: $spacing-lg + 6px;
+      span {
+        font-weight: bold;
+      }
+    }
+    .etc {
+      position: absolute;
+      left: $spacing-0;
+      bottom: $spacing-3xl + 2px;
+      width: 100%;
+      padding: $spacing-0 50px;
+      ul {
+        li {
+          color: $color-white;
+          font-family: 'pl';
+          font-size: 15px;
+          margin-top: $spacing-lg - $spacing-xs;
+          &:first-child {
+            margin-top: $spacing-0;
+          }
+        }
+      }
+      div {
+        color: $color-white;
+        font-family: 'pr';
+        text-align: right;
+        font-size: 64px;
+        line-height: 1.24;
+      }
+    }
+  }
+}

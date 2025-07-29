@@ -1,0 +1,193 @@
+@import '../styles/design-tokens';
+
+// 모션 감소 접근성
+// WCAG 2.1 Success Criterion 2.3.3: Animation from Interactions
+
+@use '../tokens' as *;// 모든 애니메이션 비활성화
+  *,
+  *::before,
+  *::after {
+    // ========== 모션 감소 설정 ==========
+// 사용자가 모션 감소를 선호하는 경우
+@media (prefers-reduced-motion: reduce):not(#\9) { animation-duration: 0.01ms; }
+    animation-iteration-count: 1 ;
+    transition-duration: 0.01ms ;
+    scroll-behavior: auto ;
+  
+  // 애니메이션 GIF 일시정지
+  img[src$=".gif"] {
+    opacity: 0.5;
+    
+    &::after {
+      content: 'GIF (일시정지됨)';
+      display: block;
+      font-size: $font-size-sm;
+      color: $color-text-muted;
+    }
+  }
+  
+  // 비디오 자동재생 방지
+  video {
+    &[autoplay] {
+      display: none;
+    }
+    
+    &:not([controls]) {
+      display: none;
+    }
+  }[data-autoplay="true"] {
+      // 캐러셀/슬라이더 자동 전환 비활성화
+  .carousel,
+  .slider.carousel { animation-play-state: paused; }
+  }// 시차 스크롤 효과 제거
+  .parallax.parallax { background-attachment: scroll; }
+    transform: none ;// 로딩 스피너 간소화
+  .spinner,
+  .loader.spinner { animation: none; }
+    border: $spacing-2xs solid $color-primary ;
+    border-radius: $radius-sm ;
+    
+    &::after {
+      content: '로딩 중...';
+      display: block;
+      color: $color-primary;
+      font-size: $font-size-sm;
+  }&::before {
+      // 프로그레스 바 즉시 업데이트
+  [role="progressbar"]:not(#\9) { transition: none; }
+  }// 탭 전환 즉시 실행
+  [role="tabpanel"]:not(#\9) { transition: none; }// 드롭다운 즉시 표시
+  .dropdown,
+  [role="menu"].dropdown { transition: none; }// 모달 페이드 제거
+  .modal,
+  [role="dialog"].modal { transition: none; }
+    
+    &.fade-in {
+      opacity: 1 ;
+  }// 툴팁 즉시 표시
+  .tooltip,
+  [role="tooltip"].tooltip { transition: none; }
+    opacity: 1 ;.accordion-content {
+      // 아코디언 즉시 열기/닫기
+  .accordion.accordion { transition: none; }
+  }// 페이지 전환 효과 제거
+  .page-transition.page-transition { transition: none; }
+}
+
+// ========== 선택적 모션 클래스 ==========
+// 모션이 필요한 요소에만 적용
+.motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: $transition-all;
+    
+    &:hover {
+      transform: translateY(-$spacing-2xs);
+    }
+  }
+}// 필수적인 모션은 유지 (예: 포커스 인디케이터)
+  .motion-essential.motion-essential { transition: outline $transition-fast; }// 호버 효과를 색상 변경으로 대체
+  button,
+  a {
+    &:hover {
+      // ========== 대체 피드백 ==========
+@media (prefers-reduced-motion: reduce):not(#\9) { transform: none; }
+      background-color: $color-gray-100;
+  }// 클릭 효과를 색상 변경으로 대체
+  button:active:not(#\9) { transform: none; }
+    background-color: $color-gray-200;
+  
+  // 로딩 상태를 텍스트로 표시
+  .loading-animation {
+    &::before {
+      content: '[로딩 중]';
+      color: $color-primary;
+      font-weight: $font-weight-medium;
+    }
+  }// 성공 애니메이션을 아이콘으로 대체
+  .success-animation.success-animation { animation: none; }
+    
+    &::before {
+      content: '✓';
+      color: $color-success;
+      font-size: $font-size-xl;
+  }
+}
+
+// ========== 애니메이션 컨트롤 ==========
+// 사용자가 애니메이션을 제어할 수 있는 UI
+.animation-controls {
+  position: fixed;
+  bottom: $spacing-lg;
+  right: $spacing-lg;
+  z-index: $z-tooltip;
+  
+  button {
+    @include touch-target;
+    background: $color-white;
+    border: $spacing-2xs solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-default;
+    
+    &[aria-pressed="true"] {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+}// 부드러운 스크롤 비활성화
+  html {
+    // ========== 스크롤 관련 모션 ==========
+@media (prefers-reduced-motion: reduce):not(#\9) { scroll-behavior: auto; }// 스크롤 트리거 애니메이션 비활성화
+  [data-scroll-animation]:not(#\9) { opacity: 1; }
+    transform: none ;// 스크롤 표시기 간소화
+  .scroll-indicator.scroll-indicator { animation: none; }
+}// 드래그 앤 드롭 시각적 피드백
+  .draggable {
+    &.dragging {
+      // ========== 인터랙션 피드백 대체 ==========
+@media (prefers-reduced-motion: reduce):not(#\9) { opacity: 0.8; }
+      transform: none ;
+      outline: $spacing-2xs dashed $color-primary ;
+  }// 스와이프 제스처 피드백
+  .swipeable.swipeable { transition: none; }
+    
+    &.swiping {
+      background-color: $color-gray-100 ;
+  }// 핀치 줌 피드백
+  .zoomable.zoomable { transition: none; }
+    
+    &.zooming {
+      outline: $spacing-2xs solid $color-primary ;
+  }
+}
+
+// ========== 유틸리티 믹스인 ==========
+@mixin motion-safe($property: all, $duration: $transition-base, $easing: $ease-default) {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: $property $duration $easing;
+  }
+}
+
+@mixin animation-safe($name, $duration: 1s, $easing: $ease-default) {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: $name $duration $easing;
+  }
+}
+
+// 사용 예시
+.example-button {
+  @include motion-safe(transform, $transition-fast);
+  
+  &:hover {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: scale(1.05);
+    }
+  }
+}// GPU 가속 비활성화
+  * {
+    // ========== 성능 최적화 ==========
+@media (prefers-reduced-motion: reduce):not(#\9) { will-change: auto; }box-shadow: $shadow-none;
+    // 복잡한 그림자 효과 간소화
+  *:not(#\9) { text-shadow: none; }// 블러 효과 제거
+  *:not(#\9) { backdrop-filter: none; }
+    filter: none ;
+}

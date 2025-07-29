@@ -2,13 +2,17 @@
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from '../../components/PageTemplate'
-import SideBar from '../../components/SideBar'
-import ProjectInput from '../../tasks/Project/ProjectInput'
-import useInput from '../../hooks/UseInput'
-import useFile from '../../hooks/Usefile'
-import ProcessDateEnhanced from '../../tasks/Project/ProcessDateEnhanced'
+import dynamic from 'next/dynamic';
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
 
-import React, { useState, useEffect, useRef } from 'react'
+import SideBar from '../../components/SideBar'
+
+
+
+
+
+import React, { useState, useEffect, useRef , Suspense } from 'react'
+import { Input } from '../../components/unified/Input'
 import { useRouter } from '../../util/nextNavigation'
 import { CreateProjectAPI } from '../../api/project'
 import { refetchProject, project_initial, project_dateRange, checkSession } from '../../util/util'
@@ -40,19 +44,14 @@ export default function ProjectCreate() {
     
     // 도메인 체크
     const currentDomain = checkDomain()
-    console.log('[ProjectCreate] Mounted on domain:', currentDomain)
-    
     // 다른 도메인에 활성 탭이 있는지 확인
-    if (detectDuplicateTabs()) {
-      console.warn('[ProjectCreate] WARNING: Active tabs on other domains detected!')
-    }
+    if (detectDuplicateTabs()) {}
     
     // cleanup function
     return () => {
       isMountedRef.current = false
       // 진행 중인 요청이 있으면 취소
       if (createRequestRef.current) {
-        console.log('[ProjectCreate] Cancelling pending request on unmount')
         // axios 요청 취소는 별도 처리 필요
       }
     }
@@ -88,7 +87,6 @@ export default function ProjectCreate() {
       return
     }
     
-    console.log('[ProjectCreate] Starting atomic project creation...')
     setIsCreating(true)
     
     // 버튼 즉시 비활성화
@@ -105,8 +103,6 @@ export default function ProjectCreate() {
       process: formatProcessDatesForBackend(process)
     }
     
-    console.log('[ProjectCreate] Atomic creation data:', projectData)
-    
     // 원자적 API 호출 (FormData 대신 JSON)
     const request = CreateProjectAPI(projectData)
     createRequestRef.current = request
@@ -114,17 +110,12 @@ export default function ProjectCreate() {
     request
         .then((res) => {
           if (!isMountedRef.current) {
-            console.log('[ProjectCreate] Component unmounted, ignoring response')
             return
           }
-          
-          console.log('[ProjectCreate] Success:', res.data)
           
           // 프로젝트 목록을 먼저 갱신
           refetchProject(dispatch, navigate)
             .then(() => {
-              console.log('[ProjectCreate] Project list refreshed successfully')
-              
               // 갱신 완료 후 페이지 이동
               navigate('/Calendar', { 
                 replace: true,
@@ -136,8 +127,6 @@ export default function ProjectCreate() {
               })
             })
             .catch(err => {
-              console.error('[ProjectCreate] refetchProject error:', err)
-              
               // 에러가 발생해도 페이지 이동은 수행
               navigate('/Calendar', { 
                 replace: true,
@@ -150,16 +139,13 @@ export default function ProjectCreate() {
               
               // 백그라운드에서 재시도
               setTimeout(() => {
-                refetchProject(dispatch, navigate).catch(retryErr => {
-                  console.error('[ProjectCreate] Background retry failed:', retryErr)
-                })
+                refetchProject(dispatch, navigate).catch(retryErr => {})
               }, 2000)
             })
         })
         .catch((err) => {
           if (!isMountedRef.current) return
           
-          console.error('[ProjectCreate] Error:', err)
           setIsCreating(false)
           
           // 버튼 다시 활성화
@@ -206,13 +192,13 @@ export default function ProjectCreate() {
     <PageTemplate>
       <div className="cms_wrap project-create">
         <SideBar />
-        <main className="project edit">
+        <main className="project edit" role="main">
           <div className="content">
             <div className="page-header">
               <h1>프로젝트 등록</h1>
               <p>새로운 프로젝트의 기본 정보와 일정을 설정해주세요</p>
             </div>
-            <div className="group grid">
+            <div className="group grid responsive-grid">
               <ProjectInput inputs={inputs} onChange={onChange} />
             </div>
             <div className="group schedule-section mt50">
@@ -229,19 +215,18 @@ export default function ProjectCreate() {
                     <label htmlFor="file">
                       <div className="btn-upload">파일 업로드</div>
                     </label>
-                    <input
-                      type="file"
+                    <UnifiedInput type="file"
                       name="file"
                       id="file"
                       onChange={FileChange}
-                    ></input>
+                     aria-label="file"></UnifiedInput>
                   </li>
                 </ul>
                 <ul className="sample">
                 {files.map((file, index) => (
                   <li key={index}>
                     {file.name}
-                    <button onClick={() => FileDelete(index)}>삭제</button>
+                    <Button onClick={() = aria-label="Click"> FileDelete(index)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> FileDelete(index)}>삭제</Button>
                   </li>
                 ))}
               </ul>
@@ -249,18 +234,12 @@ export default function ProjectCreate() {
             </div>
 
             <div className="btn_wrap">
-              <button 
-                ref={submitButtonRef}
-                onClick={CreateBtn} 
-                className="submit" 
-                disabled={isCreating || !ValidForm}
-                style={{ 
+              <Button onClick={CreateBtn} onKeyDown={(e) => e.key === 'Enter' && CreateBtn} disabled style={{ 
                   opacity: (isCreating || !ValidForm) ? 0.6 : 1,
                   cursor: (isCreating || !ValidForm) ? 'not-allowed' : 'pointer'
-                }}
-              >
+                } aria-label="Click">
                 {isCreating ? '등록 중...' : '등록'}
-              </button>
+              </Button>
             </div>
           </div>
         </main>
@@ -276,3 +255,21 @@ export default function ProjectCreate() {
     </PageTemplate>
   )
 }
+
+import { Button } from '../../components/unified/Button'
+const ProcessDateEnhanced = dynamic(() => import('../../tasks/Project/ProcessDateEnhanced'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const useFile = dynamic(() => import('../../hooks/Usefile'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const useInput = dynamic(() => import('../../hooks/UseInput'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const ProjectInput = dynamic(() => import('../../tasks/Project/ProjectInput'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});

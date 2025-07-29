@@ -5,7 +5,7 @@ import React from 'react';
 export default function ImageWrapper({ src, alt, ...props }) {
   // import된 이미지 객체인 경우
   if (typeof src === 'object' && src.src) {
-    return <img src={src.src || src} alt={alt} {...props} />;
+    return <img src={src.src || src} alt={alt} {...props} / loading="lazy">;
   }
   
   // 문자열 경로인 경우
@@ -20,5 +20,5 @@ export default function ImageWrapper({ src, alt, ...props }) {
     }
   }
   
-  return <img src={imageSrc} alt={alt} {...props} />;
+  return <img src={imageSrc} alt={alt} {...props} / loading="lazy">;
 }

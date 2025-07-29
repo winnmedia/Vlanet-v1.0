@@ -12,17 +12,17 @@ export function GetFeedBack(projectId) {
 // 피드백 create
 export function CreateFeedback(data, projectId) {
   // 보안: API 호출 로깅 시 데이터 제외
-  // console.log('CreateFeedback API called:', `/api/feedbacks/${projectId}`);
+  // 
   
   return axiosCredentials(
     'put',
     `/api/feedbacks/${projectId}`,
     data,
   ).then(response => {
-    // console.log('CreateFeedback API success');
+    // 
     return response;
   }).catch(error => {
-    // console.error('CreateFeedback API error:', error.message);
+    // 
     throw error;
   });
 }
@@ -103,7 +103,6 @@ export function FeedbackFile(data, projectId, onUploadProgress) {
   
   return axiosInstance(config);
 }
-
 
 // 피드백 file delete
 export function DeleteFeedbackFile(id) {

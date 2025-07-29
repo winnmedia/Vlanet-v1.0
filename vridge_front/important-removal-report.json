@@ -1,0 +1,505 @@
+{
+  "timestamp": "2025-07-29T06:26:47.579Z",
+  "totalRemoved": 155,
+  "filesModified": 19,
+  "usages": [
+    {
+      "file": "src/styles/minimal-design-system.scss",
+      "selector": "&:disabled",
+      "property": "transform",
+      "value": "none"
+    },
+    {
+      "file": "src/styles/_mobile-mixins.scss",
+      "selector": "// Hide on mobile\n@mixin hide-mobile",
+      "property": "display",
+      "value": "none"
+    },
+    {
+      "file": "src/styles/_mobile-mixins.scss",
+      "selector": "// Show only on mobile\n@mixin show-mobile",
+      "property": "display",
+      "value": "none"
+    },
+    {
+      "file": "src/page/User/MyPage.scss",
+      "selector": ".edit-btn",
+      "property": "width",
+      "value": "$spacing-4xl - $spacing-xs"
+    },
+    {
+      "file": "src/page/User/MyPage.scss",
+      "selector": ".profile-image-container",
+      "property": "width",
+      "value": "100%"
+    },
+    {
+      "file": "src/design-system/pages/ProjectCreate/ProjectCreate.module.scss",
+      "selector": "&:disabled",
+      "property": "transform",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_screen-reader.scss",
+      "selector": "// ========== 스크린 리더 전용 클래스 ==========\n// 시각적으로 숨기지만 스크린 리더는 읽을 수 있음\n.sr-only,\n.visually-hidden",
+      "property": "position",
+      "value": "absolute"
+    },
+    {
+      "file": "src/design-system/accessibility/_screen-reader.scss",
+      "selector": "// 포커스 시 보이기 (스킵 링크 등)\n.sr-only-focusable,\n.visually-hidden-focusable",
+      "property": "position",
+      "value": "static"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// ========== 모션 감소 설정 ==========\n// 사용자가 모션 감소를 선호하는 경우\n@media (prefers-reduced-motion: reduce)",
+      "property": "animation-duration",
+      "value": "0.01ms"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 캐러셀/슬라이더 자동 전환 비활성화\n  .carousel,\n  .slider",
+      "property": "animation-play-state",
+      "value": "paused"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 시차 스크롤 효과 제거\n  .parallax",
+      "property": "background-attachment",
+      "value": "scroll"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 로딩 스피너 간소화\n  .spinner,\n  .loader",
+      "property": "animation",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 프로그레스 바 즉시 업데이트\n  [role=\"progressbar\"]",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 탭 전환 즉시 실행\n  [role=\"tabpanel\"]",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 드롭다운 즉시 표시\n  .dropdown,\n  [role=\"menu\"]",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 모달 페이드 제거\n  .modal,\n  [role=\"dialog\"]",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 툴팁 즉시 표시\n  .tooltip,\n  [role=\"tooltip\"]",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 아코디언 즉시 열기/닫기\n  .accordion",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 페이지 전환 효과 제거\n  .page-transition",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": ".motion-essential",
+      "property": "transition",
+      "value": "outline $transition-fast"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// ========== 대체 피드백 ==========\n@media (prefers-reduced-motion: reduce)",
+      "property": "transform",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 클릭 효과를 색상 변경으로 대체\n  button:active",
+      "property": "transform",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 성공 애니메이션을 아이콘으로 대체\n  .success-animation",
+      "property": "animation",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// ========== 스크롤 관련 모션 ==========\n@media (prefers-reduced-motion: reduce)",
+      "property": "scroll-behavior",
+      "value": "auto"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 스크롤 트리거 애니메이션 비활성화\n  [data-scroll-animation]",
+      "property": "opacity",
+      "value": "1"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 스크롤 표시기 간소화\n  .scroll-indicator",
+      "property": "animation",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// ========== 인터랙션 피드백 대체 ==========\n@media (prefers-reduced-motion: reduce)",
+      "property": "opacity",
+      "value": "0.8"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 스와이프 제스처 피드백\n  .swipeable",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 핀치 줌 피드백\n  .zoomable",
+      "property": "transition",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// ========== 성능 최적화 ==========\n@media (prefers-reduced-motion: reduce)",
+      "property": "will-change",
+      "value": "auto"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 복잡한 그림자 효과 간소화\n  *",
+      "property": "text-shadow",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "selector": "// 블러 효과 제거\n  *",
+      "property": "backdrop-filter",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_focus-indicators.scss",
+      "selector": "// ========== 포커스 유틸리티 클래스 ==========\n.focus-none",
+      "property": "outline",
+      "value": "none"
+    },
+    {
+      "file": "src/design-system/accessibility/_color-contrast.scss",
+      "selector": "// 테두리 강화\n  *",
+      "property": "border-color",
+      "value": "$color-gray-900"
+    },
+    {
+      "file": "src/design-system/accessibility/_color-contrast.scss",
+      "selector": "// 링크 밑줄 항상 표시\n  a",
+      "property": "text-decoration",
+      "value": "underline"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": "// 표시/숨김\n.hidden",
+      "property": "display",
+      "value": "none"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": ".visible",
+      "property": "visibility",
+      "value": "visible"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": ".invisible",
+      "property": "visibility",
+      "value": "hidden"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": "// 반응형 유틸리티 (표준 브레이크포인트 사용)\n// 모바일에서 숨김\n@include mobile",
+      "property": "display",
+      "value": "none"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": ".visible-mobile",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": "// 태블릿에서 숨김\n@include tablet",
+      "property": "display",
+      "value": "none"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": ".visible-tablet",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": "// 데스크톱에서 숨김\n@include desktop",
+      "property": "display",
+      "value": "none"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": ".visible-desktop",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": "",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "selector": "",
+      "property": "display",
+      "value": "none"
+    },
+    {
+      "file": "src/css/_Home-responsive.scss",
+      "selector": "// 반응형 스타일\n  @media (min-width: 769px) and (max-width: $breakpoint-lg)",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/_Home-responsive.scss",
+      "selector": ".etc",
+      "property": "display",
+      "value": "flex"
+    },
+    {
+      "file": "src/css/_Home-responsive.scss",
+      "selector": "button.submit",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/_Home-responsive.scss",
+      "selector": "button.submit",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/VideoPlayerCustom.scss",
+      "selector": "// Video.js 마커 커스텀 스타일\n.video-js",
+      "property": "opacity",
+      "value": "1"
+    },
+    {
+      "file": "src/css/VideoPlayerCustom.scss",
+      "selector": "// 피드백 마커 스타일\n    &.feedback-marker",
+      "property": "background-color",
+      "value": "$color-primary"
+    },
+    {
+      "file": "src/css/VideoPlayerCustom.scss",
+      "selector": "// 커스텀 마커 스타일\n    &.custom-marker",
+      "property": "background-color",
+      "value": "$color-warning"
+    },
+    {
+      "file": "src/css/User/Auth.scss",
+      "selector": ".submit",
+      "property": "cursor",
+      "value": "pointer"
+    },
+    {
+      "file": "src/css/Cms/_Cms-responsive.scss",
+      "selector": "// .ant-space",
+      "property": "gap",
+      "value": "$spacing-sm + $spacing-2xs"
+    },
+    {
+      "file": "src/css/Cms/_Cms-responsive.scss",
+      "selector": "// .ant-select-selector",
+      "property": "outline",
+      "value": "none"
+    },
+    {
+      "file": "src/css/Cms/_Cms-responsive.scss",
+      "selector": "// 공통 토글 버튼 스타일\n  .collapse-btn",
+      "property": "width",
+      "value": "$spacing-lg"
+    },
+    {
+      "file": "src/css/Cms/_Cms-responsive.scss",
+      "selector": "// SVG 아이콘이 있는 경우 표시\n  svg",
+      "property": "width",
+      "value": "$spacing-sm + $spacing-xs"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": "// ===== Utility Classes =====\n.text-primary",
+      "property": "color",
+      "value": "$primary-blue"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".text-success",
+      "property": "color",
+      "value": "$success-green"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".text-danger",
+      "property": "color",
+      "value": "$danger-red"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".text-warning",
+      "property": "color",
+      "value": "$warning-yellow"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".text-info",
+      "property": "color",
+      "value": "$info-cyan"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".bg-primary",
+      "property": "background-color",
+      "value": "$primary-blue"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".bg-success",
+      "property": "background-color",
+      "value": "$success-green"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".bg-danger",
+      "property": "background-color",
+      "value": "$danger-red"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".bg-warning",
+      "property": "background-color",
+      "value": "$warning-yellow"
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "selector": ".bg-info",
+      "property": "background-color",
+      "value": "$info-cyan"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".ant-modal-body",
+      "property": "padding",
+      "value": "0"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".cms_wrap main .content.calendar .caldendar_box .td .week > div .Modal",
+      "property": "display",
+      "value": "block"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".cms_wrap main .content.feedback .flex .sidebox",
+      "property": "width",
+      "value": "400px"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".cms_wrap main .content.feedback .flex .sidebox",
+      "property": "width",
+      "value": "100%"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".cms_wrap main .content.feedback .video_inner .loading .loading-content .progress-container .progress-bar",
+      "property": "animation",
+      "value": "none"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".collapse-btn",
+      "property": "width",
+      "value": "$spacing-lg"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".collapse-btn:hover",
+      "property": "background",
+      "value": "$color-primary-dark"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".collapse-btn svg",
+      "property": "width",
+      "value": "calc($spacing-sm + $spacing-xs)"
+    },
+    {
+      "file": "src/css/Cms/Cms.css",
+      "selector": ".collapse-btn svg path",
+      "property": "fill",
+      "value": "$color-white"
+    },
+    {
+      "file": "src/components/VideoJsPlayer.module.scss",
+      "selector": "// VideoJsPlayer 스타일\n.videoJsPlayerWrapper",
+      "property": "width",
+      "value": "100%"
+    },
+    {
+      "file": "src/components/ResizablePanel.scss",
+      "selector": "// 모바일에서는 리사이즈 비활성화\n@media (max-width: $breakpoint-md)",
+      "property": "width",
+      "value": "100%"
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "selector": ".ant-progress-bg",
+      "property": "height",
+      "value": "$spacing-sm"
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "selector": ".ant-progress-bg",
+      "property": "height",
+      "value": "$spacing-sm - $spacing-2xs"
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "selector": ".ant-progress-bg",
+      "property": "height",
+      "value": "$spacing-sm - $spacing-2xs"
+    },
+    {
+      "file": "src/components/minimal/MinimalInput.module.scss",
+      "selector": "// 에러 상태\n.error",
+      "property": "border-color",
+      "value": "$color-danger"
+    }
+  ]
+}

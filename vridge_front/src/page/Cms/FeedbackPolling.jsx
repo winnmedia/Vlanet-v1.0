@@ -1,40 +1,27 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useMemo , Suspense } from 'react'
+import UnifiedModal from '../../components/unified/UnifiedModal';
+import dynamic from 'next/dynamic';
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
+import { Input } from '../../components/unified/Input'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from '../../util/util'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import PageTemplate from '../../components/PageTemplate'
 import SideBar from '../../components/SideBar'
 
 
-import FeedbackInput from '../../tasks/Feedback/FeedbackInput'
-import FeedbackManage from '../../tasks/Feedback/FeedbackManage'
-import FeedbackMore from '../../tasks/Feedback/FeedbackMore'
-import FeedbackMessagePolling from '../../tasks/Feedback/FeedbackMessagePolling'
-import OpinionInput from '../../tasks/Feedback/OpinionInput'
-import VideoPlayer from '../../components/VideoPlayer'
-import VideoUploadGuide from '../../components/VideoUploadGuide'
 
-import useTab from '../../hooks/UseTab'
-import down from '../../images/Cms/down_icon.svg'
+
+
+
+
+
+
+
+
 import { useSelector } from 'react-redux'
 
 import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from '../../api/feedback'
@@ -104,7 +91,44 @@ export default function FeedbackPolling() {
   // 인코딩 상태 체크
   const startEncodingStatusCheck = () => {
     if (typeof GetEncodingStatus !== 'function') {
-      console.log('Encoding status check not available');
+      
+import { Button } from '../../components/unified/Button'
+const down = dynamic(() => import('../../images/Cms/down_icon.svg'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const useTab = dynamic(() => import('../../hooks/UseTab'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const VideoUploadGuide = dynamic(() => import('../../components/VideoUploadGuide'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const VideoPlayer = dynamic(() => import('../../components/VideoPlayer'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const OpinionInput = dynamic(() => import('../../tasks/Feedback/OpinionInput'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const FeedbackMessagePolling = dynamic(() => import('../../tasks/Feedback/FeedbackMessagePolling'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const FeedbackMore = dynamic(() => import('../../tasks/Feedback/FeedbackMore'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const FeedbackManage = dynamic(() => import('../../tasks/Feedback/FeedbackManage'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const FeedbackInput = dynamic(() => import('../../tasks/Feedback/FeedbackInput'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
       return;
     }
     
@@ -126,7 +150,6 @@ export default function FeedbackPolling() {
           }
         })
         .catch((err) => {
-          console.error('Error checking encoding status:', err)
           if (err.response?.status === 404) {
             clearInterval(interval)
             setEncodingCheckInterval(null)
@@ -147,7 +170,7 @@ export default function FeedbackPolling() {
         setItems(response.data.messages);
       }
     } catch (error) {
-      console.error('[Polling] 메시지 로드 실패:', error);
+      
       if (error.response?.status === 404) {
         // 404인 경우 빈 배열로 초기화
         setItems([]);
@@ -158,8 +181,7 @@ export default function FeedbackPolling() {
   // Polling 시작
   const startPolling = React.useCallback(() => {
     if (!project_id) return;
-    
-    console.log('[Polling] 시작');
+
     setConnectionStatus('connected');
     
     // 초기 메시지 로드
@@ -173,7 +195,7 @@ export default function FeedbackPolling() {
 
   // Polling 중지
   const stopPolling = React.useCallback(() => {
-    console.log('[Polling] 중지');
+    
     setConnectionStatus('disconnected');
     
     if (pollingIntervalRef.current) {
@@ -208,8 +230,6 @@ export default function FeedbackPolling() {
 
     GetFeedBack(project_id, { signal: abortController.signal })
       .then((res) => {
-        console.log('Feedback data loaded:', res.data)
-        
         if (res.data && res.data.result) {
           set_current_project(res.data.result)
         } else if (res.data) {
@@ -218,11 +238,9 @@ export default function FeedbackPolling() {
         }
       })
       .catch((err) => {
-        console.error('Feedback load error:', err)
         if (err.response?.status === 404) {
           // 404 에러는 피드백이 아직 생성되지 않은 경우일 수 있음
-          console.log('Feedback not found, may need to create')
-        } else if (err.response && err.response.data) {
+          } else if (err.response && err.response.data) {
           window.alert(err.response.data.message || '피드백을 불러오는데 실패했습니다.')
         }
       })
@@ -285,9 +303,7 @@ export default function FeedbackPolling() {
           const data = await response.json()
           setTeachers(data.data || [])
         }
-      } catch (error) {
-        console.error('Failed to fetch teachers:', error)
-      }
+      } catch (error) {}
     }
     
     fetchTeachers()
@@ -327,7 +343,7 @@ export default function FeedbackPolling() {
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar tab="feedback" />
-        <main>
+        <main role="main">
           {/* 연결 상태 표시기 */}
           <div style={{
             position: 'fixed',
@@ -369,27 +385,27 @@ export default function FeedbackPolling() {
                   <ul>
                     <li
                       className={currentTab === 0 ? 'active' : ''}
-                      onClick={() => changeTab(0)}
+                      onClick={() => changeTab(0)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(0)}
                     >
                       피드백
                     </li>
                     <li
                       className={currentTab === 1 ? 'active' : ''}
-                      onClick={() => changeTab(1)}
+                      onClick={() => changeTab(1)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(1)}
                     >
                       폴더 관리
                     </li>
                     {is_admin && (
                       <li
                         className={currentTab === 2 ? 'active' : ''}
-                        onClick={() => changeTab(2)}
+                        onClick={() => changeTab(2)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(2)}
                       >
                         게시글 관리
                       </li>
                     )}
                   </ul>
                   <ul className="tab_btn">
-                    <li onClick={() => navigate(`/ProjectView/${project_id}`)}>
+                    <li onClick={() => navigate(`/ProjectView/${project_id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${project_id}`)}>
                       프로젝트 보기
                     </li>
                   </ul>
@@ -426,9 +442,9 @@ export default function FeedbackPolling() {
                           ) : (
                             <div className="no_data">
                               <p>등록된 영상이 없습니다.</p>
-                              <button onClick={() => setShowUploadGuide(true)}>
+                              <Button onClick={() = aria-label="Click"> setShowUploadGuide(true)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowUploadGuide(true)}>
                                 영상 업로드 가이드
-                              </button>
+                              </Button>
                             </div>
                           )}
                         </div>
@@ -472,10 +488,10 @@ export default function FeedbackPolling() {
                       <div className="upload_wrap">
                         <div className="upload-section">
                           <h3>영상 파일 업로드</h3>
-                          <input
+                          <UnifiedInput
                             type="file"
                             accept="video/*"
-                            onChange={(e) => {
+                            onChange={(e) = aria-label="file input" /> {
                               const file = e.target.files[0];
                               if (file) {
                                 const formData = new FormData();
@@ -487,7 +503,7 @@ export default function FeedbackPolling() {
                                     onUploadComplete();
                                   })
                                   .catch((err) => {
-                                    console.error('Upload error:', err);
+                                    
                                     window.alert('파일 업로드에 실패했습니다.');
                                   })
                                   .finally(() => {

@@ -213,7 +213,7 @@ describe('Working Component Tests', () => {
 
   describe('Error Handling Tests', () => {
     test('Components should handle errors gracefully', () => {
-      // Mock console.error to avoid noise
+      
       const originalError = console.error
       console.error = jest.fn()
       

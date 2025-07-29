@@ -1,0 +1,150 @@
+@import '../../../styles/design-tokens';
+
+.card {
+  display: block;
+  background-color: $color-bg-primary;
+  border-radius: $border-radius-lg;
+  transition: $transition-base;
+  
+  // Variants
+  &--default {
+    border: $spacing-2xs solid $color-border;
+  }
+  
+  &--bordered {
+    border: $spacing-2xs solid $color-border;
+    box-shadow: none;
+  }
+  
+  &--elevated {
+    border: none;
+    box-shadow: $shadow-md;
+  }
+  
+  &--filled {
+    border: none;
+    background-color: $color-background-secondary;
+  }
+  
+  // Padding
+  &--padding-none {
+    .cardBody {
+      padding: 0;
+    }
+  }
+  
+  &--padding-sm {
+    .cardBody {
+      padding: $spacing-sm;
+    }
+  }
+  
+  &--padding-md {
+    .cardBody {
+      padding: $spacing-md;
+    }
+  }
+  
+  &--padding-lg {
+    .cardBody {
+      padding: $spacing-lg;
+    }
+  }
+  
+  // States
+  &--full-width {
+    width: 100%;
+  }
+  
+  &--hoverable {
+    &:hover {
+      box-shadow: $shadow-lg;
+      transform: translateY(-$spacing-2xs);
+    }
+  }
+  
+  &--clickable {
+    cursor: pointer;
+    
+    &:hover {
+      background-color: $color-background-secondary;
+    }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+    
+    &:focus {
+      outline: $spacing-2xs solid $color-primary;
+      outline-offset: $spacing-2xs;
+    }
+  }
+}
+
+.cardHeader {
+  padding: $spacing-md;
+  border-bottom: $spacing-2xs solid $color-border;
+  
+  &:empty {
+    display: none;
+  }
+}
+
+.cardBody {
+  // Padding is controlled by card padding variant
+}
+
+.cardFooter {
+  padding: $spacing-md;
+  border-top: $spacing-2xs solid $color-border;
+  background-color: $color-background-secondary;
+  border-radius: 0 0 $border-radius-lg $border-radius-lg;
+  
+  &:empty {
+    display: none;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: $spacing-md;
+    width: 100%;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .text-large {
+    font-size: $font-size-lg;
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 76calc(8px + 4px)) and (max-width: 1024px) {
+  .container {
+    padding: $spacing-lg;
+    max-width: 960;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 102calc(8px - 4px)) {
+  .container {
+    max-width: 1200;
+    margin: 0 auto;
+  }
+}

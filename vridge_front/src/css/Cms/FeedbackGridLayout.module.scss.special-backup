@@ -1,0 +1,493 @@
+@import '../styles/design-tokens';
+
+// 피드백 페이지 그리드 레이아웃 시스템
+// Version: 1.0 - 반응형 그리드 구현
+
+@use 'sass:color';
+
+// 브랜드 색상 (디자인 시스템 준수)
+$brand-blue: $color-primary;
+$brand-blue-hover: $color-primary-dark;
+$brand-red: $color-danger;
+$brand-gray: #6c757d;
+$success-color: $color-success;
+$warning-color: $color-warning;
+$info-color: $color-info;
+
+// 간격 시스템
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+// 피드백 관리 그리드 시스템
+.feedback-grid-container {
+  width: 100%;
+  
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-lg;
+    padding: $spacing-sm 0;
+    width: 100%;
+    
+    // 태블릿 (768px - 1024px)
+    @media (min-width: $breakpoint-md) and (max-width: $breakpoint-lg) {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: $spacing-md;
+    }
+    
+    // 모바일 (767px 이하)
+    @media (max-width: 767px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-sm;
+    }
+  }
+  
+  // 피드백 카드 스타일
+  .feedback-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: $border-radius-lg - 2px;
+    padding: $spacing-lg;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    
+    // 호버 효과
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba($color-primary, 0.12);
+      border-color: rgba($brand-blue, 0.3);
+      
+      .card-actions {
+        opacity: 1;
+      }
+    }
+    
+    // 카드 헤더
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: $spacing-sm;
+      
+      .time-badge {
+        background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%);
+        color: white;
+        padding: $spacing-xs 10px;
+        border-radius: $border-radius-xl;
+        font-size: $font-size-xs;
+        font-weight: 600;
+        box-shadow: 0 1px 3px rgba($color-primary, 0.2);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        
+        &:hover {
+          transform: scale(1.02);
+          box-shadow: 0 2px 6px rgba($color-primary, 0.3);
+        }
+      }
+      
+      .delete-btn {
+        width: $spacing-lg + $spacing-xs;
+        height: $spacing-lg + $spacing-xs;
+        border-radius: $border-radius-full;
+        border: none;
+        background: transparent;
+        color: $brand-gray;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        opacity: 0;
+        
+        &:hover {
+          background: rgba($brand-red, 0.1);
+          color: $brand-red;
+          transform: rotate(90deg);
+        }
+        
+        svg {
+          width: $spacing-md;
+          height: $spacing-md;
+        }
+      }
+      
+      .header-badges {
+        display: flex;
+        gap: $spacing-sm;
+        align-items: center;
+      }
+      
+      .privacy-badge,
+      .important-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: $border-radius-sm;
+        white-space: nowrap;
+      }
+      
+      .privacy-badge {
+        color: #868e96;
+        background: $color-background-secondary;
+      }
+      
+      .important-badge {
+        color: #f59f00;
+        background: #fff3cd;
+        font-weight: 500;
+      }
+    }
+    
+    // 카드 콘텐츠
+    .card-content {
+      margin-bottom: $spacing-sm;
+      
+      p {
+        margin: $spacing-0;
+        color: #495057;
+        font-size: 13px;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    
+    // 카드 액션 버튼들
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: $spacing-sm;
+      border-top: 1px solid #f0f0f0;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      
+      .action-btn {
+        flex: 0 0 auto;
+        min-width: $spacing-4xl - $spacing-xs; // 최소 너비 설정
+        width: $spacing-4xl - $spacing-xs; // 고정 너비 설정
+        padding: $spacing-xs 0; // 좌우 패딩 제거, 상하만 유지
+        border-radius: $border-radius-xl;
+        border: 1px solid #e9ecef;
+        background: white;
+        color: #6c757d;
+        font-size: $font-size-xs;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center; // 중앙 정렬
+        gap: 3px;
+        white-space: nowrap;
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 1px 3px rgba($color-black, 0.08);
+        }
+        
+        // 반응 상태별 스타일
+        &.like {
+          &.active {
+            background: rgba($brand-blue, 0.1);
+            border-color: $brand-blue;
+            color: $brand-blue;
+          }
+          
+          &:hover:not(.active) {
+            border-color: $brand-blue;
+            color: $brand-blue;
+          }
+        }
+        
+        &.dislike {
+          &.active {
+            background: rgba($brand-red, 0.1);
+            border-color: $brand-red;
+            color: $brand-red;
+          }
+          
+          &:hover:not(.active) {
+            border-color: $brand-red;
+            color: $brand-red;
+          }
+        }
+        
+        &.needExplanation {
+          width: 110px; // 텍스트가 긴 버튼은 더 넓게
+          
+          &.active {
+            background: rgba($warning-color, 0.1);
+            border-color: $warning-color;
+            color: color.adjust($warning-color, $lightness: -10%);
+          }
+          
+          &:hover:not(.active) {
+            border-color: $warning-color;
+            color: color.adjust($warning-color, $lightness: -10%);
+          }
+        }
+        
+        &.reply {
+          &:hover {
+            border-color: $info-color;
+            color: $info-color;
+          }
+        }
+        
+        &.important {
+          width: 70px; // 중요 버튼은 조금 더 넓게
+          
+          &.active {
+            background: rgba($warning-color, 0.1);
+            border-color: $warning-color;
+            color: color.adjust($warning-color, $lightness: -15%);
+          }
+          
+          &:hover:not(.active) {
+            border-color: $warning-color;
+            color: color.adjust($warning-color, $lightness: -15%);
+          }
+        }
+        
+        .count {
+          font-weight: 600;
+          margin-left: 2px;
+        }
+      }
+    }
+    
+    // 답글 섹션
+    .reply-section {
+      margin-top: $spacing-sm;
+      padding: $spacing-sm;
+      background: $color-background-secondary;
+      border-radius: $border-radius-md - 2px;
+      
+      .reply-input-wrapper {
+        display: flex;
+        gap: 6px;
+        
+        input {
+          flex: 1;
+          padding: 6px 10px;
+          border: 1px solid $color-gray-300;
+          border-radius: $border-radius-sm;
+          font-size: $font-size-xs;
+          transition: all 0.2s ease;
+          
+          &:focus {
+            outline: none;
+            border-color: $brand-blue;
+            box-shadow: 0 0 0 2px rgba($brand-blue, 0.1);
+          }
+        }
+        
+        button {
+          width: $spacing-4xl - $spacing-xs; // 고정 너비 설정
+          padding: 6px 0; // 좌우 패딩 제거
+          background: $brand-blue;
+          color: white;
+          border: none;
+          border-radius: $border-radius-sm;
+          font-size: $font-size-xs;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+          text-align: center;
+          
+          &:hover {
+            background: $brand-blue-hover;
+            transform: translateY(-1px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+      
+      .replies-list {
+        margin-top: $spacing-sm;
+        
+        .reply-item {
+          padding: 6px 10px;
+          background: white;
+          border-radius: $border-radius-sm;
+          margin-bottom: $spacing-xs;
+          
+          .reply-author {
+            font-weight: 500;
+            font-size: $font-size-xs;
+            color: #495057;
+            margin-bottom: 2px;
+          }
+          
+          .reply-text {
+            font-size: $font-size-xs;
+            color: #6c757d;
+            line-height: 1.4;
+          }
+        }
+      }
+    }
+    
+    // 로딩 상태
+    &.loading {
+      pointer-events: none;
+      opacity: 0.6;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: $spacing-0;
+        left: $spacing-0;
+        right: $spacing-0;
+        bottom: $spacing-0;
+        background: linear-gradient(90deg, transparent 0%, rgba($color-white, $opacity-50) 50%, transparent 100%);
+        animation: shimmer 1.5s infinite;
+      }
+    }
+  }
+  
+  // 빈 상태
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: $spacing-2xl 20px;
+    
+    svg {
+      width: $spacing-3xl;
+      height: $spacing-3xl;
+      color: #dee2e6;
+      margin-bottom: $spacing-sm;
+    }
+    
+    h3 {
+      font-size: $font-size-base;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: $spacing-xs;
+    }
+    
+    p {
+      font-size: 13px;
+      color: #6c757d;
+      margin-bottom: $spacing-md;
+    }
+    
+    button {
+      padding: $spacing-sm 16px;
+      background: $brand-blue;
+      color: white;
+      border: none;
+      border-radius: $border-radius-md - 2px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: $brand-blue-hover;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba($color-primary, 0.3);
+      }
+    }
+  }
+}
+
+// 애니메이션
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// 날짜별 그룹 스타일 (FeedbackMore용)
+.feedback-date-group {
+  margin-bottom: $spacing-lg;
+  
+  .date-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: $spacing-md;
+    padding-left: 6px;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: $spacing-0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: $spacing-md;
+      background: $brand-blue;
+      border-radius: 1px;
+    }
+    
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #e9ecef 0%, transparent 100%);
+    }
+  }
+  
+  .feedback-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-sm;
+  }
+}
+
+// 스크롤바 스타일링
+.feedback-grid-container {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: $border-radius-sm - 1px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: $border-radius-sm - 1px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+// 태블릿과 데스크탑에서 호버 효과 강화
+@media (min-width: $breakpoint-md) {
+  .feedback-grid-container {
+    .feedback-card {
+      &:hover {
+        .card-header .delete-btn {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

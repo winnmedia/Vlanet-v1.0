@@ -1,63 +1,65 @@
+@import '../styles/design-tokens';
+
 .project-form {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: $breakpoint-xl;
+  margin: $spacing-0 auto;
   
   .form-container {
-    background: white;
-    border-radius: 8px;
-    padding: 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: $color-white;
+    border-radius: $border-radius-md;
+    padding: $spacing-2xl;
+    box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.08);
   }
   
   .form-section {
-    margin-bottom: 40px;
+    margin-bottom: $spacing-2xl;
     
     &:last-child {
-      margin-bottom: 0;
+      margin-bottom: $spacing-0;
     }
     
     h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: #333;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-lg - $spacing-xs;
+      color: $color-gray-800;
       display: flex;
       align-items: center;
       
       &::before {
         content: '';
-        width: 4px;
-        height: 20px;
-        background: #1890ff;
-        margin-right: 10px;
-        border-radius: 2px;
+        width: $spacing-xs;
+        height: $spacing-lg - $spacing-xs;
+        background: $color-primary;
+        margin-right: $spacing-sm + $spacing-2xs;
+        border-radius: $border-radius-sm / 2;
       }
     }
   }
   
   .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax($spacing-6xl * 3.125, 1fr));
+    gap: $spacing-lg - $spacing-xs;
   }
   
   .color-picker-wrapper {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: $spacing-md - $spacing-2xs;
     
     .color-preview {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      border: 2px solid #f0f0f0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: $spacing-2xl;
+      height: $spacing-2xl;
+      border-radius: $border-radius-md;
+      border: $spacing-2xs solid $color-gray-200;
+      box-shadow: $shadow-sm;
     }
   }
   
   .phase-timeline {
     display: grid;
-    gap: 20px;
+    gap: $spacing-lg - $spacing-xs;
     
     .phase-item {
       position: relative;
@@ -65,29 +67,29 @@
       .phase-header {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
+        gap: $spacing-sm + $spacing-2xs;
+        margin-bottom: $spacing-sm + $spacing-2xs;
         
         .phase-indicator {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
+          width: $spacing-sm + $spacing-xs;
+          height: $spacing-sm + $spacing-xs;
+          border-radius: $border-radius-full;
           flex-shrink: 0;
         }
         
         .phase-name {
-          font-weight: 500;
-          color: #333;
+          font-weight: $font-weight-medium;
+          color: $color-gray-800;
         }
       }
       
       .phase-connector {
         position: absolute;
-        left: 5px;
-        top: 30px;
-        width: 2px;
-        height: calc(100% + 10px);
-        background: #f0f0f0;
+        left: $spacing-xs;
+        top: $spacing-lg + $spacing-xs + $spacing-2xs;
+        width: $spacing-2xs;
+        height: calc(100% + 12px + 4px);
+        background: $color-gray-200;
         z-index: -1;
       }
       
@@ -100,27 +102,27 @@
   .selected-members {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px;
-    background: #fafafa;
-    border-radius: 6px;
-    min-height: 50px;
+    gap: $spacing-sm;
+    padding: $spacing-sm + $spacing-xs;
+    background: $color-gray-100;
+    border-radius: $border-radius-md - $border-radius-sm / 2;
+    min-height: $spacing-3xl + $spacing-2xs;
     
     .ant-tag {
-      margin: 0;
-      padding: 4px 12px;
-      font-size: 14px;
+      margin: $spacing-0;
+      padding: $spacing-xs $spacing-sm + $spacing-xs;
+      font-size: $font-size-sm;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: $spacing-sm - $spacing-2xs;
       
       .anticon-close {
-        margin-left: 4px;
+        margin-left: $spacing-xs;
         cursor: pointer;
         transition: color 0.2s;
         
         &:hover {
-          color: #ff4d4f;
+          color: $color-danger;
         }
       }
     }
@@ -128,32 +130,32 @@
   
   .ant-upload-list-picture-card {
     .ant-upload-list-item {
-      margin: 0 8px 8px 0;
+      margin: $spacing-0 $spacing-sm $spacing-sm 0;
     }
   }
   
   .form-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
-    margin-top: 40px;
-    padding-top: 30px;
-    border-top: 1px solid #f0f0f0;
+    gap: $spacing-sm + $spacing-xs;
+    margin-top: $spacing-2xl;
+    padding-top: $spacing-lg + $spacing-xs + $spacing-2xs;
+    border-top: $spacing-2xs solid $color-gray-200;
     
     button {
-      min-width: 120px;
+      min-width: $spacing-6xl + $spacing-lg;
     }
   }
   
   // Ant Design overrides
   .ant-form-item-label {
-    font-weight: 500;
+    font-weight: $font-weight-medium;
     
     label {
-      color: #333;
+      color: $color-gray-800;
       
       &.ant-form-item-required::before {
-        color: #ff4d4f;
+        color: $color-danger;
       }
     }
   }
@@ -162,29 +164,108 @@
   .ant-input-affix-wrapper,
   .ant-picker,
   .ant-select-selector {
-    border-radius: 6px;
+    border-radius: $border-radius-md - $border-radius-sm / 2;
     
     &:hover {
-      border-color: #40a9ff;
+      border-color: $color-info;
     }
     
     &:focus,
     &.ant-input-focused {
-      border-color: #1890ff;
-      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+      border-color: $color-primary;
+      box-shadow: 0 0 0 $spacing-2xs rgba($color-primary, 0.1);
     }
   }
   
   .ant-btn {
-    border-radius: 6px;
-    font-weight: 500;
+    border-radius: $border-radius-md - $border-radius-sm / 2;
+    font-weight: $font-weight-medium;
     
     &-primary {
-      background: #1890ff;
+      background: $color-primary;
       
       &:hover {
-        background: #40a9ff;
+        background: $color-info;
       }
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

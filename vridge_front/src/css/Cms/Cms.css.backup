@@ -1,0 +1,2139 @@
+@charset "UTF-8";
+/* 공통 */
+.page-title-container {
+  margin-b$spacing-lgm: 24px;
+}
+.page-title-container .page-main-title, .page-title-container .content > .title:first-child {
+  font-size: $spacing-xl;
+  font-weight: 700;
+  color: $color-gray-800;
+  margin-b$spacing-lgm: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.page-title-container .page-main-title .title-text, .page-title-container .content > .title:first-child .title-text {
+  flex: 1;
+}
+.page-title-container .page-main-title .title-actions, .page-title-container .content > .title:first-child .title-actions {
+  display: flex;
+  align-items: center;
+  calc($spacing-sm + $spacing-xs) 12px;
+}
+.page-title-container .page-section-title, .page-title-container .content .s_title, .content .page-title-container .s_title {
+  font-size: $spacing-lg;
+  font-weight: 700;
+  color: $color-gray-800;
+  margin-bcalc($spacing-md + $spacing-xs)m: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.page-title-container .page-section-title .title-text, .page-title-container .content .s_title .title-text, .content .page-title-container .s_title .title-text {
+  flex: 1;
+}
+.page-title-container .page-section-title .title-actions, .page-title-container .content .s_title .title-actions, .content .page-title-container .s_title .title-actions {
+  display: flex;
+  align-items: center;
+  $spacing-sm: 8px;
+}
+.page-title-container .page-subsection-title, .page-title-container .content .ss_title, .content .page-title-container .ss_title {
+  font-size: calc($spacing-md + 2px);
+  font-weight: 600;
+  color: $color-gray-800;
+  margin-b$spacing-mdm: 16px;
+  display: flex;
+  align-items: center;
+}
+.page-title-container .page-subsection-title .title-text, .page-title-container .content .ss_title .title-text, .content .page-title-container .ss_title .title-text {
+  flex: 1;
+}.ant-modal-body.ant-modal-body { padding: 0; }
+
+/* 직접입력 관련 스타일 */
+.custom-select-wrapper {
+  position: relative;
+}
+.custom-select-wrapper select optgroup {
+  font-weight: bold;
+  font-style: normal;
+  background: $color-gray-50;
+  color: $color-gray-800;
+}
+.custom-select-wrapper select option {
+  $border-width-thickd$spacing-sm: 4px 8px;
+}
+.custom-select-wrapper select option[value=직접입력] {
+  background-color: #f0f7ff;
+  color: #1976d2;
+  font-weight: 600;
+}
+.custom-select-wrapper .custom-input-wrapper {
+  display: flex;
+  calc($spacing-sm + 2px) 10px;
+  align-items: center;
+  margicalc($spacing-sm + 2px)p: 10px;
+}
+.custom-select-wrapper .custom-input-wrapper input {
+  flex: 1;
+  calc($spacing-sm + $spacing-xs)i$spacing-md12px 16px;
+  font-size: $font-size-base;
+  border: 2px solid #4a90e2;
+  calc($spacing-xs + 2px)der-radius: 6px;
+  background: #f8fbff;
+  transition: all 0.2s ease;
+}
+.custom-select-wrapper .custom-input-wrapper input:focus {
+  outline: none;
+  border-color: #012fff;
+  background: $color-white;
+  box-shadow: 0 0 0 calc($spacing-2xs + 1px) rgba(1, 47, 255, 0.1);
+}
+.custom-select-wrapper .custom-input-wrapper input::placeholder {
+  color: $color-gray-600;
+  font-size: calc($spacing-md - 2px);
+}
+.custom-select-wrapper .custom-input-wrapper .cancel-custom-btn {
+  calc($spacing-sm + $spacing-xs)icalc($spacing-md + $spacing-xs)12px 20px;
+  background: $color-gray-100;
+  border: $border-width-thin solid $color-gray-300;
+  calc($spacing-xs + 2px)der-radius: 6px;
+  cursor: pointer;
+  font-size: calc($spacing-md - 2px);
+  $color-white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.custom-select-wrapper .custom-input-wrapper .cancel-custom-btn:hover {
+  background: #e0e0e0;
+  border-color: $color-gray-400;
+}
+
+.cms_wrap {
+  display: flex;
+  justify-content: space-between;
+  height: calc(100vh - 120px);
+  height: calc(var(--vh, 1vh) * 100 - 120px);
+  margi$spacing-2xlp: 40px;
+  position: Relative;
+}
+.cms_wrap main {
+  width: calc(100% - 300px);
+  margin-left: auto;
+  pacalc($spacing-lg + 6px)g: $spacing-5xlpx 0 80px;
+  overflow-y: scroll;
+  position: relative;
+}
+.cms_wrap main .title {
+  font-size: 34px;
+  font-weight: bold;
+}
+.cms_wrap main .title span {
+  display: block;
+  font-size: 22px;
+  font-weight: normal;
+}
+.cms_wrap main .content {
+  calc($spacing-lg + 6px)in: 30px 0;
+  background: $color-white;
+  $spacing-lging: 24px;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 1px 3px rgba($color-black, $1);
+  border: $border-width-thin solid #e9ecef;
+}
+.cms_wrap main .content.calendar {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+}
+.cms_wrap main .content.home {
+  margin: 0 0 50px;
+}
+.cms_wrap main .content.home .today {
+  font-size: 160px;
+  letter-spacing: $spacing-sm;
+  line-height: 1.3;
+  font-family: "psb";
+}
+.cms_wrap main .content.home .today .clock {
+  display: flex;
+  align-items: baseline;
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.cms_wrap main .content.home .today small {
+  color: rgba($color-black, $1);
+  display: inline-block;
+  font-size: calc($spacing-lg + $spacing-xs);
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  font-family: "suit";
+  vertical-align: baseline;
+  margincalc($spacing-lg + 6px)t: 30px;
+}
+.cms_wrap main .content.home .menu_box {
+  margi$spacing-5xlp: 80px;
+}
+.cms_wrap main .content.home .menu_box ul li {
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 60px;
+  width: 150px;
+}
+.cms_wrap main .content.home .menu_box ul li .img {
+  border-radius: 35px;
+  height: 150px;
+  width: 150px;
+}
+.cms_wrap main .content.home .menu_box ul li span {
+  color: #bac4d1;
+  display: block;
+  font-size: $spacing-md;
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+  text-align: center;
+}
+.cms_wrap main .content.home .menu_box ul li:nth-child(1) .img {
+  background: #0131ff url("../../images/Cms/c_p.svg") no-repeat;
+  background-size: 76px;
+  background-position: center;
+}
+.cms_wrap main .content.home .menu_box ul li:nth-child(2) .img {
+  background: #889cb1 url("../../images/Cms/p_p.svg") no-repeat;
+  background-size: 76px;
+  background-position: center;
+}
+.cms_wrap main .content.home .menu_box ul li:nth-child(3) .img {
+  background: #889cb1 url("../../images/Cms/f_p.svg") no-repeat;
+  background-size: 76px;
+  background-position: center;
+}
+.cms_wrap main .content.home .menu_box ul li:nth-child(4) .img {
+  background: #889cb1 url("../../images/Cms/oc_p.svg") no-repeat;
+  background-size: 76px;
+  background-position: center;
+}
+.cms_wrap main .content.home .part {
+  margin-top: 50px;
+}
+.cms_wrap main .content.home .part:first-child {
+  margin-top: 0;
+}
+.cms_wrap main .content.home .part .s_title {
+  font-size: $spacing-lg;
+}
+.cms_wrap main .content.home .part .s_title span {
+  display: inline-block;
+  width: calc($spacing-lg + $spacing-xs);
+  height: calc($spacing-lg + $spacing-xs);
+  background: #0131ff url("../../images/Cms/wr_arrow_icon.png") no-repeat;
+  background-size: calc($spacing-sm + 1px);
+  background-position: center left calc($spacing-sm + 3px);
+  border-radius: 100%;
+  margincalc($spacing-sm + 2px)t: 10px;
+  margicalc($spacing-2xs + 1px)op: 3px;
+  cursor: pointer;
+}
+.cms_wrap main .content.home .part ul {
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+}
+.cms_wrap main .content.home .part ul.schedule {
+  display: grid;
+  $spacing-0dcalc($spacing-md + $spacing-xs)acing-0:calc($spacing-md + $spacing-xs) 20px;
+  grid-template-columns: repeat(4, 1fr);
+}
+.cms_wrap main .content.home .part ul.schedule li {
+  background: #25282f;
+  border-radius: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 140px;
+  pacalc($spacing-lg + 6px)g: 0 30px;
+  color: $color-white;
+  font-size: 22px;
+}
+.cms_wrap main .content.home .part ul.schedule li span {
+  font-weight: bold;
+  font-size: 50px;
+}
+.cms_wrap main .content.home .part ul.schedule li:first-child {
+  background: #0131ff;
+}
+.cms_wrap main .content.home .part ul.oc {
+  display: grid;
+  $spacing-0dcalc($spacing-md + $spacing-xs)acing-0:calc($spacing-md + $spacing-xs) 20px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.cms_wrap main .content.home .part ul.oc li {
+  height: 340px;
+  calc($spacing-lg + 6px)ing: 30px;
+  color: $color-white;
+  font-size: calc($spacing-lg + 6px);
+  background: $color-gray-400;
+  border-radius: 25px;
+  font-weight: bold;
+}
+.cms_wrap main .content.home .part ul.oc li span {
+  font-weight: normal;
+  display: block;
+  font-size: calc($spacing-md + 2px);
+  margicalc($spacing-sm + 2px)p: 10px;
+}
+.cms_wrap main .content.calendar .title {
+  font-size: calc($spacing-md + $spacing-xs);
+  font-weight: 700;
+  color: #212529;
+  margin-b$spacing-lgm: 24px;
+  display: flex;
+  align-items: center;
+  calc($spacing-sm + $spacing-xs) 12px;
+}
+.cms_wrap main .content.calendar .title .collapse-btn {
+  width: $spacing-lg;
+  height: $spacing-lg;
+  background: #f8f9fa;
+  border: $border-width-thin solid #dee2e6;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.cms_wrap main .content.calendar .title .collapse-btn::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: calc($spacing-xs + 1px) solid transparent;
+  border-right: calc($spacing-xs + 1px) solid transparent;
+  border-top: calc($spacing-xs + 2px) solid #495057;
+  transition: transform 0.3s ease;
+}
+.cms_wrap main .content.calendar .title .collapse-btn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+.cms_wrap main .content.calendar .title .collapse-btn.collapsed::after {
+  transform: rotate(180deg);
+}
+.cms_wrap main .content.calendar .filter {
+  background: $color-white;
+  calc($spacing-md + $spacing-xs)ing: 20px;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 1px 3px rgba($color-black, $1);
+  border: $border-width-thin solid #e9ecef;
+  margin-b$spacing-lgm: 24px;
+}
+.cms_wrap main .content.calendar .filter.flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  calc($spacing-md + $spacing-xs) 20px;
+}
+@media (max-width: 768px) {
+  .cms_wrap main .content.calendar .filter.flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.cms_wrap main .content.calendar .filter .date {
+  font-size: calc($spacing-lg + $spacing-xs);
+  font-weight: 700;
+  color: #212529;
+  display: flex;
+  align-items: center;
+  calc($spacing-md + $spacing-xs) 20px;
+}
+.cms_wrap main .content.calendar .filter .date .move {
+  display: flex;
+  $spacing-sm: 8px;
+}
+.cms_wrap main .content.calendar .filter .date .move span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc($spacing-xl + $spacing-xs);
+  height: calc($spacing-xl + $spacing-xs);
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  background: #f8f9fa;
+  border: $border-width-thin solid #dee2e6;
+  transition: all 0.2s ease;
+}
+.cms_wrap main .content.calendar .filter .date .move span:hover {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 $border-width-medium $spacing-sm rgba(22, 49, 248, 0.2);
+}
+.cms_wrap main .content.calendar .filter .date .move span:hover.prev::before {
+  border-right-color: $color-white;
+}
+.cms_wrap main .content.calendar .filter .date .move span:hover.next::before {
+  border-left-color: $color-white;
+}
+.cms_wrap main .content.calendar .filter .date .move span.prev::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: calc($spacing-xs + 2px) solid transparent;
+  border-bottom: calc($spacing-xs + 2px) solid transparent;
+  border-right: $spacing-sm solid #495057;
+  margin-$border-width-mediumht: 2px;
+}
+.cms_wrap main .content.calendar .filter .date .move span.next::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: calc($spacing-xs + 2px) solid transparent;
+  border-bottom: calc($spacing-xs + 2px) solid transparent;
+  border-left: $spacing-sm solid #495057;
+  margin$border-width-mediumft: 2px;
+}
+.cms_wrap main .content.calendar .filter .type {
+  display: flex;
+  align-items: center;
+  calc($spacing-sm + $spacing-xs) 12px;
+  justify-content: start;
+}
+.cms_wrap main .content.calendar .filter .type .ant-select .ant-select-selector {
+  border-radius: $border-radius-md;
+  border-color: #dee2e6;
+  height: $spacing-2xl;
+  display: flex;
+  align-items: center;
+}
+.cms_wrap main .content.calendar .filter .type .ant-select .ant-select-selector:hover {
+  border-color: $color-primary;
+}
+.cms_wrap main .content.calendar .filter .type .ant-select.ant-select-focused .ant-select-selector {
+  border-color: $color-primary;
+  box-shadow: 0 0 0 $border-width-medium rgba(22, 49, 248, 0.1);
+}
+.cms_wrap main .content.calendar .filter .type .ant-select > div {
+  height: 54px;
+}
+.cms_wrap main .content.calendar .filter .type .ant-select > div > span {
+  height: 54px;
+  line-height: 54px;
+}
+.cms_wrap main .content.calendar .filter .type .submit {
+  padding: calc($spacing-sm + $spacing-xs) $spacing-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 $border-width-medium $border-width-thick rgba(22, 49, 248, 0.2);
+  $color-white-space: nowrap;
+}
+.cms_wrap main .content.calendar .filter .type .submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 $border-width-thick calc($spacing-sm + $spacing-xs) rgba(22, 49, 248, 0.3);
+}
+.cms_wrap main .content.calendar .filter .type .submit:active {
+  transform: translateY(0);
+}
+.cms_wrap main .content.calendar .filter .type .submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.cms_wrap main .content.calendar .part ul.schedule {
+  display: grid;
+  $spacing-0dcalc($spacing-md + $spacing-xs)acing-0:calc($spacing-md + $spacing-xs) 20px;
+  grid-template-columns: repeat(4, 1fr);
+}
+.cms_wrap main .content.calendar .part ul.schedule li {
+  background: #25282f;
+  border-radius: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 140px;
+  pacalc($spacing-lg + 6px)g: 0 30px;
+  color: $color-white;
+  font-size: 22px;
+}
+.cms_wrap main .content.calendar .part ul.schedule li span {
+  font-weight: bold;
+  font-size: 50px;
+}
+.cms_wrap main .content.calendar .part ul.schedule li:first-child {
+  background: #0131ff;
+}
+.cms_wrap main .content.calendar .caldendar_box {
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+}
+.cms_wrap main .content.calendar .caldendar_box .th {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.cms_wrap main .content.calendar .caldendar_box .th div {
+  calc($spacing-xs + 2px)ding: 6px;
+  background: #23262d;
+  color: $color-white;
+  font-size: $spacing-md;
+}
+.cms_wrap main .content.calendar .caldendar_box .th div.holiday {
+  background: #707175;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div {
+  calc($spacing-xs + 2px)ding: 6px;
+  color: $color-black;
+  font-size: $font-size-base;
+  border: $border-width-thin solid #efefef;
+  min-height: 100px;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div p {
+  cursor: pointer;
+}position: absolute;
+  .cms_wrap main .content.calendar .caldendar_box .td .week > div .Modal.cms_wrap { display: block; }
+  background: $color-black;
+  z-index: 10;
+  calc($spacing-sm + 2px)ing: 10px;
+  color: $color-white;
+  calc($spacing-xs + 1px)der-radius: 5px;
+.cms_wrap main .content.calendar .caldendar_box .td .week > div .today {
+  color: $color-white;
+  font-size: $spacing-md;
+  font-weight: bold;
+  width: $spacing-lg;
+  height: $spacing-lg;
+  display: inline-block;
+  line-height: $spacing-lg;
+  background: #012fff;
+  text-align: center;
+  border-radius: 100%;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span {
+  display: block;
+  height: $border-width-thick;
+  width: calc(100% + 20px);
+  margin-left: -10px;
+  margicalc($spacing-sm + 2px)p: 10px;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span:first-child {
+  margicalc($spacing-md - 1px)p: 15px;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.start {
+  calc($spacing-xs + 2px)der-rcalc($spacing-xs + 2px)us: 6px 0 0 6px;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.end {
+  bocalc($spacing-xs + 2px)rcalc($spacing-xs + 2px)dius: 0 6px 6px 0;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.start.end {
+  calc($spacing-xs + 2px)der-radius: 6px;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.first {
+  background: #55a1f5;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.second {
+  background: #0d45ac;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.third {
+  background: #8a88e9;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.fourth {
+  background: #774bf0;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.fifth {
+  background: #57e4ed;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.sixth {
+  background: #5d888b;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.seven {
+  background: $color-black;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.eighth {
+  background: #d93a3a;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div span.memo {
+  width: 100%;
+  margin-left: 0;
+  margin-top: 0;
+  height: initial;
+  font-size: $font-size-sm;
+  margi$border-width-thickop: 4px;
+  word-break: break-all;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div:first-child {
+  background: $color-gray-50;
+}
+.cms_wrap main .content.calendar .caldendar_box .td .week > div:last-child {
+  background: $color-gray-50;
+}
+.cms_wrap main .content.calendar .caldendar_box.day .th {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+.cms_wrap main .content.calendar .caldendar_box.day .td .week {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+.cms_wrap main .content.calendar .list_box .process {
+  margicalc($spacing-lg + 6px)p: 30px;
+}
+.cms_wrap main .content.calendar .list_box .process:first-child {
+  margin-top: 0;
+}
+.cms_wrap main .content.calendar .list_box .process .s_title {
+  width: 150px;
+  height: 150px;
+  calc($spacing-md + $spacing-xs)ing: 20px;
+  color: $color-white;
+  font-size: calc($spacing-md + $spacing-xs);
+  background: #0131ff url("../../images/Cms/h_l_w.svg") no-repeat;
+  background-size: 34px;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+  line-height: 1.3;
+  calc($spacing-md + $spacing-xs)er-radius: 20px;
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(1) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon01.svg") no-repeat;
+  background-size: $spacing-lg;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(2) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon02.svg") no-repeat;
+  background-size: $spacing-lg;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(3) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon03.svg") no-repeat;
+  background-size: 26px;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(4) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon04.svg") no-repeat;
+  background-size: 26px;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(5) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon05.svg") no-repeat;
+  background-size: $spacing-lg;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(6) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon06.svg") no-repeat;
+  background-size: $spacing-lg;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(7) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon07.svg") no-repeat;
+  background-size: 26px;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process:nth-child(8) .s_title {
+  background: #0131ff url("../../images/Cms/pc_icon08.svg") no-repeat;
+  background-size: $spacing-lg;
+  background-position: right calc($spacing-md + $spacing-xs) bottom calc($spacing-md + $spacing-xs);
+}
+.cms_wrap main .content.calendar .list_box .process .swiper {
+  width: calc(100% - 180px);
+  box-shadow: $spacing-md calc($spacing-sm + 2px) $spacing-md rgba($color-black, $1);
+  calc($spacing-md + $spacing-xs)ecalc($spacing-md + $spacing-xs)dius: 20px 20px 0 0;
+  height: 150px;
+  position: relative;
+}
+.cms_wrap main .content.calendar .list_box .process .swiper .swiper-slide {
+  border-right: $border-width-thin dashed $color-gray-300;
+  text-align: center;
+  display: table;
+}
+.cms_wrap main .content.calendar .list_box .process .swiper .swiper-slide .inner03 {
+  display: table-cell;
+  vertical-align: middle;
+  width: 100%;
+  pacalc($spacing-md - 2px)g: 0 14px;
+}
+.cms_wrap main .content.calendar .list_box .process .swiper .swiper-slide .inner03 .name {
+  font-weight: bold;
+  font-size: 17px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* 원하는 줄 수 설정 */
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+.cms_wrap main .content.calendar .list_box .process .swiper .swiper-slide .inner03 .day {
+  margicalc($spacing-sm + 2px)p: 10px;
+}
+.cms_wrap main .content.calendar .list_box .process .swiper .swiper-slide .inner03 .day span {
+  display: block;
+}
+.cms_wrap main .content.calendar .list_box .process .swiper .swiper-scrollbar {
+  width: 100%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+.cms_wrap main .content.calendar .list_box .process .swiper .swiper-scrollbar .swiper-scrollbar-drag {
+  height: calc($spacing-xs + 1px);
+  background: #dddddd;
+  calc($spacing-md + $spacing-xs)er-radius: 20px;
+}
+.cms_wrap main .content.calendar .list_mark {
+  margi$spacing-lgp: 24px;
+  background: $color-white;
+  $spacing-mdicalc($spacing-md + $spacing-xs)16px 20px;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 1px 3px rgba($color-black, $1);
+  border: $border-width-thin solid #e9ecef;
+}
+.cms_wrap main .content.calendar .list_mark ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  calc($spacing-md + $spacing-xs) 20px;
+}
+@media (max-width: 768px) {
+  .cms_wrap main .content.calendar .list_mark ul {
+    calc($spacing-sm + $spacing-xs) 12px;
+    justify-content: flex-start;
+  }
+}
+.cms_wrap main .content.calendar .list_mark ul li {
+  display: flex;
+  align-items: center;
+  font-size: calc($spacing-md - 2px);
+  color: #495057;
+  font-weight: 500;
+}
+.cms_wrap main .content.calendar .list_mark ul li span {
+  display: inline-block;
+  width: $spacing-md;
+  height: $spacing-md;
+  border-radius: 50%;
+  margin-$spacing-smht: 8px;
+  box-shadow: 0 1px 3px rgba($color-black, $1);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.first {
+  background: linear-gradient(135deg, #55a1f5 0%, #4691e5 100%);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.second {
+  background: linear-gradient(135deg, #0d45ac 0%, #0a3a91 100%);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.third {
+  background: linear-gradient(135deg, #8a88e9 0%, #7a78d9 100%);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.fourth {
+  background: linear-gradient(135deg, #774bf0 0%, #673be0 100%);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.fifth {
+  background: linear-gradient(135deg, #57e4ed 0%, #47d4dd 100%);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.sixth {
+  background: linear-gradient(135deg, #5d888b 0%, #4d787b 100%);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.seven {
+  background: linear-gradient(135deg, #212529 0%, $color-black 100%);
+}
+.cms_wrap main .content.calendar .list_mark ul li span.eighth {
+  background: linear-gradient(135deg, $color-danger 0%, #c82333 100%);
+}
+.cms_wrap main .content.feedback {
+  margin: 0 0 50px;
+}
+.cms_wrap main .content.feedback .flex {
+  display: flex;
+  calc($spacing-lg + 6px) 30px;
+  align-items: flex-start;
+}
+@media (min-width: 1200px) {
+  .cms_wrap main .content.feedback .flex {
+    calc($spacing-lg + 6px) 30px;
+  }
+}
+@media (max-width: 1199px) {
+  .cms_wrap main .content.feedback .flex {
+    calc($spacing-md + $spacing-xs) 20px;
+  }
+  .cms_wrap main .content.feedback .flex .video_box {
+    flex: 1.5;
+  }.cms_wrap main .content.feedback .flex .sidebox.cms_wrap { width: 400px; }
+}
+@media (max-width: 767px) {
+  .cms_wrap main .content.feedback .flex {
+    flex-direction: column;
+    calc($spacing-md + $spacing-xs) 20px;
+  }
+  .cms_wrap main .content.feedback .flex .video_box {
+    width: 100%;
+  }.cms_wrap main .content.feedback .flex .sidebox.cms_wrap { width: 100%; }
+    position: relative;
+    right: auto;
+    bottom: auto;
+}
+.cms_wrap main .content.feedback .flex .video_box {
+  flex: 1;
+  min-width: 0;
+}
+@media (max-width: 767px) {
+  .cms_wrap main .content.feedback .flex .video_box {
+    width: 100%;
+  }
+}
+.cms_wrap main .content.feedback .video_inner {
+  background: $color-gray-50;
+  border: calc($spacing-2xs + 1px) dashed #0058da;
+  width: 100%;
+  height: 600px;
+  calc($spacing-md - 1px)er-radius: 15px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cms_wrap main .content.feedback .video_inner .loading {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($color-black, $1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}.cms_wrap main .content.feedback .video_inner .loading .loading-content .progress-container .progress-bar.cms_wrap { animation: none; }
+  transform: none ;
+.cms_wrap main .content.feedback .video_inner .loading .animation {
+  margin: 0 auto;
+  width: 80px;
+  height: 80px;
+  border: calc($spacing-xs + 1px) solid rgba($color-white, $1);
+  border-radius: 50%;
+  border-top-color: $color-white;
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+}
+@keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+.cms_wrap main .content.feedback .video_inner .upload_btn_wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 260px;
+}
+.cms_wrap main .content.feedback .video_inner .upload_btn_wrap .video_upload {
+  display: none;
+}
+.cms_wrap main .content.feedback .video_inner .upload_btn_wrap .video_upload_label div {
+  display: block;
+  text-align: center;
+  line-height: 50px;
+  background: #0058da;
+  color: $color-white;
+  width: 150px;
+  height: 50px;
+  calc($spacing-md - 1px)er-radius: 15px;
+  font-size: $font-size-base;
+}
+.cms_wrap main .content.feedback .video_inner.active {
+  border: $border-width-medium solid #0058da;
+  background: $color-black;
+  padding: 0;
+}
+.cms_wrap main .content.feedback .video_inner.active .video-player-section {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: $color-black;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cms_wrap main .content.feedback .video_inner.active .video-player-section .video-js-player-wrapper {
+  width: 100%;
+  height: 100%;
+}
+.cms_wrap main .content.feedback .video_inner.active .video-player-section .video-js-player-wrapper > div[data-vjs-player] {
+  width: 100%;
+  height: 100%;
+}
+.cms_wrap main .content.feedback .video_inner.active .video-player-section video, .cms_wrap main .content.feedback .video_inner.active .video-player-section .video-js {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.cms_wrap main .content.feedback .video_inner.active .player-controls {
+  margi$spacing-mdp: 16px;
+  $spacing-mding: 16px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: $border-radius-lg;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 $border-width-medium $spacing-sm rgba($color-black, $1);
+  display: flex;
+  calc($spacing-sm + $spacing-xs) 12px;
+  align-items: center;
+  justify-content: center;
+}
+.cms_wrap main .content.feedback .etc_box {
+  margicalc($spacing-lg + 6px)p: 30px;
+}
+.cms_wrap main .content.feedback .etc_box .flex button {
+  background: none;
+  width: auto;
+}
+.cms_wrap main .content.feedback .etc_box .flex button.change img {
+  width: calc($spacing-lg + $spacing-xs);
+}
+.cms_wrap main .content.feedback .etc_box .flex button.all {
+  background: #0058da;
+  color: $color-white;
+  width: 150px;
+  height: 50px;
+  calc($spacing-md - 1px)er-radius: 15px;
+  font-size: $font-size-base;
+}
+.cms_wrap main .content.feedback .etc_box .flex .good .change_btn_wrap {
+  display: inline-block;
+}
+.cms_wrap main .content.feedback .etc_box .flex .good .change_btn_wrap .video_upload {
+  display: none;
+}
+.cms_wrap main .content.feedback .etc_box .flex .good .change_btn_wrap .video_upload_label div {
+  display: block;
+  text-align: center;
+  line-height: 50px;
+  background: #0058da;
+  color: $color-white;
+  width: 100px;
+  height: 50px;
+  calc($spacing-md - 1px)er-radius: 15px;
+  font-size: $font-size-base;
+  macalc($spacing-xs + 1px)n: 0 5px;
+  cursor: pointer;
+}
+.cms_wrap main .content.feedback .etc_box .flex .good .change_btn_wrap .video_upload_label div.delete {
+  background: #d93a3a;
+}
+.cms_wrap main .content.feedback .etc_box .flex .share {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  background: #0058da url("../../images/Cms/share_icon.png") no-repeat;
+  background-size: 22px;
+  background-position: center;
+  text-indent: -99999px;
+  cursor: pointer;
+}
+.cms_wrap main .content.feedback .etc_box .list {
+  margicalc($spacing-lg + 6px)p: 30px;
+}
+.cms_wrap main .content.feedback .etc_box .list .box {
+  position: relative;
+  margicalc($spacing-lg + 6px)p: 30px;
+}
+.cms_wrap main .content.feedback .etc_box .list .box:first-child {
+  margin-left: 0;
+}
+.cms_wrap main .content.feedback .etc_box .list .box:last-child:after {
+  display: none;
+}
+.cms_wrap main .content.feedback .etc_box .list .box .day {
+  font-size: calc($spacing-md - 2px);
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul {
+  margicalc($spacing-md - 2px)p: 14px;
+  position: relative;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li {
+  display: inline-block;
+  background: #edf0f5;
+  $border-width-thickd$spacing-sm: 4px 8px;
+  border-radius: $border-radius-md;
+  macalc($spacing-md - 1px):calc($spacing-md - 1px)5px 15px 0;
+  cursor: pointer;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li .view-container {
+  position: absolute;
+  top: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: $color-white;
+  calc($spacing-sm + 2px)ing: 10px;
+  calc($spacing-sm + 2px)er-radius: 10px;
+  box-shadow: 6px 6px 16px rgba($color-black, $1);
+  min-width: 300px;
+  text-align: center;
+  z-index: 2;
+  color: $color-black;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li .txt_box {
+  text-align: left;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li .txt_box .name {
+  display: inline-block;
+  font-size: calc($spacing-md - 2px);
+  font-weight: bold;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li .txt_box .email {
+  display: inline-block;
+  font-size: calc($spacing-sm + $spacing-xs);
+  margi$border-width-mediumop: 2px;
+  font-family: "pl";
+  color: #9b9da7;
+  margincalc($spacing-sm + 2px)t: 10px;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li .comment_box {
+  text-align: left;
+  margicalc($spacing-sm + 2px)p: 10px;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li .close-button {
+  width: 34px;
+  height: 34px;
+  background: #efefef;
+  text-align: center;
+  border-radius: 100%;
+  font-weight: bold;
+  calc($spacing-md - 1px)in: 15px auto 0;
+}
+.cms_wrap main .content.feedback .etc_box .list .box ul li.on {
+  background: $color-black;
+  color: $color-white;
+}
+.cms_wrap main .content .sidebox {
+  width: 460px;
+  flex-shrink: 0;
+  height: 100%;
+  calc($spacing-md + $spacing-xs)ing: 20px;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 2px 8px rgba($color-black, $1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+@media (max-width: 1199px) {
+  .cms_wrap main .content .sidebox {
+    width: 350px;
+    $spacing-mding: 16px;
+  }
+}
+@media (max-width: 767px) {
+  .cms_wrap main .content .sidebox {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 60vh;
+    calc($spacing-md + $spacing-xs)ecalc($spacing-md + $spacing-xs)dius: 20px 20px 0 0;
+    box-shadow: 0 -4px calc($spacing-md + $spacing-xs) rgba($color-black, $1);
+    z-index: 100;
+  }
+  .cms_wrap main .content .sidebox::before {
+    content: "";
+    position: absolute;
+    top: $spacing-sm;
+    left: 50%;
+    transform: translateX(-50%);
+    width: $spacing-2xl;
+    height: $border-width-thick;
+    background: #dee2e6;
+    $border-width-mediumder-radius: 2px;
+  }
+}
+.cms_wrap main .content .sidebox .s_title {
+  font-size: $spacing-lg;
+  font-weight: bold;
+}
+.cms_wrap main .content .sidebox .btn {
+  cursor: pointer;
+}
+.cms_wrap main .content .sidebox .btn img {
+  height: $spacing-lg;
+}
+.cms_wrap main .content .sidebox .top_box {
+  calc($spacing-md + $spacing-xs)in: 20px 0 0;
+  position: relative;
+}
+.cms_wrap main .content .sidebox .top_box .tab_menu {
+  width: 100%;
+}
+.cms_wrap main .content .sidebox .top_box .tab_menu li {
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  font-size: $spacing-md;
+  background: #e6e6e6;
+  $border-width-thickdcalc($spacing-xs + 2px): 4px 6px;
+  calc($spacing-sm + 2px)er-radius: 10px;
+  margin-calc($spacing-sm + 2px)t: 10px;
+}
+.cms_wrap main .content .sidebox .top_box .tab_menu li.active {
+  background: #0131ff;
+  color: $color-white;
+}
+.cms_wrap main .content .sidebox .top_box .tab_menu li:hover {
+  background: #0131ff;
+  color: $color-white;
+}
+.cms_wrap main .content .sidebox .tab_content {
+  margicalc($spacing-lg + 6px)p: 30px;
+  flex: 1;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+}
+.cms_wrap main .content .sidebox .tab_content::-webkit-scrollbar {
+  display: none;
+}
+.cms_wrap main .content .sidebox .tab_content .comment {
+  padding-$spacing-5xlom: 80px;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li {
+  margicalc($spacing-lg + 6px)p: 30px;
+  background: #edf0f5;
+  calc($spacing-md + $spacing-xs)ing: 20px;
+  calc($spacing-lg + 6px)er-radius: 30px;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li:first-child {
+  margin-top: 0;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li.empty {
+  text-align: Center;
+  background: none;
+  color: $color-gray-500;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .img_box {
+  width: $spacing-2xl;
+  height: $spacing-2xl;
+  border-radius: 100%;
+  margin-calc($spacing-md - 1px)t: 15px;
+  position: relative;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .img_box img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  width: auto;
+  max-width: auto;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .img_box.admin {
+  background: #25252b;
+  position: relative;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .img_box.admin:after {
+  content: "";
+  display: block;
+  width: $spacing-lg;
+  height: $spacing-md;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -8px;
+  background: url("../../images/Cms/crown_icon.svg") no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-radius: 100%;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .img_box.basic {
+  background: #0032fc;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .txt_box .name {
+  display: block;
+  font-size: calc($spacing-md - 2px);
+  font-weight: bold;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .txt_box .name small {
+  display: inline-block;
+  margincalc($spacing-xs + 1px)ft: 5px;
+  font-size: $font-size-sm;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .txt_box .name small.admin {
+  color: #0032fc;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .txt_box .email {
+  display: block;
+  font-size: calc($spacing-sm + $spacing-xs);
+  margi$border-width-mediumop: 2px;
+  font-family: "pl";
+  color: #9b9da7;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .comment_box {
+  margicalc($spacing-md - 1px)p: 15px;
+  position: relative;
+  padding-left: 54px;
+}
+.cms_wrap main .content .sidebox .tab_content .comment ul li .comment_box:before {
+  content: '"';
+  display: block;
+  left: -30px;
+  top: -9px;
+  font-size: 34px;
+  color: rgba($color-white, $1);
+  position: absolute;
+  font-family: "lobster";
+}
+.cms_wrap main .content .sidebox .tab_content .pr {
+  position: absolute;
+  bottom: $spacing-0;
+  left: $spacing-2xl;
+  width: calc(100% - 40px);
+  z-index: 1;
+}
+.cms_wrap main .content .sidebox .tab_content .pr:after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: $spacing-5xl;
+  background: $color-white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+}
+.cms_wrap main .content .sidebox .tab_content .info .project_btn {
+  margicalc($spacing-lg + 6px)p: 30px;
+  text-align: center;
+  line-height: 54px;
+  background: #25282f;
+  color: $color-white;
+  calc($spacing-md - 1px)er-radius: 15px;
+  height: 54px;
+  font-size: $font-size-base;
+  cursor: pointer;
+}
+.cms_wrap main .content .sidebox .tab_content .info dl {
+  margicalc($spacing-lg + 6px)p: 30px;
+}
+.cms_wrap main .content .sidebox .tab_content .info dl:first-child {
+  margin-top: 0;
+}
+.cms_wrap main .content .sidebox .tab_content .info dl dt {
+  font-size: $spacing-md;
+  font-weight: bold;
+}
+.cms_wrap main .content .sidebox .tab_content .info dl dd {
+  font-size: $spacing-md;
+  word-break: keep-all;
+}
+.cms_wrap main .content .sidebox .tab_content .info dl.flex dt {
+  width: 130px;
+}
+.cms_wrap main .content .sidebox .tab_content .form .flex {
+  justify-items: start;
+}
+.cms_wrap main .content .sidebox .tab_content .form .flex > div:first-child {
+  margin-calc($spacing-md + $spacing-xs)t: 20px;
+}
+.cms_wrap main .content .sidebox .tab_content .form .submit {
+  calc($spacing-sm + 2px)icalc($spacing-md + $spacing-xs)10px 20px;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 $border-width-medium $border-width-thick rgba(22, 49, 248, 0.2);
+  height: auto;
+  line-height: 1.5;
+}
+.cms_wrap main .content .sidebox .tab_content .form .submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 $border-width-thick calc($spacing-sm + $spacing-xs) rgba(22, 49, 248, 0.3);
+}
+.cms_wrap main .content .sidebox .tab_content .form .submit.del {
+  background: linear-gradient(135deg, $color-danger 0%, #c82333 100%);
+}
+.cms_wrap main .content .sidebox .tab_content .form .submit.del:hover {
+  box-shadow: 0 $border-width-thick calc($spacing-sm + $spacing-xs) rgba(220, 53, 69, 0.3);
+}
+.cms_wrap main .content .sidebox .tab_content .member {
+  $spacing-smding: 8px 0 0;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li:first-child {
+  margin-top: 0;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li .img {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  position: relative;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li .img img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  width: auto;
+  max-width: initial;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li .txt {
+  margin$spacing-mdt: 16px;
+  font-weight: bold;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li .txt span {
+  display: block;
+  font-weight: normal;
+  font-size: $font-size-sm;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li.admin .img {
+  background: #25252b;
+  position: relative;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li.admin .img:after {
+  content: "";
+  display: block;
+  width: $spacing-lg;
+  height: $spacing-md;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -8px;
+  background: url("../../images/Cms/crown_icon.svg") no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-radius: 100%;
+}
+.cms_wrap main .content .sidebox .tab_content .member ul li.basic .img {
+  background: #0032fc;
+}
+.cms_wrap main .content .sidebox .tab_content .history ul li {
+  margicalc($spacing-lg + 6px)p: 30px;
+  background: #edf0f5;
+  calc($spacing-md + $spacing-xs)ing: 20px;
+  calc($spacing-lg + 6px)er-radius: 30px;
+}
+.cms_wrap main .content .sidebox .tab_content .history ul li:first-child {
+  margin-top: 0;
+}
+.cms_wrap main .content .sidebox .tab_content .history ul li .delete {
+  width: 44px;
+  height: 44px;
+  background: $color-white url("../../images/Common/close_icon.png") no-repeat;
+  background-size: calc($spacing-md - 2px);
+  background-position: center;
+  text-indent: -99999px;
+  border-radius: 100%;
+  box-shadow: 16px 0px 16px rgba($color-black, $1);
+}
+.cms_wrap main .content .sidebox .tab_content .history ul li .txt_box {
+  width: calc(100% - 70px);
+  margin-calc($spacing-md + $spacing-xs)t: 20px;
+}
+.cms_wrap main .content .sidebox .tab_content .history ul li .txt_box .time {
+  color: #0032fc;
+  font-size: $spacing-md;
+  font-weight: bold;
+}
+.cms_wrap main .content .sidebox .tab_content .history ul li .txt_box p {
+  margicalc($spacing-sm + 2px)p: 10px;
+  $color-white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.cms_wrap main.elearning {
+  margin: 0 0 50px;
+}
+.cms_wrap main.elearning .channel-link {
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+  margin-bcalc($spacing-lg + 6px)m: 30px;
+}
+.cms_wrap main.elearning .channel-link .youtube-channel-btn {
+  display: inline-flex;
+  align-items: center;
+  calc($spacing-sm + 2px) 10px;
+  background: #FF0000;
+  color: $color-white;
+  padding: calc($spacing-sm + $spacing-xs) $spacing-lg;
+  border-radius: $border-radius-md;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.cms_wrap main.elearning .channel-link .youtube-channel-btn:hover {
+  background: #CC0000;
+  transform: translateY(-2px);
+  box-shadow: 0 $border-width-thick calc($spacing-sm + $spacing-xs) rgba(255, 0, 0, 0.3);
+}
+.cms_wrap main.elearning .channel-link .youtube-channel-btn svg {
+  flex-shrink: 0;
+}
+.cms_wrap main.elearning .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+.cms_wrap main.elearning .loading-container .spinner {
+  width: 50px;
+  height: 50px;
+  border: calc($spacing-2xs + 1px) solid rgba($color-black, $1);
+  border-top-color: #0058da;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.cms_wrap main.elearning .loading-container p {
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+  color: $color-gray-600;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.cms_wrap main.elearning ul.oc {
+  display: grid;
+  calc($spacing-lg + 6px)-calc($spacing-lg + 6px) 30px;
+  grid-template-columns: repeat(3, 1fr);
+  margicalc($spacing-lg + 6px)p: 30px;
+}
+@media (max-width: 1200px) {
+  .cms_wrap main.elearning ul.oc {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .cms_wrap main.elearning ul.oc {
+    grid-template-columns: 1fr;
+  }
+}
+.cms_wrap main.elearning ul.oc li {
+  background: $color-gray-50;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: 0 $border-width-medium $spacing-sm rgba($color-black, $1);
+  transition: all 0.3s;
+}
+.cms_wrap main.elearning ul.oc li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 $border-width-thick $spacing-md rgba($color-black, $1);
+}
+.cms_wrap main.elearning ul.oc li .video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+.cms_wrap main.elearning ul.oc li .video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.cms_wrap main.elearning ul.oc li .video-title {
+  calc($spacing-md - 1px)ing: 15px;
+  font-size: $font-size-base;
+  font-weight: 500;
+  color: $color-gray-800;
+  line-height: 1.4;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+.cms_wrap main.elearning .empty-state {
+  text-align: center;
+  paddincalc($spacing-md + $spacing-xs)00px 20px;
+  color: $color-gray-500;
+  font-size: $spacing-md;
+}
+.cms_wrap main.feedbackall {
+  margin: 0 0 50px;
+}
+.cms_wrap main.feedbackall .title span {
+  background: #efefef url("../../images/Common/back_icon.png") no-repeat;
+  background-size: 25px;
+  background-position: center;
+  display: inline-block;
+  width: $spacing-2xl;
+  height: $spacing-2xl;
+  border-radius: 100%;
+  text-align: center;
+  text-indent: -99999px;
+  cursor: pointer;
+  vertical-align: middle;
+  margicalc($spacing-md + $spacing-xs)4px 20px 0 0;
+}
+.cms_wrap main.feedbackall .list {
+  margin-top: 70px;
+}
+.cms_wrap main.feedbackall .list .part {
+  margin-top: 50px;
+}
+.cms_wrap main.feedbackall .list .part:first-child {
+  margicalc($spacing-lg + 6px)p: 30px;
+}
+.cms_wrap main.feedbackall .list .part .day {
+  position: relative;
+}
+.cms_wrap main.feedbackall .list .part .day span {
+  display: inline-block;
+  background: $color-white;
+  paddingcalc($spacing-md - 1px)ht: 15px;
+  z-index: 1;
+  position: relative;
+  font-size: 22px;
+}
+.cms_wrap main.feedbackall .list .part .day:after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: $border-width-thin;
+  background: #e6e6e6;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+}
+.cms_wrap main.feedbackall .list .part ul {
+  margicalc($spacing-lg + 6px)p: 30px;
+  display: grid;
+  calc($spacing-lg + 6px)-calc($spacing-lg + 6px) 30px;
+  grid-template-columns: repeat(4, 1fr);
+}
+.cms_wrap main.feedbackall .list .part ul li {
+  background: #edf0f5;
+  calc($spacing-md + $spacing-xs)ing: 20px;
+  calc($spacing-lg + 6px)er-radius: 30px;
+}
+.cms_wrap main.feedbackall .list .part ul li .img_box {
+  width: $spacing-2xl;
+  height: $spacing-2xl;
+  border-radius: 100%;
+  margin-calc($spacing-md - 1px)t: 15px;
+  position: relative;
+}
+.cms_wrap main.feedbackall .list .part ul li .img_box.admin {
+  background: #25252b;
+}
+.cms_wrap main.feedbackall .list .part ul li .img_box.admin:after {
+  content: "";
+  display: block;
+  width: $spacing-lg;
+  height: $spacing-md;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -8px;
+  background: url("../../images/Cms/crown_icon.svg") no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-radius: 100%;
+}
+.cms_wrap main.feedbackall .list .part ul li .img_box.basic {
+  background: #0032fc;
+}
+.cms_wrap main.feedbackall .list .part ul li .img_box.anonymous {
+  background: $color-gray-400;
+}
+.cms_wrap main.feedbackall .list .part ul li .txt_box .name {
+  display: block;
+  font-size: calc($spacing-md - 2px);
+  font-weight: bold;
+}
+.cms_wrap main.feedbackall .list .part ul li .txt_box .name small {
+  display: inline-block;
+  margincalc($spacing-xs + 1px)ft: 5px;
+  font-size: $font-size-sm;
+}
+.cms_wrap main.feedbackall .list .part ul li .txt_box .name small.admin {
+  color: #0032fc;
+}
+.cms_wrap main.feedbackall .list .part ul li .txt_box .email {
+  display: block;
+  font-size: calc($spacing-sm + $spacing-xs);
+  margi$border-width-mediumop: 2px;
+  font-family: "pl";
+  color: #9b9da7;
+}
+.cms_wrap main.feedbackall .list .part ul li .subject {
+  font-weight: bold;
+  font-size: $spacing-md;
+  max-width: 160px;
+}
+.cms_wrap main.feedbackall .list .part ul li .time {
+  font-weight: bold;
+  display: inline-block;
+  background: #0032fc;
+  color: $color-white;
+  $border-width-mediumd$border-width-thick: 2px 4px;
+  calc($spacing-xs + 1px)der-radius: 5px;
+  font-weight: normal;
+}
+.cms_wrap main.feedbackall .list .part ul li p {
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+}
+.cms_wrap.project .info_wrap {
+  background: $color-white;
+  box-shadow: 0 $border-width-medium $spacing-sm rgba($color-black, $1);
+  overflow: hidden;
+  border-radius: $border-radius-xl;
+  margin-bcalc($spacing-lg + 6px)m: 30px;
+  border: 1px solid #e9ecef;
+}
+.cms_wrap.project .info_wrap .name_box {
+  $spacing-lgicalc($spacing-lg + 6px)24px 30px;
+  background: linear-gradient(135deg, #f8f9fa 0%, $color-white 100%);
+  border-bottom: $border-width-thin solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cms_wrap.project .info_wrap .name_box .s_title {
+  font-size: $spacing-lg;
+  font-weight: 700;
+  color: #212529;
+  margin: 0;
+}
+.cms_wrap.project .info_wrap .name_box > div {
+  display: flex;
+  align-items: center;
+  calc($spacing-md + $spacing-xs) 20px;
+}
+.cms_wrap.project .info_wrap .name_box > div > div {
+  font-size: calc($spacing-md - 2px);
+  color: #6c757d;
+  font-weight: 500;
+}
+.cms_wrap.project .info_wrap .name_box > div button {
+  calc($spacing-sm + 2px)icalc($spacing-md + $spacing-xs)10px 20px;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  $spacing-sm: 8px;
+  text-indent: 0;
+  $color-white-space: nowrap;
+  box-shadow: 0 $border-width-medium $border-width-thick rgba(22, 49, 248, 0.2);
+}
+.cms_wrap.project .info_wrap .name_box > div button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 $border-width-thick calc($spacing-sm + $spacing-xs) rgba(22, 49, 248, 0.3);
+}
+.cms_wrap.project .info_wrap .name_box > div button:active {
+  transform: translateY(0);
+}
+.cms_wrap.project .info_wrap .name_box > div button::after {
+  content: "▼";
+  font-size: calc($spacing-sm + 2px);
+  transition: transform 0.3s ease;
+  margin$border-width-thickft: 4px;
+}
+.cms_wrap.project .info_wrap .name_box > div button.on::after {
+  transform: rotate(180deg);
+}
+.cms_wrap.project .info_wrap .box {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #f8f9fa;
+}
+.cms_wrap.project .info_wrap .box .inner {
+  calc($spacing-lg + 6px)ing: 30px;
+  display: grid;
+  calc($spacing-lg + 6px)-calc($spacing-lg + 6px) 30px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+@media (max-width: 1200px) {
+  .cms_wrap.project .info_wrap .box .inner {
+    grid-template-columns: 1fr;
+    $spacing-lg 24px;
+  }
+}
+.cms_wrap.project .info_wrap .box .inner > div {
+  background: $color-white;
+  $spacing-lging: 24px;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 1px 3px rgba($color-black, $1);
+  border: $border-width-thin solid #e9ecef;
+}
+.cms_wrap.project .info_wrap .box .inner > div .ss_title {
+  margin-bcalc($spacing-md + $spacing-xs)m: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cms_wrap.project .info_wrap .box .inner > div .ss_title span {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  display: inline-block;
+  calc($spacing-xs + 2px)d$spacing-md 6px 16px;
+  calc($spacing-md + $spacing-xs)er-radius: 20px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.cms_wrap.project .info_wrap .box .inner > div.explanation p {
+  font-size: calc($spacing-md - 1px);
+  line-height: 1.8;
+  color: #495057;
+  word-break: keep-all;
+  margin: 0;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li {
+  display: flex;
+  align-items: center;
+  calc($spacing-sm + $spacing-xs)ing: 12px 0;
+  border-bottom: 1px solid #f1f3f5;
+  transition: all 0.2s ease;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li:last-child {
+  border-bottom: none;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li:hover {
+  background: #f8f9fa;
+  margin: 0 -12px;
+  calc($spacing-sm + $spacing-xs)ing: 12px;
+  border-radius: $border-radius-md;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li .img {
+  width: $spacing-3xl;
+  height: $spacing-3xl;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li .img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li .txt {
+  margin$spacing-mdt: 16px;
+  flex: 1;
+  font-size: $font-size-base;
+  font-weight: 600;
+  color: #212529;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li .txt span {
+  display: block;
+  font-weight: 400;
+  font-size: $font-size-sm;
+  color: #6c757d;
+  margi$border-width-mediumop: 2px;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li.admin .img {
+  background: linear-gradient(135deg, #212529 0%, #343a40 100%);
+  position: relative;
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li.admin .img:after {
+  content: "";
+  display: block;
+  width: calc($spacing-md + $spacing-xs);
+  height: calc($spacing-md + $spacing-xs);
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  background: url("../../images/Cms/crown_icon.svg") no-repeat;
+  background-size: contain;
+  background-position: center;
+  filter: drop-shadow(0 $border-width-thin $border-width-medium rgba($color-black, $1));
+}
+.cms_wrap.project .info_wrap .box .inner > div.member ul li.basic .img {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl {
+  margin: 0;
+  calc($spacing-sm + $spacing-xs)ing: 12px 0;
+  border-bottom: 1px solid #f1f3f5;
+  display: flex;
+  align-items: flex-start;
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl:last-child {
+  border-bottom: none;
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl dt {
+  width: 100px;
+  flex-shrink: 0;
+  font-size: calc($spacing-md - 2px);
+  font-weight: 600;
+  color: #495057;
+  line-height: 1.6;
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl dd {
+  flex: 1;
+  font-size: calc($spacing-md - 2px);
+  color: #212529;
+  line-height: 1.6;
+  margin: 0;
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl dd div {
+  display: inline-flex;
+  align-items: center;
+  $spacing-sm: 8px;
+  $border-width-thickdcalc($spacing-sm + $spacing-xs) 4px 12px;
+  background: #f8f9fa;
+  calc($spacing-xs + 2px)der-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  $border-width-mediumgin: 2px 0;
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl dd div:hover {
+  background: #e9ecef;
+  transform: translateX($border-width-medium);
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl dd div i {
+  display: flex;
+  align-items: center;
+}
+.cms_wrap.project .info_wrap .box .inner > div.info dl dd div i img {
+  width: $spacing-md;
+  height: $spacing-md;
+  filter: opacity(0.6);
+}
+.cms_wrap.project.edit .title {
+  font-family: "suit";
+  font-weight: bold;
+}
+.cms_wrap.project.edit .content .group .part .s_title {
+  font-weight: bold;
+}
+.cms_wrap.project.edit .content .group .part .pr .ty01 {
+  padding: 0calc($spacing-md - 1px)px 0 15px;
+}
+.cms_wrap.project.edit .content .group .part .pr .cert {
+  position: absolute;
+  top: 50%;
+  right: $spacing-5xl;
+  transform: translateY(-50%);
+  padding: $spacing-sm $spacing-md;
+  background: linear-gradient(135deg, $color-info 0%, #138496 100%);
+  color: $color-white;
+  border: none;
+  calc($spacing-xs + 2px)der-radius: 6px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 $border-width-medium $border-width-thick rgba(23, 162, 184, 0.2);
+}
+.cms_wrap.project.edit .content .group .part .pr .cert:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 $border-width-thick $spacing-sm rgba(23, 162, 184, 0.3);
+}
+.cms_wrap.project.edit .content .group .part .pr .del {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: calc($spacing-sm + 2px);
+  padding: $spacing-sm $spacing-md;
+  background: linear-gradient(135deg, $color-danger 0%, #c82333 100%);
+  color: $color-white;
+  border: none;
+  calc($spacing-xs + 2px)der-radius: 6px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 $border-width-medium $border-width-thick rgba(220, 53, 69, 0.2);
+  min-width: 60px;
+  text-align: center;
+}
+.cms_wrap.project.edit .content .group .part .pr .del:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 $border-width-thick $spacing-sm rgba(220, 53, 69, 0.3);
+}
+.cms_wrap.project.edit .content .group .part .pr .pend {
+  position: absolute;
+  top: 50%;
+  right: $spacing-5xl;
+  transform: translateY(-50%);
+  padding: $spacing-sm $spacing-md;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: $color-white;
+  border: none;
+  calc($spacing-xs + 2px)der-radius: 6px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: 0 $border-width-medium $border-width-thick rgba(108, 117, 125, 0.2);
+  min-width: 60px;
+  text-align: center;
+}
+.cms_wrap.project.edit .content .group .part button.add {
+  background: #efeff1;
+  margicalc($spacing-sm + 2px)p: 10px;
+  calc($spacing-md - 1px)er-radius: 15px;
+  pacalc($spacing-md - 1px)g: 0 15px;
+  height: 54px;
+  font-size: $font-size-base;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess {
+  display: grid;
+  calc($spacing-lg + 6px)-calc($spacing-lg + 6px) 30px;
+  grid-template-columns: repeat(4, 1fr);
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li .type {
+  font-size: calc($spacing-md - 1px);
+  margin-bcalc($spacing-sm + 2px)m: 10px;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li .select .react-datepicker-wrapper {
+  width: 100%;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li .select .react-datepicker-wrapper button {
+  width: 100%;
+  height: 50px;
+  calc($spacing-sm + 2px)er-radius: 10px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  color: $color-white;
+  background: $color-black;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li .select .react-datepicker-wrapper button::placeholder {
+  color: $color-white;
+  font-size: calc($spacing-md - 2px);
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li .select.start button.off:before {
+  content: "시작 날짜";
+  display: block;
+  color: $color-white;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li .select.end {
+  margicalc($spacing-sm + 2px)p: 10px;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li .select.end button.off:before {
+  content: "종료 날짜";
+  display: block;
+  color: $color-white;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(1) .select .react-datepicker-wrapper button {
+  background: #55a1f5;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(2) .select .react-datepicker-wrapper button {
+  background: #0d45ac;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(3) .select .react-datepicker-wrapper button {
+  background: #8a88e9;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(4) .select .react-datepicker-wrapper button {
+  background: #774bf0;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(5) .select .react-datepicker-wrapper button {
+  background: #57e4ed;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(6) .select .react-datepicker-wrapper button {
+  background: #5d888b;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(7) .select .react-datepicker-wrapper button {
+  background: #505d5e;
+}
+.cms_wrap.project.edit .content .group .part.day .dataprocess li:nth-child(8) .select .react-datepicker-wrapper button {
+  background: #252525;
+}
+.cms_wrap.project.edit .content .group .part.file .sample {
+  display: grid;
+  calc($spacing-sm + 2px)-calc($spacing-sm + 2px) 10px;
+  grid-template-columns: repeat(2, 1fr);
+  margicalc($spacing-md - 1px)p: 15px;
+}
+.cms_wrap.project.edit .content .group .part.file .sample li {
+  background: #edf0f5;
+  text-align: left;
+  calc($spacing-sm + 2px)ing: 10px;
+  calc($spacing-sm + 2px)er-radius: 10px;
+  cursor: pointer;
+  position: relative;
+}
+.cms_wrap.project.edit .content .group .part.file .sample li button {
+  position: absolute;
+  top: 50%;
+  right: calc($spacing-sm + 2px);
+  transform: translateY(-50%);
+  width: calc($spacing-md + $spacing-xs);
+  height: calc($spacing-md + $spacing-xs);
+  border-radius: 100%;
+  background: url("../../images/Common/close_icon.png") no-repeat;
+  background-size: calc($spacing-sm + $spacing-xs);
+  background-position: center;
+  text-indent: -9999px;
+}
+.cms_wrap.project.edit .content .group .part.file .sample li.upload_button {
+  background: #efefef;
+}
+.cms_wrap.project.edit .content .group .part.file .sample li.upload_button .btn-upload {
+  width: 100%;
+  background: #efefef;
+  calc($spacing-md - 1px)er-radius: 15px;
+  cursor: pointer;
+  text-align: center;
+}
+.cms_wrap.project.edit .content .group .part.file .sample li.upload_button #file {
+  display: none;
+}
+.cms_wrap.project.edit .content .group .part.file .upload {
+  display: grid;
+  $spacing-0dcalc($spacing-sm + 2px)acing-0:calc($spacing-sm + 2px) 10px;
+  grid-template-columns: repeat(2, 1fr);
+  margicalc($spacing-md - 1px)p: 15px;
+}
+.cms_wrap.project.edit .content .group .part.file .upload .btn-upload {
+  width: 100%;
+  height: 42.5px;
+  background: #efefef;
+  calc($spacing-md - 1px)er-radius: 15px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 42.5px;
+}
+.cms_wrap.project.edit .content .group .part.file .upload #file {
+  display: none;
+}
+.cms_wrap.project.edit .content .group .part.authority .flex {
+  font-size: $spacing-md;
+  margicalc($spacing-md + $spacing-xs)p: 20px;
+  border-bottom: 1px solid #ededed;
+  padding-calc($spacing-md + $spacing-xs)om: 20px;
+}
+.cms_wrap.project.edit .content .group .part.authority .flex:first-child {
+  margicalc($spacing-sm + 2px)p: 10px;
+  border-bottom: none;
+}
+.cms_wrap.project.edit .content .group .part.authority .flex select {
+  height: $spacing-2xl;
+  background: #efefef url("../../images/Cms/bb_arrow_icon.png") no-repeat;
+  background-size: 13px;
+  background-position: center right calc($spacing-sm + 3px);
+  width: 150px;
+  calc($spacing-md - 1px)er-radius: 15px;
+  pacalc($spacing-sm + 2px)g: 0 10px;
+}
+.cms_wrap.project.edit .content .group.grid {
+  display: grid;
+  grid-gap: 50px;
+  grid-template-columns: repeat(2, 1fr);
+}
+.cms_wrap.project.edit .content .btn_wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin$spacing-000px 0px 0;
+}
+.cms_wrap.project.edit .content .btn_wrap .submit {
+  calc($spacing-sm + $spacing-xs)i$spacing-xl12px 32px;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 $border-width-medium $border-width-thick rgba(22, 49, 248, 0.2);
+  min-width: 160px;
+  ma$spacing-smn: 0 8px;
+}
+.cms_wrap.project.edit .content .btn_wrap .submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 $border-width-thick calc($spacing-sm + $spacing-xs) rgba(22, 49, 248, 0.3);
+}
+.cms_wrap.project.edit .content .btn_wrap .submit:active {
+  transform: translateY(0);
+}
+.cms_wrap.project.edit .content .btn_wrap .submit.del {
+  background: linear-gradient(135deg, $color-danger 0%, #c82333 100%);
+}
+.cms_wrap.project.edit .content .btn_wrap .submit.del:hover {
+  box-shadow: 0 $border-width-thick calc($spacing-sm + $spacing-xs) rgba(220, 53, 69, 0.3);
+}
+
+.db {
+  display: none;
+}.collapse-btn.collapse-btn { width: $spacing-lg; }
+  height: $spacing-lg ;
+  min-width: $spacing-lg ;
+  min-height: $spacing-lg ;
+  border-radius: 50% ;
+  background: $color-primary ;
+  border: none ;
+  cursor: pointer ;
+  display: flex ;
+  align-items: center ;
+  justify-content: center ;
+  transition: all 0.3s ease ;
+  flex-shrink: 0 ;
+  position: relative ;
+  padding: 0 ;.collapse-btn:hover.collapse-btn { background: $color-primary-dark; }
+  transform: scale(1.1);
+  box-shadow: 0 $border-width-medium $spacing-sm rgba(22, 49, 248, 0.3);
+.collapse-btn:active {
+  transform: scale(0.95);
+}
+.collapse-btn::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: calc($spacing-xs + 1px) solid transparent;
+  border-right: calc($spacing-xs + 1px) solid transparent;
+  border-top: calc($spacing-xs + 2px) solid $color-white;
+  transition: transform 0.3s ease;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.collapse-btn.collapsed::after {
+  transform: translate(-50%, -50%) rotate(180deg);
+}.collapse-btn svg.collapse-btn { width: calc($spacing-sm + $spacing-xs); }
+  height: calc($spacing-sm + $spacing-xs) ;
+  fill: $color-white;.collapse-btn svg path.collapse-btn { fill: $color-white; }
+  stroke: $color-white ;

@@ -1,0 +1,114 @@
+@import '../styles/design-tokens';
+
+.video-upload-guide-overlay {
+  position: fixed;
+  top: $spacing-0;
+  left: $spacing-0;
+  right: $spacing-0;
+  bottom: $spacing-0;
+  background: rgba($color-black, $opacity-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1$color-black;
+  
+  .video-upload-guide {
+    background: white;
+    border-radius: $border-radius-lg;
+    padding: $spacing-0;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba($color-black, 0.15);
+    
+    .guide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: $spacing-lg - $spacing-xs;
+      border-bottom: 1px solid $color-gray-200;
+      
+      h3 {
+        margin: $spacing-0;
+        font-size: $font-size-xl;
+        color: $color-gray-800;
+      }
+      
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: $color-gray-500;
+        cursor: pointer;
+        padding: $spacing-0;
+        width: $spacing-lg + 6px;
+        height: $spacing-lg + 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $border-radius-full;
+        transition: all 0.3s;
+        
+        &:hover {
+          background: #f0f0f0;
+          color: $color-gray-800;
+        }
+      }
+    }
+    
+    .guide-content {
+      padding: $spacing-lg - $spacing-xs;
+      overflow-y: auto;
+      max-height: calc(80vh - 70px);
+      
+      .section {
+        margin-bottom: 25px;
+        
+        &:last-child {
+          margin-bottom: $spacing-0;
+        }
+        
+        h4 {
+          margin: $spacing-0 0 10px 0;
+          font-size: $font-size-base;
+          color: #0058da;
+          font-weight: 600;
+        }
+        
+        ul {
+          margin: $spacing-0;
+          padding-left: $spacing-lg - $spacing-xs;
+          
+          li {
+            margin-bottom: $spacing-xs;
+            color: $color-gray-600;
+            
+            &.sub {
+              margin-left: $spacing-lg - $spacing-xs;
+              color: #888;
+              font-size: $font-size-sm;
+            }
+          }
+        }
+        
+        &.warning {
+          background: #fff3cd;
+          padding: $spacing-md - 1px;
+          border-radius: $border-radius-md;
+          border: 1px solid #ffeeba;
+          
+          p {
+            margin: $spacing-0;
+            color: #856404;
+            font-size: $font-size-sm;
+            
+            &:not(:last-child) {
+              margin-bottom: $spacing-sm;
+            }
+          }
+        }
+      }
+    }
+  }
+}

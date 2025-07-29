@@ -1,0 +1,376 @@
+// Project Schedule Section Styles
+.project-schedule-section {
+  margin-top: 30px;
+  background: #fff;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  
+  .schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2d3436;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      
+      svg {
+        color: #1631F8;
+      }
+    }
+    
+    .view-controls {
+      display: flex;
+      gap: 8px;
+      
+      .view-btn {
+        padding: 8px 16px;
+        border: 1px solid #e9ecef;
+        background: #fff;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #6c757d;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+          background: #f8f9fa;
+        }
+        
+        &.active {
+          background: #1631F8;
+          color: #fff;
+          border-color: #1631F8;
+        }
+      }
+    }
+  }
+  
+  // 알림 카드 공통 스타일
+  .schedule-alert {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    
+    .alert-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+      
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .alert-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+    
+    &.overdue-alert {
+      background: #fff5f5;
+      border: 1px solid #ffe0e0;
+      
+      .alert-header {
+        color: #dc3545;
+        
+        svg {
+          stroke: #dc3545;
+        }
+      }
+    }
+    
+    &.today-alert {
+      background: #e7f1ff;
+      border: 1px solid #d0e3ff;
+      
+      .alert-header {
+        color: #1631F8;
+        
+        svg {
+          stroke: #1631F8;
+        }
+      }
+    }
+  }
+  
+  // 마감일 목록
+  .deadline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .deadline-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:hover {
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        transform: translateY(-1px);
+      }
+      
+      &.overdue {
+        border: 1px solid #ffe0e0;
+      }
+      
+      &.today {
+        border: 1px solid #d0e3ff;
+      }
+      
+      .deadline-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .project-indicator {
+          width: 4px;
+          height: 40px;
+          border-radius: 2px;
+          flex-shrink: 0;
+        }
+        
+        .deadline-details {
+          .project-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 4px;
+          }
+          
+          .phase-name {
+            font-size: 13px;
+            color: #6c757d;
+          }
+        }
+      }
+      
+      .deadline-status {
+        flex-shrink: 0;
+        
+        .overdue-days {
+          color: #dc3545;
+          font-weight: 600;
+          font-size: 14px;
+        }
+        
+        .deadline-time {
+          color: #1631F8;
+          font-weight: 600;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  
+  // 예정된 일정 섹션
+  .upcoming-deadlines {
+    .deadlines-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d3436;
+        margin: 0;
+      }
+      
+      .deadline-count {
+        font-size: 14px;
+        color: #6c757d;
+      }
+    }
+    
+    .deadline-timeline {
+      .deadline-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+          background: #e9ecef;
+          transform: translateX(4px);
+        }
+        
+        &.urgent {
+          background: #fff9e6;
+          border: 1px solid #ffe4b3;
+        }
+        
+        &.tomorrow {
+          background: #f0f8ff;
+          border: 1px solid #d6e9ff;
+        }
+        
+        .deadline-date {
+          background: #fff;
+          border-radius: 8px;
+          padding: 10px;
+          text-align: center;
+          min-width: 60px;
+          border: 1px solid #e9ecef;
+          
+          .date-day {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3436;
+            line-height: 1;
+          }
+          
+          .date-month {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-top: 4px;
+          }
+        }
+        
+        .deadline-info {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          
+          .project-indicator {
+            width: 4px;
+            height: 40px;
+            border-radius: 2px;
+            flex-shrink: 0;
+          }
+          
+          .deadline-details {
+            .project-name {
+              font-size: 15px;
+              font-weight: 600;
+              color: #2d3436;
+              margin-bottom: 4px;
+            }
+            
+            .phase-name {
+              font-size: 13px;
+              color: #6c757d;
+            }
+          }
+        }
+        
+        .deadline-status {
+          .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            
+            &.today {
+              background: #1631F8;
+              color: #fff;
+            }
+            
+            &.tomorrow {
+              background: #17a2b8;
+              color: #fff;
+            }
+            
+            &.urgent {
+              background: #ffc107;
+              color: #856404;
+            }
+          }
+          
+          .days-remaining {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+          }
+        }
+      }
+      
+      .no-deadlines {
+        text-align: center;
+        padding: 60px 20px;
+        color: #adb5bd;
+        
+        svg {
+          stroke: #dee2e6;
+          margin-bottom: 15px;
+        }
+        
+        p {
+          font-size: 14px;
+          margin: 0;
+        }
+      }
+    }
+    
+    .view-all-link {
+      text-align: center;
+      margin-top: 20px;
+      
+      a {
+        color: #1631F8;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .project-schedule-section {
+    padding: 20px;
+    
+    .schedule-header {
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-start;
+      
+      .view-controls {
+        width: 100%;
+        
+        .view-btn {
+          flex: 1;
+        }
+      }
+    }
+    
+    .deadline-item {
+      .deadline-date {
+        min-width: 50px;
+        padding: 8px;
+        
+        .date-day {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}

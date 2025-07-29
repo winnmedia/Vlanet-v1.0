@@ -1,0 +1,352 @@
+@import '../styles/design-tokens';
+
+// Feedback Page Header Design
+
+// Color Variables
+$primary-color: #0058da;
+$primary-hover: #0047b8;
+$background-light: #f8f8f8;
+$border-color: #efefef;
+$text-dark: $color-black;
+$text-gray: #707175;
+$white: $color-white;
+
+.feedback {
+  // 프로젝트 헤더 영역
+  .feedback-header {
+    background: $white;
+    border-bottom: 1px solid $border-color;
+    padding: $spacing-lg 30px;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    box-shadow: 0 2px 4px rgba($color-black, 0.04);
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: $spacing-lg - $spacing-xs;
+        
+        // 뒤로가기 버튼
+        .back-button {
+          width: $spacing-2xl;
+          height: $spacing-2xl;
+          border-radius: $border-radius-lg - 2px;
+          background: $background-light;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            background: rgba($primary-color, 0.1);
+            transform: translateX(-2px);
+          }
+          
+          svg {
+            width: $spacing-lg - $spacing-xs;
+            height: $spacing-lg - $spacing-xs;
+            stroke: $text-dark;
+          }
+        }
+        
+        // 프로젝트 정보
+        .project-info {
+          .project-name {
+            font-size: $font-size-2xl;
+            font-weight: 700;
+            color: $text-dark;
+            margin-bottom: $spacing-xs;
+          }
+          
+          .project-meta {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md - 1px;
+            
+            .meta-item {
+              font-size: $font-size-sm;
+              color: $text-gray;
+              display: flex;
+              align-items: center;
+              gap: $spacing-xs;
+              
+              &::before {
+                content: '';
+                width: $spacing-xs;
+                height: $spacing-xs;
+                background: $text-gray;
+                border-radius: $border-radius-full;
+                opacity: 0.5;
+              }
+              
+              &:first-child::before {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+      
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + 2px;
+        
+        // 액션 버튼들
+        .action-button {
+          padding: $spacing-sm + 2px 20px;
+          border-radius: $border-radius-lg - 2px;
+          border: none;
+          font-size: $font-size-sm;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          
+          &.outline {
+            background: transparent;
+            border: 2px solid $border-color;
+            color: $text-dark;
+            
+            &:hover {
+              border-color: $primary-color;
+              color: $primary-color;
+            }
+          }
+          
+          &.primary {
+            background: $primary-color;
+            color: $white;
+            
+            &:hover {
+              background: $primary-hover;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+            }
+          }
+          
+          svg {
+            width: $spacing-md + 2px;
+            height: $spacing-md + 2px;
+          }
+        }
+        
+        // 더보기 메뉴
+        .more-menu {
+          position: relative;
+          
+          .more-button {
+            width: $spacing-2xl;
+            height: $spacing-2xl;
+            border-radius: $border-radius-lg - 2px;
+            background: $background-light;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              background: rgba($primary-color, 0.1);
+            }
+            
+            .dots {
+              display: flex;
+              gap: 3px;
+              
+              span {
+                width: $spacing-xs;
+                height: $spacing-xs;
+                background: $text-dark;
+                border-radius: $border-radius-full;
+              }
+            }
+          }
+          
+          .dropdown {
+            position: absolute;
+            top: calc(100% + $spacing-sm);
+            right: $spacing-0;
+            background: $white;
+            border-radius: $border-radius-lg;
+            box-shadow: 0 8px 24px rgba($color-black, 0.12);
+            padding: $spacing-sm;
+            min-width: 200px;
+            z-index: 100;
+            
+            .dropdown-item {
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm + $spacing-xs;
+              padding: $spacing-sm + $spacing-xs 16px;
+              border-radius: $border-radius-md;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              
+              &:hover {
+                background: $background-light;
+              }
+              
+              svg {
+                width: $spacing-md + 2px;
+                height: $spacing-md + 2px;
+                opacity: 0.6;
+              }
+              
+              span {
+                font-size: $font-size-sm;
+                color: $text-dark;
+              }
+              
+              &.danger {
+                color: $color-danger;
+                
+                svg {
+                  stroke: $color-danger;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 기존 탭 메뉴 스타일 개선
+  .tab_wrap {
+    background: $white;
+    border-radius: $border-radius-lg;
+    padding: $spacing-sm;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    box-shadow: 0 2px 8px rgba($color-black, 0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    ul {
+      display: flex;
+      gap: $spacing-xs;
+      margin: $spacing-0;
+      padding: $spacing-0;
+      list-style: none;
+      
+      li {
+        padding: $spacing-sm + $spacing-xs 24px;
+        border-radius: $border-radius-md;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 500;
+        color: $text-gray;
+        transition: all 0.3s ease;
+        min-width: 120px;
+        text-align: center;
+        
+        &:hover {
+          background: $background-light;
+          color: $text-dark;
+        }
+        
+        &.active {
+          background: $primary-color;
+          color: $white;
+          
+          &:hover {
+            background: $primary-hover;
+          }
+        }
+      }
+    }
+    
+    .tab_btn {
+      display: flex;
+      gap: $spacing-sm;
+      
+      li {
+        padding: $spacing-sm + 2px 20px;
+        background: transparent;
+        border: 2px solid $border-color;
+        border-radius: $border-radius-md;
+        color: $text-dark;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          border-color: $primary-color;
+          color: $primary-color;
+          background: rgba($primary-color, 0.05);
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: $breakpoint-md) {
+  .feedback {
+    .feedback-header {
+      padding: $spacing-md 20px;
+      
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-md;
+        
+        .header-left {
+          width: 100%;
+          
+          .project-info {
+            .project-name {
+              font-size: $font-size-xl;
+            }
+          }
+        }
+        
+        .header-right {
+          width: 100%;
+          justify-content: flex-start;
+          
+          .action-button {
+            padding: $spacing-sm 16px;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+    
+    .tab_wrap {
+      flex-direction: column;
+      gap: $spacing-sm + $spacing-xs;
+      
+      ul {
+        width: 100%;
+        overflow-x: auto;
+        
+        li {
+          padding: $spacing-sm + 2px 20px;
+          font-size: $font-size-sm;
+          white-space: nowrap;
+        }
+      }
+      
+      .tab_btn {
+        width: 100%;
+        
+        li {
+          flex: 1;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

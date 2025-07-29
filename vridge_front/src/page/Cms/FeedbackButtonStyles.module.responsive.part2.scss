@@ -1,0 +1,755 @@
+          padding: $spacing-xs $spacing-sm;
+          font-size: $font-size-sm;
+        }
+      }
+    }
+    
+    // 피드백 내용
+    .feedback-content {
+      margin-bottom: $spacing-lg;
+      
+      .content-text {
+        @include body-text;
+        color: $color-text-primary;
+        line-height: $line-height-relaxed;
+      }
+      
+      // 첨부 파일
+      .attachments {
+        margin-top: $spacing-md;
+        display: flex;
+        gap: $spacing-sm;
+        flex-wrap: wrap;
+        
+        .attachment {
+          display: inline-flex;
+          align-items: center;
+          gap: $spacing-xs;
+          padding: $spacing-xs $spacing-sm;
+          background: $color-gray-100;
+          border-radius: $radius-sm;
+          font-size: $font-size-sm;
+          color: $color-text-secondary;
+          text-decoration: none;
+          transition: $transition-button;
+          
+          &:hover {
+            background: $color-gray-200;
+            color: $color-text-primary;
+          }
+          
+          .icon {
+            width: $spacing-md;
+            height: $spacing-md;
+          }
+        }
+      }
+    }
+    
+    // 피드백 상태
+    .feedback-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: $spacing-md;
+      border-top: $spacing-2xs solid $color-border-light;
+      
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-xs;
+        padding: $spacing-xs $spacing-md;
+        border-radius: $radius-full;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        
+        &.pending {
+          background: $color-warning-light;
+          color: $color-warning-dark;
+        }
+        
+        &.in-progress {
+          background: $color-info-light;
+          color: $color-info-dark;
+        }
+        
+        &.completed {
+          background: $color-success-light;
+          color: $color-success-dark;
+        }
+        
+        &.rejected {
+          background: $color-danger-light;
+          color: $color-danger-dark;
+        }
+      }
+      
+      .priority {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        font-size: $font-size-sm;
+        
+        &.high {
+          color: $color-danger;
+        }
+        
+        &.medium {
+          color: $color-warning;
+        }
+        
+        &.low {
+          color: $color-text-muted;
+        }
+      }
+    }
+  }
+  
+  // 빈 상태
+  .empty-state {
+    text-align: center;
+    padding: $spacing-4xl $spacing-2xl;
+    
+    .empty-icon {
+      width: $spacing-5xl;
+      height: $spacing-5xl;
+      margin: $spacing-0 auto $spacing-xl;
+      opacity: 0.5;
+    }
+    
+    .empty-title {
+      @include heading-4;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-sm;
+    }
+    
+    .empty-description {
+      @include body-text;
+      color: $color-text-muted;
+    }
+  }
+  
+  // 로딩 상태
+  .loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-4xl;
+    
+    .spinner {
+      width: $spacing-2xl;
+      height: $spacing-2xl;
+      border: $spacing-xs solid $color-gray-200;
+      border-top-color: $color-primary;
+      border-radius: $radius-full;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+// Source: FeedbackPage.scss
+.feedback-section {
+  height: $spacing-6xl * 3 + $spacing-sm + $spacing-xs;
+  background: $color-white;
+  border-top: $spacing-2xs solid $color-gray-300;
+  display: flex;
+  flex-direction: column;
+}
+
+// Source: FeedbackMoreStyle.scss
+            .feedback-time-marker {
+              font-size: $font-size-xs;
+              padding: $spacing-xs $spacing-sm + $spacing-2xs;
+            }
+
+// Source: FeedbackButtons.scss
+.feedback-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg - $spacing-xs;
+  padding: $spacing-4xl - $spacing-xs $spacing-2xl;
+  background: linear-gradient(135deg, $color-background-secondary 0%, $color-vp-blue-bg-1 100%);
+  border-radius: $spacing-lg - $spacing-xs;
+  border: $spacing-2xs dashed $color-info;
+  position: relative;
+  overflow: hidden;
+  
+  .upload-content {
+    position: relative;
+    z-index: $z-index-base;
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-upload-button-large {
+  display: inline-block;
+  padding: $spacing-lg $spacing-3xl;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  transition: $transition-base;
+  box-shadow: 0 $spacing-sm $font-size-xl rgba($color-primary, 0.3);
+  letter-spacing: 0.5px;
+  
+  &:hover {
+    transform: translateY(-$spacing-xs);
+    box-shadow: $shadow-lg;
+  }
+  
+  svg {
+    width: $spacing-lg;
+    height: $spacing-lg;
+    margin-right: $spacing-sm + $spacing-xs;
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-upload-label {
+  @extend .feedback-button-primary;
+  display: inline-flex;
+}
+
+// Source: FeedbackButtons.scss
+.feedback-video-container {
+  position: relative;
+  width: 100%;
+  max-width: $breakpoint-xl;
+  margin: $spacing-0 auto;
+  background-color: $color-black;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow;
+}
+
+// Source: FeedbackManage.module.scss
+.feedbackActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: $spacing-2xs solid $color-gray-100;
+}
+
+// Source: FeedbackManage.module.scss
+.feedbackContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg - $spacing-xs;
+}
+
+// Source: FeedbackManage.module.scss
+.feedbackContent {
+  font-size: $spacing-md - $spacing-2xs;
+  line-height: $line-height-relaxed;
+  color: $color-gray-700;
+  margin-bottom: $spacing-md;
+  word-break: keep-all;
+}
+
+// Source: FeedbackInput.module.scss
+.feedbackForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg - $spacing-xs;
+}
+
+// Source: FeedbackManage.module.scss
+.feedbackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm + $spacing-xs;
+}
+
+// Source: FeedbackManage.module.scss
+.feedbackItem {
+  background: $color-white;
+  border: $spacing-2xs solid $color-vp-gray-light-2;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg - $spacing-xs;
+  transition: $transition-base;
+  position: relative;
+  
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow;
+    transform: translateY(-$spacing-2xs);
+  }
+  
+  &.myFeedback {
+    background: linear-gradient(to right, rgba($color-primary, 0.03) 0%, transparent 100%);
+    border-left: $spacing-xs - $spacing-2xs solid $color-primary;
+  }
+}
+
+// Source: FeedbackHeader.scss
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-md;
+        
+        .header-left {
+          width: 100%;
+          
+          .project-info {
+            .project-name {
+              font-size: $font-size-xl;
+            }
+          }
+        }
+        
+        .header-right {
+          width: 100%;
+          justify-content: flex-start;
+          
+          .action-button {
+            padding: $spacing-sm $spacing-md;
+            font-size: $spacing-md - $spacing-xs;
+          }
+        }
+      }
+
+// Source: FeedbackInput.module.scss
+.helpText {
+  font-size: $spacing-md - $spacing-xs;
+  color: $color-gray-600;
+  margin-top: $spacing-xs;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  svg {
+    width: $spacing-md - $spacing-2xs;
+    height: $spacing-md - $spacing-2xs;
+  }
+}
+
+// Source: FeedbackLayoutRestore.scss
+      .info_panel {
+        width: 100%;
+      }
+
+// Source: FeedbackManage.module.scss
+.reactions {
+  display: flex;
+  gap: $spacing-sm;
+  
+  button {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm - $spacing-2xs;
+    padding: $spacing-sm - $spacing-2xs $spacing-md - $spacing-2xs;
+    background: $color-background-secondary;
+    border: $spacing-2xs solid $color-vp-gray-light-2;
+    border-radius: $spacing-lg - $spacing-xs;
+    font-size: $spacing-md - $spacing-xs;
+    color: $color-gray-600;
+    cursor: pointer;
+    transition: $transition-base;
+    
+    svg {
+      width: $spacing-md;
+      height: $spacing-md;
+    }
+    
+    &.active {
+      background: $color-primary;
+      color: $color-white;
+      border-color: $color-primary;
+    }
+    
+    &:hover:not(.active) {
+      background: $color-white;
+      border-color: $color-gray-500;
+      transform: translateY(-$spacing-2xs);
+    }
+  }
+}
+
+// Source: FeedbackLayoutRestore.scss
+      .right {
+        width: 100%;
+        justify-content: center;
+      }
+
+// Source: FeedbackHeader.scss
+    .tab_wrap {
+      flex-direction: column;
+      gap: $spacing-sm + $spacing-xs;
+      
+      ul {
+        width: 100%;
+        overflow-x: auto;
+        
+        li {
+          padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+          font-size: $font-size-sm;
+          white-space: nowrap;
+        }
+      }
+      
+      .tab_btn {
+        width: 100%;
+        
+        li {
+          flex: 1;
+          text-align: center;
+        }
+      }
+    }
+
+// Source: FeedbackManage.module.scss
+.tabSwitch {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg - $spacing-xs;
+  padding: $spacing-xs;
+  background: $color-gray-100;
+  border-radius: $border-radius-lg - $border-radius-sm / 2;
+  
+  button {
+    flex: 1;
+    padding: $spacing-sm $spacing-md;
+    background: transparent;
+    border: none;
+    border-radius: $border-radius-md - $border-radius-sm / 2;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-600;
+    cursor: pointer;
+    transition: $transition-base;
+    
+    &.active {
+      background: $color-white;
+      color: $color-primary;
+      box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.08);
+    }
+    
+    &:hover:not(.active) {
+      color: $color-gray-700;
+    }
+  }
+}
+
+// Source: FeedbackManage.module.scss
+.timeButton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+  background: rgba($color-primary, 0.08);
+  color: $color-primary;
+  border: $spacing-2xs solid rgba($color-primary, 0.2);
+  border-radius: $spacing-lg - $spacing-xs;
+  font-size: $spacing-md - $spacing-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  svg {
+    width: $spacing-md;
+    height: $spacing-md;
+  }
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+    border-color: $color-primary;
+    transform: scale(1.05);
+  }
+}
+
+// Source: FeedbackInput.module.scss
+.timeInput {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  
+  label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+  }
+  
+  input {
+    padding: $spacing-sm + $spacing-xs $spacing-md;
+    border: $spacing-2xs solid $color-vp-gray-light-2;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    background: $color-background-secondary;
+    transition: $transition-base;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      background: $color-white;
+      box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.1);
+    }
+    
+    &::placeholder {
+      color: $color-gray-500;
+    }
+  }
+}
+
+// Source: FeedbackPlayer.scss
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba($color-gray-900, 0.95);
+  color: $color-white;
+  padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+  border-radius: $border-radius-md - $border-radius-sm / 2;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  margin-bottom: $spacing-sm;
+  backdrop-filter: blur($font-size-xs);
+  border: $spacing-2xs solid rgba($color-white, 0.1);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: $spacing-sm solid transparent;
+    border-top-color: rgba($color-gray-900, 0.95);
+  }
+}
+
+// Source: FeedbackButtons.scss
+.upload-guide-button {
+  padding: $spacing-md $spacing-xl;
+  background: linear-gradient(135deg, $color-gray-600 0%, $color-gray-600 100%);
+  color: $color-white;
+  border: none;
+  border-radius: $border-radius-lg - $border-radius-sm / 2;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-base;
+  box-shadow: $shadow;
+  
+  &:hover {
+    transform: translateY(-$spacing-2xs);
+    box-shadow: 0 $spacing-sm $font-size-3xl rgba($color-gray-600, 0.4);
+  }
+}
+
+// Source: FeedbackInput.module.scss
+.userTypeSelector {
+  background: $color-background-secondary;
+  border-radius: $border-radius-lg;
+  padding: $spacing-md;
+  
+  .guestInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-gray-600;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .feedbackModeOptions {
+    display: flex;
+    gap: $spacing-sm + $spacing-xs;
+    justify-content: center;
+    
+    label {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+      border: $spacing-2xs solid $color-vp-gray-light-2;
+      border-radius: $spacing-lg + $spacing-2xs;
+      background: $color-white;
+      cursor: pointer;
+      transition: $transition-base;
+      
+      &:hover {
+        border-color: $color-primary;
+        transform: translateY(-$spacing-2xs);
+        box-shadow: $shadow;
+      }
+      
+      &.active {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+        border-color: transparent;
+        
+        .radioLabel {
+          color: $color-white;
+          
+          svg {
+            stroke: $color-white;
+          }
+        }
+      }
+      
+      input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: $spacing-0;
+        height: $spacing-0;
+      }
+      
+      .radioLabel {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        color: $color-gray-700;
+        transition: $transition-base;
+        
+        svg {
+          width: $spacing-md + $spacing-2xs;
+          height: $spacing-md + $spacing-2xs;
+          stroke: $color-gray-600;
+          transition: $transition-base;
+        }
+      }
+    }
+  }
+  
+  .nicknameInput {
+    margin-top: $spacing-md;
+    
+    input {
+      width: 100%;
+      padding: $spacing-sm + $spacing-xs $spacing-md;
+      border: $spacing-2xs solid $color-vp-gray-light-2;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      background: $color-white;
+      transition: $transition-base;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.1);
+      }
+      
+      &::placeholder {
+        color: $color-gray-500;
+      }
+    }
+  }
+}
+
+// Source: FeedbackPlayer.scss
+    .video-container {
+      border-radius: $border-radius-lg $border-radius-lg 0 0;
+    }
+
+// Source: FeedbackPage.scss
+.video-section {
+  flex: 1;
+  background: $color-black;
+  position: relative;
+  overflow: hidden;
+  
+  .video-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    video {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+    }
+  }
+
+  .video-controls {
+    position: absolute;
+    bottom: $spacing-0;
+    left: $spacing-0;
+    right: $spacing-0;
+    background: rgba($color-black, 0.7);
+    padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md - $spacing-2xs;
+    
+    button {
+      background: none;
+      border: none;
+      color: $color-white;
+      cursor: pointer;
+      padding: $spacing-xs $spacing-sm + $spacing-2xs;
+      font-size: $font-size-base;
+      
+      &:hover {
+        background: rgba($color-white, 0.1);
+        border-radius: $border-radius-sm;
+      }
+    }
+    
+    .time-display {
+      color: $color-white;
+      font-size: $font-size-sm;
+      margin-left: auto;
+    }
+  }
+}
+
+// Source: FeedbackButtons.scss
+.visually-hidden {
+  position: absolute;
+  width: $spacing-2xs;
+  height: $spacing-2xs;
+  padding: $spacing-0;
+  margin: -$spacing-2xs;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: $spacing-0;
+}
+
+@media (max-width: 768px) {
+  .feedbackButtons {
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    
+    button {
+      flex: 1 1 45%;
+      min-width: 120;
+      font-size: $font-size-sm;
+      padding: $spacing-xs $spacing-sm;
+    }
+  }
+  
+  .videoContainer {
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+}
+
+@media (max-width: 480px) {
+  .feedbackButtons button {
+    flex: 1 1 100%;
+  }
+  
+  .feedbackList {
+    padding: $spacing-xs;
+  }
+  
+  .feedbackItem {
+    padding: $spacing-sm;
+    font-size: $font-size-sm;
+  }
+}

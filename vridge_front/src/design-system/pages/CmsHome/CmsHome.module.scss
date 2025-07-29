@@ -1,0 +1,486 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet CMS 홈 페이지 통합 스타일
+// CmsHomeEnhanced, CmsHomeFix, CmsHomeMinimal 통합
+
+@use '../../tokens' as *;
+
+// ========== CMS 홈 레이아웃 ==========
+
+.cmsHome {
+  display: flex;
+  min-height: 100vh;
+  background: $color-background;
+  
+  // 메인 콘텐츠 영역
+  .mainContent {
+    flex: 1;
+    padding: $spacing-xl;
+    
+    @media (max-width: $breakpoint-lg) { padding: $spacing-lg;
+    }
+    
+    @media (max-width: $breakpoint-md) { padding: $spacing-md;
+    }
+  }
+}
+
+// ========== 헤더 섹션 ==========
+
+.pageHeader {
+  margin-bottom: $spacing-xl;
+  
+  .pageTitle {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-sm;
+    letter-spacing: -0.5px;
+  }
+  
+  .pageSubtitle {
+    font-size: $font-size-base;
+    color: $color-text-secondary;
+    line-height: $line-height-base;
+  }
+}
+
+// ========== 프로젝트 리스트 섹션 ==========
+
+.projectsSection {
+  background: $color-white;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-default;
+  margin-bottom: $spacing-xl;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: $spacing-2xs solid $color-border-light;
+  
+  @media (max-width: $breakpoint-sm) { flex-direction: column;
+    gap: $spacing-md;
+    align-items: stretch;
+  }
+  
+  .sectionTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin: $spacing-0;
+  }
+}
+
+// ========== 필터 버튼 ==========
+
+.filterButtons {
+  display: flex;
+  gap: $spacing-xs;
+  
+  @media (max-width: $breakpoint-sm) { width: 100%;
+    justify-content: stretch;
+  }
+  
+  .filterButton {
+    padding: $spacing-sm $spacing-md;
+    background: $color-white;
+    color: $color-text-secondary;
+    border: $spacing-2xs solid $color-border-light;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    
+    @media (max-width: $breakpoint-sm) { flex: 1;
+      text-align: center;
+    }
+    
+    &:hover {
+      background: $color-gray-50;
+      border-color: $color-gray-300;
+    }
+    
+    &.active {
+      background: $color-gray-900;
+      color: $color-white;
+      border-color: $color-gray-900;
+      
+      &:hover {
+        background: $color-gray-800;
+        border-color: $color-gray-800;
+      }
+    }
+    
+    .count {
+      display: inline-block;
+      margin-left: $spacing-xs;
+      padding: $spacing-2xs 10px;
+      background: rgba($color-black, 0.1);
+      border-radius: $radius-full;
+      font-size: $font-size-xs;
+      min-width: 16px;
+      text-align: center;
+    }
+    
+    &.active .count {
+      background: rgba($color-white, 0.2);
+    }
+  }
+}
+
+// ========== 프로젝트 그리드 ==========
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) { grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+// ========== 프로젝트 카드 ==========
+
+.projectCard {
+  background: $color-white;
+  border: $spacing-2xs solid $color-border-light;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  cursor: pointer;
+  transition: all $transition-fast;
+  position: relative;
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-$spacing-2xs);
+    box-shadow: $shadow-hover;
+  }
+  
+  &.expanded {
+    box-shadow: $shadow-lg;
+  }
+}
+
+.projectHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+  gap: $spacing-sm;
+  
+  .projectTitleRow {
+    flex: 1;
+    min-width: $spacing-0;
+  }
+  
+  .projectTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin: $spacing-0 0 $spacing-xs 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+    &:hover {
+      color: $color-primary;
+    }
+  }
+  
+  .projectMeta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    
+    .updateTime {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      
+      svg {
+        width: $spacing-md - $spacing-2xs;
+        height: $spacing-md - $spacing-2xs;
+        opacity: 0.6;
+      }
+    }
+  }
+  
+  .toggleButton {
+    width: $spacing-xl;
+    height: $spacing-xl;
+    min-width: $spacing-xl;
+    border-radius: $border-radius-full;
+    background: $color-gray-100;
+    border: $spacing-2xs solid $color-border-light;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-fast;
+    padding: $spacing-0;
+    
+    &:hover {
+      background: $color-gray-200;
+      border-color: $color-gray-300;
+      transform: rotate(180deg);
+    }
+    
+    svg {
+      width: $spacing-md;
+      height: $spacing-md;
+      color: $color-text-secondary;
+      transition: transform $transition-fast;
+    }
+    
+    &.expanded svg {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.projectStatus {
+  display: inline-block;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  
+  &.active {
+    background: $color-success-light;
+    color: $color-success;
+  }
+  
+  &.delayed {
+    background: $color-warning-light;
+    color: $color-warning;
+  }
+  
+  &.completed {
+    background: $color-info-light;
+    color: $color-info;
+  }
+}
+
+.projectInfo {
+  margin-top: $spacing-md;
+  
+  .infoRow {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    
+    svg {
+      width: $spacing-md;
+      height: $spacing-md;
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+    
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+// 프로젝트 확장 정보
+.projectDetails {
+  max-height: $spacing-0;
+  overflow: hidden;
+  transition: max-height $transition-slow ease-out;
+  
+  &.expanded {
+    max-height: 500px;
+    transition: max-height $transition-slow ease-in;
+  }
+}
+
+.detailsContent {
+  padding-top: $spacing-md;
+  border-top: $spacing-2xs solid $color-border-light;
+  margin-top: $spacing-md;
+  
+  .detailSection {
+    margin-bottom: $spacing-md;
+    
+    &:last-child {
+      margin-bottom: $spacing-0;
+    }
+    
+    .detailLabel {
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+      color: $color-text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: $spacing-xs;
+    }
+    
+    .detailValue {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: $line-height-base;
+    }
+  }
+  
+  .membersList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    
+    .memberItem {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      padding: $spacing-xs $spacing-sm;
+      background: $color-gray-100;
+      border-radius: $radius-full;
+      font-size: $font-size-xs;
+      
+      .memberAvatar {
+        width: 16px;
+        height: 16px;
+        border-radius: $border-radius-full;
+        background: $color-primary;
+        color: $color-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: $font-weight-semibold;
+      }
+      
+      .memberName {
+        color: $color-text-secondary;
+      }
+      
+      .memberRole {
+        color: $color-text-muted;
+        font-size: 10px;
+        padding: $spacing-2xs $spacing-xs;
+        background: $color-white;
+        border-radius: $radius-xs;
+      }
+    }
+  }
+}
+
+// ========== 빈 상태 ==========
+
+.emptyState {
+  text-align: center;
+  padding: $spacing-3xl $spacing-lg;
+  
+  .emptyIcon {
+    width: $spacing-5xl;
+    height: $spacing-5xl;
+    margin: $spacing-0 auto $spacing-lg;
+    opacity: 0.3;
+  }
+  
+  .emptyTitle {
+    font-size: $font-size-lg;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .emptyText {
+    color: $color-text-muted;
+    margin-bottom: $spacing-lg;
+  }
+  
+  .createButton {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+    color: $color-white;
+    border: none;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: all $transition-button;
+    
+    &:hover {
+      transform: translateY(-$spacing-2xs);
+      box-shadow: $shadow-button-hover;
+    }
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// ========== 로딩 상태 ==========
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: $color-text-muted;
+  font-size: $font-size-base;
+}
+
+// ========== 프로젝트 생성 섹션 ==========
+
+.createProjectSection {
+  background: linear-gradient(135deg, $color-gray-100 0%, $color-gray-100 100%);
+  border: $spacing-2xs dashed $color-primary-light;
+  border-radius: $radius-lg;
+  padding: $spacing-2xl;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  transition: all $transition-fast;
+  cursor: pointer;
+  
+  &:hover {
+    border-style: solid;
+    background: linear-gradient(135deg, $color-gray-100 0%, $color-vp-blue-bg-2 100%);
+    transform: translateY(-$spacing-2xs);
+    box-shadow: $shadow-hover;
+  }
+  
+  .createIcon {
+    width: 56px;
+    height: 56px;
+    margin: $spacing-0 auto $spacing-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+    border-radius: $border-radius-full;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-white;
+    font-size: $font-size-2xl;
+    box-shadow: $shadow-button;
+  }
+  
+  h2 {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-sm;
+    color: $color-text-primary;
+  }
+  
+  p {
+    color: $color-text-secondary;
+    margin-bottom: $spacing-lg;
+  }
+}

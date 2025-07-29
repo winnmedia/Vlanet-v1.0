@@ -1,0 +1,231 @@
+// ================================
+// Mobile-First Responsive Mixins
+// ================================
+// 모바일 우선 접근 방식으로 반응형 디자인 구현
+// ================================
+
+@import 'design-tokens';
+
+// Mobile First Breakpoints
+// 320 - 767px: Mobile
+// 768px - 1023px: Tablet
+// 1024px - 1279px: Desktop
+// 1280+: Large Desktop
+
+// Mobile only (max-width: 767px)
+@mixin mobile {
+  @media (max-width: #{$breakpoint-md - $border-width-thin}) {
+    @content;
+  }
+}
+
+// Mobile and up (min-width: 0)
+@mixin mobile-up {
+  @content;
+}
+
+// Tablet only (768px - 1023px)
+@mixin tablet {
+  @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - $border-width-thin}) {
+    @content;
+  }
+}
+
+// Tablet and up (min-width: 768px)
+@mixin tablet-up {
+  @media (min-width: #{$breakpoint-md}) {
+    @content;
+  }
+}
+
+// Desktop only (1024px - 1279px)
+@mixin desktop {
+  @media (min-width: #{$breakpoint-lg}) and (max-width: #{$breakpoint-xl - $border-width-thin}) {
+    @content;
+  }
+}
+
+// Desktop and up (min-width: 1024px)
+@mixin desktop-up {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}
+
+// Large desktop and up (min-width: 1280)
+@mixin large-desktop-up {
+  @media (min-width: #{$breakpoint-xl}) {
+    @content;
+  }
+}
+
+// Touch device detection
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+// High resolution displays
+@mixin retina {
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    @content;
+  }
+}
+
+// Landscape orientation
+@mixin landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+// Portrait orientation
+@mixin portrait {
+  @media (orientation: portrait) {
+    @content;
+  }
+}
+
+// ================================
+// Utility Mixins for Mobile
+// ================================
+
+// Touch-friendly button
+@mixin touch-button {
+  min-height: $spacing-4xl;
+  min-width: $spacing-4xl;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  border-radius: $border-radius-md;
+  transition: $transition-all;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  
+  @include touch-device {
+    &:hover {
+      background-color: inherit;
+    }
+    
+    &:active {
+      transform: scale(0.98);
+      background-color: rgba($color-primary, 0.1);
+    }
+  }
+}
+
+// Mobile-first typography
+@mixin responsive-font($mobile-size, $tablet-size: null, $desktop-size: null) {
+  font-size: $mobile-size;
+  
+  @if $tablet-size {
+    @include tablet-up {
+      font-size: $tablet-size;
+    }
+  }
+  
+  @if $desktop-size {
+    @include desktop-up {
+      font-size: $desktop-size;
+    }
+  }
+}
+
+// Container with responsive padding
+@mixin responsive-container {
+  width: 100%;
+  padding-left: $spacing-md;
+  padding-right: $spacing-md;
+  
+  @include tablet-up {
+    padding-left: $spacing-lg;
+    padding-right: $spacing-lg;
+  }
+  
+  @include desktop-up {
+    padding-left: $spacing-xl;
+    padding-right: $spacing-xl;
+    max-width: $container-max-width;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// Hide on mobile
+@mixin hide-mobile {
+  @include mobile {
+    display: none;
+  }
+}
+
+// Show only on mobile
+@mixin show-mobile {
+  display: none;
+  
+  @include mobile {
+    display: block;
+  }
+}
+
+// Flex container responsive
+@mixin responsive-flex($mobile-direction: column, $desktop-direction: row) {
+  display: flex;
+  flex-direction: $mobile-direction;
+  
+  @include tablet-up {
+    flex-direction: $desktop-direction;
+  }
+}
+
+// Grid container responsive
+@mixin responsive-grid($mobile-cols: 1, $tablet-cols: 2, $desktop-cols: 3, $gap: $spacing-md) {
+  display: grid;
+  grid-template-columns: repeat($mobile-cols, 1fr);
+  gap: $gap;
+  
+  @include tablet {
+    grid-template-columns: repeat($tablet-cols, 1fr);
+  }
+  
+  @include desktop-up {
+    grid-template-columns: repeat($desktop-cols, 1fr);
+  }
+}
+
+// Safe area insets for notched devices
+@mixin safe-area-insets {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// Truncate text with ellipsis
+@mixin text-truncate($lines: 1) {
+  @if $lines == 1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Smooth scrolling
+@mixin smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+// Disable user selection
+@mixin no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

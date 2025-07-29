@@ -1,13 +1,14 @@
+@import '../styles/design-tokens';
+
 @import '../../styles/minimal-design-system';
 
 // 메인 레이아웃
 .main {
   padding: var(--spacing-6);
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: $breakpoint-xl;
+  margin: $spacing-0 auto;
   
-  @media (max-width: 768px) {
-    padding: var(--spacing-4);
+  @media (max-width: $breakpoint-md) { padding: var(--spacing-4);
   }
 }
 
@@ -20,13 +21,13 @@
   font-size: var(--text-3xl);
   font-weight: var(--font-semibold);
   letter-spacing: var(--tracking-tight);
-  margin: 0 0 var(--spacing-1) 0;
+  margin: $spacing-0 0 var(--spacing-1) 0;
 }
 
 .subtitle {
   font-size: var(--text-base);
   color: var(--muted);
-  margin: 0;
+  margin: $spacing-0;
 }
 
 // 폼 요소
@@ -54,7 +55,7 @@
 
 .textarea {
   @include input-minimal;
-  min-height: 100px;
+  min-height: $spacing-6xl + $spacing-xs;
   resize: vertical;
   font-family: inherit;
   line-height: var(--leading-normal);
@@ -80,31 +81,31 @@
   
   &.selected {
     border-color: var(--blue);
-    background: linear-gradient(to bottom, rgba(0, 102, 255, 0.02), transparent);
+    background: linear-gradient(to bottom, rgba($color-primary, 0.02), transparent);
   }
   
   &:hover:not(.selected) {
-    transform: translateY(-2px);
+    transform: translateY(-$spacing-2xs);
   }
 }
 
 .selectedIcon {
-  width: 24px;
-  height: 24px;
+  width: $spacing-lg;
+  height: $spacing-lg;
   background: var(--blue);
   color: var(--white);
-  border-radius: 50%;
+  border-radius: $border-radius-full;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: $font-size-sm;
   font-weight: var(--font-semibold);
 }
 
 .frameworkDesc {
   font-size: var(--text-sm);
   color: var(--muted);
-  margin: 0 0 var(--spacing-3) 0;
+  margin: $spacing-0 0 var(--spacing-3) 0;
   line-height: var(--leading-normal);
 }
 
@@ -116,7 +117,7 @@
 
 .stage {
   font-size: var(--text-xs);
-  padding: 4px 8px;
+  padding: $spacing-xs $spacing-sm;
   background: var(--hover);
   border-radius: var(--radius-sm);
   color: var(--muted);
@@ -124,7 +125,7 @@
 
 // 스토리 컨테이너
 .storyContainer {
-  min-height: 400px;
+  min-height: $spacing-6xl * 4 + $spacing-md;
 }
 
 .storyList {
@@ -166,11 +167,11 @@
 // 에러 상태
 .error {
   font-size: var(--text-sm);
-  color: var(--danger);
+  color: $color-danger;
   padding: var(--spacing-3);
-  background: rgba(255, 59, 48, 0.05);
+  background: rgba($color-danger, 0.05);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 59, 48, 0.2);
+  border: $spacing-2xs solid rgba($color-danger, 0.2);
 }
 
 // 빈 상태
@@ -185,7 +186,7 @@
   
   p {
     font-size: var(--text-base);
-    margin: 0;
+    margin: $spacing-0;
   }
 }
 
@@ -217,21 +218,21 @@
   font-size: var(--text-2xl);
   font-weight: var(--font-semibold);
   letter-spacing: var(--tracking-tight);
-  margin: 0 0 var(--spacing-2) 0;
+  margin: $spacing-0 0 var(--spacing-2) 0;
 }
 
 .completionDesc {
   font-size: var(--text-base);
   color: var(--muted);
-  margin: 0 0 var(--spacing-6) 0;
+  margin: $spacing-0 0 var(--spacing-6) 0;
 }
 
 // 요약 정보
 .summary {
   @include card-minimal;
   padding: var(--spacing-4);
-  max-width: 400px;
-  margin: 0 auto;
+  max-width: $spacing-6xl * 4 + $spacing-md;
+  margin: $spacing-0 auto;
   text-align: left;
 }
 
@@ -242,7 +243,7 @@
   padding: var(--spacing-2) 0;
   
   &:not(:last-child) {
-    border-bottom: 1px solid var(--border);
+    border-bottom: $spacing-2xs solid var(--border);
   }
 }
 
@@ -254,4 +255,84 @@
 .summaryValue {
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: $spacing-md; /* Prevent zoom on iOS */
+  }
 }

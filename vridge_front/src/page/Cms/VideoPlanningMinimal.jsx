@@ -1,16 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { useSelector } from 'react-redux'
-import { checkSession } from '../../util/util'
-import axios from '../../config/axios'
-import moment from 'moment'
-import 'moment/locale/ko'
+import React, { useState, useEffect , Suspense } from 'react'
+import dynamic from 'next/dynamic';;
+;
 
-import PageTemplate from '../../components/PageTemplate'
-import SideBar from '../../components/SideBar'
-import { StepWizard, WizardStep, useWizard } from '../../components/minimal/StepWizard'
-import { MinimalCard, CardHeader, CardContent, CardFooter } from '../../components/minimal/MinimalCard'
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { checkSession } from '../../util/util';
+;
+import moment from 'moment';
+import 'moment/locale/ko';
+
+import PageTemplate from '../../components/PageTemplate';
+import SideBar from '../../components/SideBar';
+import { StepWizard, WizardStep, useWizard } from '../../components/minimal/StepWizard';
+
+import { CardHeader, CardContent, CardFooter } from '../../components/minimal/MinimalCard';
+import { Input } from '../../components/unified/Input';
 import styles from './VideoPlanningMinimal.module.scss'
+const axios = dynamic(() => import('../../config/axios'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const UnifiedCard = dynamic(() => import('../../components/unified/UnifiedCard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});;
 
 // 스토리 프레임워크 정보
 const STORY_FRAMEWORKS = {
@@ -39,12 +54,12 @@ const STORY_FRAMEWORKS = {
     description: '클라이맥스를 중심으로 한 구조',
     stages: ['평범한 시작', '문제 발생', '위기 고조', '스타 모멘트', '해결과 여운']
   }
-}
+};
 
 export default function VideoPlanningMinimal() {
-  const router = useRouter()
-  const { project } = useSelector(s => s.ProjectStore)
-  
+  const router = useRouter();
+  const { project } = useSelector((s) => s.ProjectStore);
+
   const [planningData, setPlanningData] = useState({
     project_id: project?.id || null,
     title: '',
@@ -55,30 +70,30 @@ export default function VideoPlanningMinimal() {
     scenes: [],
     selectedStoryIndex: 0,
     selectedSceneIndex: 0
-  })
-  
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const session = checkSession()
+    const session = checkSession();
     if (!session) {
-      router.push('/Login')
+      router.push('/Login');
     }
-  }, [router])
+  }, [router]);
 
   const handleComplete = async (data) => {
-    console.log('Planning completed:', data)
+
     // 여기서 최종 저장 로직 구현
-    router.push(`/Project/${project?.id}`)
-  }
+    router.push(`/Project/${project?.id}`);
+  };
 
   return (
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar />
         
-        <main className={styles.main}>
+        <main className={styles.main} role="main">
           <div className={styles.header}>
             <div>
               <h1 className={styles.title}>영상 기획</h1>
@@ -89,44 +104,43 @@ export default function VideoPlanningMinimal() {
             </div>
           </div>
 
-          <StepWizard 
+          <StepWizard
             onComplete={handleComplete}
-            initialStep={0}
-          >
+            initialStep={0}>
+
             {/* Step 1: 기본 정보 입력 */}
             <WizardStep
               title="기획 정보"
               subtitle="영상의 기본 정보를 입력해주세요"
               onNext={() => {
-                const { updateData } = useWizard()
-                updateData({ 
+                const { updateData } = useWizard();
+                updateData({
                   title: planningData.title,
-                  description: planningData.description 
-                })
+                  description: planningData.description
+                });
               }}
-              isValid={planningData.title.length > 0}
-            >
+              isValid={planningData.title.length > 0}>
+
               <div className={styles.form}>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>기획 제목</label>
-                  <input
+                  <Input
                     type="text"
                     className={styles.input}
                     placeholder="예: 신제품 런칭 홍보 영상"
                     value={planningData.title}
-                    onChange={(e) => setPlanningData(prev => ({ ...prev, title: e.target.value }))}
-                  />
+                    onChange={(e) = aria-label="예: 신제품 런칭 홍보 영상"> setPlanningData((prev) => ({ ...prev, title: e.target.value }))} />
+
                 </div>
                 
                 <div className={styles.formGroup}>
                   <label className={styles.label}>기획 설명</label>
-                  <textarea
-                    className={styles.textarea}
+                  <UnifiedInput variant="textarea" className="" className={styles.textarea}
                     placeholder="영상의 목적과 주요 내용을 간단히 설명해주세요"
                     rows="4"
                     value={planningData.description}
-                    onChange={(e) => setPlanningData(prev => ({ ...prev, description: e.target.value }))}
-                  />
+                    onChange={(e) =/> setPlanningData((prev) => ({ ...prev, description: e.target.value }))} />
+
                 </div>
               </div>
             </WizardStep>
@@ -136,36 +150,36 @@ export default function VideoPlanningMinimal() {
               title="스토리 구조 선택"
               subtitle="영상에 적합한 스토리텔링 구조를 선택하세요"
               onNext={() => {
-                const { updateData } = useWizard()
-                updateData({ framework: planningData.framework })
-              }}
-            >
+                const { updateData } = useWizard();
+                updateData({ framework: planningData.framework });
+              }}>
+
               <div className={styles.frameworkGrid}>
-                {Object.entries(STORY_FRAMEWORKS).map(([key, framework]) => (
-                  <MinimalCard
-                    key={key}
-                    hover
-                    onClick={() => setPlanningData(prev => ({ ...prev, framework: key }))}
-                    className={`${styles.frameworkCard} ${planningData.framework === key ? styles.selected : ''}`}
-                  >
+                {Object.entries(STORY_FRAMEWORKS).map(([key, framework]) =>
+                <UnifiedCard key={key}
+                  hoverable
+                  clickable
+                  onClick={() => setPlanningData((prev) => ({ ...prev, framework: key } onKeyDown={(e) => e.key === 'Enter' && () => setPlanningData((prev) => ({ ...prev, framework: key }))}
+                  className={`${styles.frameworkCard} ${planningData.framework === key ? styles.selected : ''}`}>
+
                     <CardHeader
-                      title={framework.name}
-                      action={
-                        planningData.framework === key && (
-                          <div className={styles.selectedIcon}>✓</div>
-                        )
-                      }
-                    />
+                    title={framework.name}
+                    action={
+                    planningData.framework === key &&
+                    <div className={styles.selectedIcon}>✓</div>
+
+                    } />
+
                     <CardContent>
                       <p className={styles.frameworkDesc}>{framework.description}</p>
                       <div className={styles.stages}>
-                        {framework.stages.map((stage, idx) => (
-                          <span key={idx} className={styles.stage}>{stage}</span>
-                        ))}
+                        {framework.stages.map((stage, idx) =>
+                      <span key={idx} className={styles.stage}>{stage}</span>
+                      )}
                       </div>
                     </CardContent>
-                  </MinimalCard>
-                ))}
+                  </UnifiedCard>
+                )}
               </div>
             </WizardStep>
 
@@ -174,11 +188,11 @@ export default function VideoPlanningMinimal() {
               title="AI 기획 생성"
               subtitle="영상의 핵심 내용을 입력하면 AI가 기획을 도와드립니다"
               onNext={async () => {
-                setLoading(true)
-                setError(null)
-                
+                setLoading(true);
+                setError(null);
+
                 try {
-                  const token = checkSession()
+                  const token = checkSession();
                   const response = await axios.post(
                     '/api/video-planning/generate/planning/',
                     {
@@ -191,49 +205,48 @@ export default function VideoPlanningMinimal() {
                     {
                       headers: { 'Authorization': `Bearer ${token}` }
                     }
-                  )
-                  
+                  );
+
                   if (response.data.status === 'success') {
-                    const { updateData } = useWizard()
-                    const planning = response.data.data.planning
-                    setPlanningData(prev => ({ ...prev, planning }))
-                    updateData({ planning })
-                    return true
+                    const { updateData } = useWizard();
+                    const planning = response.data.data.planning;
+                    setPlanningData((prev) => ({ ...prev, planning }));
+                    updateData({ planning });
+                    return true;
                   }
                 } catch (err) {
-                  setError(err.response?.data?.message || '기획 생성에 실패했습니다')
-                  return false
+                  setError(err.response?.data?.message || '기획 생성에 실패했습니다');
+                  return false;
                 } finally {
-                  setLoading(false)
+                  setLoading(false);
                 }
               }}
-              isValid={planningData.planning_text.length > 20}
-            >
+              isValid={planningData.planning_text.length > 20}>
+
               <div className={styles.form}>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>영상 내용</label>
-                  <textarea
-                    className={styles.textarea}
+                  <UnifiedInput variant="textarea" className="" className={styles.textarea}
                     placeholder="영상으로 전달하고 싶은 핵심 메시지, 주요 포인트를 자유롭게 작성해주세요"
                     rows="8"
                     value={planningData.planning_text}
-                    onChange={(e) => setPlanningData(prev => ({ ...prev, planning_text: e.target.value }))}
-                  />
+                    onChange={(e) =/> setPlanningData((prev) => ({ ...prev, planning_text: e.target.value }))} />
+
                   <div className={styles.charCount}>
                     {planningData.planning_text.length} / 최소 20자
                   </div>
                 </div>
                 
-                {error && (
-                  <div className={styles.error}>{error}</div>
-                )}
+                {error &&
+                <div className={styles.error}>{error}</div>
+                }
                 
-                {loading && (
-                  <div className={styles.loadingState}>
+                {loading &&
+                <div className={styles.loadingState}>
                     <div className={styles.loadingSpinner} />
                     <p>AI가 기획을 생성하고 있습니다...</p>
                   </div>
-                )}
+                }
               </div>
             </WizardStep>
 
@@ -242,10 +255,10 @@ export default function VideoPlanningMinimal() {
               title="스토리 구성"
               subtitle="AI가 생성한 스토리를 확인하고 수정하세요"
               onNext={async () => {
-                setLoading(true)
-                
+                setLoading(true);
+
                 try {
-                  const token = checkSession()
+                  const token = checkSession();
                   const response = await axios.post(
                     '/api/video-planning/generate/stories/',
                     {
@@ -257,50 +270,50 @@ export default function VideoPlanningMinimal() {
                     {
                       headers: { 'Authorization': `Bearer ${token}` }
                     }
-                  )
-                  
+                  );
+
                   if (response.data.status === 'success') {
-                    const stories = response.data.data.stories || []
-                    setPlanningData(prev => ({ ...prev, stories }))
-                    const { updateData } = useWizard()
-                    updateData({ stories })
-                    return true
+                    const stories = response.data.data.stories || [];
+                    setPlanningData((prev) => ({ ...prev, stories }));
+                    const { updateData } = useWizard();
+                    updateData({ stories });
+                    return true;
                   }
                 } catch (err) {
-                  setError(err.response?.data?.message || '스토리 생성에 실패했습니다')
-                  return false
+                  setError(err.response?.data?.message || '스토리 생성에 실패했습니다');
+                  return false;
                 } finally {
-                  setLoading(false)
+                  setLoading(false);
                 }
-              }}
-            >
+              }}>
+
               <div className={styles.storyContainer}>
-                {planningData.stories.length > 0 ? (
-                  <div className={styles.storyList}>
-                    {planningData.stories.map((story, idx) => (
-                      <MinimalCard key={idx} className={styles.storyCard}>
+                {planningData.stories.length > 0 ?
+                <div className={styles.storyList}>
+                    {planningData.stories.map((story, idx) =>
+                  <UnifiedCard key={idx} className={styles.storyCard}>
                         <CardHeader
-                          title={`${story.stage_name} - ${story.title}`}
-                          subtitle={story.subtitle}
-                        />
+                      title={`${story.stage_name} - ${story.title}`}
+                      subtitle={story.subtitle} />
+
                         <CardContent>
                           <p>{story.content}</p>
                         </CardContent>
-                      </MinimalCard>
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.emptyState}>
-                    {loading ? (
-                      <>
+                      </UnifiedCard>
+                  )}
+                  </div> :
+
+                <div className={styles.emptyState}>
+                    {loading ?
+                  <>
                         <div className={styles.loadingSpinner} />
                         <p>스토리를 생성하고 있습니다...</p>
-                      </>
-                    ) : (
-                      <p>이전 단계에서 기획을 생성해주세요</p>
-                    )}
+                      </> :
+
+                  <p>이전 단계에서 기획을 생성해주세요</p>
+                  }
                   </div>
-                )}
+                }
               </div>
             </WizardStep>
 
@@ -308,13 +321,13 @@ export default function VideoPlanningMinimal() {
             <WizardStep
               title="기획 완료"
               subtitle="기획이 완성되었습니다!"
-              showPrev={false}
-            >
+              showPrev={false}>
+
               <div className={styles.completion}>
                 <div className={styles.completionIcon}>
                   <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                    <circle cx="32" cy="32" r="32" fill="#0066FF" opacity="0.1"/>
-                    <path d="M44 24L28 40L20 32" stroke="#0066FF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="32" cy="32" r="32" fill="#0066FF" opacity="0.1" />
+                    <path d="M44 24L28 40L20 32" stroke="#0066FF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
                 
@@ -344,6 +357,6 @@ export default function VideoPlanningMinimal() {
           </StepWizard>
         </main>
       </div>
-    </PageTemplate>
-  )
+    </PageTemplate>);
+
 }

@@ -1,0 +1,52 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 디자인 토큰 검사
+echo "🎨 디자인 토큰 검사 중..."
+
+# Stage된 SCSS 파일 가져오기
+STAGED_SCSS=$(git diff --cached --name-only --diff-filter=ACM | grep '\.scss$' | grep -v '\.backup$')
+
+if [ -n "$STAGED_SCSS" ]; then
+  # Stylelint 실행
+  npx stylelint $STAGED_SCSS
+  
+  if [ $? -ne 0 ]; then
+    echo "❌ 디자인 토큰 규칙 위반이 발견되었습니다!"
+    echo "💡 다음 명령으로 자동 수정을 시도해보세요:"
+    echo "   npm run tokenize:advanced"
+    exit 1
+  fi
+  
+  # 하드코딩 검사
+  HARDCODED_COLORS=$(echo "$STAGED_SCSS" | xargs grep -E '#[0-9a-fA-F]{3,6}|rgb\(|rgba\(' | grep -v '$color-' | wc -l)
+  HARDCODED_PIXELS=$(echo "$STAGED_SCSS" | xargs grep -E '[0-9]+px' | grep -v '$spacing-' | grep -v '$font-size-' | wc -l)
+  IMPORTANT_USAGE=$(echo "$STAGED_SCSS" | xargs grep -c '!important' || true)
+  
+  if [ $HARDCODED_COLORS -gt 0 ] || [ $HARDCODED_PIXELS -gt 0 ] || [ $IMPORTANT_USAGE -gt 0 ]; then
+    echo "⚠️  디자인 토큰 미사용 감지:"
+    [ $HARDCODED_COLORS -gt 0 ] && echo "   - 하드코딩된 색상: $HARDCODED_COLORS개"
+    [ $HARDCODED_PIXELS -gt 0 ] && echo "   - 하드코딩된 픽셀: $HARDCODED_PIXELS개"
+    [ $IMPORTANT_USAGE -gt 0 ] && echo "   - !important 사용: $IMPORTANT_USAGE개"
+    echo ""
+    echo "💡 자동 변환 도구를 실행하시겠습니까? (y/n)"
+    read -r response
+    
+    if [ "$response" = "y" ]; then
+      echo "🔄 자동 변환 실행 중..."
+      node scripts/advanced-tokenizer.js $STAGED_SCSS
+      
+      # 변환된 파일을 다시 stage
+      git add $STAGED_SCSS
+      echo "✅ 변환 완료! 커밋을 계속 진행합니다."
+    else
+      echo "❌ 디자인 토큰을 사용하도록 수정 후 다시 커밋하세요."
+      exit 1
+    fi
+  fi
+fi
+
+# 테스트 실행 (선택사항)
+# npm test
+
+echo "✅ 모든 검사 통과!"

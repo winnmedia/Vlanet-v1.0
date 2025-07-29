@@ -1,98 +1,98 @@
-import React, { useState, useEffect } from 'react'
-import { useRouter, useParams } from '../../util/nextNavigation'
-import { AcceptInvitation, DeclineInvitation } from '../../api/invitation'
-import { CreateGuestSession } from '../../api/feedback'
-import { checkSession } from '../../util/util'
-import axios from '../../config/axios'
-import moment from 'moment'
-import 'moment/locale/ko'
-import { useNavigationFlow } from '../../hooks/useNavigationFlow'
-import { debug404 } from '../../utils/debug404'
+import React, { useState, useEffect , Suspense } from 'react'
+import dynamic from 'next/dynamic';;
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { useRouter, useParams } from '../../util/nextNavigation';
+import { AcceptInvitation, DeclineInvitation } from '../../api/invitation';
+import { CreateGuestSession } from '../../api/feedback';
+import { checkSession } from '../../util/util';
+;
+import moment from 'moment';
+import 'moment/locale/ko';
+import { useNavigationFlow } from '../../hooks/useNavigationFlow';
+import { debug404 } from '../../utils/debug404';
+import { Button } from '../../components/unified/Button';
+import { Input } from '../../components/unified/Input'
+const axios = dynamic(() => import('../../config/axios'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});;
 
 export default function InvitationAccept() {
-  const { token, uid } = useParams()
-  const { navigate } = useRouter()
-  const { startFlow, navigateInFlow, navigateSafely, handleNotFound } = useNavigationFlow()
-  
-  const [invitation, setInvitation] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [processing, setProcessing] = useState(false)
-  const [showGuestOptions, setShowGuestOptions] = useState(false)
-  const [guestName, setGuestName] = useState('')
-  const [guestLoading, setGuestLoading] = useState(false)
+  const { token, uid } = useParams();
+  const { navigate } = useRouter();
+  const { startFlow, navigateInFlow, navigateSafely, handleNotFound } = useNavigationFlow();
+
+  const [invitation, setInvitation] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [showGuestOptions, setShowGuestOptions] = useState(false);
+  const [guestName, setGuestName] = useState('');
+  const [guestLoading, setGuestLoading] = useState(false);
 
   useEffect(() => {
     const fetchInvitation = async () => {
       try {
-        console.log('[InvitationAccept] Parameters:', { token, uid })
-        
+
         // 새로운 초대 시스템 (토큰만 사용)
         if (token && !uid) {
-          const apiUrl = `/api/projects/invitations/token/${token}/`
-          console.log('[InvitationAccept] API URL:', apiUrl)
-          
+          const apiUrl = `/api/projects/invitations/token/${token}/`;
+
           // 토큰으로 초대 정보 조회
-          const response = await axios.get(apiUrl)
-          console.log('[InvitationAccept] API Response:', response.data)
-          
+          const response = await axios.get(apiUrl);
+
           if (response.data.status === 'success') {
-            setInvitation(response.data.invitation)
+            setInvitation(response.data.invitation);
           } else {
-            setError(response.data.message || '초대 정보를 찾을 수 없습니다.')
+            setError(response.data.message || '초대 정보를 찾을 수 없습니다.');
           }
-        } 
+        }
         // 기존 초대 시스템 (uid와 token 사용) - 하위 호환성
         else if (uid && token) {
-          console.log('[InvitationAccept] Legacy URL detected:', { uid, token })
+
           // 기존 방식의 초대는 지원 중단 메시지 표시
-          setError('이 초대 링크는 더 이상 유효하지 않습니다. 새로운 초대를 요청해주세요.')
+          setError('이 초대 링크는 더 이상 유효하지 않습니다. 새로운 초대를 요청해주세요.');
         } else {
-          console.log('[InvitationAccept] Invalid parameters:', { token, uid })
-          setError('잘못된 초대 링크입니다.')
+
+          setError('잘못된 초대 링크입니다.');
         }
       } catch (error) {
-        console.error('[InvitationAccept] 초대 정보 조회 실패:', error)
-        console.error('[InvitationAccept] Error details:', {
-          status: error.response?.status,
-          data: error.response?.data,
-          message: error.message
-        })
-        
+
         // 404 디버깅 정보 추가
-        debug404.analyzeError(error)
-        
+        debug404.analyzeError(error);
+
         if (error.response?.status === 404) {
-          setError('유효하지 않은 초대 링크입니다.')
+          setError('유효하지 않은 초대 링크입니다.');
         } else if (error.response?.status === 400) {
-          setError(error.response.data.message || '만료되거나 처리된 초대입니다.')
+          setError(error.response.data.message || '만료되거나 처리된 초대입니다.');
         } else {
-          setError('초대 정보를 불러오는 중 오류가 발생했습니다.')
+          setError('초대 정보를 불러오는 중 오류가 발생했습니다.');
         }
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
     if (token) {
-      fetchInvitation()
+      fetchInvitation();
     } else {
-      setError('잘못된 초대 링크입니다.')
-      setLoading(false)
+      setError('잘못된 초대 링크입니다.');
+      setLoading(false);
     }
-  }, [token, uid])
+  }, [token, uid]);
 
   // 게스트로 계속하기 처리
   const handleGuestContinue = async () => {
     if (!guestName.trim()) {
-      alert('이름을 입력해주세요.')
-      return
+      alert('이름을 입력해주세요.');
+      return;
     }
 
-    setGuestLoading(true)
+    setGuestLoading(true);
     try {
       // 게스트 세션 생성 API 호출
-      const response = await CreateGuestSession(invitation.id, guestName)
+      const response = await CreateGuestSession(invitation.id, guestName);
 
       if (response.data.status === 'success') {
         // 게스트 세션 정보를 localStorage에 저장
@@ -101,20 +101,20 @@ export default function InvitationAccept() {
           guestName: response.data.guest_name,
           projectId: invitation.project.id,
           expiresAt: response.data.expires_at
-        }))
+        }));
 
         // 게스트 피드백 페이지로 이동
-        navigate(`/feedback/${invitation.project.id}?guest=true&session=${response.data.session_id}`)
+        navigate(`/feedback/${invitation.project.id}?guest=true&session=${response.data.session_id}`);
       } else {
-        alert('게스트 세션 생성에 실패했습니다.')
+        alert('게스트 세션 생성에 실패했습니다.');
       }
     } catch (error) {
-      console.error('게스트 세션 생성 실패:', error)
-      alert(error.response?.data?.message || '게스트 세션 생성 중 오류가 발생했습니다.')
+      
+      alert(error.response?.data?.message || '게스트 세션 생성 중 오류가 발생했습니다.');
     } finally {
-      setGuestLoading(false)
+      setGuestLoading(false);
     }
-  }
+  };
 
   // 회원가입으로 이동
   const handleSignupRedirect = () => {
@@ -125,11 +125,11 @@ export default function InvitationAccept() {
       projectId: invitation.project.id,
       projectName: invitation.project.name,
       inviterName: invitation.inviter.nickname
-    })
-    
+    });
+
     // 회원가입 페이지로 이동
-    navigate('/signup', { 
-      state: { 
+    navigate('/signup', {
+      state: {
         invitationToken: token,
         invitationId: invitation.id,
         projectId: invitation.project.id,
@@ -138,68 +138,67 @@ export default function InvitationAccept() {
         returnUrl: `/Feedback/${invitation.project.id}`,
         message: `${invitation.inviter.nickname}님이 "${invitation.project.name}" 프로젝트에 초대했습니다.`
       }
-    })
-  }
+    });
+  };
 
   const handleResponse = async (action) => {
     // 로그인 확인
-    const session = checkSession()
+    const session = checkSession();
     if (!session) {
       // 비회원이 수락하려는 경우 옵션 제공
       if (action === 'accept') {
-        setShowGuestOptions(true)
-        return
+        setShowGuestOptions(true);
+        return;
       } else {
         // 거절은 로그인 없이도 가능
-        setProcessing(true)
+        setProcessing(true);
         try {
-          await DeclineInvitation(invitation.id)
-          alert('초대를 거절했습니다.')
-          navigateSafely('/')
+          await DeclineInvitation(invitation.id);
+          alert('초대를 거절했습니다.');
+          navigateSafely('/');
         } catch (error) {
-          console.error('초대 거절 실패:', error)
-          alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.')
+          
+          alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.');
         } finally {
-          setProcessing(false)
+          setProcessing(false);
         }
       }
-      return
+      return;
     }
 
-    setProcessing(true)
-    
+    setProcessing(true);
+
     try {
       if (action === 'accept') {
         // 초대 플로우 시작 (로그인된 사용자)
         startFlow('invitation', {
           projectId: invitation.project.id
-        })
-        
-        await AcceptInvitation(invitation.id)
-        alert('초대를 수락했습니다! 피드백 페이지로 이동합니다.')
-        
+        });
+
+        await AcceptInvitation(invitation.id);
+        alert('초대를 수락했습니다! 피드백 페이지로 이동합니다.');
+
         // 안전한 네비게이션으로 피드백 페이지로 이동
         navigateSafely(`/Feedback/${invitation.project.id}`, {
           projectId: invitation.project.id
-        })
+        });
       } else {
-        await DeclineInvitation(invitation.id)
-        alert('초대를 거절했습니다.')
-        navigateSafely('/')
+        await DeclineInvitation(invitation.id);
+        alert('초대를 거절했습니다.');
+        navigateSafely('/');
       }
     } catch (error) {
-      console.error('초대 처리 실패:', error)
-      
+
       if (error.response?.status === 404) {
-        alert('프로젝트를 찾을 수 없습니다.')
-        handleNotFound(error)
+        alert('프로젝트를 찾을 수 없습니다.');
+        handleNotFound(error);
       } else {
-        alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.')
+        alert(error.response?.data?.message || '초대 처리 중 오류가 발생했습니다.');
       }
     } finally {
-      setProcessing(false)
+      setProcessing(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -228,8 +227,8 @@ export default function InvitationAccept() {
           }}></div>
           <p style={{ fontSize: '18px', color: '#666' }}>초대 정보를 확인하는 중...</p>
         </div>
-      </div>
-    )
+      </div>);
+
   }
 
   if (error) {
@@ -252,24 +251,23 @@ export default function InvitationAccept() {
           <div style={{ fontSize: '48px', marginBottom: '20px', color: '#dc3545' }}>!</div>
           <h2 style={{ color: '#dc3545', marginBottom: '16px' }}>초대 확인 실패</h2>
           <p style={{ color: '#666', marginBottom: '30px' }}>{error}</p>
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 30px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
+          <UnifiedButton onClick={() = aria-label="Click"> navigate('/')}
+          style={{
+            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+            color: 'white',
+            border: 'none',
+            padding: '12px 30px',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}>
+
             홈으로 이동
-          </button>
+          </UnifiedButton>
         </div>
-      </div>
-    )
+      </div>);
+
   }
 
   return (
@@ -327,7 +325,7 @@ export default function InvitationAccept() {
             alignItems: 'center',
             gap: '8px'
           }}>
-{invitation.project.name}
+            {invitation.project.name}
           </h3>
           
           <div style={{ marginBottom: '16px' }}>
@@ -351,40 +349,40 @@ export default function InvitationAccept() {
             </span>
           </div>
 
-          {invitation.project.description && (
-            <div style={{ marginBottom: '16px' }}>
+          {invitation.project.description &&
+          <div style={{ marginBottom: '16px' }}>
               <strong style={{ color: '#495057' }}>프로젝트 설명:</strong>
-              <p style={{ 
-                marginTop: '8px', 
-                color: '#6c757d',
-                lineHeight: '1.5',
-                background: 'white',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '1px solid #dee2e6'
-              }}>
+              <p style={{
+              marginTop: '8px',
+              color: '#6c757d',
+              lineHeight: '1.5',
+              background: 'white',
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid #dee2e6'
+            }}>
                 {invitation.project.description}
               </p>
             </div>
-          )}
+          }
 
-          {invitation.message && (
-            <div>
+          {invitation.message &&
+          <div>
               <strong style={{ color: '#495057' }}>초대 메시지:</strong>
-              <p style={{ 
-                marginTop: '8px', 
-                color: '#6c757d',
-                lineHeight: '1.5',
-                background: '#fff3cd',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '1px solid #ffeaa7',
-                fontStyle: 'italic'
-              }}>
+              <p style={{
+              marginTop: '8px',
+              color: '#6c757d',
+              lineHeight: '1.5',
+              background: '#fff3cd',
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid #ffeaa7',
+              fontStyle: 'italic'
+            }}>
                 "{invitation.message}"
               </p>
             </div>
-          )}
+          }
         </div>
 
         {/* 액션 버튼들 */}
@@ -393,68 +391,66 @@ export default function InvitationAccept() {
           gap: '16px',
           justifyContent: 'center'
         }}>
-          <button
-            onClick={() => handleResponse('decline')}
-            disabled={processing}
-            style={{
-              background: 'white',
-              color: '#dc3545',
-              border: '2px solid #dc3545',
-              padding: '16px 32px',
-              borderRadius: '12px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: processing ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s ease',
-              opacity: processing ? 0.6 : 1
-            }}
-            onMouseEnter={(e) => {
-              if (!processing) {
-                e.target.style.background = '#dc3545'
-                e.target.style.color = 'white'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!processing) {
-                e.target.style.background = 'white'
-                e.target.style.color = '#dc3545'
-              }
-            }}
-          >
+          <UnifiedButton onClick={() = aria-label="Click"> handleResponse('decline')}
+          disabled={processing}
+          style={{
+            background: 'white',
+            color: '#dc3545',
+            border: '2px solid #dc3545',
+            padding: '16px 32px',
+            borderRadius: '12px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: processing ? 'not-allowed' : 'pointer',
+            transition: 'all 0.3s ease',
+            opacity: processing ? 0.6 : 1
+          }}
+          onMouseEnter={(e) => {
+            if (!processing) {
+              e.target.style.background = '#dc3545';
+              e.target.style.color = 'white';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!processing) {
+              e.target.style.background = 'white';
+              e.target.style.color = '#dc3545';
+            }
+          }}>
+
             {processing ? '처리 중...' : '거절하기'}
-          </button>
+          </UnifiedButton>
           
-          <button
-            onClick={() => handleResponse('accept')}
-            disabled={processing}
-            style={{
-              background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
-              color: 'white',
-              border: 'none',
-              padding: '16px 32px',
-              borderRadius: '12px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: processing ? 'not-allowed' : 'pointer',
-              boxShadow: '0 4px 12px rgba(22, 49, 248, 0.3)',
-              transition: 'all 0.3s ease',
-              opacity: processing ? 0.6 : 1
-            }}
-            onMouseEnter={(e) => {
-              if (!processing) {
-                e.target.style.transform = 'translateY(-2px)'
-                e.target.style.boxShadow = '0 6px 16px rgba(22, 49, 248, 0.4)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!processing) {
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.3)'
-              }
-            }}
-          >
+          <UnifiedButton onClick={() = aria-label="Click"> handleResponse('accept')}
+          disabled={processing}
+          style={{
+            background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
+            color: 'white',
+            border: 'none',
+            padding: '16px 32px',
+            borderRadius: '12px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: processing ? 'not-allowed' : 'pointer',
+            boxShadow: '0 4px 12px rgba(22, 49, 248, 0.3)',
+            transition: 'all 0.3s ease',
+            opacity: processing ? 0.6 : 1
+          }}
+          onMouseEnter={(e) => {
+            if (!processing) {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 16px rgba(22, 49, 248, 0.4)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!processing) {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 12px rgba(22, 49, 248, 0.3)';
+            }
+          }}>
+
             {processing ? '처리 중...' : '수락하기'}
-          </button>
+          </UnifiedButton>
         </div>
 
         {/* 하단 정보 */}
@@ -472,215 +468,209 @@ export default function InvitationAccept() {
       </div>
 
       {/* 게스트 옵션 모달 */}
-      {showGuestOptions && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.6)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000,
-          padding: '20px'
-        }}>
+      {showGuestOptions &&
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.6)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+        padding: '20px'
+      }}>
           <div style={{
-            background: 'white',
-            borderRadius: '20px',
-            padding: '40px',
-            maxWidth: '500px',
-            width: '100%',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
-          }}>
+          background: 'white',
+          borderRadius: '20px',
+          padding: '40px',
+          maxWidth: '500px',
+          width: '100%',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+        }}>
             <h2 style={{
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#212529',
-              marginBottom: '16px',
-              textAlign: 'center'
-            }}>
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#212529',
+            marginBottom: '16px',
+            textAlign: 'center'
+          }}>
               프로젝트 참여 방법 선택
             </h2>
             
             <p style={{
-              color: '#6c757d',
-              textAlign: 'center',
-              marginBottom: '32px',
-              fontSize: '16px'
-            }}>
+            color: '#6c757d',
+            textAlign: 'center',
+            marginBottom: '32px',
+            fontSize: '16px'
+          }}>
               프로젝트에 참여하려면 아래 옵션 중 하나를 선택해주세요.
             </p>
 
             <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-              marginBottom: '24px'
-            }}>
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            marginBottom: '24px'
+          }}>
               {/* 회원가입 옵션 */}
-              <div 
-                onClick={handleSignupRedirect}
-                style={{
-                  padding: '20px',
-                  border: '2px solid #1631F8',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  background: 'white'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#f8f9fa'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'white'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
-              >
+              <div
+              onClick={handleSignupRedirect}
+              style={{
+                padding: '20px',
+                border: '2px solid #1631F8',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                background: 'white'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#f8f9fa';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'white';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}>
+
                 <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1631F8',
-                  marginBottom: '8px'
-                }}>
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1631F8',
+                marginBottom: '8px'
+              }}>
                   회원가입하기
                 </h3>
                 <p style={{
-                  color: '#6c757d',
-                  fontSize: '14px',
-                  margin: 0
-                }}>
+                color: '#6c757d',
+                fontSize: '14px',
+                margin: 0
+              }}>
                   모든 기능을 이용하고 프로젝트를 관리할 수 있습니다.
                 </p>
               </div>
 
               {/* 로그인 옵션 */}
-              <div 
-                onClick={() => navigate('/login')}
-                style={{
-                  padding: '20px',
-                  border: '2px solid #28a745',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  background: 'white'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#f8f9fa'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'white'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
-              >
+              <div
+              onClick={() => navigate('/login')}
+              style={{
+                padding: '20px',
+                border: '2px solid #28a745',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                background: 'white'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#f8f9fa';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'white';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}>
+
                 <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#28a745',
-                  marginBottom: '8px'
-                }}>
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#28a745',
+                marginBottom: '8px'
+              }}>
                   로그인하기
                 </h3>
                 <p style={{
-                  color: '#6c757d',
-                  fontSize: '14px',
-                  margin: 0
-                }}>
+                color: '#6c757d',
+                fontSize: '14px',
+                margin: 0
+              }}>
                   이미 계정이 있다면 로그인하여 참여하세요.
                 </p>
               </div>
 
               {/* 게스트 옵션 */}
               <div style={{
-                padding: '20px',
-                border: '2px solid #6c757d',
-                borderRadius: '12px',
-                background: 'white'
-              }}>
+              padding: '20px',
+              border: '2px solid #6c757d',
+              borderRadius: '12px',
+              background: 'white'
+            }}>
                 <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#6c757d',
-                  marginBottom: '12px'
-                }}>
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#6c757d',
+                marginBottom: '12px'
+              }}>
                   게스트로 계속하기
                 </h3>
                 <p style={{
-                  color: '#6c757d',
-                  fontSize: '14px',
-                  marginBottom: '16px'
-                }}>
+                color: '#6c757d',
+                fontSize: '14px',
+                marginBottom: '16px'
+              }}>
                   회원가입 없이 피드백만 작성할 수 있습니다.
                 </p>
-                <input
-                  type="text"
-                  placeholder="이름을 입력해주세요"
-                  value={guestName}
-                  onChange={(e) => setGuestName(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '1px solid #dee2e6',
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    marginBottom: '12px'
-                  }}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleGuestContinue()
-                    }
-                  }}
-                />
-                <button
-                  onClick={handleGuestContinue}
-                  disabled={guestLoading || !guestName.trim()}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: guestLoading || !guestName.trim() ? '#e9ecef' : '#6c757d',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: guestLoading || !guestName.trim() ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {guestLoading ? '처리 중...' : '게스트로 시작'}
-                </button>
-              </div>
-            </div>
+                <Input
+                type="text"
+                placeholder="이름을 입력해주세요"
+                value={guestName}
+                onChange={(e) = aria-label="이름을 입력해주세요"> setGuestName(e.target.value)}
+                style={{
+                  width: '100%',
+                  marginBottom: '12px'
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleGuestContinue();
+                  }
+                }} />
 
-            <button
-              onClick={() => setShowGuestOptions(false)}
+                <UnifiedButton onClick={handleGuestContinue}
+              disabled={guestLoading || !guestName.trim()}
               style={{
                 width: '100%',
                 padding: '12px',
-                background: 'white',
-                color: '#6c757d',
-                border: '1px solid #dee2e6',
+                background: guestLoading || !guestName.trim() ? '#e9ecef' : '#6c757d',
+                color: 'white',
+                border: 'none',
                 borderRadius: '8px',
                 fontSize: '16px',
                 fontWeight: '600',
-                cursor: 'pointer',
+                cursor: guestLoading || !guestName.trim() ? 'not-allowed' : 'pointer',
                 transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = '#f8f9fa'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'white'
-              }}
-            >
+              }} aria-label="Click">
+
+                  {guestLoading ? '처리 중...' : '게스트로 시작'}
+                </UnifiedButton>
+              </div>
+            </div>
+
+            <UnifiedButton onClick={() = aria-label="Click"> setShowGuestOptions(false)}
+          style={{
+            width: '100%',
+            padding: '12px',
+            background: 'white',
+            color: '#6c757d',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = '#f8f9fa';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'white';
+          }}>
+
               취소
-            </button>
+            </UnifiedButton>
           </div>
         </div>
-      )}
+      }
 
       <style jsx>{`
         @keyframes spin {
@@ -688,6 +678,6 @@ export default function InvitationAccept() {
           100% { transform: rotate(360deg); }
         }
       `}</style>
-    </div>
-  )
+    </div>);
+
 }

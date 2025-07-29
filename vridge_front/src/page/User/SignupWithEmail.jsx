@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
+import UnifiedCard from '../../components/unified/UnifiedCard';
+import dynamic from 'next/dynamic';;
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { useRouter } from '../../util/nextNavigation';
 import { SendAuthNumber, EmailAuth, SignUp, CheckNickname } from '../../api/auth';
 import PasswordInput from "component/PasswordInput";
 import { CircularProgress } from "@material-ui/core";
+import { Button } from '../../components/unified/Button'
 
 const SignupWithEmail = () => {
   const { navigate } = useRouter();
+import { Input } from '../../components/unified/Input';
   
   // 스타일 정의
   const styles = {
@@ -220,12 +226,12 @@ const SignupWithEmail = () => {
   
   return (
     <div className="signup-container">
-      <div className="signup-box">
+      <UnifiedCard variant="default" className="signup-box">
         <h1>회원가입</h1>
         
         {/* Progress Bar */}
         <div className="progress-bar">
-          <div className={`step ${step >= 1 ? 'active' : ''}`}>1. 이메일 인증</div>
+          <div className={`step ${step >= 1 ? 'active' : ''}`}>1. 이메일 인증</UnifiedCard>
           <div className={`step ${step >= 2 ? 'active' : ''}`}>2. 정보 입력</div>
         </div>
         
@@ -236,17 +242,9 @@ const SignupWithEmail = () => {
             <div className="form-group">
               <label>이메일</label>
               <div className="input-with-button">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={handleEmailChange}
-                  placeholder="이메일을 입력하세요"
-                  disabled={emailSent && emailStatus === "available"}
-                  style={emailStatus === "registered" ? styles.errorInput : {}}
-                />
-                <button
-                  onClick={handleSendEmail}
-                  disabled={loading || !email || emailStatus === "invalid" || (countdown > 0 && emailStatus !== "registered")}
+                <UnifiedInput placeholder="이메일을 입력하세요" value={email} onChange={handleEmailChange}  / aria-label="이메일을 입력하세요">
+                <Button onClick={handleSendEmail} onKeyDown={(e) => e.key === 'Enter' && handleSendEmail}
+                  disabled={loading || !email || emailStatus === "invalid" || (countdown  aria-label="Click"> 0 && emailStatus !== "registered")}
                   style={
                     emailStatus === "registered" ? styles.errorButton :
                     (loading || !email || emailStatus === "invalid" || (countdown > 0 && emailStatus !== "registered")) ? styles.disabledButton : {}
@@ -256,7 +254,7 @@ const SignupWithEmail = () => {
                    countdown > 0 && emailStatus !== "registered" ? `재발송 (${countdown}초)` : 
                    emailStatus === "registered" ? "이미 가입된 이메일" :
                    emailSent ? "재발송" : "인증"}
-                </button>
+                </Button>
               </div>
               {errors.email && <span style={styles.errorMessage}>{errors.email}</span>}
               {emailStatus === "available" && !errors.email && (
@@ -267,22 +265,15 @@ const SignupWithEmail = () => {
             {emailSent && (
               <div className="form-group">
                 <label>인증번호</label>
-                <input
-                  type="text"
-                  value={authNumber}
-                  onChange={(e) => setAuthNumber(e.target.value)}
+                <UnifiedInput value={authNumber}  / aria-label="Input field"> setAuthNumber(e.target.value)}
                   placeholder="6자리 인증번호 입력"
                   maxLength={6}
                 />
                 {errors.auth && <span style={styles.errorMessage}>{errors.auth}</span>}
                 
-                <button
-                  className="verify-button"
-                  onClick={handleVerifyEmail}
-                  disabled={loading || !authNumber}
-                >
+                <Button onClick={handleVerifyEmail} onKeyDown={(e) => e.key === 'Enter' && handleVerifyEmail} disabled aria-label="Click">
                   {loading ? <CircularProgress size={20} /> : "인증 확인"}
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -294,15 +285,12 @@ const SignupWithEmail = () => {
             
             <div className="form-group">
               <label>이메일 (인증 완료)</label>
-              <input type="email" value={email} disabled />
+              <UnifiedInput value={email}  / aria-label="Input field">
             </div>
             
             <div className="form-group">
               <label>닉네임</label>
-              <input
-                type="text"
-                value={nickname}
-                onChange={(e) => {
+              <UnifiedInput value={nickname}  / aria-label="Input field"> {
                   setNickname(e.target.value);
                   handleCheckNickname(e.target.value);
                 }}
@@ -335,18 +323,14 @@ const SignupWithEmail = () => {
             
             {errors.general && <div style={styles.errorMessage}>{errors.general}</div>}
             
-            <button
-              className="signup-button"
-              onClick={handleSignUp}
-              disabled={loading || !nicknameValid}
-            >
+            <Button onClick={handleSignUp} onKeyDown={(e) => e.key === 'Enter' && handleSignUp} disabled aria-label="Click">
               {loading ? <CircularProgress size={20} /> : "회원가입 완료"}
-            </button>
+            </Button>
           </div>
         )}
         
         <div className="login-link">
-          이미 계정이 있으신가요? <a href="/Login">로그인</a>
+          이미 계정이 있으신가요? <a href="/Login" aria-label="Link">로그인</a>
         </div>
       </div>
     </div>

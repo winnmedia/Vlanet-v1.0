@@ -1,4 +1,5 @@
 import React from 'react'
+import dynamic from 'next/dynamic';
 import PageTemplate from '../../components/PageTemplate'
 import SideBar from '../../components/SideBar'
 

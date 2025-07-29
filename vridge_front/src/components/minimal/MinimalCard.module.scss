@@ -1,3 +1,5 @@
+@import '../styles/design-tokens';
+
 @import '../../styles/minimal-design-system';
 
 .card {
@@ -8,7 +10,7 @@
   
   // 패딩 옵션
   &.padding-none {
-    padding: 0;
+    padding: $spacing-0;
   }
   
   &.padding-small {
@@ -28,7 +30,7 @@
     cursor: pointer;
     
     &:hover {
-      transform: translateY(-2px);
+      transform: translateY(-$spacing-2xs);
       border-color: var(--border-hover);
     }
     
@@ -44,8 +46,8 @@
     background: var(--white);
     
     &:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
+      outline: $spacing-2xs solid var(--accent);
+      outline-offset: $spacing-2xs;
     }
   }
 }
@@ -63,7 +65,7 @@
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
   letter-spacing: var(--tracking-tight);
-  margin: 0;
+  margin: $spacing-0;
   line-height: var(--leading-tight);
 }
 
@@ -84,11 +86,11 @@
   line-height: var(--leading-normal);
   
   > *:first-child {
-    margin-top: 0;
+    margin-top: $spacing-0;
   }
   
   > *:last-child {
-    margin-bottom: 0;
+    margin-bottom: $spacing-0;
   }
 }
 
@@ -98,7 +100,7 @@
   gap: var(--spacing-2);
   margin-top: var(--spacing-3);
   padding-top: var(--spacing-3);
-  border-top: 1px solid var(--border);
+  border-top: $spacing-2xs solid var(--border);
   
   &.align-left {
     justify-content: flex-start;
@@ -114,5 +116,49 @@
   
   &.align-between {
     justify-content: space-between;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: $spacing-md;
+    width: 100%;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .text-large {
+    font-size: $font-size-lg;
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 76calc(8px + 4px)) and (max-width: 1024px) {
+  .container {
+    padding: $spacing-lg;
+    max-width: 960;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 102calc(8px - 4px)) {
+  .container {
+    max-width: 1200;
+    margin: 0 auto;
   }
 }

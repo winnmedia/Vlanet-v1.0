@@ -1,0 +1,83 @@
+{
+  "timestamp": "2025-07-29T08:47:26.400Z",
+  "finalScore": 96,
+  "grade": "A+",
+  "categories": {
+    "tokenUsage": {
+      "score": 95.78959713833342,
+      "weight": 15,
+      "details": [
+        "토큰 사용률: 95.8%",
+        "토큰화된 값: 16335개",
+        "전체 값: 17053개"
+      ]
+    },
+    "componentConsistency": {
+      "score": 94.44444444444446,
+      "weight": 20,
+      "details": [
+        "버튼 일관성: 100.0%",
+        "입력 일관성: 100.0%",
+        "카드 일관성: 88.9%",
+        "모달 일관성: 88.9%"
+      ]
+    },
+    "codeQuality": {
+      "score": 96,
+      "weight": 15,
+      "details": [
+        "console 사용: 7개",
+        "!important 사용: 1개",
+        "전체 이슈: 8개"
+      ]
+    },
+    "performance": {
+      "score": 87.6,
+      "weight": 15,
+      "details": [
+        "코드 스플리팅: 92.0%",
+        "이미지 최적화: 구현됨",
+        "대용량 CSS 파일: 0개"
+      ]
+    },
+    "accessibility": {
+      "score": 100,
+      "weight": 10,
+      "details": [
+        "접근성 속성 사용률: 100.0%",
+        "인터랙티브 요소: 31개",
+        "접근성 속성: 662개"
+      ]
+    },
+    "testCoverage": {
+      "score": 100,
+      "weight": 10,
+      "details": [
+        "테스트 파일: 148개",
+        "소스 파일: 247개",
+        "테스트 커버리지: 59.9%"
+      ]
+    },
+    "responsive": {
+      "score": 97.36842105263158,
+      "weight": 10,
+      "details": [
+        "반응형 스타일 사용: 111/114 파일",
+        "반응형 적용률: 97.4%"
+      ]
+    },
+    "maintenance": {
+      "score": 100,
+      "weight": 5,
+      "details": [
+        "README.md: ✓",
+        "MEMORY.md: ✓",
+        "CLAUDE.md: ✓",
+        "폴더 구조: ✓"
+      ]
+    }
+  },
+  "suggestions": [
+    "- 더 많은 페이지에 코드 스플리팅을 적용하세요"
+  ]
+}

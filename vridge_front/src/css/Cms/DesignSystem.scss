@@ -1,72 +1,74 @@
+@import '../../styles/design-tokens';
+
 // Vlanet Design System
 // 브랜드 색상과 일관된 디자인 시스템
 
 // ===== Color Palette =====
 // Primary Colors
-$primary-blue: #1E88E5;      // 메인 블루
-$primary-dark: #1565C0;      // 다크 블루
-$primary-light: #42A5F5;     // 라이트 블루
-$primary-pale: #E3F2FD;      // 페일 블루
+$primary-blue: $color-primary;      // 메인 블루
+$primary-dark: $color-info-dark;      // 다크 블루
+$primary-light: $color-info;     // 라이트 블루
+$primary-pale: $color-vp-blue-bg-1;      // 페일 블루
 
 // Secondary Colors  
-$success-green: #43A047;     // 성공/완료
-$warning-yellow: #FFA726;    // 경고
-$danger-red: #E53935;        // 삭제/위험
-$info-cyan: #00ACC1;         // 정보
+$success-green: $color-success;     // 성공/완료
+$warning-yellow: $color-danger;    // 경고
+$danger-red: $color-danger;        // 삭제/위험
+$info-cyan: $color-info;         // 정보
 
 // Neutral Colors
-$gray-900: #212529;          // 제목
-$gray-800: #343A40;          // 본문
-$gray-700: #495057;          // 서브텍스트
-$gray-600: #6C757D;          // 비활성 텍스트
-$gray-500: #ADB5BD;          // 보더
-$gray-400: #CED4DA;          // 라이트 보더
-$gray-300: #DEE2E6;          // 배경 보더
-$gray-200: #E9ECEF;          // 라이트 배경
-$gray-100: #F8F9FA;          // 가장 밝은 배경
-$white: #FFFFFF;
+$gray-900: $color-gray-900;          // 제목
+$gray-800: $color-gray-800;          // 본문
+$gray-700: $color-gray-700;          // 서브텍스트
+$gray-600: $color-gray-600;          // 비활성 텍스트
+$gray-500: $color-gray-500;          // 보더
+$gray-400: $color-gray-400;          // 라이트 보더
+$gray-300: $color-vp-gray-light-3;          // 배경 보더
+$gray-200: $color-vp-gray-light-2;          // 라이트 배경
+$gray-100: $color-background-secondary;          // 가장 밝은 배경
+$$color-white: $color-white;
 
 // ===== Spacing System =====
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
-$spacing-xxl: 48px;
+$spacing-xs: $spacing-xs;
+$spacing-sm: $spacing-sm;
+$spacing-md: $font-size-base;
+$spacing-lg: $font-size-2xl;
+$spacing-xl: $font-size-4xl;
+$spacing-xxl: $font-size-5xl;
 
 // ===== Typography =====
 $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-$font-size-xs: 12px;
-$font-size-sm: 14px;
-$font-size-base: 16px;
-$font-size-lg: 18px;
-$font-size-xl: 20px;
-$font-size-xxl: 24px;
-$font-size-xxxl: 32px;
+$font-size-xs: $font-size-xs;
+$font-size-sm: $font-size-sm;
+$font-size-base: $font-size-base;
+$font-size-lg: $font-size-lg;
+$font-size-xl: $font-size-xl;
+$font-size-xxl: $font-size-2xl;
+$font-size-xxxl: $font-size-4xl;
 
 // ===== Border Radius =====
-$radius-xs: 4px;
-$radius-sm: 6px;
-$radius-md: 8px;
-$radius-lg: 12px;
-$radius-xl: 16px;
-$radius-pill: 100px;
+$radius-xs: $spacing-xs;
+$radius-sm: $spacing-sm;
+$radius-md: $spacing-sm;
+$radius-lg: $font-size-xs;
+$radius-xl: $font-size-base;
+$radius-pill: $spacing-6xl + $spacing-xs;
 $radius-circle: 50%;
 
 // ===== Shadows =====
-$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+$shadow-xs: 0 $spacing-2xs $spacing-2xs rgba($color-black, 0.05);
+$shadow-sm: 0 $spacing-2xs $spacing-xs rgba($color-black, 0.06);
+$shadow-md: 0 $spacing-xs $spacing-sm rgba($color-black, 0.07);
+$shadow-lg: 0 $font-size-xs $font-size-base rgba($color-black, 0.1);
+$shadow-xl: 0 $font-size-xl $font-size-3xl rgba($color-black, 0.15);
 
 // ===== Transitions =====
-$transition-fast: 150ms ease-in-out;
-$transition-base: 250ms ease-in-out;
-$transition-slow: 350ms ease-in-out;
+$transition-fast: $duration-fast ease-in-out;
+$transition-base: $duration-normal ease-in-out;
+$transition-slow: $duration-slow ease-in-out;
 
 // ===== Z-index =====
-$z-dropdown: 1000;
+$z-dropdown: 1$color-black;
 $z-sticky: 1020;
 $z-fixed: 1030;
 $z-modal-backdrop: 1040;
@@ -82,8 +84,8 @@ $z-tooltip: 1070;
   gap: $spacing-sm;
   padding: $spacing-sm $spacing-md;
   font-size: $font-size-base;
-  font-weight: 500;
-  line-height: 1.5;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-base;
   border: none;
   border-radius: $radius-md;
   cursor: pointer;
@@ -93,7 +95,7 @@ $z-tooltip: 1070;
   
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($primary-blue, 0.25);
+    box-shadow: 0 0 0 $spacing-xs rgba($primary-blue, 0.25);
   }
   
   &:disabled {
@@ -105,11 +107,11 @@ $z-tooltip: 1070;
 @mixin button-primary {
   @include button-base;
   background-color: $primary-blue;
-  color: $white;
+  color: $$color-white;
   
   &:hover:not(:disabled) {
     background-color: $primary-dark;
-    transform: translateY(-1px);
+    transform: translateY(-$spacing-2xs);
     box-shadow: $shadow-md;
   }
   
@@ -126,7 +128,7 @@ $z-tooltip: 1070;
   
   &:hover:not(:disabled) {
     background-color: $gray-300;
-    transform: translateY(-1px);
+    transform: translateY(-$spacing-2xs);
     box-shadow: $shadow-sm;
   }
 }
@@ -134,11 +136,11 @@ $z-tooltip: 1070;
 @mixin button-success {
   @include button-base;
   background-color: $success-green;
-  color: $white;
+  color: $$color-white;
   
   &:hover:not(:disabled) {
     background-color: darken($success-green, 8%);
-    transform: translateY(-1px);
+    transform: translateY(-$spacing-2xs);
     box-shadow: $shadow-md;
   }
 }
@@ -146,11 +148,11 @@ $z-tooltip: 1070;
 @mixin button-danger {
   @include button-base;
   background-color: $danger-red;
-  color: $white;
+  color: $$color-white;
   
   &:hover:not(:disabled) {
     background-color: darken($danger-red, 8%);
-    transform: translateY(-1px);
+    transform: translateY(-$spacing-2xs);
     box-shadow: $shadow-md;
   }
 }
@@ -158,20 +160,20 @@ $z-tooltip: 1070;
 @mixin button-outline {
   @include button-base;
   background-color: transparent;
-  border: 2px solid $primary-blue;
+  border: $spacing-2xs solid $primary-blue;
   color: $primary-blue;
   
   &:hover:not(:disabled) {
     background-color: $primary-blue;
-    color: $white;
-    transform: translateY(-1px);
+    color: $$color-white;
+    transform: translateY(-$spacing-2xs);
     box-shadow: $shadow-sm;
   }
 }
 
 // ===== Card Mixin =====
 @mixin card {
-  background-color: $white;
+  background-color: $$color-white;
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
   transition: box-shadow $transition-base;
@@ -186,17 +188,17 @@ $z-tooltip: 1070;
   width: 100%;
   padding: $spacing-sm $spacing-md;
   font-size: $font-size-base;
-  line-height: 1.5;
+  line-height: $line-height-base;
   color: $gray-800;
-  background-color: $white;
-  border: 2px solid $gray-300;
+  background-color: $$color-white;
+  border: $spacing-2xs solid $gray-300;
   border-radius: $radius-md;
   transition: all $transition-fast;
   
   &:focus {
     outline: none;
     border-color: $primary-blue;
-    box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+    box-shadow: 0 0 0 $spacing-xs rgba($primary-blue, 0.1);
   }
   
   &::placeholder {
@@ -207,17 +209,84 @@ $z-tooltip: 1070;
     background-color: $gray-100;
     cursor: not-allowed;
   }
+}// ===== Utility Classes =====
+.text-primary.text-primary { color: $primary-blue; }.text-success.text-success { color: $success-green; }.text-danger.text-danger { color: $danger-red; }.text-warning.text-warning { color: $warning-yellow; }.text-info.text-info { color: $info-cyan; }.bg-primary.bg-primary { background-color: $primary-blue; }.bg-success.bg-success { background-color: $success-green; }.bg-danger.bg-danger { background-color: $danger-red; }.bg-warning.bg-warning { background-color: $warning-yellow; }.bg-info.bg-info { background-color: $info-cyan; }
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
 }
 
-// ===== Utility Classes =====
-.text-primary { color: $primary-blue !important; }
-.text-success { color: $success-green !important; }
-.text-danger { color: $danger-red !important; }
-.text-warning { color: $warning-yellow !important; }
-.text-info { color: $info-cyan !important; }
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
 
-.bg-primary { background-color: $primary-blue !important; }
-.bg-success { background-color: $success-green !important; }
-.bg-danger { background-color: $danger-red !important; }
-.bg-warning { background-color: $warning-yellow !important; }
-.bg-info { background-color: $info-cyan !important; }
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

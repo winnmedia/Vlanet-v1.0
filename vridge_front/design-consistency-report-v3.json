@@ -1,0 +1,169 @@
+{
+  "summary": {
+    "overallScore": 51,
+    "grade": "F",
+    "timestamp": "2025-07-29T07:47:33.272Z"
+  },
+  "details": {
+    "tokenUsage": {
+      "percentage": 46,
+      "used": 7140,
+      "total": 15432,
+      "recommendation": "디자인 토큰 사용을 늘려주세요"
+    },
+    "hardcodedValues": {
+      "colors": 60,
+      "spacing": 135,
+      "topOffenders": [
+        {
+          "file": "src/components/unified/UnifiedModal.module.scss",
+          "count": 24
+        },
+        {
+          "file": "src/page/Cms/FeedbackButtonStyles.module.scss",
+          "count": 17
+        },
+        {
+          "file": "src/page/User/MyPage.scss",
+          "count": 15
+        },
+        {
+          "file": "src/components/unified/UnifiedCard.module.scss",
+          "count": 14
+        },
+        {
+          "file": "src/css/Home.scss",
+          "count": 12
+        }
+      ]
+    },
+    "componentConsistency": {
+      "buttons": 85,
+      "inputs": 88,
+      "cards": 0,
+      "modals": 100
+    },
+    "componentStats": {
+      "buttons": {
+        "unified": 151,
+        "custom": 26,
+        "files": {
+          "unified": [
+            "src/components/ExportModal.jsx",
+            "src/components/Navigation/EnhancedSidebar.jsx",
+            "src/components/ProjectPhaseBoard.jsx",
+            "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+            "src/page/Cms/Calendar.jsx",
+            "src/page/Cms/Feedback.jsx",
+            "src/page/Cms/FeedbackPolling.jsx",
+            "src/page/Cms/FeedbackStable.jsx",
+            "src/page/Cms/FrameworkManagement.jsx",
+            "src/page/Cms/ProjectCreate.jsx",
+            "src/page/Cms/ProjectView-fixed.jsx",
+            "src/page/Cms/ProjectView.jsx",
+            "src/page/Cms/VideoPlanning-working.jsx",
+            "src/page/Cms/VideoPlanning.jsx",
+            "src/page/Home.jsx",
+            "src/page/User/Login.jsx",
+            "src/page/User/MyPage.jsx",
+            "src/page/User/MyPage.migrated.jsx",
+            "src/page/User/Signup.jsx",
+            "src/page/User/SignupWithEmail.jsx",
+            "src/tasks/Calendar/CalendarDate.jsx",
+            "src/tasks/Feedback/FeedbackManage.jsx",
+            "src/tasks/Feedback/FeedbackMessage.jsx",
+            "src/tasks/Feedback/FeedbackMore.fixed-migrated.jsx",
+            "src/tasks/Feedback/FeedbackMore.modules-migrated.jsx",
+            "src/tasks/Feedback/OpinionInput.jsx",
+            "src/tasks/Project/InviteInput.jsx",
+            "src/tasks/Project/ProcessDateEnhanced.jsx"
+          ],
+          "custom": [
+            "src/components/unified/Button/Button.tsx",
+            "src/design-system/components/Button/Button.stories.tsx",
+            "src/design-system/components/Button/Button.tsx",
+            "src/design-system/components/Button/FeedbackButton.tsx",
+            "src/design-system/layout/Toast.tsx",
+            "src/page/Admin/AdminDashboard.jsx"
+          ]
+        }
+      },
+      "inputs": {
+        "unified": 14,
+        "custom": 2,
+        "files": {
+          "unified": [
+            "src/page/Cms/Calendar.jsx",
+            "src/page/Cms/CmsHomeMinimal.v2.jsx",
+            "src/page/Cms/FrameworkManagement.jsx",
+            "src/page/Cms/InvitationAccept.jsx",
+            "src/page/Cms/VideoPlanning.jsx",
+            "src/page/Cms/VideoPlanningMinimal.jsx",
+            "src/page/User/LoginMinimal.jsx",
+            "src/tasks/Feedback/FeedbackManage.jsx",
+            "src/tasks/Feedback/FeedbackMessage.jsx",
+            "src/tasks/Project/InviteInput.jsx"
+          ],
+          "custom": [
+            "src/components/unified/Input/Input.tsx",
+            "src/tasks/Project/ProcessDateEnhanced.jsx"
+          ]
+        }
+      },
+      "cards": {
+        "unified": 0,
+        "custom": 6,
+        "files": {
+          "unified": [],
+          "custom": []
+        }
+      },
+      "modals": {
+        "unified": 0,
+        "custom": 0,
+        "files": {
+          "unified": [],
+          "custom": []
+        }
+      }
+    },
+    "responsiveIssues": [],
+    "brandColorUsage": {},
+    "detailedScores": {
+      "tokenUsageByCategory": {
+        "components": {
+          "count": 37,
+          "tokenized": 37
+        },
+        "pages": {
+          "count": 9,
+          "tokenized": 9
+        },
+        "styles": {
+          "count": 38,
+          "tokenized": 36
+        }
+      },
+      "tokenUsage": {
+        "weight": 0.4,
+        "score": 46
+      },
+      "hardcoding": {
+        "weight": 0.3,
+        "score": 29.5
+      },
+      "componentConsistency": {
+        "weight": 0.2,
+        "score": 68.25
+      },
+      "designSystem": {
+        "weight": 0.1,
+        "score": 100
+      }
+    }
+  },
+  "recommendations": [
+    "디자인 토큰 사용률을 50% 이상으로 높이세요",
+    "60개의 하드코딩된 색상을 디자인 토큰으로 변경하세요"
+  ]
+}

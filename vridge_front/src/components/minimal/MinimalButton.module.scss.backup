@@ -1,0 +1,276 @@
+@import '../../styles/minimal-design-system';
+
+// 버튼 기본 스타일
+.button {
+  @include button-minimal('primary');
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  
+  // 아이콘과 텍스트 정렬
+  .icon,
+  .loadingIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .text {
+    display: inline-block;
+  }
+  
+  // 로딩 상태
+  &.loading {
+    color: transparent;
+    pointer-events: none;
+    
+    .text {
+      visibility: hidden;
+    }
+    
+    .loadingIcon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  
+  // 전체 너비
+  &.fullWidth {
+    width: 100%;
+  }
+}
+
+// 버튼 변형
+.primary {
+  @include button-minimal('primary');
+}
+
+.secondary {
+  @include button-minimal('secondary');
+}
+
+.ghost {
+  @include button-minimal('ghost');
+}
+
+.danger {
+  background: var(--danger);
+  color: var(--white);
+  
+  &:hover:not(:disabled) {
+    background: #E6352B; // 더 어두운 빨강
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+// 버튼 크기
+.small {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--text-sm);
+  
+  .icon,
+  .loadingIcon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.medium {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--text-base);
+  
+  .icon,
+  .loadingIcon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.large {
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--text-lg);
+  
+  .icon,
+  .loadingIcon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// 로딩 스피너 애니메이션
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 아이콘 버튼
+.iconButtonWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.iconButton {
+  padding: var(--spacing-2);
+  
+  &.small {
+    padding: var(--spacing-1);
+  }
+  
+  &.large {
+    padding: var(--spacing-3);
+  }
+  
+  .text {
+    display: none;
+  }
+}
+
+// 툴팁
+.tooltip {
+  position: absolute;
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--foreground);
+  color: var(--background);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+  z-index: 1000;
+  
+  // 화살표
+  &::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+  
+  // 툴팁 위치
+  &.tooltip-top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: var(--spacing-1);
+    
+    &::before {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px 4px 0 4px;
+      border-color: var(--foreground) transparent transparent transparent;
+    }
+  }
+  
+  &.tooltip-bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: var(--spacing-1);
+    
+    &::before {
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 4px 4px 4px;
+      border-color: transparent transparent var(--foreground) transparent;
+    }
+  }
+  
+  &.tooltip-left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: var(--spacing-1);
+    
+    &::before {
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 4px 0 4px 4px;
+      border-color: transparent transparent transparent var(--foreground);
+    }
+  }
+  
+  &.tooltip-right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: var(--spacing-1);
+    
+    &::before {
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 4px 4px 4px 0;
+      border-color: transparent var(--foreground) transparent transparent;
+    }
+  }
+}
+
+// 호버 시 툴팁 표시
+.iconButtonWrapper:hover .tooltip,
+.iconButton:focus-visible ~ .tooltip {
+  opacity: 1;
+}
+
+// 버튼 그룹
+.buttonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  
+  // 정렬
+  &.align-left {
+    justify-content: flex-start;
+  }
+  
+  &.align-center {
+    justify-content: center;
+  }
+  
+  &.align-right {
+    justify-content: flex-end;
+  }
+  
+  &.align-between {
+    justify-content: space-between;
+  }
+  
+  // 간격
+  &.spacing-tight {
+    gap: var(--spacing-1);
+  }
+  
+  &.spacing-normal {
+    gap: var(--spacing-2);
+  }
+  
+  &.spacing-loose {
+    gap: var(--spacing-3);
+  }
+}
+
+// 다크모드 대응
+@media (prefers-color-scheme: dark) {
+  .tooltip {
+    box-shadow: var(--shadow-md);
+  }
+}

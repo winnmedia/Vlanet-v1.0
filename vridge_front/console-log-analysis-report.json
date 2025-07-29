@@ -1,0 +1,53 @@
+{
+  "summary": {
+    "totalFiles": 82,
+    "totalLogs": 691,
+    "distribution": {
+      "log": 424,
+      "error": 231,
+      "warn": 32,
+      "info": 2,
+      "debug": 2
+    }
+  },
+  "analysis": {
+    "safeToRemove": 458,
+    "needsReview": 233,
+    "inTestFiles": 0
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Remove debug logs",
+      "count": 457,
+      "impact": "Safe - These are development-only logs",
+      "command": "npm run console:remove-debug"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Wrap development logs with environment check",
+      "count": 1,
+      "impact": "Safe - Logs will only appear in development",
+      "command": "npm run console:wrap-dev"
+    },
+    {
+      "priority": "LOW",
+      "action": "Review error logs for proper error handling",
+      "count": 233,
+      "impact": "Requires manual review",
+      "command": "npm run console:review-errors"
+    },
+    {
+      "priority": "STRATEGIC",
+      "action": "Implement centralized logging system",
+      "description": "Replace console methods with a proper logger",
+      "benefits": [
+        "Environment-aware logging",
+        "Log levels (debug, info, warn, error)",
+        "Performance optimization",
+        "Better error tracking"
+      ]
+    }
+  ],
+  "timestamp": "2025-07-29T03:56:28.639Z"
+}

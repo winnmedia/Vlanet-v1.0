@@ -1,0 +1,6 @@
+// _VideoPlanning-responsive - Optimized and split into modules
+@import './_VideoPlanning-responsive.responsive.scss';
+
+@media (max-width: 768px) {
+  .container { width: 100%; }
+}

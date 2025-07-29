@@ -1,0 +1,385 @@
+[
+  {
+    "file": "components/ExportModal.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "components/Navigation/EnhancedSidebar.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "components/ProjectPhaseBoard.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "components/minimal/MinimalCard.jsx",
+    "changes": [
+      "MinimalCard -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "components/minimal/MinimalCard.stories.jsx",
+    "changes": [
+      "MinimalCard -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "components/minimal/MinimalCard.v2.jsx",
+    "changes": [
+      "MinimalCard -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "components/minimal/StepWizard.stories.jsx",
+    "changes": [
+      "Added UnifiedInput import",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "components/unified/UnifiedButton.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "components/unified/UnifiedCard.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "components/unified/UnifiedInput.jsx",
+    "changes": [
+      "Added UnifiedInput import",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "components/unified/UnifiedModal.jsx",
+    "changes": [
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "page/Admin/AdminDashboard.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "page/Cms/Calendar.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "page/Cms/CmsHomeMinimal.jsx",
+    "changes": [
+      "MinimalCard -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "page/Cms/CmsHomeMinimal.v2.jsx",
+    "changes": [
+      "Added UnifiedInput import",
+      "MinimalCard -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "page/Cms/Feedback.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "page/Cms/FeedbackPolling.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "page/Cms/FeedbackStable.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "page/Cms/FrameworkManagement.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import"
+    ]
+  },
+  {
+    "file": "page/Cms/InvitationAccept.jsx",
+    "changes": [
+      "Added UnifiedInput import"
+    ]
+  },
+  {
+    "file": "page/Cms/ProjectCreate.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "page/Cms/ProjectView-fixed.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "page/Cms/ProjectView.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "page/Cms/VideoPlanning-working.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "page/Cms/VideoPlanning.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "page/Cms/VideoPlanningMinimal.jsx",
+    "changes": [
+      "Added UnifiedInput import",
+      "MinimalCard -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "page/Home.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "page/User/Login.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "page/User/LoginMinimal.fixed-migrated.jsx",
+    "changes": [
+      "Added UnifiedInput import",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "page/User/LoginMinimal.jsx",
+    "changes": [
+      "Added UnifiedInput import"
+    ]
+  },
+  {
+    "file": "page/User/LoginMinimal.modules-migrated.jsx",
+    "changes": [
+      "Added UnifiedInput import",
+      "input -> UnifiedInput",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "page/User/MyPage.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "page/User/MyPage.migrated.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "page/User/Signup.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "page/User/SignupWithEmail.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "tasks/Calendar/CalendarDate.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackManage.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMessage.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMessagePolling.jsx",
+    "changes": [
+      "Added UnifiedInput import",
+      "input -> UnifiedInput"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMore.fixed-migrated.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMore.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMore.modules-migrated.jsx",
+    "changes": [
+      "Added UnifiedButton import"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/OpinionInput.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton",
+      "button -> UnifiedButton"
+    ]
+  },
+  {
+    "file": "tasks/Project/InviteInput.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "Added UnifiedInput import"
+    ]
+  },
+  {
+    "file": "tasks/Project/ProcessDateEnhanced.jsx",
+    "changes": [
+      "Added UnifiedButton import",
+      "button -> UnifiedButton"
+    ]
+  }
+]

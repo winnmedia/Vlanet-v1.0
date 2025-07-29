@@ -1,4 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect , Suspense } from 'react'
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+import dynamic from 'next/dynamic';
+import { Input } from '../../components/unified/Input'
 import { useRouter } from '../../util/nextNavigation'
 import { useDispatch } from 'react-redux'
 import { checkSession } from '../../util/util'
@@ -143,7 +146,7 @@ export default function LoginMinimal() {
             onSubmit={handleSubmit}
             noValidate
             aria-label="로그인 폼"
-          >
+           role="form">
             <MinimalInput
               ref={emailRef}
               type="email"
@@ -186,7 +189,7 @@ export default function LoginMinimal() {
                   <input
                     type="checkbox"
                     checked={showPassword}
-                    onChange={(e) => setShowPassword(e.target.checked)}
+                    onChange={(e) = aria-label="checkbox input"> setShowPassword(e.target.checked)}
                     disabled={isLoading}
                   />
                   <span>비밀번호 표시</span>
@@ -196,7 +199,7 @@ export default function LoginMinimal() {
                   href="/forgot-password" 
                   className={styles.link}
                   tabIndex={isLoading ? -1 : 0}
-                >
+                 aria-label="Link">
                   비밀번호를 잊으셨나요?
                 </a>
               </div>
@@ -211,7 +214,7 @@ export default function LoginMinimal() {
                     <MinimalButton
                       variant="secondary"
                       size="small"
-                      onClick={handleResendVerification}
+                      onClick={handleResendVerification} onKeyDown={(e) => e.key === 'Enter' && handleResendVerification}
                       type="button"
                     >
                       인증 메일 다시 받기
@@ -242,7 +245,7 @@ export default function LoginMinimal() {
               href="/Signup" 
               className={styles.link}
               tabIndex={isLoading ? -1 : 0}
-            >
+             aria-label="Link">
               회원가입
             </a>
           </div>

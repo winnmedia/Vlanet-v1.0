@@ -1,49 +1,94 @@
+@import '../styles/design-tokens';
+
 .LoginIntro {
   height: 100%;
-  padding: 50px;
+  padding: $spacing-3xl + $spacing-2xs;
   position: relative;
   background: url('../images/User/bg.png') no-repeat;
   background-size: cover;
   .intro_wrap {
     .logo {
       img {
-        width: 120px;
+        width: $spacing-6xl + $spacing-lg;
         cursor: pointer;
       }
     }
     .slogun {
-      color: #fff;
-      font-size: 57px;
-      line-height: 1.24;
-      margin-top: 30px;
+      color: $color-white;
+      font-size: $spacing-4xl;
+      line-height: $line-height-tight;
+      margin-top: $spacing-lg + $spacing-xs + $spacing-2xs;
       span {
-        font-weight: bold;
+        font-weight: $font-weight-bold;
       }
     }
     .etc {
       position: absolute;
-      left: 0;
-      bottom: 50px;
+      left: $spacing-0;
+      bottom: $spacing-3xl + $spacing-2xs;
       width: 100%;
-      padding: 0 50px;
+      padding: $spacing-0 $spacing-3xl + $spacing-2xs;
       ul {
         li {
-          color: #fff;
+          color: $color-white;
           font-family: 'pl';
-          font-size: 15px;
-          margin-top: 20px;
+          font-size: $spacing-md - $spacing-2xs;
+          margin-top: $spacing-lg - $spacing-xs;
           &:first-child {
-            margin-top: 0;
+            margin-top: $spacing-0;
           }
         }
       }
       div {
-        color: #fff;
+        color: $color-white;
         font-family: 'pr';
         text-align: right;
-        font-size: 64px;
-        line-height: 1.24;
+        font-size: $spacing-4xl;
+        line-height: $line-height-tight;
       }
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: $spacing-md;
+    width: 100%;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .text-large {
+    font-size: $font-size-lg;
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 76calc(8px + 4px)) and (max-width: 1024px) {
+  .container {
+    padding: $spacing-lg;
+    max-width: 960;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 102calc(8px - 4px)) {
+  .container {
+    max-width: 1200;
+    margin: 0 auto;
   }
 }

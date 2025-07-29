@@ -1,0 +1,604 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 캘린더 통합 스타일
+// CalendarLayout, CalendarResponsive, CalendarToolbar, CalendarEnhanced 통합
+
+@use '../../tokens' as *;
+
+// ========== 캘린더 컨테이너 ==========
+
+.calendarContainer {
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-default;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// ========== 캘린더 툴바 ==========
+
+.calendarToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  background: $color-gray-50;
+  border-bottom: 1px solid $color-border-light;
+  gap: $spacing-md;
+  flex-shrink: 0;
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-sm $spacing-md;
+    flex-wrap: wrap;
+  }
+  
+  .toolbarLeft,
+  .toolbarCenter,
+  .toolbarRight {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+  
+  .toolbarCenter {
+    flex: 1;
+    justify-content: center;
+    
+    @media (max-width: $breakpoint-md) {
+      order: -1;
+      width: 100%;
+      margin-bottom: $spacing-sm;
+    }
+  }
+}
+
+// 네비게이션 버튼
+.navButton {
+  width: $spacing-xl + $spacing-xs;
+  height: $spacing-xl + $spacing-xs;
+  border-radius: $radius-md;
+  background: $color-white;
+  border: 1px solid $color-border-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-fast;
+  
+  &:hover {
+    background: $color-gray-100;
+    border-color: $color-gray-300;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  svg {
+    width: $spacing-md + 2px;
+    height: $spacing-md + 2px;
+    color: $color-text-secondary;
+  }
+}
+
+// 현재 날짜 표시
+.currentDate {
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $color-text-primary;
+  min-width: 200px;
+  text-align: center;
+  
+  @media (max-width: $breakpoint-sm) {
+    font-size: $font-size-base;
+    min-width: auto;
+  }
+}
+
+// 오늘 버튼
+.todayButton {
+  padding: $spacing-xs $spacing-md;
+  background: $color-primary;
+  color: white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-fast;
+  white-space: nowrap;
+  
+  &:hover {
+    background: $color-primary-hover;
+    transform: translateY(-1px);
+    box-shadow: $shadow-sm;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
+  }
+}
+
+// 뷰 전환 버튼
+.viewButtons {
+  display: flex;
+  background: $color-gray-100;
+  border-radius: $radius-md;
+  padding: 2px;
+  gap: 2px;
+  
+  .viewButton {
+    padding: $spacing-xs $spacing-sm;
+    background: transparent;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    
+    &:hover {
+      background: rgba($color-white, $opacity-50);
+      color: $color-text-primary;
+    }
+    
+    &.active {
+      background: $color-white;
+      color: $color-primary;
+      box-shadow: $shadow-xs;
+    }
+    
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-xs;
+      font-size: $font-size-xs;
+    }
+  }
+}
+
+// ========== 캘린더 본체 ==========
+
+.calendarBody {
+  flex: 1;
+  overflow: auto;
+  padding: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-sm;
+  }
+}
+
+// 캘린더 그리드
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: $color-border-light;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  height: 100%;
+  min-height: 500px;
+  
+  @media (max-width: $breakpoint-sm) {
+    min-height: 400px;
+  }
+}
+
+// 요일 헤더
+.weekHeader {
+  display: contents;
+  
+  .weekDay {
+    background: $color-gray-50;
+    padding: $spacing-sm;
+    text-align: center;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-text-secondary;
+    border-bottom: 1px solid $color-border-light;
+    
+    &:first-child {
+      color: $color-danger;
+    }
+    
+    &:last-child {
+      color: $color-primary;
+    }
+    
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-xs;
+      padding: $spacing-xs;
+    }
+  }
+}
+
+// 날짜 셀
+.dateCell {
+  background: $color-white;
+  padding: $spacing-sm;
+  min-height: 100px;
+  position: relative;
+  cursor: pointer;
+  transition: all $transition-fast;
+  
+  @media (max-width: $breakpoint-md) {
+    min-height: $spacing-5xl;
+    padding: $spacing-xs;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    min-height: $spacing-4xl - $spacing-xs;
+  }
+  
+  &:hover {
+    background: $color-gray-50;
+  }
+  
+  &.otherMonth {
+    background: $color-gray-50;
+    
+    .dateNumber {
+      color: $color-text-muted;
+    }
+  }
+  
+  &.today {
+    background: $color-primary-light;
+    
+    .dateNumber {
+      color: $color-primary;
+      font-weight: 700;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 6px;
+        height: 6px;
+        background: $color-primary;
+        border-radius: $border-radius-full;
+      }
+    }
+  }
+  
+  &.selected {
+    background: $color-primary;
+    
+    .dateNumber {
+      color: white;
+    }
+    
+    .event {
+      background: rgba($color-white, 0.2);
+      color: white;
+    }
+  }
+  
+  &.hasEvent {
+    .dateNumber::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: $spacing-sm;
+      height: $spacing-sm;
+      background: $color-danger;
+      border-radius: $border-radius-full;
+    }
+  }
+}
+
+.dateNumber {
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: $color-text-primary;
+  position: relative;
+  display: inline-block;
+  
+  @media (max-width: $breakpoint-sm) {
+    font-size: $font-size-xs;
+  }
+}
+
+// 이벤트 표시
+.events {
+  margin-top: $spacing-xs;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.event {
+  padding: 2px 6px;
+  background: $color-primary-light;
+  color: $color-primary;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: all $transition-fast;
+  
+  &:hover {
+    background: $color-primary;
+    color: white;
+  }
+  
+  &.project {
+    background: $color-info-light;
+    color: $color-info;
+    
+    &:hover {
+      background: $color-info;
+      color: white;
+    }
+  }
+  
+  &.deadline {
+    background: $color-danger-light;
+    color: $color-danger;
+    
+    &:hover {
+      background: $color-danger;
+      color: white;
+    }
+  }
+  
+  &.meeting {
+    background: $color-warning-light;
+    color: $color-warning;
+    
+    &:hover {
+      background: $color-warning;
+      color: white;
+    }
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    display: none;
+    
+    &:first-child {
+      display: block;
+    }
+  }
+}
+
+.moreEvents {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 2px;
+  
+  &:hover {
+    color: $color-primary;
+    text-decoration: underline;
+  }
+}
+
+// ========== 주간/일간 뷰 ==========
+
+.weekView,
+.dayView {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 1px;
+  background: $color-border-light;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  height: 100%;
+  
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 40px 1fr;
+  }
+}
+
+.timeColumn {
+  background: $color-gray-50;
+  border-right: 1px solid $color-border-light;
+}
+
+.timeSlot {
+  height: $spacing-4xl - $spacing-xs;
+  padding: $spacing-xs;
+  text-align: right;
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  border-bottom: 1px solid $color-border-light;
+  
+  @media (max-width: $breakpoint-sm) {
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+}
+
+.eventsColumn {
+  position: relative;
+  background: $color-white;
+}
+
+.timeEvent {
+  position: absolute;
+  left: $spacing-xs;
+  right: $spacing-xs;
+  background: $color-primary;
+  color: white;
+  padding: $spacing-xs;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  box-shadow: $shadow-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+  overflow: hidden;
+  
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: $shadow-md;
+    z-index: 10;
+  }
+  
+  .eventTime {
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  
+  .eventTitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// ========== 리스트 뷰 ==========
+
+.listView {
+  .listHeader {
+    display: grid;
+    grid-template-columns: 120px 1fr 100px 100px;
+    gap: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    background: $color-gray-50;
+    border-bottom: 2px solid $color-border-light;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-text-secondary;
+    
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 100px 1fr;
+      
+      > *:nth-child(n+3) {
+        display: none;
+      }
+    }
+  }
+  
+  .listItem {
+    display: grid;
+    grid-template-columns: 120px 1fr 100px 100px;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    border-bottom: 1px solid $color-border-light;
+    transition: all $transition-fast;
+    cursor: pointer;
+    
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 100px 1fr;
+      
+      > *:nth-child(n+3) {
+        display: none;
+      }
+    }
+    
+    &:hover {
+      background: $color-gray-50;
+    }
+    
+    .listDate {
+      font-weight: 500;
+      color: $color-text-secondary;
+    }
+    
+    .listTitle {
+      font-weight: 500;
+      color: $color-text-primary;
+    }
+    
+    .listType {
+      color: $color-text-muted;
+      font-size: $font-size-sm;
+    }
+    
+    .listStatus {
+      text-align: right;
+      
+      .statusBadge {
+        display: inline-block;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $radius-full;
+        font-size: $font-size-xs;
+        font-weight: 500;
+        
+        &.pending {
+          background: $color-warning-light;
+          color: $color-warning;
+        }
+        
+        &.completed {
+          background: $color-success-light;
+          color: $color-success;
+        }
+      }
+    }
+  }
+}
+
+// ========== 이벤트 생성 버튼 ==========
+
+.createEventButton {
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  width: 56px;
+  height: 56px;
+  border-radius: $border-radius-full;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+  color: white;
+  border: none;
+  box-shadow: $shadow-button-hover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-button;
+  z-index: 100;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: $shadow-xl;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  svg {
+    width: $spacing-lg;
+    height: $spacing-lg;
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    bottom: $spacing-lg;
+    right: $spacing-lg;
+    width: $spacing-3xl;
+    height: $spacing-3xl;
+    
+    svg {
+      width: $spacing-lg - $spacing-xs;
+      height: $spacing-lg - $spacing-xs;
+    }
+  }
+}

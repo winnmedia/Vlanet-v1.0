@@ -1,0 +1,222 @@
+[
+  {
+    "file": "src/page/Cms/CmsHomeMinimal.jsx",
+    "buttons": [
+      {
+        "lineNumber": 214,
+        "endLine": 219,
+        "content": "<button \n              className={styles.newProjectBtn}\n              onClick={() => navigate('/Create')}\n            >\n              새 프로젝트\n            </button>"
+      },
+      {
+        "lineNumber": 233,
+        "endLine": 238,
+        "content": "<button \n                          className={styles.acceptBtn}\n                          onClick={() => handleAcceptInvitation(invitations.received[0].id)}\n                        >\n                          수락\n                        </button>"
+      },
+      {
+        "lineNumber": 239,
+        "endLine": 244,
+        "content": "<button \n                          className={styles.declineBtn}\n                          onClick={() => handleDeclineInvitation(invitations.received[0].id)}\n                        >\n                          거절\n                        </button>"
+      },
+      {
+        "lineNumber": 258,
+        "endLine": 264,
+        "content": "<button \n                  className={`${styles.tab} ${activeTab === 'all' ? styles.active : ''}`}\n                  onClick={() => setActiveTab('all')}\n                >\n                  전체\n                  <span className={styles.count}>{projectListData.length}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 265,
+        "endLine": 271,
+        "content": "<button \n                  className={`${styles.tab} ${activeTab === 'this-month' ? styles.active : ''}`}\n                  onClick={() => setActiveTab('this-month')}\n                >\n                  이번 달\n                  <span className={styles.count}>{this_month_project?.length || 0}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 272,
+        "endLine": 278,
+        "content": "<button \n                  className={`${styles.tab} ${activeTab === 'next-month' ? styles.active : ''}`}\n                  onClick={() => setActiveTab('next-month')}\n                >\n                  다음 달\n                  <span className={styles.count}>{next_month_project?.length || 0}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 283,
+        "endLine": 289,
+        "content": "<button \n                  className={`${styles.statusFilter} ${filterStatus === 'all' ? styles.active : ''}`}\n                  onClick={() => setFilterStatus('all')}\n                >\n                  <span className={styles.filterLabel}>전체</span>\n                  <span className={styles.filterCount}>{statusCounts.all}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 290,
+        "endLine": 296,
+        "content": "<button \n                  className={`${styles.statusFilter} ${filterStatus === 'active' ? styles.active : ''}`}\n                  onClick={() => setFilterStatus('active')}\n                >\n                  <span className={styles.filterLabel}>진행중</span>\n                  <span className={styles.filterCount}>{statusCounts.active}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 297,
+        "endLine": 303,
+        "content": "<button \n                  className={`${styles.statusFilter} ${filterStatus === 'delayed' ? styles.active : ''}`}\n                  onClick={() => setFilterStatus('delayed')}\n                >\n                  <span className={styles.filterLabel}>지연</span>\n                  <span className={styles.filterCount}>{statusCounts.delayed}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 361,
+        "endLine": 374,
+        "content": "<button \n                            className={styles.expandToggle}\n                            aria-label={expandedProjects.has(project.id) ? '접기' : '펼치기'}\n                          >\n                            <svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" fill=\"none\">\n                              <path \n                                d={expandedProjects.has(project.id) ? \"M6 8L10 12L14 8\" : \"M8 6L12 10L8 14\"} \n                                stroke=\"currentColor\" \n                                strokeWidth=\"2\" \n                                strokeLinecap=\"round\" \n                                strokeLinejoin=\"round\"\n                              />\n                            </svg>\n                          </button>"
+      },
+      {
+        "lineNumber": 435,
+        "endLine": 440,
+        "content": "<button \n                              className={styles.viewProjectBtn}\n                              onClick={() => navigate(`/Project/${project.id}`)}\n                            >\n                              프로젝트 보기\n                            </button>"
+      }
+    ]
+  },
+  {
+    "file": "src/page/Cms/CmsHomeMinimal.v2.jsx",
+    "buttons": [
+      {
+        "lineNumber": 319,
+        "endLine": 327,
+        "content": "<button \n                  role=\"tab\"\n                  aria-selected={activeTab === 'all'}\n                  className={`${styles.tab} ${activeTab === 'all' ? styles.active : ''}`}\n                  onClick={() => setActiveTab('all')}\n                >\n                  전체\n                  <span className={styles.count}>{projectListData.length}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 328,
+        "endLine": 336,
+        "content": "<button \n                  role=\"tab\"\n                  aria-selected={activeTab === 'this-month'}\n                  className={`${styles.tab} ${activeTab === 'this-month' ? styles.active : ''}`}\n                  onClick={() => setActiveTab('this-month')}\n                >\n                  이번 달\n                  <span className={styles.count}>{this_month_project?.length || 0}</span>\n                </button>"
+      },
+      {
+        "lineNumber": 337,
+        "endLine": 345,
+        "content": "<button \n                  role=\"tab\"\n                  aria-selected={activeTab === 'next-month'}\n                  className={`${styles.tab} ${activeTab === 'next-month' ? styles.active : ''}`}\n                  onClick={() => setActiveTab('next-month')}\n                >\n                  다음 달\n                  <span className={styles.count}>{next_month_project?.length || 0}</span>\n                </button>"
+      }
+    ]
+  },
+  {
+    "file": "src/components/ProjectPhaseBoard.jsx",
+    "buttons": [
+      {
+        "lineNumber": 142,
+        "endLine": 148,
+        "content": "<button \n                className={`${styles.filterTab} ${selectedFilter === 'all' ? styles.active : ''}`}\n                onClick={() => setSelectedFilter('all')}\n              >\n                전체\n                <span className={styles.count}>{projectsByStatus.all.length}</span>\n              </button>"
+      },
+      {
+        "lineNumber": 149,
+        "endLine": 155,
+        "content": "<button \n                className={`${styles.filterTab} ${selectedFilter === 'active' ? styles.active : ''}`}\n                onClick={() => setSelectedFilter('active')}\n              >\n                진행중\n                <span className={styles.count}>{projectsByStatus.active.length}</span>\n              </button>"
+      },
+      {
+        "lineNumber": 156,
+        "endLine": 162,
+        "content": "<button \n                className={`${styles.filterTab} ${selectedFilter === 'delayed' ? styles.active : ''}`}\n                onClick={() => setSelectedFilter('delayed')}\n              >\n                지연\n                <span className={`${styles.count} ${styles.delayed}`}>{projectsByStatus.delayed.length}</span>\n              </button>"
+      },
+      {
+        "lineNumber": 164,
+        "endLine": 181,
+        "content": "<button \n              className={`${styles.collapseBtn} ${isCollapsed ? styles.collapsed : ''}`}\n              onClick={() => setIsCollapsed(!isCollapsed)}\n              title={isCollapsed ? '펼치기' : '접기'}\n            >\n              <svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" fill=\"none\">\n                <path \n                  d={isCollapsed ? \n                    'M7 8L10 11L13 8' : \n                    'M7 12L10 9L13 12'\n                  } \n                  stroke=\"currentColor\" \n                  strokeWidth=\"2\" \n                  strokeLinecap=\"round\" \n                  strokeLinejoin=\"round\"\n                />\n              </svg>\n            </button>"
+      },
+      {
+        "lineNumber": 189,
+        "endLine": 370,
+        "content": "<button \n              className={`${styles.collapseBtn} ${isCollapsed ? styles.collapsed : ''}`}\n              onClick={() => setIsCollapsed(!isCollapsed)}\n              style={{ marginBottom: '20px' }}\n            />\n          </div>\n        )}\n        \n        {!isCollapsed && (\n          <div className={styles.boardContent}>\n            <div className={styles.projectsContainer}>\n              {projectsByStatus[selectedFilter].map(project => (\n                <ProjectPhaseCard\n                  key={project.id}\n                  project={project}\n                  phases={phases}\n                  getPhaseStatus={getPhaseStatus}\n                  getProjectProgress={getProjectProgress}\n                  expandedProjects={expandedProjects}\n                  toggleProject={toggleProject}\n                  statusColors={statusColors}\n                  statusNames={statusNames}\n                  onPhaseUpdate={onPhaseUpdate}\n                />\n              ))}\n              {projectsByStatus[selectedFilter].length === 0 && (\n                <div className={styles.emptyState}>\n                  <svg width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" fill=\"none\">\n                    <circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#F8F9FA\"/>\n                    <path d=\"M22 28H42M22 36H42\" stroke=\"#DEE2E6\" strokeWidth=\"2\" strokeLinecap=\"round\"/>\n                    <rect x=\"18\" y=\"20\" width=\"28\" height=\"24\" rx=\"2\" stroke=\"#DEE2E6\" strokeWidth=\"2\" fill=\"none\"/>\n                  </svg>\n                  <p>해당하는 프로젝트가 없습니다</p>\n                </div>\n              )}\n            </div>\n          </div>\n        )}\n      </div>\n    </>\n  )\n}\n\n// 프로젝트 단계 카드 컴포넌트\nfunction ProjectPhaseCard({ \n  project, \n  phases, \n  getPhaseStatus, \n  getProjectProgress,\n  expandedProjects,\n  toggleProject,\n  statusColors,\n  statusNames,\n  onPhaseUpdate\n}) {\n  const progress = getProjectProgress(project)\n  const isExpanded = expandedProjects[project.id]\n  const hasDelayed = phases.some(phase => \n    getPhaseStatus(project[phase.key], project.end_date) === 'delayed'\n  )\n  \n  // 단계 완료 처리\n  const handlePhaseComplete = (phase) => {\n    if (onPhaseUpdate) {\n      const phaseData = project[phase.key]\n      if (phaseData && phaseData.start_date) {\n        // 완료 상태를 토글\n        const completed = !phaseData.completed\n        // 백엔드 API 호출을 위해 시작일과 종료일을 함께 전달\n        onPhaseUpdate(project.id, phase.key, phaseData.start_date, phaseData.end_date, completed)\n      }\n    }\n  }\n  \n  return (\n    <div className={`${styles.projectCard} ${hasDelayed ? styles.hasDelayed : ''}`} data-expanded={isExpanded}>\n      {/* 프로젝트 헤더 */}\n      <div className={styles.projectHeader} onClick={() => toggleProject(project.id)}>\n        <div className={styles.projectMainInfo}>\n          <div className={styles.projectTitleRow}>\n            <h3 className={styles.projectName}>{project.name}</h3>\n            {hasDelayed && (\n              <span className={styles.delayIndicator} title=\"지연된 단계가 있습니다\">\n                <svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\">\n                  <path d=\"M8 2V8L11 11\" stroke=\"#dc3545\" strokeWidth=\"2\" strokeLinecap=\"round\"/>\n                  <circle cx=\"8\" cy=\"8\" r=\"7\" stroke=\"#dc3545\" strokeWidth=\"2\" fill=\"none\"/>\n                </svg>\n              </span>\n            )}\n          </div>\n          <div className={styles.projectDetails}>\n            <span className={styles.projectDates}>\n              {moment(project.start_date).format('MM.DD')} - {moment(project.end_date).format('MM.DD')}\n            </span>\n            <span className={styles.projectDuration}>\n              {moment(project.end_date).diff(moment(project.start_date), 'days')}일\n            </span>\n          </div>\n        </div>\n        <div className={styles.projectActions}>\n          <div className={styles.progressIndicator}>\n            <svg className={styles.progressRing} width=\"48\" height=\"48\" viewBox=\"0 0 48 48\">\n              <circle \n                cx=\"24\" \n                cy=\"24\" \n                r=\"20\" \n                fill=\"none\" \n                stroke=\"#E9ECEF\" \n                strokeWidth=\"3\"\n              />\n              <circle \n                cx=\"24\" \n                cy=\"24\" \n                r=\"20\" \n                fill=\"none\" \n                stroke={hasDelayed ? '#dc3545' : '#1631F8'}\n                strokeWidth=\"3\"\n                strokeDasharray={`${2 * Math.PI * 20}`}\n                strokeDashoffset={`${2 * Math.PI * 20 * (1 - progress / 100)}`}\n                transform=\"rotate(-90 24 24)\"\n                style={{ transition: 'stroke-dashoffset 0.5s ease' }}\n              />\n            </svg>\n            <span className={styles.progressText}>{progress}%</span>\n          </div>\n          <button className={styles.expandToggle}>\n            <svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" fill=\"none\">\n              <path \n                d={isExpanded ? 'M6 12L10 8L14 12' : 'M6 8L10 12L14 8'} \n                stroke=\"currentColor\" \n                strokeWidth=\"2\" \n                strokeLinecap=\"round\" \n                strokeLinejoin=\"round\"\n              />\n            </svg>\n          </button>\n        </div>\n      </div>\n      \n      {/* 단계 타임라인 - 펼쳐진 경우에만 표시 */}\n      {isExpanded && (\n        <div className={styles.phasesTimeline}>\n          {phases.map((phase, index) => {\n            const phaseData = project[phase.key]\n            const status = getPhaseStatus(phaseData, project.end_date)\n            const hasData = phaseData && phaseData.start_date\n            \n            return (\n              <div key={phase.key} className={`${styles.phaseItem} ${styles[status]} ${!hasData ? styles.noData : ''}`}>\n                <div className={styles.phaseDot}>\n                  {status === 'completed' && (\n                    <svg width=\"12\" height=\"12\" viewBox=\"0 0 12 12\" fill=\"none\">\n                      <path d=\"M2 6L5 9L10 3\" stroke=\"white\" strokeWidth=\"2\" strokeLinecap=\"round\" strokeLinejoin=\"round\"/>\n                    </svg>\n                  )}\n                  {status === 'in_progress' && (\n                    <div className={styles.pulseDot}></div>\n                  )}\n                </div>\n                {index < phases.length - 1 && <div className={styles.phaseLine}></div>}\n                <div className={styles.phaseContent}>\n                  <div className={styles.phaseHeader}>\n                    <span className={styles.phaseName}>{phase.name}</span>\n                    {hasData && status !== 'pending' && (\n                      <button \n                        className={`${styles.completeBtn} ${phaseData.completed ? styles.completed : ''}`}\n                        onClick={(e) => {\n                          e.stopPropagation()\n                          handlePhaseComplete(phase)\n                        }}\n                        title={phaseData.completed ? '완료 취소' : '완료 처리'}\n                      >\n                        {phaseData.completed ? (\n                          <svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\">\n                            <path d=\"M2 7L5.5 10.5L12 3.5\" stroke=\"currentColor\" strokeWidth=\"2\" strokeLinecap=\"round\" strokeLinejoin=\"round\"/>\n                          </svg>\n                        ) : (\n                          <svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\">\n                            <circle cx=\"7\" cy=\"7\" r=\"6\" stroke=\"currentColor\" strokeWidth=\"2\" fill=\"none\"/>\n                          </svg>\n                        )}\n                      </button>\n                    )}\n                  </div>\n                  {hasData ? (\n                    <div className={styles.phaseDates}>\n                      <span className={styles.dateRange}>\n                        {moment(phaseData.start_date).format('MM.DD')} - {moment(phaseData.end_date).format('MM.DD')}\n                      </span>\n                      {status === 'delayed' && (\n                        <span className={styles.delayBadge}>\n                          {moment().diff(moment(phaseData.end_date), 'days')}일 지연\n                        </span>\n                      )}\n                    </div>\n                  ) : (\n                    <div className={styles.noDataMessage}>일정 미정</div>\n                  )}\n                </div>\n              </div>\n            )\n          })}\n        </div>\n      )}\n      \n    </div>\n  )\n}"
+      },
+      {
+        "lineNumber": 314,
+        "endLine": 324,
+        "content": "<button className={styles.expandToggle}>\n            <svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" fill=\"none\">\n              <path \n                d={isExpanded ? 'M6 12L10 8L14 12' : 'M6 8L10 12L14 8'} \n                stroke=\"currentColor\" \n                strokeWidth=\"2\" \n                strokeLinecap=\"round\" \n                strokeLinejoin=\"round\"\n              />\n            </svg>\n          </button>"
+      },
+      {
+        "lineNumber": 353,
+        "endLine": 370,
+        "content": "<button \n                        className={`${styles.completeBtn} ${phaseData.completed ? styles.completed : ''}`}\n                        onClick={(e) => {\n                          e.stopPropagation()\n                          handlePhaseComplete(phase)\n                        }}\n                        title={phaseData.completed ? '완료 취소' : '완료 처리'}\n                      >\n                        {phaseData.completed ? (\n                          <svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\">\n                            <path d=\"M2 7L5.5 10.5L12 3.5\" stroke=\"currentColor\" strokeWidth=\"2\" strokeLinecap=\"round\" strokeLinejoin=\"round\"/>\n                          </svg>\n                        ) : (\n                          <svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\">\n                            <circle cx=\"7\" cy=\"7\" r=\"6\" stroke=\"currentColor\" strokeWidth=\"2\" fill=\"none\"/>\n                          </svg>\n                        )}\n                      </button>"
+      }
+    ]
+  },
+  {
+    "file": "src/components/ProjectScheduleSection.jsx",
+    "buttons": [
+      {
+        "lineNumber": 126,
+        "endLine": 131,
+        "content": "<button \n            className={`${styles['view-btn']} ${viewMode === 'week' ? styles.active : ''}`}\n            onClick={() => setViewMode('week')}\n          >\n            주간\n          </button>"
+      },
+      {
+        "lineNumber": 132,
+        "endLine": 137,
+        "content": "<button \n            className={`${styles['view-btn']} ${viewMode === 'month' ? styles.active : ''}`}\n            onClick={() => setViewMode('month')}\n          >\n            월간\n          </button>"
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+    "buttons": [
+      {
+        "lineNumber": 58,
+        "endLine": 62,
+        "content": "<button className={styles.infoButton} onClick={onInfoClick}>\n            <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"currentColor\">\n              <path d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z\"/>\n            </svg>\n          </button>"
+      },
+      {
+        "lineNumber": 116,
+        "endLine": 120,
+        "content": "<button className={styles.controlButton} onClick={onAddFeedback} title=\"피드백 추가\">\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\">\n            <path d=\"M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z\"/>\n          </svg>\n        </button>"
+      },
+      {
+        "lineNumber": 123,
+        "endLine": 127,
+        "content": "<button className={styles.controlButton} onClick={onUpload} title=\"영상 업로드\">\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\">\n            <path d=\"M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z\"/>\n          </svg>\n        </button>"
+      },
+      {
+        "lineNumber": 130,
+        "endLine": 134,
+        "content": "<button className={styles.controlButton} onClick={onDelete} title=\"영상 삭제\">\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\">\n            <path d=\"M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z\"/>\n          </svg>\n        </button>"
+      },
+      {
+        "lineNumber": 138,
+        "endLine": 142,
+        "content": "<button className={styles.controlButton} onClick={onShare} title=\"공유\">\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\">\n            <path d=\"M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z\"/>\n          </svg>\n        </button>"
+      },
+      {
+        "lineNumber": 145,
+        "endLine": 149,
+        "content": "<button className={styles.controlButton} onClick={onScreenshot} title=\"스크린샷\">\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\">\n            <path d=\"M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z\"/>\n          </svg>\n        </button>"
+      },
+      {
+        "lineNumber": 152,
+        "endLine": 156,
+        "content": "<button className={styles.controlButton} onClick={onFullview} title=\"전체보기\">\n          <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"currentColor\">\n            <path d=\"M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z\"/>\n          </svg>\n        </button>"
+      },
+      {
+        "lineNumber": 206,
+        "endLine": 215,
+        "content": "<button\n          key={tab.id}\n          className={classNames(\n            styles.tabButton,\n            { [styles.active]: activeTab === tab.id }\n          )}\n          onClick={() => onTabChange(tab.id)}\n        >\n          {tab.label}\n        </button>"
+      },
+      {
+        "lineNumber": 322,
+        "endLine": 328,
+        "content": "<button \n          className={styles.sendButton}\n          onClick={onSend}\n          disabled={disabled || !value.trim()}\n        >\n          전송\n        </button>"
+      }
+    ]
+  },
+  {
+    "file": "src/tasks/Feedback/FeedbackMore.jsx",
+    "buttons": [
+      {
+        "lineNumber": 171,
+        "endLine": 180,
+        "content": "<button \n                    className={`${styles['action-btn']} ${styles.like} ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? styles.active : ''}`}\n                    onClick={(e) => {\n                      e.stopPropagation();\n                      handleReaction(data.id, 'like');\n                    }}\n                  >\n                    <span>👍</span>\n                    <span className={styles.count}>{feedbackReactions[`${data.id}_like`] || 0}</span>\n                  </button>"
+      },
+      {
+        "lineNumber": 181,
+        "endLine": 190,
+        "content": "<button \n                    className={`${styles['action-btn']} ${styles.dislike} ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? styles.active : ''}`}\n                    onClick={(e) => {\n                      e.stopPropagation();\n                      handleReaction(data.id, 'dislike');\n                    }}\n                  >\n                    <span>👎</span>\n                    <span className={styles.count}>{feedbackReactions[`${data.id}_dislike`] || 0}</span>\n                  </button>"
+      }
+    ]
+  },
+  {
+    "file": "src/components/ToggleButton.jsx",
+    "buttons": [
+      {
+        "lineNumber": 6,
+        "endLine": 16,
+        "content": "<button \n      className={`${styles.toggleButton} ${isExpanded ? styles.expanded : ''} ${className}`}\n      onClick={onClick}\n      type=\"button\"\n      aria-expanded={isExpanded}\n      aria-label={isExpanded ? '접기' : '펼치기'}\n    >\n      <span className={styles.icon}>\n        {isExpanded ? '−' : '+'}\n      </span>\n    </button>"
+      }
+    ]
+  },
+  {
+    "file": "src/components/SideBar.jsx",
+    "buttons": [
+      {
+        "lineNumber": 252,
+        "endLine": 257,
+        "content": "<button\n              onClick={() => navigate('/ProjectCreate')}\n              className=\"submit\"\n            >\n              프로젝트 등록\n            </button>"
+      }
+    ]
+  }
+]

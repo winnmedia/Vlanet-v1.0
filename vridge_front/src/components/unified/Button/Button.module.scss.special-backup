@@ -1,0 +1,298 @@
+@import '../../../styles/design-tokens';
+
+// Base button styles
+.button {
+  // Layout
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  position: relative;
+  
+  // Typography
+  font-family: $font-family-base;
+  font-weight: $font-weight-medium;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  
+  // Interaction
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  border: $border-width-thin solid transparent;
+  
+  // Transitions
+  transition: $transition-colors, $transition-transform, $transition-shadow;
+  
+  // Disabled state
+  &:disabled,
+  &--disabled {
+    cursor: not-allowed;
+    opacity: $opacity-50;
+  }
+  
+  // Focus state (accessibility)
+  &:focus-visible {
+    box-shadow: 0 0 0 2px $color-white, 0 0 0 4px $color-primary;
+  }
+  
+  // Active state
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+// Size variants
+.button--xs {
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-xs;
+  border-radius: $border-radius-sm;
+  min-height: $spacing-lg;
+}
+
+.button--sm {
+  padding: $spacing-xs $spacing-md;
+  font-size: $font-size-sm;
+  border-radius: $border-radius-sm;
+  min-height: $spacing-xl;
+}
+
+.button--md {
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  border-radius: $border-radius-md;
+  min-height: $spacing-2xl;
+}
+
+.button--lg {
+  padding: $spacing-md $spacing-xl;
+  font-size: $font-size-lg;
+  border-radius: $border-radius-md;
+  min-height: $spacing-3xl;
+}
+
+.button--xl {
+  padding: $spacing-lg $spacing-2xl;
+  font-size: $font-size-xl;
+  border-radius: $border-radius-lg;
+  min-height: 56px;
+}
+
+// Variant styles
+.button--primary {
+  background: $gradient-primary;
+  color: $color-white;
+  border-color: $color-primary-dark;
+  box-shadow: $shadow-button;
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, $color-primary-light 0%, $color-primary 100%);
+    box-shadow: $shadow-button-hover;
+  }
+  
+  &:active:not(:disabled) {
+    background: $color-primary-dark;
+  }
+}
+
+.button--secondary {
+  background: $color-white;
+  color: $color-text;
+  border-color: $color-border;
+  box-shadow: $shadow-sm;
+  
+  &:hover:not(:disabled) {
+    background: $color-background-secondary;
+    border-color: $color-border-dark;
+    box-shadow: $shadow-button-hover;
+  }
+  
+  &:active:not(:disabled) {
+    background: $color-gray-100;
+  }
+}
+
+.button--danger {
+  background: $gradient-danger;
+  color: $color-white;
+  border-color: $color-danger;
+  box-shadow: $shadow-button;
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, $color-danger-light 0%, $color-danger 100%);
+    box-shadow: $shadow-button-hover;
+  }
+  
+  &:active:not(:disabled) {
+    background: darken($color-danger, 10%);
+  }
+}
+
+.button--success {
+  background: $gradient-success;
+  color: $color-white;
+  border-color: $color-success;
+  box-shadow: $shadow-button;
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, $color-success-light 0%, $color-success 100%);
+    box-shadow: $shadow-button-hover;
+  }
+  
+  &:active:not(:disabled) {
+    background: darken($color-success, 10%);
+  }
+}
+
+.button--warning {
+  background: $color-warning;
+  color: $color-gray-900;
+  border-color: $color-warning;
+  box-shadow: $shadow-button;
+  
+  &:hover:not(:disabled) {
+    background: $color-warning-light;
+    box-shadow: $shadow-button-hover;
+  }
+  
+  &:active:not(:disabled) {
+    background: darken($color-warning, 10%);
+  }
+}
+
+.button--ghost {
+  background: transparent;
+  color: $color-text;
+  border-color: transparent;
+  
+  &:hover:not(:disabled) {
+    background: $color-background-secondary;
+    border-color: $color-border;
+  }
+  
+  &:active:not(:disabled) {
+    background: $color-gray-100;
+  }
+}
+
+.button--link {
+  background: transparent;
+  color: $color-primary;
+  border-color: transparent;
+  padding: $spacing-0;
+  min-height: auto;
+  text-decoration: underline;
+  box-shadow: $shadow-none;
+  
+  &:hover:not(:disabled) {
+    color: $color-primary-dark;
+    text-decoration: none;
+  }
+  
+  &:active:not(:disabled) {
+    color: $color-primary-dark;
+    transform: none;
+  }
+  
+  &:focus-visible {
+    box-shadow: $shadow-none;
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// Full width modifier
+.button--full-width {
+  width: 100%;
+}
+
+// Icon only modifier
+.button--icon-only {
+  padding: $spacing-sm;
+  
+  &.button--xs {
+    padding: $spacing-xs;
+    min-width: $spacing-lg;
+  }
+  
+  &.button--sm {
+    padding: $spacing-xs;
+    min-width: $spacing-xl;
+  }
+  
+  &.button--md {
+    padding: $spacing-sm;
+    min-width: $spacing-2xl;
+  }
+  
+  &.button--lg {
+    padding: $spacing-md;
+    min-width: $spacing-3xl;
+  }
+  
+  &.button--xl {
+    padding: $spacing-lg;
+    min-width: 56px;
+  }
+}
+
+// Loading state
+.button--loading {
+  color: transparent;
+  pointer-events: none;
+  
+  .button__text,
+  .button__icon {
+    visibility: hidden;
+  }
+}
+
+// Button elements
+.button__spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: $spacing-md;
+  height: $spacing-md;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: $border-radius-full;
+  animation: button-spin $duration-slower linear infinite;
+  
+  .button--primary &,
+  .button--danger &,
+  .button--success & {
+    border-color: $color-white;
+    border-top-color: transparent;
+  }
+}
+
+.button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.button__text {
+  display: inline-block;
+}
+
+// Animations
+@keyframes button-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: $breakpoint-sm) {
+  .button--md,
+  .button--lg,
+  .button--xl {
+    padding-left: $spacing-md;
+    padding-right: $spacing-md;
+  }
+}

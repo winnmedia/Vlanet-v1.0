@@ -1,0 +1,337 @@
+@import '../styles/design-tokens';
+
+// 스크린 리더 접근성 스타일
+// WCAG 2.1 스크린 리더 사용자를 위한 유틸리티
+
+@use '../tokens' as *;// ========== 스크린 리더 전용 클래스 ==========
+// 시각적으로 숨기지만 스크린 리더는 읽을 수 있음
+.sr-only,
+.visually-hidden.sr-only { position: absolute; }
+  width: $spacing-2xs ;
+  height: $spacing-2xs ;
+  padding: $spacing-0 ;
+  margin: -$spacing-2xs ;
+  overflow: hidden ;
+  clip: rect(0, 0, 0, 0) ;
+  $color-white-space: nowrap ;
+  border: 0 ;&:focus,
+  &:active {
+    // 포커스 시 보이기 (스킵 링크 등)
+.sr-only-focusable,
+.visually-hidden-focusable.sr-only-focusable { position: static; }
+    width: auto ;
+    height: auto ;
+    margin: $spacing-0 ;
+    overflow: visible ;
+    clip: auto ;
+    $color-white-space: normal ;
+}
+
+// ========== 스크린 리더 텍스트 믹스인 ==========
+@mixin sr-only {
+  position: absolute;
+  width: $spacing-2xs;
+  height: $spacing-2xs;
+  padding: $spacing-0;
+  margin: -$spacing-2xs;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin sr-only-focusable {
+  &:focus,
+  &:active {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: $spacing-0;
+    overflow: visible;
+    clip: auto;
+    $color-white-space: normal;
+  }
+}
+
+// ========== ARIA 라벨링 헬퍼 ==========
+// 숨겨진 라벨
+.hidden-label {
+  @include sr-only;
+}
+
+// 설명 텍스트 (aria-describedby)
+.sr-description {
+  @include sr-only;
+}
+
+// 라이브 리전 알림
+.sr-alert {
+  @include sr-only;
+  
+  // 중요 알림은 assertive
+  &.sr-alert-important {
+    aria-live: assertive;
+    aria-atomic: true;
+  }
+}
+
+// ========== 의미있는 아이콘 ==========
+// 아이콘 전용 버튼
+.icon-only {
+  // 아이콘에 대한 텍스트 설명 필요
+  .icon-text {
+    @include sr-only;
+  }
+}
+
+// 장식용 아이콘
+.decorative-icon {
+  aria-hidden: true;
+}
+
+// ========== 폼 접근성 ==========
+// 필수 필드 표시
+.required-indicator {
+  color: $color-danger;
+  
+  &::before {
+    content: '*';
+    margin-right: $spacing-xs;
+  }
+  
+  .sr-text {
+    @include sr-only;
+  }
+}
+
+// 에러 메시지
+.error-message {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin-top: $spacing-xs;
+  
+  &::before {
+    @include sr-only;
+    content: '오류: ';
+  }
+}
+
+// 도움말 텍스트
+.help-text {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  margin-top: $spacing-xs;
+}
+
+// ========== 테이블 접근성 ==========
+// 테이블 캡션
+table caption {
+  @include sr-only;
+  
+  // 보이는 캡션이 필요한 경우
+  &.visible-caption {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: $spacing-0 0 $spacing-md 0;
+    font-weight: $font-weight-semibold;
+    text-align: left;
+  }
+}
+
+// 테이블 헤더 스코프
+th[scope] {
+  font-weight: $font-weight-semibold;
+}
+
+// ========== 랜드마크 영역 ==========
+// 네비게이션 라벨
+nav[aria-label],
+[role="navigation"][aria-label] {
+  // 스크린 리더가 구분할 수 있도록 라벨 제공
+}
+
+// 메인 콘텐츠
+main,
+[role="main"] {
+  &:focus {
+    outline: none;
+  }
+}
+
+// ========== 상태 표시 ==========
+// 로딩 상태
+.loading {
+  &[aria-busy="true"] {
+    &::after {
+      @include sr-only;
+      content: '로딩 중...';
+    }
+  }
+}
+
+// 확장/축소 상태
+[aria-expanded] {
+  &::after {
+    @include sr-only;
+    content: attr(aria-expanded) ' 상태';
+  }
+}
+
+// 선택 상태
+[aria-selected="true"] {
+  &::after {
+    @include sr-only;
+    content: '선택됨';
+  }
+}
+
+// ========== 리스트 접근성 ==========
+// 리스트 아이템 개수
+.list-count {
+  @include sr-only;
+}
+
+// 현재 위치
+.current-position {
+  @include sr-only;
+}
+
+// ========== 유틸리티 클래스 ==========
+// 텍스트 대체
+.text-alternative {
+  @include sr-only;
+}
+
+// 추가 정보
+.additional-info {
+  @include sr-only;
+}
+
+// 컨텍스트 정보
+.context-info {
+  @include sr-only;
+}
+
+// ========== 라이브 리전 ==========
+// 정중한 알림 (기본)
+[aria-live="polite"],
+.live-region {
+  @include sr-only;
+}
+
+// 긴급 알림
+[aria-live="assertive"],
+.live-region-urgent {
+  @include sr-only;
+}
+
+// 상태 메시지
+[role="status"],
+.status-message {
+  @include sr-only;
+}
+
+// 알림 메시지
+[role="alert"],
+.alert-message {
+  @include sr-only;
+}
+
+// ========== 시각적 표시와 함께 사용 ==========
+// 배지나 태그의 스크린 리더 텍스트
+.badge,
+.tag {
+  .sr-label {
+    @include sr-only;
+  }
+}
+
+// 진행률 표시
+.progress {
+  [role="progressbar"] {
+    &::after {
+      @include sr-only;
+      content: attr(aria-valuenow) '% 완료';
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

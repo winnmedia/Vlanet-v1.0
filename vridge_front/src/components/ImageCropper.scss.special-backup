@@ -1,0 +1,196 @@
+@import '../styles/design-tokens';
+
+.image-cropper-modal {
+  position: fixed;
+  top: $spacing-0;
+  left: $spacing-0;
+  right: $spacing-0;
+  bottom: $spacing-0;
+  background: rgba($color-black, 0.9);
+  z-index: 9$color-gray-500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .cropper-container {
+    background: white;
+    border-radius: $border-radius-xl;
+    width: 90%;
+    max-width: 400px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba($color-black, 0.3);
+
+    .cropper-header {
+      padding: $spacing-lg - $spacing-xs;
+      text-align: center;
+      border-bottom: 1px solid $color-gray-200;
+
+      h3 {
+        margin: $spacing-0 0 6px 0;
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      p {
+        margin: $spacing-0;
+        font-size: 13px;
+        color: $color-gray-600;
+      }
+    }
+
+    .cropper-wrapper {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      background: $color-gray-100;
+    }
+
+    .cropper-controls {
+      padding: $spacing-md 20px;
+      background: #f9f9f9;
+      border-top: 1px solid $color-gray-200;
+
+      .zoom-control {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+
+        span {
+          font-size: $font-size-sm;
+          color: $color-gray-600;
+          font-weight: 500;
+          min-width: $spacing-5xl;
+        }
+
+        .zoom-slider {
+          flex: 1;
+          height: $spacing-xs;
+          -webkit-appearance: none;
+          appearance: none;
+          background: #e0e0e0;
+          border-radius: $border-radius-sm / 2;
+          outline: none;
+          cursor: pointer;
+
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: $spacing-lg - $spacing-xs;
+            height: $spacing-lg - $spacing-xs;
+            background: #0058da;
+            border-radius: $border-radius-full;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba($color-black, 0.2);
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: scale(1.1);
+              box-shadow: 0 3px 6px rgba($color-black, 0.3);
+            }
+          }
+
+          &::-moz-range-thumb {
+            width: $spacing-lg - $spacing-xs;
+            height: $spacing-lg - $spacing-xs;
+            background: #0058da;
+            border-radius: $border-radius-full;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba($color-black, 0.2);
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: scale(1.1);
+              box-shadow: 0 3px 6px rgba($color-black, 0.3);
+            }
+          }
+        }
+      }
+    }
+
+    .cropper-actions {
+      padding: $spacing-md 20px;
+      display: flex;
+      gap: $spacing-sm + $spacing-xs;
+      justify-content: flex-end;
+      background: white;
+      border-top: 1px solid $color-gray-200;
+
+      button {
+        padding: $spacing-sm 20px;
+        border: none;
+        border-radius: $border-radius-md - 2px;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .cancel-btn {
+        background: #f0f0f0;
+        color: $color-gray-600;
+
+        &:hover:not(:disabled) {
+          background: #e0e0e0;
+        }
+      }
+
+      .confirm-btn {
+        background: #0058da;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: #0047b8;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 88, 218, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// 반응형
+@media (max-width: 600px) {
+  .image-cropper-modal {
+    .cropper-container {
+      width: 95%;
+      max-width: 350px;
+      margin: auto;
+
+      .cropper-wrapper {
+        height: 40vh;
+        max-height: 250px;
+      }
+
+      .cropper-header {
+        padding: $spacing-md;
+
+        h3 {
+          font-size: $font-size-base;
+        }
+
+        p {
+          font-size: $font-size-xs;
+        }
+      }
+
+      .cropper-controls {
+        padding: $spacing-sm + $spacing-xs 16px;
+      }
+
+      .cropper-actions {
+        padding: $spacing-sm + $spacing-xs 16px;
+
+        button {
+          padding: $spacing-sm 16px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}

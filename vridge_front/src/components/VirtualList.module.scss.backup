@@ -1,0 +1,151 @@
+@import '../styles/minimal-design-system-v2';
+
+.virtualList {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  
+  // 스크롤바 스타일링
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: var(--radius-md);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: var(--radius-md);
+    border: 2px solid var(--gray-100);
+    
+    &:hover {
+      background: var(--gray-500);
+    }
+    
+    &:active {
+      background: var(--gray-600);
+    }
+  }
+  
+  // Firefox 스크롤바
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-400) var(--gray-100);
+  
+  // 포커스 스타일
+  &:focus {
+    @include focus-ring;
+  }
+  
+  // 모바일 최적화
+  @media (max-width: 768px) {
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+  }
+}
+
+.listContainer {
+  position: relative;
+  width: 100%;
+}
+
+.listItem {
+  width: 100%;
+  box-sizing: border-box;
+  
+  // GPU 가속을 위한 최적화
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  
+  // 부드러운 스크롤을 위한 will-change
+  will-change: transform;
+}
+
+// 로딩 상태
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-4);
+  color: var(--muted);
+  
+  &::after {
+    content: '';
+    @include loading-spinner;
+    width: 24px;
+    height: 24px;
+    margin-left: var(--spacing-2);
+  }
+}
+
+// 빈 상태
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  text-align: center;
+  color: var(--muted);
+  
+  svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--spacing-3);
+    opacity: 0.5;
+  }
+  
+  p {
+    margin: 0;
+    font-size: var(--text-base);
+  }
+}
+
+// 다크 모드 지원
+@media (prefers-color-scheme: dark) {
+  .virtualList {
+    &::-webkit-scrollbar-track {
+      background: var(--gray-800);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--gray-600);
+      border-color: var(--gray-800);
+      
+      &:hover {
+        background: var(--gray-500);
+      }
+      
+      &:active {
+        background: var(--gray-400);
+      }
+    }
+    
+    scrollbar-color: var(--gray-600) var(--gray-800);
+  }
+}
+
+// 고대비 모드
+@media (prefers-contrast: high) {
+  .virtualList {
+    border: 2px solid var(--border);
+    
+    &::-webkit-scrollbar-thumb {
+      border-width: 1px;
+    }
+  }
+  
+  .listItem {
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+// 모션 축소 모드
+@media (prefers-reduced-motion: reduce) {
+  .listItem {
+    will-change: auto;
+  }
+}

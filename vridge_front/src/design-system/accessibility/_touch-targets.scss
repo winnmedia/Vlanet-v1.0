@@ -1,0 +1,443 @@
+@import '../styles/design-tokens';
+
+// 터치 타겟 접근성
+// WCAG 2.1 Success Criterion 2.5.5: Target Size (Level AAA)
+// 최소 44x$font-size-5xl (iOS), 48x48dp (Android Material Design)
+
+@use '../tokens' as *;
+
+// ========== 터치 타겟 기본값 ==========
+:root {
+  --touch-target-min: $font-size-5xl;
+  --touch-target-recommended: $font-size-5xl;
+  --touch-target-spacing: $spacing-sm;
+}
+
+// ========== 터치 타겟 믹스인 ==========
+@mixin touch-target($size: $font-size-5xl) {
+  min-width: $size;
+  min-height: $size;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin touch-target-expand($visual-size, $touch-size: $font-size-5xl) {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, $touch-size);
+    height: max(100%, $touch-size);
+    min-width: $touch-size;
+    min-height: $touch-size;
+  }
+}
+
+// ========== 기본 인터랙티브 요소 ==========
+// 버튼
+button,
+.button,
+[role="button"] {
+  @include touch-target;
+  padding: $spacing-sm $spacing-lg;
+  
+  // 작은 버튼 (시각적으로는 작지만 터치 영역은 $font-size-5xl)
+  &.button-sm {
+    padding: $spacing-xs $spacing-md;
+    @include touch-target-expand($font-size-4xl);
+  }
+  
+  // 아이콘 버튼
+  &.icon-button {
+    width: $touch-target-min;
+    height: $touch-target-min;
+    padding: $spacing-0;
+  }
+}
+
+// 링크
+a {
+  @include touch-target;
+  
+  // 인라인 링크는 예외
+  &.inline-link {
+    display: inline;
+    min-height: auto;
+    min-width: auto;
+  }
+  
+  // 네비게이션 링크
+  &.nav-link {
+    padding: $spacing-sm $spacing-md;
+  }
+}
+
+// ========== 폼 컨트롤 ==========
+// 체크박스와 라디오
+input[type="checkbox"],
+input[type="radio"] {
+  width: $spacing-lg - $spacing-xs;
+  height: $spacing-lg - $spacing-xs;
+  cursor: pointer;
+  position: relative;
+  
+  // 터치 영역 확장
+  @include touch-target-expand($font-size-xl);
+  
+  // 라벨과 함께 사용할 때
+  & + label {
+    padding-left: $spacing-sm;
+    cursor: pointer;
+    min-height: $touch-target-min;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+// 텍스트 입력
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  min-height: $touch-target-min;
+  padding: $spacing-sm $spacing-md;
+  
+  // iOS 자동 줌 방지
+  @include touch {
+    font-size: max($font-size-base, $font-size-base);
+  }
+}
+
+// 슬라이더
+input[type="range"] {
+  min-height: $touch-target-min;
+  cursor: pointer;
+  
+  &::-webkit-slider-thumb {
+    width: $spacing-lg;
+    height: $spacing-lg;
+    cursor: pointer;
+    position: relative;
+    
+    // 터치 영역 확장
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: $touch-target-min;
+      height: $touch-target-min;
+    }
+  }
+  
+  &::-moz-range-thumb {
+    width: $spacing-lg;
+    height: $spacing-lg;
+    cursor: pointer;
+  }
+}
+
+// ========== 네비게이션 요소 ==========
+// 탭
+[role="tab"],
+.tab {
+  @include touch-target;
+  padding: $spacing-sm $spacing-lg;
+  cursor: pointer;
+}
+
+// 메뉴 아이템
+[role="menuitem"],
+.menu-item {
+  @include touch-target;
+  padding: $spacing-sm $spacing-lg;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+// 드롭다운 아이템
+.dropdown-item {
+  @include touch-target;
+  padding: $spacing-sm $spacing-lg;
+  cursor: pointer;
+}
+
+// 브레드크럼
+.breadcrumb-item {
+  @include touch-target;
+  
+  a {
+    padding: $spacing-xs $spacing-sm;
+  }
+  
+  // 구분자
+  &:not(:last-child)::after {
+    margin: $spacing-0 $spacing-sm;
+  }
+}
+
+// ========== 리스트 아이템 ==========
+// 클릭 가능한 리스트 아이템
+.list-item {
+  &.clickable {
+    @include touch-target;
+    padding: $spacing-md;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: $color-gray-50;
+    }
+  }
+}
+
+// 액션 버튼이 있는 리스트 아이템
+.list-item-action {
+  @include touch-target;
+  margin-left: auto;
+}
+
+// ========== 특수 컴포넌트 ==========
+// 칩/태그
+.chip,
+.tag {
+  min-height: $spacing-xl;
+  padding: $spacing-xs $spacing-md;
+  display: inline-flex;
+  align-items: center;
+  
+  // 삭제 버튼
+  .chip-delete,
+  .tag-close {
+    @include touch-target-expand($font-size-xl);
+    margin-left: $spacing-xs;
+    cursor: pointer;
+  }
+}
+
+// 페이지네이션
+.pagination {
+  display: flex;
+  gap: $spacing-xs;
+  
+  &-item {
+    @include touch-target;
+    cursor: pointer;
+    
+    &.active {
+      background-color: $color-primary;
+      color: $color-white;
+    }
+  }
+}
+
+// 스텝퍼
+.stepper {
+  &-button {
+    @include touch-target;
+    cursor: pointer;
+  }
+  
+  &-input {
+    min-width: $touch-target-min;
+    text-align: center;
+  }
+}
+
+// 토글/스위치
+.toggle,
+.switch {
+  min-width: $spacing-4xl - $spacing-xs;
+  height: $spacing-xl;
+  cursor: pointer;
+  position: relative;
+  
+  // 터치 영역 확장
+  @include touch-target-expand($font-size-4xl);
+  
+  // 라벨과 함께
+  & + label {
+    margin-left: $spacing-sm;
+    cursor: pointer;
+  }
+}
+
+// 모달 닫기 버튼
+.modal-close,
+.dialog-close {
+  @include touch-target;
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  cursor: pointer;
+}
+
+// ========== 터치 영역 간격 ==========
+// 인접한 터치 타겟 간 최소 간격
+.touch-targets {
+  display: flex;
+  gap: $touch-target-spacing;
+  
+  > * {
+    @include touch-target;
+  }
+}
+
+// 툴바
+.toolbar {
+  display: flex;
+  gap: $spacing-xs;
+  
+  button {
+    @include touch-target;
+  }
+}
+
+// ========== 반응형 터치 타겟 ==========
+// 모바일에서만 적용
+@include touch {
+  // 데스크톱에서는 작은 타겟도 모바일에서는 확대
+  .desktop-small {
+    @include touch-target;
+  }
+  
+  // 테이블 셀 내 버튼
+  td button {
+    @include touch-target;
+  }
+}
+
+// ========== 터치 디바이스 최적화 ==========
+@include touch {
+  // 호버 효과 제거
+  button:hover,
+  a:hover {
+    background-color: transparent;
+  }
+  
+  // 탭 하이라이트 제거
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  // 스크롤 성능 개선
+  .scrollable {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+// ========== 접근성 검사 (개발 모드) ==========
+@if $debug-mode {
+  .touch-target-check {
+    button,
+    a,
+    input,
+    [role="button"] {
+      &:not(.inline-link) {
+        outline: $spacing-2xs dashed red;
+        
+        &[data-touch-target-small]::after {
+          content: 'Touch target too small';
+          position: absolute;
+          top: 100%;
+          left: $spacing-0;
+          font-size: $font-size-xs;
+          color: $color-danger;
+          background: $color-white;
+          padding: $spacing-2xs $spacing-xs;
+          z-index: $z-tooltip;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

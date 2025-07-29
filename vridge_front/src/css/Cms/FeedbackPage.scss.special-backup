@@ -1,0 +1,255 @@
+@import '../styles/design-tokens';
+
+/* 피드백 페이지 기본 스타일 */
+.feedback-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-gray-100;
+}
+
+/* 비디오 플레이어 영역 */
+.video-section {
+  flex: 1;
+  background: $color-black;
+  position: relative;
+  overflow: hidden;
+  
+  .video-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    video {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+    }
+  }
+  
+  /* 비디오 컨트롤 */
+  .video-controls {
+    position: absolute;
+    bottom: $spacing-0;
+    left: $spacing-0;
+    right: $spacing-0;
+    background: rgba($color-black, 0.7);
+    padding: $spacing-sm + 2px 20px;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md - 1px;
+    
+    button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: $spacing-xs 10px;
+      font-size: $font-size-base;
+      
+      &:hover {
+        background: rgba($color-white, 0.1);
+        border-radius: $border-radius-sm;
+      }
+    }
+    
+    .time-display {
+      color: white;
+      font-size: $font-size-sm;
+      margin-left: auto;
+    }
+  }
+}
+
+/* 피드백 섹션 */
+.feedback-section {
+  height: 300px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 피드백 리스트 */
+.feedback-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg - $spacing-xs;
+  
+  .feedback-item {
+    display: flex;
+    gap: $spacing-md - 1px;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    
+    .feedback-avatar {
+      width: $spacing-2xl;
+      height: $spacing-2xl;
+      border-radius: $border-radius-full;
+      background: $color-primary;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    
+    .feedback-content {
+      flex: 1;
+      
+      .feedback-header {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + 2px;
+        margin-bottom: $spacing-xs;
+        
+        .feedback-author {
+          font-weight: 600;
+          color: $color-gray-800;
+        }
+        
+        .feedback-time {
+          font-size: $font-size-xs;
+          color: $color-gray-600;
+          background: #f0f0f0;
+          padding: 2px 8px;
+          border-radius: $border-radius-lg;
+        }
+        
+        .feedback-date {
+          font-size: $font-size-xs;
+          color: $color-gray-500;
+          margin-left: auto;
+        }
+      }
+      
+      .feedback-message {
+        color: #444;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+/* 피드백 입력 영역 */
+.feedback-input-section {
+  border-top: 1px solid #e0e0e0;
+  padding: $spacing-lg - $spacing-xs;
+  background: white;
+  
+  .feedback-input-wrapper {
+    display: flex;
+    gap: $spacing-md - 1px;
+    align-items: flex-end;
+    
+    .input-group {
+      flex: 1;
+      
+      .time-input {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + 2px;
+        margin-bottom: $spacing-sm + 2px;
+        
+        label {
+          font-size: $font-size-sm;
+          color: $color-gray-600;
+        }
+        
+        input {
+          width: 100px;
+          padding: $spacing-xs 10px;
+          border: 1px solid $color-gray-300;
+          border-radius: $border-radius-sm;
+          font-size: $font-size-sm;
+        }
+        
+        button {
+          padding: $spacing-xs 10px;
+          background: #f0f0f0;
+          border: 1px solid $color-gray-300;
+          border-radius: $border-radius-sm;
+          cursor: pointer;
+          font-size: $font-size-xs;
+          
+          &:hover {
+            background: #e0e0e0;
+          }
+        }
+      }
+      
+      textarea {
+        width: 100%;
+        min-height: $spacing-4xl - $spacing-xs;
+        padding: $spacing-sm + 2px;
+        border: 1px solid $color-gray-300;
+        border-radius: $border-radius-sm;
+        resize: vertical;
+        font-family: inherit;
+        font-size: $font-size-sm;
+        
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+        }
+      }
+    }
+    
+    .submit-button {
+      padding: $spacing-sm + 2px 20px;
+      background: linear-gradient(to bottom, $color-primary, $color-primary-dark);
+      color: white;
+      border: none;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba($color-black, 0.2);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+/* 사이드바가 있을 때 레이아웃 조정 */
+.cms_wrap {
+  display: flex;
+  height: 100vh;
+  
+  .sidebar {
+    width: 250px;
+    flex-shrink: 0;
+  }
+  
+  .feedback-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: $breakpoint-md) {
+  .feedback-section {
+    height: 250px;
+  }
+  
+  .feedback-input-wrapper {
+    flex-direction: column;
+    
+    .submit-button {
+      width: 100%;
+    }
+  }
+}

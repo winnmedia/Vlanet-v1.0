@@ -1,0 +1,208 @@
+@import '../styles/design-tokens';
+
+// 커스텀 알림 스타일
+.custom-alert-overlay {
+  position: fixed;
+  top: $spacing-0;
+  left: $spacing-0;
+  right: $spacing-0;
+  bottom: $spacing-0;
+  background: rgba($color-black, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10$color-black;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+  &.closing {
+    animation: fadeOut 0.3s ease;
+  }
+}
+
+.custom-alert {
+  background: rgba($color-white, 0.95);
+  border-radius: $border-radius-lg;
+  box-shadow: 0 10px 40px rgba($color-black, 0.2);
+  min-width: 320px;
+  max-width: 500px;
+  padding: $spacing-lg;
+  animation: slideIn 0.3s ease;
+  border: 1px solid rgba($color-white, 0.8);
+  
+  &.closing {
+    animation: slideOut 0.3s ease;
+  }
+  
+  .alert-content {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-md;
+    position: relative;
+  }
+  
+  .alert-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  .alert-message {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.5;
+    color: $color-gray-800;
+    word-break: keep-all;
+    padding-right: $spacing-lg;
+  }
+  
+  .alert-close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: $spacing-xl;
+    height: $spacing-xl;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-gray-600;
+    transition: all 0.2s ease;
+    border-radius: $border-radius-full;
+    
+    &:hover {
+      background: $color-gray-100;
+      color: $color-gray-800;
+    }
+  }
+  
+  .alert-actions {
+    display: flex;
+    gap: $spacing-sm;
+    justify-content: flex-end;
+    margin-top: $spacing-lg - $spacing-xs;
+    
+    .alert-button {
+      padding: $spacing-sm 20px;
+      border: none;
+      border-radius: $border-radius-md - 2px;
+      font-size: $font-size-sm;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &.primary {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+        color: white;
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+        }
+      }
+      
+      &.secondary {
+        background: $color-gray-100;
+        color: $color-gray-600;
+        
+        &:hover {
+          background: #e5e5e5;
+          color: $color-gray-800;
+        }
+      }
+    }
+  }
+  
+  // 타입별 스타일 - 대표 색상 사용
+  &.success {
+    border-top: $spacing-xs solid $color-success;
+    background: rgba($color-success, 0.08);
+    
+    .alert-icon circle {
+      fill: $color-success;
+    }
+  }
+  
+  &.error {
+    border-top: $spacing-xs solid $color-danger;
+    background: rgba($color-danger, 0.08);
+    
+    .alert-icon circle {
+      fill: $color-danger;
+    }
+  }
+  
+  &.warning {
+    border-top: $spacing-xs solid $color-warning;
+    background: rgba($color-warning, 0.08);
+    
+    .alert-icon path:first-child {
+      fill: $color-warning;
+    }
+  }
+  
+  &.info {
+    border-top: $spacing-xs solid $color-primary;
+    background: rgba($color-primary, 0.08);
+    
+    .alert-icon circle {
+      fill: $color-primary;
+    }
+  }
+}
+
+// 애니메이션
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+// 반응형
+@media (max-width: 480px) {
+  .custom-alert {
+    min-width: 280px;
+    margin: $spacing-md;
+    padding: $spacing-lg - $spacing-xs;
+    
+    .alert-message {
+      font-size: $font-size-sm;
+    }
+  }
+}

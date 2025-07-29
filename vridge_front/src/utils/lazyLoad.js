@@ -1,101 +1,82 @@
-import React, { lazy } from 'react'
-import { CardSkeleton } from '../components/minimal'
+import dynamic from 'next/dynamic'
+import UnifiedModal from '../../components/unified/UnifiedModal';;
+import React from 'react';
 
 // 로딩 컴포넌트
-export const LoadingFallback = () => (
-  <div style={{ padding: '20px' }}>
-    <CardSkeleton />
-  </div>
-)
-
-// 에러 폴백 컴포넌트
-export const ErrorFallback = ({ error, resetErrorBoundary }) => (
-  <div style={{ 
-    padding: '20px', 
-    textAlign: 'center',
-    background: '#FFF3F3',
-    border: '1px solid #FFDDDD',
-    borderRadius: '8px'
+const LoadingComponent = () => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '400px',
+    fontSize: '1rem',
+    color: '#666'
   }}>
-    <h3 style={{ color: '#FF3B30', marginBottom: '8px' }}>문제가 발생했습니다</h3>
-    <p style={{ color: '#666', marginBottom: '16px' }}>
-      {error?.message || '알 수 없는 오류가 발생했습니다'}
-    </p>
-    <button 
-      onClick={resetErrorBoundary}
-      style={{
-        padding: '8px 16px',
-        background: '#FF3B30',
-        color: 'white',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer'
-      }}
-    >
-      다시 시도
-    </button>
+    <div style={{
+      textAlign: 'center'
+    }}>
+      <div style={{
+        width: '40px',
+        height: '40px',
+        border: '3px solid #f3f3f3',
+        borderTop: '3px solid #1631F8',
+        borderRadius: '50%',
+        margin: '0 auto 16px',
+        animation: 'spin 1s linear infinite'
+      }} />
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+      로딩 중...
+    </div>
   </div>
-)
+);
 
-// 지연 로딩 래퍼
-export const lazyLoadComponent = (importFunc, fallback = <LoadingFallback />) => {
-  const LazyComponent = lazy(importFunc)
-  
-  return (props) => (
-    <React.Suspense fallback={fallback}>
-      <LazyComponent {...props} />
-    </React.Suspense>
-  )
-}
+// 동적 임포트 헬퍼
+export const lazyLoad = (importFunc, options = {}) => {
+  return dynamic(importFunc, {
+    loading: () => <LoadingComponent />,
+    ssr: true,
+    ...options
+  });
+};
 
-// 페이지별 지연 로딩 설정
+// 주요 페이지 컴포넌트 lazy loading
 export const LazyPages = {
-  // CMS 페이지
-  CmsHome: lazyLoadComponent(() => import('../page/Cms/CmsHomeMinimal.v2')),
-  VideoPlanning: lazyLoadComponent(() => import('../page/Cms/VideoPlanningMinimal')),
-  VideoList: lazyLoadComponent(() => import('../page/Cms/VideoList')),
-  Feedback: lazyLoadComponent(() => import('../page/Cms/Feedback')),
-  Project: lazyLoadComponent(() => import('../page/Cms/Project')),
+  // CMS 페이지들
+  CmsHome: lazyLoad(() => import('../../page/Cms/CmsHome')),
+  CmsHomeMinimal: lazyLoad(() => import('../../page/Cms/CmsHomeMinimal')),
+  Feedback: lazyLoad(() => import('../../page/Cms/Feedback')),
+  FeedbackAll: lazyLoad(() => import('../../page/Cms/FeedbackAll')),
+  VideoPlanning: lazyLoad(() => import('../../page/Cms/VideoPlanning')),
+  VideoPlanningMinimal: lazyLoad(() => import('../../page/Cms/VideoPlanningMinimal')),
+  Calendar: lazyLoad(() => import('../../page/Cms/Calendar')),
+  ProjectCreate: lazyLoad(() => import('../../page/Cms/ProjectCreate')),
+  ProjectEdit: lazyLoad(() => import('../../page/Cms/ProjectEdit')),
+  ProjectView: lazyLoad(() => import('../../page/Cms/ProjectView')),
   
-  // User 페이지
-  Login: lazyLoadComponent(() => import('../page/User/LoginMinimal.v2')),
-  Signup: lazyLoadComponent(() => import('../page/User/Signup')),
-  MyPage: lazyLoadComponent(() => import('../page/MyPage/MyPage')),
+  // User 페이지들
+  Login: lazyLoad(() => import('../../page/User/Login')),
+  LoginMinimal: lazyLoad(() => import('../../page/User/LoginMinimal')),
+  Signup: lazyLoad(() => import('../../page/User/Signup')),
+  SignupWithEmail: lazyLoad(() => import('../../page/User/SignupWithEmail')),
+  MyPage: lazyLoad(() => import('../../page/User/MyPage')),
+  EmailCheck: lazyLoad(() => import('../../page/User/EmailCheck')),
   
-  // Admin 페이지
-  AdminDashboard: lazyLoadComponent(() => import('../page/Admin/Dashboard'))
-}
+  // Admin 페이지들
+  AdminDashboard: lazyLoad(() => import('../../page/Admin/AdminDashboard')),
+  EmailMonitor: lazyLoad(() => import('../../page/Admin/EmailMonitor'))
+};
 
-// 프리로드 함수
-export const preloadComponent = (componentName) => {
-  switch (componentName) {
-    case 'CmsHome':
-      import('../page/Cms/CmsHomeMinimal.v2')
-      break
-    case 'VideoPlanning':
-      import('../page/Cms/VideoPlanningMinimal')
-      break
-    case 'Login':
-      import('../page/User/LoginMinimal.v2')
-      break
-    // 필요한 다른 컴포넌트들 추가
-  }
-}
-
-// 라우트 전환 시 다음 페이지 프리로드
-export const preloadNextRoute = (currentRoute) => {
-  // 일반적인 사용자 플로우에 따른 프리로드
-  switch (currentRoute) {
-    case '/Login':
-      preloadComponent('CmsHome')
-      break
-    case '/Home':
-      preloadComponent('VideoPlanning')
-      preloadComponent('Project')
-      break
-    case '/Project/:id':
-      preloadComponent('VideoList')
-      preloadComponent('Feedback')
-      break
-  }
-}
+// 무거운 컴포넌트들 lazy loading
+export const LazyComponents = {
+  VideoPlayer: lazyLoad(() => import('../../components/VideoPlayer')),
+  FeedbackPlayer: lazyLoad(() => import('../../components/FeedbackPlayer')),
+  ProjectDashboard: lazyLoad(() => import('../../components/ProjectDashboard')),
+  CalendarEnhanced: lazyLoad(() => import('../../components/CalendarEnhanced')),
+  ImageCropper: lazyLoad(() => import('../../components/ImageCropper')),
+  ExportModal: lazyLoad(() => import('../../components/ExportModal'))
+};

@@ -1,55 +1,83 @@
+@import '../styles/design-tokens';
+
 // VideoPlanet 브랜드 대표 색상
-@import '../../styles/_variables';
+// @import '../../styles/_variables';
+
+// 임시 변수 정의 - 나중에 디자인 시스템으로 이동
+$border-light: $color-vp-gray-light-2;
+$gray-50: $color-background-secondary;
+$gray-100: $color-gray-200;
+$gray-200: $color-vp-gray-light-2;
+$gray-300: $color-gray-300;
+$gray-400: $color-gray-500;
+$gray-500: $color-gray-600;
+$gray-600: $color-text-secondary;
+$gray-700: $color-text-secondary;
+$gray-800: $color-text-primary;
+$gray-900: $color-info-dark;
+$text-primary: $color-text-primary;
+$text-secondary: $color-gray-600;
+$primary-color: $color-primary;
+$success-color: $color-success;
+$warning-color: $color-warning;
+$danger-color: $color-danger;
+$hover-bg: $color-background-secondary;
+$border-radius: $border-radius-md;
+$spacing-unit: $spacing-sm;
+$primary-gradient-start: $color-primary;
+$primary-gradient-end: $color-primary-dark;
+$border-main: $color-vp-gray-light-2;
+$primary-hover: $color-primary-dark;
 
 .process-date-enhanced {
-  padding: 24px;
-  background: #ffffff;
-  border: 1px solid $border-light;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: $spacing-lg;
+  background: $color-white;
+  border: $spacing-2xs solid $border-light;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.06);
   
   .header-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid $gray-100;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: $spacing-2xs solid $gray-100;
     
     h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 700;
+      margin: $spacing-0;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
       color: $text-primary;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: $spacing-sm;
       
       &::before {
         content: '';
-        width: 4px;
-        height: 24px;
+        width: $spacing-xs;
+        height: $spacing-lg;
         background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
-        border-radius: 2px;
+        border-radius: $border-radius-sm / 2;
       }
     }
     
     .header-actions {
       display: flex;
-      gap: 12px;
+      gap: $spacing-sm + $spacing-xs;
       align-items: center;
       
       .autocalc-toggle {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: $spacing-sm;
         cursor: pointer;
-        padding: 8px 16px;
+        padding: $spacing-sm $spacing-md;
         background: $gray-50;
-        border-radius: 100px;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        font-weight: 500;
+        border-radius: $spacing-6xl + $spacing-xs;
+        transition: $transition-base;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
         color: $text-secondary;
         
         &:hover {
@@ -57,8 +85,8 @@
         }
         
         input[type="checkbox"] {
-          width: 0;
-          height: 0;
+          width: $spacing-0;
+          height: $spacing-0;
           opacity: 0;
           position: absolute;
           
@@ -70,37 +98,37 @@
             background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
             
             &::after {
-              transform: translateX(20px);
-              background: white;
+              transform: translateX($font-size-xl);
+              background: $color-white;
             }
           }
         }
         
         .toggle-switch {
           position: relative;
-          width: 44px;
-          height: 24px;
+          width: $spacing-2xl + $spacing-xs;
+          height: $spacing-lg;
           background: $gray-300;
-          border-radius: 100px;
-          transition: all 0.3s ease;
+          border-radius: $spacing-6xl + $spacing-xs;
+          transition: $transition-base;
           flex-shrink: 0;
           
           &::after {
             content: '';
             position: absolute;
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            top: 3px;
-            left: 3px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            width: $spacing-md + $spacing-2xs;
+            height: $spacing-md + $spacing-2xs;
+            background: $color-white;
+            border-radius: $border-radius-full;
+            top: $spacing-xs - $spacing-2xs;
+            left: $spacing-xs - $spacing-2xs;
+            transition: $transition-base;
+            box-shadow: $shadow-sm;
           }
         }
         
         span {
-          font-weight: 500;
+          font-weight: $font-weight-medium;
           transition: color 0.3s ease;
         }
       }
@@ -111,27 +139,27 @@
   .project-summary {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(22, 49, 248, 0.05) 0%, rgba(15, 35, 201, 0.05) 100%);
-    border-radius: 8px;
-    border: 1px solid rgba(22, 49, 248, 0.1);
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+    padding: $spacing-lg - $spacing-xs;
+    background: linear-gradient(135deg, rgba($color-primary, 0.05) 0%, rgba($color-primary-dark, 0.05) 100%);
+    border-radius: $border-radius-md;
+    border: $spacing-2xs solid rgba($color-primary, 0.1);
     
     .summary-item {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: $spacing-xs;
       
       .label {
-        font-size: 13px;
+        font-size: $spacing-md - $spacing-xs;
         color: $text-secondary;
-        font-weight: 500;
+        font-weight: $font-weight-medium;
       }
       
       .value {
-        font-size: 16px;
-        font-weight: 700;
+        font-size: $font-size-base;
+        font-weight: $font-weight-bold;
         color: $primary-color;
       }
     }
@@ -141,60 +169,60 @@
   .auto-calc-info {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: rgba(22, 49, 248, 0.05);
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(22, 49, 248, 0.1);
+    gap: $spacing-sm;
+    padding: $spacing-sm + $spacing-xs $spacing-md;
+    background: rgba($color-primary, 0.05);
+    border-radius: $border-radius-md;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    border: $spacing-2xs solid rgba($color-primary, 0.1);
     
     &::before {
       content: 'ℹ️';
-      font-size: 16px;
+      font-size: $font-size-base;
     }
     
     span {
-      font-size: 14px;
+      font-size: $font-size-sm;
       color: $primary-color;
-      font-weight: 500;
+      font-weight: $font-weight-medium;
     }
   }
   
   // 템플릿 섹션
   .template-section {
-    margin-bottom: 24px;
+    margin-bottom: $spacing-lg;
     
     h4 {
-      margin: 0 0 12px 0;
-      font-size: 15px;
-      font-weight: 600;
+      margin: $spacing-0 0 $spacing-sm + $spacing-xs 0;
+      font-size: $spacing-md - $spacing-2xs;
+      font-weight: $font-weight-semibold;
       color: $text-primary;
     }
     
     .template-buttons {
       display: flex;
-      gap: 8px;
+      gap: $spacing-sm;
       flex-wrap: wrap;
       
       .template-btn {
-        padding: 10px 20px;
-        border: 1px solid $border-light;
-        background: white;
+        padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+        border: $spacing-2xs solid $border-light;
+        background: $color-white;
         color: $text-primary;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
+        border-radius: $border-radius-md;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: $transition-base;
         position: relative;
         overflow: hidden;
         
         &::before {
           content: '';
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 0;
+          top: $spacing-0;
+          left: $spacing-0;
+          width: $spacing-0;
           height: 100%;
           background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
           transition: width 0.3s ease;
@@ -204,15 +232,15 @@
         &:hover {
           border-color: $primary-color;
           color: $primary-color;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(22, 49, 248, 0.15);
+          transform: translateY(-$spacing-2xs);
+          box-shadow: $shadow;
         }
         
         &.active {
           background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
-          color: white;
+          color: $color-white;
           border-color: transparent;
-          box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+          box-shadow: $shadow;
           
           &::before {
             width: 100%;
@@ -228,7 +256,7 @@
             background: $gray-100;
             border-color: $gray-400;
             color: $text-primary;
-            box-shadow: none;
+            box-shadow: $shadow-none;
           }
         }
       }
@@ -239,75 +267,75 @@
   .date-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: $spacing-md;
     
     .date-item {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 20px;
+      gap: $spacing-sm + $spacing-xs;
+      padding: $spacing-lg - $spacing-xs;
       background: $gray-50;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      transition: all 0.3s ease;
+      border-radius: $border-radius-lg;
+      border: $spacing-2xs solid transparent;
+      transition: $transition-base;
       
       &:hover {
-        background: white;
+        background: $color-white;
         border-color: $border-light;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: $shadow;
       }
       
       .process-info {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: $spacing-sm + $spacing-xs;
         
         .process-number {
-          width: 32px;
-          height: 32px;
+          width: $spacing-xl;
+          height: $spacing-xl;
           background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
-          color: white;
-          border-radius: 50%;
+          color: $color-white;
+          border-radius: $border-radius-full;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: $font-weight-semibold;
+          font-size: $font-size-sm;
           flex-shrink: 0;
         }
         
         .process-name {
-          font-size: 15px;
-          font-weight: 600;
+          font-size: $spacing-md - $spacing-2xs;
+          font-weight: $font-weight-semibold;
           color: $text-primary;
           flex: 1;
         }
         
         .duration-badge {
-          padding: 4px 12px;
-          background: rgba(22, 49, 248, 0.1);
+          padding: $spacing-xs $spacing-sm + $spacing-xs;
+          background: rgba($color-primary, 0.1);
           color: $primary-color;
-          border-radius: 20px;
-          font-size: 13px;
-          font-weight: 600;
+          border-radius: $spacing-lg - $spacing-xs;
+          font-size: $spacing-md - $spacing-xs;
+          font-weight: $font-weight-semibold;
         }
       }
       
       .date-inputs {
         display: flex;
         align-items: center;
-        gap: 16px;
-        margin-left: 44px; // process-number width + gap
+        gap: $spacing-md;
+        margin-left: $spacing-2xl + $spacing-xs; // process-number width + gap
         
         .date-input-group {
           flex: 1;
           
           label {
             display: block;
-            font-size: 13px;
+            font-size: $spacing-md - $spacing-xs;
             color: $text-secondary;
-            margin-bottom: 6px;
-            font-weight: 500;
+            margin-bottom: $spacing-sm - $spacing-2xs;
+            font-weight: $font-weight-medium;
           }
           
           .date-picker-wrapper {
@@ -315,23 +343,23 @@
             
             svg {
               position: absolute;
-              left: 12px;
+              left: $spacing-sm + $spacing-xs;
               top: 50%;
               transform: translateY(-50%);
-              width: 18px;
-              height: 18px;
+              width: $spacing-md + $spacing-2xs;
+              height: $spacing-md + $spacing-2xs;
               stroke: $text-secondary;
               stroke-width: 2;
             }
             
             .date-input {
               width: 100%;
-              padding: 10px 12px 10px 40px;
-              border: 1px solid $border-light;
-              border-radius: 8px;
-              font-size: 14px;
-              transition: all 0.3s ease;
-              background: white;
+              padding: $spacing-sm + $spacing-2xs $spacing-sm + $spacing-xs $spacing-sm + $spacing-2xs $spacing-2xl;
+              border: $spacing-2xs solid $border-light;
+              border-radius: $border-radius-md;
+              font-size: $font-size-sm;
+              transition: $transition-base;
+              background: $color-white;
               
               &:hover {
                 border-color: $border-main;
@@ -340,7 +368,7 @@
               &:focus {
                 outline: none;
                 border-color: $primary-color;
-                box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+                box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.1);
               }
               
               &:disabled {
@@ -353,31 +381,31 @@
         }
         
         .date-arrow {
-          font-size: 20px;
+          font-size: $font-size-xl;
           color: $text-secondary;
-          margin-top: 20px;
+          margin-top: $spacing-lg - $spacing-xs;
         }
         
         .quick-duration {
           display: flex;
-          gap: 4px;
-          margin-top: 20px;
+          gap: $spacing-xs;
+          margin-top: $spacing-lg - $spacing-xs;
           
           button {
-            padding: 6px 12px;
-            background: white;
-            border: 1px solid $border-light;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
+            padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+            background: $color-white;
+            border: $spacing-2xs solid $border-light;
+            border-radius: $border-radius-md - $border-radius-sm / 2;
+            font-size: $font-size-xs;
+            font-weight: $font-weight-medium;
             color: $text-secondary;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: $transition-base;
             
             &:hover {
               border-color: $primary-color;
               color: $primary-color;
-              background: rgba(22, 49, 248, 0.05);
+              background: rgba($color-primary, 0.05);
             }
           }
         }
@@ -387,55 +415,55 @@
 
   // 타임라인 뷰
   .timeline-view {
-    margin-top: 32px;
-    padding: 24px;
-    background: white;
-    border-radius: 12px;
-    border: 1px solid $border-light;
+    margin-top: $spacing-xl;
+    padding: $spacing-lg;
+    background: $color-white;
+    border-radius: $border-radius-lg;
+    border: $spacing-2xs solid $border-light;
     
     h4 {
-      margin: 0 0 20px 0;
-      font-size: 16px;
-      font-weight: 600;
+      margin: $spacing-0 0 $spacing-lg - $spacing-xs 0;
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
       color: $text-primary;
     }
     
     .timeline-container {
       position: relative;
       overflow-x: auto;
-      padding: 20px 0;
+      padding: $spacing-lg - $spacing-xs 0;
       
       .timeline-track {
         position: relative;
-        min-height: 60px;
+        min-height: $spacing-4xl - $spacing-xs;
         background: $gray-50;
-        border-radius: 8px;
-        padding: 10px;
+        border-radius: $border-radius-md;
+        padding: $spacing-sm + $spacing-2xs;
         
         .timeline-item {
           position: absolute;
-          height: 40px;
+          height: $spacing-2xl;
           background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
-          border-radius: 6px;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
           display: flex;
           align-items: center;
-          padding: 0 12px;
-          color: white;
-          font-size: 13px;
-          font-weight: 500;
-          box-shadow: 0 2px 8px rgba(22, 49, 248, 0.2);
-          transition: all 0.2s ease;
+          padding: $spacing-0 $spacing-sm + $spacing-xs;
+          color: $color-white;
+          font-size: $spacing-md - $spacing-xs;
+          font-weight: $font-weight-medium;
+          box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-primary, 0.2);
+          transition: $transition-base;
           cursor: pointer;
           
           &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
-            z-index: 10;
+            transform: translateY(-$spacing-2xs);
+            box-shadow: $shadow;
+            z-index: $z-index-fixed;
           }
           
           &.overlap {
             opacity: 0.8;
-            top: 50px;
+            top: $spacing-3xl + $spacing-2xs;
           }
         }
       }
@@ -443,9 +471,9 @@
       .timeline-axis {
         display: flex;
         justify-content: space-between;
-        margin-top: 10px;
-        padding: 0 10px;
-        font-size: 12px;
+        margin-top: $spacing-sm + $spacing-2xs;
+        padding: $spacing-0 $spacing-sm + $spacing-2xs;
+        font-size: $font-size-xs;
         color: $text-secondary;
       }
     }
@@ -462,30 +490,30 @@
 }
 
 .react-datepicker-popper {
-  z-index: 100;
+  z-index: $z-index-sticky;
   
   .react-datepicker {
     font-family: inherit;
-    border: 1px solid $border-light;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: $spacing-2xs solid $border-light;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow;
     
     .react-datepicker__header {
       background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
       border-bottom: none;
-      border-radius: 8px 8px 0 0;
-      padding-top: 12px;
+      border-radius: $border-radius-md $border-radius-md 0 0;
+      padding-top: $spacing-sm + $spacing-xs;
       
       .react-datepicker__current-month,
       .react-datepicker__day-name {
-        color: white;
+        color: $color-white;
       }
     }
     
     .react-datepicker__day--selected,
     .react-datepicker__day--keyboard-selected {
       background: $primary-color;
-      color: white;
+      color: $color-white;
       
       &:hover {
         background: $primary-hover;
@@ -493,16 +521,95 @@
     }
     
     .react-datepicker__day:hover {
-      background: rgba(22, 49, 248, 0.1);
+      background: rgba($color-primary, 0.1);
     }
     
     .react-datepicker__time-container {
-      border-left: 1px solid $border-light;
+      border-left: $spacing-2xs solid $border-light;
       
       .react-datepicker__time-list-item--selected {
         background: $primary-color;
-        color: white;
+        color: $color-white;
       }
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

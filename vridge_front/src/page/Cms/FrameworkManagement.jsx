@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect , Suspense } from 'react'
+import dynamic from 'next/dynamic';
+;
+
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { useRouter } from '../../util/nextNavigation'
 import PageTemplate from '../../components/PageTemplate'
 import SideBar from '../../components/SideBar'
 
 import { GetFrameworks, CreateFramework, UpdateFramework, DeleteFramework, SetDefaultFramework } from '../../api/framework'
 import { checkSession } from '../../util/util'
+import { Button } from '../../components/unified/Button'
+import { Input } from '../../components/unified/Input'
 
 export default function FrameworkManagement() {
   const { navigate } = useRouter()
@@ -36,7 +45,6 @@ export default function FrameworkManagement() {
       const response = await GetFrameworks()
       setFrameworks(response.data.frameworks)
     } catch (error) {
-      console.error('프레임워크 목록 로드 실패:', error)
       alert('프레임워크 목록을 불러오는데 실패했습니다.')
     } finally {
       setLoading(false)
@@ -58,7 +66,6 @@ export default function FrameworkManagement() {
       resetForm()
       loadFrameworks()
     } catch (error) {
-      console.error('프레임워크 저장 실패:', error)
       alert('프레임워크 저장에 실패했습니다.')
     }
   }
@@ -86,7 +93,6 @@ export default function FrameworkManagement() {
       alert('프레임워크가 삭제되었습니다.')
       loadFrameworks()
     } catch (error) {
-      console.error('프레임워크 삭제 실패:', error)
       alert(error.response?.data?.message || '프레임워크 삭제에 실패했습니다.')
     }
   }
@@ -97,7 +103,6 @@ export default function FrameworkManagement() {
       alert('기본 프레임워크로 설정되었습니다.')
       loadFrameworks()
     } catch (error) {
-      console.error('기본 프레임워크 설정 실패:', error)
       alert('기본 프레임워크 설정에 실패했습니다.')
     }
   }
@@ -119,29 +124,27 @@ export default function FrameworkManagement() {
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar />
-        <main>
+        <main role="main">
           <div className="content framework-management">
             <div className="page-header">
               <h1>기획안 디벨롭 프레임워크 관리</h1>
-              <button 
-                className="btn-primary"
-                onClick={() => setShowForm(true)}
+              <Button  aria-label="Click"> setShowForm(true)}
               >
                 새 프레임워크 추가
-              </button>
+              </Button>
             </div>
 
             {showForm && (
               <div className="framework-form-container">
-                <form onSubmit={handleSubmit} className="framework-form">
+                <form onSubmit={handleSubmit} className="framework-form" role="form">
                   <h2>{editingFramework ? '프레임워크 수정' : '새 프레임워크 추가'}</h2>
                   
                   <div className="form-group">
                     <label>프레임워크 이름 *</label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) = aria-label="text input"> setFormData({...formData, name: e.target.value})}
                       required
                       placeholder="예: 유튜브 쇼츠 프레임워크"
                     />
@@ -196,19 +199,19 @@ export default function FrameworkManagement() {
                       <input
                         type="checkbox"
                         checked={formData.is_default}
-                        onChange={(e) => setFormData({...formData, is_default: e.target.checked})}
+                        onChange={(e) = aria-label="checkbox input"> setFormData({...formData, is_default: e.target.checked})}
                       />
                       기본 프레임워크로 설정
                     </label>
                   </div>
 
                   <div className="form-actions">
-                    <button type="submit" className="btn-primary">
+                    <Button type="submit" aria-label="Click">
                       {editingFramework ? '수정하기' : '추가하기'}
-                    </button>
-                    <button type="button" className="btn-secondary" onClick={resetForm}>
+                    </Button>
+                    <Button variant="secondary" onClick={resetForm} onKeyDown={(e) => e.key === 'Enter' && resetForm} aria-label="Click">
                       취소
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -233,25 +236,19 @@ export default function FrameworkManagement() {
                         </h3>
                         <div className="framework-actions">
                           {!framework.is_default && (
-                            <button
-                              className="btn-small btn-outline"
-                              onClick={() => handleSetDefault(framework.id)}
+                            <Button variant="ghost" size="sm" aria-label="Click"> handleSetDefault(framework.id)}
                             >
                               기본값 설정
-                            </button>
+                            </Button>
                           )}
-                          <button
-                            className="btn-small btn-secondary"
-                            onClick={() => handleEdit(framework)}
+                          <Button variant="secondary" size="sm" aria-label="Click"> handleEdit(framework)}
                           >
                             수정
-                          </button>
-                          <button
-                            className="btn-small btn-danger"
-                            onClick={() => handleDelete(framework.id)}
+                          </Button>
+                          <Button variant="danger" size="sm" aria-label="Click"> handleDelete(framework.id)}
                           >
                             삭제
-                          </button>
+                          </Button>
                         </div>
                       </div>
                       
@@ -284,3 +281,8 @@ export default function FrameworkManagement() {
     </PageTemplate>
   )
 }
+import { Button } from '../../components/unified/Button'
+const UnifiedCard = dynamic(() => import('../../components/unified/UnifiedCard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});

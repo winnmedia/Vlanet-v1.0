@@ -1,0 +1,203 @@
+@import '../../styles/design-tokens';
+
+// VideoPlanet 디자인 토큰 시스템
+// 모든 토큰을 하나로 통합
+
+// 순서가 중요합니다!
+// 1. 색상 (다른 토큰에서 참조)
+@import 'colors';
+
+// 2. 간격
+@import 'spacing';
+
+// 3. 타이포그래피
+@import 'typography';
+
+// 4. 브레이크포인트
+@import 'breakpoints';
+
+// 5. 효과 (색상과 간격 참조)
+@import 'effects';
+
+// ========== 추가 토큰 ==========
+
+// 터치 타겟 크기 (접근성)
+$touch-target-min: $font-size-5xl;
+$touch-target-recommended: $font-size-5xl;
+
+// 아이콘 크기
+$icon-size-xs: $font-size-xs;
+$icon-size-sm: $font-size-base;
+$icon-size-md: $font-size-xl;
+$icon-size-lg: $font-size-2xl;
+$icon-size-xl: $font-size-4xl;
+
+// 최대 너비
+$max-width-xs: 320;
+$max-width-sm: $spacing-6xl * 5;
+$max-width-md: 640;
+$max-width-lg: 800;
+$max-width-xl: 960;
+$max-width-2xl: $breakpoint-xl;
+$max-width-full: 100%;
+
+// 종횡비
+$aspect-ratio-square: 1 / 1;
+$aspect-ratio-video: 16 / 9;
+$aspect-ratio-portrait: 3 / 4;
+$aspect-ratio-landscape: 4 / 3;
+
+// ========== CSS 변수 추가 ==========
+:root {
+  // 터치 타겟
+  --touch-target-min: #{$touch-target-min};
+  --touch-target-recommended: #{$touch-target-recommended};
+  
+  // 아이콘 크기
+  --icon-size-xs: #{$icon-size-xs};
+  --icon-size-sm: #{$icon-size-sm};
+  --icon-size-md: #{$icon-size-md};
+  --icon-size-lg: #{$icon-size-lg};
+  --icon-size-xl: #{$icon-size-xl};
+  
+  // 최대 너비
+  --max-width-xs: #{$max-width-xs};
+  --max-width-sm: #{$max-width-sm};
+  --max-width-md: #{$max-width-md};
+  --max-width-lg: #{$max-width-lg};
+  --max-width-xl: #{$max-width-xl};
+  --max-width-2xl: #{$max-width-2xl};
+  --max-width-full: #{$max-width-full};
+}
+
+// ========== 글로벌 스타일 리셋 ==========
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-body;
+  color: $color-text-primary;
+  background-color: $color-background;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: $spacing-0;
+  padding: $spacing-0;
+}
+
+// 접근성: 포커스 스타일
+:focus-visible {
+  outline: $spacing-2xs solid $color-primary;
+  outline-offset: $spacing-2xs;
+}
+
+// 스크롤바 스타일
+::-webkit-scrollbar {
+  width: $spacing-sm;
+  height: $spacing-sm;
+}
+
+::-webkit-scrollbar-track {
+  background: $color-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $color-gray-400;
+  border-radius: $radius-sm;
+  
+  &:hover {
+    background: $color-gray-500;
+  }
+}
+
+// 선택 영역 스타일
+::selection {
+  background: $color-primary-light;
+  color: $color-primary-dark;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

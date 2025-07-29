@@ -139,6 +139,43 @@ class FeedbackDetail(View):
                         'nickname': member_row[3]
                     })
                 
+                # 초대 현황 가져오기
+                pending_invitations = []
+                try:
+                    cursor.execute("""
+                        SELECT pi.id, pi.invitee_email, pi.created, pi.status
+                        FROM projects_projectinvitation pi
+                        WHERE pi.project_id = %s AND pi.status = 'pending'
+                        ORDER BY pi.created DESC
+                    """, [id])
+                    
+                    for inv_row in cursor.fetchall():
+                        pending_invitations.append({
+                            'id': inv_row[0],
+                            'invitee_email': inv_row[1],
+                            'created': inv_row[2],
+                            'status': inv_row[3]
+                        })
+                except Exception as e:
+                    # ProjectInvitation 테이블이 없는 경우 구 시스템 사용
+                    try:
+                        cursor.execute("""
+                            SELECT id, email, created
+                            FROM projects_projectinvite
+                            WHERE project_id = %s
+                            ORDER BY created DESC
+                        """, [id])
+                        
+                        for inv_row in cursor.fetchall():
+                            pending_invitations.append({
+                                'id': inv_row[0],
+                                'invitee_email': inv_row[1],
+                                'created': inv_row[2],
+                                'status': 'pending'
+                            })
+                    except:
+                        pass  # 초대 목록이 없어도 계속 진행
+                
                 # 피드백 코멘트 가져오기
                 feedback_comments = []
                 if project_data['feedback_id']:
@@ -314,6 +351,7 @@ class FeedbackDetail(View):
                 "created": project_data['created'],
                 "updated": project_data['updated'],
                 "member_list": member_list,
+                "pending_list": pending_invitations,
                 "files": feedback_file_url,
                 "feedback": feedback_comments
             }

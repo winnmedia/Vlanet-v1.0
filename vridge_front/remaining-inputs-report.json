@@ -1,0 +1,377 @@
+{
+  "timestamp": "2025-07-28T17:41:38.326Z",
+  "totalFiles": 24,
+  "totalCustomInputs": 45,
+  "unifiedInputUsage": 12,
+  "files": [
+    {
+      "file": "src/page/User/MyPage.migrated.jsx",
+      "count": 6,
+      "inputs": [
+        {
+          "file": "src/page/User/MyPage.migrated.jsx",
+          "line": 615,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/User/MyPage.migrated.jsx",
+          "line": 680,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/User/MyPage.migrated.jsx",
+          "line": 724,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/User/MyPage.migrated.jsx",
+          "line": 748,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/User/MyPage.migrated.jsx",
+          "line": 769,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/User/MyPage.migrated.jsx",
+          "line": 944,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackInput.modules-migrated.jsx",
+      "count": 5,
+      "inputs": [
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.modules-migrated.jsx",
+          "line": 111,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.modules-migrated.jsx",
+          "line": 133,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.modules-migrated.jsx",
+          "line": 156,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.modules-migrated.jsx",
+          "line": 181,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.modules-migrated.jsx",
+          "line": 196,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackInput.fixed-migrated.jsx",
+      "count": 5,
+      "inputs": [
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.fixed-migrated.jsx",
+          "line": 111,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.fixed-migrated.jsx",
+          "line": 133,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.fixed-migrated.jsx",
+          "line": 156,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.fixed-migrated.jsx",
+          "line": 181,
+          "content": "<input"
+        },
+        {
+          "file": "src/tasks/Feedback/FeedbackInput.fixed-migrated.jsx",
+          "line": 196,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/components/ui/Input.jsx",
+      "count": 3,
+      "inputs": [
+        {
+          "file": "src/components/ui/Input.jsx",
+          "line": 23,
+          "content": "<input"
+        },
+        {
+          "file": "src/components/ui/Input.jsx",
+          "line": 141,
+          "content": "<input"
+        },
+        {
+          "file": "src/components/ui/Input.jsx",
+          "line": 170,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/User/LoginMinimal.modules-migrated.jsx",
+      "count": 2,
+      "inputs": [
+        {
+          "file": "src/page/User/LoginMinimal.modules-migrated.jsx",
+          "line": 105,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/User/LoginMinimal.modules-migrated.jsx",
+          "line": 117,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/User/LoginMinimal.fixed-migrated.jsx",
+      "count": 2,
+      "inputs": [
+        {
+          "file": "src/page/User/LoginMinimal.fixed-migrated.jsx",
+          "line": 107,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/User/LoginMinimal.fixed-migrated.jsx",
+          "line": 119,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/FrameworkManagement.jsx",
+      "count": 2,
+      "inputs": [
+        {
+          "file": "src/page/Cms/FrameworkManagement.jsx",
+          "line": 139,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/Cms/FrameworkManagement.jsx",
+          "line": 194,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "count": 2,
+      "inputs": [
+        {
+          "file": "src/page/Cms/FeedbackStable.jsx",
+          "line": 519,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/Cms/FeedbackStable.jsx",
+          "line": 711,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "count": 2,
+      "inputs": [
+        {
+          "file": "src/page/Cms/Feedback.jsx",
+          "line": 1255,
+          "content": "<input"
+        },
+        {
+          "file": "src/page/Cms/Feedback.jsx",
+          "line": 1404,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/components/FeedbackPlayer.jsx",
+      "count": 2,
+      "inputs": [
+        {
+          "file": "src/components/FeedbackPlayer.jsx",
+          "line": 460,
+          "content": "<input"
+        },
+        {
+          "file": "src/components/FeedbackPlayer.jsx",
+          "line": 528,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/tasks/Project/ProcessDateEnhanced.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/tasks/Project/ProcessDateEnhanced.jsx",
+          "line": 174,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackMessagePolling.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/tasks/Feedback/FeedbackMessagePolling.jsx",
+          "line": 105,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackMessage.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/tasks/Feedback/FeedbackMessage.jsx",
+          "line": 119,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackManage.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/tasks/Feedback/FeedbackManage.jsx",
+          "line": 297,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/User/LoginMinimal.v2.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/User/LoginMinimal.v2.jsx",
+          "line": 186,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/VideoPlanningMinimal.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/Cms/VideoPlanningMinimal.jsx",
+          "line": 113,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/ProjectEdit.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/Cms/ProjectEdit.jsx",
+          "line": 276,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/ProjectCreateDebug.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/Cms/ProjectCreateDebug.jsx",
+          "line": 136,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/ProjectCreate.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/Cms/ProjectCreate.jsx",
+          "line": 232,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/InvitationAccept.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/Cms/InvitationAccept.jsx",
+          "line": 615,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/FeedbackPolling.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/Cms/FeedbackPolling.jsx",
+          "line": 476,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/page/Cms/Calendar.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/page/Cms/Calendar.jsx",
+          "line": 389,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/components/ImageCropper.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/components/ImageCropper.jsx",
+          "line": 116,
+          "content": "<input"
+        }
+      ]
+    },
+    {
+      "file": "src/components/minimal/MinimalInput.jsx",
+      "count": 1,
+      "inputs": [
+        {
+          "file": "src/components/minimal/MinimalInput.jsx",
+          "line": 102,
+          "content": "<input"
+        }
+      ]
+    }
+  ]
+}

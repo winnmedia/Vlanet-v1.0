@@ -1,0 +1,73 @@
+// VideoJsPlayer 스타일
+.videoJsPlayerWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  // 비디오 플레이어 기본 스타일
+  :global(.video-js) {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+    
+    // 큰 재생 버튼 중앙 정렬
+    &.vjs-big-play-centered .vjs-big-play-button {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+    }
+    
+    // 컨트롤바 스타일
+    .vjs-control-bar {
+      background: rgba(0, 0, 0, 0.7);
+      height: 40px;
+    }
+    
+    // 진행 바 스타일
+    .vjs-progress-control {
+      .vjs-progress-holder {
+        height: 4px;
+        margin-top: 18px;
+        
+        .vjs-play-progress {
+          background: #1631F8;
+          
+          &:before {
+            display: none;
+          }
+        }
+      }
+    }
+    
+    // 시간 표시 스타일
+    .vjs-time-control {
+      font-size: 14px;
+      line-height: 40px;
+    }
+    
+    // 볼륨 컨트롤
+    .vjs-volume-panel {
+      .vjs-volume-control {
+        width: 5em;
+      }
+    }
+  }
+  
+  // 일시정지 아이콘 애니메이션
+  .pauseIconOverlay {
+    pointer-events: none;
+    z-index: 100;
+  }
+  
+  // 로딩 스피너 스타일 - 전역 스타일로 video.js에서 사용
+  :global(.vjs-loading-spinner) {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+  }
+}

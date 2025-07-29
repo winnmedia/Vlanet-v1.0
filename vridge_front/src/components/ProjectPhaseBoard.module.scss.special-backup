@@ -1,0 +1,699 @@
+@import '../styles/design-tokens';
+
+// 완료 버튼 스타일
+.completeBtn {
+  width: $spacing-lg - $spacing-xs;
+  height: $spacing-lg - $spacing-xs;
+  padding: $spacing-0;
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: $color-primary;
+    transform: scale(1.1);
+  }
+  
+  &.completed {
+    color: $color-primary;
+    
+    &:hover {
+      color: $color-primary-dark;
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.projectPhaseBoard {
+  margin-top: $spacing-xl;
+  background: transparent;
+  border-radius: $border-radius-none;
+  padding: $spacing-0;
+  box-shadow: $shadow-none;
+  border: none;
+  
+  // 헤더 스타일
+  .phaseBoardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid #E9ECEF;
+    
+    .phaseBoardTitle {
+      font-size: $font-size-2xl;
+      font-weight: 700;
+      color: $color-gray-900;
+      margin: $spacing-0;
+      letter-spacing: -0.5px;
+    }
+    
+    .phaseBoardControls {
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
+      
+      .filterTabs {
+        display: flex;
+        gap: $spacing-sm + $spacing-xs;
+        background: transparent;
+        padding: $spacing-0;
+        
+        .filterTab {
+          padding: $spacing-sm + 2px 20px;
+          border: 1px solid #e0e0e0;
+          background: $color-white;
+          color: #495057;
+          font-size: $font-size-sm;
+          font-weight: 500;
+          cursor: pointer;
+          border-radius: $border-radius-md;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          box-shadow: 0 1px 3px rgba($color-black, 0.08);
+          
+          .count {
+            font-size: $font-size-base;
+            font-weight: 700;
+            padding: $spacing-xs 10px;
+            background: #f0f1f3;
+            border-radius: $border-radius-md - 2px;
+            min-width: $spacing-xl;
+            text-align: center;
+            color: #495057;
+            
+            &.delayed {
+              background: #fee;
+              color: $color-danger;
+            }
+          }
+          
+          &:hover {
+            background: $color-background-secondary;
+            border-color: $color-primary;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba($color-primary, 0.15);
+            
+            .count {
+              background: #e8ecff;
+              color: $color-primary;
+            }
+          }
+          
+          &.active {
+            background: $color-primary;
+            color: white;
+            border-color: $color-primary;
+            box-shadow: 0 2px 8px rgba($color-primary, $opacity-25);
+            
+            .count {
+              background: rgba($color-white, 0.2);
+              color: white;
+            }
+          }
+        }
+      }
+      
+      .collapseBtn {
+        width: $spacing-xl + $spacing-xs;
+        height: $spacing-xl + $spacing-xs;
+        border: none;
+        background: white;
+        border-radius: $border-radius-lg - 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba($color-black, 0.06);
+        color: #6C757D;
+        
+        &:hover {
+          background: $color-background-secondary;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba($color-black, 0.1);
+          color: $color-primary;
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+        
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+  
+  .boardHeader {
+    margin-bottom: $spacing-0;
+    
+    .collapseBtn {
+      width: $spacing-xl;
+      height: $spacing-xl;
+      border: none;
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+      border-radius: $border-radius-full;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba($color-primary, $opacity-25);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($color-primary, 0.35);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba($color-primary, 0.2);
+      }
+      
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  // 프로젝트 카운트 섹션 - 백업과 동일한 스타일
+  .projectCountsSection {
+    margin-bottom: $spacing-lg + 6px;
+    
+    ul.schedule {
+      display: grid;
+      grid-gap: $spacing-0 20px;
+      grid-template-columns: repeat(4, 1fr);
+      
+      li {
+        background: #25282f;
+        border-radius: 25px;
+        height: 140px;
+        padding: $spacing-0 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 22px;
+        color: $color-white;
+        
+        br {
+          display: block;
+        }
+        
+        span {
+          display: block;
+          font-weight: bold;
+          font-size: 50px;
+          margin-top: $spacing-sm + 2px;
+        }
+        
+        &:first-child {
+          background: #0131ff;
+        }
+      }
+    }
+  }
+  
+  .boardContent {
+    animation: fadeIn 0.3s ease;
+    
+    .projectsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+    }
+    
+    .emptyState {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: $spacing-4xl - $spacing-xs 20px;
+      text-align: center;
+      
+      svg {
+        margin-bottom: $spacing-md;
+      }
+      
+      p {
+        color: #6C757D;
+        font-size: $font-size-sm;
+        margin: $spacing-0;
+      }
+    }
+  }
+  
+  .projectCard {
+    background: white;
+    border: 1px solid #E9ECEF;
+    border-radius: $border-radius-xl;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    
+    &.hasDelayed {
+      border-color: rgba($color-danger, 0.2);
+      
+      &:hover {
+        border-color: rgba($color-danger, 0.3);
+        box-shadow: 0 8px 24px rgba($color-danger, 0.1);
+      }
+    }
+    
+    &:hover {
+      border-color: rgba($color-primary, 0.2);
+      box-shadow: 0 8px 24px rgba($color-primary, 0.08);
+      transform: translateY(-2px);
+    }
+    
+    .projectHeader {
+      padding: $spacing-lg - $spacing-xs 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+      
+      &:hover {
+        background: #FAFBFD;
+      }
+      
+      .projectMainInfo {
+        flex: 1;
+        
+        .projectTitleRow {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm + $spacing-xs;
+          margin-bottom: $spacing-sm;
+          
+          .projectName {
+            font-size: $font-size-base;
+            font-weight: 600;
+            color: $color-gray-900;
+            margin: $spacing-0;
+            letter-spacing: -0.3px;
+          }
+          
+          .delayIndicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: $spacing-lg;
+            height: $spacing-lg;
+            
+            svg {
+              animation: pulse 2s infinite;
+            }
+          }
+        }
+        
+        .projectDetails {
+          display: flex;
+          align-items: center;
+          gap: $spacing-md;
+          
+          .projectDates {
+            font-size: 13px;
+            color: #6C757D;
+            font-weight: 500;
+          }
+          
+          .projectDuration {
+            font-size: 13px;
+            color: #6C757D;
+            padding: 2px 8px;
+            background: $color-background-secondary;
+            border-radius: $border-radius-lg;
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .projectActions {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        
+        .progressIndicator {
+          position: relative;
+          width: $spacing-3xl;
+          height: $spacing-3xl;
+          
+          .progressRing {
+            transform: rotate(-90deg);
+          }
+          
+          .progressText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: $font-size-xs;
+            font-weight: 700;
+            color: $color-gray-900;
+          }
+        }
+        
+        .expandToggle {
+          width: $spacing-xl;
+          height: $spacing-xl;
+          border: none;
+          background: $color-background-secondary;
+          border-radius: $border-radius-md;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6C757D;
+          
+          &:hover {
+            background: #E9ECEF;
+            color: $color-primary;
+          }
+          
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+    
+    // 타임라인 스타일
+    .phasesTimeline {
+      padding: $spacing-lg;
+      background: #FAFBFD;
+      border-top: 1px solid #E9ECEF;
+      
+      .phaseItem {
+        display: flex;
+        align-items: flex-start;
+        position: relative;
+        
+        &:last-child .phaseLine {
+          display: none;
+        }
+        
+        .phaseDot {
+          width: $spacing-lg;
+          height: $spacing-lg;
+          border-radius: $border-radius-full;
+          background: #E9ECEF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          position: relative;
+          z-index: 2;
+          transition: all 0.3s ease;
+          
+          .pulseDot {
+            width: $spacing-sm;
+            height: $spacing-sm;
+            background: white;
+            border-radius: $border-radius-full;
+            animation: pulse 2s infinite;
+          }
+        }
+        
+        .phaseLine {
+          position: absolute;
+          left: 11px;
+          top: $spacing-lg;
+          width: 2px;
+          height: calc(100% + $spacing-md);
+          background: #E9ECEF;
+          z-index: 1;
+        }
+        
+        &.completed {
+          .phaseDot {
+            background: $color-success;
+            box-shadow: 0 0 0 4px rgba($color-success, 0.1);
+          }
+          
+          .phaseLine {
+            background: $color-success;
+          }
+        }
+        
+        &.inProgress {
+          .phaseDot {
+            background: $color-primary;
+            box-shadow: 0 0 0 4px rgba($color-primary, 0.1);
+          }
+          
+          .phaseLine {
+            background: linear-gradient(to bottom, $color-primary 0%, #E9ECEF 100%);
+          }
+        }
+        
+        &.delayed {
+          .phaseDot {
+            background: $color-danger;
+            box-shadow: 0 0 0 4px rgba($color-danger, 0.1);
+          }
+        }
+        
+        &.pending {
+          opacity: 0.6;
+        }
+        
+        .phaseContent {
+          flex: 1;
+          margin-left: $spacing-md;
+          padding-bottom: $spacing-lg;
+        }
+        
+        .phaseHeader {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: $spacing-sm;
+          margin-bottom: $spacing-xs;
+          
+          .phaseName {
+            font-size: $font-size-sm;
+            font-weight: 600;
+            color: $color-gray-900;
+            letter-spacing: -0.2px;
+          }
+        }
+        
+        .phaseDates {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          
+          .dateRange {
+            font-size: $font-size-xs;
+            color: #6C757D;
+            font-weight: 500;
+          }
+          
+          .delayBadge {
+            font-size: 11px;
+            color: $color-danger;
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba($color-danger, 0.1);
+            border-radius: $border-radius-lg - 2px;
+          }
+        }
+        
+        .noDataMessage {
+          font-size: $font-size-xs;
+          color: #ADB5BD;
+          font-style: italic;
+        }
+      }
+    }
+  }
+  
+  // 반응형 디자인
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+    
+    .boardHeader {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-sm + $spacing-xs;
+    }
+    
+    .projectCard {
+      .projectHeader {
+        flex-wrap: wrap;
+        
+        .projectInfo {
+          flex: 100%;
+          margin-bottom: $spacing-sm;
+        }
+      }
+      
+      .projectPhases {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+  
+    // 프로젝트 카운트 섹션 스타일
+  .projectCountsSection {
+    margin: $spacing-lg 0;
+    animation: fadeIn 0.3s ease;
+    
+    ul.schedule {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: $spacing-md !important;
+      width: 100%;
+      max-width: 100%;
+      margin: $spacing-0;
+      padding: $spacing-0;
+      list-style: none;
+      
+      li {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%) !important;
+        border-radius: $border-radius-xl !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100px !important;
+        padding: $spacing-md !important;
+        color: $color-white !important;
+        font-size: $font-size-sm !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+        text-align: center !important;
+        box-shadow: 0 4px 12px rgba($color-primary, 0.15) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        border: 1px solid rgba($color-white, 0.1) !important;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba($color-white, 0.1) 0%, transparent 70%);
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+        
+        &:hover {
+          transform: translateY(-3px) !important;
+          box-shadow: 0 8px 24px rgba($color-primary, $opacity-25) !important;
+          
+          &::before {
+            opacity: 1;
+          }
+        }
+        
+        br {
+          display: none !important;
+        }
+        
+        span {
+          font-weight: 700 !important;
+          font-size: 28px !important;
+          margin-top: 6px !important;
+          display: block !important;
+        }
+        
+        &:first-child {
+          background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%) !important;
+        }
+        
+        &:nth-child(2) {
+          background: linear-gradient(135deg, #212529 0%, $color-black 100%) !important;
+        }
+        
+        &:nth-child(3) {
+          background: linear-gradient(135deg, #212529 0%, $color-black 100%) !important;
+        }
+      }
+    }
+  }
+}
+
+// 반응형 스타일 추가
+@media (max-width: 1200px) {
+  .projectPhaseBoard {
+    .projectCountsSection {
+      ul.schedule li {
+        font-size: 13px !important;
+        height: 90px !important;
+        padding: $spacing-sm + $spacing-xs !important;
+        
+        span {
+          font-size: $font-size-2xl !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .projectPhaseBoard {
+    .projectCountsSection {
+      ul.schedule {
+        grid-template-columns: 1fr !important;
+        gap: $spacing-sm + $spacing-xs !important;
+        
+        li {
+          height: 70px !important;
+          flex-direction: row !important;
+          justify-content: space-between !important;
+          padding: $spacing-sm + $spacing-xs 20px !important;
+          
+          span {
+            font-size: 22px !important;
+            margin-top: $spacing-0 !important;
+            margin-left: $spacing-sm + $spacing-xs !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}

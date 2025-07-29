@@ -1,0 +1,190 @@
+.project-form {
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  .form-container {
+    background: white;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .form-section {
+    margin-bottom: 40px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      
+      &::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: #1890ff;
+        margin-right: 10px;
+        border-radius: 2px;
+      }
+    }
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    .color-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 2px solid #f0f0f0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .phase-timeline {
+    display: grid;
+    gap: 20px;
+    
+    .phase-item {
+      position: relative;
+      
+      .phase-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        
+        .phase-indicator {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        
+        .phase-name {
+          font-weight: 500;
+          color: #333;
+        }
+      }
+      
+      .phase-connector {
+        position: absolute;
+        left: 5px;
+        top: 30px;
+        width: 2px;
+        height: calc(100% + 10px);
+        background: #f0f0f0;
+        z-index: -1;
+      }
+      
+      .ant-picker-range {
+        width: 100%;
+      }
+    }
+  }
+  
+  .selected-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    background: #fafafa;
+    border-radius: 6px;
+    min-height: 50px;
+    
+    .ant-tag {
+      margin: 0;
+      padding: 4px 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      
+      .anticon-close {
+        margin-left: 4px;
+        cursor: pointer;
+        transition: color 0.2s;
+        
+        &:hover {
+          color: #ff4d4f;
+        }
+      }
+    }
+  }
+  
+  .ant-upload-list-picture-card {
+    .ant-upload-list-item {
+      margin: 0 8px 8px 0;
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #f0f0f0;
+    
+    button {
+      min-width: 120px;
+    }
+  }
+  
+  // Ant Design overrides
+  .ant-form-item-label {
+    font-weight: 500;
+    
+    label {
+      color: #333;
+      
+      &.ant-form-item-required::before {
+        color: #ff4d4f;
+      }
+    }
+  }
+  
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-picker,
+  .ant-select-selector {
+    border-radius: 6px;
+    
+    &:hover {
+      border-color: #40a9ff;
+    }
+    
+    &:focus,
+    &.ant-input-focused {
+      border-color: #1890ff;
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+    }
+  }
+  
+  .ant-btn {
+    border-radius: 6px;
+    font-weight: 500;
+    
+    &-primary {
+      background: #1890ff;
+      
+      &:hover {
+        background: #40a9ff;
+      }
+    }
+  }
+}

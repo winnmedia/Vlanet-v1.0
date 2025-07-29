@@ -1,0 +1,406 @@
+{
+  "timestamp": "2025-07-28T13:07:39.497Z",
+  "overallScore": 56,
+  "grade": "F",
+  "scores": {
+    "noHardcoding": 6.957482054113754,
+    "noImportant": 98.1970379909852,
+    "useTokens": 21.107533805537667,
+    "noDuplication": 75.15151515151516,
+    "fileOrganization": 89.38271604938272,
+    "performance": 96.29629629629629
+  },
+  "totalFiles": 81,
+  "totalSize": 700167,
+  "issues": [
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/tasks/Project/ProcessDateEnhanced.scss",
+      "message": "하드코딩된 값: 색상 1개, 픽셀 119개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/tasks/Feedback/FeedbackManage.module.scss",
+      "message": "하드코딩된 값: 색상 29개, 픽셀 63개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/tasks/Feedback/FeedbackInput.module.scss",
+      "message": "하드코딩된 값: 색상 25개, 픽셀 58개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/styles/minimal-design-system.scss",
+      "message": "하드코딩된 값: 색상 6개, 픽셀 41개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/styles/design-system.scss",
+      "message": "하드코딩된 값: 색상 21개, 픽셀 48개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/page/User/MyPage.scss",
+      "message": "하드코딩된 값: 색상 33개, 픽셀 233개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/page/Cms/VideoPlanningMinimal.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 14개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "message": "하드코딩된 값: 색상 487개, 픽셀 963개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/page/Cms/FeedbackButtonStyles.module.scss",
+      "message": "하드코딩된 값: 색상 6개, 픽셀 85개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/page/Cms/CmsHomeMinimal.module.scss",
+      "message": "하드코딩된 값: 색상 4개, 픽셀 47개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/page/Admin/AdminDashboard.scss",
+      "message": "하드코딩된 값: 색상 82개, 픽셀 186개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/design-system/pages/ProjectCreate/ProjectCreate.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 36개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/design-system/pages/Feedback/Feedback.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 43개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/design-system/pages/CmsHome/CmsHome.module.scss",
+      "message": "하드코딩된 값: 색상 4개, 픽셀 34개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/design-system/layout/Layout.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 33개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/design-system/components/Calendar/Calendar.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 47개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/design-system/components/Button/Button.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 33개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/design-system/accessibility/_touch-targets.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 24개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/VideoPlayerCustom.scss",
+      "message": "하드코딩된 값: 색상 8개, 픽셀 31개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Home.scss",
+      "message": "하드코딩된 값: 색상 108개, 픽셀 562개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/User/Login.scss",
+      "message": "하드코딩된 값: 색상 12개, 픽셀 27개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/User/Auth.scss",
+      "message": "하드코딩된 값: 색상 15개, 픽셀 31개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Common/ToggleButton.scss",
+      "message": "하드코딩된 값: 색상 17개, 픽셀 22개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/VideoPlanning.scss",
+      "message": "하드코딩된 값: 색상 23개, 픽셀 52개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/FeedbackPage.scss",
+      "message": "하드코딩된 값: 색상 19개, 픽셀 53개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/FeedbackMoreStyle.scss",
+      "message": "하드코딩된 값: 색상 13개, 픽셀 61개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/FeedbackHeader.scss",
+      "message": "하드코딩된 값: 색상 2개, 픽셀 72개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/FeedbackGridLayout.module.scss",
+      "message": "하드코딩된 값: 색상 18개, 픽셀 46개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/FeedbackButtons.scss",
+      "message": "하드코딩된 값: 색상 23개, 픽셀 74개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/EncodingStatus.scss",
+      "message": "하드코딩된 값: 색상 1개, 픽셀 16개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/CmsHomeMinimal.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 14개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Cms/Cms.scss",
+      "message": "하드코딩된 값: 색상 251개, 픽셀 697개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/css/Admin/AdminRedirect.scss",
+      "message": "하드코딩된 값: 색상 5개, 픽셀 16개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/VirtualList.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 11개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/VideoUploadGuide.scss",
+      "message": "하드코딩된 값: 색상 11개, 픽셀 24개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/VideoPlayer.scss",
+      "message": "하드코딩된 값: 색상 10개, 픽셀 22개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/UserAvatar.module.scss",
+      "message": "하드코딩된 값: 색상 14개, 픽셀 5개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/ToggleButton.module.scss",
+      "message": "하드코딩된 값: 색상 8개, 픽셀 5개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/SideBar.module.scss",
+      "message": "하드코딩된 값: 색상 39개, 픽셀 95개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/ProjectScheduleSection.module.scss",
+      "message": "하드코딩된 값: 색상 50개, 픽셀 82개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "message": "하드코딩된 값: 색상 62개, 픽셀 144개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/ProjectForm.scss",
+      "message": "하드코딩된 값: 색상 14개, 픽셀 49개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/ProjectDashboard.scss",
+      "message": "하드코딩된 값: 색상 67개, 픽셀 129개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/NotificationDropdown.scss",
+      "message": "하드코딩된 값: 색상 23개, 픽셀 62개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/LoadingAnimation.scss",
+      "message": "하드코딩된 값: 색상 14개, 픽셀 32개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/ImageCropper.scss",
+      "message": "하드코딩된 값: 색상 16개, 픽셀 54개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/Header.module.scss",
+      "message": "하드코딩된 값: 색상 19개, 픽셀 31개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/FeedbackPlayer.scss",
+      "message": "하드코딩된 값: 색상 30개, 픽셀 132개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/ExportModal.scss",
+      "message": "하드코딩된 값: 색상 33개, 픽셀 61개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/CustomAlert.scss",
+      "message": "하드코딩된 값: 색상 18개, 픽셀 37개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/CalendarEnhanced.scss",
+      "message": "하드코딩된 값: 색상 23개, 픽셀 87개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/minimal/StepWizard.module.scss",
+      "message": "하드코딩된 값: 색상 0개, 픽셀 11개"
+    },
+    {
+      "type": "hardcoding",
+      "severity": "high",
+      "file": "src/components/minimal/MinimalButton.module.scss",
+      "message": "하드코딩된 값: 색상 1개, 픽셀 19개"
+    },
+    {
+      "type": "important",
+      "severity": "high",
+      "file": "src/page/Cms/FeedbackButtonStyles.module.scss",
+      "message": "!important 100개 사용"
+    },
+    {
+      "type": "important",
+      "severity": "high",
+      "file": "src/design-system/accessibility/_screen-reader.scss",
+      "message": "!important 16개 사용"
+    },
+    {
+      "type": "important",
+      "severity": "high",
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "message": "!important 39개 사용"
+    },
+    {
+      "type": "important",
+      "severity": "high",
+      "file": "src/css/_layout-improved.scss",
+      "message": "!important 11개 사용"
+    },
+    {
+      "type": "important",
+      "severity": "high",
+      "file": "src/css/Cms/Cms.scss",
+      "message": "!important 30개 사용"
+    },
+    {
+      "type": "important",
+      "severity": "high",
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "message": "!important 42개 사용"
+    },
+    {
+      "type": "organization",
+      "severity": "medium",
+      "message": "임시/수정 파일 1개 발견"
+    },
+    {
+      "type": "organization",
+      "severity": "low",
+      "file": "src/components",
+      "message": "디렉토리에 파일이 너무 많음 (23개)"
+    },
+    {
+      "type": "performance",
+      "severity": "medium",
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "message": "파일 크기가 큼 (82.78 KB)"
+    },
+    {
+      "type": "performance",
+      "severity": "medium",
+      "file": "src/css/Home.scss",
+      "message": "파일 크기가 큼 (59.08 KB)"
+    },
+    {
+      "type": "performance",
+      "severity": "medium",
+      "file": "src/css/Cms/Cms.scss",
+      "message": "파일 크기가 큼 (80.74 KB)"
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "tokens",
+      "message": "디자인 토큰 사용률이 낮습니다. 하드코딩된 값을 토큰으로 교체하세요."
+    }
+  ]
+}

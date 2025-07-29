@@ -1,5 +1,8 @@
 
 import PageTemplate from '../../components/PageTemplate'
+import dynamic from 'next/dynamic';
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import queryString from 'query-string'
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams, useLocation } from '../../util/nextNavigation'
@@ -71,7 +74,9 @@ export default function Login() {
         email: userData.user || userData.email,
         nickname: userData.nickname
       };
+import { Button } from '../../components/unified/Button'
       typeof window !== 'undefined' && window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
+import { Input } from '../../components/unified/Input';
     } else {
       // 사용자 정보 API 호출
       try {
@@ -83,9 +88,7 @@ export default function Login() {
           };
           typeof window !== 'undefined' && window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
         }
-      } catch (userErr) {
-        console.error('Failed to fetch user info:', userErr);
-      }
+      } catch (userErr) {}
     }
     
     // Create controller for refetchProject
@@ -93,8 +96,7 @@ export default function Login() {
     
     try {
       // refetchProject를 기다린 후 navigate
-      // console.log('[Login] Loading project list after successful login')
-      await refetchProject(dispatch, navigate, { signal: controller.signal })
+      // await refetchProject(dispatch, navigate, { signal: controller.signal })
       
       if (uid && token) {
         // 초대 링크 처리 페이지
@@ -110,7 +112,6 @@ export default function Login() {
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
-        console.error('Failed to load projects after login:', err)
         // Still navigate even if project loading fails
         navigate('/cmshome', { replace: true })
       }
@@ -173,17 +174,13 @@ export default function Login() {
             // Request was aborted, do nothing
             return
           }
-          console.error('Login error:', err)
-          console.error('Error response:', err.response)
-          
           if (err.response && err.response.data) {
             // 이메일 미인증 에러 처리
             if (err.response.status === 403 && err.response.data.error_code === 'EMAIL_NOT_VERIFIED') {
               SetLoginMessage(
                 <div>
                   <p style={{ margin: '0 0 10px 0' }}>{err.response.data.message}</p>
-                  <button 
-                    onClick={() => resendVerificationEmail(err.response.data.email)}
+                  <Button onClick={() = aria-label="Click"> resendVerificationEmail(err.response.data.email)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> resendVerificationEmail(err.response.data.email)}
                     style={{
                       padding: '8px 16px',
                       backgroundColor: '#1631F8',
@@ -195,7 +192,7 @@ export default function Login() {
                     }}
                   >
                     인증 메일 재발송
-                  </button>
+                  </Button>
                 </div>
               )
             } else if (err.response.data.message) {
@@ -240,33 +237,19 @@ export default function Login() {
               </p>
             </div>
           )}
-          <input
-            type="text"
-            name="email"
-            placeholder="이메일"
-            className="ty01 mt50"
-            value={email}
-            onChange={OnChange}
-          />
+          <UnifiedInput placeholder="이메일" value={email} onChange={OnChange} name="email"  / aria-label="이메일">
 
-          <input
-            type="password"
-            name="password"
-            placeholder="비밀번호"
-            className="ty01 mt10"
-            value={password}
-            onChange={OnChange}
-          />
+          <UnifiedInput placeholder="비밀번호" value={password} onChange={OnChange} name="password"  / aria-label="비밀번호">
           {login_message && <div className="error">{login_message}</div>}
-          <div className="find_link tr" onClick={() => navigate('/resetpw')}>
+          <div className="find_link tr" onClick={() => navigate('/resetpw')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/resetpw')}>
             비밀번호 찾기
           </div>
-          <button className="submit mt20" onClick={Login}>
+          <Button onClick={Login} onKeyDown={(e) => e.key === 'Enter' && Login} aria-label="Click">
             로그인
-          </button>
+          </Button>
           <div className="mt20 signup_link">
             브이래닛이 처음이신가요?{' '}
-            <span onClick={() => navigate('/signup')}>간편 가입하기</span>
+            <span onClick={() => navigate('/signup')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/signup')}>간편 가입하기</span>
           </div>
         </div>
       </div>

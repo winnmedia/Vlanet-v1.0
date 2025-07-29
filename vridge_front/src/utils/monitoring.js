@@ -30,8 +30,7 @@ export function initMonitoring() {
 
 // 커스텀 에러 로깅
 export function logError(error, context = {}) {
-  console.error('Error occurred:', error);
-  
+
   if (process.env.NODE_ENV === 'production') {
     Sentry.captureException(error, {
       extra: context,
@@ -80,8 +79,7 @@ export function measurePerformance(name, fn) {
 
 // 성능 로깅
 function logPerformance(operation, duration) {
-  if (duration > 1000) {
-    console.warn(`Slow operation detected: ${operation} took ${duration.toFixed(2)}ms`);
+  ms`);
     
     Sentry.captureMessage('Slow operation detected', {
       level: 'warning',
@@ -117,9 +115,7 @@ export function trackUserAction(action, data = {}) {
         timestamp: new Date().toISOString(),
         sessionId: getSessionId(),
       }),
-    }).catch((error) => {
-      console.error('Failed to track event:', error);
-    });
+    }).catch((error) => {});
   }
 }
 
@@ -144,8 +140,7 @@ export function reportWebVitals(metric) {
   };
 
   if (metric.value > vitals[metric.name]) {
-    console.warn(`Poor ${metric.name}: ${metric.value}`);
-    
+
     Sentry.captureMessage(`Poor Web Vital: ${metric.name}`, {
       level: 'warning',
       extra: {

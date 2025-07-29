@@ -1,91 +1,38 @@
-@import '../styles/minimal-design-system-v2';
+@import '../styles/design-tokens';
 
-.imageContainer {
+// 컨테이너
+.container {
   position: relative;
+  display: inline-block;
   overflow: hidden;
-  background-color: var(--gray-50);
-  
-  &.loaded {
-    background-color: transparent;
-  }
-  
-  &.error {
-    background-color: var(--gray-100);
-  }
+  background: $color-gray-100;
 }
 
+// 이미지
 .image {
-  width: 100%;
-  height: 100%;
   display: block;
-  transition: opacity var(--duration-normal) var(--ease-out);
-  opacity: 0;
-  
-  .loaded & {
-    opacity: 1;
-  }
-  
-  // Object-fit 변형
-  &.objectFit-contain {
-    object-fit: contain;
-  }
-  
-  &.objectFit-cover {
-    object-fit: cover;
-  }
-  
-  &.objectFit-fill {
-    object-fit: fill;
-  }
-  
-  &.objectFit-none {
-    object-fit: none;
-  }
-  
-  &.objectFit-scale-down {
-    object-fit: scale-down;
-  }
+  max-width: 100%;
+  height: auto;
+  transition: opacity 0.3s ease-in-out;
 }
 
-.placeholder {
+// 로딩 스켈레톤
+.skeleton {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  filter: blur(10px);
-  transform: scale(1.1);
-  transition: opacity var(--duration-normal) var(--ease-out);
-  
-  .loaded & {
-    opacity: 0;
-  }
+  background: linear-gradient(
+    90deg,
+    $color-gray-200 0%,
+    $color-gray-100 50%,
+    $color-gray-200 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
 
-.errorState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: var(--spacing-4);
-  color: var(--muted);
-  
-  svg {
-    margin-bottom: var(--spacing-2);
-    opacity: 0.5;
-  }
-  
-  p {
-    margin: 0;
-    font-size: var(--text-sm);
-    text-align: center;
-  }
-}
-
-// 로딩 스켈레톤 애니메이션
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -95,49 +42,159 @@
   }
 }
 
-.imageContainer:not(.loaded):not(.error) {
-  background: linear-gradient(
-    90deg,
-    var(--gray-50) 0%,
-    var(--gray-100) 50%,
-    var(--gray-50) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+// 에러 컨테이너
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: $color-gray-100;
+  color: $color-gray-500;
+  border: $spacing-2xs dashed $color-gray-300;
+  border-radius: $border-radius-md;
+  padding: $spacing-lg;
+  text-align: center;
 }
 
-// 접근성을 위한 포커스 스타일
-.imageContainer:focus-within {
-  @include focus-ring;
+.errorIcon {
+  margin-bottom: $spacing-sm;
+  opacity: 0.5;
 }
 
-// 고대비 모드 지원
-@media (prefers-contrast: high) {
-  .errorState {
-    border: 2px solid currentColor;
-    
-    svg {
-      opacity: 1;
+.errorText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+// 썸네일 스타일
+.thumbnail {
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $shadow-md;
+  }
+}
+
+// 배너 스타일
+.banner {
+  width: 100%;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-md;
+}
+
+// 아바타 스타일
+.avatar {
+  border-radius: 50%;
+  overflow: hidden;
+  border: $spacing-2xs solid $color-white;
+  box-shadow: $shadow-sm;
+
+  &.avatar-small {
+    width: $spacing-2xl;
+    height: $spacing-2xl;
+  }
+
+  &.avatar-medium {
+    width: $spacing-5xl;
+    height: $spacing-5xl;
+  }
+
+  &.avatar-large {
+    width: 128px;
+    height: 128px;
+  }
+}
+
+// 반응형
+@media (max-width: $breakpoint-mobile) {
+  .thumbnail {
+    &:hover {
+      transform: none;
     }
   }
 }
 
-// 다크 모드 지원
-@media (prefers-color-scheme: dark) {
-  .imageContainer {
-    background-color: var(--gray-800);
-    
-    &.error {
-      background-color: var(--gray-900);
-    }
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
   }
   
-  .imageContainer:not(.loaded):not(.error) {
-    background: linear-gradient(
-      90deg,
-      var(--gray-800) 0%,
-      var(--gray-700) 50%,
-      var(--gray-800) 100%
-    );
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: $spacing-md; /* Prevent zoom on iOS */
   }
 }

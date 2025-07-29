@@ -1,0 +1,559 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 통합 레이아웃 시스템
+// 모든 레이아웃 스타일을 하나로 통합
+
+@use '../tokens' as *;
+
+// ========== 기본 레이아웃 믹스인 ==========
+
+// 페이지 레이아웃
+@mixin page-layout {
+  display: flex;
+  min-height: 100vh;
+  background: $color-background;
+}
+
+// 콘텐츠 영역
+@mixin content-area {
+  flex: 1;
+  padding: $spacing-xl;
+  
+  @media (max-width: $breakpoint-md) { padding: $spacing-md;
+  }
+  
+  @media (max-width: $breakpoint-sm) { padding: $spacing-sm;
+  }
+}
+
+// 카드 컨테이너
+@mixin card {
+  background: $color-white;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-default;
+  border: $spacing-2xs solid $color-border-light;
+  transition: all $transition-fast;
+  
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-$spacing-2xs);
+  }
+}
+
+// 섹션 헤더
+@mixin section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: $spacing-2xs solid $color-border-light;
+}
+
+// ========== 홈 페이지 레이아웃 ==========
+
+.homeLayout {
+  @include page-layout;
+  
+  .homeContent {
+    @include content-area;
+    
+    .homeHeader {
+      margin-bottom: $spacing-xl;
+      
+      h1 {
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-bold;
+        color: $color-text-primary;
+        margin-bottom: $spacing-sm;
+      }
+      
+      .welcomeMessage {
+        font-size: $font-size-base;
+        color: $color-text-secondary;
+      }
+    }
+  }
+}
+
+// 프로젝트 생성 섹션
+.createProjectSection {
+  @include card;
+  margin-bottom: $spacing-xl;
+  text-align: center;
+  
+  .createIcon {
+    width: $spacing-4xl - $spacing-xs;
+    height: $spacing-4xl - $spacing-xs;
+    margin: $spacing-0 auto $spacing-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+    border-radius: $border-radius-full;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-white;
+    font-size: $font-size-2xl;
+  }
+  
+  h2 {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-sm;
+    color: $color-text-primary;
+  }
+  
+  p {
+    color: $color-text-secondary;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// 프로젝트 그리드
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($spacing-6xl * 3.125, 1fr));
+  gap: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) { grid-template-columns: 1fr;
+  }
+}
+
+.projectCard {
+  @include card;
+  cursor: pointer;
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-$spacing-2xs);
+    box-shadow: $shadow-lg;
+  }
+  
+  .projectHeader {
+    @include section-header;
+    padding-bottom: $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+  
+  .projectTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin: $spacing-0;
+  }
+  
+  .projectStatus {
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    
+    &.active {
+      background: $color-success-light;
+      color: $color-success;
+    }
+    
+    &.completed {
+      background: $color-info-light;
+      color: $color-info;
+    }
+  }
+}
+
+// ========== 홈 액티비티 그리드 ==========
+
+.homeActivityGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  
+  @media (max-width: $breakpoint-md) { grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+.activityCard,
+.invitationCard {
+  @include card;
+  
+  .cardHeader {
+    @include section-header;
+    
+    .cardTitle {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      margin: $spacing-0;
+    }
+    
+    .collapseBtn {
+      width: $spacing-lg + $spacing-xs;
+      height: $spacing-lg + $spacing-xs;
+      border: none;
+      background: $color-gray-100;
+      border-radius: $radius-sm;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all $transition-fast;
+      
+      &:hover {
+        background: $color-gray-200;
+      }
+      
+      &::after {
+        content: '−';
+        font-size: $font-size-xl;
+        font-weight: $font-weight-semibold;
+        color: $color-text-secondary;
+        line-height: 1;
+      }
+      
+      &.collapsed::after {
+        content: '+';
+      }
+    }
+  }
+  
+  .cardContent {
+    min-height: $spacing-6xl * 2 + $spacing-sm;
+  }
+}
+
+// ========== 피드백 페이지 레이아웃 ==========
+
+.feedbackLayout {
+  display: flex;
+  height: calc(100vh - 96px + 8px);
+  margin: $spacing-0 0 $spacing-xl;
+  padding: $spacing-lg;
+  padding-left: $spacing-xs;
+  gap: $spacing-sm;
+  
+  // 큰 화면 - 좌우 배치
+  @media (min-width: 140$border-width-thin) { flex-direction: row;
+    
+    .videoSection {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+      
+      .videoInner {
+        flex: 1;
+        min-height: $spacing-6xl * 5 + $spacing-lg - $spacing-xs;
+        
+        &.active {
+          display: flex;
+          
+          .feedbackPlayer {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+      
+      .controlsBox {
+        flex-shrink: 0;
+      }
+    }
+    
+    .sideSection {
+      width: $spacing-6xl * 4.69;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+  }
+  
+  // 중간 화면 - 세로 배치
+  @media (max-width: 1400px) { flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 96px + 8px);
+    
+    .videoSection {
+      width: 100%;
+      
+      .videoInner {
+        height: $spacing-6xl * 5 + $spacing-lg - $spacing-xs;
+      }
+    }
+    
+    .sideSection {
+      width: 100%;
+      height: $spacing-6xl * 6.25;
+      margin-top: $spacing-lg;
+    }
+  }
+  
+  // 모바일
+  @media (max-width: $breakpoint-sm) { padding: $spacing-sm;
+    gap: $spacing-sm;
+    
+    .videoSection .videoInner {
+      height: $spacing-6xl * 3 + $spacing-sm + $spacing-xs;
+    }
+    
+    .sideSection {
+      height: $spacing-6xl * 4 + $spacing-md;
+      margin-top: $spacing-md;
+    }
+  }
+}
+
+// 피드백 사이드 섹션
+.feedbackSide {
+  @include card;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  .sideHeader {
+    padding: $spacing-lg $spacing-lg;
+    border-bottom: $spacing-2xs solid $color-border-light;
+    background: $color-gray-50;
+    flex-shrink: 0;
+    
+    .sideTitle {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+  }
+  
+  .tabContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: $spacing-0;
+    overflow: hidden;
+    
+    .tabMenu {
+      padding: $spacing-sm $spacing-md;
+      background: $color-gray-100;
+      border-bottom: $spacing-2xs solid $color-border-light;
+      flex-shrink: 0;
+    }
+    
+    .tabContent {
+      flex: 1;
+      overflow-y: auto;
+      padding: $spacing-lg;
+      
+      // 스크롤바 스타일
+      &::-webkit-scrollbar {
+        width: $spacing-sm - $spacing-2xs;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: $color-gray-100;
+        border-radius: $border-radius-sm - $spacing-2xs;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: $color-gray-400;
+        border-radius: $border-radius-sm - $spacing-2xs;
+        
+        &:hover {
+          background: $color-gray-500;
+        }
+      }
+    }
+  }
+}
+
+// ========== 프로젝트 생성 레이아웃 ==========
+
+.projectCreateLayout {
+  @include page-layout;
+  
+  .createContent {
+    flex: 1;
+    max-width: $breakpoint-xl;
+    margin: $spacing-0 auto;
+    padding: $spacing-xl;
+    
+    @media (max-width: $breakpoint-md) { padding: $spacing-md;
+    }
+  }
+}
+
+// 단계 표시기
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-2xl;
+  
+  .step {
+    display: flex;
+    align-items: center;
+    
+    .stepCircle {
+      width: $spacing-2xl;
+      height: $spacing-2xl;
+      border-radius: $border-radius-full;
+      background: $color-gray-200;
+      color: $color-text-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: $font-weight-semibold;
+      transition: all $transition-button;
+      
+      &.active {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+        color: $color-white;
+      }
+      
+      &.completed {
+        background: $color-success;
+        color: $color-white;
+      }
+    }
+    
+    .stepLine {
+      width: $spacing-6xl + $spacing-xs;
+      height: $spacing-2xs;
+      background: $color-gray-200;
+      margin: $spacing-0 $spacing-sm;
+      
+      &.completed {
+        background: $color-success;
+      }
+    }
+    
+    &:last-child .stepLine {
+      display: none;
+    }
+  }
+}
+
+// 폼 섹션
+.formSection {
+  @include card;
+  margin-bottom: $spacing-lg;
+  
+  h2 {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-lg;
+    color: $color-text-primary;
+  }
+  
+  .formRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg;
+    
+    @media (max-width: $breakpoint-md) { grid-template-columns: 1fr;
+    }
+    
+    &.single {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// ========== 유틸리티 클래스 ==========
+
+.emptyState {
+  text-align: center;
+  padding: $spacing-2xl $spacing-lg;
+  color: $color-text-muted;
+  
+  .emptyIcon {
+    width: $spacing-5xl;
+    height: $spacing-5xl;
+    margin: $spacing-0 auto $spacing-lg;
+    opacity: 0.3;
+  }
+  
+  h3 {
+    font-size: $font-size-lg;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-sm;
+  }
+  
+  p {
+    color: $color-text-muted;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// 드롭다운 메뉴
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: $spacing-0;
+  margin-top: $spacing-xs;
+  background: $color-white;
+  border: $spacing-2xs solid $color-border-light;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  min-width: $spacing-6xl * 2 + $spacing-sm;
+  z-index: $z-dropdown;
+  
+  .dropdownItem {
+    padding: $spacing-sm $spacing-md;
+    cursor: pointer;
+    transition: background $transition-fast;
+    
+    &:hover {
+      background: $color-gray-50;
+    }
+    
+    &:first-child {
+      border-radius: $radius-md $radius-md 0 0;
+    }
+    
+    &:last-child {
+      border-radius: $border-radius-none 0 $radius-md $radius-md;
+    }
+  }
+}
+
+// 토스트 알림
+.toastNotification {
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  background: $color-white;
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-lg;
+  box-shadow: $shadow-xl;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  z-index: $z-notification;
+  animation: slideIn 0.3s ease;
+  
+  @media (max-width: $breakpoint-md) { left: $spacing-md;
+    right: $spacing-md;
+    bottom: $spacing-md;
+  }
+  
+  &.success {
+    border-left: $spacing-xs solid $color-success;
+  }
+  
+  &.error {
+    border-left: $spacing-xs solid $color-danger;
+  }
+  
+  &.info {
+    border-left: $spacing-xs solid $color-info;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

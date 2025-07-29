@@ -953,6 +953,8 @@ def export_to_pdf(request):
 def export_planning_to_pdf(request, planning_id):
     """특정 기획을 PDF로 내보내기 (GET 방식)"""
     try:
+        logger.info(f"PDF export requested for planning_id: {planning_id} by user: {request.user}")
+        
         # 기획 조회
         planning = VideoPlanning.objects.filter(
             id=planning_id,
@@ -960,25 +962,51 @@ def export_planning_to_pdf(request, planning_id):
         ).first()
         
         if not planning:
+            # 더 자세한 에러 정보 제공
+            all_user_plannings = VideoPlanning.objects.filter(user=request.user).values_list('id', flat=True)
+            logger.warning(f"Planning not found. ID: {planning_id}, User: {request.user}, Available IDs: {list(all_user_plannings)}")
+            
             return Response({
                 'status': 'error',
-                'message': '기획을 찾을 수 없습니다.'
+                'message': f'기획을 찾을 수 없습니다. (ID: {planning_id})'
             }, status=status.HTTP_404_NOT_FOUND)
+        
+        logger.info(f"Planning found: {planning.title}")
         
         # 기획 데이터 직렬화
         serializer = VideoPlanningSerializer(planning)
         planning_data = serializer.data
         
+        logger.info(f"Planning data serialized. Keys: {list(planning_data.keys())}")
+        
+        # 데이터 검증
+        if not planning_data:
+            logger.error("Planning data is empty after serialization")
+            return Response({
+                'status': 'error',
+                'message': '기획 데이터가 비어있습니다.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
         # PDF 생성 서비스
         pdf_service = PDFExportService()
         
         # PDF 생성
+        logger.info("Starting PDF generation...")
         pdf_buffer = pdf_service.generate_pdf(planning_data)
+        
+        if not pdf_buffer:
+            logger.error("PDF buffer is None")
+            return Response({
+                'status': 'error',
+                'message': 'PDF 생성에 실패했습니다.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         # 파일명 생성
         title = planning_data.get('title', '영상기획안')
         safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
         filename = f"{safe_title}_기획안.pdf"
+        
+        logger.info(f"PDF generated successfully. Filename: {filename}")
         
         # PDF 반환
         response = HttpResponse(

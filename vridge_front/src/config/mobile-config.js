@@ -30,13 +30,13 @@ export const setupMobileConfig = () => {
 
     // 모바일 터치 이벤트 최적화
     document.addEventListener('touchstart', () => {}, { passive: true });
-    
-    console.log('[Mobile Config] Mobile environment detected:', {
-      isMobile: true,
-      isIOS: isIOS(),
-      isAndroid: isAndroid(),
-      userAgent: navigator.userAgent
-    });
+
+
+
+
+
+
+
   }
 };
 

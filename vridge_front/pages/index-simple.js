@@ -1,4 +1,6 @@
 import { useRouter } from 'next/router'
+import { UnifiedButton } from '../src/components/unified/UnifiedButton';
+import dynamic from 'next/dynamic';
 import { useEffect } from 'react'
 
 export default function SimpleHome() {
@@ -28,7 +30,7 @@ export default function SimpleHome() {
         영상 콘텐츠 협업의 신세계
       </p>
       <div style={{ display: 'flex', gap: '20px' }}>
-        <button
+        <UnifiedButton
           onClick={() => router.push('/login')}
           style={{
             padding: '12px 32px',
@@ -41,8 +43,8 @@ export default function SimpleHome() {
           }}
         >
           로그인
-        </button>
-        <button
+        </UnifiedButton>
+        <UnifiedButton
           onClick={() => router.push('/signup')}
           style={{
             padding: '12px 32px',
@@ -55,7 +57,7 @@ export default function SimpleHome() {
           }}
         >
           회원가입
-        </button>
+        </UnifiedButton>
       </div>
     </div>
   )

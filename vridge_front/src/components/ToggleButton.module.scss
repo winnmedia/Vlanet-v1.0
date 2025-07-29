@@ -1,20 +1,22 @@
+@import '../styles/design-tokens';
+
 .toggleButton {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid #e0e0e0;
-  background-color: #ffffff;
+  width: $spacing-xl;
+  height: $spacing-xl;
+  border-radius: $border-radius-full;
+  border: $spacing-2xs solid $color-gray-300;
+  background-color: $color-white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
+  transition: $transition-base;
+  padding: $spacing-0;
   flex-shrink: 0;
   
   &:hover {
-    background-color: #f8f9fa;
-    border-color: #c6c6c6;
+    background-color: $color-background-secondary;
+    border-color: $color-gray-300;
     transform: scale(1.05);
   }
   
@@ -23,19 +25,19 @@
   }
   
   &.expanded {
-    background-color: #f0f1f3;
-    border-color: #c6c6c6;
+    background-color: $color-gray-100;
+    border-color: $color-gray-300;
     
     .icon {
-      color: #495057;
+      color: $color-gray-700;
     }
   }
   
   .icon {
-    font-size: 20px;
-    font-weight: 300;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-light;
     line-height: 1;
-    color: #6c757d;
+    color: $color-gray-600;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,6 +47,50 @@
   
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(22, 49, 248, 0.2);
+    box-shadow: 0 0 0 $spacing-2xs rgba($color-primary, 0.2);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: $spacing-md;
+    width: 100%;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .text-large {
+    font-size: $font-size-lg;
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 76calc(8px + 4px)) and (max-width: 1024px) {
+  .container {
+    padding: $spacing-lg;
+    max-width: 960;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 102calc(8px - 4px)) {
+  .container {
+    max-width: 1200;
+    margin: 0 auto;
   }
 }

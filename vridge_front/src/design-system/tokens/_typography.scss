@@ -1,0 +1,281 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 타이포그래피 토큰 시스템
+// 일관된 텍스트 스타일 제공
+
+// ========== 폰트 패밀리 ==========
+$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+$font-family-heading: $font-family-base;
+$font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
+// 한글 폰트 추가
+$font-family-korean: 'Noto Sans KR', 'Malgun Gothic', '맑은 고딕', sans-serif;
+
+// ========== 폰트 크기 ==========
+$font-size-base: $font-size-sm;
+$font-size-xs: $font-size-xs;
+$font-size-sm: $font-size-sm;
+$font-size-md: $font-size-base;  // $font-size-sm
+$font-size-lg: $font-size-base;
+$font-size-xl: $font-size-lg;
+$font-size-2xl: $font-size-xl;
+$font-size-3xl: $font-size-2xl;
+$font-size-4xl: $font-size-3xl;
+$font-size-5xl: $font-size-4xl;
+
+// 제목 크기
+$font-size-h1: $font-size-4xl;
+$font-size-h2: $font-size-3xl;
+$font-size-h3: $font-size-2xl;
+$font-size-h4: $font-size-xl;
+$font-size-h5: $font-size-lg;
+$font-size-h6: $font-size-base;
+
+// ========== 폰트 굵기 ==========
+$font-weight-thin: 100;
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-$color-black: 900;
+
+// ========== 줄 높이 ==========
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+$line-height-loose: 2;
+
+// 컴포넌트별 줄 높이
+$line-height-heading: $line-height-tight;
+$line-height-body: $line-height-normal;
+$line-height-button: 1;
+$line-height-input: $line-height-normal;
+
+// ========== 자간 ==========
+$letter-spacing-tight: -0.5px;
+$letter-spacing-normal: 0;
+$letter-spacing-wide: 0.5px;
+$letter-spacing-wider: $spacing-2xs;
+$letter-spacing-widest: $spacing-2xs;
+
+// ========== 텍스트 스타일 믹스인 ==========
+@mixin text-xs {
+  font-size: $font-size-xs;
+  line-height: $line-height-normal;
+}
+
+@mixin text-sm {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+}
+
+@mixin text-base {
+  font-size: $font-size-base;
+  line-height: $line-height-body;
+}
+
+@mixin text-lg {
+  font-size: $font-size-lg;
+  line-height: $line-height-normal;
+}
+
+@mixin text-xl {
+  font-size: $font-size-xl;
+  line-height: $line-height-normal;
+}
+
+// 제목 스타일
+@mixin heading-1 {
+  font-size: $font-size-h1;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-heading;
+  letter-spacing: $letter-spacing-tight;
+}
+
+@mixin heading-2 {
+  font-size: $font-size-h2;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-heading;
+  letter-spacing: $letter-spacing-tight;
+}
+
+@mixin heading-3 {
+  font-size: $font-size-h3;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-heading;
+  letter-spacing: $letter-spacing-tight;
+}
+
+@mixin heading-4 {
+  font-size: $font-size-h4;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-heading;
+}
+
+@mixin heading-5 {
+  font-size: $font-size-h5;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-heading;
+}
+
+@mixin heading-6 {
+  font-size: $font-size-h6;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-heading;
+}
+
+// 특수 텍스트 스타일
+@mixin text-button {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-button;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: none;
+}
+
+@mixin text-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+}
+
+@mixin text-caption {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: $color-text-muted;
+}
+
+@mixin text-code {
+  font-family: $font-family-mono;
+  font-size: 0.875em;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+}
+
+// ========== CSS 변수 정의 ==========
+:root {
+  // 폰트 패밀리
+  --font-family-base: #{$font-family-base};
+  --font-family-heading: #{$font-family-heading};
+  --font-family-mono: #{$font-family-mono};
+  --font-family-korean: #{$font-family-korean};
+  
+  // 폰트 크기
+  --font-size-xs: #{$font-size-xs};
+  --font-size-sm: #{$font-size-sm};
+  --font-size-base: #{$font-size-base};
+  --font-size-lg: #{$font-size-lg};
+  --font-size-xl: #{$font-size-xl};
+  --font-size-2xl: #{$font-size-2xl};
+  --font-size-3xl: #{$font-size-3xl};
+  --font-size-4xl: #{$font-size-4xl};
+  --font-size-5xl: #{$font-size-5xl};
+  
+  // 폰트 굵기
+  --font-weight-thin: #{$font-weight-thin};
+  --font-weight-light: #{$font-weight-light};
+  --font-weight-normal: #{$font-weight-normal};
+  --font-weight-medium: #{$font-weight-medium};
+  --font-weight-semibold: #{$font-weight-semibold};
+  --font-weight-bold: #{$font-weight-bold};
+  --font-weight-$color-black: #{$font-weight-$color-black};
+  
+  // 줄 높이
+  --line-height-tight: #{$line-height-tight};
+  --line-height-normal: #{$line-height-normal};
+  --line-height-relaxed: #{$line-height-relaxed};
+  --line-height-loose: #{$line-height-loose};
+  
+  // 자간
+  --letter-spacing-tight: #{$letter-spacing-tight};
+  --letter-spacing-normal: #{$letter-spacing-normal};
+  --letter-spacing-wide: #{$letter-spacing-wide};
+  --letter-spacing-wider: #{$letter-spacing-wider};
+  --letter-spacing-widest: #{$letter-spacing-widest};
+}
+
+// ========== 반응형 타이포그래피 ==========
+// breakpoints는 사용하는 파일에서 import해야 함
+// 미디어 쿼리는 사용하는 컴포넌트에서 직접 적용
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

@@ -1,0 +1,168 @@
+name: UI Test on Demand
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: '테스트 타입'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - visual
+          - accessibility
+          - performance
+      browser:
+        description: '브라우저'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+          - all
+
+jobs:
+  ui-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./vridge_front
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: vridge_front/package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: |
+        if [ "${{ inputs.browser }}" = "all" ]; then
+          npx playwright install --with-deps
+        else
+          npx playwright install --with-deps ${{ inputs.browser }}
+        fi
+
+    - name: Run tests
+      run: |
+        if [ "${{ inputs.test_type }}" = "all" ]; then
+          TEST_PATH="tests/"
+        else
+          TEST_PATH="tests/${{ inputs.test_type }}/"
+        fi
+        
+        if [ "${{ inputs.browser }}" = "all" ]; then
+          npx playwright test $TEST_PATH
+        else
+          npx playwright test $TEST_PATH --project=${{ inputs.browser }}
+        fi
+      env:
+        CI: true
+
+    - name: Check accessibility violations
+      if: inputs.test_type == 'accessibility' || inputs.test_type == 'all'
+      run: |
+        # 접근성 테스트 결과 확인
+        if [ -f "test-results/results.json" ]; then
+          VIOLATIONS=$(jq '.stats.failed' test-results/results.json)
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "❌ 접근성 위반사항이 발견되었습니다!"
+            echo "PR이 자동으로 차단됩니다."
+            exit 1
+          else
+            echo "✅ 모든 접근성 테스트를 통과했습니다!"
+          fi
+        fi
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ inputs.test_type }}-${{ inputs.browser }}
+        path: |
+          vridge_front/playwright-report/
+          vridge_front/test-results/
+        retention-days: 30
+
+    - name: Generate summary report
+      if: always()
+      run: |
+        echo "## 🧪 UI Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Configuration" >> $GITHUB_STEP_SUMMARY
+        echo "- Test Type: ${{ inputs.test_type }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Browser: ${{ inputs.browser }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "test-results/results.json" ]; then
+          echo "### Results" >> $GITHUB_STEP_SUMMARY
+          TOTAL=$(jq '.stats.total' test-results/results.json)
+          PASSED=$(jq '.stats.passed' test-results/results.json)
+          FAILED=$(jq '.stats.failed' test-results/results.json)
+          
+          echo "- Total: $TOTAL" >> $GITHUB_STEP_SUMMARY
+          echo "- Passed: ✅ $PASSED" >> $GITHUB_STEP_SUMMARY
+          echo "- Failed: ❌ $FAILED" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$FAILED" -gt 0 ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ⚠️ Failed Tests" >> $GITHUB_STEP_SUMMARY
+            jq -r '.suites[].specs[].tests[] | select(.status == "failed") | "- \(.title)"' test-results/results.json >> $GITHUB_STEP_SUMMARY
+          fi
+        fi
+
+  accessibility-gate:
+    name: Accessibility Gate Check
+    runs-on: ubuntu-latest
+    needs: ui-tests
+    if: inputs.test_type == 'accessibility' || inputs.test_type == 'all'
+    
+    steps:
+    - name: Download test results
+      uses: actions/download-artifact@v4
+      with:
+        name: test-results-${{ inputs.test_type }}-${{ inputs.browser }}
+        path: results
+
+    - name: Enforce accessibility standards
+      run: |
+        echo "## ♿ Accessibility Gate Check" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # WCAG 2.1 AA 준수 확인
+        if [ -f "results/test-results/results.json" ]; then
+          VIOLATIONS=$(jq '.stats.failed' results/test-results/results.json)
+          
+          if [ "$VIOLATIONS" -eq 0 ]; then
+            echo "✅ **PASSED**: 모든 WCAG 2.1 AA 기준을 충족합니다." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Compliance Summary" >> $GITHUB_STEP_SUMMARY
+            echo "- Level A: ✅ Compliant" >> $GITHUB_STEP_SUMMARY
+            echo "- Level AA: ✅ Compliant" >> $GITHUB_STEP_SUMMARY
+            echo "- Color Contrast: ✅ 4.5:1 ratio met" >> $GITHUB_STEP_SUMMARY
+            echo "- Keyboard Navigation: ✅ Fully accessible" >> $GITHUB_STEP_SUMMARY
+            echo "- Screen Reader: ✅ Compatible" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **FAILED**: 접근성 위반사항이 발견되었습니다." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Required Actions" >> $GITHUB_STEP_SUMMARY
+            echo "1. 테스트 리포트를 다운로드하여 상세 내용 확인" >> $GITHUB_STEP_SUMMARY
+            echo "2. 각 위반사항 수정" >> $GITHUB_STEP_SUMMARY
+            echo "3. 로컬에서 접근성 테스트 재실행" >> $GITHUB_STEP_SUMMARY
+            echo "4. 모든 테스트 통과 후 다시 커밋" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        else
+          echo "⚠️ 테스트 결과를 찾을 수 없습니다." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi

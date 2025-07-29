@@ -1,4 +1,10 @@
-import AdminDashboard from '../src/page/Admin/AdminDashboard'
+import dynamic from 'next/dynamic'
+import LoadingAnimation from '../src/components/LoadingAnimation'
+
+const AdminDashboard = dynamic(() => import('../src/page/Admin/AdminDashboard'), {
+  loading: () => <LoadingAnimation />,
+  ssr: false
+})
 
 export default AdminDashboard
 

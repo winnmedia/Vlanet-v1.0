@@ -1,9 +1,11 @@
+@import '../styles/design-tokens';
+
 // 전역 스타일 import
 @import './global';
 
 // 페이지별 스타일
 @import '../css/Home';
-@import '../css/HomeAlignment';
+@import '../css/HomeAlignment-improved';
 @import '../css/Service';
 @import '../css/Policy';
 @import '../css/DarkMode';
@@ -15,9 +17,11 @@
 @import '../css/Cms/ButtonFix';
 @import '../css/Cms/CalendarResponsive';
 @import '../css/Cms/CmsHomeEnhanced';
+@import '../css/Cms/CmsHomeRestore';
 @import '../css/Cms/FeedbackClean';
 @import '../css/Cms/FeedbackInitial';
 @import '../css/Cms/FeedbackLayoutFix';
+@import '../css/Cms/FeedbackLayoutRestore';
 @import '../css/Cms/FeedbackModern';
 @import '../css/Cms/FeedbackModernUI';
 @import '../css/Cms/FeedbackNewLayout';
@@ -34,7 +38,114 @@
 // Common 스타일
 @import '../css/Common/LayoutFix';
 @import '../css/Common/ToggleButton';
+@import '../css/Common/ButtonAlignment';
+@import '../css/Common/InputActivation';
 
 // User 스타일
 @import '../css/User/Auth';
 @import '../css/User/Login';
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: var(--font-size-base);
+  }
+  
+  .page-wrapper {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  .main-content {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (hover: none) {
+  
+  .button:active {
+    transform: scale(0.98);
+  }
+  
+  .link:active {
+    opacity: 0.7;
+  }
+}

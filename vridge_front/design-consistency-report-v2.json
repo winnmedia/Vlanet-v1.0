@@ -1,0 +1,87 @@
+{
+  "summary": {
+    "overallScore": 51,
+    "grade": "F",
+    "timestamp": "2025-07-28T16:01:32.347Z"
+  },
+  "details": {
+    "tokenUsage": {
+      "percentage": 46,
+      "used": 6885,
+      "total": 15116,
+      "recommendation": "디자인 토큰 사용을 늘려주세요"
+    },
+    "hardcodedValues": {
+      "colors": 70,
+      "spacing": 77,
+      "topOffenders": [
+        {
+          "file": "src/page/Cms/VideoPlanning.scss",
+          "count": 25
+        },
+        {
+          "file": "src/css/Home.scss",
+          "count": 16
+        },
+        {
+          "file": "src/page/User/MyPage.scss",
+          "count": 15
+        },
+        {
+          "file": "src/css/Cms/Cms.scss",
+          "count": 12
+        },
+        {
+          "file": "src/css/Cms/FeedbackGridLayout.module.scss",
+          "count": 10
+        }
+      ]
+    },
+    "componentConsistency": {
+      "buttons": 0,
+      "inputs": 0,
+      "cards": 100,
+      "modals": 100
+    },
+    "responsiveIssues": [],
+    "brandColorUsage": {},
+    "detailedScores": {
+      "tokenUsageByCategory": {
+        "components": {
+          "count": 30,
+          "tokenized": 30
+        },
+        "pages": {
+          "count": 7,
+          "tokenized": 7
+        },
+        "styles": {
+          "count": 46,
+          "tokenized": 44
+        }
+      },
+      "tokenUsage": {
+        "weight": 0.4,
+        "score": 46
+      },
+      "hardcoding": {
+        "weight": 0.3,
+        "score": 41.900000000000006
+      },
+      "componentConsistency": {
+        "weight": 0.2,
+        "score": 50
+      },
+      "designSystem": {
+        "weight": 0.1,
+        "score": 100
+      }
+    }
+  },
+  "recommendations": [
+    "디자인 토큰 사용률을 50% 이상으로 높이세요",
+    "70개의 하드코딩된 색상을 디자인 토큰으로 변경하세요",
+    "버튼 컴포넌트를 통합 시스템으로 마이그레이션하세요",
+    "입력 필드 컴포넌트를 통합 시스템으로 마이그레이션하세요"
+  ]
+}

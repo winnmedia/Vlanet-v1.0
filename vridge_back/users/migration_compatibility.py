@@ -49,15 +49,25 @@ def create_user_queryset_safely():
         safe_fields = get_user_fields_safely()
         return User.objects.only(*safe_fields)
 
-def get_user_safely(username):
-    """안전하게 사용자 조회"""
+def get_user_safely(username_or_email):
+    """안전하게 사용자 조회 (username 또는 email로 검색)"""
     from .models import User
     
     try:
-        return User.objects.get(username=username)
+        # 먼저 username으로 시도
+        return User.objects.get(username=username_or_email)
+    except User.DoesNotExist:
+        try:
+            # username으로 찾지 못하면 email로 시도
+            return User.objects.get(email=username_or_email)
+        except User.DoesNotExist:
+            raise
     except Exception as e:
-        logger.warning(f"Safe user lookup failed for {username}: {e}")
+        logger.warning(f"Safe user lookup failed for {username_or_email}: {e}")
         
         # 기본 필드만 사용해서 조회
         safe_fields = get_user_fields_safely()
-        return User.objects.only(*safe_fields).get(username=username)
+        try:
+            return User.objects.only(*safe_fields).get(username=username_or_email)
+        except User.DoesNotExist:
+            return User.objects.only(*safe_fields).get(email=username_or_email)

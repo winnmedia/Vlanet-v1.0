@@ -1,0 +1,343 @@
+// Feedback Layout Restoration - 피드백 페이지 핵심 레이아웃 복원
+// 백업에서 추출한 필수 레이아웃 스타일 + 디자인 토큰 통합
+
+@import '../../design-system/tokens/design-tokens';
+
+// 피드백 페이지 전체 레이아웃
+.feedback_wrap {
+  // 헤더 영역 정렬
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg 0;
+    border-bottom: 1px solid $color-gray-200;
+    margin-bottom: $spacing-xl;
+    
+    .title {
+      font-size: $font-size-2xl;
+      font-weight: 700;
+      color: $color-gray-900;
+    }
+    
+    .actions {
+      display: flex;
+      gap: $spacing-md;
+    }
+  }
+  
+  // 비디오 섹션 레이아웃
+  .video_section {
+    display: flex;
+    gap: $spacing-xl;
+    margin-bottom: $spacing-2xl;
+    
+    .video_inner {
+      flex: 1;
+      position: relative;
+      
+      .video-player-section {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; // 16:9 비율
+        background: $color-gray-900;
+        border-radius: $border-radius-lg;
+        overflow: visible; // 콘솔 버튼 표시를 위해
+      }
+    }
+    
+    .info_panel {
+      width: 320px;
+      flex-shrink: 0;
+    }
+  }
+  
+  // 탭 레이아웃
+  .tab_section {
+    .tab_header {
+      display: flex;
+      border-bottom: 2px solid $color-gray-200;
+      margin-bottom: $spacing-xl;
+      
+      .tab_item {
+        padding: $spacing-md $spacing-xl;
+        font-size: $font-size-lg;
+        font-weight: 500;
+        color: $color-gray-600;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        cursor: pointer;
+        transition: $transition-base;
+        
+        &.active {
+          color: $color-primary;
+          border-bottom-color: $color-primary;
+        }
+        
+        &:hover:not(.active) {
+          color: $color-gray-800;
+        }
+      }
+    }
+  }
+  
+  // 컨트롤 박스 레이아웃
+  .etc_box {
+    background: $color-gray-50;
+    padding: $spacing-lg;
+    border-radius: $border-radius-base;
+    margin-bottom: $spacing-xl;
+    
+    .flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: $spacing-md;
+      
+      .left {
+        display: flex;
+        gap: $spacing-sm;
+      }
+      
+      .good {
+        display: flex;
+        gap: $spacing-sm;
+        
+        button {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          
+          span {
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .right {
+        display: flex;
+        gap: $spacing-sm;
+      }
+    }
+  }
+}
+
+// 피드백 섹션 레이아웃
+.feedback_section {
+  // 코멘트 리스트
+  .comment_list {
+    .comment_item {
+      display: flex;
+      align-items: flex-start;
+      gap: $spacing-lg;
+      padding: $spacing-lg;
+      border-bottom: 1px solid $color-gray-200;
+      transition: $transition-base;
+      
+      &:hover {
+        background: $color-gray-50;
+      }
+      
+      .avatar {
+        width: $spacing-2xl;
+        height: $spacing-2xl;
+        border-radius: $border-radius-full;
+        flex-shrink: 0;
+      }
+      
+      .content {
+        flex: 1;
+        
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: $spacing-sm;
+          
+          .user_info {
+            .name {
+              font-weight: 600;
+              color: $color-gray-900;
+              margin-right: $spacing-sm;
+            }
+            
+            .time {
+              font-size: $font-size-sm;
+              color: $color-gray-500;
+            }
+          }
+          
+          .actions {
+            display: flex;
+            gap: $spacing-xs;
+            
+            button {
+              padding: $spacing-xs 8px;
+              font-size: $font-size-sm;
+            }
+          }
+        }
+        
+        .text {
+          color: $color-gray-700;
+          line-height: 1.6;
+          margin-bottom: $spacing-md;
+        }
+        
+        .reactions {
+          display: flex;
+          gap: $spacing-md;
+          
+          .reaction_btn {
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+            padding: 6px 12px;
+            border: 1px solid $color-gray-300;
+            border-radius: $border-radius-base;
+            background: white;
+            font-size: $font-size-sm;
+            cursor: pointer;
+            transition: $transition-base;
+            
+            &:hover {
+              border-color: $color-primary;
+              color: $color-primary;
+            }
+            
+            &.active {
+              background: $color-primary;
+              border-color: $color-primary;
+              color: white;
+            }
+            
+            .count {
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+    
+    // 답글 스타일
+    .reply_list {
+      margin-left: 56px; // 아바타 너비 + gap
+      margin-top: $spacing-md;
+      
+      .reply_item {
+        padding: $spacing-md;
+        background: $color-gray-50;
+        border-radius: $border-radius-base;
+        margin-bottom: $spacing-sm;
+      }
+    }
+  }
+  
+  // 입력 영역
+  .input_section {
+    padding: $spacing-xl;
+    background: $color-gray-50;
+    border-radius: $border-radius-base;
+    margin-top: $spacing-xl;
+    
+    .input_header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-lg;
+      
+      .title {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-gray-900;
+      }
+      
+      .mode_selector {
+        display: flex;
+        gap: $spacing-sm;
+        
+        button {
+          padding: 6px 12px;
+          font-size: $font-size-sm;
+          border: 1px solid $color-gray-300;
+          border-radius: $border-radius-base;
+          background: white;
+          cursor: pointer;
+          
+          &.active {
+            background: $color-primary;
+            border-color: $color-primary;
+            color: white;
+          }
+        }
+      }
+    }
+    
+    .input_content {
+      textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: $spacing-md;
+        border: 1px solid $color-gray-300;
+        border-radius: $border-radius-base;
+        resize: vertical;
+        font-family: inherit;
+        
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+        }
+      }
+      
+      .input_footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: $spacing-md;
+        
+        .char_count {
+          font-size: $font-size-sm;
+          color: $color-gray-500;
+        }
+        
+        button {
+          min-width: 100px;
+        }
+      }
+    }
+  }
+}
+
+// 모바일 반응형
+@media (max-width: $breakpoint-md) {
+  .feedback_wrap {
+    .video_section {
+      flex-direction: column;
+      
+      .info_panel {
+        width: 100%;
+      }
+    }
+    
+    .etc_box .flex {
+      flex-wrap: wrap;
+      gap: $spacing-sm;
+      
+      .left,
+      .good,
+      .right {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+  
+  .feedback_section {
+    .comment_list {
+      .reply_list {
+        margin-left: $spacing-0;
+      }
+    }
+  }
+}

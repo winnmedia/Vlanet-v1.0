@@ -17,36 +17,26 @@ const colors = {
 };
 
 // 유틸리티 함수
-function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
-}
+function log(message, color = 'reset') {}
 
-function logTest(testName) {
-  console.log(`\n${colors.cyan}▶ ${testName}${colors.reset}`);
-}
+function logTest(testName) {}
 
-function logSuccess(message) {
-  console.log(`${colors.green}✓ ${message}${colors.reset}`);
-}
+function logSuccess(message) {}
 
-function logError(message) {
-  console.log(`${colors.red}✗ ${message}${colors.reset}`);
-}
+function logError(message) {}
 
-function logWarning(message) {
-  console.log(`${colors.yellow}⚠ ${message}${colors.reset}`);
-}
+function logWarning(message) {}
 
 // 대기 함수
 function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // 테스트 실행
 async function runDeploymentTests() {
   log('\n🚀 VideoPlanet v1.0.4 배포 테스트 시작', 'bright');
   log('================================', 'bright');
-  
+
   const testResults = {
     passed: 0,
     failed: 0,
@@ -94,7 +84,7 @@ async function runDeploymentTests() {
         },
         maxRedirects: 5
       });
-      
+
       if (response.status === 200) {
         // HTML 내용 확인
         const html = response.data;
@@ -142,7 +132,7 @@ async function runDeploymentTests() {
           return status < 500; // 500 미만은 오류로 처리하지 않음
         }
       });
-      
+
       if (staticCheck.status < 400) {
         logSuccess('정적 리소스 정상 로드');
         testResults.passed++;
@@ -158,7 +148,7 @@ async function runDeploymentTests() {
     // 6. 피드백 페이지 스타일 적용 확인
     logTest('6. 피드백 페이지 CSS 로드 확인');
     log('(실제 피드백 페이지는 인증이 필요하므로 CSS 파일 존재 여부만 체크)', 'yellow');
-    
+
     // 빌드된 CSS 파일이 포함되어 있는지 확인
     try {
       const mainPage = await axios.get(FRONTEND_URL);
@@ -183,7 +173,7 @@ async function runDeploymentTests() {
           'Access-Control-Request-Method': 'GET'
         }
       });
-      
+
       const corsHeader = response.headers['access-control-allow-origin'];
       if (corsHeader && (corsHeader === '*' || corsHeader.includes('vlanet.net'))) {
         logSuccess(`CORS 설정 정상: ${corsHeader}`);
@@ -202,7 +192,7 @@ async function runDeploymentTests() {
     try {
       const response = await axios.get(FRONTEND_URL);
       const html = response.data;
-      
+
       // HTML 메타 태그나 빌드 해시에서 버전 정보 찾기
       if (html.includes('1.0.4') || html.includes('videoplanet-frontend')) {
         logSuccess('v1.0.4 배포 확인');
@@ -221,10 +211,10 @@ async function runDeploymentTests() {
   }
 
   // 테스트 결과 요약
-  console.log('\n' + '='.repeat(50));
+
   log('📊 테스트 결과 요약', 'bright');
-  console.log('='.repeat(50));
-  
+
+
   logSuccess(`통과: ${testResults.passed}개`);
   if (testResults.warnings > 0) {
     logWarning(`경고: ${testResults.warnings}개`);
@@ -232,42 +222,42 @@ async function runDeploymentTests() {
   if (testResults.failed > 0) {
     logError(`실패: ${testResults.failed}개`);
   }
-  
+
   const totalTests = testResults.passed + testResults.failed;
   const successRate = totalTests > 0 ? (testResults.passed / totalTests * 100).toFixed(1) : 0;
-  
-  console.log('\n' + '='.repeat(50));
+
+
   if (testResults.failed === 0) {
     log(`✨ 모든 핵심 테스트 통과! (성공률: ${successRate}%)`, 'green');
   } else {
     log(`⚠️  일부 테스트 실패 (성공률: ${successRate}%)`, 'yellow');
   }
-  
+
   // 권장사항
-  console.log('\n📝 권장사항:');
-  console.log('1. 브라우저에서 직접 https://vlanet.net/videoplanning 접속 확인');
-  console.log('2. 로그인 후 피드백 페이지 UI 변경사항 확인');
-  console.log('3. 프로젝트 관리 페이지에서 무한 요청 없는지 확인');
-  console.log('4. 개발자 도구 콘솔에서 오류 메시지 확인');
-  
+
+
+
+
+
+
   return testResults;
 }
 
 // 배포 대기 및 테스트 실행
 async function waitAndTest() {
   log('⏳ Vercel 배포 완료 대기 중... (30초)', 'yellow');
-  
+
   for (let i = 30; i > 0; i -= 5) {
     await wait(5000);
-    log(`   ${i-5}초 남음...`, 'yellow');
+    log(`   ${i - 5}초 남음...`, 'yellow');
   }
-  
+
   log('\n🔍 배포 상태 확인 시작', 'cyan');
   await runDeploymentTests();
 }
 
 // 실행
-waitAndTest().catch(error => {
+waitAndTest().catch((error) => {
   logError(`테스트 실행 실패: ${error.message}`);
   process.exit(1);
 });

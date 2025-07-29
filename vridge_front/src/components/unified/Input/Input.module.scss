@@ -1,0 +1,192 @@
+@import '../../../styles/design-tokens';
+
+.inputWrapper {
+  display: inline-block;
+  width: auto;
+  
+  &--full-width {
+    display: block;
+    width: 100%;
+  }
+}
+
+.label {
+  display: block;
+  margin-bottom: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  font-family: inherit;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-text-primary;
+  background-color: $color-bg-primary;
+  border: $spacing-2xs solid $color-border;
+  border-radius: $border-radius-base;
+  transition: $transition-base;
+  
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 $spacing-2xs rgba($color-primary, 0.1);
+  }
+  
+  &:disabled {
+    background-color: $color-gray-50;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  // Variants
+  &--default {
+    // Default styles already applied
+  }
+  
+  &--filled {
+    background-color: $color-gray-50;
+    border-color: transparent;
+    
+    &:focus {
+      background-color: $color-bg-primary;
+      border-color: $color-primary;
+    }
+  }
+  
+  &--outlined {
+    background-color: transparent;
+    border-width: $spacing-2xs;
+  }
+  
+  &--borderless {
+    border-color: transparent;
+    border-bottom: $spacing-2xs solid $color-border;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+    
+    &:focus {
+      border-color: transparent;
+      border-bottom-color: $color-primary;
+      box-shadow: none;
+    }
+  }
+  
+  // Sizes
+  &--sm {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
+  
+  &--md {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-base;
+  }
+  
+  &--lg {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-lg;
+  }
+  
+  // States
+  &--error {
+    border-color: $color-danger;
+    
+    &:focus {
+      border-color: $color-danger;
+      box-shadow: 0 0 0 $spacing-2xs rgba($color-danger, 0.1);
+    }
+  }
+  
+  &--full-width {
+    width: 100%;
+  }
+}
+
+.prefix,
+.suffix {
+  display: flex;
+  align-items: center;
+  color: $color-text-secondary;
+}
+
+.prefix {
+  margin-right: $spacing-sm;
+  margin-left: $spacing-sm;
+}
+
+.suffix {
+  margin-left: $spacing-sm;
+  margin-right: $spacing-sm;
+}
+
+.errorMessage {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-danger;
+}
+
+.helpText {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: $spacing-md;
+    width: 100%;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .text-large {
+    font-size: $font-size-lg;
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 76calc(8px + 4px)) and (max-width: 1024px) {
+  .container {
+    padding: $spacing-lg;
+    max-width: 960;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 102calc(8px - 4px)) {
+  .container {
+    max-width: 1200;
+    margin: 0 auto;
+  }
+}

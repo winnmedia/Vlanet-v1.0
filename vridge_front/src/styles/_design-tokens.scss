@@ -1,0 +1,430 @@
+// Design Token System
+
+// ================================================================
+// VideoPlanet Design Token System
+// ================================================================
+// 이 파일은 모든 디자인 값의 single source of truth입니다.
+// 하드코딩된 값 대신 반드시 이 토큰들을 사용하세요.
+// ================================================================
+
+// ================================
+// 1. COLOR TOKENS
+// ================================
+
+// Brand Colors
+$color-primary: #1631F8;
+$color-primary-dark: #0F1C9E;
+$color-primary-light: #4B5EFF;
+$color-primary-lighter: #E8EBFF;
+$color-primary-lightest: #F5F6FF;
+
+// Semantic Colors
+$color-success: #28a745;
+$color-success-light: #48b461;
+$color-success-lighter: #d4edda;
+$color-success-lightest: #f1f9f3;
+
+$color-danger: #dc3545;
+$color-danger-light: #e25563;
+$color-danger-lighter: #f8d7da;
+$color-danger-lightest: #fdf2f3;
+
+$color-warning: #ffc107;
+$color-warning-light: #ffcd39;
+$color-warning-lighter: #fff3cd;
+$color-warning-lightest: #fffbf0;
+
+$color-info: #17a2b8;
+$color-info-light: #3ab0c3;
+$color-info-lighter: #d1ecf1;
+$color-info-lightest: #f0f9fa;
+
+// VideoPlanet Special Colors
+$color-vp-blue-1: #0084ff;
+$color-vp-blue-2: #0073e5;
+$color-vp-blue-3: #0059d5;
+$color-vp-blue-4: $color-primary;
+$color-vp-blue-5: #0032fc;
+$color-vp-blue-light-1: #55a1f5;
+$color-vp-blue-light-2: #4691e5;
+$color-vp-blue-dark-1: #0d45ac;
+$color-vp-blue-dark-2: #0a3a91;
+$color-vp-gray-dark: #4a4a4a;
+$color-vp-gray-light-1: #e2e8f0;
+$color-vp-gray-light-2: #e8e8e8;
+$color-vp-gray-light-3: #e2e8f0;
+$color-vp-gray-medium: #8c8c8c;
+$color-vp-gray-bg: #edf0f5;
+$color-vp-blue-bg-1: #f0f4ff;
+$color-vp-blue-bg-2: #e8ebff;
+$color-vp-red-bg-1: #fff5f5;
+$color-vp-red-bg-2: #ffebee;
+
+// Neutral Colors
+$color-black: #000000;
+$color-gray-900: #1a1f36;
+$color-gray-800: #2d3748;
+$color-gray-700: #4a5568;
+$color-gray-600: #718096;
+$color-gray-500: #a0aec0;
+$color-gray-400: #cbd5e0;
+$color-gray-300: #e2e8f0;
+$color-gray-200: #edf2f7;
+$color-gray-100: #f7fafc;
+$color-gray-50: #f8f9fa;
+$color-white: #ffffff;
+
+// Additional gray shades for legacy code
+$color-gray-444: $color-gray-800;
+$color-gray-555: $color-gray-700;
+$color-gray-777: $color-gray-600;
+$color-gray-888: $color-gray-600;
+$color-gray-bfbfbf: #bfbfbf;
+$color-gray-d9d9d9: #e2e8f0;
+$color-gray-f0f0f0: $color-gray-100;
+$color-gray-fafafa: $color-gray-50;
+
+// Additional theme colors
+$color-pink-light: #fee;
+$color-pink-medium: #fcc;
+$color-red-dark: #c00;
+
+// Background Colors
+$color-background: $color-white;
+$color-background-secondary: $color-gray-100;
+$color-background-tertiary: #f1f3f5;
+$color-background-inverse: #1a1f36;
+
+// Text Colors
+$color-text: #1a1f36;
+$color-text-secondary: #718096;
+$color-text-tertiary: #a0aec0;
+$color-text-inverse: $color-white;
+$color-text-link: $color-primary;
+$color-text-link-hover: $color-primary-dark;
+
+// Border Colors
+$color-border: #e2e8f0;
+$color-border-light: #edf2f7;
+$color-border-dark: #cbd5e0;
+$color-border-focus: $color-primary;
+
+// ================================
+// 2. SPACING TOKENS
+// ================================
+
+// Base spacing unit ($spacing-xs)
+$spacing-unit: 12px;
+
+// Spacing Scale
+$spacing-0: 0;
+$spacing-xs: 8px;    // 0.5 * unit
+$spacing-sm: 12px;    // 1 * unit
+$spacing-md: 16px;   // 2 * unit
+$spacing-lg: 20px;   // 3 * unit
+$spacing-xl: 24px;   // 4 * unit
+$spacing-2xl: 32px;  // 5 * unit
+$spacing-3xl: 48px;  // 6 * unit
+$spacing-4xl: 64px;  // 8 * unit
+$spacing-5xl: 80px;  // 10 * unit
+$spacing-6xl: 96px;  // 12 * unit
+$spacing-7xl: 112px; // 14 * unit
+$spacing-8xl: 128px; // 16 * unit
+$spacing-2xs: 4px;   // 0.25 * unit
+
+// Component Spacing
+$spacing-button-x: $spacing-md;
+$spacing-button-y: $spacing-sm;
+$spacing-card-padding: $spacing-lg;
+$spacing-section-gap: $spacing-3xl;
+$spacing-page-margin: $spacing-xl;
+
+// ================================
+// 3. TYPOGRAPHY TOKENS
+// ================================
+
+// Font Families
+$font-family-base: 'SUIT Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-family-heading: 'SUIT Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-family-mono: 'Courier New', Courier, monospace;
+
+// Font Sizes
+$font-size-xs: 12px;
+$font-size-sm: $spacing-md;
+$font-size-base: 16px;
+$font-size-lg: $spacing-lg;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 30px;
+$font-size-4xl: 36px;
+$font-size-5xl: 48px;
+$font-size-6xl: 60px;
+
+// Font Weights
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Line Heights
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+$line-height-loose: 2;
+
+// Letter Spacing
+$letter-spacing-tight: -0.025em;
+$letter-spacing-normal: 0;
+$letter-spacing-wide: 0.025em;
+$letter-spacing-wider: 0.05em;
+$letter-spacing-widest: 0.1em;
+
+// ================================
+// 4. BORDER TOKENS
+// ================================
+
+// Border Width
+$border-width-none: 0;
+$border-width-thin: 1px;
+$border-width-medium: $spacing-2xs;
+$border-width-thick: 4px;
+
+// Border Radius
+$border-radius-none: 0;
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+$border-radius-2xl: 24px;
+$border-radius-full: 9999px;
+
+// Component Border Radius
+$border-radius-button: $border-radius-md;
+$border-radius-card: $border-radius-lg;
+$border-radius-input: $border-radius-md;
+$border-radius-modal: $border-radius-xl;
+
+// ================================
+// 5. SHADOW TOKENS
+// ================================
+
+$shadow-xs: 0 $border-width-thin $spacing-2xs 0 rgba($color-black, 0.05);
+$shadow-sm: 0 $border-width-thin 8px 0 rgba($color-black, 0.1), 0 $border-width-thin $spacing-2xs 0 rgba($color-black, 0.06);
+$shadow-md: 0 $spacing-2xs 4px -$border-width-thin rgba($color-black, 0.1), 0 $spacing-2xs $spacing-2xs -$border-width-thin rgba($color-black, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba($color-black, 0.1), 0 $spacing-2xs 6px -2px rgba($color-black, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba($color-black, 0.1), 0 10px 10px -5px rgba($color-black, 0.04);
+$shadow-2xl: 0 25px 50px -12px rgba($color-black, 0.25);
+$shadow-inner: inset 0 $spacing-2xs $spacing-2xs 0 rgba($color-black, 0.06);
+$shadow-none: none;
+
+// Component Shadows
+$shadow-button: $shadow-sm;
+$shadow-button-hover: $shadow-md;
+$shadow-card: $shadow-md;
+$shadow-card-hover: $shadow-lg;
+$shadow-modal: $shadow-xl;
+$shadow-dropdown: $shadow-lg;
+
+// ================================
+// 6. ANIMATION TOKENS
+// ================================
+
+// Duration
+$duration-instant: 0ms;
+$duration-fast: 150ms;
+$duration-normal: 250ms;
+$duration-slow: 350ms;
+$duration-slower: 500ms;
+
+// Easing
+$easing-linear: linear;
+$easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+$easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+$easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Transitions
+$transition-base: all 0.3s ease;
+$transition-fast: all 0.2s ease;
+$transition-all: all $duration-normal $easing-ease-in-out;
+$transition-colors: background-color $duration-normal $easing-ease-in-out, 
+                    border-color $duration-normal $easing-ease-in-out, 
+                    color $duration-normal $easing-ease-in-out;
+$transition-transform: transform $duration-normal $easing-ease-in-out;
+$transition-opacity: opacity $duration-normal $easing-ease-in-out;
+$transition-shadow: box-shadow $duration-normal $easing-ease-in-out;
+
+// ================================
+// 7. Z-INDEX TOKENS
+// ================================
+
+$z-index-negative: -1;
+$z-index-0: 0;
+$z-index-10: 10;
+$z-index-20: 20;
+$z-index-30: 30;
+$z-index-40: 40;
+$z-index-50: 50;
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+
+// ================================
+// 8. BREAKPOINT TOKENS
+// ================================
+
+$breakpoint-xs: 0;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
+
+// ================================
+// 9. GRADIENT TOKENS
+// ================================
+
+$gradient-primary: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+$gradient-success: linear-gradient(135deg, $color-success 0%, darken($color-success, 10%) 100%);
+$gradient-danger: linear-gradient(135deg, $color-danger 0%, darken($color-danger, 10%) 100%);
+$gradient-gray: linear-gradient(135deg, $color-gray-100 0%, $color-gray-200 100%);
+
+// ================================
+// 10. SPECIAL TOKENS
+// ================================
+
+// Opacity
+$opacity-0: 0;
+$opacity-25: 0.25;
+$opacity-50: 0.5;
+$opacity-75: 0.75;
+$opacity-100: 1;
+
+// Aspect Ratios
+$aspect-square: 1 / 1;
+$aspect-video: 16 / 9;
+$aspect-4-3: 4 / 3;
+
+// Container
+$container-max-width: $breakpoint-xl + $spacing-5xl;
+$container-padding: $spacing-xl;
+
+// ================================
+// CSS CUSTOM PROPERTIES
+// ================================
+// CSS 변수로도 사용 가능하도록 export
+
+:root {
+  // Colors
+  --color-primary: #{$color-primary};
+  --color-primary-dark: #{$color-primary-dark};
+  --color-primary-light: #{$color-primary-light};
+  --color-success: #{$color-success};
+  --color-danger: #{$color-danger};
+  --color-warning: #{$color-warning};
+  --color-info: #{$color-info};
+  
+  // Spacing
+  --spacing-xs: #{$spacing-xs};
+  --spacing-sm: #{$spacing-sm};
+  --spacing-md: #{$spacing-md};
+  --spacing-lg: #{$spacing-lg};
+  --spacing-xl: #{$spacing-xl};
+  
+  // Typography
+  --font-size-base: #{$font-size-base};
+  --line-height-normal: #{$line-height-normal};
+  
+  // Shadows
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  
+  // Border Radius
+  --border-radius-sm: #{$border-radius-sm};
+  --border-radius-md: #{$border-radius-md};
+  --border-radius-lg: #{$border-radius-lg};
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}

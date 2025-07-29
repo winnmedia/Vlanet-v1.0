@@ -1,0 +1,246 @@
+@import '../styles/design-tokens';
+
+// 피드백 입력 폼 스타일
+.feedbackForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg - $spacing-xs;
+}
+
+// 익명/닉네임/실명 선택
+.userTypeSelector {
+  background: $color-background-secondary;
+  border-radius: $border-radius-lg;
+  padding: $spacing-md;
+  
+  .guestInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: $font-size-sm;
+    font-weight: 600;
+  }
+  
+  .feedbackModeOptions {
+    display: flex;
+    gap: $spacing-sm + $spacing-xs;
+    justify-content: center;
+    
+    label {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: $spacing-sm + 2px 20px;
+      border: 2px solid #e9ecef;
+      border-radius: 25px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: $color-primary;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($color-primary, 0.15);
+      }
+      
+      &.active {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+        border-color: transparent;
+        
+        .radioLabel {
+          color: white;
+          
+          svg {
+            stroke: white;
+          }
+        }
+      }
+      
+      input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: $spacing-0;
+        height: $spacing-0;
+      }
+      
+      .radioLabel {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        color: #495057;
+        transition: all 0.3s ease;
+        
+        svg {
+          width: $spacing-md + 2px;
+          height: $spacing-md + 2px;
+          stroke: #6c757d;
+          transition: all 0.3s ease;
+        }
+      }
+    }
+  }
+  
+  .nicknameInput {
+    margin-top: $spacing-md;
+    
+    input {
+      width: 100%;
+      padding: $spacing-sm + $spacing-xs 16px;
+      border: 2px solid #e9ecef;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      background: white;
+      transition: all 0.2s ease;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      }
+      
+      &::placeholder {
+        color: #adb5bd;
+      }
+    }
+  }
+}
+
+// 시간 입력 - 글로벌 input-group 스타일과 함께 사용
+.timeInput {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  
+  label {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  input {
+    padding: $spacing-sm + $spacing-xs 16px;
+    border: 1px solid #e9ecef;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    background: $color-background-secondary;
+    transition: all 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      background: white;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+    
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+}
+
+// 내용 입력
+.contentInput {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  
+  label {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  textarea {
+    padding: $spacing-sm + $spacing-xs 16px;
+    border: 1px solid #e9ecef;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    line-height: 1.6;
+    min-height: 120px;
+    resize: vertical;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+    
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+}
+
+// 버튼 그룹
+.buttonGroup {
+  display: flex;
+  gap: $spacing-sm + $spacing-xs;
+  margin-top: $spacing-sm + $spacing-xs;
+  
+  button {
+    flex: 1;
+    padding: $spacing-sm + $spacing-xs 24px;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    
+    &.submitButton {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+      color: white;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba($color-primary, 0.3);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+    
+    &.aiButton {
+      background: white;
+      color: $color-primary;
+      border: 2px solid $color-primary;
+      
+      &:hover {
+        background: rgba($color-primary, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($color-primary, 0.15);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// 도움말 텍스트
+.helpText {
+  font-size: 13px;
+  color: #6c757d;
+  margin-top: $spacing-xs;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  svg {
+    width: $spacing-md - 2px;
+    height: $spacing-md - 2px;
+  }
+}

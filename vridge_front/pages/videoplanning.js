@@ -1,11 +1,12 @@
 import dynamic from 'next/dynamic'
+import LoadingAnimation from '../src/components/LoadingAnimation'
 
-// 동적 import로 변경하여 SSR 문제 해결
+// 동적 import로 변경하여 SSR 문제 해결 - 로딩 컴포넌트 개선
 const VideoPlanning = dynamic(
   () => import('../src/page/Cms/VideoPlanning'),
   { 
     ssr: false,
-    loading: () => <div>Loading...</div>
+    loading: () => <LoadingAnimation />
   }
 )
 

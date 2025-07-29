@@ -1,9 +1,9 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
-import { MediaPlayer, MediaProvider } from '@vidstack/react'
+import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import { MediaPlayer, MediaProvider } from '@vidstack/react';
 
-const VidstackPlayer = forwardRef(({ 
-  videoUrl, 
-  onTimeUpdate, 
+const VidstackPlayer = forwardRef(({
+  videoUrl,
+  onTimeUpdate,
   onError,
   onFeedbackClick,
   initialTime = 0,
@@ -11,41 +11,41 @@ const VidstackPlayer = forwardRef(({
   autoplay = false,
   muted = false
 }, ref) => {
-  const playerRef = useRef(null)
-  
+  const playerRef = useRef(null);
+
   // 부모 컴포넌트에서 사용할 수 있는 메서드들
   useImperativeHandle(ref, () => ({
     seekTo: (time) => {
       if (playerRef.current) {
-        playerRef.current.currentTime = time
+        playerRef.current.currentTime = time;
       }
     },
     play: () => {
       if (playerRef.current) {
-        playerRef.current.play()
+        playerRef.current.play();
       }
     },
     pause: () => {
       if (playerRef.current) {
-        playerRef.current.pause()
+        playerRef.current.pause();
       }
     },
     getCurrentTime: () => {
-      return playerRef.current ? playerRef.current.currentTime : 0
+      return playerRef.current ? playerRef.current.currentTime : 0;
     },
     getDuration: () => {
-      return playerRef.current ? playerRef.current.duration : 0
+      return playerRef.current ? playerRef.current.duration : 0;
     }
-  }))
+  }));
 
   // 초기 시간 설정
   useEffect(() => {
     if (playerRef.current && initialTime > 0) {
       playerRef.current.addEventListener('loadedmetadata', () => {
-        playerRef.current.currentTime = initialTime
-      }, { once: true })
+        playerRef.current.currentTime = initialTime;
+      }, { once: true });
     }
-  }, [initialTime])
+  }, [initialTime]);
 
   // 피드백 마커 렌더링 (추후 구현)
   const renderFeedbackMarkers = () => {
@@ -53,37 +53,37 @@ const VidstackPlayer = forwardRef(({
     return feedbacks.map((feedback, index) => {
       if (feedback.time_position) {
         // 마커 구현
-        return null
+        return null;
       }
-      return null
-    })
-  }
+      return null;
+    });
+  };
 
   const handleError = (event) => {
-    console.error('Vidstack Player Error:', event)
+    
     if (onError) {
-      onError(event)
+      onError(event);
     }
-  }
+  };
 
   const handleTimeUpdate = (event) => {
     if (onTimeUpdate) {
       onTimeUpdate({
         currentTime: event.detail.currentTime,
         duration: event.detail.duration
-      })
+      });
     }
-  }
+  };
 
   // 클릭 이벤트 처리 (피드백 추가)
   const handleClick = (event) => {
     if (onFeedbackClick && playerRef.current) {
-      const rect = playerRef.current.getBoundingClientRect()
-      const x = ((event.clientX - rect.left) / rect.width) * 100
-      const y = ((event.clientY - rect.top) / rect.height) * 100
-      onFeedbackClick(playerRef.current.currentTime, x, y)
+      const rect = playerRef.current.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width * 100;
+      const y = (event.clientY - rect.top) / rect.height * 100;
+      onFeedbackClick(playerRef.current.currentTime, x, y);
     }
-  }
+  };
 
   return (
     <div className="vidstack-player-wrapper" onClick={handleClick}>
@@ -97,14 +97,14 @@ const VidstackPlayer = forwardRef(({
         muted={muted}
         onError={handleError}
         onTimeUpdate={handleTimeUpdate}
-        onCanPlay={(e) => console.log('Video can play', e)}
-        onLoadedMetadata={(e) => console.log('Metadata loaded', e)}
-        onPlay={(e) => console.log('Video playing', e)}
-        onPause={(e) => console.log('Video paused', e)}
-        onSeeking={(e) => console.log('Seeking', e)}
-        onSeeked={(e) => console.log('Seeked', e)}
-        className="vidstack-player"
-      >
+        onCanPlay={(e) => undefined}
+        onLoadedMetadata={(e) => undefined}
+        onPlay={(e) => undefined}
+        onPause={(e) => undefined}
+        onSeeking={(e) => undefined}
+        onSeeked={(e) => undefined}
+        className="vidstack-player">
+
         <MediaProvider />
       </MediaPlayer>
       
@@ -137,10 +137,10 @@ const VidstackPlayer = forwardRef(({
           }
         }
       `}</style>
-    </div>
-  )
-})
+    </div>);
 
-VidstackPlayer.displayName = 'VidstackPlayer'
+});
 
-export default VidstackPlayer
+VidstackPlayer.displayName = 'VidstackPlayer';
+
+export default VidstackPlayer;

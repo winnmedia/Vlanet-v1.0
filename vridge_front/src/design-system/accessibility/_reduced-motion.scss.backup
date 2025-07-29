@@ -1,0 +1,287 @@
+// 모션 감소 접근성
+// WCAG 2.1 Success Criterion 2.3.3: Animation from Interactions
+
+@use '../tokens' as *;
+
+// ========== 모션 감소 설정 ==========
+// 사용자가 모션 감소를 선호하는 경우
+@media (prefers-reduced-motion: reduce) {
+  // 모든 애니메이션 비활성화
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  // 애니메이션 GIF 일시정지
+  img[src$=".gif"] {
+    opacity: 0.5;
+    
+    &::after {
+      content: 'GIF (일시정지됨)';
+      display: block;
+      font-size: $font-size-sm;
+      color: $color-text-muted;
+    }
+  }
+  
+  // 비디오 자동재생 방지
+  video {
+    &[autoplay] {
+      display: none;
+    }
+    
+    &:not([controls]) {
+      display: none;
+    }
+  }
+  
+  // 캐러셀/슬라이더 자동 전환 비활성화
+  .carousel,
+  .slider {
+    [data-autoplay="true"] {
+      animation-play-state: paused !important;
+    }
+  }
+  
+  // 시차 스크롤 효과 제거
+  .parallax {
+    background-attachment: scroll !important;
+    transform: none !important;
+  }
+  
+  // 로딩 스피너 간소화
+  .spinner,
+  .loader {
+    animation: none !important;
+    border: 2px solid $color-primary !important;
+    border-radius: $radius-sm !important;
+    
+    &::after {
+      content: '로딩 중...';
+      display: block;
+      color: $color-primary;
+      font-size: $font-size-sm;
+    }
+  }
+  
+  // 프로그레스 바 즉시 업데이트
+  [role="progressbar"] {
+    &::before {
+      transition: none !important;
+    }
+  }
+  
+  // 탭 전환 즉시 실행
+  [role="tabpanel"] {
+    transition: none !important;
+  }
+  
+  // 드롭다운 즉시 표시
+  .dropdown,
+  [role="menu"] {
+    transition: none !important;
+  }
+  
+  // 모달 페이드 제거
+  .modal,
+  [role="dialog"] {
+    transition: none !important;
+    
+    &.fade-in {
+      opacity: 1 !important;
+    }
+  }
+  
+  // 툴팁 즉시 표시
+  .tooltip,
+  [role="tooltip"] {
+    transition: none !important;
+    opacity: 1 !important;
+  }
+  
+  // 아코디언 즉시 열기/닫기
+  .accordion {
+    .accordion-content {
+      transition: none !important;
+    }
+  }
+  
+  // 페이지 전환 효과 제거
+  .page-transition {
+    transition: none !important;
+  }
+}
+
+// ========== 선택적 모션 클래스 ==========
+// 모션이 필요한 요소에만 적용
+.motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: $transition-all;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.motion-essential {
+  // 필수적인 모션은 유지 (예: 포커스 인디케이터)
+  transition: outline $transition-fast !important;
+}
+
+// ========== 대체 피드백 ==========
+@media (prefers-reduced-motion: reduce) {
+  // 호버 효과를 색상 변경으로 대체
+  button,
+  a {
+    &:hover {
+      transform: none !important;
+      background-color: $color-gray-100;
+    }
+  }
+  
+  // 클릭 효과를 색상 변경으로 대체
+  button:active {
+    transform: none !important;
+    background-color: $color-gray-200;
+  }
+  
+  // 로딩 상태를 텍스트로 표시
+  .loading-animation {
+    &::before {
+      content: '[로딩 중]';
+      color: $color-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+  
+  // 성공 애니메이션을 아이콘으로 대체
+  .success-animation {
+    animation: none !important;
+    
+    &::before {
+      content: '✓';
+      color: $color-success;
+      font-size: $font-size-xl;
+    }
+  }
+}
+
+// ========== 애니메이션 컨트롤 ==========
+// 사용자가 애니메이션을 제어할 수 있는 UI
+.animation-controls {
+  position: fixed;
+  bottom: $spacing-lg;
+  right: $spacing-lg;
+  z-index: $z-tooltip;
+  
+  button {
+    @include touch-target;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-default;
+    
+    &[aria-pressed="true"] {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+}
+
+// ========== 스크롤 관련 모션 ==========
+@media (prefers-reduced-motion: reduce) {
+  // 부드러운 스크롤 비활성화
+  html {
+    scroll-behavior: auto !important;
+  }
+  
+  // 스크롤 트리거 애니메이션 비활성화
+  [data-scroll-animation] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  // 스크롤 표시기 간소화
+  .scroll-indicator {
+    animation: none !important;
+  }
+}
+
+// ========== 인터랙션 피드백 대체 ==========
+@media (prefers-reduced-motion: reduce) {
+  // 드래그 앤 드롭 시각적 피드백
+  .draggable {
+    &.dragging {
+      opacity: 0.8 !important;
+      transform: none !important;
+      outline: 2px dashed $color-primary !important;
+    }
+  }
+  
+  // 스와이프 제스처 피드백
+  .swipeable {
+    transition: none !important;
+    
+    &.swiping {
+      background-color: $color-gray-100 !important;
+    }
+  }
+  
+  // 핀치 줌 피드백
+  .zoomable {
+    transition: none !important;
+    
+    &.zooming {
+      outline: 2px solid $color-primary !important;
+    }
+  }
+}
+
+// ========== 유틸리티 믹스인 ==========
+@mixin motion-safe($property: all, $duration: $transition-base, $easing: $ease-default) {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: $property $duration $easing;
+  }
+}
+
+@mixin animation-safe($name, $duration: 1s, $easing: $ease-default) {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: $name $duration $easing;
+  }
+}
+
+// 사용 예시
+.example-button {
+  @include motion-safe(transform, $transition-fast);
+  
+  &:hover {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// ========== 성능 최적화 ==========
+@media (prefers-reduced-motion: reduce) {
+  // GPU 가속 비활성화
+  * {
+    will-change: auto !important;
+  }
+  
+  // 복잡한 그림자 효과 간소화
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  // 블러 효과 제거
+  * {
+    backdrop-filter: none !important;
+    filter: none !important;
+  }
+}

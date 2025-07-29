@@ -1,96 +1,95 @@
-import { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
-import { setGlobalLoading } from '../redux/loading'
-import { GetProject } from '../api/project'
+import { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { setGlobalLoading } from '../redux/loading';
+import { GetProject } from '../api/project';
 
 // 프로젝트 상세 정보를 가져오는 커스텀 훅
 // 중복 API 호출 방지 및 캐싱 기능 포함
 export function useProjectDetail(projectId) {
-  const [project, setProject] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const abortControllerRef = useRef(null)
-  const lastFetchedId = useRef(null)
-  
+  const [project, setProject] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const abortControllerRef = useRef(null);
+  const lastFetchedId = useRef(null);
+
   useEffect(() => {
     if (!projectId) {
-      setProject(null)
-      return
+      setProject(null);
+      return;
     }
-    
+
     // 이미 로드한 프로젝트면 스킵
     if (lastFetchedId.current === projectId && project?.id === projectId) {
-      console.log('[useProjectDetail] Project already loaded, skipping:', projectId)
-      return
+
+      return;
     }
-    
+
     // 이전 요청 취소
     if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
+      abortControllerRef.current.abort();
     }
-    
+
     // 새 요청 시작
-    abortControllerRef.current = new AbortController()
-    const signal = abortControllerRef.current.signal
-    
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     const fetchProject = async () => {
-      setIsLoading(true)
-      setError(null)
-      
+      setIsLoading(true);
+      setError(null);
+
       try {
-        console.log('[useProjectDetail] Fetching project:', projectId)
-        const response = await GetProject(projectId, { signal })
-        
+
+        const response = await GetProject(projectId, { signal });
+
         if (response.data?.result) {
-          setProject(response.data.result)
-          lastFetchedId.current = projectId
-          console.log('[useProjectDetail] Project loaded:', response.data.result.name)
+          setProject(response.data.result);
+          lastFetchedId.current = projectId;
+
         }
       } catch (err) {
         if (err.name === 'AbortError') {
-          console.log('[useProjectDetail] Request aborted')
-          return
+
+          return;
         }
-        
-        console.error('[useProjectDetail] Error:', err)
-        setError(err)
+
+        setError(err);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-    
-    fetchProject()
-    
+    };
+
+    fetchProject();
+
     // 클린업
     return () => {
       if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
+        abortControllerRef.current.abort();
       }
-    }
-  }, [projectId])
-  
+    };
+  }, [projectId]);
+
   // 수동 새로고침 함수
   const refetch = async () => {
-    if (!projectId) return
-    
-    lastFetchedId.current = null // 캐시 무효화
-    
-    setIsLoading(true)
-    setError(null)
-    
+    if (!projectId) return;
+
+    lastFetchedId.current = null; // 캐시 무효화
+
+    setIsLoading(true);
+    setError(null);
+
     try {
-      const response = await GetProject(projectId)
+      const response = await GetProject(projectId);
       if (response.data?.result) {
-        setProject(response.data.result)
-        lastFetchedId.current = projectId
+        setProject(response.data.result);
+        lastFetchedId.current = projectId;
       }
     } catch (err) {
-      console.error('[useProjectDetail] Refetch error:', err)
-      setError(err)
+      
+      setError(err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
-  
-  return { project, isLoading, error, refetch }
+  };
+
+  return { project, isLoading, error, refetch };
 }

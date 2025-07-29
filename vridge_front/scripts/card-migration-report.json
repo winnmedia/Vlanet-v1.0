@@ -1,0 +1,146 @@
+[
+  {
+    "file": "components/ProjectDashboard.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "Card -> UnifiedCard component",
+      "ProjectDashboard card classes migrated"
+    ]
+  },
+  {
+    "file": "components/ProjectPhaseBoard.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "components/Skeleton.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "components/minimal/MinimalCard.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "components/minimal/MinimalCard.v2.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "components/ui/Card.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "components/ui/Loading.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "page/Admin/AdminRedirect.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "page/Admin/EmailMonitor.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "Card -> UnifiedCard component"
+    ]
+  },
+  {
+    "file": "page/Cms/CmsHome.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "Card -> UnifiedCard component"
+    ]
+  },
+  {
+    "file": "page/Cms/CmsHomeMinimal.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "Card -> UnifiedCard component"
+    ]
+  },
+  {
+    "file": "page/Cms/Feedback.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "page/Cms/FeedbackStable.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "div.stats-card -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "page/Cms/FrameworkManagement.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "page/Cms/VideoPlanning-working.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "div.feature-card -> UnifiedCard",
+      "div.feature-card -> UnifiedCard",
+      "div.feature-card -> UnifiedCard"
+    ]
+  },
+  {
+    "file": "page/Cms/VideoPlanning.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "Card -> UnifiedCard component"
+    ]
+  },
+  {
+    "file": "page/Cms/VideoPlanningMinimal.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "Card -> UnifiedCard component"
+    ]
+  },
+  {
+    "file": "page/User/MyPage.jsx",
+    "changes": [
+      "Added UnifiedCard import",
+      "Card -> UnifiedCard component"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackManage.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMore.fixed-migrated.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMore.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  },
+  {
+    "file": "tasks/Feedback/FeedbackMore.modules-migrated.jsx",
+    "changes": [
+      "Added UnifiedCard import"
+    ]
+  }
+]

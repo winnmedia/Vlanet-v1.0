@@ -1,4 +1,14 @@
-import CmsHome from '../src/page/Cms/CmsHome'
+import dynamic from 'next/dynamic'
+import LoadingAnimation from '../src/components/LoadingAnimation'
+
+// 코드 스플리팅 적용
+const CmsHome = dynamic(
+  () => import('../src/page/Cms/CmsHome'),
+  {
+    loading: () => <LoadingAnimation />,
+    ssr: true
+  }
+)
 
 export default CmsHome
 

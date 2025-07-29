@@ -119,3 +119,27 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         response['Content-Security-Policy'] = '; '.join(csp_directives)
         
         return response
+
+
+class CSRFMigrationMiddleware(MiddlewareMixin):
+    """CSRF 단계적 마이그레이션을 위한 미들웨어"""
+    
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        # OPTIONS 요청은 CSRF 체크 제외
+        if request.method == 'OPTIONS':
+            return None
+            
+        # 뷰 이름 가져오기
+        if hasattr(view_func, 'view_class'):
+            view_name = f"{view_func.view_class.__module__}.{view_func.view_class.__name__}"
+        else:
+            view_name = f"{view_func.__module__}.{view_func.__name__}"
+        
+        # CSRF 보호가 필요한 엔드포인트인지 확인
+        from config.csrf_migration import should_protect_endpoint
+        if should_protect_endpoint(view_name):
+            # 이미 csrf_protect_if_enabled 데코레이터가 적용되어 있으므로
+            # 여기서는 로깅만 수행
+            logger.info(f"CSRF protection enabled for: {view_name}")
+        
+        return None

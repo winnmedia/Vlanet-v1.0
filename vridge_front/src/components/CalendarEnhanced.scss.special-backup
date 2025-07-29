@@ -1,0 +1,317 @@
+@import '../styles/design-tokens';
+
+.calendar-enhanced {
+  background: white;
+  border-radius: $border-radius-md;
+  padding: $spacing-lg - $spacing-xs;
+  box-shadow: 0 2px 8px rgba($color-black, 0.1);
+  
+  .calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    flex-wrap: wrap;
+    gap: $spacing-md - 1px;
+    
+    .search-filter {
+      display: flex;
+      gap: $spacing-sm + 2px;
+      flex: 1;
+      min-width: 300px;
+      
+      .search-input {
+        flex: 1;
+        padding: $spacing-sm 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-sm;
+        transition: border-color 0.3s;
+        
+        &:focus {
+          outline: none;
+          border-color: #4A90E2;
+        }
+      }
+      
+      .phase-filter {
+        padding: $spacing-sm 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-sm;
+        background: white;
+        cursor: pointer;
+        
+        &:focus {
+          outline: none;
+          border-color: #4A90E2;
+        }
+      }
+    }
+    
+    .view-switcher {
+      display: flex;
+      gap: $spacing-xs;
+      background: $color-gray-100;
+      padding: $spacing-xs;
+      border-radius: $border-radius-md - 2px;
+      
+      button {
+        padding: $spacing-sm 16px;
+        border: none;
+        background: transparent;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-sm;
+        cursor: pointer;
+        transition: all 0.3s;
+        
+        &:hover {
+          background: rgba(74, 144, 226, 0.1);
+        }
+        
+        &.active {
+          background: white;
+          color: #4A90E2;
+          box-shadow: 0 1px 3px rgba($color-black, 0.1);
+        }
+      }
+    }
+  }
+  
+  .calendar-content {
+    min-height: 500px;
+    
+    // Timeline View Styles
+    .timeline-view {
+      overflow-x: auto;
+      
+      .timeline-header {
+        display: flex;
+        border-bottom: 2px solid #e0e0e0;
+        position: sticky;
+        top: $spacing-0;
+        background: white;
+        z-index: 10;
+        
+        .project-column {
+          width: 200px;
+          min-width: 200px;
+          padding: $spacing-md - 1px;
+          font-weight: 600;
+          border-right: 1px solid #e0e0e0;
+        }
+        
+        .timeline-dates {
+          display: flex;
+          flex: 1;
+          
+          .timeline-date {
+            flex: 1;
+            min-width: $spacing-lg + 6px;
+            padding: $spacing-md - 1px 5px;
+            text-align: center;
+            font-size: $font-size-xs;
+            border-right: 1px solid #f0f0f0;
+          }
+        }
+      }
+      
+      .timeline-body {
+        .timeline-row {
+          display: flex;
+          border-bottom: 1px solid #f0f0f0;
+          min-height: $spacing-4xl - $spacing-xs;
+          
+          &:hover {
+            background: #fafafa;
+          }
+          
+          .project-name {
+            width: 200px;
+            min-width: 200px;
+            padding: $spacing-md - 1px;
+            font-weight: 500;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+          }
+          
+          .timeline-phases {
+            flex: 1;
+            position: relative;
+            
+            .timeline-phase {
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              height: $spacing-lg + 6px;
+              border-radius: 15px;
+              display: flex;
+              align-items: center;
+              padding: $spacing-0 10px;
+              cursor: move;
+              transition: all 0.3s;
+              opacity: 0.9;
+              
+              &:hover {
+                opacity: 1;
+                transform: translateY(-50%) scale(1.02);
+                box-shadow: 0 2px 8px rgba($color-black, 0.2);
+              }
+              
+              .phase-label {
+                font-size: 11px;
+                color: white;
+                font-weight: 500;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Gantt Chart View Styles
+    .gantt-view {
+      overflow-x: auto;
+      
+      .gantt-header {
+        display: flex;
+        border-bottom: 2px solid #e0e0e0;
+        position: sticky;
+        top: $spacing-0;
+        background: white;
+        z-index: 10;
+        
+        .phase-column {
+          width: 150px;
+          min-width: 150px;
+          padding: $spacing-md - 1px;
+          font-weight: 600;
+          border-right: 1px solid #e0e0e0;
+        }
+        
+        .gantt-timeline {
+          display: flex;
+          flex: 1;
+          
+          .gantt-date {
+            min-width: 25px;
+            padding: $spacing-md - 1px 2px;
+            text-align: center;
+            font-size: 11px;
+            border-right: 1px solid #f0f0f0;
+            
+            &:nth-child(7n) {
+              background: #f8f8f8;
+            }
+          }
+        }
+      }
+      
+      .gantt-body {
+        .gantt-project {
+          border-bottom: 2px solid #e0e0e0;
+          
+          .project-header {
+            padding: $spacing-sm + 2px 15px;
+            color: white;
+            font-weight: 600;
+            font-size: $font-size-sm;
+          }
+          
+          .gantt-row {
+            display: flex;
+            min-height: $spacing-2xl;
+            border-bottom: 1px solid #f0f0f0;
+            
+            &:hover {
+              background: #fafafa;
+            }
+            
+            .phase-name {
+              width: 150px;
+              min-width: 150px;
+              padding: $spacing-sm + 2px 15px;
+              font-size: 13px;
+              border-right: 1px solid #e0e0e0;
+              display: flex;
+              align-items: center;
+            }
+            
+            .gantt-bars {
+              flex: 1;
+              position: relative;
+              
+              .gantt-bar {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                height: $spacing-lg;
+                border-radius: $border-radius-lg;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: move;
+                transition: all 0.3s;
+                opacity: 0.9;
+                
+                &:hover {
+                  opacity: 1;
+                  transform: translateY(-50%) scale(1.05);
+                  box-shadow: 0 2px 8px rgba($color-black, 0.2);
+                }
+                
+                .duration {
+                  font-size: 11px;
+                  color: white;
+                  font-weight: 500;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Phase Legend
+  .phase-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md - 1px;
+    margin-top: $spacing-lg - $spacing-xs;
+    padding-top: $spacing-lg - $spacing-xs;
+    border-top: 1px solid #e0e0e0;
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      
+      .legend-color {
+        width: $spacing-md;
+        height: $spacing-md;
+        border-radius: $border-radius-sm;
+      }
+      
+      .legend-name {
+        font-size: 13px;
+        color: $color-gray-600;
+      }
+    }
+  }
+  
+  // Drag and drop states
+  .drag-over {
+    background: rgba(74, 144, 226, 0.1);
+    border: 2px dashed #4A90E2;
+  }
+  
+  .dragging {
+    opacity: 0.5;
+    cursor: move;
+  }
+}

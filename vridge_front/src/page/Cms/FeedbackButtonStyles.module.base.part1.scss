@@ -1,0 +1,26 @@
+// ===================================
+// Feedback 스타일 통합 파일
+// 2025-07-29T05:37:55.692Z
+// ===================================
+
+@import '../../styles/design-tokens';
+@import '../../styles/mobile-mixins';
+
+// ===================================
+// 변수 정의
+// ===================================
+
+// From FeedbackPage.scss
+$color-white-space: nowrap;
+// From FeedbackHeader.scss
+$primary-color: $color-primary;
+$primary-hover: $color-primary-dark;
+$background-light: $color-background-secondary;
+$border-color: $color-border;
+$text-dark: $color-text;
+$text-gray: $color-text-secondary;
+
+// Placeholder styles to fix compilation
+.feedback-placeholder {
+  display: block;
+}

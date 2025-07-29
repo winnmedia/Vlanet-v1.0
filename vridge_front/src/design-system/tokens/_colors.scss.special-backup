@@ -1,0 +1,166 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 색상 토큰 시스템
+// 모든 색상을 중앙에서 관리
+
+// ========== 브랜드 색상 ==========
+$color-primary: $color-primary;
+$color-primary-hover: $color-primary-dark;
+$color-primary-light: #E8EBFF;
+$color-primary-dark: #0A1A7D;
+
+// 그라데이션
+$gradient-primary: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+$gradient-primary-reverse: linear-gradient(135deg, $color-primary-hover 0%, $color-primary 100%);
+
+// ========== 시스템 색상 ==========
+$color-success: $color-success;
+$color-success-hover: #218838;
+$color-success-light: #d4edda;
+$color-success-dark: #155724;
+
+$color-danger: $color-danger;
+$color-danger-hover: #c82$color-gray-800;
+$color-danger-light: #f8d7da;
+$color-danger-dark: #721c24;
+
+$color-warning: $color-warning;
+$color-warning-hover: #e0a800;
+$color-warning-light: #fff3cd;
+$color-warning-dark: #856404;
+
+$color-info: $color-info;
+$color-info-hover: #138496;
+$color-info-light: #d1ecf1;
+$color-info-dark: #0c5460;
+
+// ========== 중성 색상 ==========
+$color-white: $color-white;
+$color-black: $color-black;
+
+// Gray Scale
+$color-gray-50: $color-background-secondary;
+$color-gray-100: #f5f7fa;
+$color-gray-200: #e9ecef;
+$color-gray-300: #dee2e6;
+$color-gray-400: #ced4da;
+$color-gray-500: #adb5bd;
+$color-gray-600: #6c757d;
+$color-gray-700: #495057;
+$color-gray-800: #343a40;
+$color-gray-900: #212529;
+
+// ========== 텍스트 색상 ==========
+$color-text-primary: $color-gray-900;
+$color-text-secondary: #495057;
+$color-text-muted: #6c757d;
+$color-text-disabled: #adb5bd;
+$color-text-white: $color-white;
+$color-text-link: $color-primary;
+$color-text-link-hover: $color-primary-hover;
+
+// ========== 배경 색상 ==========
+$color-background: #f5f7fa;
+$color-background-light: $color-background-secondary;
+$color-background-dark: #e9ecef;
+$color-background-overlay: rgba($color-black, $opacity-50);
+$color-background-modal: rgba($color-black, 0.8);
+
+// ========== 테두리 색상 ==========
+$color-border-light: #e9ecef;
+$color-border: #dee2e6;
+$color-border-dark: #ced4da;
+$color-border-focus: $color-primary;
+$color-border-error: $color-danger;
+$color-border-success: $color-success;
+
+// ========== 특수 색상 ==========
+// 비디오 플레이어
+$color-video-bg: $color-black;
+$color-video-controls: rgba($color-black, 0.7);
+$color-video-hover: rgba($color-white, 0.1);
+
+// 캘린더
+$color-calendar-today: $color-primary-light;
+$color-calendar-selected: $color-primary;
+$color-calendar-weekend: $color-danger;
+$color-calendar-other-month: $color-gray-100;
+
+// 피드백
+$color-feedback-bg: $color-background-secondary;
+$color-feedback-hover: #f0f4ff;
+$color-feedback-selected: $color-primary-light;
+$color-feedback-time-badge: $color-primary;
+
+// 상태 색상
+$color-status-active: $color-success;
+$color-status-delayed: $color-warning;
+$color-status-completed: $color-info;
+$color-status-pending: $color-gray-500;
+$color-status-error: $color-danger;
+
+// ========== CSS 변수 정의 ==========
+:root {
+  // 브랜드 색상
+  --color-primary: #{$color-primary};
+  --color-primary-hover: #{$color-primary-hover};
+  --color-primary-light: #{$color-primary-light};
+  --color-primary-dark: #{$color-primary-dark};
+  
+  // 시스템 색상
+  --color-success: #{$color-success};
+  --color-success-hover: #{$color-success-hover};
+  --color-success-light: #{$color-success-light};
+  --color-danger: #{$color-danger};
+  --color-danger-hover: #{$color-danger-hover};
+  --color-danger-light: #{$color-danger-light};
+  --color-warning: #{$color-warning};
+  --color-warning-hover: #{$color-warning-hover};
+  --color-warning-light: #{$color-warning-light};
+  --color-info: #{$color-info};
+  --color-info-hover: #{$color-info-hover};
+  --color-info-light: #{$color-info-light};
+  
+  // 중성 색상
+  --color-white: #{$color-white};
+  --color-black: #{$color-black};
+  --color-gray-50: #{$color-gray-50};
+  --color-gray-100: #{$color-gray-100};
+  --color-gray-200: #{$color-gray-200};
+  --color-gray-300: #{$color-gray-300};
+  --color-gray-400: #{$color-gray-400};
+  --color-gray-500: #{$color-gray-500};
+  --color-gray-600: #{$color-gray-600};
+  --color-gray-700: #{$color-gray-700};
+  --color-gray-800: #{$color-gray-800};
+  --color-gray-900: #{$color-gray-900};
+  
+  // 텍스트 색상
+  --color-text-primary: #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-text-muted: #{$color-text-muted};
+  --color-text-disabled: #{$color-text-disabled};
+  --color-text-white: #{$color-text-white};
+  --color-text-link: #{$color-text-link};
+  --color-text-link-hover: #{$color-text-link-hover};
+  
+  // 배경 색상
+  --color-background: #{$color-background};
+  --color-background-light: #{$color-background-light};
+  --color-background-dark: #{$color-background-dark};
+  
+  // 테두리 색상
+  --color-border-light: #{$color-border-light};
+  --color-border: #{$color-border};
+  --color-border-dark: #{$color-border-dark};
+  --color-border-focus: #{$color-border-focus};
+  --color-border-error: #{$color-border-error};
+  --color-border-success: #{$color-border-success};
+}
+
+// 다크모드 지원 (향후 확장)
+@media (prefers-color-scheme: dark) {
+  :root {
+    // 다크모드 색상 정의
+  }
+}

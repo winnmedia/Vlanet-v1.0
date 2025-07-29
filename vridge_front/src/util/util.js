@@ -16,7 +16,7 @@ export function axiosOpts(method, url, data, config) {
   };
   
   return axios(axiosConfig).catch(error => {
-    console.error('API Error:', error.response?.data || error.message);
+    
     throw error;
   });
 }
@@ -27,7 +27,7 @@ export function axiosCredentials(method, url, data, config) {
   
   // 토큰이 없으면 에러 발생
   if (!token) {
-    console.error('No authentication token found');
+    
     // 로그인 페이지로 리다이렉트 (약간의 지연 추가)
     setTimeout(() => {
       if (typeof window !== 'undefined') {
@@ -46,17 +46,17 @@ export function axiosCredentials(method, url, data, config) {
   };
   
   // 보안: 요청 로깅 시 헤더 제외 (토큰 등 민감정보 포함)
-  // console.log('[axiosCredentials] Request:', method, url);
+  // 
   
   return axios(axiosConfig)
     .then(response => {
       // 보안: 응답 데이터 로깅 제외
-      // console.log('[axiosCredentials] Response:', url, response.status);
+      // 
       return response;
     })
     .catch(error => {
       // 보안: 에러 상세 정보 로깅 제외
-      // console.log('[axiosCredentials] Error:', url, error.response?.status);
+      // 
       throw error;
     });
 }
@@ -123,7 +123,7 @@ export function refetchProject(dispatch, navigate) {
     return;
   }
   
-  // console.log('[refetchProject] Called at:', new Date().toISOString())
+  // .toISOString())
   
   if (checkSession()) {
     const date = new Date()
@@ -136,19 +136,18 @@ export function refetchProject(dispatch, navigate) {
         userInfo = JSON.parse(storedUserInfo);
       }
     } catch (e) {
-      // console.error('Failed to parse userInfo from localStorage:', e);
+      // 
     }
     
     // 사용자 정보가 없으면 API 호출
     const getUserInfoPromise = userInfo ? Promise.resolve({ data: userInfo }) : GetUserInfo().catch(err => {
-      // console.error('Failed to fetch user info:', err);
+      // 
       return null;
     });
     
     return Promise.all([ProjectList(), getUserInfoPromise])
       .then(([projectRes, userRes]) => {
-        // console.log('[refetchProject] ProjectList response:', projectRes.data)
-        const data = projectRes.data.result
+        // const data = projectRes.data.result
         const result = data.sort((a, b) => {
           return new Date(b.created) - new Date(a.created)
         })
@@ -210,14 +209,11 @@ export function refetchProject(dispatch, navigate) {
         }
         
         // 보안: Redux 상태 로깅 제한
-        // console.log('[refetchProject] Projects loaded:', result.length)
-        
-        dispatch(updateProjectStore(storeData))
+        // dispatch(updateProjectStore(storeData))
         return projectRes
       })
       .catch((error) => {
-        // console.error('[refetchProject] Error:', error.message)
-        if (
+        // if (
           error.response &&
           error.response.data &&
           error.response.data.message === 'NEED_ACCESS_TOKEN'

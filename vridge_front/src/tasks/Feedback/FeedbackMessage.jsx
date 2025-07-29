@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import cx from 'classnames'
+import { Input } from '../../components/unified/Input'
+import { Button } from '../../components/unified/Button'
 
 export default function FeedbackMessage({
   Rating,
@@ -65,8 +71,7 @@ export default function FeedbackMessage({
   //     if (sendMsg) {
   //       ws.current.onmessage = (evt) => {
   //         const data = JSON.parse(evt.data)
-  //         console.log(data)
-  //         setItems((prevItems) => [...prevItems, data])
+  //         //         setItems((prevItems) => [...prevItems, data])
   //       }
   //     }
   //   }, [sendMsg])
@@ -116,18 +121,18 @@ export default function FeedbackMessage({
         </div>
         {me && (
           <div className="pr">
-            <input
+            <Input
               type="text"
               value={text}
-              onChange={(e) => set_text(e.target.value)}
+              onChange={(e) = aria-label="text input"> set_text(e.target.value)}
               onKeyUp={enterkey}
               placeholder="채팅 입력"
               className="ty01"
               style={{ padding: '0 120px 0 15px' }}
             />
-            <button onClick={SendMessage} className="cert">
+            <Button onClick={SendMessage} onKeyDown={(e) => e.key === 'Enter' && SendMessage} aria-label="Click">
               입력
-            </button>
+            </Button>
           </div>
         )}
       </>
@@ -135,3 +140,5 @@ export default function FeedbackMessage({
   )
 }
 React.memo(FeedbackMessage)
+
+import { Button } from '../../components/unified/Button'

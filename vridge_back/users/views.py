@@ -16,12 +16,26 @@ from core.security import sanitize_input, set_secure_cookie, rate_limit, Securit
 from .security_utils import PasswordResetSecurity
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from rest_framework_simplejwt.tokens import RefreshToken
 from .validators import InputValidator, validate_request_data
+from config.csrf_migration import csrf_protect_if_enabled
+from django.middleware.csrf import get_token
 
 # from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
+
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    """
+    CSRF 토큰을 발급하는 엔드포인트
+    프론트엔드에서 CSRF 토큰을 받기 위해 사용
+    """
+    return JsonResponse({
+        "csrfToken": get_token(request),
+        "message": "CSRF token generated successfully"
+    })
 
 
 ########## username이 kakao,naver,google이든 회원가입 때 중복되면 생성x
@@ -74,10 +88,28 @@ class CheckNickname(View):
             return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@csrf_protect_if_enabled
 class SignUp(View):
     def post(self, request):
         try:
+            # Rate limiting 체크
+            from django.core.cache import cache
+            client_ip = request.META.get('REMOTE_ADDR', '')
+            rate_limit_key = f"signup:{client_ip}"
+            current_requests = cache.get(rate_limit_key, 0)
+            
+            if current_requests >= 5:  # 5분에 5회 제한
+                return JsonResponse({
+                    "message": "너무 많은 회원가입 시도입니다. 잠시 후 다시 시도해주세요."
+                }, status=429)
+            
+            # 요청 카운트 증가
+            cache.set(rate_limit_key, current_requests + 1, 300)  # 5분(300초) TTL
+            
+            # 동시 요청 방지를 위한 체크
+            import hashlib
+            request_id = hashlib.md5(f"{client_ip}:{timezone.now().timestamp()}".encode()).hexdigest()
+            logger.info(f"Signup request {request_id} from {client_ip}")
             data = json.loads(request.body)
             email = data.get("email")
             nickname = data.get("nickname")
@@ -86,6 +118,10 @@ class SignUp(View):
             # 입력값 검증
             if not email or not nickname or not password:
                 return JsonResponse({"message": "모든 필드를 입력해주세요."}, status=400)
+            
+            # 타입 검증
+            if not isinstance(email, str) or not isinstance(nickname, str) or not isinstance(password, str):
+                return JsonResponse({"message": "잘못된 데이터 형식입니다."}, status=400)
             
             # 이메일 형식 검증
             is_valid, error_msg = InputValidator.validate_email(email)
@@ -167,11 +203,16 @@ class SignUp(View):
             logger.error(f"회원가입 에러: {str(e)}", exc_info=True)
             logging.error(f"SignUp Error: {str(e)}")
             import traceback
-            traceback.print_exc()
-            return JsonResponse({"message": "회원가입 처리 중 오류가 발생했습니다."}, status=500)
+            error_detail = traceback.format_exc()
+            logger.error(f"Detailed error: {error_detail}")
+            return JsonResponse({
+                "message": "회원가입 처리 중 오류가 발생했습니다.",
+                "error": str(e),
+                "type": type(e).__name__
+            }, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@csrf_protect_if_enabled
 class SignIn(View):
     def options(self, request, *args, **kwargs):
         """Handle CORS preflight requests"""
@@ -262,7 +303,7 @@ class SignIn(View):
             return JsonResponse({"message": str(e)}, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@csrf_protect_if_enabled
 class SendAuthNumber(View):
     def post(self, request, types):
         try:
@@ -389,7 +430,7 @@ class EmailAuth(View):
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@csrf_protect_if_enabled
 class ResetPassword(View):
     def post(self, request):
         try:

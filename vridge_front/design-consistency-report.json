@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "overallScore": 43,
+    "grade": "F",
+    "timestamp": "2025-07-29T03:05:27.816Z"
+  },
+  "details": {
+    "tokenUsage": {
+      "percentage": 21,
+      "recommendation": "디자인 토큰 사용을 늘려주세요"
+    },
+    "hardcodedValues": {
+      "colors": 433,
+      "spacing": 13,
+      "topOffenders": [
+        {
+          "file": "src/styles/_design-tokens.scss",
+          "count": 63
+        },
+        {
+          "file": "src/components/FeedbackPlayer.scss",
+          "count": 45
+        },
+        {
+          "file": "src/page/User/MyPage.scss",
+          "count": 26
+        },
+        {
+          "file": "src/css/Home.scss",
+          "count": 25
+        },
+        {
+          "file": "src/page/Cms/VideoPlanning.scss",
+          "count": 23
+        }
+      ]
+    },
+    "componentConsistency": {
+      "buttons": 100,
+      "inputs": 38,
+      "cards": 100,
+      "modals": 100
+    },
+    "responsiveIssues": [],
+    "brandColorUsage": {}
+  },
+  "recommendations": [
+    "디자인 토큰 사용률을 50% 이상으로 높이세요",
+    "433개의 하드코딩된 색상을 디자인 토큰으로 변경하세요"
+  ]
+}

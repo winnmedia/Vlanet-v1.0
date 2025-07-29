@@ -1,6 +1,6 @@
-import React from 'react'
-import classNames from 'classnames'
-
+import React from 'react';
+import classNames from 'classnames';
+import { UnifiedButton } from "../unified/Button";
 export default function Button({
   children,
   variant = 'primary',
@@ -15,34 +15,15 @@ export default function Button({
   onClick,
   ...props
 }) {
-  const buttonClasses = classNames(
-    'btn',
-    `btn-${variant}`,
-    size !== 'md' && `btn-${size}`,
-    loading && 'btn-loading',
-    fullWidth && 'w-full',
-    className
-  )
-  
-  const content = (
-    <>
+  const buttonClasses = classNames('btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, loading && 'btn-loading', fullWidth && 'w-full', className);
+  const content = <>
       {icon && iconPosition === 'left' && <span className="btn-icon-left">{icon}</span>}
       {!loading && children}
       {icon && iconPosition === 'right' && <span className="btn-icon-right">{icon}</span>}
-    </>
-  )
-  
-  return (
-    <button
-      type={type}
-      className={buttonClasses}
-      disabled={disabled || loading}
-      onClick={onClick}
-      {...props}
-    >
+    </>;
+  return <UnifiedButton type={type} className={buttonClasses} disabled={disabled || loading} onClick={onClick} onKeyDown={(e) => e.key === 'Enter' && onClick} {...props} aria-label="Click">
       {content}
-    </button>
-  )
+    </UnifiedButton>;
 }
 
 // Icon Button Variant
@@ -53,22 +34,17 @@ export function IconButton({
   tooltip,
   ...props
 }) {
-  return (
-    <button
-      className={classNames('btn', 'btn-icon', `btn-${variant}`, size !== 'md' && `btn-${size}`)}
-      title={tooltip}
-      {...props}
-    >
+  return <UnifiedButton className={classNames('btn', 'btn-icon', `btn-${variant}`, size !== 'md' && `btn-${size}`)} title={tooltip} {...props} aria-label="Click">
       {icon}
-    </button>
-  )
+    </UnifiedButton>;
 }
 
 // Button Group Component
-export function ButtonGroup({ children, className = '' }) {
-  return (
-    <div className={classNames('btn-group', className)}>
+export function ButtonGroup({
+  children,
+  className = ''
+}) {
+  return <div className={classNames('btn-group', className)}>
       {children}
-    </div>
-  )
+    </div>;
 }

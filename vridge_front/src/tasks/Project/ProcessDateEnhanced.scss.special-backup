@@ -1,0 +1,536 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 브랜드 대표 색상
+// @import '../../styles/_variables';
+
+// 임시 변수 정의 - 나중에 디자인 시스템으로 이동
+$border-light: #e5e7eb;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$primary-color: $color-primary;
+$success-color: $color-success;
+$warning-color: $color-warning;
+$danger-color: $color-danger;
+$hover-bg: #f9fafb;
+$border-radius: $border-radius-md;
+$spacing-unit: 8px;
+$primary-gradient-start: $color-primary;
+$primary-gradient-end: $color-primary-dark;
+$border-main: #e5e7eb;
+$primary-hover: $color-primary-dark;
+
+.process-date-enhanced {
+  padding: $spacing-lg;
+  background: $color-white;
+  border: 1px solid $border-light;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 2px 8px rgba($color-black, 0.06);
+  
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 2px solid $gray-100;
+    
+    h3 {
+      margin: $spacing-0;
+      font-size: $font-size-lg;
+      font-weight: 700;
+      color: $text-primary;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      
+      &::before {
+        content: '';
+        width: $spacing-xs;
+        height: $spacing-lg;
+        background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+        border-radius: $border-radius-sm / 2;
+      }
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: $spacing-sm + $spacing-xs;
+      align-items: center;
+      
+      .autocalc-toggle {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        cursor: pointer;
+        padding: $spacing-sm 16px;
+        background: $gray-50;
+        border-radius: 100px;
+        transition: all 0.3s ease;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        color: $text-secondary;
+        
+        &:hover {
+          background: $gray-100;
+        }
+        
+        input[type="checkbox"] {
+          width: $spacing-0;
+          height: $spacing-0;
+          opacity: 0;
+          position: absolute;
+          
+          &:checked ~ span {
+            color: $primary-color;
+          }
+          
+          &:checked + .toggle-switch {
+            background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+            
+            &::after {
+              transform: translateX(20px);
+              background: white;
+            }
+          }
+        }
+        
+        .toggle-switch {
+          position: relative;
+          width: 44px;
+          height: $spacing-lg;
+          background: $gray-300;
+          border-radius: 100px;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            width: $spacing-md + 2px;
+            height: $spacing-md + 2px;
+            background: white;
+            border-radius: $border-radius-full;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba($color-black, 0.15);
+          }
+        }
+        
+        span {
+          font-weight: 500;
+          transition: color 0.3s ease;
+        }
+      }
+    }
+  }
+
+  // 프로젝트 요약 정보
+  .project-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+    padding: $spacing-lg - $spacing-xs;
+    background: linear-gradient(135deg, rgba($color-primary, 0.05) 0%, rgba($color-primary-dark, 0.05) 100%);
+    border-radius: $border-radius-md;
+    border: 1px solid rgba($color-primary, 0.1);
+    
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-xs;
+      
+      .label {
+        font-size: 13px;
+        color: $text-secondary;
+        font-weight: 500;
+      }
+      
+      .value {
+        font-size: $font-size-base;
+        font-weight: 700;
+        color: $primary-color;
+      }
+    }
+  }
+
+  // 자동 계산 안내
+  .auto-calc-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm + $spacing-xs 16px;
+    background: rgba($color-primary, 0.05);
+    border-radius: $border-radius-md;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    border: 1px solid rgba($color-primary, 0.1);
+    
+    &::before {
+      content: 'ℹ️';
+      font-size: $font-size-base;
+    }
+    
+    span {
+      font-size: $font-size-sm;
+      color: $primary-color;
+      font-weight: 500;
+    }
+  }
+  
+  // 템플릿 섹션
+  .template-section {
+    margin-bottom: $spacing-lg;
+    
+    h4 {
+      margin: $spacing-0 0 12px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+    
+    .template-buttons {
+      display: flex;
+      gap: $spacing-sm;
+      flex-wrap: wrap;
+      
+      .template-btn {
+        padding: $spacing-sm + 2px 20px;
+        border: 1px solid $border-light;
+        background: white;
+        color: $text-primary;
+        border-radius: $border-radius-md;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: $spacing-0;
+          left: $spacing-0;
+          width: $spacing-0;
+          height: 100%;
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          transition: width 0.3s ease;
+          z-index: -1;
+        }
+        
+        &:hover {
+          border-color: $primary-color;
+          color: $primary-color;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba($color-primary, 0.15);
+        }
+        
+        &.active {
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          color: white;
+          border-color: transparent;
+          box-shadow: 0 4px 12px rgba($color-primary, $opacity-25);
+          
+          &::before {
+            width: 100%;
+          }
+        }
+        
+        &.clear {
+          background: $gray-50;
+          border-color: $gray-300;
+          color: $text-secondary;
+          
+          &:hover {
+            background: $gray-100;
+            border-color: $gray-400;
+            color: $text-primary;
+            box-shadow: $shadow-none;
+          }
+        }
+      }
+    }
+  }
+  
+  // 날짜 선택 리스트
+  .date-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    
+    .date-item {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm + $spacing-xs;
+      padding: $spacing-lg - $spacing-xs;
+      background: $gray-50;
+      border-radius: $border-radius-lg;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: white;
+        border-color: $border-light;
+        box-shadow: 0 4px 12px rgba($color-black, 0.08);
+      }
+      
+      .process-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + $spacing-xs;
+        
+        .process-number {
+          width: $spacing-xl;
+          height: $spacing-xl;
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          color: white;
+          border-radius: $border-radius-full;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: $font-size-sm;
+          flex-shrink: 0;
+        }
+        
+        .process-name {
+          font-size: 15px;
+          font-weight: 600;
+          color: $text-primary;
+          flex: 1;
+        }
+        
+        .duration-badge {
+          padding: $spacing-xs 12px;
+          background: rgba($color-primary, 0.1);
+          color: $primary-color;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 600;
+        }
+      }
+      
+      .date-inputs {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        margin-left: 44px; // process-number width + gap
+        
+        .date-input-group {
+          flex: 1;
+          
+          label {
+            display: block;
+            font-size: 13px;
+            color: $text-secondary;
+            margin-bottom: 6px;
+            font-weight: 500;
+          }
+          
+          .date-picker-wrapper {
+            position: relative;
+            
+            svg {
+              position: absolute;
+              left: $spacing-sm + $spacing-xs;
+              top: 50%;
+              transform: translateY(-50%);
+              width: $spacing-md + 2px;
+              height: $spacing-md + 2px;
+              stroke: $text-secondary;
+              stroke-width: 2;
+            }
+            
+            .date-input {
+              width: 100%;
+              padding: $spacing-sm + 2px 12px 10px 40px;
+              border: 1px solid $border-light;
+              border-radius: $border-radius-md;
+              font-size: $font-size-sm;
+              transition: all 0.3s ease;
+              background: white;
+              
+              &:hover {
+                border-color: $border-main;
+              }
+              
+              &:focus {
+                outline: none;
+                border-color: $primary-color;
+                box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+              }
+              
+              &:disabled {
+                background: $gray-100;
+                cursor: not-allowed;
+                opacity: 0.6;
+              }
+            }
+          }
+        }
+        
+        .date-arrow {
+          font-size: $font-size-xl;
+          color: $text-secondary;
+          margin-top: $spacing-lg - $spacing-xs;
+        }
+        
+        .quick-duration {
+          display: flex;
+          gap: $spacing-xs;
+          margin-top: $spacing-lg - $spacing-xs;
+          
+          button {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid $border-light;
+            border-radius: $border-radius-md - 2px;
+            font-size: $font-size-xs;
+            font-weight: 500;
+            color: $text-secondary;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              border-color: $primary-color;
+              color: $primary-color;
+              background: rgba($color-primary, 0.05);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 타임라인 뷰
+  .timeline-view {
+    margin-top: $spacing-xl;
+    padding: $spacing-lg;
+    background: white;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-light;
+    
+    h4 {
+      margin: $spacing-0 0 20px 0;
+      font-size: $font-size-base;
+      font-weight: 600;
+      color: $text-primary;
+    }
+    
+    .timeline-container {
+      position: relative;
+      overflow-x: auto;
+      padding: $spacing-lg - $spacing-xs 0;
+      
+      .timeline-track {
+        position: relative;
+        min-height: $spacing-4xl - $spacing-xs;
+        background: $gray-50;
+        border-radius: $border-radius-md;
+        padding: $spacing-sm + 2px;
+        
+        .timeline-item {
+          position: absolute;
+          height: $spacing-2xl;
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          border-radius: $border-radius-md - 2px;
+          display: flex;
+          align-items: center;
+          padding: $spacing-0 12px;
+          color: white;
+          font-size: 13px;
+          font-weight: 500;
+          box-shadow: 0 2px 8px rgba($color-primary, 0.2);
+          transition: all 0.2s ease;
+          cursor: pointer;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+            z-index: 10;
+          }
+          
+          &.overlap {
+            opacity: 0.8;
+            top: $spacing-3xl + 2px;
+          }
+        }
+      }
+      
+      .timeline-axis {
+        display: flex;
+        justify-content: space-between;
+        margin-top: $spacing-sm + 2px;
+        padding: $spacing-0 10px;
+        font-size: $font-size-xs;
+        color: $text-secondary;
+      }
+    }
+  }
+}
+
+// React DatePicker 커스텀 스타일
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container {
+  width: 100%;
+}
+
+.react-datepicker-popper {
+  z-index: 100;
+  
+  .react-datepicker {
+    font-family: inherit;
+    border: 1px solid $border-light;
+    border-radius: $border-radius-md;
+    box-shadow: 0 4px 16px rgba($color-black, 0.1);
+    
+    .react-datepicker__header {
+      background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+      border-bottom: none;
+      border-radius: $border-radius-md 8px 0 0;
+      padding-top: $spacing-sm + $spacing-xs;
+      
+      .react-datepicker__current-month,
+      .react-datepicker__day-name {
+        color: white;
+      }
+    }
+    
+    .react-datepicker__day--selected,
+    .react-datepicker__day--keyboard-selected {
+      background: $primary-color;
+      color: white;
+      
+      &:hover {
+        background: $primary-hover;
+      }
+    }
+    
+    .react-datepicker__day:hover {
+      background: rgba($color-primary, 0.1);
+    }
+    
+    .react-datepicker__time-container {
+      border-left: 1px solid $border-light;
+      
+      .react-datepicker__time-list-item--selected {
+        background: $primary-color;
+        color: white;
+      }
+    }
+  }
+}

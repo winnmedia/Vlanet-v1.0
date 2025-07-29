@@ -1,43 +1,27 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useMemo , Suspense } from 'react'
+import dynamic from 'next/dynamic';
+;
+;
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
+import { Input } from '../../components/unified/Input'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from '../../util/util'
 import '../../css/Cms/FeedbackVideoResponsive.scss'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import PageTemplate from '../../components/PageTemplate'
 import SideBar from '../../components/SideBar'
 
 
-import FeedbackInput from '../../tasks/Feedback/FeedbackInput'
-import FeedbackManage from '../../tasks/Feedback/FeedbackManage'
-import FeedbackMore from '../../tasks/Feedback/FeedbackMore'
-import OpinionInput from '../../tasks/Feedback/OpinionInput'
-import VideoPlayer from '../../components/VideoPlayer'
-import VideoUploadGuide from '../../components/VideoUploadGuide'
 
-import useTab from '../../hooks/UseTab'
-import down from '../../images/Cms/down_icon.svg'
+
+
+
+
+
+
+
 import { useSelector } from 'react-redux'
 
 import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from '../../api/feedback'
@@ -53,12 +37,9 @@ const formatTime = (seconds) => {
 }
 
 function FeedbackStable() {
-  console.log('[FeedbackStable] Component mounted')
   const { navigate } = useRouter()
   const { user, project_list } = useSelector((s) => s.ProjectStore)
   const { project_id } = useParams()
-  console.log('[FeedbackStable] project_id:', project_id, 'user:', user, 'project_list:', project_list?.length || 0)
-
   // 상태 관리
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -97,7 +78,48 @@ function FeedbackStable() {
   // 인코딩 상태 체크
   const startEncodingStatusCheck = () => {
     if (typeof GetEncodingStatus !== 'function') {
-      console.log('Encoding status check not available');
+      
+import { Button } from '../../components/unified/Button'
+const down = dynamic(() => import('../../images/Cms/down_icon.svg'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const useTab = dynamic(() => import('../../hooks/UseTab'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const VideoUploadGuide = dynamic(() => import('../../components/VideoUploadGuide'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const VideoPlayer = dynamic(() => import('../../components/VideoPlayer'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const OpinionInput = dynamic(() => import('../../tasks/Feedback/OpinionInput'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const FeedbackMore = dynamic(() => import('../../tasks/Feedback/FeedbackMore'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const FeedbackManage = dynamic(() => import('../../tasks/Feedback/FeedbackManage'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const FeedbackInput = dynamic(() => import('../../tasks/Feedback/FeedbackInput'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const UnifiedCard = dynamic(() => import('../../components/unified/UnifiedCard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const UnifiedModal = dynamic(() => import('../../components/unified/UnifiedModal'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
       return;
     }
     
@@ -119,7 +141,6 @@ function FeedbackStable() {
           }
         })
         .catch((err) => {
-          console.error('Error checking encoding status:', err)
           if (err.response?.status === 404) {
             clearInterval(interval)
             setEncodingCheckInterval(null)
@@ -142,9 +163,7 @@ function FeedbackStable() {
   // 인증 체크
   useEffect(() => {
     const session = checkSession()
-    console.log('[FeedbackStable] Session check:', session)
     if (!session) {
-      console.log('[FeedbackStable] No session, redirecting to login')
       navigate('/login', { replace: true })
     }
   }, [navigate])
@@ -162,14 +181,8 @@ function FeedbackStable() {
     setLoading(true)
     setError(null)
 
-    console.log(`[Feedback] Loading feedback for project ${project_id}`)
-
     GetFeedBack(project_id, { signal: abortController.signal })
       .then((res) => {
-        console.log('[Feedback] Data loaded successfully:', res.data)
-        console.log('[Feedback] Files URL:', res.data?.result?.files)
-        console.log('[Feedback] Feedback comments:', res.data?.result?.feedback)
-        
         // API 응답 처리
         let projectData = null
         
@@ -190,7 +203,6 @@ function FeedbackStable() {
         if (projectData) {
           // feedback이 배열이 아닌 경우 빈 배열로 설정
           if (!Array.isArray(projectData.feedback)) {
-            console.warn('[Feedback] feedback is not an array, setting to empty array')
             projectData.feedback = []
           }
           
@@ -200,8 +212,6 @@ function FeedbackStable() {
           }
           
           // files URL 로깅
-          console.log('[Feedback] Final project data files:', projectData.files)
-          
           set_current_project(projectData)
         }
         
@@ -209,21 +219,14 @@ function FeedbackStable() {
       })
       .catch((err) => {
         if (err.name === 'AbortError') {
-          console.log('[Feedback] Request aborted')
           return
         }
         
-        console.error('[Feedback] Load error:', err)
-        console.error('[Feedback] Error response:', err.response)
-        
         if (err.response?.status === 404 || err.response?.status === 400) {
           // 404 또는 400은 프로젝트가 없는 경우
-          console.log('[Feedback] Project not found error:', err.response?.status)
-          
           // Redux store에서 프로젝트 존재 여부 확인
           const projectExists = project_list?.some(p => p.id === parseInt(project_id))
           if (!projectExists) {
-            console.log('[Feedback] Project ID', project_id, 'not found in Redux store')
             setError(`프로젝트 ID ${project_id}를 찾을 수 없습니다. 프로젝트 목록으로 돌아갑니다.`)
           } else {
             setError('프로젝트 정보를 불러오는 중 오류가 발생했습니다.')
@@ -285,7 +288,7 @@ function FeedbackStable() {
         if (input) input.value = '';
       })
       .catch((err) => {
-        console.error('Upload error:', err);
+        
         if (err.response?.status === 413) {
           window.alert('파일 크기가 너무 큽니다. 더 작은 파일을 선택해주세요.');
         } else if (err.response?.status === 401) {
@@ -356,7 +359,7 @@ function FeedbackStable() {
       <PageTemplate>
         <div className="cms_wrap">
           <SideBar tab="feedback" />
-          <main>
+          <main role="main">
             <div className="content">
               <div className="loading">피드백 정보를 불러오는 중...</div>
             </div>
@@ -372,12 +375,12 @@ function FeedbackStable() {
       <PageTemplate>
         <div className="cms_wrap">
           <SideBar tab="feedback" />
-          <main>
+          <main role="main">
             <div className="content">
               <div className="error">
                 <h3>오류 발생</h3>
                 <p>{error}</p>
-                <button onClick={() => navigate('/cmshome')}>홈으로 돌아가기</button>
+                <Button onClick={() = aria-label="Click"> navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate('/cmshome')}>홈으로 돌아가기</Button>
               </div>
             </div>
           </main>
@@ -392,11 +395,11 @@ function FeedbackStable() {
       <PageTemplate>
         <div className="cms_wrap">
           <SideBar tab="feedback" />
-          <main>
+          <main role="main">
             <div className="content">
               <div className="error">
                 <h3>프로젝트를 찾을 수 없습니다</h3>
-                <button onClick={() => navigate('/cmshome')}>홈으로 돌아가기</button>
+                <Button onClick={() = aria-label="Click"> navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate('/cmshome')}>홈으로 돌아가기</Button>
               </div>
             </div>
           </main>
@@ -409,17 +412,17 @@ function FeedbackStable() {
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar tab="feedback" />
-        <main>
+        <main role="main">
           <div className="content">
             <div className="feedback">
               <div className="feedback-header">
                 <div className="header-content">
                   <div className="header-left">
-                    <button className="back-button" onClick={() => navigate('/cmshome')}>
+                    <Button variant="ghost" aria-label="Click"> navigate('/cmshome')}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M15 18l-6-6 6-6" />
                       </svg>
-                    </button>
+                    </Button>
                     <div className="project-info">
                       <h1 className="project-name">{current_project.name || '프로젝트 이름 없음'}</h1>
                       <div className="project-meta">
@@ -430,21 +433,21 @@ function FeedbackStable() {
                     </div>
                   </div>
                   <div className="header-right">
-                    <button className="action-button outline" onClick={() => setShowProjectInfo(!showProjectInfo)}>
+                    <Button  aria-label="Click"> setShowProjectInfo(!showProjectInfo)}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10" />
                         <path d="M12 16v-4" />
                         <circle cx="12" cy="8" r="1" />
                       </svg>
                       프로젝트 정보
-                    </button>
-                    <button className="action-button primary" onClick={() => navigate(`/ProjectView/${project_id}`)}>
+                    </Button>
+                    <Button  aria-label="Click"> navigate(`/ProjectView/${project_id}`)}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                         <circle cx="12" cy="12" r="3" />
                       </svg>
                       프로젝트 보기
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -453,20 +456,20 @@ function FeedbackStable() {
                 <ul>
                   <li
                     className={currentTab === 0 ? 'active' : ''}
-                    onClick={() => changeTab(0)}
+                    onClick={() => changeTab(0)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(0)}
                   >
                     피드백
                   </li>
                   <li
                     className={currentTab === 1 ? 'active' : ''}
-                    onClick={() => changeTab(1)}
+                    onClick={() => changeTab(1)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(1)}
                   >
                     폴더 관리
                   </li>
                   {is_admin && (
                     <li
                       className={currentTab === 2 ? 'active' : ''}
-                      onClick={() => changeTab(2)}
+                      onClick={() => changeTab(2)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(2)}
                     >
                       게시글 관리
                     </li>
@@ -515,20 +518,19 @@ function FeedbackStable() {
                             ) : (
                               <div className="upload_area">
                                 <div className="upload_btn_wrap">
-                                  <input
-                                    id="video_upload"
+                                  <UnifiedInput id="video_upload"
                                     type="file"
                                     accept="video/*"
                                     onChange={handleFileUpload}
                                     className="video_upload"
-                                  />
+                                   / aria-label="file input">
                                   <label htmlFor="video_upload" className="video_upload_label">
                                     <div>영상 업로드</div>
                                   </label>
                                 </div>
-                                <button className="guide_btn" onClick={() => setShowUploadGuide(true)}>
+                                <Button  aria-label="Click"> setShowUploadGuide(true)}>
                                   업로드 가이드
-                                </button>
+                                </Button>
                               </div>
                             )}
                           </div>
@@ -537,7 +539,10 @@ function FeedbackStable() {
                       
                       <div className="player-controls">
                         <div className="control-group">
-                          <button onClick={() => {
+                          <Button onClick={() = aria-label="Click"> {
+                            if (videoPlayerRef.current) {
+                              videoPlayerRef.current.seekTo(Math.max(0, currentVideoTime - 3));
+                            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
                             if (videoPlayerRef.current) {
                               videoPlayerRef.current.seekTo(Math.max(0, currentVideoTime - 3));
                             }
@@ -548,8 +553,11 @@ function FeedbackStable() {
                               <polyline points="16 8 12 12 16 16" />
                             </svg>
                             3초 뒤로
-                          </button>
-                          <button onClick={() => {
+                          </Button>
+                          <Button onClick={() = aria-label="Click"> {
+                            if (videoPlayerRef.current) {
+                              videoPlayerRef.current.seekTo(currentVideoTime + 3);
+                            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
                             if (videoPlayerRef.current) {
                               videoPlayerRef.current.seekTo(currentVideoTime + 3);
                             }
@@ -560,11 +568,15 @@ function FeedbackStable() {
                               <polyline points="8 8 12 12 8 16" />
                               <polyline points="12 8 16 12 12 16" />
                             </svg>
-                          </button>
+                          </Button>
                         </div>
                         <div className="control-group">
-                          <button 
-                            onClick={() => {
+                          <Button onClick={() = aria-label="Click"> {
+                              // 현재 페이지 URL 복사
+                              const shareUrl = typeof window !== 'undefined' && window.location.href;
+                              navigator.clipboard.writeText(shareUrl).then(() => {
+                                window.alert('피드백 페이지 링크가 복사되었습니다.');
+                              } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
                               // 현재 페이지 URL 복사
                               const shareUrl = typeof window !== 'undefined' && window.location.href;
                               navigator.clipboard.writeText(shareUrl).then(() => {
@@ -595,7 +607,7 @@ function FeedbackStable() {
                               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                             </svg>
                             페이지 공유
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -603,18 +615,18 @@ function FeedbackStable() {
                     {/* 오른쪽 - 폼 섹션 */}
                     <div className="forms-section" style={{ width: activeFormTab === 'comment' ? '650px' : '400px', transition: 'width 0.3s ease' }}>
                       <div className="form-tabs">
-                        <button 
+                        <UnifiedButton 
                           className={`tab-button ${activeFormTab === 'feedback' ? 'active' : ''}`}
-                          onClick={() => setActiveFormTab('feedback')}
+                          onClick={() = aria-label="Click" type="button"> setActiveFormTab('feedback')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setActiveFormTab('feedback')}
                         >
                           피드백 등록
-                        </button>
-                        <button 
+                        </UnifiedButton>
+                        <UnifiedButton 
                           className={`tab-button ${activeFormTab === 'comment' ? 'active' : ''}`}
-                          onClick={() => setActiveFormTab('comment')}
+                          onClick={() = aria-label="Click" type="button"> setActiveFormTab('comment')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setActiveFormTab('comment')}
                         >
                           코멘트 작성
-                        </button>
+                        </UnifiedButton>
                       </div>
                       
                       <div className="form-content">
@@ -708,13 +720,12 @@ function FeedbackStable() {
                         <label htmlFor="video-upload" className="upload-button">
                           파일 선택
                         </label>
-                        <input
-                          id="video-upload"
+                        <UnifiedInput id="video-upload"
                           type="file"
                           accept="video/*"
                           onChange={handleFileUpload}
                           multiple
-                        />
+                         / aria-label="file input">
                       </div>
                       
                       {uploadProgress > 0 && (
@@ -764,15 +775,15 @@ function FeedbackStable() {
                               </div>
                             </div>
                             <div className="file-actions">
-                              <button title="다운로드">
+                              <UnifiedButton title="다운로드" aria-label="Click" type="button">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                   <polyline points="7 10 12 15 17 10" />
                                   <line x1="12" y1="15" x2="12" y2="3" />
                                 </svg>
-                              </button>
+                              </UnifiedButton>
                               {is_admin && (
-                                <button className="delete-btn" title="삭제" onClick={() => {
+                                <Button variant="danger" title="삭제" aria-label="Click"> {
                                   if (window.confirm('파일을 삭제하시겠습니까?')) {
                                     DeleteFeedbackFile(project_id)
                                       .then(() => {
@@ -788,7 +799,7 @@ function FeedbackStable() {
                                     <polyline points="3 6 5 6 21 6" />
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                                   </svg>
-                                </button>
+                                </Button>
                               )}
                             </div>
                           </div>
@@ -812,11 +823,11 @@ function FeedbackStable() {
                       <div className="section-header">
                         <h3>피드백 관리</h3>
                         <div className="filter-controls">
-                          <select className="filter-select">
+                          <UnifiedInput variant="select" className="filter-select" >
                             <option value="all">전체 보기</option>
                             <option value="public">공개 피드백</option>
                             <option value="private">비공개 피드백</option>
-                          </select>
+                          </UnifiedInput>
                         </div>
                       </div>
                       
@@ -832,18 +843,16 @@ function FeedbackStable() {
                                   </div>
                                 </div>
                                 <div className="feedback-actions">
-                                  <button title="수정">
+                                  <UnifiedButton title="수정" aria-label="Click" type="button">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                     </svg>
-                                  </button>
-                                  <button className="delete-btn" title="삭제">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  </UnifiedButton>
+                                  <Button variant="danger" title="삭제" icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-label="Click">
                                       <polyline points="3 6 5 6 21 6" />
                                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                    </svg>
-                                  </button>
+                                    </svg>} />
                                 </div>
                               </div>
                               <div className="feedback-content">
@@ -875,12 +884,12 @@ function FeedbackStable() {
                     </div>
                     
                     <div className="management-sidebar">
-                      <div className="stats-card">
+                      <UnifiedCard variant="default" className="stats-card" >
                         <h4>프로젝트 통계</h4>
                         <div className="stat-item">
                           <span className="stat-label">전체 피드백</span>
                           <span className="stat-value">{current_project.feedback?.length || 0}</span>
-                        </div>
+                        </UnifiedCard>
                         <div className="stat-item">
                           <span className="stat-label">프로젝트 멤버</span>
                           <span className="stat-value">{current_project.member_list?.length || 0}</span>
@@ -894,12 +903,10 @@ function FeedbackStable() {
                       <div className="notice-section">
                         <div className="notice-header">
                           <h4>공지사항</h4>
-                          <button className="add-notice-btn" title="공지 추가">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <Button title="공지 추가" icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-label="Click">
                               <line x1="12" y1="5" x2="12" y2="19" />
                               <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                          </button>
+                            </svg>} />
                         </div>
                         <div className="notice-empty">
                           <p>실시간 채팅 기능은 현재 지원되지 않습니다.</p>
@@ -918,18 +925,18 @@ function FeedbackStable() {
           )}
           
           {showProjectInfo && (
-            <div className="modal-backdrop" onClick={() => setShowProjectInfo(false)}>
-              <div className="modal-content project-info-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
+            <div className="modal-backdrop" onClick={() = role="dialog" aria-modal="true"> setShowProjectInfo(false)} onKeyDown={(e) => e.key === 'Enter' && () = role="dialog" aria-modal="true"> setShowProjectInfo(false)}>
+              <div className="modal-content project-info-modal" onClick={(e) = role="dialog" aria-modal="true"> e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) = role="dialog" aria-modal="true"> e.stopPropagation()}>
+                <div className="modal-header" role="dialog" aria-modal="true">
                   <h3>프로젝트 정보</h3>
-                  <button className="close-button" onClick={() => setShowProjectInfo(false)}>
+                  <Button variant="ghost" aria-label="Click"> setShowProjectInfo(false)}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="18" y1="6" x2="6" y2="18" />
                       <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                  </button>
+                  </Button>
                 </div>
-                <div className="modal-body">
+                <div className="modal-body" role="dialog" aria-modal="true">
                   <div className="info-group">
                     <label>프로젝트명</label>
                     <p>{current_project.name}</p>

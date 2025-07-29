@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { GetProject } from '../../api/project'
 import { InviteProjectMember, CancelInvitation, GetProjectInvitations } from '../../api/invitation'
 import { axiosCredentials } from '../../util/util'
 import { alertSuccess, alertError, confirm } from '../../util/alert'
+import { Button } from '../../components/unified/Button'
+import { Input } from '../../components/unified/Input'
 
 export default function InviteInput({
   project_id,
@@ -26,12 +32,7 @@ export default function InviteInput({
       if (response.data && response.data.recent_invitations) {
         setRecentInvitations(response.data.recent_invitations)
       }
-    } catch (err) {
-      console.error('Failed to fetch recent invitations:', err)
-      if (err.response && err.response.data) {
-        console.error('Error details:', err.response.data)
-      }
-    }
+    } catch (err) {}
   }
 
   const InputChange = (index, value) => {
@@ -98,8 +99,7 @@ export default function InviteInput({
           backgroundColor: '#f8f9fa',
           borderRadius: '8px'
         }}>
-          <input
-            type="text"
+          <UnifiedInput type="text"
             value={pend.invitee_email || pend.email}
             placeholder="이메일 입력"
             readOnly
@@ -112,7 +112,7 @@ export default function InviteInput({
               backgroundColor: '#fff',
               color: '#666'
             }}
-          />
+           / aria-label="이메일 입력">
           <span style={{
             padding: '6px 12px',
             backgroundColor: '#e8f4f8',
@@ -124,8 +124,7 @@ export default function InviteInput({
           }}>
             초대됨
           </span>
-          <button 
-            onClick={() => handleResend(pend.invitee_email || pend.email)}
+          <Button onClick={() = aria-label="Click"> handleResend(pend.invitee_email || pend.email)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleResend(pend.invitee_email || pend.email)}
             style={{
               background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
               color: 'white',
@@ -148,9 +147,8 @@ export default function InviteInput({
             }}
           >
             재전송
-          </button>
-          <button 
-            onClick={() => CancelBtn(pend.id)}
+          </Button>
+          <Button onClick={() = aria-label="Click"> CancelBtn(pend.id)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> CancelBtn(pend.id)}
             style={{
               background: '#dc3545',
               color: 'white',
@@ -171,7 +169,7 @@ export default function InviteInput({
             }}
           >
             삭제
-          </button>
+          </Button>
         </div>
       ))}
       {emails.map((email, index) => (
@@ -182,10 +180,10 @@ export default function InviteInput({
           borderRadius: '8px',
           backgroundColor: '#f8f9fa'
         }}>
-          <input
+          <Input
             type="text"
             value={email}
-            onChange={(e) => InputChange(index, e.target.value)}
+            onChange={(e) = aria-label="text input"> InputChange(index, e.target.value)}
             placeholder="초대할 사용자의 이메일 주소"
             style={{
               width: '100%',
@@ -210,8 +208,11 @@ export default function InviteInput({
             gap: '8px',
             justifyContent: 'flex-end'
           }}>
-            <button
-              onClick={async () => {
+            <Button onClick={async () = aria-label="Click"> {
+                if (!email || !email.trim()) {
+                  alertError('이메일을 입력해주세요.')
+                  return
+                } onKeyDown={(e) => e.key === 'Enter' && async () = aria-label="Click"> {
                 if (!email || !email.trim()) {
                   alertError('이메일을 입력해주세요.')
                   return
@@ -312,9 +313,8 @@ export default function InviteInput({
               }}
             >
               {duplicateEmails.has(email) ? '재전송' : '보내기'}
-            </button>
-            <button 
-              onClick={() => RemoveInput(index)}
+            </Button>
+            <Button onClick={() = aria-label="Click"> RemoveInput(index)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> RemoveInput(index)}
               style={{
                 background: 'transparent',
                 color: '#dc3545',
@@ -337,12 +337,11 @@ export default function InviteInput({
               }}
             >
               삭제
-            </button>
+            </Button>
           </div>
         </div>
       ))}
-      <button 
-        onClick={AddInput}
+      <Button onClick={AddInput} onKeyDown={(e) => e.key === 'Enter' && AddInput}
         style={{
           width: '100%',
           padding: '12px',
@@ -361,7 +360,7 @@ export default function InviteInput({
           justifyContent: 'center',
           gap: '8px'
         }}
-        onMouseEnter={(e) => {
+        onMouseEnter={(e) = aria-label="Click"> {
           e.target.style.backgroundColor = '#f0f5ff'
           e.target.style.borderStyle = 'solid'
         }}
@@ -372,7 +371,7 @@ export default function InviteInput({
       >
         <span style={{ fontSize: '20px', lineHeight: '1' }}>+</span>
         멤버 추가
-      </button>
+      </Button>
       
       {/* 최근 초대한 멤버 리스트 */}
       {recentInvitations.length > 0 && (
@@ -384,7 +383,7 @@ export default function InviteInput({
           border: '1px solid #e9ecef'
         }}>
           <div 
-            onClick={() => setShowRecentInvitations(!showRecentInvitations)}
+            onClick={() => setShowRecentInvitations(!showRecentInvitations)} onKeyDown={(e) => e.key === 'Enter' && () => setShowRecentInvitations(!showRecentInvitations)}
             style={{
               cursor: 'pointer',
               padding: '8px',
@@ -459,8 +458,11 @@ export default function InviteInput({
                       최근 프로젝트: {invitation.project_name} • {invitation.invitation_count}회 초대
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
+                  <Button onClick={() = aria-label="Click"> {
+                      const emptyIndex = emails.findIndex(email => !email.trim())
+                      if (emptyIndex !== -1) {
+                        InputChange(emptyIndex, invitation.email || invitation.invitee_email)
+                      } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
                       const emptyIndex = emails.findIndex(email => !email.trim())
                       if (emptyIndex !== -1) {
                         InputChange(emptyIndex, invitation.email || invitation.invitee_email)
@@ -493,7 +495,7 @@ export default function InviteInput({
                     }}
                   >
                     빠른 초대
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -505,3 +507,5 @@ export default function InviteInput({
 }
 
 React.memo(InviteInput)
+
+import { Button } from '../../components/unified/Button'

@@ -41,7 +41,7 @@ export default function LazyImage({ src, alt, className, style, placeholder }) {
         opacity: isLoaded ? 1 : 0,
         transition: 'opacity 0.3s ease-in-out'
       }}
-      onLoad={() => setIsLoaded(true)}
+      onLoad={() = loading="lazy"> setIsLoaded(true)}
     />
   )
 }

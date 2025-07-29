@@ -1,3 +1,5 @@
+@import '../styles/design-tokens';
+
 .notification-dropdown {
   position: relative;
   display: inline-block;
@@ -7,21 +9,21 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    color: #6c757d;
-    transition: all 0.2s ease;
+    padding: $spacing-sm;
+    border-radius: $border-radius-full;
+    color: $color-gray-600;
+    transition: $transition-base;
     display: flex;
     align-items: center;
     justify-content: center;
 
     &:hover {
-      background: rgba(22, 49, 248, 0.1);
-      color: #1631F8;
+      background: rgba($color-primary, 0.1);
+      color: $color-primary;
     }
 
     &.has-unread {
-      color: #1631F8;
+      color: $color-primary;
       
       svg {
         animation: bell-ring 2s ease-in-out infinite;
@@ -30,71 +32,71 @@
 
     .notification-badge {
       position: absolute;
-      top: 0;
-      right: 0;
-      background: #dc3545;
-      color: white;
-      border-radius: 10px;
-      padding: 2px 6px;
-      font-size: 10px;
-      font-weight: 600;
-      min-width: 18px;
-      height: 18px;
+      top: $spacing-0;
+      right: $spacing-0;
+      background: $color-danger;
+      color: $color-white;
+      border-radius: $border-radius-lg - $border-radius-sm / 2;
+      padding: $spacing-2xs $spacing-xs + $spacing-2xs;
+      font-size: $spacing-sm + $spacing-2xs;
+      font-weight: $font-weight-semibold;
+      min-width: $spacing-md + $spacing-2xs;
+      height: $spacing-md + $spacing-2xs;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid white;
+      border: $spacing-2xs solid $color-white;
       animation: badge-pulse 2s infinite;
     }
   }
 
   .notification-dropdown-menu {
     position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    width: 380px;
-    max-height: 500px;
+    top: calc(100% + 12px);
+    right: $spacing-0;
+    background: $color-white;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-lg;
+    width: $spacing-6xl * 3.96;
+    max-height: $spacing-6xl * 5 + $spacing-lg - $spacing-xs;
     overflow: hidden;
-    z-index: 1000;
-    border: 1px solid #e9ecef;
+    z-index: $z-index-base$color-black;
+    border: $spacing-2xs solid $color-vp-gray-light-2;
 
     .notification-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid #f1f3f4;
-      background: #f8f9fa;
+      padding: $spacing-md $spacing-lg - $spacing-xs;
+      border-bottom: $spacing-2xs solid $color-vp-gray-light-3;
+      background: $color-background-secondary;
 
       h4 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #212529;
+        margin: $spacing-0;
+        font-size: $font-size-base;
+        font-weight: $font-weight-semibold;
+        color: $color-gray-900;
       }
 
       .mark-all-read {
         background: none;
         border: none;
-        color: #1631F8;
-        font-size: 14px;
-        font-weight: 500;
+        color: $color-primary;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
         cursor: pointer;
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-sm;
         transition: background 0.2s ease;
 
         &:hover {
-          background: rgba(22, 49, 248, 0.1);
+          background: rgba($color-primary, 0.1);
         }
       }
     }
 
     .notification-list {
-      max-height: 360px;
+      max-height: $spacing-6xl * 3.75;
       overflow-y: auto;
 
       .notification-loading {
@@ -102,21 +104,21 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 40px 20px;
-        color: #6c757d;
+        padding: $spacing-2xl $spacing-lg - $spacing-xs;
+        color: $color-gray-600;
 
         .loading-spinner {
-          width: 24px;
-          height: 24px;
-          border: 2px solid #f3f3f3;
-          border-top: 2px solid #1631F8;
-          border-radius: 50%;
+          width: $spacing-lg;
+          height: $spacing-lg;
+          border: $spacing-2xs solid $color-gray-200;
+          border-top: $spacing-2xs solid $color-primary;
+          border-radius: $border-radius-full;
           animation: spin 1s linear infinite;
-          margin-bottom: 12px;
+          margin-bottom: $spacing-sm + $spacing-xs;
         }
 
         span {
-          font-size: 14px;
+          font-size: $font-size-sm;
         }
       }
 
@@ -125,38 +127,38 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 40px 20px;
-        color: #6c757d;
+        padding: $spacing-2xl $spacing-lg - $spacing-xs;
+        color: $color-gray-600;
         text-align: center;
 
         .empty-icon {
-          font-size: 32px;
-          margin-bottom: 12px;
+          font-size: $spacing-xl;
+          margin-bottom: $spacing-sm + $spacing-xs;
           opacity: 0.5;
         }
 
         p {
-          margin: 0;
-          font-size: 14px;
+          margin: $spacing-0;
+          font-size: $font-size-sm;
         }
       }
 
       .notification-item {
         display: flex;
         align-items: flex-start;
-        padding: 16px 20px;
-        border-bottom: 1px solid #f1f3f4;
+        padding: $spacing-md $spacing-lg - $spacing-xs;
+        border-bottom: $spacing-2xs solid $color-vp-gray-light-3;
         cursor: pointer;
         transition: background 0.2s ease;
         position: relative;
 
         &:hover {
-          background: #f8f9fa;
+          background: $color-background-secondary;
         }
 
         &.unread {
-          background: rgba(22, 49, 248, 0.02);
-          border-left: 3px solid #1631F8;
+          background: rgba($color-primary, 0.02);
+          border-left: $spacing-xs - $spacing-2xs solid $color-primary;
         }
 
         &:last-child {
@@ -164,29 +166,29 @@
         }
 
         .notification-icon {
-          font-size: 20px;
-          margin-right: 12px;
-          margin-top: 2px;
+          font-size: $font-size-xl;
+          margin-right: $spacing-sm + $spacing-xs;
+          margin-top: $spacing-2xs;
           flex-shrink: 0;
         }
 
         .notification-content {
           flex: 1;
-          min-width: 0;
+          min-width: $spacing-0;
 
           .notification-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #212529;
-            margin-bottom: 4px;
-            line-height: 1.3;
+            font-size: $font-size-sm;
+            font-weight: $font-weight-semibold;
+            color: $color-gray-900;
+            margin-bottom: $spacing-xs;
+            line-height: $line-height-tight;
           }
 
           .notification-message {
-            font-size: 13px;
-            color: #6c757d;
-            line-height: 1.4;
-            margin-bottom: 6px;
+            font-size: $spacing-md - $spacing-xs;
+            color: $color-gray-600;
+            line-height: $line-height-base;
+            margin-bottom: $spacing-sm - $spacing-2xs;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -194,42 +196,42 @@
           }
 
           .notification-time {
-            font-size: 11px;
-            color: #adb5bd;
+            font-size: $spacing-sm + $spacing-xs;
+            color: $color-gray-500;
           }
         }
 
         .unread-dot {
-          width: 8px;
-          height: 8px;
-          background: #1631F8;
-          border-radius: 50%;
+          width: $spacing-sm;
+          height: $spacing-sm;
+          background: $color-primary;
+          border-radius: $border-radius-full;
           flex-shrink: 0;
-          margin-top: 8px;
-          margin-left: 8px;
+          margin-top: $spacing-sm;
+          margin-left: $spacing-sm;
         }
       }
     }
 
     .notification-footer {
-      padding: 12px 20px;
-      border-top: 1px solid #f1f3f4;
-      background: #f8f9fa;
+      padding: $spacing-sm + $spacing-xs $spacing-lg - $spacing-xs;
+      border-top: $spacing-2xs solid $color-vp-gray-light-3;
+      background: $color-background-secondary;
 
       .view-all-notifications {
         width: 100%;
         background: none;
         border: none;
-        color: #1631F8;
-        font-size: 14px;
-        font-weight: 500;
+        color: $color-primary;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
         cursor: pointer;
-        padding: 8px;
-        border-radius: 6px;
+        padding: $spacing-sm;
+        border-radius: $border-radius-md - $border-radius-sm / 2;
         transition: background 0.2s ease;
 
         &:hover {
-          background: rgba(22, 49, 248, 0.1);
+          background: rgba($color-primary, 0.1);
         }
       }
     }
@@ -253,12 +255,88 @@
 }
 
 // 모바일 반응형
-@media (max-width: 768px) {
-  .notification-dropdown {
-    .notification-dropdown-menu {
-      width: 90vw;
-      max-width: 350px;
-      right: -20px;
+@media (max-width: $breakpoint-md) { .notification-dropdown { .notification-dropdown-menu { width: 90vw;
+      max-width: $spacing-6xl * 3.65;
+      right: -$spacing-lg - $spacing-xs;
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

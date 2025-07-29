@@ -1,283 +1,119 @@
-// VideoPlanet SCSS 변수
-// theme.js와 동일한 값 유지
+@import '../styles/design-tokens';
 
-// 색상 변수
-$primary-color: #1631F8;
-$primary-gradient-start: #1631F8;
-$primary-gradient-end: #0F23C9;
-$primary-hover: #0F23C9;
+// Legacy variables file - 새로운 디자인 시스템으로 마이그레이션 중
+// 새로운 변수는 src/design-system/tokens/ 디렉토리를 사용하세요
 
-$danger-color: #dc3545;
-$danger-gradient-start: #dc3545;
-$danger-gradient-end: #c82333;
-$danger-hover: #c82333;
+// breakpoints를 먼저 import
+@import '../design-system/tokens/breakpoints';
+@import '../design-system/tokens/colors';
+@import '../design-system/tokens/spacing';
+@import '../design-system/tokens/typography';
+@import '../design-system/tokens/effects';
 
-$success-color: #28a745;
-$warning-color: #ffc107;
-$info-color: #17a2b8;
+// 하위 호환성을 위한 레거시 변수 매핑
+$primary-color: $color-primary;
+$danger-color: $color-danger;
+$success-color: $color-success;
+$warning-color: $color-warning;
+$info-color: $color-info;
 
-// 회색 계열
-$gray-50: #f9fafb;
-$gray-100: #f1f3f5;
-$gray-200: #e9ecef;
-$gray-300: #dee2e6;
-$gray-400: #ced4da;
-$gray-500: #adb5bd;
-$gray-600: #6c757d;
-$gray-700: #495057;
-$gray-800: #343a40;
-$gray-900: #212529;
+$font-size-base: $font-size-md;
+$font-size-small: $font-size-sm;
+$font-size-large: $font-size-lg;
+
+$spacing-unit: $spacing-md;
+$border-radius: $radius-md;
+
+// 추가 레거시 변수
+$gray-100: $color-gray-100;
+$gray-200: $color-gray-200;
+$gray-300: $color-gray-300;
+$gray-400: $color-gray-400;
+$gray-500: $color-gray-500;
+$gray-600: $color-gray-600;
+$gray-700: $color-gray-700;
+$gray-800: $color-gray-800;
+$gray-900: $color-gray-900;
 
 // 텍스트 색상
-$text-primary: #212529;
-$text-secondary: #6c757d;
-$text-disabled: #adb5bd;
-$text-hint: #adb5bd;
-$text-muted: #adb5bd;
-$text-light: #ffffff;
+$text-primary: $color-gray-900;
+$text-secondary: $color-gray-600;
 
-// 보더 색상
-$border-light: #dee2e6;
-$border-main: #ced4da;
-$border-dark: #adb5bd;
-
-// 그림자
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.075);
-$shadow-default: 0 4px 6px rgba(0, 0, 0, 0.1);
-$shadow-md: 0 6px 12px rgba(0, 0, 0, 0.15);
-$shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.2);
-$shadow-xl: 0 20px 48px rgba(0, 0, 0, 0.25);
-$shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
-$shadow-button: 0 2px 4px rgba(0, 0, 0, 0.1);
-$shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
-
-// 전환 효과
-$transition-fast: 150ms ease-in-out;
-$transition-default: 300ms ease-in-out;
-$transition-slow: 500ms ease-in-out;
-$transition-button: all 0.3s ease;
-
-// 반응형 브레이크포인트
-$breakpoint-xs: 480px;
-$breakpoint-sm: 768px;
-$breakpoint-md: 1024px;
-$breakpoint-lg: 1280px;
-$breakpoint-xl: 1920px;
-
-// 믹스인: 주요 버튼 스타일
-@mixin primary-button {
-  background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
-  color: #ffffff;
-  border: none;
-  transition: $transition-button;
-  cursor: pointer;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-button-hover;
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
   }
   
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
 
-// 믹스인: 위험 버튼 스타일
-@mixin danger-button {
-  background: linear-gradient(135deg, $danger-gradient-start 0%, $danger-gradient-end 100%);
-  color: #ffffff;
-  border: none;
-  transition: $transition-button;
-  cursor: pointer;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-button-hover;
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
   }
   
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
   }
 }
 
-// 믹스인: 아웃라인 버튼 스타일
-@mixin outline-button($color: $primary-color) {
-  background: transparent;
-  color: $color;
-  border: 1px solid $color;
-  transition: $transition-button;
-  cursor: pointer;
-  
-  &:hover {
-    background: $color;
-    color: #ffffff;
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
   }
   
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }
-
-// 믹스인: 반응형 미디어 쿼리
-@mixin responsive($breakpoint) {
-  @if $breakpoint == 'xs' {
-    @media (max-width: $breakpoint-xs) { @content; }
-  } @else if $breakpoint == 'sm' {
-    @media (max-width: $breakpoint-sm) { @content; }
-  } @else if $breakpoint == 'md' {
-    @media (max-width: $breakpoint-md) { @content; }
-  } @else if $breakpoint == 'lg' {
-    @media (max-width: $breakpoint-lg) { @content; }
-  } @else if $breakpoint == 'xl' {
-    @media (max-width: $breakpoint-xl) { @content; }
-  }
-}
-
-// Design System 추가 변수들
-
-// Primary Color 별칭
-$primary-blue: $primary-color;
-$primary-blue-dark: $primary-gradient-end;
-$primary-gradient: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
-
-// Semantic Colors
-$color-success: $success-color;
-$color-success-light: #d4edda;
-$color-success-dark: #155724;
-
-$color-danger: $danger-color;
-$color-danger-light: #f8d7da;
-$color-danger-dark: #721c24;
-
-$color-warning: $warning-color;
-$color-warning-light: #fff3cd;
-$color-warning-dark: #856404;
-
-$color-info: $info-color;
-$color-info-light: #d1ecf1;
-$color-info-dark: #0c5460;
-
-// Background Colors
-$bg-primary: #ffffff;
-$bg-secondary: #f8f9fa;
-$bg-dark: #25282f;
-$bg-card: #ffffff;
-
-// Font Sizes
-$font-size-base: 14px;
-$font-size-xs: 12px;
-$font-size-sm: 13px;
-$font-size-md: 16px;
-$font-size-lg: 18px;
-$font-size-xl: 20px;
-$font-size-2xl: 24px;
-$font-size-3xl: 30px;
-$font-size-4xl: 36px;
-
-// Font Weights
-$font-weight-light: 300;
-$font-weight-normal: 400;
-$font-weight-medium: 500;
-$font-weight-semibold: 600;
-$font-weight-bold: 700;
-
-// Line Heights
-$line-height-tight: 1.2;
-$line-height-normal: 1.5;
-$line-height-relaxed: 1.75;
-
-// Spacing System
-$spacing-1: 4px;
-$spacing-2: 8px;
-$spacing-3: 12px;
-$spacing-4: 16px;
-$spacing-5: 20px;
-$spacing-6: 24px;
-$spacing-7: 28px;
-$spacing-8: 32px;
-$spacing-9: 36px;
-$spacing-10: 40px;
-$spacing-12: 48px;
-$spacing-16: 64px;
-$spacing-20: 80px;
-
-// Border
-$border-color: $border-main;
-$border-color-light: $border-light;
-$border-color-dark: $border-dark;
-
-// Border Radius
-$radius-sm: 4px;
-$radius-md: 8px;
-$radius-lg: 12px;
-$radius-xl: 16px;
-$radius-2xl: 20px;
-$radius-full: 50%;
-$radius-pill: 9999px;
-
-// Additional Shadows
-$shadow-primary: 0 4px 14px 0 rgba(22, 49, 248, 0.3);
-$shadow-success: 0 4px 14px 0 rgba(40, 167, 69, 0.3);
-$shadow-danger: 0 4px 14px 0 rgba(220, 53, 69, 0.3);
-
-// Animation
-$duration-fast: 150ms;
-$duration-normal: 250ms;
-$duration-slow: 350ms;
-$duration-slower: 500ms;
-
-$easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
-$easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
-$easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
-$easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
-
-// Z-Index
-$z-index-dropdown: 1000;
-$z-index-sticky: 1020;
-$z-index-fixed: 1030;
-$z-index-modal-backdrop: 1040;
-$z-index-modal: 1050;
-$z-index-popover: 1060;
-$z-index-tooltip: 1070;
-$z-index-notification: 1080;
-
-// Component Variables
-$btn-padding-y: $spacing-3;
-$btn-padding-x: $spacing-5;
-$btn-padding-y-sm: $spacing-2;
-$btn-padding-x-sm: $spacing-3;
-$btn-padding-y-lg: $spacing-4;
-$btn-padding-x-lg: $spacing-6;
-$btn-border-radius: $radius-md;
-$btn-font-weight: 600;
-$btn-min-width: 80px;
-$btn-height: 40px;
-$btn-height-sm: 32px;
-$btn-height-lg: 48px;
-
-$input-padding-y: $spacing-3;
-$input-padding-x: $spacing-4;
-$input-border-radius: $radius-md;
-$input-border-color: $border-color;
-$input-focus-color: $primary-blue;
-$input-height: 44px;
-$input-font-size: $font-size-base;
-
-$card-padding: $spacing-6;
-$card-border-radius: $radius-lg;
-$card-shadow: $shadow-sm;
-$card-bg: $bg-card;
-
-$modal-padding: $spacing-8;
-$modal-border-radius: $radius-xl;
-$modal-backdrop-bg: rgba(0, 0, 0, 0.5);
-$modal-max-width: 600px;
-
-// Font Family
-$font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-$font-mono: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;

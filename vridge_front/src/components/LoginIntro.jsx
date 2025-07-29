@@ -8,7 +8,7 @@ export default function LoginIntro() {
     <div className="LoginIntro">
       <div className="intro_wrap">
         <h1 className="logo">
-          <img onClick={() => navigate('/')} src={w_logo.src || w_logo} />
+          <img onClick={() = alt="image" loading="lazy"> navigate('/')} onKeyDown={(e) => e.key === 'Enter' && () = alt="image"> navigate('/')} src={w_logo.src || w_logo} />
         </h1>
         <div className="slogun">
           당신의 창의력에

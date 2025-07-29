@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import UnifiedModal from '../../components/unified/UnifiedModal';
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { WriteMemo, DeleteMemo, UpdateDate } from '../../api/project'
 import { WriteUserMemo, DeleteUserMemo } from '../../api/auth'
 import { useRouter, useParams } from '../../util/nextNavigation'
@@ -6,7 +9,6 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import cx from 'classnames'
 import DatePicker from 'react-datepicker'
-
 
 import styled from 'styled-components'
 
@@ -156,26 +158,23 @@ export function Dates({
 
   const input_modal = OnInputModal && (
     <CalendarModal
-      visible={true}
+      open={true}
       ModalTitle={<></>}
       ModalText={
         <div>
           <div className="day">
             {year}년 {month + 1}월 {date}일
           </div>
-          <textarea
-            className="mt20"
+          <UnifiedInput variant="textarea" className="mt20" 
             name="textarea"
             placeholder="메모를 입력해주세요."
             cols="30"
             rows="10"
             value={memo}
-            onChange={(e) => set_memo(e.target.value)}
+            onChange={(e) =/> set_memo(e.target.value)}
           ></textarea>
           <div className="btn_wrap">
-            <button
-              className="submit"
-              onClick={() => {
+            <Button  aria-label="Click"> {
                 if (memo.length > 0) {
                   if (is_admin) {
                     WriteMemo(
@@ -214,10 +213,10 @@ export function Dates({
               }}
             >
               등록
-            </button>
-            <button className="cancel" onClick={() => setInputModal(false)}>
+            </Button>
+            <Button  aria-label="Click"> setInputModal(false)}>
               닫기
-            </button>
+            </Button>
           </div>
         </div>
       }
@@ -234,9 +233,7 @@ export function Dates({
 
           <div className="btn_wrap">
             {(is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) && (
-              <button
-                className="submit"
-                onClick={() => {
+              <Button  aria-label="Click"> {
                   if (is_admin) {
                     DeleteMemo({ memo_id: DetailModal.id }, project_id)
                       .then((res) => {
@@ -263,15 +260,15 @@ export function Dates({
                 }}
               >
                 삭제
-              </button>
+              </Button>
             )}
-            <button onClick={() => setDetailModal(null)} className="cancel">
+            <UnifiedButton onClick={() = aria-label="Click" type="button"> setDetailModal(null)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setDetailModal(null)} className="cancel">
               닫기
-            </button>
+            </UnifiedButton>
           </div>
         </div>
       }
-      visible={true}
+      open={true}
     />
   )
 
@@ -340,10 +337,7 @@ export function Dates({
           </div>
 
           <div className="btn_wrap">
-            <button
-              className="submit"
-              onClick={() => {
-                console.log(DateInput)
+            <Button  aria-label="Click"> {
                 if (
                   DateInput.start_date &&
                   DateInput.end_date &&
@@ -365,15 +359,15 @@ export function Dates({
               }}
             >
               변경하기
-            </button>
+            </Button>
 
-            <button className="cancel" onClick={() => SetDateInput(null)}>
+            <Button  aria-label="Click"> SetDateInput(null)}>
               닫기
-            </button>
+            </Button>
           </div>
         </div>
       }
-      visible={true}
+      open={true}
     />
   )
 
@@ -386,7 +380,9 @@ export function Dates({
   const BarSpan = styled.span`
     &:hover::before {
       content: '${(props) => (props.content ? props.content : '')}';
+import { Button } from '../../components/unified/Button'
       color: black;
+import { UnifiedInput } from '../components/unified/UnifiedInput';
       opacity: 0.3;
       font-size: 12px;
       position: absolute;
@@ -407,6 +403,9 @@ export function Dates({
         onClick={() => {
           if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
             setInputModal(true)
+          } onKeyDown={(e) => e.key === 'Enter' && () => {
+          if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
+            setInputModal(true)
           }
         }}
       >
@@ -425,6 +424,9 @@ export function Dates({
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.basic_plan)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  if (is_admin) {
+                    SetDateInput(current_project.basic_plan)
                   }
                 }}
                 onMouseOver={(e) => set_modal('기초기획안 작성')}
@@ -440,7 +442,7 @@ export function Dates({
                 })}
               />
               {on_modal == '기초기획안 작성' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -451,6 +453,9 @@ export function Dates({
             <>
               <span
                 onClick={() => {
+                  if (is_admin) {
+                    SetDateInput(current_project.story_board)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
                   if (is_admin) {
                     SetDateInput(current_project.story_board)
                   }
@@ -468,7 +473,7 @@ export function Dates({
                 })}
               />
               {on_modal == '스토리보드 작성' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -479,6 +484,9 @@ export function Dates({
             <>
               <span
                 onClick={() => {
+                  if (is_admin) {
+                    SetDateInput(current_project.filming)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
                   if (is_admin) {
                     SetDateInput(current_project.filming)
                   }
@@ -494,7 +502,7 @@ export function Dates({
                 })}
               />
               {on_modal == '촬영(계획/진행)' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -505,6 +513,9 @@ export function Dates({
             <>
               <span
                 onClick={() => {
+                  if (is_admin) {
+                    SetDateInput(current_project.video_edit)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
                   if (is_admin) {
                     SetDateInput(current_project.video_edit)
                   }
@@ -522,7 +533,7 @@ export function Dates({
                 })}
               />
               {on_modal == '비디오 편집' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -533,6 +544,9 @@ export function Dates({
             <>
               <span
                 onClick={() => {
+                  if (is_admin) {
+                    SetDateInput(current_project.post_work)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
                   if (is_admin) {
                     SetDateInput(current_project.post_work)
                   }
@@ -550,7 +564,7 @@ export function Dates({
                 })}
               />
               {on_modal == '후반 작업' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -561,6 +575,9 @@ export function Dates({
             <>
               <span
                 onClick={() => {
+                  if (is_admin) {
+                    SetDateInput(current_project.video_preview)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
                   if (is_admin) {
                     SetDateInput(current_project.video_preview)
                   }
@@ -578,7 +595,7 @@ export function Dates({
                 })}
               />
               {on_modal == '비디오 시사' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -589,6 +606,9 @@ export function Dates({
             <>
               <span
                 onClick={() => {
+                  if (is_admin) {
+                    SetDateInput(current_project.confirmation)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
                   if (is_admin) {
                     SetDateInput(current_project.confirmation)
                   }
@@ -606,7 +626,7 @@ export function Dates({
                 })}
               />
               {on_modal == '최종 컨펌' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -617,6 +637,9 @@ export function Dates({
             <>
               <span
                 onClick={() => {
+                  if (is_admin) {
+                    SetDateInput(current_project.video_delivery)
+                  } onKeyDown={(e) => e.key === 'Enter' && () => {
                   if (is_admin) {
                     SetDateInput(current_project.video_delivery)
                   }
@@ -634,7 +657,7 @@ export function Dates({
                 })}
               />
               {on_modal == '영상 납품' && (
-                <div className="Modal">{on_modal}</div>
+                <div className="Modal" role="dialog" aria-modal="true">{on_modal}</div>
               )}
             </>
           ) : (
@@ -645,7 +668,7 @@ export function Dates({
               return (
                 <span
                   className="memo"
-                  onClick={() => setDetailModal(memo)}
+                  onClick={() => setDetailModal(memo)} onKeyDown={(e) => e.key === 'Enter' && () => setDetailModal(memo)}
                   style={{ color: '#23262d', cursor: 'pointer' }}
                   key={index}
                 >
@@ -664,7 +687,7 @@ export function Dates({
               <span
                 onMouseOver={(e) => set_modal(index)}
                 onMouseLeave={(e) => set_modal(null)}
-                onClick={() => navigate(`/ProjectView/${project.id}`)}
+                onClick={() => navigate(`/ProjectView/${project.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${project.id}`)}
                 className={cx({
                   start: class_valid(set_date(project.first_date)),
                   end: class_valid(set_date(project.end_date)),
@@ -672,7 +695,7 @@ export function Dates({
                 key={index}
                 style={{ background: project.color, cursor: 'pointer' }}
               ></span>
-              {on_modal == index && <div className="Modal">{project.name}</div>}
+              {on_modal == index && <div className="Modal" role="dialog" aria-modal="true">{project.name}</div>}
             </>
           ) : (
             <span key={index}></span>
@@ -684,7 +707,7 @@ export function Dates({
             return (
               <span
                 className="memo"
-                onClick={() => setDetailModal(memo)}
+                onClick={() => setDetailModal(memo)} onKeyDown={(e) => e.key === 'Enter' && () => setDetailModal(memo)}
                 style={{ color: '#23262d', cursor: 'pointer' }}
                 key={index}
               >

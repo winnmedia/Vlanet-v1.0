@@ -1,83 +1,85 @@
+@import '../styles/design-tokens';
+
 .calendar-enhanced {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: $color-white;
+  border-radius: $border-radius-md;
+  padding: $spacing-lg - $spacing-xs;
+  box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.1);
   
   .calendar-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: $spacing-lg - $spacing-xs;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: $spacing-md - $spacing-2xs;
     
     .search-filter {
       display: flex;
-      gap: 10px;
+      gap: $spacing-sm + $spacing-2xs;
       flex: 1;
-      min-width: 300px;
+      min-width: $spacing-6xl * 3 + $spacing-sm + $spacing-xs;
       
       .search-input {
         flex: 1;
-        padding: 8px 15px;
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        font-size: 14px;
+        padding: $spacing-sm $spacing-md - $spacing-2xs;
+        border: $spacing-2xs solid $color-gray-300;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-sm;
         transition: border-color 0.3s;
         
         &:focus {
           outline: none;
-          border-color: #4A90E2;
+          border-color: lighten($color-info, 10%);
         }
       }
       
       .phase-filter {
-        padding: 8px 15px;
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        font-size: 14px;
-        background: white;
+        padding: $spacing-sm $spacing-md - $spacing-2xs;
+        border: $spacing-2xs solid $color-gray-300;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-sm;
+        background: $color-white;
         cursor: pointer;
         
         &:focus {
           outline: none;
-          border-color: #4A90E2;
+          border-color: lighten($color-info, 10%);
         }
       }
     }
     
     .view-switcher {
       display: flex;
-      gap: 5px;
-      background: #f5f5f5;
-      padding: 4px;
-      border-radius: 6px;
+      gap: $spacing-xs;
+      background: $color-gray-100;
+      padding: $spacing-xs;
+      border-radius: $border-radius-md - $border-radius-sm / 2;
       
       button {
-        padding: 8px 16px;
+        padding: $spacing-sm $spacing-md;
         border: none;
         background: transparent;
-        border-radius: 4px;
-        font-size: 14px;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-sm;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: $transition-base;
         
         &:hover {
-          background: rgba(74, 144, 226, 0.1);
+          background: rgba(lighten($color-info, 10%), 0.1);
         }
         
         &.active {
-          background: white;
-          color: #4A90E2;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          background: $color-white;
+          color: lighten($color-info, 10%);
+          box-shadow: $shadow-sm;
         }
       }
     }
   }
   
   .calendar-content {
-    min-height: 500px;
+    min-height: $spacing-6xl * 5 + $spacing-lg - $spacing-xs;
     
     // Timeline View Styles
     .timeline-view {
@@ -85,18 +87,18 @@
       
       .timeline-header {
         display: flex;
-        border-bottom: 2px solid #e0e0e0;
+        border-bottom: $spacing-2xs solid $color-gray-300;
         position: sticky;
-        top: 0;
-        background: white;
-        z-index: 10;
+        top: $spacing-0;
+        background: $color-white;
+        z-index: $z-index-fixed;
         
         .project-column {
-          width: 200px;
-          min-width: 200px;
-          padding: 15px;
-          font-weight: 600;
-          border-right: 1px solid #e0e0e0;
+          width: $spacing-6xl * 2 + $spacing-sm;
+          min-width: $spacing-6xl * 2 + $spacing-sm;
+          padding: $spacing-md - $spacing-2xs;
+          font-weight: $font-weight-semibold;
+          border-right: $spacing-2xs solid $color-gray-300;
         }
         
         .timeline-dates {
@@ -105,11 +107,11 @@
           
           .timeline-date {
             flex: 1;
-            min-width: 30px;
-            padding: 15px 5px;
+            min-width: $spacing-lg + $spacing-xs + $spacing-2xs;
+            padding: $spacing-md - $spacing-2xs $spacing-xs + $spacing-2xs;
             text-align: center;
-            font-size: 12px;
-            border-right: 1px solid #f0f0f0;
+            font-size: $font-size-xs;
+            border-right: $spacing-2xs solid $color-gray-200;
           }
         }
       }
@@ -117,19 +119,19 @@
       .timeline-body {
         .timeline-row {
           display: flex;
-          border-bottom: 1px solid #f0f0f0;
-          min-height: 60px;
+          border-bottom: $spacing-2xs solid $color-gray-200;
+          min-height: $spacing-4xl - $spacing-xs;
           
           &:hover {
-            background: #fafafa;
+            background: $color-gray-100;
           }
           
           .project-name {
-            width: 200px;
-            min-width: 200px;
-            padding: 15px;
-            font-weight: 500;
-            border-right: 1px solid #e0e0e0;
+            width: $spacing-6xl * 2 + $spacing-sm;
+            min-width: $spacing-6xl * 2 + $spacing-sm;
+            padding: $spacing-md - $spacing-2xs;
+            font-weight: $font-weight-medium;
+            border-right: $spacing-2xs solid $color-gray-300;
             display: flex;
             align-items: center;
           }
@@ -142,25 +144,25 @@
               position: absolute;
               top: 50%;
               transform: translateY(-50%);
-              height: 30px;
-              border-radius: 15px;
+              height: $spacing-lg + $spacing-xs + $spacing-2xs;
+              border-radius: $spacing-md - $spacing-2xs;
               display: flex;
               align-items: center;
-              padding: 0 10px;
+              padding: $spacing-0 $spacing-sm + $spacing-2xs;
               cursor: move;
-              transition: all 0.3s;
+              transition: $transition-base;
               opacity: 0.9;
               
               &:hover {
                 opacity: 1;
                 transform: translateY(-50%) scale(1.02);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.2);
               }
               
               .phase-label {
-                font-size: 11px;
-                color: white;
-                font-weight: 500;
+                font-size: $spacing-sm + $spacing-xs;
+                color: $color-white;
+                font-weight: $font-weight-medium;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -177,18 +179,18 @@
       
       .gantt-header {
         display: flex;
-        border-bottom: 2px solid #e0e0e0;
+        border-bottom: $spacing-2xs solid $color-gray-300;
         position: sticky;
-        top: 0;
-        background: white;
-        z-index: 10;
+        top: $spacing-0;
+        background: $color-white;
+        z-index: $z-index-fixed;
         
         .phase-column {
-          width: 150px;
-          min-width: 150px;
-          padding: 15px;
-          font-weight: 600;
-          border-right: 1px solid #e0e0e0;
+          width: $spacing-6xl * 1.5 + $spacing-sm;
+          min-width: $spacing-6xl * 1.5 + $spacing-sm;
+          padding: $spacing-md - $spacing-2xs;
+          font-weight: $font-weight-semibold;
+          border-right: $spacing-2xs solid $color-gray-300;
         }
         
         .gantt-timeline {
@@ -196,14 +198,14 @@
           flex: 1;
           
           .gantt-date {
-            min-width: 25px;
-            padding: 15px 2px;
+            min-width: $spacing-lg + $spacing-2xs;
+            padding: $spacing-md - $spacing-2xs $spacing-2xs;
             text-align: center;
-            font-size: 11px;
-            border-right: 1px solid #f0f0f0;
+            font-size: $spacing-sm + $spacing-xs;
+            border-right: $spacing-2xs solid $color-gray-200;
             
             &:nth-child(7n) {
-              background: #f8f8f8;
+              background: $color-background-secondary;
             }
           }
         }
@@ -211,30 +213,30 @@
       
       .gantt-body {
         .gantt-project {
-          border-bottom: 2px solid #e0e0e0;
+          border-bottom: $spacing-2xs solid $color-gray-300;
           
           .project-header {
-            padding: 10px 15px;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
+            padding: $spacing-sm + $spacing-2xs $spacing-md - $spacing-2xs;
+            color: $color-white;
+            font-weight: $font-weight-semibold;
+            font-size: $font-size-sm;
           }
           
           .gantt-row {
             display: flex;
-            min-height: 40px;
-            border-bottom: 1px solid #f0f0f0;
+            min-height: $spacing-2xl;
+            border-bottom: $spacing-2xs solid $color-gray-200;
             
             &:hover {
-              background: #fafafa;
+              background: $color-gray-100;
             }
             
             .phase-name {
-              width: 150px;
-              min-width: 150px;
-              padding: 10px 15px;
-              font-size: 13px;
-              border-right: 1px solid #e0e0e0;
+              width: $spacing-6xl * 1.5 + $spacing-sm;
+              min-width: $spacing-6xl * 1.5 + $spacing-sm;
+              padding: $spacing-sm + $spacing-2xs $spacing-md - $spacing-2xs;
+              font-size: $spacing-md - $spacing-xs;
+              border-right: $spacing-2xs solid $color-gray-300;
               display: flex;
               align-items: center;
             }
@@ -247,25 +249,25 @@
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                height: 24px;
-                border-radius: 12px;
+                height: $spacing-lg;
+                border-radius: $border-radius-lg;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: move;
-                transition: all 0.3s;
+                transition: $transition-base;
                 opacity: 0.9;
                 
                 &:hover {
                   opacity: 1;
                   transform: translateY(-50%) scale(1.05);
-                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                  box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.2);
                 }
                 
                 .duration {
-                  font-size: 11px;
-                  color: white;
-                  font-weight: 500;
+                  font-size: $spacing-sm + $spacing-xs;
+                  color: $color-white;
+                  font-weight: $font-weight-medium;
                 }
               }
             }
@@ -279,37 +281,116 @@
   .phase-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
+    gap: $spacing-md - $spacing-2xs;
+    margin-top: $spacing-lg - $spacing-xs;
+    padding-top: $spacing-lg - $spacing-xs;
+    border-top: $spacing-2xs solid $color-gray-300;
     
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: $spacing-sm;
       
       .legend-color {
-        width: 16px;
-        height: 16px;
-        border-radius: 4px;
+        width: $spacing-md;
+        height: $spacing-md;
+        border-radius: $border-radius-sm;
       }
       
       .legend-name {
-        font-size: 13px;
-        color: #666;
+        font-size: $spacing-md - $spacing-xs;
+        color: $color-gray-600;
       }
     }
   }
   
   // Drag and drop states
   .drag-over {
-    background: rgba(74, 144, 226, 0.1);
-    border: 2px dashed #4A90E2;
+    background: rgba(lighten($color-info, 10%), 0.1);
+    border: $spacing-2xs dashed lighten($color-info, 10%);
   }
   
   .dragging {
     opacity: 0.5;
     cursor: move;
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

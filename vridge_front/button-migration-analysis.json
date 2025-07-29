@@ -1,0 +1,1236 @@
+{
+  "summary": {
+    "totalFiles": 71,
+    "totalButtons": 316,
+    "uniqueClasses": 75,
+    "filesWithInlineStyles": 18,
+    "iconButtons": 52
+  },
+  "classMapping": {
+    "variants": {
+      "btn-primary": "primary",
+      "save-btn": "primary",
+      "generate-btn": "primary",
+      "export-btn": "primary",
+      "btn-secondary": "secondary",
+      "cancel-btn": "secondary",
+      "edit-btn": "secondary",
+      "save-edit-btn": "secondary",
+      "cancel-edit-btn": "secondary",
+      "back-btn": "secondary",
+      "pdf-download-btn": "secondary",
+      "btn-danger": "danger",
+      "gridStyles['delete-btn']": "danger",
+      "delete-btn": "danger",
+      "upload-confirm-btn": "success",
+      "confirm-btn": "success",
+      "btn-outline": "ghost"
+    },
+    "sizes": {
+      "btn-small": "sm"
+    }
+  },
+  "inlineStyles": [
+    {
+      "file": "src/utils/lazyLoad.js",
+      "line": 24,
+      "style": "{\n        padding: '8px 16px',\n        background: '#FF3B30',\n        color: 'white',\n        border: 'none',\n        borderRadius: '6px',\n        cursor: 'pointer'\n      "
+    },
+    {
+      "file": "src/tasks/Project/InviteInput.jsx",
+      "line": 344,
+      "style": "{\n          width: '100%',\n          padding: '12px',\n          marginTop: '16px',\n          marginBottom: '16px',\n          border: '2px dashed #1631F8',\n          borderRadius: '8px',\n          backgroundColor: 'transparent',\n          color: '#1631F8',\n          fontSize: '14px',\n          fontWeight: '600',\n          cursor: 'pointer',\n          transition: 'all 0.2s ease',\n          display: 'flex',\n          alignItems: 'center',\n          justifyContent: 'center',\n          gap: '8px'\n        "
+    },
+    {
+      "file": "src/page/MobileDebug.jsx",
+      "line": 82,
+      "style": "{ \n            padding: '10px 20px', \n            fontSize: '16px',\n            backgroundColor: '#007ACC',\n            color: 'white',\n            border: 'none',\n            borderRadius: '5px'\n          "
+    },
+    {
+      "file": "src/page/MobileDebug.jsx",
+      "line": 96,
+      "style": "{ \n            padding: '10px 20px', \n            fontSize: '16px',\n            backgroundColor: '#28a745',\n            color: 'white',\n            border: 'none',\n            borderRadius: '5px',\n            marginLeft: '10px'\n          "
+    },
+    {
+      "file": "src/page/User/Signup.jsx",
+      "line": 375,
+      "style": "{\n                    width: '110px',\n                    padding: '12px 16px',\n                    fontSize: '14px',\n                    fontWeight: '600',\n                    backgroundColor: (!email || !email.includes('@')) ? '#e9ecef' : '#1631F8',\n                    color: (!email || !email.includes('@')) ? '#6c757d' : 'white',\n                    border: 'none',\n                    borderRadius: '8px',\n                    cursor: (!email || !email.includes('@') || checkingEmail) ? 'not-allowed' : 'pointer',\n                    transition: 'all 0.3s ease',\n                  "
+    },
+    {
+      "file": "src/page/User/Signup.jsx",
+      "line": 457,
+      "style": "{\n                    width: '110px',\n                    padding: '12px 16px',\n                    fontSize: '14px',\n                    fontWeight: '600',\n                    backgroundColor: (!nickname || nickname.length < 2) ? '#e9ecef' : '#1631F8',\n                    color: (!nickname || nickname.length < 2) ? '#6c757d' : 'white',\n                    border: 'none',\n                    borderRadius: '8px',\n                    cursor: (!nickname || nickname.length < 2 || checkingNickname) ? 'not-allowed' : 'pointer',\n                    transition: 'all 0.3s ease',\n                  "
+    },
+    {
+      "file": "src/page/User/Signup.jsx",
+      "line": 742,
+      "style": "{\n                width: '100%',\n                padding: '14px',\n                fontSize: '16px',\n                fontWeight: '600',\n                backgroundColor: isLoading ? '#6c757d' : '#1631F8',\n                color: 'white',\n                border: 'none',\n                borderRadius: '8px',\n                cursor: isLoading ? 'not-allowed' : 'pointer',\n                transition: 'all 0.3s ease',\n                boxShadow: isLoading ? 'none' : '0 2px 4px rgba(22, 49, 248, 0.2)'\n              "
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.jsx",
+      "line": 2214,
+      "style": "{\n                                  backgroundColor: '#dc3545',\n                                  color: 'white',\n                                  border: 'none',\n                                  padding: '8px 16px',\n                                  borderRadius: '4px',\n                                  cursor: 'pointer'\n                                "
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.jsx",
+      "line": 2266,
+      "style": "{\n                  backgroundColor: '#1631F8',\n                  color: 'white',\n                  border: 'none',\n                  padding: '10px 20px',\n                  borderRadius: '6px',\n                  cursor: loading ? 'not-allowed' : 'pointer',\n                  fontSize: '16px',\n                  fontWeight: '600',\n                  opacity: loading ? 0.7 : 1\n                "
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.jsx",
+      "line": 2334,
+      "style": "{\n                    background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',\n                    color: 'white',\n                    border: 'none',\n                    padding: '12px 24px',\n                    borderRadius: '8px',\n                    fontSize: '14px',\n                    fontWeight: '600',\n                    cursor: loading ? 'wait' : 'pointer',\n                    opacity: loading || planningData.scenes.length === 0 ? 0.6 : 1,\n                    transition: 'all 0.3s ease',\n                    boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'\n                  "
+    },
+    {
+      "file": "src/page/Cms/ProjectCreate.jsx",
+      "line": 252,
+      "style": "{ \n                  opacity: (isCreating || !ValidForm) ? 0.6 : 1,\n                  cursor: (isCreating || !ValidForm) ? 'not-allowed' : 'pointer'\n                "
+    },
+    {
+      "file": "src/page/Cms/InvitationAccept.jsx",
+      "line": 637,
+      "style": "{\n                    width: '100%',\n                    padding: '12px',\n                    background: guestLoading || !guestName.trim() ? '#e9ecef' : '#6c757d',\n                    color: 'white',\n                    border: 'none',\n                    borderRadius: '8px',\n                    fontSize: '16px',\n                    fontWeight: '600',\n                    cursor: guestLoading || !guestName.trim() ? 'not-allowed' : 'pointer',\n                    transition: 'all 0.3s ease'\n                  "
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1955,
+      "style": "{\n                  background: 'none',\n                  border: 'none',\n                  fontSize: '24px',\n                  cursor: 'pointer',\n                  color: '#666',\n                  padding: 0,\n                  width: '30px',\n                  height: '30px',\n                  display: 'flex',\n                  alignItems: 'center',\n                  justifyContent: 'center'\n                "
+    },
+    {
+      "file": "src/components/Header.jsx",
+      "line": 216,
+      "style": "{\n                      background: 'none',\n                      border: 'none',\n                      color: '#1631F8',\n                      fontSize: '12px',\n                      cursor: 'pointer',\n                      fontWeight: '500'\n                    "
+    },
+    {
+      "file": "src/components/minimal/MinimalCard.stories.jsx",
+      "line": 44,
+      "style": "{ \n        background: 'none', \n        border: '1px solid #E5E5E7',\n        padding: '4px 12px',\n        borderRadius: '6px',\n        fontSize: '14px',\n        cursor: 'pointer'\n      "
+    },
+    {
+      "file": "src/components/minimal/MinimalCard.stories.jsx",
+      "line": 67,
+      "style": "{ \n        background: 'none',\n        border: 'none',\n        padding: '8px 16px',\n        color: '#8B8B8D',\n        cursor: 'pointer'\n      "
+    },
+    {
+      "file": "src/components/minimal/MinimalCard.stories.jsx",
+      "line": 74,
+      "style": "{ \n        background: '#0066FF',\n        border: 'none',\n        padding: '8px 16px',\n        color: 'white',\n        borderRadius: '6px',\n        cursor: 'pointer'\n      "
+    },
+    {
+      "file": "src/components/minimal/MinimalCard.stories.jsx",
+      "line": 167,
+      "style": "{ \n        background: '#0066FF',\n        border: 'none',\n        padding: '6px 16px',\n        color: 'white',\n        borderRadius: '6px',\n        fontSize: '14px',\n        cursor: 'pointer'\n      "
+    }
+  ],
+  "iconButtons": [
+    {
+      "file": "src/tasks/Feedback/OpinionInput.jsx",
+      "line": 245,
+      "hasText": true
+    },
+    {
+      "file": "src/tasks/Feedback/OpinionInput.jsx",
+      "line": 315,
+      "hasText": true
+    },
+    {
+      "file": "src/tasks/Feedback/OpinionInput.jsx",
+      "line": 326,
+      "hasText": true
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackManage.jsx",
+      "line": 225,
+      "hasText": true
+    },
+    {
+      "file": "src/page/User/Signup.jsx",
+      "line": 532,
+      "hasText": true
+    },
+    {
+      "file": "src/page/User/Signup.jsx",
+      "line": 649,
+      "hasText": true
+    },
+    {
+      "file": "src/page/User/MyPage.jsx",
+      "line": 624,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 418,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 433,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 441,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 540,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 552,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 566,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 767,
+      "hasText": false
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 775,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 835,
+      "hasText": false
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 841,
+      "hasText": false
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 897,
+      "hasText": false
+    },
+    {
+      "file": "src/page/Cms/FeedbackStable.jsx",
+      "line": 925,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 658,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1351,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1434,
+      "hasText": false
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1448,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1462,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1512,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1548,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/Feedback.jsx",
+      "line": 1602,
+      "hasText": true
+    },
+    {
+      "file": "src/page/Cms/CmsHomeMinimal.jsx",
+      "line": 361,
+      "hasText": false
+    },
+    {
+      "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "line": 58,
+      "hasText": false
+    },
+    {
+      "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "line": 116,
+      "hasText": false
+    },
+    {
+      "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "line": 123,
+      "hasText": false
+    },
+    {
+      "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "line": 130,
+      "hasText": false
+    },
+    {
+      "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "line": 138,
+      "hasText": false
+    },
+    {
+      "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "line": 145,
+      "hasText": false
+    },
+    {
+      "file": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "line": 152,
+      "hasText": false
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.jsx",
+      "line": 164,
+      "hasText": true
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.jsx",
+      "line": 189,
+      "hasText": true
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.jsx",
+      "line": 353,
+      "hasText": true
+    },
+    {
+      "file": "src/components/NotificationDropdown.jsx",
+      "line": 90,
+      "hasText": true
+    },
+    {
+      "file": "src/components/FeedbackPlayer.jsx",
+      "line": 472,
+      "hasText": true
+    },
+    {
+      "file": "src/components/FeedbackPlayer.jsx",
+      "line": 491,
+      "hasText": true
+    },
+    {
+      "file": "src/components/FeedbackPlayer.jsx",
+      "line": 499,
+      "hasText": true
+    },
+    {
+      "file": "src/components/FeedbackPlayer.jsx",
+      "line": 507,
+      "hasText": true
+    },
+    {
+      "file": "src/components/FeedbackPlayer.jsx",
+      "line": 543,
+      "hasText": true
+    },
+    {
+      "file": "src/components/CustomAlert.jsx",
+      "line": 64,
+      "hasText": false
+    },
+    {
+      "file": "src/components/ui/Modal.jsx",
+      "line": 58,
+      "hasText": false
+    },
+    {
+      "file": "src/components/ui/Alert.jsx",
+      "line": 72,
+      "hasText": false
+    },
+    {
+      "file": "src/components/minimal/StepWizard.v2.jsx",
+      "line": 215,
+      "hasText": true
+    },
+    {
+      "file": "src/components/minimal/StepWizard.v2.jsx",
+      "line": 240,
+      "hasText": true
+    },
+    {
+      "file": "src/components/minimal/StepWizard.v2.jsx",
+      "line": 323,
+      "hasText": true
+    },
+    {
+      "file": "src/components/Navigation/EnhancedSidebar.jsx",
+      "line": 100,
+      "hasText": true
+    },
+    {
+      "file": "src/components/Navigation/EnhancedSidebar.jsx",
+      "line": 151,
+      "hasText": true
+    }
+  ],
+  "buttonClasses": [
+    "'btn-icon',",
+    "`${gridStyles['action-btn']",
+    "`${styles['action-btn']",
+    "`${styles['view-btn']",
+    "`alert-button",
+    "`btn-${variant",
+    "`collapse-btn",
+    "`level-btn",
+    "`tab-button",
+    "`template-btn",
+    "`view-btn",
+    "action-button",
+    "add-notice-btn",
+    "back-btn",
+    "back-button",
+    "block-btn",
+    "btn-accept",
+    "btn-cleanup",
+    "btn-danger",
+    "btn-decline",
+    "btn-outline",
+    "btn-primary",
+    "btn-refresh",
+    "btn-resend",
+    "btn-secondary",
+    "btn-small",
+    "buttonClasses",
+    "cancel-btn",
+    "cancel-custom-btn",
+    "cancel-edit-btn",
+    "cancel-story-btn",
+    "classNames('btn',",
+    "close-btn",
+    "close-button",
+    "comment-button",
+    "complete-project-btn",
+    "confirm-btn",
+    "delete-btn",
+    "delete-planning-btn",
+    "delete-video-btn",
+    "download-storyboard-btn",
+    "edit-btn",
+    "edit-story-btn",
+    "edit-storyboard-btn",
+    "export-btn",
+    "generate-all-btn",
+    "generate-btn",
+    "generate-storyboard-btn",
+    "gridStyles['delete-btn']",
+    "guide_btn",
+    "icon-button",
+    "insert-shot-btn",
+    "invite-btn",
+    "message-btn",
+    "new-btn",
+    "new-planning-btn",
+    "pdf-download-btn",
+    "prev-step-btn",
+    "rate-button",
+    "regenerate-storyboard-btn",
+    "remove-image-btn",
+    "replace-video-btn",
+    "save-btn",
+    "save-edit-btn",
+    "save-story-btn",
+    "signup-button",
+    "styles.btnAnalyze",
+    "styles.btnCancel",
+    "submit-button",
+    "template-btn",
+    "upload-confirm-btn",
+    "upload-guide-btn",
+    "verify-button",
+    "view-project-btn",
+    "volume-button"
+  ],
+  "fileDetails": [
+    {
+      "path": "src/utils/lazyLoad.js",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/AuthEmail.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Project/ProcessDateEnhanced.jsx",
+      "buttonCount": 5,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Project/ProcessDate.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Project/InviteInput.jsx",
+      "buttonCount": 6,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Feedback/OpinionInput.jsx",
+      "buttonCount": 4,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Feedback/FeedbackMore.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Feedback/FeedbackMessagePolling.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Feedback/FeedbackMessage.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Feedback/FeedbackManage.jsx",
+      "buttonCount": 7,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Feedback/FeedbackInput.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/tasks/Calendar/CalendarDate.jsx",
+      "buttonCount": 6,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/NotFound.jsx",
+      "buttonCount": 2,
+      "types": [
+        "antd",
+        "antd"
+      ]
+    },
+    {
+      "path": "src/page/MobileDebug.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Home.jsx",
+      "buttonCount": 9,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/User/SignupWithEmail.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/User/Signup.jsx",
+      "buttonCount": 5,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/User/ResetPw.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/User/MyPage.jsx",
+      "buttonCount": 20,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/User/LoginMinimal.v2.jsx",
+      "buttonCount": 2,
+      "types": [
+        "custom",
+        "custom"
+      ]
+    },
+    {
+      "path": "src/page/User/LoginMinimal.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/User/Login.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/User/EmailCheck.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/VideoPlanning.jsx",
+      "buttonCount": 40,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/VideoPlanning-working.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/ProjectView.jsx",
+      "buttonCount": 8,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/ProjectView-fixed.jsx",
+      "buttonCount": 5,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/ProjectEdit.jsx",
+      "buttonCount": 4,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/ProjectCreateDebug.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/ProjectCreate.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/InvitationAccept.jsx",
+      "buttonCount": 5,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/FrameworkManagement.jsx",
+      "buttonCount": 6,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/FeedbackStable.jsx",
+      "buttonCount": 17,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/FeedbackPolling.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/FeedbackAll.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/Feedback.jsx",
+      "buttonCount": 18,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/CmsHomeMinimal.v2.jsx",
+      "buttonCount": 6,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "custom",
+        "custom",
+        "custom"
+      ]
+    },
+    {
+      "path": "src/page/Cms/CmsHomeMinimal.jsx",
+      "buttonCount": 11,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/CmsHome.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Cms/Calendar.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Admin/EmailMonitor.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/page/Admin/AdminRedirect.jsx",
+      "buttonCount": 2,
+      "types": [
+        "antd",
+        "antd"
+      ]
+    },
+    {
+      "path": "src/page/Admin/AdminDashboard.jsx",
+      "buttonCount": 15,
+      "types": [
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd",
+        "antd"
+      ]
+    },
+    {
+      "path": "src/design-system/pages/Feedback/FeedbackComponents.tsx",
+      "buttonCount": 9,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/design-system/layout/Toast.tsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/design-system/components/Button/FeedbackButton.tsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/design-system/components/Button/Button.tsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/design-system/components/Button/Button.stories.tsx",
+      "buttonCount": 7,
+      "types": [
+        "antd",
+        "antd",
+        "custom",
+        "custom",
+        "custom",
+        "custom",
+        "custom"
+      ]
+    },
+    {
+      "path": "src/components/VideoUploadGuide.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ToggleButton.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/SideBar.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ProjectScheduleSection.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ProjectPhaseBoard.jsx",
+      "buttonCount": 6,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ProjectForm.jsx",
+      "buttonCount": 2,
+      "types": [
+        "antd",
+        "antd"
+      ]
+    },
+    {
+      "path": "src/components/ProjectDashboard.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/NotificationDropdown.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ImageCropper.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/Header.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/FeedbackPlayer.jsx",
+      "buttonCount": 6,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ExportModal.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ErrorBoundary.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/CustomAlert.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ui/Modal.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ui/Button.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/ui/Alert.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/minimal/StepWizard.v2.jsx",
+      "buttonCount": 3,
+      "types": [
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/minimal/StepWizard.stories.jsx",
+      "buttonCount": 1,
+      "types": [
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/minimal/StepWizard.jsx",
+      "buttonCount": 2,
+      "types": [
+        "custom",
+        "custom"
+      ]
+    },
+    {
+      "path": "src/components/minimal/MinimalCard.stories.jsx",
+      "buttonCount": 4,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    },
+    {
+      "path": "src/components/minimal/MinimalButton.jsx",
+      "buttonCount": 2,
+      "types": [
+        "native",
+        "custom"
+      ]
+    },
+    {
+      "path": "src/components/Navigation/EnhancedSidebar.jsx",
+      "buttonCount": 6,
+      "types": [
+        "native",
+        "native",
+        "native",
+        "native",
+        "native",
+        "native"
+      ]
+    }
+  ],
+  "migrationExamples": [
+    {
+      "title": "Simple button with class",
+      "before": "<button className=\"save-btn\">Save</button>",
+      "after": "<Button variant=\"primary\">Save</Button>"
+    },
+    {
+      "title": "Button with onClick handler",
+      "before": "<button className=\"cancel-btn\" onClick={handleCancel}>Cancel</button>",
+      "after": "<Button variant=\"secondary\" onClick={handleCancel}>Cancel</Button>"
+    },
+    {
+      "title": "Icon-only button",
+      "before": "<button className=\"delete-btn\"><DeleteIcon /></button>",
+      "after": "<Button variant=\"danger\" icon={<DeleteIcon />} />"
+    },
+    {
+      "title": "Full width button",
+      "before": "<button className=\"btn-primary full-width\">Submit</button>",
+      "after": "<Button fullWidth>Submit</Button>"
+    },
+    {
+      "title": "Disabled button",
+      "before": "<button className=\"btn-secondary\" disabled>Not Available</button>",
+      "after": "<Button variant=\"secondary\" disabled>Not Available</Button>"
+    }
+  ],
+  "timestamp": "2025-07-28T15:57:05.445Z"
+}

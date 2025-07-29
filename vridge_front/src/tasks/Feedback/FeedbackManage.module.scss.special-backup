@@ -1,0 +1,237 @@
+@import '../styles/design-tokens';
+
+// 피드백 관리 페이지 스타일
+.feedbackContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg - $spacing-xs;
+}
+
+// 피드백 아이템
+.feedbackItem {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg - $spacing-xs;
+  transition: all 0.2s ease;
+  position: relative;
+  
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.08);
+    transform: translateY(-1px);
+  }
+  
+  &.myFeedback {
+    background: linear-gradient(to right, rgba($color-primary, 0.03) 0%, transparent 100%);
+    border-left: 3px solid $color-primary;
+  }
+}
+
+// 피드백 헤더
+.feedbackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm + $spacing-xs;
+}
+
+// 작성자 정보
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm + $spacing-xs;
+  
+  .avatar {
+    width: $spacing-2xl;
+    height: $spacing-2xl;
+    border-radius: $border-radius-full;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-base;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    
+    .name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #212529;
+    }
+    
+    .date {
+      font-size: 13px;
+      color: #6c757d;
+    }
+  }
+}
+
+// 시간 버튼
+.timeButton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: 6px 12px;
+  background: rgba($color-primary, 0.08);
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  svg {
+    width: $spacing-md;
+    height: $spacing-md;
+  }
+  
+  &:hover {
+    background: $color-primary;
+    color: white;
+    border-color: $color-primary;
+    transform: scale(1.05);
+  }
+}
+
+// 피드백 내용
+.feedbackContent {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #495057;
+  margin-bottom: $spacing-md;
+  word-break: keep-all;
+}
+
+// 피드백 액션
+.feedbackActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1px solid #f1f3f5;
+}
+
+// 반응 버튼들
+.reactions {
+  display: flex;
+  gap: $spacing-sm;
+  
+  button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: $color-background-secondary;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    svg {
+      width: $spacing-md;
+      height: $spacing-md;
+    }
+    
+    &.active {
+      background: $color-primary;
+      color: white;
+      border-color: $color-primary;
+    }
+    
+    &:hover:not(.active) {
+      background: white;
+      border-color: #adb5bd;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// 삭제 버튼
+.deleteButton {
+  padding: 6px 12px;
+  background: transparent;
+  color: $color-danger;
+  border: 1px solid $color-danger;
+  border-radius: $border-radius-md - 2px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: $color-danger;
+    color: white;
+    transform: translateY(-1px);
+  }
+}
+
+// 빈 상태
+.emptyState {
+  text-align: center;
+  padding: $spacing-4xl - $spacing-xs 20px;
+  background: $color-background-secondary;
+  border-radius: $border-radius-lg;
+  
+  svg {
+    width: $spacing-4xl;
+    height: $spacing-4xl;
+    color: #dee2e6;
+    margin-bottom: $spacing-md;
+  }
+  
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: $spacing-sm;
+  }
+  
+  p {
+    font-size: $font-size-sm;
+    color: #adb5bd;
+  }
+}
+
+// 탭 전환
+.tabSwitch {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg - $spacing-xs;
+  padding: $spacing-xs;
+  background: #f1f3f5;
+  border-radius: $border-radius-lg - 2px;
+  
+  button {
+    flex: 1;
+    padding: $spacing-sm 16px;
+    background: transparent;
+    border: none;
+    border-radius: $border-radius-md - 2px;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &.active {
+      background: white;
+      color: $color-primary;
+      box-shadow: 0 2px 8px rgba($color-black, 0.08);
+    }
+    
+    &:hover:not(.active) {
+      color: #495057;
+    }
+  }
+}

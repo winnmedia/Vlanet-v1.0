@@ -1,4 +1,10 @@
-import EmailMonitor from '../src/page/Admin/EmailMonitor'
+import dynamic from 'next/dynamic'
+import LoadingAnimation from '../src/components/LoadingAnimation'
+
+const EmailMonitor = dynamic(() => import('../src/page/Admin/EmailMonitor'), {
+  loading: () => <LoadingAnimation />,
+  ssr: false
+})
 
 export default EmailMonitor
 

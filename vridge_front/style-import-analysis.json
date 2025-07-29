@@ -1,0 +1,1103 @@
+{
+  "timestamp": "2025-07-28T13:49:02.274Z",
+  "summary": {
+    "total": 59,
+    "used": 45,
+    "unused": 14,
+    "safeToDelete": 0,
+    "needsReview": 0,
+    "duplicateGroups": 6
+  },
+  "used": [
+    {
+      "file": "src/tasks/Project/ProcessDateEnhanced.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/page/Cms/ProjectEdit.jsx",
+        "src/page/Cms/ProjectEdit.jsx",
+        "src/page/Cms/ProjectCreateDebug.jsx",
+        "src/page/Cms/ProjectCreateDebug.jsx",
+        "src/page/Cms/ProjectCreate.jsx",
+        "src/page/Cms/ProjectCreate.jsx"
+      ]
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackManage.module.scss",
+      "importCount": 7,
+      "importedBy": [
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/Feedback.jsx"
+      ]
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackInput.module.scss",
+      "importCount": 7,
+      "importedBy": [
+        "src/tasks/Feedback/FeedbackInput.jsx",
+        "src/tasks/Feedback/FeedbackInput.jsx",
+        "src/tasks/Feedback/FeedbackInput.jsx",
+        "src/tasks/Feedback/FeedbackInput.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/Feedback.jsx"
+      ]
+    },
+    {
+      "file": "src/styles/main.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/page/Cms/ProjectCreate.jsx",
+        "src/page/Cms/ProjectCreate.jsx"
+      ]
+    },
+    {
+      "file": "src/page/User/MyPage.scss",
+      "importCount": 4,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/User/MyPage.jsx",
+        "src/page/User/MyPage.jsx"
+      ]
+    },
+    {
+      "file": "src/page/User/LoginMinimal.module.scss",
+      "importCount": 10,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.jsx",
+        "src/page/User/LoginMinimal.jsx",
+        "src/page/User/LoginMinimal.jsx",
+        "src/page/User/LoginMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/page/Cms/VideoPlanningMinimal.module.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanningMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanningMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/page/Cms/FeedbackButtonStyles.module.scss",
+      "importCount": 4,
+      "importedBy": [
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/Feedback.jsx"
+      ]
+    },
+    {
+      "file": "src/page/Cms/CmsHomeMinimal.module.scss",
+      "importCount": 10,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/page/Admin/AdminDashboard.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js"
+      ]
+    },
+    {
+      "file": "src/css/VideoPlayerCustom.scss",
+      "importCount": 3,
+      "importedBy": [
+        "src/components/VideoJsPlayer.jsx",
+        "src/components/VideoJsPlayer.jsx",
+        "src/components/VideoJsPlayer.jsx"
+      ]
+    },
+    {
+      "file": "src/css/Home.scss",
+      "importCount": 8,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/css/User/Login.scss",
+      "importCount": 14,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.jsx",
+        "src/page/User/LoginMinimal.jsx",
+        "src/page/User/Login.jsx",
+        "src/page/User/Login.jsx",
+        "src/components/PageTemplate.jsx",
+        "src/components/PageTemplate.jsx"
+      ]
+    },
+    {
+      "file": "src/css/User/Auth.scss",
+      "importCount": 18,
+      "importedBy": [
+        "src/utils/test/test-utils.tsx",
+        "src/utils/test/test-utils.tsx",
+        "src/tasks/AuthEmail.jsx",
+        "src/tasks/AuthEmail.jsx",
+        "src/page/User/SignupWithEmail.jsx",
+        "src/page/User/SignupWithEmail.jsx",
+        "src/page/User/ResetPw.jsx",
+        "src/page/User/ResetPw.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx"
+      ]
+    },
+    {
+      "file": "src/css/Common/ToggleButton.scss",
+      "importCount": 8,
+      "importedBy": [
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/CmsHome.jsx",
+        "src/page/Cms/CmsHome.jsx",
+        "src/components/ToggleButton.jsx",
+        "src/components/ToggleButton.jsx"
+      ]
+    },
+    {
+      "file": "src/css/Cms/VideoPlanning.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanningMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/css/Cms/FeedbackGridLayout.module.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/tasks/Feedback/FeedbackMore.jsx",
+        "src/tasks/Feedback/FeedbackMore.jsx",
+        "src/tasks/Feedback/FeedbackMore.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx"
+      ]
+    },
+    {
+      "file": "src/css/Cms/EncodingStatus.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/Feedback.jsx"
+      ]
+    },
+    {
+      "file": "src/css/Cms/CmsHomeMinimal.scss",
+      "importCount": 8,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/css/Cms/Cms.scss",
+      "importCount": 34,
+      "importedBy": [
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/utils/lazyLoad.js",
+        "src/tasks/Feedback/FeedbackMore.jsx",
+        "src/tasks/Feedback/FeedbackMore.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/tasks/Feedback/FeedbackManage.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx"
+      ]
+    },
+    {
+      "file": "src/components/VirtualList.module.scss",
+      "importCount": 4,
+      "importedBy": [
+        "src/components/VirtualList.jsx",
+        "src/components/VirtualList.jsx",
+        "src/components/VirtualList.jsx",
+        "src/components/VirtualList.jsx"
+      ]
+    },
+    {
+      "file": "src/components/VideoUploadGuide.scss",
+      "importCount": 8,
+      "importedBy": [
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/Feedback.jsx"
+      ]
+    },
+    {
+      "file": "src/components/VideoPlayer.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/components/VideoJsPlayer.jsx",
+        "src/components/VideoJsPlayer.jsx"
+      ]
+    },
+    {
+      "file": "src/components/VideoJsPlayer.module.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/page/Cms/Feedback.jsx",
+        "src/components/VideoPlayer.jsx",
+        "src/components/VideoJsPlayer-fixed.jsx",
+        "src/components/VideoJsPlayer-fixed.jsx",
+        "src/components/VideoJsPlayer-fixed.jsx",
+        "src/components/VideoJsPlayer-fixed.jsx"
+      ]
+    },
+    {
+      "file": "src/components/UserAvatar.module.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/page/User/MyPage.jsx",
+        "src/components/UserAvatar.jsx",
+        "src/components/UserAvatar.jsx",
+        "src/components/UserAvatar.jsx",
+        "src/components/UserAvatar.jsx",
+        "src/components/Header.jsx"
+      ]
+    },
+    {
+      "file": "src/components/ToggleButton.module.scss",
+      "importCount": 7,
+      "importedBy": [
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/CmsHome.jsx",
+        "src/components/ToggleButton.jsx",
+        "src/components/ToggleButton.jsx",
+        "src/components/ToggleButton.jsx",
+        "src/components/ToggleButton.jsx"
+      ]
+    },
+    {
+      "file": "src/components/SideBar.module.scss",
+      "importCount": 23,
+      "importedBy": [
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/VideoPlanning-working.jsx",
+        "src/page/Cms/VideoPlanning-simple.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/ProjectEdit.jsx",
+        "src/page/Cms/ProjectCreateDebug.jsx",
+        "src/page/Cms/ProjectCreate.jsx",
+        "src/page/Cms/FrameworkManagement.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/FeedbackAll.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHome.jsx",
+        "src/page/Cms/Calendar.jsx",
+        "src/page/Admin/AdminDashboard.jsx",
+        "src/components/SideBar.jsx",
+        "src/components/SideBar.jsx",
+        "src/components/SideBar.jsx",
+        "src/components/SideBar.jsx"
+      ]
+    },
+    {
+      "file": "src/components/ProjectScheduleSection.module.scss",
+      "importCount": 5,
+      "importedBy": [
+        "src/page/Cms/CmsHome.jsx",
+        "src/components/ProjectScheduleSection.jsx",
+        "src/components/ProjectScheduleSection.jsx",
+        "src/components/ProjectScheduleSection.jsx",
+        "src/components/ProjectScheduleSection.jsx"
+      ]
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "importCount": 8,
+      "importedBy": [
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/CmsHome.jsx",
+        "src/page/Cms/Calendar.jsx",
+        "src/components/ProjectPhaseBoard.jsx",
+        "src/components/ProjectPhaseBoard.jsx",
+        "src/components/ProjectPhaseBoard.jsx",
+        "src/components/ProjectPhaseBoard.jsx"
+      ]
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/page/Cms/CmsHome.jsx",
+        "src/page/Cms/CmsHome.jsx"
+      ]
+    },
+    {
+      "file": "src/components/PageTemplate.scss",
+      "importCount": 54,
+      "importedBy": [
+        "src/page/User/Signup.jsx",
+        "src/page/User/Signup.jsx",
+        "src/page/User/ResetPw.jsx",
+        "src/page/User/ResetPw.jsx",
+        "src/page/User/MyPage.jsx",
+        "src/page/User/MyPage.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/User/Login.jsx",
+        "src/page/User/Login.jsx",
+        "src/page/User/EmailCheck.jsx",
+        "src/page/User/EmailCheck.jsx",
+        "src/page/Policy/TermsOfService.jsx",
+        "src/page/Policy/TermsOfService.jsx",
+        "src/page/Policy/PrivacyPolicy.jsx",
+        "src/page/Policy/PrivacyPolicy.jsx",
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/VideoPlanning-working.jsx",
+        "src/page/Cms/VideoPlanning-working.jsx",
+        "src/page/Cms/VideoPlanning-simple.jsx",
+        "src/page/Cms/VideoPlanning-simple.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/ProjectEdit.jsx",
+        "src/page/Cms/ProjectEdit.jsx",
+        "src/page/Cms/ProjectCreateDebug.jsx",
+        "src/page/Cms/ProjectCreateDebug.jsx",
+        "src/page/Cms/ProjectCreate.jsx",
+        "src/page/Cms/ProjectCreate.jsx",
+        "src/page/Cms/FrameworkManagement.jsx",
+        "src/page/Cms/FrameworkManagement.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackStable.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/FeedbackPolling.jsx",
+        "src/page/Cms/FeedbackAll.jsx",
+        "src/page/Cms/FeedbackAll.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/Feedback.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/CmsHome.jsx",
+        "src/page/Cms/CmsHome.jsx",
+        "src/page/Cms/Calendar.jsx",
+        "src/page/Cms/Calendar.jsx",
+        "src/page/Admin/AdminDashboard.jsx",
+        "src/page/Admin/AdminDashboard.jsx"
+      ]
+    },
+    {
+      "file": "src/components/OptimizedImage.module.scss",
+      "importCount": 4,
+      "importedBy": [
+        "src/components/OptimizedImage.jsx",
+        "src/components/OptimizedImage.jsx",
+        "src/components/OptimizedImage.jsx",
+        "src/components/OptimizedImage.jsx"
+      ]
+    },
+    {
+      "file": "src/components/LoginIntro.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/components/PageTemplate.jsx",
+        "src/components/PageTemplate.jsx"
+      ]
+    },
+    {
+      "file": "src/components/LoadingAnimation.scss",
+      "importCount": 4,
+      "importedBy": [
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/components/PageLoadingWrapper.jsx",
+        "src/components/PageLoadingWrapper.jsx"
+      ]
+    },
+    {
+      "file": "src/components/ImageCropper.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/page/User/MyPage.jsx",
+        "src/page/User/MyPage.jsx"
+      ]
+    },
+    {
+      "file": "src/components/Header.module.scss",
+      "importCount": 14,
+      "importedBy": [
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/page/Cms/Calendar.jsx",
+        "src/config/axios-unified.js",
+        "src/config/axios-original.js",
+        "src/components/PageTemplate.jsx",
+        "src/components/Header.jsx",
+        "src/components/Header.jsx",
+        "src/components/Header.jsx",
+        "src/components/Header.jsx",
+        "src/components/minimal/MinimalCard.stories.jsx"
+      ]
+    },
+    {
+      "file": "src/components/FeedbackPlayer.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/components/VideoPlayer.jsx",
+        "src/components/VideoPlayer.jsx"
+      ]
+    },
+    {
+      "file": "src/components/ExportModal.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/page/Cms/VideoPlanning.jsx",
+        "src/page/Cms/VideoPlanning.jsx"
+      ]
+    },
+    {
+      "file": "src/components/CustomAlert.scss",
+      "importCount": 2,
+      "importedBy": [
+        "src/util/alert.js",
+        "src/util/alert.js"
+      ]
+    },
+    {
+      "file": "src/components/CalendarEnhanced.scss",
+      "importCount": 6,
+      "importedBy": [
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/ProjectView-fixed.jsx",
+        "src/page/Cms/Calendar.jsx",
+        "src/page/Cms/Calendar.jsx"
+      ]
+    },
+    {
+      "file": "src/components/minimal/StepWizard.module.scss",
+      "importCount": 10,
+      "importedBy": [
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/components/minimal/StepWizard.v2.jsx",
+        "src/components/minimal/StepWizard.v2.jsx",
+        "src/components/minimal/StepWizard.v2.jsx",
+        "src/components/minimal/StepWizard.v2.jsx",
+        "src/components/minimal/StepWizard.stories.jsx",
+        "src/components/minimal/StepWizard.jsx",
+        "src/components/minimal/StepWizard.jsx",
+        "src/components/minimal/StepWizard.jsx",
+        "src/components/minimal/StepWizard.jsx"
+      ]
+    },
+    {
+      "file": "src/components/minimal/MinimalInput.module.scss",
+      "importCount": 5,
+      "importedBy": [
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/components/minimal/MinimalInput.jsx",
+        "src/components/minimal/MinimalInput.jsx",
+        "src/components/minimal/MinimalInput.jsx",
+        "src/components/minimal/MinimalInput.jsx"
+      ]
+    },
+    {
+      "file": "src/components/minimal/MinimalCard.module.scss",
+      "importCount": 12,
+      "importedBy": [
+        "src/page/Cms/VideoPlanningMinimal.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.jsx",
+        "src/components/minimal/MinimalCard.v2.jsx",
+        "src/components/minimal/MinimalCard.v2.jsx",
+        "src/components/minimal/MinimalCard.v2.jsx",
+        "src/components/minimal/MinimalCard.v2.jsx",
+        "src/components/minimal/MinimalCard.stories.jsx",
+        "src/components/minimal/MinimalCard.jsx",
+        "src/components/minimal/MinimalCard.jsx",
+        "src/components/minimal/MinimalCard.jsx",
+        "src/components/minimal/MinimalCard.jsx"
+      ]
+    },
+    {
+      "file": "src/components/minimal/MinimalButton.module.scss",
+      "importCount": 7,
+      "importedBy": [
+        "src/page/User/LoginMinimal.v2.jsx",
+        "src/page/Cms/CmsHomeMinimal.v2.jsx",
+        "src/components/minimal/StepWizard.jsx",
+        "src/components/minimal/MinimalButton.jsx",
+        "src/components/minimal/MinimalButton.jsx",
+        "src/components/minimal/MinimalButton.jsx",
+        "src/components/minimal/MinimalButton.jsx"
+      ]
+    }
+  ],
+  "unused": [
+    "src/css/_layout-improved.scss",
+    "src/css/HomeAlignment-improved.scss",
+    "src/css/Cms/FeedbackSectionRedesign-improved.scss",
+    "src/css/Cms/FeedbackPage.scss",
+    "src/css/Cms/FeedbackMoreStyle.scss",
+    "src/css/Cms/FeedbackHeader.scss",
+    "src/css/Cms/FeedbackButtons.scss",
+    "src/css/Cms/DesignSystem.scss",
+    "src/css/Cms/CmsHomeEnhanced.scss",
+    "src/css/Cms/CmsCommon.scss",
+    "src/css/Admin/AdminRedirect.scss",
+    "src/components/ResizablePanel.scss",
+    "src/components/ProjectForm.scss",
+    "src/components/NotificationDropdown.scss"
+  ],
+  "safeToDelete": [],
+  "maybeDelete": [],
+  "duplicates": [
+    [
+      "VideoPlanning",
+      [
+        "src/page/Cms/VideoPlanning.scss",
+        "src/css/Cms/VideoPlanning.scss"
+      ]
+    ],
+    [
+      "CmsHomeMinimal",
+      [
+        "src/page/Cms/CmsHomeMinimal.module.scss",
+        "src/css/Cms/CmsHomeMinimal.scss"
+      ]
+    ],
+    [
+      "_index",
+      [
+        "src/design-system/tokens/_index.scss",
+        "src/design-system/accessibility/_index.scss"
+      ]
+    ],
+    [
+      "CmsHome",
+      [
+        "src/design-system/pages/CmsHome/CmsHome.module.scss",
+        "src/css/Cms/CmsHomeEnhanced.scss"
+      ]
+    ],
+    [
+      "Calendar",
+      [
+        "src/design-system/components/Calendar/Calendar.module.scss",
+        "src/components/CalendarEnhanced.scss"
+      ]
+    ],
+    [
+      "ToggleButton",
+      [
+        "src/css/Common/ToggleButton.scss",
+        "src/components/ToggleButton.module.scss"
+      ]
+    ]
+  ],
+  "styleUsage": [
+    [
+      "src/tasks/Feedback/FeedbackManage.module.scss",
+      {
+        "imports": 7,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/tasks/Feedback/FeedbackInput.module.scss",
+      {
+        "imports": 7,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/page/User/LoginMinimal.module.scss",
+      {
+        "imports": 10,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/page/Cms/VideoPlanningMinimal.module.scss",
+      {
+        "imports": 6,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/page/Cms/FeedbackButtonStyles.module.scss",
+      {
+        "imports": 4,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/page/Cms/CmsHomeMinimal.module.scss",
+      {
+        "imports": 10,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/css/Cms/FeedbackGridLayout.module.scss",
+      {
+        "imports": 6,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/VirtualList.module.scss",
+      {
+        "imports": 4,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/VideoJsPlayer.module.scss",
+      {
+        "imports": 6,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/UserAvatar.module.scss",
+      {
+        "imports": 6,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/ToggleButton.module.scss",
+      {
+        "imports": 7,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/SideBar.module.scss",
+      {
+        "imports": 23,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/ProjectScheduleSection.module.scss",
+      {
+        "imports": 5,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/ProjectPhaseBoard.module.scss",
+      {
+        "imports": 8,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/OptimizedImage.module.scss",
+      {
+        "imports": 4,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/Header.module.scss",
+      {
+        "imports": 14,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/minimal/StepWizard.module.scss",
+      {
+        "imports": 10,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/minimal/MinimalInput.module.scss",
+      {
+        "imports": 5,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/minimal/MinimalCard.module.scss",
+      {
+        "imports": 12,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ],
+    [
+      "src/components/minimal/MinimalButton.module.scss",
+      {
+        "imports": 7,
+        "usages": 12,
+        "classes": [
+          "button",
+          "fullWidth",
+          "disabled",
+          "loading",
+          "active",
+          "loadingSpinner",
+          "icon",
+          "text",
+          "iconButton",
+          "buttonGroup"
+        ]
+      }
+    ]
+  ]
+}

@@ -1,0 +1,450 @@
+// ARIA 패턴 및 시맨틱 마크업 스타일
+// WAI-ARIA 1.2 Authoring Practices Guide
+
+@use '../tokens' as *;
+
+// ========== 라이브 리전 ==========
+// 동적 콘텐츠 업데이트 알림
+[aria-live="polite"],
+.live-region {
+  position: relative;
+  
+  &[aria-busy="true"] {
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba($color-white, 0.8);
+      z-index: 1;
+    }
+    
+    &::after {
+      @include sr-only;
+      content: '업데이트 중...';
+    }
+  }
+}
+
+[aria-live="assertive"],
+.live-region-urgent {
+  // 긴급 알림 스타일
+  &.visible {
+    padding: $spacing-sm;
+    background: $color-warning-light;
+    border: 1px solid $color-warning;
+    border-radius: $radius-md;
+  }
+}
+
+// ========== 알림 패턴 ==========
+[role="alert"],
+.alert {
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  border-radius: $radius-md;
+  font-weight: $font-weight-medium;
+  
+  &.alert-info {
+    background: $color-info-light;
+    color: $color-info-dark;
+    border: 1px solid $color-info;
+  }
+  
+  &.alert-success {
+    background: $color-success-light;
+    color: $color-success-dark;
+    border: 1px solid $color-success;
+  }
+  
+  &.alert-warning {
+    background: $color-warning-light;
+    color: $color-warning-dark;
+    border: 1px solid $color-warning;
+  }
+  
+  &.alert-error {
+    background: $color-danger-light;
+    color: $color-danger-dark;
+    border: 1px solid $color-danger;
+  }
+}
+
+[role="status"],
+.status {
+  @include sr-only;
+  
+  &.visible {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: $spacing-xs $spacing-sm;
+    background: $color-gray-100;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+  }
+}
+
+// ========== 다이얼로그 패턴 ==========
+[role="dialog"],
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-modal;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  
+  // 모달 배경
+  &::backdrop,
+  & + .dialog-backdrop {
+    background: rgba($color-black, 0.5);
+  }
+  
+  // 다이얼로그 헤더
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg;
+    border-bottom: 1px solid $color-border;
+    
+    h2[id] {
+      margin: 0;
+      font-size: $font-size-xl;
+    }
+  }
+  
+  // 다이얼로그 내용
+  .dialog-body {
+    padding: $spacing-lg;
+  }
+  
+  // 다이얼로그 푸터
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-md;
+    padding: $spacing-lg;
+    border-top: 1px solid $color-border;
+  }
+}
+
+// ========== 탭 패턴 ==========
+[role="tablist"] {
+  display: flex;
+  border-bottom: 1px solid $color-border;
+  
+  [role="tab"] {
+    padding: $spacing-sm $spacing-lg;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: $transition-color;
+    
+    &:hover {
+      background: $color-gray-50;
+    }
+    
+    &[aria-selected="true"] {
+      color: $color-primary;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: $color-primary;
+      }
+    }
+    
+    &[aria-disabled="true"] {
+      opacity: $opacity-disabled;
+      cursor: not-allowed;
+    }
+  }
+}
+
+[role="tabpanel"] {
+  padding: $spacing-lg;
+  
+  &[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+// ========== 메뉴 패턴 ==========
+[role="menu"],
+[role="menubar"] {
+  background: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-dropdown;
+  padding: $spacing-xs 0;
+  
+  [role="menuitem"],
+  [role="menuitemcheckbox"],
+  [role="menuitemradio"] {
+    display: flex;
+    align-items: center;
+    padding: $spacing-sm $spacing-lg;
+    cursor: pointer;
+    transition: $transition-color;
+    
+    &:hover,
+    &:focus {
+      background: $color-gray-50;
+      outline: none;
+    }
+    
+    &[aria-checked="true"]::before {
+      content: '✓';
+      margin-right: $spacing-sm;
+    }
+    
+    &[aria-disabled="true"] {
+      opacity: $opacity-disabled;
+      cursor: not-allowed;
+    }
+  }
+  
+  // 메뉴 구분선
+  [role="separator"] {
+    height: 1px;
+    background: $color-border;
+    margin: $spacing-xs 0;
+  }
+}
+
+// ========== 트리뷰 패턴 ==========
+[role="tree"] {
+  [role="treeitem"] {
+    padding: $spacing-xs $spacing-sm;
+    cursor: pointer;
+    user-select: none;
+    
+    &:hover {
+      background: $color-gray-50;
+    }
+    
+    &[aria-selected="true"] {
+      background: $color-primary-light;
+      color: $color-primary-dark;
+    }
+    
+    &[aria-expanded] {
+      &::before {
+        content: '▶';
+        display: inline-block;
+        width: 16px;
+        margin-right: $spacing-xs;
+        transition: transform $transition-fast;
+      }
+      
+      &[aria-expanded="true"]::before {
+        transform: rotate(90deg);
+      }
+    }
+    
+    // 들여쓰기
+    &[aria-level="2"] { padding-left: $spacing-xl; }
+    &[aria-level="3"] { padding-left: $spacing-3xl; }
+    &[aria-level="4"] { padding-left: $spacing-4xl; }
+  }
+}
+
+// ========== 그리드 패턴 ==========
+[role="grid"] {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  
+  [role="row"] {
+    display: table-row;
+    
+    &:hover {
+      background: $color-gray-50;
+    }
+  }
+  
+  [role="columnheader"],
+  [role="rowheader"] {
+    display: table-cell;
+    padding: $spacing-sm $spacing-md;
+    font-weight: $font-weight-semibold;
+    background: $color-gray-100;
+    border: 1px solid $color-border;
+    
+    &[aria-sort] {
+      cursor: pointer;
+      
+      &::after {
+        margin-left: $spacing-xs;
+        
+        @if [aria-sort="ascending"] {
+          content: '↑';
+        } @else if [aria-sort="descending"] {
+          content: '↓';
+        } @else {
+          content: '↕';
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+  
+  [role="gridcell"] {
+    display: table-cell;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $color-border;
+  }
+}
+
+// ========== 폼 패턴 ==========
+// 필수 필드
+[aria-required="true"],
+[required] {
+  &::after {
+    content: '*';
+    color: $color-danger;
+    margin-left: $spacing-xs;
+  }
+}
+
+// 유효하지 않은 필드
+[aria-invalid="true"] {
+  border-color: $color-danger;
+  
+  &:focus {
+    @include focus-shadow($color-danger);
+  }
+}
+
+// 설명 텍스트 연결
+[aria-describedby] {
+  & ~ .field-description {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    margin-top: $spacing-xs;
+  }
+  
+  & ~ .field-error {
+    font-size: $font-size-sm;
+    color: $color-danger;
+    margin-top: $spacing-xs;
+  }
+}
+
+// ========== 툴팁 패턴 ==========
+[role="tooltip"],
+.tooltip {
+  position: absolute;
+  z-index: $z-tooltip;
+  padding: $spacing-xs $spacing-sm;
+  background: $color-gray-900;
+  color: $color-white;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  white-space: nowrap;
+  pointer-events: none;
+  
+  // 화살표
+  &::before {
+    content: '';
+    position: absolute;
+    border: 4px solid transparent;
+  }
+  
+  &[data-placement="top"] {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: $spacing-xs;
+    
+    &::before {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-top-color: $color-gray-900;
+    }
+  }
+}
+
+// ========== 프로그레스 패턴 ==========
+[role="progressbar"] {
+  width: 100%;
+  height: 8px;
+  background: $color-gray-200;
+  border-radius: $radius-full;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    display: block;
+    height: 100%;
+    background: $color-primary;
+    width: attr(aria-valuenow);
+    transition: width $transition-base;
+  }
+  
+  // 텍스트 라벨
+  & + .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing-xs;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+}
+
+// ========== 콤보박스 패턴 ==========
+[role="combobox"] {
+  position: relative;
+  
+  input {
+    padding-right: $spacing-3xl;
+  }
+  
+  // 드롭다운 토글 버튼
+  button[aria-label] {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: $touch-target-min;
+    border-left: 1px solid $color-border;
+  }
+  
+  // 옵션 리스트
+  [role="listbox"] {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: $color-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-dropdown;
+    
+    [role="option"] {
+      padding: $spacing-sm $spacing-md;
+      cursor: pointer;
+      
+      &:hover,
+      &[aria-selected="true"] {
+        background: $color-primary-light;
+      }
+    }
+  }
+}

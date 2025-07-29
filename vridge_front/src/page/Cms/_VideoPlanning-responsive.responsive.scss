@@ -1,0 +1,5 @@
+@import './_VideoPlanning-responsive.responsive.part1';
+@import './_VideoPlanning-responsive.responsive.part2';
+@media (max-width: 768px) {
+  .container { width: 100%; }
+}

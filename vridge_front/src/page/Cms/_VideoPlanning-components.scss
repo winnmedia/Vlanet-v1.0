@@ -1,0 +1,175 @@
+.video-planning {
+  padding: $spacing-lg - $spacing-xs $spacing-xl - $spacing-2xs; // 상하 $font-size-xl, 좌우 $font-size-3xl로 조정
+  background: $color-background-secondary;
+  min-height: calc(100vh - 96px + 16px);
+  
+  // 원형 토글 버튼 스타일
+  .collapse-btn {
+    width: $spacing-xl;
+    height: $spacing-xl;
+    min-width: $spacing-xl;
+    border-radius: $border-radius-full;
+    background: $color-gray-100;
+    border: $spacing-2xs solid $color-vp-gray-light-2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-base;
+    position: relative;
+    padding: $spacing-0;
+    
+    // 플러스/마이너스 아이콘
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: $color-gray-600;
+      transition: $transition-base;
+    }
+    
+    // 가로선 (항상 표시)
+    &::before {
+      width: $spacing-md - $spacing-2xs;
+      height: $spacing-2xs;
+    }
+    
+    // 세로선 (접혔을 때만 표시)
+    &::after {
+      width: $spacing-2xs;
+      height: $spacing-md - $spacing-2xs;
+      opacity: 0;
+      transform: rotate(90deg);
+    }
+    
+    // 접힌 상태 (플러스 표시)
+    &.collapsed {
+      &::after {
+        opacity: 1;
+        transform: rotate(0deg);
+      }
+    }
+    
+    // 호버 효과
+    &:hover {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+      border-color: $color-primary;
+      transform: scale(1.1);
+      box-shadow: $shadow;
+      
+      &::before,
+      &::after {
+        background: $color-white;
+      }
+    }
+    
+    // 활성 상태
+    &:active {
+      transform: scale(0.95);
+    }
+    
+    // 포커스 시 아웃라인 제거
+    &:focus {
+      outline: none;
+    }
+  }
+  
+  .step-content-with-sidebar {
+    display: flex;
+    gap: $spacing-lg;
+    
+    .step-content {
+      flex: 1;
+      min-width: $spacing-0; // flexbox 오버플로우 방지
+    }
+    
+    .recent-plannings-sidebar {
+      width: $spacing-6xl * 2.7; // 280에서 260로 추가 축소
+      flex-shrink: 0; // 축소 방지
+      background: $color-white;
+      border-radius: $border-radius-lg;
+      padding: $spacing-md; // $font-size-xl에서 $font-size-base로 축소
+      height: fit-content;
+      box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.08);
+      
+      // 화면이 좁을 때 숨김
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
+}
+}}}

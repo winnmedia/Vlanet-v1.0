@@ -1,0 +1,653 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 프로젝트 생성 페이지 통합 스타일
+// ProjectCreate, ProjectCreateImproved 통합
+
+@use '../../tokens' as *;
+
+// ========== 프로젝트 생성 레이아웃 ==========
+
+.projectCreate {
+  display: flex;
+  min-height: 100vh;
+  background: $color-background;
+  
+  .createContent {
+    flex: 1;
+    max-width: $breakpoint-xl;
+    margin: $spacing-0 auto;
+    padding: $spacing-xl;
+    width: 100%;
+    
+    @media (max-width: $breakpoint-md) { padding: $spacing-md;
+    }
+  }
+}
+
+// ========== 단계 표시기 ==========
+
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: $spacing-2xl;
+  padding: $spacing-lg;
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  
+  @media (max-width: $breakpoint-sm) { padding: $spacing-md;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .step {
+    display: flex;
+    align-items: center;
+    
+    .stepCircle {
+      width: $spacing-2xl + $spacing-xs;
+      height: $spacing-2xl + $spacing-xs;
+      border-radius: $border-radius-full;
+      background: $color-gray-200;
+      color: $color-text-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: $font-weight-semibold;
+      font-size: $font-size-base;
+      transition: all $transition-button;
+      position: relative;
+      
+      &.active {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+        color: $color-white;
+        box-shadow: $shadow-button;
+        transform: scale(1.1);
+      }
+      
+      &.completed {
+        background: $color-success;
+        color: $color-white;
+        
+        &::after {
+          content: '✓';
+          position: absolute;
+          font-size: $font-size-lg;
+        }
+        
+        span {
+          opacity: 0;
+        }
+      }
+    }
+    
+    .stepLabel {
+      margin-left: $spacing-sm;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      font-weight: $font-weight-medium;
+      white-space: nowrap;
+      
+      @media (max-width: $breakpoint-md) { display: none;
+      }
+    }
+    
+    .stepLine {
+      width: $spacing-5xl;
+      height: $spacing-2xs;
+      background: $color-gray-200;
+      margin: $spacing-0 $spacing-md;
+      
+      @media (max-width: $breakpoint-md) { width: $spacing-2xl;
+        margin: $spacing-0 $spacing-sm;
+      }
+      
+      &.completed {
+        background: $color-success;
+        position: relative;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          top: $spacing-0;
+          left: $spacing-0;
+          right: $spacing-0;
+          bottom: $spacing-0;
+          background: linear-gradient(90deg, $color-success 0%, $color-success-light 100%);
+          animation: progressLine 0.5s ease-out;
+        }
+      }
+    }
+    
+    &:last-child .stepLine {
+      display: none;
+    }
+  }
+}
+
+@keyframes progressLine {
+  from {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+// ========== 폼 섹션 ==========
+
+.formSection {
+  background: $color-white;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-default;
+  transition: all $transition-fast;
+  
+  &:hover {
+    box-shadow: $shadow-hover;
+  }
+  
+  .sectionHeader {
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: $spacing-2xs solid $color-border-light;
+    
+    h2 {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      margin: $spacing-0 0 $spacing-xs 0;
+    }
+    
+    .sectionDescription {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      margin: $spacing-0;
+    }
+  }
+}
+
+// ========== 폼 그룹 ==========
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) { grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  &.single {
+    grid-template-columns: 1fr;
+  }
+  
+  &.triple {
+    grid-template-columns: repeat(3, 1fr);
+    
+    @media (max-width: $breakpoint-lg) { grid-template-columns: 1fr;
+    }
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  
+  label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    font-weight: $font-weight-medium;
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+    
+    .required {
+      color: $color-danger;
+      margin-left: $spacing-xs;
+    }
+    
+    .optional {
+      color: $color-text-muted;
+      font-weight: $font-weight-normal;
+      font-size: $font-size-xs;
+      margin-left: $spacing-xs;
+    }
+  }
+  
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border: $spacing-2xs solid $color-border-light;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    transition: all $transition-fast;
+    background: $color-white;
+    
+    &:hover {
+      border-color: $color-gray-300;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.1);
+      background: $color-white;
+    }
+    
+    &:disabled {
+      background: $color-gray-100;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+    
+    &.error {
+      border-color: $color-danger;
+      
+      &:focus {
+        box-shadow: 0 0 0 $spacing-xs rgba($color-danger, 0.1);
+      }
+    }
+  }
+  
+  textarea {
+    min-height: $spacing-6xl + $spacing-lg;
+    resize: vertical;
+    line-height: $line-height-base;
+  }
+  
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2$color-black/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23$color-gray-800' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $font-size-xs center;
+    padding-right: $spacing-xl + $spacing-xs;
+  }
+  
+  .helperText {
+    margin-top: $spacing-xs;
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+    line-height: $line-height-base;
+    
+    &.error {
+      color: $color-danger;
+    }
+    
+    &.success {
+      color: $color-success;
+    }
+  }
+  
+  .characterCount {
+    margin-top: $spacing-xs;
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    text-align: right;
+    
+    &.warning {
+      color: $color-warning;
+    }
+    
+    &.error {
+      color: $color-danger;
+    }
+  }
+}
+
+// ========== 날짜 선택기 ==========
+
+.datePickerGroup {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+  
+  .dateSeparator {
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+  }
+  
+  .dateInput {
+    flex: 1;
+    position: relative;
+    
+    input {
+      padding-left: $spacing-2xl;
+    }
+    
+    .calendarIcon {
+      position: absolute;
+      left: $spacing-sm + $spacing-xs;
+      top: 50%;
+      transform: translateY(-50%);
+      width: $spacing-lg - $spacing-xs;
+      height: $spacing-lg - $spacing-xs;
+      color: $color-text-muted;
+      pointer-events: none;
+    }
+  }
+}
+
+// ========== 체크박스 & 라디오 ==========
+
+.checkboxGroup,
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  
+  &.inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+}
+
+.checkbox,
+.radio {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  
+  input {
+    width: $spacing-md + $spacing-2xs;
+    height: $spacing-md + $spacing-2xs;
+    margin-right: $spacing-xs;
+    cursor: pointer;
+    
+    &:checked {
+      accent-color: $color-primary;
+    }
+  }
+  
+  label {
+    margin: $spacing-0;
+    font-weight: $font-weight-normal;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  &:hover input:not(:checked) {
+    border-color: $color-primary;
+  }
+}
+
+// ========== 태그 입력 ==========
+
+.tagInput {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  padding: $spacing-xs;
+  border: $spacing-2xs solid $color-border-light;
+  border-radius: $radius-md;
+  min-height: $spacing-2xl + $spacing-xs;
+  cursor: text;
+  transition: all $transition-fast;
+  
+  &:hover {
+    border-color: $color-gray-300;
+  }
+  
+  &.focused {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.1);
+  }
+  
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background: $color-primary-light;
+    color: $color-primary;
+    border-radius: $radius-full;
+    font-size: $font-size-sm;
+    
+    .removeTag {
+      width: $spacing-md;
+      height: $spacing-md;
+      border-radius: $border-radius-full;
+      background: $color-primary;
+      color: $color-white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: $font-size-xs;
+      transition: all $transition-fast;
+      
+      &:hover {
+        background: $color-primary-hover;
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    min-width: $spacing-6xl + $spacing-xs;
+    padding: $spacing-xs;
+    font-size: $font-size-base;
+  }
+}
+
+// ========== 파일 업로드 ==========
+
+.fileUpload {
+  border: $spacing-2xs dashed $color-border-light;
+  border-radius: $radius-md;
+  padding: $spacing-xl;
+  text-align: center;
+  transition: all $transition-fast;
+  cursor: pointer;
+  position: relative;
+  
+  &:hover,
+  &.dragOver {
+    border-color: $color-primary;
+    background: $color-primary-light;
+    
+    .uploadIcon {
+      transform: translateY(-$spacing-xs);
+    }
+  }
+  
+  .uploadIcon {
+    width: $spacing-3xl;
+    height: $spacing-3xl;
+    margin: $spacing-0 auto $spacing-md;
+    color: $color-text-muted;
+    transition: all $transition-fast;
+  }
+  
+  .uploadText {
+    font-size: $font-size-base;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-xs;
+  }
+  
+  .uploadHint {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+  
+  input[type="file"] {
+    display: none;
+  }
+  
+  &.hasFile {
+    border-style: solid;
+    border-color: $color-success;
+    background: $color-success-light;
+    
+    .fileInfo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-sm;
+      
+      .fileName {
+        font-weight: $font-weight-medium;
+        color: $color-text-primary;
+      }
+      
+      .fileSize {
+        color: $color-text-secondary;
+        font-size: $font-size-sm;
+      }
+      
+      .removeFile {
+        padding: $spacing-xs $spacing-sm;
+        background: $color-danger;
+        color: $color-white;
+        border: none;
+        border-radius: $radius-sm;
+        font-size: $font-size-xs;
+        cursor: pointer;
+        transition: all $transition-fast;
+        
+        &:hover {
+          background: $color-danger-hover;
+        }
+      }
+    }
+  }
+}
+
+// ========== 액션 버튼 ==========
+
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $spacing-2xl;
+  padding-top: $spacing-lg;
+  border-top: $spacing-2xs solid $color-border-light;
+  
+  @media (max-width: $breakpoint-sm) { flex-direction: column-reverse;
+    gap: $spacing-md;
+    
+    > * {
+      width: 100%;
+    }
+  }
+  
+  .leftActions,
+  .rightActions {
+    display: flex;
+    gap: $spacing-sm;
+    
+    @media (max-width: $breakpoint-sm) { width: 100%;
+      
+      button {
+        flex: 1;
+      }
+    }
+  }
+  
+  .actionButton {
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: all $transition-button;
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    min-height: $spacing-2xl + $spacing-xs;
+    
+    &.primary {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+      color: $color-white;
+      border: none;
+      box-shadow: $shadow-button;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-$spacing-2xs);
+        box-shadow: $shadow-button-hover;
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+    
+    &.secondary {
+      background: $color-white;
+      color: $color-text-secondary;
+      border: $spacing-2xs solid $color-border-light;
+      
+      &:hover {
+        background: $color-gray-50;
+        border-color: $color-gray-300;
+      }
+    }
+    
+    &.ghost {
+      background: transparent;
+      color: $color-text-secondary;
+      border: none;
+      
+      &:hover {
+        background: $color-gray-100;
+        color: $color-text-primary;
+      }
+    }opacity: 0.6;
+      cursor: not-allowed;
+      &:disabled:not(#\9) { transform: none; }
+    
+    svg {
+      width: $spacing-lg - $spacing-xs;
+      height: $spacing-lg - $spacing-xs;
+    }
+  }
+}
+
+// ========== 프로그레스 바 ==========
+
+.progressBar {
+  height: $spacing-xs;
+  background: $color-gray-200;
+  border-radius: $border-radius-sm / 2;
+  margin-bottom: $spacing-xl;
+  overflow: hidden;
+  
+  .progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, $color-primary 0%, $color-primary-hover 100%);
+    border-radius: $border-radius-sm / 2;
+    transition: width $transition-slow;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: $spacing-0;
+      right: $spacing-0;
+      bottom: $spacing-0;
+      width: $spacing-6xl + $spacing-xs;
+      background: linear-gradient(90deg, transparent, rgba($color-white, 0.3));
+      animation: shimmer 2s infinite;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-$spacing-6xl + $spacing-xs);
+  }
+  100% {
+    transform: translateX($spacing-6xl + $spacing-xs);
+  }
+}

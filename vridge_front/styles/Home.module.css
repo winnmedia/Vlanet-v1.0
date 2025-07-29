@@ -7,12 +7,12 @@
   --button-secondary-hover: #f2f2f2;
 
   display: grid;
-  grid-template-rows: 20px 1fr 20px;
+  grid-template-rows: $spacing-lg 1fr $spacing-lg;
   align-items: center;
   justify-items: center;
   min-height: 100svh;
   padding: 80px;
-  gap: 64px;
+  gap: $spacing-5xl;
   font-family: var(--font-geist-sans);
 }
 
@@ -30,7 +30,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: $spacing-2xl;
   grid-row-start: 2;
 }
 
@@ -38,34 +38,34 @@
   font-family: var(--font-geist-mono);
   padding-left: 0;
   margin: 0;
-  font-size: 14px;
-  line-height: 24px;
+  font-size: $font-size-sm;
+  line-height: $spacing-xl;
   letter-spacing: -0.01em;
   list-style-position: inside;
 }
 
 .main li:not(:last-of-type) {
-  margin-bottom: 8px;
+  margin-bottom: $spacing-xs;
 }
 
 .main code {
   font-family: inherit;
   background: var(--gray-alpha-100);
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-weight: 600;
+  padding: 2px $spacing-2xs;
+  border-radius: $spacing-2xs;
+  font-weight: $font-weight-semibold;
 }
 
 .ctas {
   display: flex;
-  gap: 16px;
+  gap: $spacing-md;
 }
 
 .ctas a {
   appearance: none;
   border-radius: 128px;
-  height: 48px;
-  padding: 0 20px;
+  height: $spacing-4xl;
+  padding: 0 $spacing-lg;
   border: none;
   border: 1px solid transparent;
   transition:
@@ -76,15 +76,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
+  font-size: $spacing-md;
+  line-height: $spacing-lg;
+  font-weight: $font-weight-medium;
 }
 
 a.primary {
   background: var(--foreground);
   color: var(--background);
-  gap: 8px;
+  gap: $spacing-xs;
 }
 
 a.secondary {
@@ -95,13 +95,13 @@ a.secondary {
 .footer {
   grid-row-start: 3;
   display: flex;
-  gap: 24px;
+  gap: $spacing-xl;
 }
 
 .footer a {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $spacing-xs;
 }
 
 .footer img {
@@ -122,13 +122,13 @@ a.secondary {
 
   .footer a:hover {
     text-decoration: underline;
-    text-underline-offset: 4px;
+    text-underline-offset: $spacing-2xs;
   }
 }
 
 @media (max-width: 600px) {
   .page {
-    padding: 32px;
+    padding: $spacing-2xl;
     padding-bottom: 80px;
   }
 
@@ -145,9 +145,9 @@ a.secondary {
   }
 
   .ctas a {
-    font-size: 14px;
-    height: 40px;
-    padding: 0 16px;
+    font-size: $font-size-sm;
+    height: $spacing-3xl;
+    padding: 0 $spacing-md;
   }
 
   a.secondary {

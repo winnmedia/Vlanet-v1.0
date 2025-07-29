@@ -18,38 +18,30 @@ export const enhanceMobileExperience = () => {
   try {
     // 모바일인지 확인
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+
     if (!isMobile) return; // 모바일이 아니면 아무것도 하지 않음
-    
+
     // 모바일 전용 최적화
     // 1. 터치 이벤트 최적화 (passive 리스너로 성능 향상)
     document.addEventListener('touchstart', () => {}, { passive: true });
-    
+
     // 2. 모바일 디버그 정보 (에러 발생시에만)
-    window.addEventListener('error', (event) => {
-      console.log('[Mobile Debug]', {
-        error: event.error?.message || 'Unknown error',
-        userAgent: navigator.userAgent,
-        url: typeof window !== 'undefined' && window.location.href
-      });
-    });
-    
+    window.addEventListener('error', (event) => {});
+
     // 3. 네트워크 상태 모니터링
     if ('connection' in navigator) {
-      navigator.connection.addEventListener('change', () => {
-        console.log('[Mobile Network]', navigator.connection.effectiveType);
-      });
+      navigator.connection.addEventListener('change', () => {});
     }
-    
+
     // 4. iOS Safari 쿠키 처리 개선
     if (isIOSSafari()) {
       // iOS Safari에서 third-party 쿠키 문제 해결을 위한 설정
       if (typeof window !== 'undefined') {
         document.cookie = 'SameSite=None; Secure';
       }
-      console.log('[Mobile] iOS Safari detected - cookie settings applied');
+
     }
-    
+
     // 5. 모바일 뷰포트 설정 확인
     let viewport = typeof window !== 'undefined' ? document.querySelector('meta[name=viewport]') : null;
     if (!viewport) {
@@ -57,12 +49,12 @@ export const enhanceMobileExperience = () => {
       viewport.name = 'viewport';
       viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes';
       document.head.appendChild(viewport);
-      console.log('[Mobile] Viewport meta tag added');
+
     }
-    
+
   } catch (error) {
     // 모바일 최적화 실패해도 앱은 정상 작동
-    console.warn('Mobile optimization failed:', error);
+    
   }
 };
 
@@ -70,15 +62,15 @@ export const enhanceMobileExperience = () => {
 export const addMobileHeaders = (config) => {
   try {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+
     if (isMobile && config.headers) {
       config.headers['X-Mobile-Client'] = 'true';
       config.headers['X-Client-Type'] = /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'iOS' : 'Android';
     }
   } catch (error) {
+
     // 실패해도 원래 config 그대로 반환
   }
-  
   return config;
 };
 
@@ -99,7 +91,7 @@ export const safeStorage = {
       }
     }
   },
-  
+
   getItem: (key) => {
     try {
       return typeof window !== 'undefined' && localStorage.getItem(key);
@@ -114,7 +106,7 @@ export const safeStorage = {
       }
     }
   },
-  
+
   removeItem: (key) => {
     try {
       typeof window !== 'undefined' && localStorage.removeItem(key);

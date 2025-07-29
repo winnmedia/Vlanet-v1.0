@@ -26,7 +26,6 @@ export function useNavigationFlow() {
   
   // 404 에러 처리 함수
   const handleNotFound = (error = null) => {
-    console.error('[useNavigationFlow] 404 error:', error)
     const redirectPath = handle404Error(router.pathname)
     navigate(redirectPath, { replace: true })
   }
@@ -40,7 +39,6 @@ export function useNavigationFlow() {
       return true
     }
     
-    console.warn('[useNavigationFlow] No next path found')
     return false
   }
   

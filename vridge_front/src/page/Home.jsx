@@ -1,6 +1,10 @@
 import { useState } from 'react'
+import dynamic from 'next/dynamic';
+import { UnifiedButton } from '../components/unified/UnifiedButton';
+
 import { useRouter } from '../util/nextNavigation'
 import { checkSession } from '../util/util'
+import OptimizedImage, { Banner } from '../components/OptimizedImage'
 
 // Next.js에서는 public 폴더의 이미지를 직접 경로로 참조
 const logo = '/images/Common/w_logo02.svg'
@@ -53,7 +57,7 @@ export default function Home() {
       <section id="header">
         <div className="inner flex space_between align_center">
           <h1 className="logo">
-            <img src={logo} alt="VideoPlanet" />
+            <img src={logo} alt="VideoPlanet" / loading="lazy">
           </h1>
           <div className="etc">
             <ul>
@@ -62,7 +66,7 @@ export default function Home() {
                   href="https://www.youtube.com/channel/UC33mItthSPySgXc24SiXH2A"
                   target="_blank"
                   rel="noopener noreferrer"
-                >
+                 aria-label="Link">
                   유튜브
                 </a>
               </li>
@@ -71,15 +75,15 @@ export default function Home() {
                   href="https://www.instagram.com/vlanet_official/"
                   target="_blank"
                   rel="noopener noreferrer"
-                >
+                 aria-label="Link">
                   인스타그램
                 </a>
               </li>
             </ul>
-            <button onClick={handleNavigate} className="submit">
+            <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
               로그인
-            </button>
-            {/* <button className="submit">시작하기</button> */}
+            </Button>
+            {/* <Button  aria-label="Click">시작하기</Button> */}
           </div>
         </div>
       </section>
@@ -102,7 +106,7 @@ export default function Home() {
               </p>
             </div>
             <div className="img">
-              <img src={visual} alt="" />
+              <img src={visual} alt="" / loading="lazy">
             </div>
           </div>
         </section>
@@ -110,13 +114,13 @@ export default function Home() {
           <div className="txt_box">
             영상 콘텐츠 협업에 <br />
             다리를 잇다, 브이래닛
-            <button onClick={handleNavigate} className="submit">
+            <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
               무료로 사용해보기
-            </button>
+            </Button>
           </div>
         </section> */}
         <section className="textbox">
-          <img src={tool02} alt="" />
+          <img src={tool02} alt="" / loading="lazy">
           <div>번거로운 n가지 툴 사용은 이제 그만,</div>
           <p>
             영상 편집 피드백, 프로젝트 관리가 까다로우셨나요? <br />
@@ -143,12 +147,12 @@ export default function Home() {
                   영상 피드백은 익명일 때 가장 효과적입니다. 이제 익명으로
                   피드백해보세요!
                 </p>
-                <button onClick={handleNavigate} className="submit">
+                <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
                   바로가기
-                </button>
+                </Button>
               </div>
               <div className="img">
-                <img src={feedback} />
+                <img src={feedback} / alt="image" loading="lazy">
               </div>
             </div>
           </div>
@@ -169,12 +173,12 @@ export default function Home() {
                   오늘 어떤 프로젝트가 진행되는지 쉽게 추적하고, 앞으로 해야 할
                   일이 무엇인지 정확하게 알려줍니다.
                 </p>
-                <button onClick={handleNavigate} className="submit">
+                <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
                   바로가기
-                </button>
+                </Button>
               </div>
               <div className="img">
-                <img src={project} />
+                <img src={project} / alt="image" loading="lazy">
               </div>
             </div>
           </div>
@@ -195,12 +199,12 @@ export default function Home() {
                   라이브코멘트 기능을 통해 영상을 보면서 실시간 미팅이
                   가능합니다.
                 </p>
-                <button onClick={handleNavigate} className="submit">
+                <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
                   바로가기
-                </button>
+                </Button>
               </div>
               <div className="img">
-                <img src={comment} />
+                <OptimizedImage src={comment} alt="Comment feature" width={600} height={400} />
               </div>
             </div>
           </div>
@@ -215,25 +219,25 @@ export default function Home() {
             <ul>
               <li>
                 <div className="img">
-                  <img src={identity} alt="" />
+                  <OptimizedImage src={identity} alt="Easy Management" width={200} height={200} />
                 </div>
                 <div className="txt">Easy Management</div>
               </li>
               <li>
                 <div className="img">
-                  <img src={identity02} alt="" />
+                  <OptimizedImage src={identity02} alt="Fast and Accurate Feedback" width={200} height={200} />
                 </div>
                 <div className="txt">Fast and Accurate Feedback</div>
               </li>
               <li>
                 <div className="img">
-                  <img src={identity03} alt="" />
+                  <OptimizedImage src={identity03} alt="Study Together" width={200} height={200} />
                 </div>
                 <div className="txt">Study Together</div>
               </li>
               <li>
                 <div className="img">
-                  <img src={identity04} alt="" />
+                  <OptimizedImage src={identity04} alt="Convenient Meeting" width={200} height={200} />
                 </div>
                 <div className="txt">Convenient Meeting</div>
               </li>
@@ -260,13 +264,13 @@ export default function Home() {
               <div className="ex">
                 <div className="part flex space_between align_center">
                   <div className="img">
-                    <img src={emoji01} className="img01" />
+                    <img src={emoji01} className="img01" / alt="image" loading="lazy">
                   </div>
                   <div className="text">
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <img src={chat} / alt="image" loading="lazy">
                         </i>
                         영상 디자이너 L
                       </span>
@@ -283,7 +287,7 @@ export default function Home() {
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <img src={chat} / alt="image" loading="lazy">
                         </i>
                         콘텐츠 기획자 P
                       </span>
@@ -295,7 +299,7 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="img">
-                    <img src={emoji03} />
+                    <img src={emoji03} / alt="image" loading="lazy">
                   </div>
                 </div>
               </div>
@@ -315,13 +319,13 @@ export default function Home() {
               <div className="ex">
                 <div className="part flex space_between align_center">
                   <div className="img">
-                    <img src={emoji02} className="img01" />
+                    <img src={emoji02} className="img01" / alt="image" loading="lazy">
                   </div>
                   <div className="text">
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <img src={chat} / alt="image" loading="lazy">
                         </i>
                         영상 제작 꿈나무 K
                       </span>
@@ -338,7 +342,7 @@ export default function Home() {
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <img src={chat} / alt="image" loading="lazy">
                         </i>
                         영상디자인학과 학생 J
                       </span>
@@ -350,7 +354,7 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="img">
-                    <img src={emoji04} className="img02" />
+                    <img src={emoji04} className="img02" / alt="image" loading="lazy">
                   </div>
                 </div>
               </div>
@@ -373,6 +377,7 @@ export default function Home() {
                 src="https://www.youtube.com/embed/nBH02NxZRfI"
                 title="실제 고객이 말하는 세이프홈즈, 고객의 리얼 스토리"
                 frameborder="0"
+import { Button } from '../components/unified/Button'
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
               ></iframe>
@@ -391,11 +396,11 @@ export default function Home() {
               <span>만들어 갑니다.</span>
             </div>
             <div className="img">
-              <img src={end} alt="" />
+              <img src={end} alt="" / loading="lazy">
             </div>
           </div>
           <div className="ment">
-            SAVE THE CREATORS <img src={end02} alt="" />
+            SAVE THE CREATORS <img src={end02} alt="" / loading="lazy">
           </div>
         </section>
 
@@ -434,7 +439,7 @@ export default function Home() {
             </h2>
             <div className="content">
               <div className="img plus">
-                <img src={img09} />
+                <img src={img09} / alt="image" loading="lazy">
                 <div className="pop">
                   전체
                   <br />
@@ -447,7 +452,7 @@ export default function Home() {
                   한 눈으로 보는 <br />
                   <span>캘린더</span> 기능
                   <i>
-                    <img src={icon03} alt="icon" />
+                    <img src={icon03} alt="icon" / loading="lazy">
                   </i>
                 </div>
                 <p>
@@ -455,9 +460,9 @@ export default function Home() {
                   기간(월,주,일) 별로 확인하고! <br />
                   프로젝트 별로 확인하고!
                 </p>
-                <button onClick={handleNavigate} className="submit">
+                <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
                   바로가기
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -472,7 +477,7 @@ export default function Home() {
                   <br />
                   <span>프로젝트</span> 관리
                   <i>
-                    <img src={icon04} alt="icon" />
+                    <img src={icon04} alt="icon" / loading="lazy">
                   </i>
                 </div>
                 <p>
@@ -480,12 +485,12 @@ export default function Home() {
                   프로세스(기획안,구성안,대본 등)의 <br />
                   모든 것을 손 쉽게 관리 OK!
                 </p>
-                <button onClick={handleNavigate} className="submit">
+                <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
                   바로가기
-                </button>
+                </Button>
               </div>
               <div className="img">
-                <img src={img08} />
+                <img src={img08} / alt="image" loading="lazy">
               </div>
             </div>
           </div>
@@ -501,23 +506,23 @@ export default function Home() {
             </h2>
             <div className="content">
               <div className="img">
-                <img src={img10} />
+                <img src={img10} / alt="image" loading="lazy">
               </div>
               <div className="txt">
                 <div>
                   쉽고, 빠르고, 정확한 <br />
                   <span>영상 피드백</span>
                   <i>
-                    <img src={icon01} alt="icon" />
+                    <img src={icon01} alt="icon" / loading="lazy">
                   </i>
                 </div>
                 <p>
                   영상을 같이 보며 정확하게 피드백 해보세요! <br />
                   영상 수정 횟수가 절반으로 줄어들어요.
                 </p>
-                <button onClick={handleNavigate} className="submit">
+                <Button onClick={handleNavigate} onKeyDown={(e) => e.key === 'Enter' && handleNavigate} aria-label="Click">
                   바로가기
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -592,7 +597,7 @@ export default function Home() {
                   <br />
                   비법으로 <span>학습</span>
                   <i>
-                    <img src={icon02} alt="icon" />
+                    <img src={icon02} alt="icon" / loading="lazy">
                   </i>
                 </div>
                 <p>
@@ -631,8 +636,8 @@ export default function Home() {
               <li>전화번호 : 010-4156-8865</li>
             </ul>
             <div>
-              <span onClick={() => navigate('/terms')}>이용약관</span>
-              <span onClick={() => navigate('/privacy')}>
+              <span onClick={() => navigate('/terms')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/terms')}>이용약관</span>
+              <span onClick={() => navigate('/privacy')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/privacy')}>
                 개인정보 취급방침
               </span>
             </div>
@@ -644,7 +649,7 @@ export default function Home() {
                 href="https://www.youtube.com/channel/UC33mItthSPySgXc24SiXH2A"
                 target="_blank"
                 rel="noopener noreferrer"
-              >
+               aria-label="Link">
                 유튜브
               </a>
             </li>
@@ -653,7 +658,7 @@ export default function Home() {
                 href="https://www.instagram.com/vlanet_official/"
                 target="_blank"
                 rel="noopener noreferrer"
-              >
+               aria-label="Link">
                 인스타그램
               </a>
             </li>

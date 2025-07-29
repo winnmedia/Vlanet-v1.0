@@ -1,4 +1,10 @@
-import Calendar from '../src/page/Cms/Calendar'
+import dynamic from 'next/dynamic'
+import LoadingAnimation from '../src/components/LoadingAnimation'
+
+const Calendar = dynamic(() => import('../src/page/Cms/Calendar'), {
+  loading: () => <LoadingAnimation />,
+  ssr: false
+})
 
 export default Calendar
 

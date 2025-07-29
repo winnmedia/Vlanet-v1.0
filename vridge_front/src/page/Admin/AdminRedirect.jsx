@@ -1,47 +1,54 @@
-import React, { useEffect } from 'react'
-import { useRouter } from '../../util/nextNavigation'
-import { useSelector } from 'react-redux'
-import { Spin, Card, Button, Typography, Space } from 'antd'
-import { LoadingOutlined, SettingOutlined, DashboardOutlined } from '@ant-design/icons'
+import React, { useEffect , Suspense } from 'react'
+import dynamic from 'next/dynamic';;
+;
 
-const { Title, Text, Paragraph } = Typography
+import { useRouter } from '../../util/nextNavigation';
+import { useSelector } from 'react-redux';
+import { Spin, Card, Button, Typography, Space } from 'antd';
+import { LoadingOutlined, SettingOutlined, DashboardOutlined } from '@ant-design/icons'
+const UnifiedCard = dynamic(() => import('../../components/unified/UnifiedCard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});;
+
+const { Title, Text, Paragraph } = Typography;
 
 export default function AdminRedirect() {
-  const { navigate } = useRouter()
-  const { user } = useSelector((s) => s.ProjectStore)
-  const backendAdminUrl = process.env.NEXT_PUBLIC_API_URL 
-    ? `${process.env.NEXT_PUBLIC_API_URL.replace('/api', '')}/admin/`
-    : 'https://videoplanet.up.railway.app/admin/'
+  const { navigate } = useRouter();
+  const { user } = useSelector((s) => s.ProjectStore);
+  const backendAdminUrl = process.env.NEXT_PUBLIC_API_URL ?
+  `${process.env.NEXT_PUBLIC_API_URL.replace('/api', '')}/admin/` :
+  'https://videoplanet.up.railway.app/admin/';
 
   useEffect(() => {
     // 3초 후 자동 리다이렉트
     const timer = setTimeout(() => {
       if (typeof window !== 'undefined') {
-        window.location.href = backendAdminUrl
+        window.location.href = backendAdminUrl;
       }
-    }, 3000)
+    }, 3000);
 
-    return () => clearTimeout(timer)
-  }, [backendAdminUrl])
+    return () => clearTimeout(timer);
+  }, [backendAdminUrl]);
 
   const handleImmediateRedirect = () => {
     if (typeof window !== 'undefined') {
-      window.location.href = backendAdminUrl
+      window.location.href = backendAdminUrl;
     }
-  }
+  };
 
   const handleGoToDashboard = () => {
-    navigate('/admindashboard')
-  }
+    navigate('/admindashboard');
+  };
 
   return (
     <div className="admin-redirect-container">
-      <Card className="admin-redirect-card">
+      <UnifiedCard className="admin-redirect-card">
         <Space direction="vertical" size="large" align="center" style={{ width: '100%' }}>
-          <Spin 
-            indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} 
-            spinning={true}
-          />
+          <Spin
+            indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />}
+            spinning={true} />
+
           
           <Title level={2}>
             <SettingOutlined /> Django 관리자 페이지로 이동 중...
@@ -52,29 +59,29 @@ export default function AdminRedirect() {
           </Paragraph>
           
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <Button 
-              type="primary" 
-              size="large" 
-              onClick={handleImmediateRedirect}
+            <UnifiedButton
+              type="primary"
+              size="large"
+              onClick={handleImmediateRedirect} onKeyDown={(e) => e.key === 'Enter' && handleImmediateRedirect}
               block
               style={{
                 background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                 border: 'none',
                 height: 'auto',
                 padding: '12px 24px'
-              }}
-            >
+              }} aria-label="Click">
+
               지금 바로 이동
-            </Button>
+            </UnifiedButton>
             
-            <Button 
-              size="large" 
-              onClick={handleGoToDashboard}
-              icon={<DashboardOutlined />}
-              block
-            >
+            <UnifiedButton
+              size="large"
+              onClick={handleGoToDashboard} onKeyDown={(e) => e.key === 'Enter' && handleGoToDashboard}
+              icon={<DashboardOutlined / aria-label="Click">}
+              block>
+
               프론트엔드 대시보드로 이동
-            </Button>
+            </UnifiedButton>
           </Space>
           
           <div className="admin-info">
@@ -83,7 +90,7 @@ export default function AdminRedirect() {
             </Text>
           </div>
         </Space>
-      </Card>
-    </div>
-  )
+      </UnifiedCard>
+    </div>);
+
 }

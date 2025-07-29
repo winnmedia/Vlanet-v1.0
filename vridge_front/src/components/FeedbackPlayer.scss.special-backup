@@ -1,0 +1,713 @@
+@import '../styles/design-tokens';
+
+// Modern Video Player Styles - VideoPlanet Brand
+.feedback-player {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  border-radius: $border-radius-xl;
+  overflow: visible; // 콘솔이 잘리지 않도록 수정
+  box-shadow: 0 8px 32px rgba($color-primary, 0.15), 0 4px 16px rgba($color-black, 0.3);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: $spacing-0;
+    left: $spacing-0;
+    right: $spacing-0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba($color-primary, $opacity-50), transparent);
+    opacity: 0.6;
+  }
+  
+  // 모바일에서 터치 제스처 지원
+  @media (max-width: $breakpoint-md) {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .video-container {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    background: $color-black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: $spacing-0; // flexbox 높이 제한 해제
+    border-radius: $border-radius-xl 16px 0 0; // 상단만 둥글게
+
+    video {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain; // 비디오 비율 유지하며 컨테이너에 맞춤
+      transition: opacity 0.3s ease-out;
+      
+      &.loading {
+        opacity: 0.5;
+      }
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: $spacing-0;
+      left: $spacing-0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent; // 항상 클릭 가능하도록 투명 배경
+      transition: background-color 0.3s;
+      z-index: 1; // 비디오 위에 표시
+
+      &:hover {
+        background: rgba($color-black, 0.3); // 호버 시에만 어두운 배경
+      }
+
+      .play-button {
+        background: linear-gradient(135deg, $color-primary 0%, #0f23c4 100%);
+        border-radius: $border-radius-full;
+        padding: $spacing-lg - $spacing-xs;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 4px 20px rgba($color-primary, 0.4);
+        position: relative;
+        opacity: 1;
+        transition: opacity 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          border-radius: $border-radius-full;
+          padding: 2px;
+          background: linear-gradient(135deg, $color-primary, #4a5eff);
+          -webkit-mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+          mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        &:hover {
+          transform: scale(1.1);
+          box-shadow: 0 6px 30px rgba($color-primary, 0.6);
+          
+          &::after {
+            opacity: 1;
+          }
+        }
+        
+        &:active {
+          transform: scale(1.05);
+        }
+      }
+    }
+    
+    // Loading and Error Overlays
+    .loading-overlay,
+    .error-overlay {
+      position: absolute;
+      top: $spacing-0;
+      left: $spacing-0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba($color-black, 0.8);
+      color: white;
+      z-index: 10;
+      
+      .spinner {
+        width: $spacing-3xl + 2px;
+        height: $spacing-3xl + 2px;
+        border: 3px solid rgba($color-primary, 0.2);
+        border-top-color: $color-primary;
+        border-radius: $border-radius-full;
+        animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        box-shadow: 0 0 20px rgba($color-primary, 0.3);
+      }
+      
+      p {
+        margin-top: $spacing-lg - $spacing-xs;
+        font-size: $font-size-base;
+        font-weight: 500;
+        animation: fadeIn 0.5s ease-out;
+      }
+      
+      .error-url {
+        font-size: $font-size-xs;
+        color: $color-gray-500;
+        word-break: break-all;
+        max-width: 80%;
+        text-align: center;
+      }
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    // Smooth fade-in animation
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    // Pulse animation for loading
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+    
+    // Keyboard help overlay
+    .keyboard-help {
+      position: absolute;
+      top: $spacing-lg - $spacing-xs;
+      right: $spacing-lg - $spacing-xs;
+      background: rgba($color-black, 0.9);
+      border: 1px solid rgba($color-white, 0.2);
+      border-radius: $border-radius-md;
+      padding: $spacing-lg - $spacing-xs;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      max-width: 300px;
+      
+      .help-content {
+        color: white;
+        
+        h4 {
+          margin: $spacing-0 0 15px 0;
+          font-size: $font-size-base;
+          color: $color-white;
+        }
+        
+        .help-grid {
+          display: grid;
+          gap: $spacing-sm;
+          font-size: 13px;
+          
+          div {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm + 2px;
+            
+            kbd {
+              background: rgba($color-white, 0.1);
+              border: 1px solid rgba($color-white, 0.3);
+              border-radius: $border-radius-sm - 1px;
+              padding: 2px 6px;
+              font-family: monospace;
+              font-size: $font-size-xs;
+              min-width: $spacing-4xl - $spacing-xs;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+    
+    &:hover .keyboard-help {
+      opacity: 1;
+    }
+  }
+
+  .controls {
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.98), rgba(20, 20, 20, 0.95));
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba($color-white, 0.05);
+    position: relative;
+    z-index: 2; // 콘솔이 항상 위에 표시되도록
+    border-radius: $border-radius-none 0 16px 16px; // 하단 모서리만 둥글게
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: $spacing-0;
+      left: $spacing-0;
+      right: $spacing-0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba($color-primary, 0.3), transparent);
+    }
+
+    .progress-bar {
+      position: relative;
+      height: $spacing-xs;
+      background: rgba($color-white, 0.1);
+      cursor: pointer;
+      transition: height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: $spacing-0;
+        left: $spacing-0;
+        right: $spacing-0;
+        bottom: $spacing-0;
+        background: linear-gradient(90deg, transparent, rgba($color-white, 0.1), transparent);
+        transform: translateX(-100%);
+        animation: shimmer 2s infinite;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      &:hover {
+        height: $spacing-sm;
+        
+        &::before {
+          opacity: 1;
+        }
+      }
+      
+      @keyframes shimmer {
+        to {
+          transform: translateX(100%);
+        }
+      }
+
+      .seek-slider {
+        position: absolute;
+        top: $spacing-0;
+        left: $spacing-0;
+        width: 100%;
+        height: 100%;
+        margin: $spacing-0;
+        cursor: pointer;
+        opacity: 0;
+        z-index: 2;
+      }
+
+      .progress-fill {
+        position: absolute;
+        top: $spacing-0;
+        left: $spacing-0;
+        height: 100%;
+        background: linear-gradient(90deg, $color-primary 0%, #4a5eff 100%);
+        pointer-events: none;
+        transition: width 0.1s;
+        box-shadow: 0 0 8px rgba($color-primary, 0.6);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          right: -4px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: $spacing-sm + $spacing-xs;
+          height: $spacing-sm + $spacing-xs;
+          background: $color-white;
+          border-radius: $border-radius-full;
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.3), 0 2px 8px rgba($color-primary, 0.6);
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+      }
+      
+      &:hover .progress-fill::after {
+        opacity: 1;
+      }
+    }
+
+    .control-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $spacing-sm + $spacing-xs 20px;
+      gap: $spacing-sm + 2px;
+      color: white;
+      flex-wrap: nowrap; // 버튼이 줄바꿈되지 않도록
+
+      .left-controls {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + $spacing-xs;
+        flex: 1;
+
+        .play-pause {
+          background: rgba($color-white, 0.08);
+          border: 1px solid rgba($color-white, 0.1);
+          padding: $spacing-sm + 2px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: $border-radius-full;
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          color: white;
+          position: relative;
+          overflow: hidden;
+          
+          &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba($color-primary, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
+
+          &:hover {
+            background: rgba($color-primary, 0.15);
+            border-color: rgba($color-primary, $opacity-50);
+            transform: scale(1.05);
+            
+            &::before {
+              opacity: 1;
+            }
+          }
+          
+          &:active {
+            transform: scale(0.95);
+          }
+        }
+
+        .skip-button {
+          background: rgba($color-white, 0.1);
+          border: 1px solid rgba($color-white, 0.2);
+          color: white;
+          padding: 6px 10px;
+          cursor: pointer;
+          border-radius: $border-radius-md - 2px;
+          transition: all 0.3s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          svg {
+            display: block;
+          }
+
+          &:hover {
+            background: rgba($color-white, 0.2);
+            border-color: rgba($color-white, 0.3);
+            transform: translateY(-1px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+        }
+
+        .time-display {
+          font-size: $font-size-sm;
+          color: rgba($color-white, 0.8);
+          font-variant-numeric: tabular-nums;
+          user-select: none;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        }
+      }
+
+      .right-controls {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        flex-shrink: 0; // 오른쪽 컨트롤이 축소되지 않도록
+
+        // 통일된 아이콘 버튼 스타일 - VideoPlanet Design System
+        .icon-button {
+          background: rgba($color-white, 0.06);
+          border: 1px solid rgba($color-white, 0.12);
+          color: rgba($color-white, 0.9);
+          padding: $spacing-sm 12px;
+          cursor: pointer;
+          border-radius: $border-radius-md;
+          transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: $spacing-sm;
+          font-size: 13px;
+          font-weight: 500;
+          min-height: $spacing-xl + $spacing-xs;
+          position: relative;
+          overflow: hidden;
+          backdrop-filter: blur(10px);
+          
+          svg {
+            display: block;
+          }
+          
+          .button-text {
+            display: none;
+            
+            @media (min-width: $breakpoint-md) {
+              display: block;
+            }
+          }
+          
+          &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba($color-white, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
+
+          &:hover {
+            background: rgba($color-white, 0.1);
+            border-color: rgba($color-white, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba($color-black, 0.2);
+            color: white;
+            
+            &::before {
+              opacity: 1;
+            }
+          }
+          
+          &:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba($color-black, 0.2);
+          }
+          
+          // 코멘트 버튼은 브랜드 색상으로 강조
+          &.comment-button {
+            background: linear-gradient(135deg, $color-primary 0%, #0f23c4 100%);
+            border: 1px solid transparent;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba($color-primary, 0.3);
+            white-space: nowrap; // 텍스트 줄바꿈 방지
+            
+            &::after {
+              content: '';
+              position: absolute;
+              inset: -1px;
+              border-radius: $border-radius-md;
+              padding: 1px;
+              background: linear-gradient(135deg, #4a5eff, $color-primary);
+              -webkit-mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+              mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+              -webkit-mask-composite: xor;
+              mask-composite: exclude;
+              opacity: 0;
+              transition: opacity 0.3s;
+            }
+            
+            &:hover {
+              background: linear-gradient(135deg, #1a35ff 0%, #1127d8 100%);
+              transform: translateY(-2px) scale(1.02);
+              box-shadow: 0 6px 20px rgba($color-primary, 0.4);
+              
+              &::after {
+                opacity: 1;
+              }
+            }
+            
+            &:active {
+              transform: translateY(0) scale(0.98);
+            }
+          }
+          
+          &.rate-button {
+            padding: $spacing-sm 14px;
+            min-width: 65px;
+            background: rgba($color-white, 0.08);
+            
+            .rate-text {
+              font-weight: 600;
+              font-size: 13px;
+              background: linear-gradient(135deg, $color-white, #e0e0e0);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+            }
+            
+            &:hover {
+              background: rgba($color-primary, 0.15);
+              border-color: rgba($color-primary, 0.3);
+            }
+          }
+        }
+
+        .volume-control {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          position: relative;
+
+          .volume-button {
+            background: none;
+            padding: 6px;
+          }
+          
+          .volume-slider-container {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba($color-black, 0.9);
+            border: 1px solid rgba($color-white, 0.2);
+            border-radius: $border-radius-md;
+            padding: $spacing-sm + 2px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            margin-bottom: $spacing-sm + 2px;
+            
+            &.show {
+              opacity: 1;
+              pointer-events: all;
+            }
+            
+            &::after {
+              content: '';
+              position: absolute;
+              top: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              border: 8px solid transparent;
+              border-top-color: rgba($color-black, 0.9);
+            }
+            
+            .volume-slider {
+              width: 100px;
+              height: $spacing-xs;
+              background: #444;
+              outline: none;
+              -webkit-appearance: none;
+              cursor: pointer;
+              border-radius: $border-radius-sm / 2;
+
+              &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: $spacing-sm + $spacing-xs;
+                height: $spacing-sm + $spacing-xs;
+                background: white;
+                border-radius: $border-radius-full;
+                cursor: pointer;
+              }
+              
+              &::-moz-range-thumb {
+                width: $spacing-sm + $spacing-xs;
+                height: $spacing-sm + $spacing-xs;
+                background: white;
+                border-radius: $border-radius-full;
+                cursor: pointer;
+                border: none;
+              }
+            }
+          }
+        }
+
+        .playback-rate {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+}
+
+// 툴팁 스타일
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.95);
+  color: white;
+  padding: 6px 12px;
+  border-radius: $border-radius-md - 2px;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  margin-bottom: $spacing-sm;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($color-white, 0.1);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(20, 20, 20, 0.95);
+  }
+}
+
+// 호버 시 툴팁 표시
+.icon-button:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+// 모바일 반응형
+@media (max-width: $breakpoint-md) {
+  .feedback-player {
+    border-radius: $border-radius-lg;
+    
+    .video-container {
+      border-radius: $border-radius-lg 12px 0 0;
+    }
+    
+    .controls {
+      border-radius: $border-radius-none 0 12px 12px;
+      
+      .control-buttons {
+        padding: $spacing-sm 12px;
+        
+        .left-controls {
+          gap: $spacing-sm;
+          
+          .time-display {
+            font-size: $font-size-xs;
+          }
+        }
+        
+        .right-controls {
+          gap: $spacing-xs;
+          
+          .icon-button {
+            padding: 6px;
+            min-height: $spacing-xl;
+            
+            .button-text {
+              display: none !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 다크 모드 지원
+@media (prefers-color-scheme: dark) {
+  .feedback-player {
+    .controls {
+      .icon-button {
+        &:hover {
+          background: rgba($color-white, 0.15);
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react'
-import cx from 'classnames'
-import { SendChatMessage } from '../../api/chat'
+import React, { useEffect, useState, useRef } from 'react';
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { Input } from '../../components/unified/Input';
+import cx from 'classnames';
+import { SendChatMessage } from '../../api/chat';
 
 export default function FeedbackMessagePolling({
   Rating,
@@ -8,46 +11,46 @@ export default function FeedbackMessagePolling({
   socketConnected,
   items,
   me,
-  onMessageSent,
+  onMessageSent
 }) {
-  const recent_element = useRef()
-  const { email, nickname, rating } = me
-  const [text, set_text] = useState('')
-  const [sending, setSending] = useState(false)
+  const recent_element = useRef();
+  const { email, nickname, rating } = me;
+  const [text, set_text] = useState('');
+  const [sending, setSending] = useState(false);
 
   // 메시지 전송
   async function SendMessage() {
-    const valid_text = text.replaceAll(' ', '')
+    const valid_text = text.replaceAll(' ', '');
     if (socketConnected) {
       if (valid_text.length > 0) {
-        setSending(true)
+        setSending(true);
         try {
           await SendChatMessage(project_id, {
             email: email,
             nickname: nickname,
             rating: rating,
-            message: text,
-          })
-          set_text('')
+            message: text
+          });
+          set_text('');
           // 메시지 전송 후 부모 컴포넌트에 알림
           if (onMessageSent) {
-            onMessageSent()
+            onMessageSent();
           }
         } catch (error) {
-          console.error('메시지 전송 실패:', error)
-          window.alert('메시지 전송에 실패했습니다.')
+          
+          window.alert('메시지 전송에 실패했습니다.');
         } finally {
-          setSending(false)
+          setSending(false);
         }
       }
     } else {
-      window.alert('채팅 서버가 불안정합니다. 재접속 해주세요.')
+      window.alert('채팅 서버가 불안정합니다. 재접속 해주세요.');
     }
   }
 
   function enterkey() {
     if (window.event.keyCode == 13 && !sending) {
-      SendMessage()
+      SendMessage();
     }
   }
 
@@ -56,38 +59,38 @@ export default function FeedbackMessagePolling({
       recent_element.current.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
-        inline: 'nearest',
-      })
+        inline: 'nearest'
+      });
     }
-  }, [items])
+  }, [items]);
 
   return (
-    socketConnected && (
-      <>
+    socketConnected &&
+    <>
         <div className="comment">
           <ul>
-            {items.length > 0 ? (
-              items.map((item, index) => (
-                <li
-                  key={item.id || index}
-                  ref={index === items.length - 1 ? recent_element : null}
-                >
+            {items.length > 0 ?
+          items.map((item, index) =>
+          <li
+            key={item.id || index}
+            ref={index === items.length - 1 ? recent_element : null}>
+
                   <div className="flex align_center">
                     <div
-                      className={
-                        Rating(item.rating) == '관리자'
-                          ? 'img_box admin'
-                          : 'img_box basic'
-                      }
-                    ></div>
+                className={
+                Rating(item.rating) == '관리자' ?
+                'img_box admin' :
+                'img_box basic'
+                }>
+              </div>
                     <div className="txt_box">
                       <span className="name">
                         {item.nickname}
                         <small
-                          className={
-                            Rating(item.rating) == '관리자' ? 'admin' : 'basic'
-                          }
-                        >
+                    className={
+                    Rating(item.rating) == '관리자' ? 'admin' : 'basic'
+                    }>
+
                           {Rating(item.rating)}
                         </small>
                       </span>
@@ -95,32 +98,28 @@ export default function FeedbackMessagePolling({
                     </div>
                   </div>
                 </li>
-              ))
-            ) : (
-              <div className="empty">아직 메시지가 없습니다.</div>
-            )}
+          ) :
+
+          <div className="empty">아직 메시지가 없습니다.</div>
+          }
           </ul>
         </div>
         <div className="send">
-          <input
-            type="text"
-            name=""
-            id=""
-            placeholder="채팅을 입력해주세요"
-            value={text}
-            onChange={(e) => set_text(e.target.value)}
-            onKeyUp={enterkey}
-            disabled={sending}
-          />
-          <button 
-            className="common send" 
-            onClick={SendMessage}
-            disabled={sending}
-          >
+          <UnifiedInput
+          type="text"
+          name=""
+          id=""
+          placeholder="채팅을 입력해주세요"
+          value={text}
+          onChange={(e) = aria-label="채팅을 입력해주세요" /> set_text(e.target.value)}
+          onKeyUp={enterkey}
+          disabled={sending} />
+
+          <UnifiedButton onClick={SendMessage} onKeyDown={(e) => e.key === 'Enter' && SendMessage} disabled aria-label="Click">
             {sending ? '전송중...' : '전송'}
-          </button>
+          </UnifiedButton>
         </div>
-      </>
-    )
-  )
+      </>);
+
 }
+import { Button } from '../../components/unified/Button';

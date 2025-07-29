@@ -1,0 +1,164 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-prettier-scss"
+  ],
+  "plugins": [
+    "stylelint-scss",
+    "stylelint-order"
+  ],
+  "rules": {
+    "color-no-hex": [true, {
+      "message": "하드코딩된 색상 대신 디자인 토큰을 사용하세요 (예: $color-primary)"
+    }],
+    "color-named": ["never", {
+      "message": "색상 이름 대신 디자인 토큰을 사용하세요"
+    }],
+    "declaration-property-value-disallowed-list": {
+      "/.*/": [
+        "/^#[0-9a-fA-F]{3,6}$/",
+        "/^rgb/",
+        "/^rgba/"
+      ],
+      "message": "하드코딩된 색상 대신 디자인 토큰을 사용하세요"
+    },
+    "function-disallowed-list": ["rgb", "rgba", "hsl", "hsla"],
+    "declaration-no-important": [true, {
+      "message": "!important 사용 금지 - CSS 특정성으로 해결하세요"
+    }],
+    "unit-disallowed-list": [
+      ["px"],
+      {
+        "ignoreProperties": {
+          "px": ["border", "border-width", "box-shadow", "clip"]
+        },
+        "message": "픽셀 대신 디자인 토큰을 사용하세요 (예: $spacing-md)"
+      }
+    ],
+    "scss/dollar-variable-pattern": [
+      "^(color|spacing|font|border|shadow|duration|z-index|breakpoint|gradient|opacity|aspect|container)-",
+      {
+        "message": "변수명은 디자인 토큰 규칙을 따라야 합니다"
+      }
+    ],
+    "scss/at-import-partial-extension": "never",
+    "scss/at-import-no-partial-leading-underscore": true,
+    "property-no-unknown": [
+      true,
+      {
+        "ignoreProperties": [
+          "composes"
+        ]
+      }
+    ],
+    "selector-class-pattern": [
+      "^[a-z][a-zA-Z0-9]+$",
+      {
+        "message": "클래스명은 camelCase를 사용하세요"
+      }
+    ],
+    "max-nesting-depth": [3, {
+      "message": "중첩은 최대 3단계까지만 허용됩니다"
+    }],
+    "selector-max-id": [0, {
+      "message": "ID 선택자 사용 금지 - 클래스를 사용하세요"
+    }],
+    "order/properties-order": [
+      {
+        "groupName": "positioning",
+        "properties": [
+          "position",
+          "top",
+          "right",
+          "bottom",
+          "left",
+          "z-index"
+        ]
+      },
+      {
+        "groupName": "display",
+        "properties": [
+          "display",
+          "flex",
+          "flex-direction",
+          "flex-wrap",
+          "justify-content",
+          "align-items",
+          "align-content",
+          "gap",
+          "grid",
+          "grid-template",
+          "grid-template-columns",
+          "grid-template-rows"
+        ]
+      },
+      {
+        "groupName": "dimensions",
+        "properties": [
+          "width",
+          "min-width",
+          "max-width",
+          "height",
+          "min-height",
+          "max-height"
+        ]
+      },
+      {
+        "groupName": "spacing",
+        "properties": [
+          "margin",
+          "margin-top",
+          "margin-right",
+          "margin-bottom",
+          "margin-left",
+          "padding",
+          "padding-top",
+          "padding-right",
+          "padding-bottom",
+          "padding-left"
+        ]
+      },
+      {
+        "groupName": "typography",
+        "properties": [
+          "font",
+          "font-family",
+          "font-size",
+          "font-weight",
+          "line-height",
+          "text-align",
+          "text-decoration",
+          "text-transform"
+        ]
+      },
+      {
+        "groupName": "visual",
+        "properties": [
+          "color",
+          "background",
+          "background-color",
+          "background-image",
+          "background-size",
+          "border",
+          "border-radius",
+          "box-shadow",
+          "opacity"
+        ]
+      },
+      {
+        "groupName": "animation",
+        "properties": [
+          "transition",
+          "animation",
+          "transform"
+        ]
+      }
+    ]
+  },
+  "ignoreFiles": [
+    "**/*.css",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/*.backup"
+  ]
+}

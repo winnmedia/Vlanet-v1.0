@@ -1,16 +1,19 @@
 
 
-
-
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from '../../components/PageTemplate'
+import dynamic from 'next/dynamic';
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import SideBar from '../../components/SideBar'
 import CalendarBody from '../../tasks/Calendar/CalendarBody'
 import CalendarHeader from '../../tasks/Calendar/CalendarHeader'
 import CalendarTotal from '../../tasks/Calendar/CalendarTotal'
 import ProjectList from '../../tasks/Calendar/ProjectList'
-import CalendarEnhanced from '../../components/CalendarEnhanced'
-import ProjectPhaseBoard from '../../components/ProjectPhaseBoard'
+
+import { Input } from '../../components/unified/Input'
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter, useLocation } from '../../util/nextNavigation'
@@ -93,11 +96,7 @@ export default function Calendar() {
       .then(() => {
         refetch()
       })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
-          console.error('Failed to update phase:', err)
-        }
-      })
+      .catch(err => {})
     
     return controller
   }
@@ -109,11 +108,7 @@ export default function Calendar() {
       .then(() => {
         refetch()
       })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
-          console.error('Failed to add memo:', err)
-        }
-      })
+      .catch(err => {})
     
     return controller
   }
@@ -142,8 +137,6 @@ export default function Calendar() {
     
     // 이미 로드 중이거나 로드됨을 추적하는 플래그가 필요
     // 현재는 주석 처리하여 Calendar에서는 프로젝트 목록을 가져오지 않음
-    console.log('[Calendar] Component mounted, project_list length:', project_list?.length || 0)
-    
     // refetchProject 호출을 완전히 제거
     // App.js에서만 호출하도록 함
   }, []) // 빈 배열로 최초 마운트 시에만 실행
@@ -155,15 +148,8 @@ export default function Calendar() {
       
       // 새로 생성된 프로젝트 정보가 있으면 로그
       if (location.state.newProjectId) {
-        console.log('[Calendar] New project created:', {
-          id: location.state.newProjectId,
-          name: location.state.newProjectName
-        })
-        
         // 프로젝트 목록 강제 새로고침
-        refetchProject(dispatch, navigate).then(() => {
-          console.log('[Calendar] Project list refreshed after new project creation')
-        })
+        refetchProject(dispatch, navigate).then(() => {})
       }
       
       // 메시지를 3초 후에 자동으로 사라지게 함
@@ -186,12 +172,9 @@ export default function Calendar() {
     //이전 날짜
     let PVLastDate = new Date(year, month, 0).getDate()
     let PVLastDay = new Date(year, month, 0).getDay()
-    console.log('이전날짜', PVLastDate, PVLastDay)
     //다음 날짜
     const ThisLasyDay = new Date(year, month + 1, 0).getDay()
     const ThisLasyDate = new Date(year, month + 1, 0).getDate()
-    console.log('다음날짜', ThisLasyDate, ThisLasyDay)
-
     //이전 날짜 만들기
     let PVLD = []
     if (PVLastDay !== 6) {
@@ -201,6 +184,15 @@ export default function Calendar() {
         --pre_year
         pre_month = 11
       }
+import { Button } from '../../components/unified/Button'
+const ProjectPhaseBoard = dynamic(() => import('../../components/ProjectPhaseBoard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
       for (let i = 0; i < PVLastDay + 1; i++) {
         PVLD.unshift(new Date(pre_year, pre_month, PVLastDate - i))
       }
@@ -251,12 +243,11 @@ export default function Calendar() {
     changeDate(DateType)
   }, [])
 
-
   return (
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar />
-        <main>
+        <main role="main">
           {/* 메시지 표시 */}
           {message && (
             <div style={{
@@ -282,9 +273,9 @@ export default function Calendar() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               캘린더
-              <button 
+              <UnifiedButton 
                 className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
-                onClick={() => setIsCollapsed(!isCollapsed)}
+                onClick={() = aria-label="Click" type="button"> setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)}
               />
             </div>
             <div className="calendar-toolbar" style={{ 
@@ -299,8 +290,8 @@ export default function Calendar() {
                 alignItems: 'center'
               }}>
                 <li className={viewMode === 'month' ? 'active' : ''}>
-                  <button 
-                    onClick={() => setViewMode('month')}
+                  <UnifiedButton 
+                    onClick={() = aria-label="Click" type="button"> setViewMode('month')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('month')}
                     style={{
                       padding: '8px 16px',
                       fontSize: '14px',
@@ -325,11 +316,10 @@ export default function Calendar() {
                   }}
                 >
                   월간 보기
-                </button>
+                </UnifiedButton>
               </li>
               <li className={viewMode === 'timeline' ? 'active' : ''}>
-                <button 
-                  onClick={() => setViewMode('timeline')}
+                <Button onClick={() = aria-label="Click"> setViewMode('timeline')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('timeline')}
                   style={{
                     padding: '8px 16px',
                     fontSize: '14px',
@@ -354,11 +344,10 @@ export default function Calendar() {
                   }}
                 >
                   타임라인
-                </button>
+                </Button>
               </li>
               <li className={viewMode === 'gantt' ? 'active' : ''}>
-                <button 
-                  onClick={() => setViewMode('gantt')}
+                <Button onClick={() = aria-label="Click"> setViewMode('gantt')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('gantt')}
                   style={{
                     padding: '8px 16px',
                     fontSize: '14px',
@@ -383,15 +372,15 @@ export default function Calendar() {
                   }}
                 >
                   간트 차트
-                </button>
+                </Button>
               </li>
               <div style={{ borderLeft: '1px solid #e0e0e0', height: '16px', margin: '0 12px' }}></div>
               <li style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <input
+                <Input
                   type="text"
                   placeholder="프로젝트 검색..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) = aria-label="프로젝트 검색..."> setSearchTerm(e.target.value)}
                   style={{
                     padding: '6px 12px',
                     fontSize: '13px',
@@ -407,8 +396,7 @@ export default function Calendar() {
                     e.target.style.borderColor = '#e0e0e0'
                   }}
                 />
-                <select
-                  value={selectedPhase}
+                <UnifiedInput variant="select" className="" value={selectedPhase}
                   onChange={(e) => setSelectedPhase(e.target.value)}
                   style={{
                     padding: '6px 12px',
@@ -435,7 +423,7 @@ export default function Calendar() {
                   <option value="video_preview">시사</option>
                   <option value="confirmation">컨펌</option>
                   <option value="video_delivery">납품</option>
-                </select>
+                </UnifiedInput>
               </li>
             </ul>
             </div>

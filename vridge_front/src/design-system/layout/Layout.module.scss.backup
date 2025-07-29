@@ -1,0 +1,567 @@
+// VideoPlanet 통합 레이아웃 시스템
+// 모든 레이아웃 스타일을 하나로 통합
+
+@use '../tokens' as *;
+
+// ========== 기본 레이아웃 믹스인 ==========
+
+// 페이지 레이아웃
+@mixin page-layout {
+  display: flex;
+  min-height: 100vh;
+  background: $color-background;
+}
+
+// 콘텐츠 영역
+@mixin content-area {
+  flex: 1;
+  padding: $spacing-xl;
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-sm;
+  }
+}
+
+// 카드 컨테이너
+@mixin card {
+  background: $color-white;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-default;
+  border: 1px solid $color-border-light;
+  transition: all $transition-fast;
+  
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-1px);
+  }
+}
+
+// 섹션 헤더
+@mixin section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border-light;
+}
+
+// ========== 홈 페이지 레이아웃 ==========
+
+.homeLayout {
+  @include page-layout;
+  
+  .homeContent {
+    @include content-area;
+    
+    .homeHeader {
+      margin-bottom: $spacing-xl;
+      
+      h1 {
+        font-size: $font-size-2xl;
+        font-weight: 700;
+        color: $color-text-primary;
+        margin-bottom: $spacing-sm;
+      }
+      
+      .welcomeMessage {
+        font-size: $font-size-base;
+        color: $color-text-secondary;
+      }
+    }
+  }
+}
+
+// 프로젝트 생성 섹션
+.createProjectSection {
+  @include card;
+  margin-bottom: $spacing-xl;
+  text-align: center;
+  
+  .createIcon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto $spacing-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+  }
+  
+  h2 {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-sm;
+    color: $color-text-primary;
+  }
+  
+  p {
+    color: $color-text-secondary;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// 프로젝트 그리드
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.projectCard {
+  @include card;
+  cursor: pointer;
+  
+  &:hover {
+    border-color: $color-primary;
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+  
+  .projectHeader {
+    @include section-header;
+    padding-bottom: $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+  
+  .projectTitle {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $color-text-primary;
+    margin: 0;
+  }
+  
+  .projectStatus {
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: 500;
+    
+    &.active {
+      background: $color-success-light;
+      color: $color-success;
+    }
+    
+    &.completed {
+      background: $color-info-light;
+      color: $color-info;
+    }
+  }
+}
+
+// ========== 홈 액티비티 그리드 ==========
+
+.homeActivityGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+.activityCard,
+.invitationCard {
+  @include card;
+  
+  .cardHeader {
+    @include section-header;
+    
+    .cardTitle {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $color-text-primary;
+      margin: 0;
+    }
+    
+    .collapseBtn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: $color-gray-100;
+      border-radius: $radius-sm;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all $transition-fast;
+      
+      &:hover {
+        background: $color-gray-200;
+      }
+      
+      &::after {
+        content: '−';
+        font-size: 20px;
+        font-weight: 600;
+        color: $color-text-secondary;
+        line-height: 1;
+      }
+      
+      &.collapsed::after {
+        content: '+';
+      }
+    }
+  }
+  
+  .cardContent {
+    min-height: 200px;
+  }
+}
+
+// ========== 피드백 페이지 레이아웃 ==========
+
+.feedbackLayout {
+  display: flex;
+  height: calc(100vh - 100px);
+  margin: 0 0 $spacing-xl;
+  padding: $spacing-lg;
+  padding-left: $spacing-xs;
+  gap: $spacing-sm;
+  
+  // 큰 화면 - 좌우 배치
+  @media (min-width: 1401px) {
+    flex-direction: row;
+    
+    .videoSection {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+      
+      .videoInner {
+        flex: 1;
+        min-height: 500px;
+        
+        &.active {
+          display: flex;
+          
+          .feedbackPlayer {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+      
+      .controlsBox {
+        flex-shrink: 0;
+      }
+    }
+    
+    .sideSection {
+      width: 450px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+  }
+  
+  // 중간 화면 - 세로 배치
+  @media (max-width: 1400px) {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 100px);
+    
+    .videoSection {
+      width: 100%;
+      
+      .videoInner {
+        height: 500px;
+      }
+    }
+    
+    .sideSection {
+      width: 100%;
+      height: 600px;
+      margin-top: $spacing-lg;
+    }
+  }
+  
+  // 모바일
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-sm;
+    gap: $spacing-sm;
+    
+    .videoSection .videoInner {
+      height: 300px;
+    }
+    
+    .sideSection {
+      height: 400px;
+      margin-top: $spacing-md;
+    }
+  }
+}
+
+// 피드백 사이드 섹션
+.feedbackSide {
+  @include card;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  .sideHeader {
+    padding: $spacing-lg $spacing-lg;
+    border-bottom: 1px solid $color-border-light;
+    background: $color-gray-50;
+    flex-shrink: 0;
+    
+    .sideTitle {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $color-text-primary;
+    }
+  }
+  
+  .tabContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    
+    .tabMenu {
+      padding: $spacing-sm $spacing-md;
+      background: $color-gray-100;
+      border-bottom: 1px solid $color-border-light;
+      flex-shrink: 0;
+    }
+    
+    .tabContent {
+      flex: 1;
+      overflow-y: auto;
+      padding: $spacing-lg;
+      
+      // 스크롤바 스타일
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: $color-gray-100;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: $color-gray-400;
+        border-radius: 3px;
+        
+        &:hover {
+          background: $color-gray-500;
+        }
+      }
+    }
+  }
+}
+
+// ========== 프로젝트 생성 레이아웃 ==========
+
+.projectCreateLayout {
+  @include page-layout;
+  
+  .createContent {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing-xl;
+    
+    @media (max-width: $breakpoint-md) {
+      padding: $spacing-md;
+    }
+  }
+}
+
+// 단계 표시기
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-2xl;
+  
+  .step {
+    display: flex;
+    align-items: center;
+    
+    .stepCircle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: $color-gray-200;
+      color: $color-text-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: all $transition-button;
+      
+      &.active {
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+        color: white;
+      }
+      
+      &.completed {
+        background: $color-success;
+        color: white;
+      }
+    }
+    
+    .stepLine {
+      width: 100px;
+      height: 2px;
+      background: $color-gray-200;
+      margin: 0 $spacing-sm;
+      
+      &.completed {
+        background: $color-success;
+      }
+    }
+    
+    &:last-child .stepLine {
+      display: none;
+    }
+  }
+}
+
+// 폼 섹션
+.formSection {
+  @include card;
+  margin-bottom: $spacing-lg;
+  
+  h2 {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-lg;
+    color: $color-text-primary;
+  }
+  
+  .formRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg;
+    
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+    }
+    
+    &.single {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// ========== 유틸리티 클래스 ==========
+
+.emptyState {
+  text-align: center;
+  padding: $spacing-2xl $spacing-lg;
+  color: $color-text-muted;
+  
+  .emptyIcon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto $spacing-lg;
+    opacity: 0.3;
+  }
+  
+  h3 {
+    font-size: $font-size-lg;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-sm;
+  }
+  
+  p {
+    color: $color-text-muted;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// 드롭다운 메뉴
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: $spacing-xs;
+  background: white;
+  border: 1px solid $color-border-light;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  min-width: 200px;
+  z-index: $z-dropdown;
+  
+  .dropdownItem {
+    padding: $spacing-sm $spacing-md;
+    cursor: pointer;
+    transition: background $transition-fast;
+    
+    &:hover {
+      background: $color-gray-50;
+    }
+    
+    &:first-child {
+      border-radius: $radius-md $radius-md 0 0;
+    }
+    
+    &:last-child {
+      border-radius: 0 0 $radius-md $radius-md;
+    }
+  }
+}
+
+// 토스트 알림
+.toastNotification {
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  background: white;
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-lg;
+  box-shadow: $shadow-xl;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  z-index: $z-notification;
+  animation: slideIn 0.3s ease;
+  
+  @media (max-width: $breakpoint-md) {
+    left: $spacing-md;
+    right: $spacing-md;
+    bottom: $spacing-md;
+  }
+  
+  &.success {
+    border-left: 4px solid $color-success;
+  }
+  
+  &.error {
+    border-left: 4px solid $color-danger;
+  }
+  
+  &.info {
+    border-left: 4px solid $color-info;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

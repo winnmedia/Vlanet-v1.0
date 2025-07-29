@@ -1,0 +1,952 @@
+@import '../styles/design-tokens';
+
+@import '../../design-system/tokens/_colors';
+@import '../../design-system/tokens/_spacing';
+@import '../../design-system/tokens/_effects';
+
+// 피드백 페이지 버튼 스타일 - 백업 폴더 디자인 100% 참고
+// Version: 3.0 - 버튼 스타일 인라인에서 CSS로 변경
+
+// ===== 브랜드 색상 정의 (백업 폴더 기준) =====
+$brand-blue: $color-primary;
+$brand-blue-hover: $color-primary-hover;
+$brand-red: $color-danger;
+$brand-red-hover: $color-danger-hover;
+$brand-gray: $color-gray-600;
+$brand-gray-hover: #5a6268;
+
+// 공통 버튼 믹스인 (백업 폴더에서 참고)
+@mixin button-base {
+  display: inline-flex ;
+  align-items: center ;
+  gap: $spacing-xs * 1.5 ;
+  padding: $spacing-sm + $spacing-xs / 2 $spacing-lg ;
+  border: none !important;
+  border-radius: $radius-md !important;
+  font-size: 13px ;
+  font-weight: 600 ;
+  cursor: pointer ;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba($color-black, 0.15) !important;
+  position: relative ;
+  overflow: hidden ;
+  
+  // 리플 효과
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $spacing-0;
+    height: $spacing-0;
+    border-radius: $border-radius-full;
+    background: rgba($color-white, $opacity-50);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
+  
+  svg {
+    width: $spacing-md + 2px ;
+    height: $spacing-md + 2px ;
+    flex-shrink: 0 ;
+  }
+  
+  &:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed ;
+    transform: none !important;
+    box-shadow: $shadow-none !important;
+  }
+}
+
+// 파란색 버튼 (기본) - 백업 폴더 스타일
+.feedbackButtonPrimary,
+label.feedbackButtonPrimary {
+  @include button-base;
+  & {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba($color-primary, $opacity-25) !important;
+  }
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba($color-primary, 0.4) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+// 빨간색 버튼 (삭제/취소) - 백업 폴더 스타일
+.feedbackButtonDanger {
+  @include button-base;
+  & {
+    background: linear-gradient(135deg, $color-danger 0%, $color-danger-hover 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba($color-danger, $opacity-25) !important;
+  }
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba($color-danger, 0.4) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+// 회색 버튼 (공유) - 백업 폴더 스타일
+.feedbackButtonSecondary {
+  display: inline-flex ;
+  align-items: center ;
+  gap: $spacing-xs * 1.5 ;
+  padding: $spacing-sm $spacing-md + $spacing-xs / 2 ;
+  background: white !important;
+  color: $color-gray-600 !important;
+  border: 1px solid $color-gray-300 !important;
+  border-radius: $radius-md !important;
+  font-size: 13px ;
+  font-weight: 500 ;
+  cursor: pointer ;
+  transition: all 0.2s ease !important;
+  
+  svg {
+    width: $spacing-lg ;
+    height: $spacing-lg ;
+    flex-shrink: 0 ;
+  }
+  
+  &:hover {
+    background: $color-gray-50 !important;
+    border-color: $color-gray-500 !important;
+    color: $color-gray-700 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba($color-black, 0.08) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+// 아웃라인 버튼 (업로드 가이드) - 백업 폴더 스타일
+.feedbackButtonOutline {
+  display: inline-flex ;
+  align-items: center ;
+  justify-content: center ;
+  gap: $spacing-sm ;
+  padding: $spacing-md $spacing-xl ;
+  background: white !important;
+  color: $color-primary !important;
+  border: 2px solid $color-primary !important;
+  border-radius: $radius-md !important;
+  font-size: $font-size-sm ;
+  font-weight: 600 ;
+  cursor: pointer ;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    background: $color-primary !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+// 토글 버튼 - 백업 폴더 스타일
+.feedbackButtonToggle {
+  display: inline-flex ;
+  align-items: center ;
+  gap: $spacing-sm ;
+  padding: $spacing-sm $spacing-lg ;
+  background: $color-gray-50 !important;
+  color: $color-gray-700 !important;
+  border: 1px solid $color-gray-300 !important;
+  border-radius: $radius-sm + 2px !important;
+  font-size: $font-size-sm ;
+  font-weight: 500 ;
+  cursor: pointer ;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    background: $color-gray-200 !important;
+    color: $color-gray-900 !important;
+  }
+  
+  &:active {
+    background: $color-gray-300 !important;
+  }
+}
+
+// 아이콘 전용 버튼 - 컴팩트 디자인
+.feedbackButtonIconOnly {
+  display: inline-flex ;
+  align-items: center ;
+  justify-content: center ;
+  width: $spacing-3xl + $spacing-xs ;
+  height: $spacing-3xl + $spacing-xs ;
+  padding: $spacing-0 ;
+  background: white !important;
+  color: $color-gray-600 !important;
+  border: 1px solid $color-gray-200 !important;
+  border-radius: $radius-md !important;
+  cursor: pointer ;
+  transition: all 0.2s ease !important;
+  position: relative ;
+  
+  svg {
+    width: $spacing-md + 2px ;
+    height: $spacing-md + 2px ;
+  }
+  
+  // 툴팁 스타일
+  &[title] {
+    &::before {
+      content: attr(title);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px);
+      padding: $spacing-xs * 1.5 $spacing-sm + $spacing-xs / 2;
+      background: rgba(33, 37, 41, 0.95);
+      color: white;
+      font-size: $font-size-xs;
+      font-weight: 500;
+      white-space: nowrap;
+      border-radius: $radius-sm + 2px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 1$color-black;
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: $spacing-0;
+      height: $spacing-0;
+      border-left: $spacing-xs solid transparent;
+      border-right: $spacing-xs solid transparent;
+      border-top: $spacing-xs solid rgba(33, 37, 41, $spacing-0.95);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 1$color-black;
+    }
+    
+    &:hover::before,
+    &:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-8px);
+    }
+    
+    &:hover::after {
+      transform: translateX(-50%) translateY(-3px);
+    }
+  }
+  
+  &:hover {
+    border-color: $brand-blue !important;
+    color: $brand-blue !important;
+    background: rgba($color-primary, 0.05) !important;
+  }
+  
+  &:active {
+    transform: scale(0.95) !important;
+  }
+}
+
+// 전체 너비 버튼
+.feedbackButtonPrimaryFull {
+  @extend .feedbackButtonPrimary;
+  width: 100% ;
+}
+
+// 작은 버튼 변형
+.feedbackButtonSmall {
+  padding: $spacing-sm $spacing-lg ;
+  font-size: 13px ;
+  min-height: $spacing-3xl + $spacing-xs ;
+  min-width: 90px ;
+  
+  svg {
+    width: $spacing-lg ;
+    height: $spacing-lg ;
+  }
+}
+
+// 모달 버튼들
+.btnCancel {
+  @extend .feedbackButtonSecondary;
+  @extend .feedbackButtonSmall;
+}
+
+.btnAnalyze {
+  @extend .feedbackButtonPrimary;
+  @extend .feedbackButtonSmall;
+}
+
+// 액션 버튼 그룹 스타일
+.actionButtonGroup {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-0;
+  margin-top: $spacing-lg;
+  border-top: 1px solid $color-gray-200;
+  flex-wrap: nowrap;
+  
+  @media (max-width: $breakpoint-md) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: $spacing-xl;
+    
+    &::-webkit-scrollbar {
+      height: $spacing-xs;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: $radius-xs;
+    }
+  }
+}
+
+// 비디오 컨트롤 버튼 그룹 스타일 - Feedback.jsx에서 인라인 스타일로 처리
+
+// 프로젝트 헤더 스타일
+.projectHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid $color-gray-200;
+  margin-bottom: $spacing-xl;
+}
+
+.projectTitle {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-gray-900;
+  letter-spacing: -0.5px;
+}
+
+.infoButton {
+  width: $spacing-3xl ;
+  height: $spacing-3xl ;
+  padding: $spacing-0 ;
+  border-radius: $border-radius-full !important;
+  background: $color-gray-50 !important;
+  border: 1px solid #e0e0e0 !important;
+  display: flex ;
+  align-items: center ;
+  justify-content: center ;
+  cursor: pointer ;
+  transition: all 0.2s ease !important;
+  
+  svg {
+    width: $spacing-lg ;
+    height: $spacing-lg ;
+    color: $color-gray-600 !important;
+  }
+  
+  &:hover {
+    background: $color-white !important;
+    border-color: $color-primary !important;
+    transform: scale(1.05) !important;
+    
+    svg {
+      color: $color-primary !important;
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95) !important;
+  }
+}
+
+// 탭 메뉴 컨테이너
+.tabMenu {
+  display: flex ;
+  gap: $spacing-xs ;
+  padding: $spacing-xs ;
+  background: #f0f1f3 !important;
+  border-radius: $radius-md + 2px !important;
+  margin-bottom: $spacing-lg !important;
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-xs * 0.75 ;
+    gap: $spacing-xs / 2 ;
+  }
+}
+
+// 탭 버튼 스타일
+.tabButton {
+  flex: 1;
+  padding: $spacing-sm $spacing-md ;
+  background: transparent !important;
+  color: $color-gray-600 !important;
+  border: none !important;
+  border-radius: $radius-sm + 2px !important;
+  font-size: 13px ;
+  font-weight: 500 ;
+  cursor: pointer ;
+  transition: all 0.2s ease !important;
+  white-space: nowrap ;
+  min-width: $spacing-0 ;
+  overflow: hidden ;
+  text-overflow: ellipsis ;
+  
+  &:hover:not(.active) {
+    background: rgba($color-white, $opacity-50) !important;
+    color: $color-gray-700 !important;
+  }
+  
+  &.active {
+    background: white !important;
+    color: $brand-blue !important;
+    font-weight: 600 ;
+    box-shadow: 0 1px 3px rgba($color-black, 0.1) !important;
+    position: relative ;
+    
+    // 활성 탭 인디케이터
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -$spacing-xs;
+      left: 50%;
+      transform: translateX(-50%);
+      width: $spacing-xl;
+      height: $spacing-xs * 0.75;
+      background: $brand-blue;
+      border-radius: $radius-xs;
+      opacity: 0;
+    }
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-xs * 1.5 $spacing-sm ;
+    font-size: $font-size-xs ;
+  }
+}
+
+// 초대 관련 버튼 스타일
+.inviteButton {
+  @extend .feedbackButtonPrimary;
+  
+  svg {
+    width: $spacing-lg ;
+    height: $spacing-lg ;
+  }
+}
+
+// 재전송/취소 버튼 그룹
+.invitationActions {
+  display: flex;
+  gap: $spacing-sm;
+  
+  button {
+    @extend .feedbackButtonSmall;
+    
+    &:first-child {
+      @extend .feedbackButtonSecondary;
+    }
+    
+    &:last-child {
+      @extend .feedbackButtonDanger;
+    }
+  }
+}
+
+// 피드백 액션 버튼
+.feedbackActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  
+  button {
+    @extend .feedbackButtonSecondary;
+    @extend .feedbackButtonSmall;
+  }
+}
+
+// 프로젝트 정보 토글 버튼
+.projectInfoToggle {
+  @extend .feedbackButtonIconOnly;
+  margin-left: auto;
+}
+
+// 전체보기 버튼
+.fullviewButton {
+  @extend .feedbackButtonSecondary;
+  border-style: dashed !important;
+  
+  &:hover {
+    border-style: solid !important;
+  }
+}
+
+// 파일 업로드 라벨 스타일
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: $spacing-0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// 로딩 애니메이션
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+// 모달 푸터 버튼 그룹
+.footerButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  padding: $spacing-xl;
+  border-top: 1px solid $color-gray-200;
+  margin-top: $spacing-xl;
+}
+
+// 액션 버튼 그룹 컨테이너 - 컴팩트 디자인
+.actionButtonGroup {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: $color-gray-50;
+  border-radius: $radius-lg;
+  box-shadow: 0 1px 3px rgba($color-black, 0.05);
+  border: 1px solid $color-gray-200;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  
+  // 버튼 스타일 조정
+  button, label {
+    flex: 0 0 auto ;
+    position: relative;
+    z-index: 1;
+  }
+  
+  // 아이콘 버튼 그룹화
+  .file-upload-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  
+  // 구분선
+  &::after {
+    content: '';
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: $spacing-xl;
+    background: $color-gray-300;
+  }
+  
+  // 반응형
+  @media (max-width: $breakpoint-md) {
+    gap: $spacing-xs * 1.5;
+    padding: $spacing-sm;
+    
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// 프로젝트 타이틀 헤더
+.projectHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-sm;
+  
+  .projectTitle {
+    font-weight: 700;
+    font-size: 22px;
+    color: $color-gray-900;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    
+    // 긴 프로젝트명 처리
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100% - 50px);
+  }
+}
+
+// 정보 버튼 (원형)
+.infoButton {
+  width: $spacing-3xl + $spacing-xs ;
+  height: $spacing-3xl + $spacing-xs ;
+  min-width: $spacing-3xl + $spacing-xs ;
+  min-height: $spacing-3xl + $spacing-xs ;
+  padding: $spacing-0 ;
+  border-radius: $border-radius-full !important;
+  display: inline-flex ;
+  align-items: center ;
+  justify-content: center ;
+  background: $color-gray-50 !important;
+  border: 2px solid $color-gray-200 !important;
+  color: $color-gray-600 !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer ;
+  flex-shrink: 0 ;
+  position: relative ;
+  overflow: hidden ;
+  
+  svg {
+    width: $spacing-md + 2px ;
+    height: $spacing-md + 2px ;
+  }
+  
+  // 호버 효과
+  &:hover {
+    background: white !important;
+    border-color: $brand-blue !important;
+    color: $brand-blue !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.2) !important;
+  }
+  
+  // 활성 상태
+  &.active {
+    background: $brand-blue !important;
+    border-color: $brand-blue !important;
+    color: white !important;
+    box-shadow: 0 4px 16px rgba($color-primary, 0.3) !important;
+    
+    &:hover {
+      background: $brand-blue-hover !important;
+      border-color: $brand-blue-hover !important;
+      transform: scale(1.05) !important;
+    }
+  }
+  
+  // 클릭 효과
+  &:active {
+    transform: scale(0.95) !important;
+  }
+  
+  // 리플 효과 제거 (원형 버튼에는 불필요)
+  &::before {
+    display: none;
+  }
+}
+
+// 피드백 카드 스타일
+.feedbackCard {
+  background: white;
+  border: 1px solid $color-gray-200;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    border-color: $brand-blue;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  &.selected {
+    border-color: $brand-blue;
+    background: rgba($brand-blue, 0.05);
+    box-shadow: 0 4px 16px rgba($color-primary, 0.15);
+  }
+  
+  .feedbackHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-sm;
+    
+    .userInfo {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      
+      .avatar {
+        width: $spacing-3xl + $spacing-xs;
+        height: $spacing-3xl + $spacing-xs;
+        border-radius: $border-radius-full;
+        background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: $font-size-sm;
+      }
+      
+      .name {
+        font-weight: 600;
+        color: $color-gray-900;
+        font-size: $font-size-sm;
+      }
+    }
+    
+    .time {
+      font-size: $font-size-xs;
+      color: $color-gray-600;
+    }
+  }
+  
+  .feedbackContent {
+    color: $color-gray-700;
+    font-size: $font-size-sm;
+    line-height: 1.5;
+    
+    // 시간 표시 뱃지
+    .timeBadge {
+      display: inline-block;
+      background: $brand-blue;
+      color: white;
+      padding: $spacing-xs / 2 $spacing-sm;
+      border-radius: $radius-lg;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: $spacing-sm;
+    }
+  }
+}
+
+// 빈 상태 스타일
+.emptyState {
+  text-align: center;
+  padding: $spacing-5xl + $spacing-md $spacing-xl;
+  color: $color-gray-600;
+  
+  svg {
+    width: $spacing-lg * 4;
+    height: $spacing-lg * 4;
+    margin-bottom: $spacing-lg;
+    opacity: 0.3;
+  }
+  
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    margin-bottom: $spacing-sm;
+    color: $color-gray-700;
+  }
+  
+  p {
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-xl;
+  }
+}
+
+// 스켈레톤 로딩 UI
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #f0f0f0;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: $spacing-0;
+    right: $spacing-0;
+    bottom: $spacing-0;
+    left: $spacing-0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      rgba($color-white, $opacity-0) 0,
+      rgba($color-white, 0.2) 20%,
+      rgba($color-white, $opacity-50) 60%,
+      rgba($color-white, $opacity-0)
+    );
+    animation: shimmer 2s infinite;
+  }
+  
+  &.text {
+    height: $spacing-lg;
+    border-radius: $radius-sm;
+    margin-bottom: $spacing-sm;
+    
+    &.title {
+      height: $spacing-2xl;
+      width: 60%;
+    }
+    
+    &.subtitle {
+      height: $spacing-md + $spacing-xs / 2;
+      width: 40%;
+    }
+  }
+  
+  &.button {
+    height: 44px;
+    border-radius: $radius-md + 2px;
+    width: 120px;
+  }
+  
+  &.avatar {
+    width: $spacing-4xl;
+    height: $spacing-4xl;
+    border-radius: $border-radius-full;
+  }
+  
+  &.card {
+    height: 100px;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-md;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// 멤버 초대 섹션 스타일
+.member_header {
+  padding: $spacing-lg $spacing-0;
+  margin-bottom: $spacing-lg;
+  border-bottom: 1px solid $color-gray-200;
+}
+
+.invitation_section {
+  margin-top: $spacing-3xl;
+  padding-top: $spacing-2xl;
+  border-top: 2px solid $color-gray-200;
+  
+  .section_title {
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $color-gray-900;
+    margin-bottom: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    
+    &::before {
+      content: '';
+      display: inline-block;
+      width: $spacing-xs;
+      height: $spacing-lg;
+      background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%);
+      border-radius: $radius-xs;
+    }
+  }
+}
+
+.invitation_list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.invitation_item {
+  background: $color-gray-50;
+  border: 1px solid $color-gray-200;
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: $brand-blue;
+    background: white;
+    box-shadow: 0 2px 8px rgba($color-primary, 0.1);
+  }
+  
+  .invitation_info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    
+    .invitation_email {
+      font-weight: 500;
+      color: $color-gray-900;
+      font-size: $font-size-sm;
+    }
+    
+    .invitation_date {
+      font-size: $font-size-xs;
+      color: $color-gray-600;
+    }
+  }
+  
+  .invitation_actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    
+    .invitation_status {
+      padding: $spacing-xs $spacing-md;
+      border-radius: $radius-2xl;
+      font-size: $font-size-xs;
+      font-weight: 500;
+      
+      &.pending {
+        background: $color-warning;
+        color: white;
+      }
+      
+      &.accepted {
+        background: $color-success;
+        color: white;
+      }
+      
+      &.declined {
+        background: $color-danger;
+        color: white;
+      }
+      
+      &.cancelled {
+        background: $color-gray-600;
+        color: white;
+      }
+    }
+  }
+}

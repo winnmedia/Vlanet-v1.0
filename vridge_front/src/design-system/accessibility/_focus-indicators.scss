@@ -1,0 +1,204 @@
+@import '../styles/design-tokens';
+
+// 포커스 인디케이터 스타일
+// WCAG 2.1 Success Criterion 2.4.7: Focus Visible
+
+@use '../tokens' as *;
+
+// ========== 기본 포커스 스타일 ==========
+// 모든 포커스 가능한 요소에 적용
+:focus {
+  outline: $spacing-2xs solid $color-primary;
+  outline-offset: $spacing-2xs;
+}
+
+// 포커스 시각화 개선 (브라우저 지원)
+:focus-visible {
+  outline: $spacing-2xs solid $color-primary;
+  outline-offset: $spacing-2xs;
+}
+
+// 마우스 클릭 시 포커스 링 제거
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// ========== 포커스 스타일 믹스인 ==========
+@mixin focus-ring($color: $color-primary, $width: $spacing-2xs, $offset: $spacing-2xs) { &:focus-visible { outline: $width solid $color;
+    outline-offset: $offset;
+  }
+}
+
+@mixin focus-shadow($color: $color-primary, $spread: $spacing-xs) {
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 $spread rgba($color, 0.4);
+  }
+}
+
+@mixin focus-within-ring($color: $color-primary) {
+  &:focus-within {
+    outline: $spacing-2xs solid $color;
+    outline-offset: $spacing-2xs;
+  }
+}
+
+// ========== 컴포넌트별 포커스 스타일 ==========
+// 버튼
+button,
+.button,
+[role="button"] {
+  @include focus-shadow($color-primary, $spacing-xs);
+  
+  &.button-danger {
+    @include focus-shadow($color-danger, $spacing-xs);
+  }
+  
+  &.button-success {
+    @include focus-shadow($color-success, $spacing-xs);
+  }
+}
+
+// 링크
+a {
+  @include focus-ring($color-primary, $spacing-2xs, $spacing-2xs);
+  
+  &:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: $spacing-2xs;
+  }
+}
+
+// 입력 필드
+input,
+textarea,
+select {
+  @include focus-shadow($color-primary, $spacing-xs);
+  
+  &:focus-visible {
+    border-color: $color-primary;
+  }
+  
+  &.error {
+    @include focus-shadow($color-danger, $spacing-xs);
+  }
+}
+
+// 체크박스와 라디오
+input[type="checkbox"],
+input[type="radio"] {
+  @include focus-ring($color-primary, $spacing-2xs, $spacing-xs);
+}
+
+// 탭 네비게이션
+[role="tab"] {
+  @include focus-ring($color-primary, $spacing-2xs, -$spacing-2xs);
+  
+  &[aria-selected="true"] {
+    @include focus-shadow($color-primary, $spacing-xs);
+  }
+}
+
+// 메뉴 아이템
+[role="menuitem"],
+[role="option"] {
+  &:focus-visible {
+    outline: none;
+    background-color: $color-primary-light;
+    color: $color-primary-dark;
+  }
+}
+
+// 카드와 리스트 아이템
+.card,
+.list-item {
+  &.clickable {
+    @include focus-within-ring($color-primary);
+  }
+}
+
+// 모달과 다이얼로그
+[role="dialog"],
+.modal {
+  @include focus-within-ring($color-primary);
+}
+
+// ========== 포커스 트랩 ==========
+// 모달이나 드롭다운 내에서 포커스 순환
+.focus-trap {
+  &:focus-within {
+    .focus-trap-start:focus {
+      + .focus-trap-content {
+        :last-child:focus {
+          ~ .focus-trap-end {
+            @include focus-ring($color-primary);
+          }
+        }
+      }
+    }
+  }
+}
+
+// ========== 스킵 링크 ==========
+.skip-link {
+  position: absolute;
+  top: -$spacing-2xl;
+  left: $spacing-0;
+  background: $color-primary;
+  color: $color-white;
+  padding: $spacing-sm $spacing-md;
+  text-decoration: none;
+  z-index: $z-tooltip;
+  
+  &:focus {
+    top: $spacing-0;
+  }
+}
+
+// ========== 고대비 모드 ==========
+@media (prefers-contrast: high) {
+  :focus-visible {
+    outline-width: $spacing-xs - $spacing-2xs;
+    outline-style: solid;
+  }
+  
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline-offset: $spacing-xs;
+  }
+}
+
+// ========== 다크 모드 포커스 ==========
+@media (prefers-color-scheme: dark) {
+  :focus-visible {
+    outline-color: $color-primary-light;
+  }
+  
+  [role="menuitem"]:focus-visible,
+  [role="option"]:focus-visible {
+    background-color: rgba($color-primary-light, 0.2);
+    color: $color-primary-light;
+  }
+}&:focus,
+  &:focus-visible {
+    // ========== 포커스 유틸리티 클래스 ==========
+.focus-none.focus-none { outline: none; }
+    box-shadow: $shadow-none;
+}
+
+.focus-ring {
+  @include focus-ring($color-primary);
+}
+
+.focus-shadow {
+  @include focus-shadow($color-primary);
+}
+
+// 포커스 색상 변형
+.focus-primary { @include focus-ring($color-primary); }
+.focus-secondary { @include focus-ring($color-secondary); }
+.focus-success { @include focus-ring($color-success); }
+.focus-danger { @include focus-ring($color-danger); }
+.focus-warning { @include focus-ring($color-warning); }

@@ -1,0 +1,756 @@
+  @media (max-width: $breakpoint-md) { -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .video-container {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    background: $color-black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: $spacing-0; // flexbox 높이 제한 해제
+    border-radius: $border-radius-xl $border-radius-xl 0 0; // 상단만 둥글게
+
+    video {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain; // 비디오 비율 유지하며 컨테이너에 맞춤
+      transition: opacity 0.3s ease-out;
+      
+      &.loading {
+        opacity: 0.5;
+      }
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: $spacing-0;
+      left: $spacing-0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent; // 항상 클릭 가능하도록 투명 배경
+      transition: background-color 0.3s;
+      z-index: $z-index-base; // 비디오 위에 표시
+
+      &:hover {
+        background: rgba($color-black, 0.3); // 호버 시에만 어두운 배경
+      }
+
+      .play-button {
+        background: linear-gradient(135deg, $color-primary 0%, $color-info 100%);
+        border-radius: $border-radius-full;
+        padding: $spacing-lg - $spacing-xs;
+        transition: $transition-base-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: $shadow;
+        position: relative;
+        opacity: 1;
+        transition: opacity 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          inset: -$spacing-2xs;
+          border-radius: $border-radius-full;
+          padding: $spacing-2xs;
+          background: linear-gradient(135deg, $color-primary, $color-primary);
+          -webkit-mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+          mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        &:hover {
+          transform: scale(1.1);
+          box-shadow: 0 $spacing-sm $font-size-3xl rgba($color-primary, 0.6);
+          
+          &::after {
+            opacity: 1;
+          }
+        }
+        
+        &:active {
+          transform: scale(1.05);
+        }
+      }
+    }
+    
+    // Loading and Error Overlays
+    .loading-overlay,
+    .error-overlay {
+      position: absolute;
+      top: $spacing-0;
+      left: $spacing-0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba($color-black, 0.8);
+      color: $color-white;
+      z-index: $z-index-fixed;
+      
+      .spinner {
+        width: $spacing-3xl + $spacing-2xs;
+        height: $spacing-3xl + $spacing-2xs;
+        border: $spacing-xs solid rgba($color-primary, 0.2);
+        border-top-color: $color-primary;
+        border-radius: $border-radius-full;
+        animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        box-shadow: $shadow-xl;
+      }
+      
+      p {
+        margin-top: $spacing-lg - $spacing-xs;
+        font-size: $font-size-base;
+        font-weight: $font-weight-medium;
+        animation: fadeIn 0.5s ease-out;
+      }
+      
+      .error-url {
+        font-size: $font-size-xs;
+        color: $color-gray-500;
+        word-break: break-all;
+        max-width: 80%;
+        text-align: center;
+      }
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    // Smooth fade-in animation
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY($spacing-sm + $spacing-2xs);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    // Pulse animation for loading
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+    
+    // Keyboard help overlay
+    .keyboard-help {
+      position: absolute;
+      top: $spacing-lg - $spacing-xs;
+      right: $spacing-lg - $spacing-xs;
+      background: rgba($color-black, 0.9);
+      border: $spacing-2xs solid rgba($color-white, 0.2);
+      border-radius: $border-radius-md;
+      padding: $spacing-lg - $spacing-xs;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      max-width: $spacing-6xl * 3 + $spacing-sm + $spacing-xs;
+      
+      .help-content {
+        color: $color-white;
+        
+        h4 {
+          margin: $spacing-0 0 $spacing-md - $spacing-2xs 0;
+          font-size: $font-size-base;
+          color: $color-white;
+        }
+        
+        .help-grid {
+          display: grid;
+          gap: $spacing-sm;
+          font-size: $spacing-md - $spacing-xs;
+          
+          div {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm + $spacing-2xs;
+            
+            kbd {
+              background: rgba($color-white, 0.1);
+              border: $spacing-2xs solid rgba($color-white, 0.3);
+              border-radius: $border-radius-sm - $spacing-2xs;
+              padding: $spacing-2xs $spacing-xs + $spacing-2xs;
+              font-family: monospace;
+              font-size: $font-size-xs;
+              min-width: $spacing-4xl - $spacing-xs;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+    
+    &:hover .keyboard-help {
+      opacity: 1;
+    }
+  }
+
+  .controls {
+    background: linear-gradient(to top, rgba($color-gray-900, 0.98), rgba($color-gray-900, 0.95));
+    backdrop-filter: blur($font-size-xl);
+    border-top: $spacing-2xs solid rgba($color-white, 0.05);
+    position: relative;
+    z-index: 2; // 콘솔이 항상 위에 표시되도록
+    border-radius: $border-radius-none 0 $border-radius-xl $border-radius-xl; // 하단 모서리만 둥글게
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: $spacing-0;
+      left: $spacing-0;
+      right: $spacing-0;
+      height: $spacing-2xs;
+      background: linear-gradient(90deg, transparent, rgba($color-primary, 0.3), transparent);
+    }
+
+    .progress-bar {
+      position: relative;
+      height: $spacing-xs;
+      background: rgba($color-white, 0.1);
+      cursor: pointer;
+      transition: height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: $spacing-0;
+        left: $spacing-0;
+        right: $spacing-0;
+        bottom: $spacing-0;
+        background: linear-gradient(90deg, transparent, rgba($color-white, 0.1), transparent);
+        transform: translateX(-100%);
+        animation: shimmer 2s infinite;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      &:hover {
+        height: $spacing-sm;
+        
+        &::before {
+          opacity: 1;
+        }
+      }
+      
+      @keyframes shimmer {
+        to {
+          transform: translateX(100%);
+        }
+      }
+
+      .seek-slider {
+        position: absolute;
+        top: $spacing-0;
+        left: $spacing-0;
+        width: 100%;
+        height: 100%;
+        margin: $spacing-0;
+        cursor: pointer;
+        opacity: 0;
+        z-index: 2;
+      }
+
+      .progress-fill {
+        position: absolute;
+        top: $spacing-0;
+        left: $spacing-0;
+        height: 100%;
+        background: linear-gradient(90deg, $color-primary 0%, $color-primary 100%);
+        pointer-events: none;
+        transition: width 0.1s;
+        box-shadow: $shadow-lg;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          right: -$spacing-xs;
+          top: 50%;
+          transform: translateY(-50%);
+          width: $spacing-sm + $spacing-xs;
+          height: $spacing-sm + $spacing-xs;
+          background: $color-white;
+          border-radius: $border-radius-full;
+          box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.3), 0 $spacing-2xs $spacing-sm rgba($color-primary, 0.6);
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+      }
+      
+      &:hover .progress-fill::after {
+        opacity: 1;
+      }
+    }
+
+    .control-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: $spacing-sm + $spacing-xs $spacing-lg - $spacing-xs;
+      gap: $spacing-sm + $spacing-2xs;
+      color: $color-white;
+      flex-wrap: nowrap; // 버튼이 줄바꿈되지 않도록
+
+      .left-controls {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + $spacing-xs;
+        flex: 1;
+
+        .play-pause {
+          background: rgba($color-white, 0.08);
+          border: $spacing-2xs solid rgba($color-white, 0.1);
+          padding: $spacing-sm + $spacing-2xs;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: $border-radius-full;
+          transition: $transition-base-bezier(0.25, 0.46, 0.45, 0.94);
+          color: $color-white;
+          position: relative;
+          overflow: hidden;
+          
+          &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba($color-primary, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
+
+          &:hover {
+            background: rgba($color-primary, 0.15);
+            border-color: rgba($color-primary, $opacity-50);
+            transform: scale(1.05);
+            
+            &::before {
+              opacity: 1;
+            }
+          }
+          
+          &:active {
+            transform: scale(0.95);
+          }
+        }
+
+        .skip-button {
+          background: rgba($color-white, 0.1);
+          border: $spacing-2xs solid rgba($color-white, 0.2);
+          color: $color-white;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-2xs;
+          cursor: pointer;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          transition: $transition-base;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          svg {
+            display: block;
+          }
+
+          &:hover {
+            background: rgba($color-white, 0.2);
+            border-color: rgba($color-white, 0.3);
+            transform: translateY(-$spacing-2xs);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+        }
+
+        .time-display {
+          font-size: $font-size-sm;
+          color: rgba($color-white, 0.8);
+          font-variant-numeric: tabular-nums;
+          user-select: none;
+          font-weight: $font-weight-medium;
+          letter-spacing: 0.5px;
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+        }
+      }
+
+      .right-controls {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        flex-shrink: 0; // 오른쪽 컨트롤이 축소되지 않도록
+
+        // 통일된 아이콘 버튼 스타일 - VideoPlanet Design System
+        .icon-button {
+          background: rgba($color-white, 0.06);
+          border: $spacing-2xs solid rgba($color-white, 0.12);
+          color: rgba($color-white, 0.9);
+          padding: $spacing-sm $spacing-sm + $spacing-xs;
+          cursor: pointer;
+          border-radius: $border-radius-md;
+          transition: $transition-base-bezier(0.25, 0.46, 0.45, 0.94);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: $spacing-sm;
+          font-size: $spacing-md - $spacing-xs;
+          font-weight: $font-weight-medium;
+          min-height: $spacing-xl + $spacing-xs;
+          position: relative;
+          overflow: hidden;
+          backdrop-filter: blur($font-size-xs);
+          
+          svg {
+            display: block;
+          }
+          
+          .button-text {
+            display: none;
+            
+            @media (min-width: $breakpoint-md) { display: block;
+            }
+          }
+          
+          &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba($color-white, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+          }
+
+          &:hover {
+            background: rgba($color-white, 0.1);
+            border-color: rgba($color-white, 0.2);
+            transform: translateY(-$spacing-2xs);
+            box-shadow: $shadow;
+            color: $color-white;
+            
+            &::before {
+              opacity: 1;
+            }
+          }
+          
+          &:active {
+            transform: translateY(0);
+            box-shadow: $shadow-sm;
+          }
+          
+          // 코멘트 버튼은 브랜드 색상으로 강조
+          &.comment-button {
+            background: linear-gradient(135deg, $color-primary 0%, $color-info 100%);
+            border: $spacing-2xs solid transparent;
+            color: $color-white;
+            font-weight: $font-weight-semibold;
+            box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-primary, 0.3);
+            white-space: nowrap; // 텍스트 줄바꿈 방지
+            
+            &::after {
+              content: '';
+              position: absolute;
+              inset: -$spacing-2xs;
+              border-radius: $border-radius-md;
+              padding: $spacing-2xs;
+              background: linear-gradient(135deg, $color-primary, $color-primary);
+              -webkit-mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+              mask: linear-gradient($color-white 0 0) content-box, linear-gradient($color-white 0 0);
+              -webkit-mask-composite: xor;
+              mask-composite: exclude;
+              opacity: 0;
+              transition: opacity 0.3s;
+            }
+            
+            &:hover {
+              background: linear-gradient(135deg, $color-primary 0%, $color-primary 100%);
+              transform: translateY(-$spacing-2xs) scale(1.02);
+              box-shadow: 0 $spacing-sm $font-size-xl rgba($color-primary, 0.4);
+              
+              &::after {
+                opacity: 1;
+              }
+            }
+            
+            &:active {
+              transform: translateY(0) scale(0.98);
+            }
+          }
+          
+          &.rate-button {
+            padding: $spacing-sm $spacing-md - $spacing-2xs;
+            min-width: $spacing-4xl + $spacing-2xs;
+            background: rgba($color-white, 0.08);
+            
+            .rate-text {
+              font-weight: $font-weight-semibold;
+              font-size: $spacing-md - $spacing-xs;
+              background: linear-gradient(135deg, $color-white, $color-gray-300);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+            }
+            
+            &:hover {
+              background: rgba($color-primary, 0.15);
+              border-color: rgba($color-primary, 0.3);
+            }
+          }
+        }
+
+        .volume-control {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          position: relative;
+
+          .volume-button {
+            background: none;
+            padding: $spacing-sm - $spacing-2xs;
+          }
+          
+          .volume-slider-container {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba($color-black, 0.9);
+            border: $spacing-2xs solid rgba($color-white, 0.2);
+            border-radius: $border-radius-md;
+            padding: $spacing-sm + $spacing-2xs;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            margin-bottom: $spacing-sm + $spacing-2xs;
+            
+            &.show {
+              opacity: 1;
+              pointer-events: all;
+            }
+            
+            &::after {
+              content: '';
+              position: absolute;
+              top: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              border: $spacing-sm solid transparent;
+              border-top-color: rgba($color-black, 0.9);
+            }
+            
+            .volume-slider {
+              width: $spacing-6xl + $spacing-xs;
+              height: $spacing-xs;
+              background: $color-gray-800;
+              outline: none;
+              -webkit-appearance: none;
+              cursor: pointer;
+              border-radius: $border-radius-sm / 2;
+
+              &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: $spacing-sm + $spacing-xs;
+                height: $spacing-sm + $spacing-xs;
+                background: $color-white;
+                border-radius: $border-radius-full;
+                cursor: pointer;
+              }
+              
+              &::-moz-range-thumb {
+                width: $spacing-sm + $spacing-xs;
+                height: $spacing-sm + $spacing-xs;
+                background: $color-white;
+                border-radius: $border-radius-full;
+                cursor: pointer;
+                border: none;
+              }
+            }
+          }
+        }
+
+        .playback-rate {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+}
+
+// Source: FeedbackSectionRedesign-improved.scss
+.feedback-redesign {
+  // 사이드박스 컨테이너
+  .sidebox {
+    background: $color-white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-card;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: $spacing-2xs solid $color-border-light;
+    isolation: isolate;
+    
+    // 상단 타이틀
+    .b_title {
+      padding: $spacing-xl $spacing-2xl;
+      background: transparent;
+      border-bottom: $spacing-2xs solid $color-border-light;
+      
+      .s_title {
+        @include heading-3;
+        color: $color-text-primary;
+        letter-spacing: -0.5px;
+      }
+    }
+    
+    // 탭 컨테이너
+    .tab_container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      
+      // 탭 메뉴
+      .top_box.tab_menu {
+        padding: $spacing-lg $spacing-xl;
+        background: transparent;
+        border-bottom: $spacing-2xs solid $color-border-light;
+        
+        .tab_list {
+          display: flex;
+          gap: $spacing-sm;
+          margin: $spacing-0;
+          padding: $spacing-0;
+          list-style: none;
+          flex-wrap: wrap;
+          
+          li {
+            margin: $spacing-0;
+            
+            a {
+              display: inline-flex;
+              align-items: center;
+              padding: $spacing-sm $spacing-lg;
+              font-size: $font-size-base;
+              font-weight: $font-weight-medium;
+              color: $color-text-secondary;
+              background: $color-gray-50;
+              border: $spacing-2xs solid transparent;
+              border-radius: $radius-full;
+              text-decoration: none;
+              transition: $transition-button;
+              white-space: nowrap;
+              
+              &:hover {
+                background: $color-gray-100;
+                color: $color-text-primary;
+              }
+              
+              &.active {
+                background: $color-primary;
+                color: $color-white;
+                font-weight: $font-weight-semibold;
+                
+                &:hover {
+                  background: $color-primary-hover;
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // 탭 컨텐츠
+      .tab-content {
+        flex: 1;
+        overflow-y: auto;
+        background: $color-gray-50;
+        
+        // 컨텐츠 내부 패딩
+        .tab-pane {
+          padding: $spacing-2xl;
+          
+          &.active {
+            display: block;
+          }
+          
+          &:not(.active) {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  
+  // 피드백 아이템
+  .feedback-item {
+    background: $color-white;
+    border: $spacing-2xs solid $color-border-light;
+    border-radius: $radius-md;
+    padding: $spacing-xl;
+    margin-bottom: $spacing-lg;
+    transition: $transition-all;
+    
+    &:hover {
+      box-shadow: $shadow-hover;
+      border-color: $color-primary-light;
+    }
+    
+    // 피드백 헤더
+    .feedback-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: $spacing-md;
+      
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        
+        .avatar {
+          width: $spacing-2xl;
+          height: $spacing-2xl;
+          border-radius: $radius-full;
+          background: $color-gray-200;
+        }
+        
+        .user-details {
+          .name {
+            font-weight: $font-weight-semibold;
+            color: $color-text-primary;
+            font-size: $font-size-base;
+          }
+          
+          .date {
+            font-size: $font-size-sm;
+            color: $color-text-muted;
+          }
+        }
+      }
+      
+      .feedback-actions {
+        display: flex;
+        gap: $spacing-sm;
+        
+        button {
+          @include button-ghost;
+}}}}

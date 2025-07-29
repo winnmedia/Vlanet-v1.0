@@ -1,112 +1,193 @@
+@import '../styles/design-tokens';
+
 .video-upload-guide-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  top: $spacing-0;
+  left: $spacing-0;
+  right: $spacing-0;
+  bottom: $spacing-0;
+  background: rgba($color-black, $opacity-50);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: $z-index-base$color-black;
   
   .video-upload-guide {
-    background: white;
-    border-radius: 12px;
-    padding: 0;
+    background: $color-white;
+    border-radius: $border-radius-lg;
+    padding: $spacing-0;
     width: 90%;
-    max-width: 500px;
+    max-width: $spacing-6xl * 5 + $spacing-lg - $spacing-xs;
     max-height: 80vh;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: $shadow;
     
     .guide-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px;
-      border-bottom: 1px solid #eee;
+      padding: $spacing-lg - $spacing-xs;
+      border-bottom: $spacing-2xs solid $color-gray-200;
       
       h3 {
-        margin: 0;
-        font-size: 20px;
-        color: #333;
+        margin: $spacing-0;
+        font-size: $font-size-xl;
+        color: $color-gray-800;
       }
       
       .close-btn {
         background: none;
         border: none;
-        font-size: 28px;
-        color: #999;
+        font-size: $spacing-lg + $spacing-xs;
+        color: $color-gray-500;
         cursor: pointer;
-        padding: 0;
-        width: 30px;
-        height: 30px;
+        padding: $spacing-0;
+        width: $spacing-lg + $spacing-xs + $spacing-2xs;
+        height: $spacing-lg + $spacing-xs + $spacing-2xs;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        transition: all 0.3s;
+        border-radius: $border-radius-full;
+        transition: $transition-base;
         
         &:hover {
-          background: #f0f0f0;
-          color: #333;
+          background: $color-gray-200;
+          color: $color-gray-800;
         }
       }
     }
     
     .guide-content {
-      padding: 20px;
+      padding: $spacing-lg - $spacing-xs;
       overflow-y: auto;
-      max-height: calc(80vh - 70px);
+      max-height: calc(80vh - 64px + 12px);
       
       .section {
-        margin-bottom: 25px;
+        margin-bottom: $spacing-lg + $spacing-2xs;
         
         &:last-child {
-          margin-bottom: 0;
+          margin-bottom: $spacing-0;
         }
         
         h4 {
-          margin: 0 0 10px 0;
-          font-size: 16px;
-          color: #0058da;
-          font-weight: 600;
+          margin: $spacing-0 0 $spacing-sm + $spacing-2xs 0;
+          font-size: $font-size-base;
+          color: $color-vp-blue-2;
+          font-weight: $font-weight-semibold;
         }
         
         ul {
-          margin: 0;
-          padding-left: 20px;
+          margin: $spacing-0;
+          padding-left: $spacing-lg - $spacing-xs;
           
           li {
-            margin-bottom: 5px;
-            color: #666;
+            margin-bottom: $spacing-xs;
+            color: $color-gray-600;
             
             &.sub {
-              margin-left: 20px;
-              color: #888;
-              font-size: 14px;
+              margin-left: $spacing-lg - $spacing-xs;
+              color: $color-gray-600;
+              font-size: $font-size-sm;
             }
           }
         }
         
         &.warning {
-          background: #fff3cd;
-          padding: 15px;
-          border-radius: 8px;
-          border: 1px solid #ffeeba;
+          background: $color-danger;
+          padding: $spacing-md - $spacing-2xs;
+          border-radius: $border-radius-md;
+          border: $spacing-2xs solid $color-danger;
           
           p {
-            margin: 0;
-            color: #856404;
-            font-size: 14px;
+            margin: $spacing-0;
+            color: $color-warning-dark;
+            font-size: $font-size-sm;
             
             &:not(:last-child) {
-              margin-bottom: 8px;
+              margin-bottom: $spacing-sm;
             }
           }
         }
       }
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

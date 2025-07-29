@@ -1,12 +1,13 @@
 import React from 'react';
+import { Button } from 'unified/Button';
 
 export default function VideoUploadGuide({ onClose }) {
   return (
-    <div className="video-upload-guide-overlay" onClick={onClose}>
-      <div className="video-upload-guide" onClick={(e) => e.stopPropagation()}>
+    <div className="video-upload-guide-overlay" onClick={onClose} onKeyDown={(e) => e.key === 'Enter' && onClose}>
+      <div className="video-upload-guide" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}>
         <div className="guide-header">
           <h3>영상 업로드 가이드</h3>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <UnifiedButton variant="secondary" onClick={onClose} onKeyDown={(e) => e.key === 'Enter' && onClose} aria-label="Click">×</UnifiedButton>
         </div>
         
         <div className="guide-content">
@@ -50,6 +51,6 @@ export default function VideoUploadGuide({ onClose }) {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }

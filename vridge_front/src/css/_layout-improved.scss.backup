@@ -1,0 +1,298 @@
+// Layout Utilities - 표준 브레이크포인트 적용 버전
+// 레이아웃 유틸리티 및 믹스인
+
+@use '@/design-system/tokens' as *;
+
+// ========== 레이아웃 변수 ==========
+// 이미 토큰 시스템에 정의되어 있으므로 참조만 함
+
+// ========== 믹스인 ==========
+// 컨테이너
+@mixin container {
+  width: 100%;
+  max-width: $container-max-width-xl;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  
+  @include media-up('md') {
+    padding: 0 $spacing-lg;
+  }
+  
+  @include media-up('lg') {
+    padding: 0 $spacing-xl;
+  }
+}
+
+// Flexbox 유틸리티
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@mixin flex-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Grid 유틸리티
+@mixin grid($columns: 1, $gap: $spacing-lg) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+@mixin grid-responsive($desktop: 3, $tablet: 2, $mobile: 1) {
+  @include grid($mobile);
+  
+  @include media-up('md') {
+    grid-template-columns: repeat($tablet, 1fr);
+  }
+  
+  @include media-up('lg') {
+    grid-template-columns: repeat($desktop, 1fr);
+  }
+}
+
+// Position 유틸리티
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin absolute-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+@mixin fixed-fill {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+// ========== 유틸리티 클래스 ==========
+// Flexbox
+.flex { display: flex; }
+.flex-inline { display: inline-flex; }
+.flex-center { @include flex-center; }
+.flex-between { @include flex-between; }
+.flex-start { @include flex-start; }
+.flex-end { @include flex-end; }
+.flex-column { @include flex-column; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; }
+.flex-1 { flex: 1; }
+.flex-auto { flex: auto; }
+.flex-none { flex: none; }
+
+// Alignment
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+.items-baseline { align-items: baseline; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+.justify-evenly { justify-content: space-evenly; }
+
+// Grid
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+// Gap
+.gap-xs { gap: $spacing-xs; }
+.gap-sm { gap: $spacing-sm; }
+.gap-md { gap: $spacing-md; }
+.gap-lg { gap: $spacing-lg; }
+.gap-xl { gap: $spacing-xl; }
+.gap-2xl { gap: $spacing-2xl; }
+
+// Position
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+.static { position: static; }
+
+// 표시/숨김
+.hidden { display: none !important; }
+.visible { visibility: visible !important; }
+.invisible { visibility: hidden !important; }
+
+// 반응형 유틸리티 (표준 브레이크포인트 사용)
+// 모바일에서 숨김
+@include mobile {
+  .hidden-mobile { display: none !important; }
+  .visible-mobile { display: block !important; }
+}
+
+// 태블릿에서 숨김
+@include tablet {
+  .hidden-tablet { display: none !important; }
+  .visible-tablet { display: block !important; }
+}
+
+// 데스크톱에서 숨김
+@include desktop {
+  .hidden-desktop { display: none !important; }
+  .visible-desktop { display: block !important; }
+}
+
+// 브레이크포인트별 표시/숨김
+@each $breakpoint in ('sm', 'md', 'lg', 'xl', '2xl') {
+  @include media-up($breakpoint) {
+    .show-#{$breakpoint} { display: block !important; }
+    .hide-#{$breakpoint} { display: none !important; }
+  }
+}
+
+// ========== 반응형 컨테이너 ==========
+.container {
+  @include container;
+}
+
+.container-fluid {
+  width: 100%;
+  padding: 0 $spacing-lg;
+  
+  @include mobile {
+    padding: 0 $spacing-md;
+  }
+}
+
+// ========== 반응형 그리드 ==========
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 (-$spacing-md);
+  
+  > * {
+    padding: 0 $spacing-md;
+  }
+}
+
+// 컬럼 시스템
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    flex: 0 0 percentage($i / 12);
+    max-width: percentage($i / 12);
+  }
+}
+
+// 반응형 컬럼
+@each $breakpoint in ('sm', 'md', 'lg', 'xl') {
+  @include media-up($breakpoint) {
+    @for $i from 1 through 12 {
+      .col-#{$breakpoint}-#{$i} {
+        flex: 0 0 percentage($i / 12);
+        max-width: percentage($i / 12);
+      }
+    }
+  }
+}
+
+// ========== 스페이싱 유틸리티 ==========
+// 마진
+@each $size, $value in (
+  'xs': $spacing-xs,
+  'sm': $spacing-sm,
+  'md': $spacing-md,
+  'lg': $spacing-lg,
+  'xl': $spacing-xl,
+  '2xl': $spacing-2xl,
+  '3xl': $spacing-3xl
+) {
+  .m-#{$size} { margin: $value; }
+  .mt-#{$size} { margin-top: $value; }
+  .mr-#{$size} { margin-right: $value; }
+  .mb-#{$size} { margin-bottom: $value; }
+  .ml-#{$size} { margin-left: $value; }
+  .mx-#{$size} { margin-left: $value; margin-right: $value; }
+  .my-#{$size} { margin-top: $value; margin-bottom: $value; }
+}
+
+// 패딩
+@each $size, $value in (
+  'xs': $spacing-xs,
+  'sm': $spacing-sm,
+  'md': $spacing-md,
+  'lg': $spacing-lg,
+  'xl': $spacing-xl,
+  '2xl': $spacing-2xl,
+  '3xl': $spacing-3xl
+) {
+  .p-#{$size} { padding: $value; }
+  .pt-#{$size} { padding-top: $value; }
+  .pr-#{$size} { padding-right: $value; }
+  .pb-#{$size} { padding-bottom: $value; }
+  .pl-#{$size} { padding-left: $value; }
+  .px-#{$size} { padding-left: $value; padding-right: $value; }
+  .py-#{$size} { padding-top: $value; padding-bottom: $value; }
+}
+
+// ========== 크기 유틸리티 ==========
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.h-full { height: 100%; }
+.h-auto { height: auto; }
+.h-screen { height: 100vh; }
+.min-h-screen { min-height: 100vh; }
+
+// ========== 텍스트 정렬 ==========
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+// 반응형 텍스트 정렬
+@each $breakpoint in ('sm', 'md', 'lg', 'xl') {
+  @include media-up($breakpoint) {
+    .text-#{$breakpoint}-left { text-align: left; }
+    .text-#{$breakpoint}-center { text-align: center; }
+    .text-#{$breakpoint}-right { text-align: right; }
+  }
+}
+
+// ========== Z-index 유틸리티 ==========
+.z-0 { z-index: $z-base; }
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.z-30 { z-index: 30; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+.z-dropdown { z-index: $z-dropdown; }
+.z-modal { z-index: $z-modal; }
+.z-tooltip { z-index: $z-tooltip; }

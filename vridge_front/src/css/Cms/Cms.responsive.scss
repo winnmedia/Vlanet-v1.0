@@ -1,0 +1,6 @@
+@import './Cms.responsive.part1';
+@import './Cms.responsive.part2';
+@media (max-width: 768px) {
+  * { box-sizing: border-box; }
+  .container, .wrapper, .content { width: 100%; padding: 0 1rem; }
+}

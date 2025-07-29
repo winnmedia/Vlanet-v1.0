@@ -1,0 +1,461 @@
+@import '../../styles/design-tokens';
+
+// 기본 카드 스타일
+.card {
+  position: relative;
+  background: $color-white;
+  border: $border-width-thin solid $color-gray-200;
+  transition: $transition-base;
+  overflow: hidden;
+  
+  // 변형
+  &.default {
+    // 기본 스타일
+  }
+  
+  &.elevated {
+    border: none;
+    box-shadow: $shadow-md;
+  }
+  
+  &.outlined {
+    border: $spacing-2xs solid $color-gray-300;
+    box-shadow: none;
+  }
+  
+  &.interactive {
+    cursor: pointer;
+    
+    &:hover:not(.disabled) {
+      border-color: $color-primary;
+      box-shadow: $shadow-lg;
+      transform: translateY(-$spacing-2xs);
+    }
+  }
+  
+  // 패딩
+  &.padding-none {
+    .body { padding: 0; }
+  }
+  
+  &.padding-small {
+    .body { padding: $spacing-md; }
+  }
+  
+  &.padding-medium {
+    .body { padding: $spacing-lg; }
+  }
+  
+  &.padding-large {
+    .body { padding: $spacing-xl; }
+  }
+  
+  // 모서리
+  &.radius-none {
+    border-radius: 0;
+  }
+  
+  &.radius-small {
+    border-radius: $border-radius-sm;
+  }
+  
+  &.radius-medium {
+    border-radius: $border-radius-md;
+  }
+  
+  &.radius-large {
+    border-radius: $border-radius-lg;
+  }
+  
+  // 그림자
+  &.shadow-none {
+    box-shadow: none;
+  }
+  
+  &.shadow-small {
+    box-shadow: $shadow-sm;
+  }
+  
+  &.shadow-medium {
+    box-shadow: $shadow-md;
+  }
+  
+  &.shadow-large {
+    box-shadow: $shadow-lg;
+  }
+  
+  // 상태
+  &.hoverable:hover:not(.disabled) {
+    box-shadow: $shadow-lg;
+  }
+  
+  &.clickable {
+    cursor: pointer;
+    user-select: none;
+    
+    &:active:not(.disabled) {
+      transform: scale(0.98);
+    }
+  }
+  
+  &.selected {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 calc(4px + 4px) rgba($color-primary, 0.1);
+  }
+  
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  &.loading {
+    pointer-events: none;
+  }
+}
+
+// 로딩 오버레이
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-white, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-default;
+}
+
+.spinner {
+  width: $spacing-xl;
+  height: $spacing-xl;
+  border: $spacing-2xs solid $color-gray-300;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// 카드 섹션들
+.cover {
+  position: relative;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.header {
+  padding: $spacing-md $spacing-lg;
+  border-bottom: $border-width-thin solid $color-gray-200;
+  background: $color-gray-50;
+}
+
+.body {
+  padding: $spacing-lg;
+}
+
+.meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.metaContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin: 0 0 $spacing-xs;
+  line-height: $line-height-tight;
+}
+
+.description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin: 0;
+  line-height: $line-height-relaxed;
+}
+
+.extra {
+  flex-shrink: 0;
+}
+
+.content {
+  color: $color-text-primary;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  border-top: $border-width-thin solid $color-gray-200;
+  background: $color-gray-50;
+}
+
+.footer {
+  padding: $spacing-md $spacing-lg;
+  border-top: $border-width-thin solid $color-gray-200;
+  background: $color-gray-50;
+}
+
+// 액션 버튼
+.actionButton {
+  padding: $spacing-xs $spacing-md;
+  font-size: $font-size-sm;
+  border: $border-width-thin solid $color-gray-300;
+  border-radius: $border-radius-sm;
+  background: $color-white;
+  color: $color-text-primary;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    background: $color-gray-50;
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+}
+
+.actionButtonDanger {
+  @extend .actionButton;
+  
+  &:hover {
+    background: rgba($color-danger, 0.05);
+    border-color: $color-danger;
+    color: $color-danger;
+  }
+}
+
+// 카드 그룹
+.cardGroup {
+  display: grid;
+  
+  &.gap-small {
+    gap: $spacing-md;
+  }
+  
+  &.gap-medium {
+    gap: $spacing-lg;
+  }
+  
+  &.gap-large {
+    gap: $spacing-xl;
+  }
+  
+  &.columns-auto {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  
+  &.columns-1 {
+    grid-template-columns: 1fr;
+  }
+  
+  &.columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  &.columns-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  &.columns-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// 프리셋 스타일
+.projectStatus {
+  display: inline-block;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-sm;
+  background: $color-primary-light;
+  color: $color-primary;
+}
+
+.projectMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.feedbackContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.feedbackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feedbackUser {
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.feedbackTime {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.feedbackBody {
+  color: $color-text-primary;
+  line-height: $line-height-relaxed;
+}
+
+.feedbackActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.iconButton {
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-sm;
+  border: none;
+  background: none;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.statContent {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.statIcon {
+  width: $spacing-4xl;
+  height: $spacing-4xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-md;
+  font-size: $spacing-xl;
+  
+  &.color-primary {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+  
+  &.color-success {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+  
+  &.color-warning {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+  }
+  
+  &.color-danger {
+    background: rgba($color-danger, 0.1);
+    color: $color-danger;
+  }
+}
+
+.statData {
+  flex: 1;
+}
+
+.statTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+  margin: 0 0 $spacing-xs;
+}
+
+.statValue {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-xs;
+}
+
+.value {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.unit {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+}
+
+.statTrend {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  margin-top: $spacing-xs;
+  
+  &.up {
+    color: $color-success;
+  }
+  
+  &.down {
+    color: $color-danger;
+  }
+}
+
+// 반응형
+@media (max-width: $breakpoint-tablet) {
+  .cardGroup {
+    &.columns-4,
+    &.columns-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .card {
+    &.padding-large {
+      .body { padding: $spacing-md; }
+    }
+  }
+  
+  .cardGroup {
+    &.columns-4,
+    &.columns-3,
+    &.columns-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .statContent {
+    gap: $spacing-md;
+  }
+  
+  .statIcon {
+    width: $spacing-3xl;
+    height: $spacing-3xl;
+    font-size: $spacing-lg;
+  }
+  
+  .value {
+    font-size: $font-size-xl;
+  }
+}

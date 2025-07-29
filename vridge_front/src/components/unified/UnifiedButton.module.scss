@@ -1,0 +1,267 @@
+@import '../../styles/design-tokens';
+
+// 기본 버튼 스타일
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  border: none;
+  border-radius: $border-radius-md;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-base;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+  
+  // 리플 효과를 위한 가상 요소
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: $border-radius-full;
+    background: rgba($color-white, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::before {
+    width: 300%;
+    height: 300%;
+  }
+  
+  // 비활성화 상태
+  &:disabled,
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  // 로딩 상태
+  &.loading {
+    color: transparent;
+    pointer-events: none;
+  }
+  
+  // 전체 너비
+  &.fullWidth {
+    width: 100%;
+  }
+}
+
+// 텍스트
+.text {
+  position: relative;
+  z-index: $z-index-default;
+}
+
+// 아이콘
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25em;
+  height: 1.25em;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// 스피너
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  
+  svg {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// 크기 변형
+.size-small {
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-sm;
+  min-height: $spacing-2xl;
+  
+  .icon {
+    width: 1em;
+    height: 1em;
+  }
+}
+
+.size-medium {
+  padding: $spacing-sm + $spacing-xs $spacing-lg;
+  font-size: $font-size-base;
+  min-height: $spacing-3xl;
+}
+
+.size-large {
+  padding: $spacing-md $spacing-xl;
+  font-size: $font-size-lg;
+  min-height: $spacing-4xl;
+  
+  .icon {
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+// 스타일 변형
+.variant-primary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  box-shadow: $shadow;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-$spacing-2xs);
+    box-shadow: 0 calc(8px - 4px) $spacing-lg rgba($color-primary, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.variant-secondary {
+  background: $color-white;
+  color: $color-gray-700;
+  border: $border-width-thin solid $color-gray-300;
+  
+  &:hover:not(:disabled) {
+    background: $color-gray-50;
+    border-color: $color-gray-400;
+    transform: translateY(-$spacing-2xs);
+    box-shadow: $shadow;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.variant-danger {
+  background: linear-gradient(135deg, $color-danger 0%, darken($color-danger, 10%) 100%);
+  color: $color-white;
+  box-shadow: $shadow;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-$spacing-2xs);
+    box-shadow: 0 calc(8px - 4px) $spacing-lg rgba($color-danger, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.variant-outline {
+  background: transparent;
+  color: $color-primary;
+  border: $spacing-2xs solid $color-primary;
+  
+  &:hover:not(:disabled) {
+    background: $color-primary;
+    color: $color-white;
+    transform: translateY(-$spacing-2xs);
+    box-shadow: $shadow;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.variant-ghost {
+  background: transparent;
+  color: $color-gray-700;
+  
+  &:hover:not(:disabled) {
+    background: $color-gray-100;
+    transform: translateY(-$border-width-thin);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.variant-link {
+  background: transparent;
+  color: $color-primary;
+  padding: 0;
+  min-height: auto;
+  text-decoration: underline;
+  
+  &:hover:not(:disabled) {
+    color: $color-primary-dark;
+    text-decoration: none;
+  }
+  
+  &:active:not(:disabled) {
+    color: $color-primary-darker;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: $spacing-md;
+    width: 100%;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+  
+  .text-large {
+    font-size: $font-size-lg;
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 76calc(8px + 4px)) and (max-width: 1024px) {
+  .container {
+    padding: $spacing-lg;
+    max-width: 960;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 102calc(8px - 4px)) {
+  .container {
+    max-width: 1200;
+    margin: 0 auto;
+  }
+}

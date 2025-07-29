@@ -1,0 +1,38 @@
+// Legacy variables file - 새로운 디자인 시스템으로 마이그레이션 중
+// 새로운 변수는 src/design-system/tokens/ 디렉토리를 사용하세요
+
+// breakpoints를 먼저 import
+@import '../design-system/tokens/breakpoints';
+@import '../design-system/tokens/colors';
+@import '../design-system/tokens/spacing';
+@import '../design-system/tokens/typography';
+@import '../design-system/tokens/effects';
+
+// 하위 호환성을 위한 레거시 변수 매핑
+$primary-color: $color-primary;
+$danger-color: $color-danger;
+$success-color: $color-success;
+$warning-color: $color-warning;
+$info-color: $color-info;
+
+$font-size-base: $font-size-md;
+$font-size-small: $font-size-sm;
+$font-size-large: $font-size-lg;
+
+$spacing-unit: $spacing-md;
+$border-radius: $radius-md;
+
+// 추가 레거시 변수
+$gray-100: $color-gray-100;
+$gray-200: $color-gray-200;
+$gray-300: $color-gray-300;
+$gray-400: $color-gray-400;
+$gray-500: $color-gray-500;
+$gray-600: $color-gray-600;
+$gray-700: $color-gray-700;
+$gray-800: $color-gray-800;
+$gray-900: $color-gray-900;
+
+// 텍스트 색상
+$text-primary: $color-gray-900;
+$text-secondary: $color-gray-600;

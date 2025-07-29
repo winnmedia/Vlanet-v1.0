@@ -47,7 +47,6 @@ export const convertToBase64 = async (imageUrl) => {
     
     throw new Error(response.data.message || '이미지 변환 실패')
   } catch (error) {
-    console.error('Base64 변환 오류:', error)
     return null
   }
 }
@@ -59,8 +58,6 @@ export const convertToBase64 = async (imageUrl) => {
  * @param {Function} setImageUrl - 이미지 URL 설정 함수
  */
 export const handleImageError = async (event, originalUrl, setImageUrl) => {
-  console.warn('이미지 로드 실패, base64로 변환 시도:', originalUrl)
-  
   try {
     const base64Url = await convertToBase64(originalUrl)
     if (base64Url) {
@@ -73,7 +70,6 @@ export const handleImageError = async (event, originalUrl, setImageUrl) => {
       }
     }
   } catch (error) {
-    console.error('이미지 처리 실패:', error)
     event.target.style.display = 'none'
     if (event.target.nextSibling) {
       event.target.nextSibling.style.display = 'flex'

@@ -1,0 +1,57 @@
+.user-avatar {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  flex-shrink: 0;
+  
+  &.with-border {
+    border: 2px solid #1631F8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &.clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  .user-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10; // 이미지가 항상 위에 표시되도록 높은 z-index
+  }
+  
+  .user-avatar-initial {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+    color: white;
+    font-weight: 600;
+    user-select: none;
+    z-index: 1; // 이니셜은 기본 백그라운드 레이어
+    
+    // 다양한 배경색 옵션 (이름 해시값 기반으로 선택 가능)
+    &.bg-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    &.bg-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    &.bg-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    &.bg-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    &.bg-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+  }
+}

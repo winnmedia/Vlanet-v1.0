@@ -1,0 +1,441 @@
+@import '../../styles/design-tokens';
+
+// 마스크
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-black, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// 모달 컨테이너
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-2xl;
+  opacity: 0;
+  visibility: hidden;
+  transition: $transition-base ease;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  
+  &.centered {
+    // 이미 중앙 정렬됨
+  }
+  
+  &.loading {
+    pointer-events: none;
+  }
+  
+  // 크기 변형
+  &.width-small {
+    width: 400;
+    max-width: 90vw;
+  }
+  
+  &.width-medium {
+    width: 600;
+    max-width: 90vw;
+  }
+  
+  &.width-large {
+    width: 800;
+    max-width: 90vw;
+  }
+  
+  &.width-full {
+    width: 90vw;
+    height: 90vh;
+  }
+}
+
+// 로딩 오버레이
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($color-white, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-fixed;
+}
+
+.spinner {
+  width: $spacing-2xl;
+  height: $spacing-2xl;
+  border: calc(4px + 4px) solid $color-gray-300;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// 헤더
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  border-bottom: $border-width-thin solid $color-gray-200;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin: 0;
+  line-height: $line-height-tight;
+}
+
+.closeButton {
+  width: $spacing-2xl;
+  height: $spacing-2xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: $border-radius-sm;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    background: $color-gray-100;
+    color: $color-text-primary;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// 바디
+.body {
+  padding: $spacing-lg;
+  overflow-y: auto;
+  flex: 1;
+}
+
+// 푸터
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  border-top: $border-width-thin solid $color-gray-200;
+  flex-shrink: 0;
+}
+
+// 버튼
+.button {
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-md;
+  border: $border-width-thin solid transparent;
+  cursor: pointer;
+  transition: $transition-base;
+  min-width: 80;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background: $color-white;
+  border-color: $color-gray-300;
+  color: $color-text-primary;
+  
+  &:hover:not(:disabled) {
+    background: $color-gray-50;
+    border-color: $color-gray-400;
+  }
+}
+
+.okButton {
+  background: $color-primary;
+  color: $color-white;
+  
+  &:hover:not(:disabled) {
+    background: darken($color-primary, 10%);
+  }
+  
+  &.loading {
+    pointer-events: none;
+  }
+}
+
+.buttonSpinner {
+  width: $font-size-sm;
+  height: $font-size-sm;
+  border: $spacing-2xs solid rgba($color-white, 0.3);
+  border-top-color: $color-white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+// 프리셋 스타일
+.confirmContent {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+}
+
+.confirmIcon {
+  font-size: $spacing-xl;
+  line-height: 1;
+  
+  &.confirm { color: $color-primary; }
+  &.info { color: $color-info; }
+  &.success { color: $color-success; }
+  &.warning { color: $color-warning; }
+  &.error { color: $color-danger; }
+}
+
+.confirmMessage {
+  flex: 1;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  line-height: $line-height-relaxed;
+}
+
+.infoContent {
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  line-height: $line-height-relaxed;
+}
+
+// 이미지 미리보기
+.imagePreviewModal {
+  &.modal {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.imagePreviewMask {
+  &.mask {
+    background: rgba($color-black, 0.95);
+  }
+}
+
+.imagePreviewContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.prevButton,
+.nextButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: $spacing-4xl;
+  height: $spacing-4xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($color-white, 0.1);
+  border: $spacing-2xs solid rgba($color-white, 0.3);
+  border-radius: 50%;
+  color: $color-white;
+  font-size: $spacing-xl;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    background: rgba($color-white, 0.2);
+    border-color: rgba($color-white, 0.5);
+  }
+}
+
+.prevButton {
+  left: $spacing-lg;
+}
+
+.nextButton {
+  right: $spacing-lg;
+}
+
+.imageCounter {
+  position: absolute;
+  bottom: $spacing-lg;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: $spacing-xs $spacing-md;
+  background: rgba($color-black, 0.6);
+  color: $color-white;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-sm;
+}
+
+// 반응형
+@media (max-width: $breakpoint-mobile) {
+  .modal {
+    &.width-small,
+    &.width-medium,
+    &.width-large {
+      width: 95vw;
+      max-height: 95vh;
+    }
+  }
+  
+  .header {
+    padding: $spacing-md;
+  }
+  
+  .body {
+    padding: $spacing-md;
+  }
+  
+  .footer {
+    padding: $spacing-sm $spacing-md;
+    flex-wrap: wrap;
+    
+    .button {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+  
+  .prevButton,
+  .nextButton {
+    width: $spacing-3xl;
+    height: $spacing-3xl;
+    font-size: $spacing-lg;
+  }
+  
+  .prevButton {
+    left: $spacing-sm;
+  }
+  
+  .nextButton {
+    right: $spacing-sm;
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: $spacing-md; /* Prevent zoom on iOS */
+  }
+}

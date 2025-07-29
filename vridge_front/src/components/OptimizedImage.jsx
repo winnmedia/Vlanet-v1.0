@@ -1,194 +1,169 @@
-import React, { useState, useRef, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import { useIntersectionObserver } from '../utils/performance'
-import styles from './OptimizedImage.module.scss'
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import styles from './OptimizedImage.module.scss';
 
-const OptimizedImage = React.memo(({
+/**
+ * 최적화된 이미지 컴포넌트
+ * - WebP 자동 변환
+ * - Lazy loading
+ * - Blur placeholder
+ * - Responsive sizing
+ */
+const OptimizedImage = ({
   src,
   alt,
   width,
   height,
-  placeholder = '/images/placeholder.jpg',
-  className = '',
-  objectFit = 'cover',
   priority = false,
+  quality = 75,
+  placeholder = 'blur',
+  blurDataURL,
+  sizes,
+  className,
+  objectFit = 'cover',
+  objectPosition = 'center',
   onLoad,
   onError,
-  sizes,
-  quality = 75
+  ...props
 }) => {
-  const [imageSrc, setImageSrc] = useState(priority ? src : placeholder)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [hasError, setHasError] = useState(false)
-  const imageRef = useRef(null)
-  
-  // Intersection Observer를 사용한 레이지 로딩
-  const loadImage = () => {
-    if (src && !priority) {
-      const img = new Image()
-      img.src = src
-      
-      img.onload = () => {
-        setImageSrc(src)
-        setIsLoaded(true)
-        if (onLoad) onLoad()
-      }
-      
-      img.onerror = () => {
-        setHasError(true)
-        if (onError) onError()
-      }
-    }
-  }
-  
-  useIntersectionObserver({
-    target: imageRef,
-    onIntersect: loadImage,
-    threshold: 0.01,
-    rootMargin: '50px',
-    enabled: !priority && !isLoaded
-  })
-  
-  // Priority 이미지는 즉시 로드
-  useEffect(() => {
-    if (priority && src) {
-      setImageSrc(src)
-      setIsLoaded(true)
-    }
-  }, [priority, src])
-  
-  // Next.js Image 컴포넌트와 호환되는 srcset 생성
-  const generateSrcSet = () => {
-    if (!src || hasError) return undefined
-    
-    const baseUrl = src.split('?')[0]
-    const extension = baseUrl.split('.').pop()
-    
-    // 이미지 형식에 따른 최적화
-    if (['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
-      return `
-        ${baseUrl}?w=640&q=${quality} 640w,
-        ${baseUrl}?w=750&q=${quality} 750w,
-        ${baseUrl}?w=828&q=${quality} 828w,
-        ${baseUrl}?w=1080&q=${quality} 1080w,
-        ${baseUrl}?w=1200&q=${quality} 1200w,
-        ${baseUrl}?w=1920&q=${quality} 1920w,
-        ${baseUrl}?w=2048&q=${quality} 2048w,
-        ${baseUrl}?w=3840&q=${quality} 3840w
-      `
-    }
-    
-    return undefined
-  }
-  
-  const containerClasses = [
-    styles.imageContainer,
-    isLoaded && styles.loaded,
-    hasError && styles.error,
-    className
-  ].filter(Boolean).join(' ')
-  
-  const imageClasses = [
-    styles.image,
-    styles[`objectFit-${objectFit}`]
-  ].filter(Boolean).join(' ')
-  
-  return (
-    <div 
-      ref={imageRef}
-      className={containerClasses}
-      style={{ width, height }}
-    >
-      {!hasError ? (
-        <>
-          {/* Blur placeholder */}
-          {!isLoaded && placeholder && (
-            <img
-              src={placeholder}
-              alt=""
-              className={styles.placeholder}
-              aria-hidden="true"
-            />
-          )}
-          
-          {/* Main image */}
-          <img
-            src={imageSrc}
-            alt={alt}
-            width={width}
-            height={height}
-            className={imageClasses}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            srcSet={generateSrcSet()}
-            sizes={sizes}
-            onLoad={() => {
-              setIsLoaded(true)
-              if (onLoad) onLoad()
-            }}
-            onError={() => {
-              setHasError(true)
-              if (onError) onError()
-            }}
-          />
-        </>
-      ) : (
-        <div className={styles.errorState}>
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect x="8" y="8" width="32" height="32" rx="4" stroke="currentColor" strokeWidth="2"/>
-            <path d="M8 16L24 28L40 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            <circle cx="16" cy="16" r="2" fill="currentColor"/>
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  // 기본 blur 데이터 URL (1x1 픽셀 투명 이미지)
+  const defaultBlurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==';
+
+  const handleLoad = () => {
+    setIsLoading(false);
+    onLoad?.();
+  };
+
+  const handleError = () => {
+    setError(true);
+    setIsLoading(false);
+    onError?.();
+  };
+
+  // 에러 시 대체 이미지
+  if (error) {
+    return (
+      <div 
+        className={`${styles.errorContainer} ${className || ''}`}
+        style={{ width, height }}
+      >
+        <div className={styles.errorIcon}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <path d="M4 6h16l-2 12H6L4 6zm0 0l-.5-2h17l-.5 2" stroke="currentColor" strokeWidth="2"/>
+            <path d="M12 9v6m0 3h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
           </svg>
-          <p>이미지를 불러올 수 없습니다</p>
         </div>
-      )}
-    </div>
-  )
-})
-
-OptimizedImage.displayName = 'OptimizedImage'
-
-OptimizedImage.propTypes = {
-  src: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
-  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  placeholder: PropTypes.string,
-  className: PropTypes.string,
-  objectFit: PropTypes.oneOf(['contain', 'cover', 'fill', 'none', 'scale-down']),
-  priority: PropTypes.bool,
-  onLoad: PropTypes.func,
-  onError: PropTypes.func,
-  sizes: PropTypes.string,
-  quality: PropTypes.number
-}
-
-export default OptimizedImage
-
-// WebP 지원 체크 유틸리티
-export const supportsWebP = () => {
-  if (typeof window === 'undefined') return false
-  
-  const canvas = document.createElement('canvas')
-  canvas.width = 1
-  canvas.height = 1
-  
-  return canvas.toDataURL('image/webp').indexOf('image/webp') === 0
-}
-
-// 이미지 포맷 최적화 함수
-export const getOptimizedImageUrl = (url, format = 'auto') => {
-  if (!url) return ''
-  
-  const baseUrl = url.split('?')[0]
-  const params = new URLSearchParams(url.split('?')[1])
-  
-  // 자동 포맷 선택
-  if (format === 'auto') {
-    format = supportsWebP() ? 'webp' : 'jpg'
+        <span className={styles.errorText}>이미지 로드 실패</span>
+      </div>
+    );
   }
-  
-  params.set('fm', format)
-  
-  return `${baseUrl}?${params.toString()}`
-}
+
+  return (
+    <div className={`${styles.container} ${className || ''}`}>
+      {/* 로딩 스켈레톤 */}
+      {isLoading && (
+        <div 
+          className={styles.skeleton}
+          style={{ aspectRatio: `${width}/${height}` }}
+        />
+      )}
+      
+      {/* Next.js Image 컴포넌트 */}
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        priority={priority}
+        quality={quality}
+        placeholder={placeholder}
+        blurDataURL={blurDataURL || defaultBlurDataURL}
+        sizes={sizes || `(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw`}
+        className={styles.image}
+        style={{
+          objectFit,
+          objectPosition,
+          opacity: isLoading ? 0 : 1
+        }}
+        onLoadingComplete={handleLoad}
+        onError={handleError}
+        {...props}
+      />
+    </div>
+  );
+};
+
+// 썸네일용 프리셋
+export const Thumbnail = ({ src, alt, size = 'medium', ...props }) => {
+  const sizes = {
+    small: { width: 120, height: 80 },
+    medium: { width: 240, height: 160 },
+    large: { width: 360, height: 240 }
+  };
+
+  const { width, height } = sizes[size] || sizes.medium;
+
+  return (
+    <OptimizedImage
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={styles.thumbnail}
+      {...props}
+    />
+  );
+};
+
+// 배너용 프리셋
+export const Banner = ({ src, alt, aspectRatio = '16:9', ...props }) => {
+  const ratios = {
+    '16:9': { width: 1920, height: 1080 },
+    '4:3': { width: 1600, height: 1200 },
+    '21:9': { width: 2560, height: 1080 },
+    '1:1': { width: 1200, height: 1200 }
+  };
+
+  const { width, height } = ratios[aspectRatio] || ratios['16:9'];
+
+  return (
+    <OptimizedImage
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={styles.banner}
+      sizes="100vw"
+      priority
+      {...props}
+    />
+  );
+};
+
+// 프로필 이미지용 프리셋
+export const Avatar = ({ src, alt, size = 'medium', ...props }) => {
+  const sizes = {
+    small: 32,
+    medium: 64,
+    large: 128
+  };
+
+  const dimension = sizes[size] || sizes.medium;
+
+  return (
+    <OptimizedImage
+      src={src}
+      alt={alt}
+      width={dimension}
+      height={dimension}
+      className={`${styles.avatar} ${styles[`avatar-${size}`]}`}
+      objectFit="cover"
+      {...props}
+    />
+  );
+};
+
+export default OptimizedImage;

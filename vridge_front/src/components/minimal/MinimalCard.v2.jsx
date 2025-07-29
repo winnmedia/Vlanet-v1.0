@@ -1,4 +1,6 @@
 import React from 'react'
+import UnifiedCard from '../../components/unified/UnifiedCard';
+
 import PropTypes from 'prop-types'
 import styles from './MinimalCard.module.scss'
 

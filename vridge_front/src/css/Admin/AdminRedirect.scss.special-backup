@@ -1,0 +1,54 @@
+@import '../styles/design-tokens';
+
+.admin-redirect-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: $spacing-lg - $spacing-xs;
+  
+  .admin-redirect-card {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba($color-black, 0.1);
+    border-radius: $border-radius-xl;
+    
+    .ant-card-body {
+      padding: $spacing-3xl 40px;
+    }
+    
+    .ant-spin {
+      color: $color-primary;
+    }
+    
+    .ant-typography {
+      margin-bottom: $spacing-sm;
+    }
+    
+    h2.ant-typography {
+      color: $color-primary;
+      font-weight: 600;
+      margin-top: $spacing-lg;
+      
+      .anticon {
+        margin-right: $spacing-sm + $spacing-xs;
+      }
+    }
+    
+    .admin-info {
+      margin-top: $spacing-xl;
+      padding-top: $spacing-lg;
+      border-top: 1px solid #f0f0f0;
+    }
+  }
+  
+  @media (max-width: $breakpoint-md) {
+    .admin-redirect-card {
+      .ant-card-body {
+        padding: $spacing-xl 24px;
+      }
+    }
+  }
+}

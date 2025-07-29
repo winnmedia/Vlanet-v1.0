@@ -1,7 +1,15 @@
 import useInput from '../../hooks/UseInput'
+import UnifiedCard from '../../components/unified/UnifiedCard';
+
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import React, { useState, useEffect } from 'react'
-import styles from './FeedbackManage.module.scss'
-import gridStyles from '../../css/Cms/FeedbackGridLayout.module.scss'
+import styles from '../../page/Cms/FeedbackButtonStyles.module.scss'
+import gridStyles from '../../page/Cms/FeedbackButtonStyles.module.scss'
+import { Input } from '../../components/unified/Input'
+import { Button } from '../../components/unified/Button'
 
 import { 
   DeleteFeedback, 
@@ -57,7 +65,6 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
       setImportantFeedbacks(initialImportant)
     } else {
       // feedback이 없거나 배열이 아닌 경우
-      console.warn('[FeedbackManage] feedback is not an array:', feedbackList)
       setReactions({})
       setReactionCounts({})
       setImportantFeedbacks({})
@@ -67,7 +74,6 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   function DropFeedback(feedback_id) {
     DeleteFeedback(feedback_id)
       .then((res) => {
-        console.log(res)
         window.alert('피드백이 삭제되었습니다.')
         refetch()
       })
@@ -130,11 +136,9 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
     // API 호출로 반응 저장
     UpdateFeedbackReaction(feedbackId, newReaction)
       .then((response) => {
-        console.log('Reaction updated successfully', response)
         refetch()
       })
       .catch(err => {
-        console.error('Failed to update reaction:', err)
         // 실패 시 원래 상태로 되돌리기
         setReactions(prev => ({
           ...prev,
@@ -168,13 +172,11 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
     
     CreateFeedbackReply(feedbackId, { text: replyText })
       .then((response) => {
-        console.log('Reply created successfully', response)
         setReplyTexts(prev => ({ ...prev, [feedbackId]: '' }))
         setShowReplyInput(prev => ({ ...prev, [feedbackId]: false }))
         refetch()
       })
       .catch(err => {
-        console.error('Failed to create reply:', err)
         window.alert('답글 등록에 실패했습니다.')
       })
   }
@@ -191,11 +193,9 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
     
     ToggleFeedbackImportant(feedbackId)
       .then((response) => {
-        console.log('Important status toggled successfully', response)
         refetch()
       })
       .catch(err => {
-        console.error('Failed to toggle important status:', err)
         // 실패 시 원래 상태로 되돌리기
         setImportantFeedbacks(prev => ({
           ...prev,
@@ -203,7 +203,6 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
         }))
       })
   }
-
 
   return (
     <div className={gridStyles['feedback-grid-container']}>
@@ -222,15 +221,15 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 >
                   {feedback.section || '시간 미지정'}
                 </div>
-                <button
+                <UnifiedButton
                   className={gridStyles['delete-btn']}
-                  onClick={() => DropFeedback(feedback.id)}
+                  onClick={() = aria-label="Click" type="button"> DropFeedback(feedback.id)}
                   title="삭제"
                 >
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                </button>
+                </UnifiedButton>
               </div>
               
               <div className={gridStyles['card-content']}>
@@ -238,55 +237,55 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
               </div>
               
               <div className={gridStyles['card-actions']}>
-                <button
+                <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.like} ${reactions[feedback.id] === 'like' ? gridStyles.active : ''}`}
-                  onClick={() => toggleReaction(feedback.id, 'like')}
+                  onClick={() = aria-label="Click" type="button"> toggleReaction(feedback.id, 'like')}
                 >
                   <span>👍</span> 좋아요
                   {reactionCounts[feedback.id]?.like > 0 && (
                     <span className={gridStyles.count}>({reactionCounts[feedback.id].like})</span>
                   )}
-                </button>
+                </UnifiedButton>
                 
-                <button
+                <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.dislike} ${reactions[feedback.id] === 'dislike' ? gridStyles.active : ''}`}
-                  onClick={() => toggleReaction(feedback.id, 'dislike')}
+                  onClick={() = aria-label="Click" type="button"> toggleReaction(feedback.id, 'dislike')}
                 >
                   <span>👎</span> 싫어요
                   {reactionCounts[feedback.id]?.dislike > 0 && (
                     <span className={gridStyles.count}>({reactionCounts[feedback.id].dislike})</span>
                   )}
-                </button>
+                </UnifiedButton>
                 
-                <button
+                <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.needExplanation} ${reactions[feedback.id] === 'needExplanation' ? gridStyles.active : ''}`}
-                  onClick={() => toggleReaction(feedback.id, 'needExplanation')}
+                  onClick={() = aria-label="Click" type="button"> toggleReaction(feedback.id, 'needExplanation')}
                 >
                   <span>❓</span>
                   <span>추가설명필요</span>
                   {reactionCounts[feedback.id]?.needExplanation > 0 && (
                     <span className={gridStyles.count}>({reactionCounts[feedback.id].needExplanation})</span>
                   )}
-                </button>
+                </UnifiedButton>
                 
-                <button
+                <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.reply} ${showReplyInput[feedback.id] ? gridStyles.active : ''}`}
-                  onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
+                  onClick={() = aria-label="Click" type="button"> setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
                 >
                   <span>💬</span> 답글
                   {feedback.replies?.length > 0 && (
                     <span className={gridStyles.count}>({feedback.replies.length})</span>
                   )}
-                </button>
+                </UnifiedButton>
                 
-                <button
+                <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.important} ${importantFeedbacks[feedback.id] ? gridStyles.active : ''}`}
-                  onClick={() => toggleImportant(feedback.id)}
+                  onClick={() = aria-label="Click" type="button"> toggleImportant(feedback.id)}
                   title={importantFeedbacks[feedback.id] ? '중요 해제' : '중요 표시'}
                 >
                   <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span>
                   <span>중요</span>
-                </button>
+                </UnifiedButton>
               </div>
               
               {/* 답글 섹션 */}
@@ -294,20 +293,20 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 <div className={gridStyles['reply-section']}>
                   {showReplyInput[feedback.id] && (
                     <div className={gridStyles['reply-input-wrapper']}>
-                      <input
+                      <Input
                         type="text"
                         placeholder="답글을 입력하세요..."
                         value={replyTexts[feedback.id] || ''}
-                        onChange={(e) => setReplyTexts(prev => ({ ...prev, [feedback.id]: e.target.value }))}
+                        onChange={(e) = aria-label="답글을 입력하세요..."> setReplyTexts(prev => ({ ...prev, [feedback.id]: e.target.value }))}
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             submitReply(feedback.id)
                           }
                         }}
                       />
-                      <button onClick={() => submitReply(feedback.id)}>
+                      <Button onClick={() = aria-label="Click"> submitReply(feedback.id)}>
                         답글
-                      </button>
+                      </Button>
                     </div>
                   )}
                   
@@ -344,3 +343,5 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
 }
 
 React.memo(FeedbackManage)
+
+import { Button } from '../../components/unified/Button'

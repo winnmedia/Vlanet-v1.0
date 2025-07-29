@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
+import dynamic from 'next/dynamic';
+import UnifiedModal from '../../components/unified/UnifiedModal';
+import UnifiedCard from '../../components/unified/UnifiedCard';
+
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
+import { Input } from '../../components/unified/Input'
 import { useRouter } from 'next/router'
 import { checkSession } from '../../util/util'
-
-
-
-
-
-
-
-
-
-
 
 import styles from './FeedbackButtonStyles.module.scss'
 
@@ -23,7 +20,7 @@ import FeedbackManage from '../../tasks/Feedback/FeedbackManage'
 import FeedbackMore from '../../tasks/Feedback/FeedbackMore'
 import FeedbackMessagePolling from '../../tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from '../../tasks/Feedback/OpinionInput'
-import VideoJsPlayer from '../../components/VideoJsPlayer-fixed'
+
 import VideoUploadGuide from '../../components/VideoUploadGuide'
 import InviteInput from '../../tasks/Project/InviteInput'
 
@@ -131,7 +128,12 @@ export default function Feedback() {
   const startEncodingStatusCheck = () => {
     // GetEncodingStatus가 없으면 실행하지 않음
     if (typeof GetEncodingStatus !== 'function') {
-      console.log('Encoding status check not available');
+      
+import { Button } from '../../components/unified/Button'
+const VideoJsPlayer = dynamic(() => import('../../components/VideoJsPlayer-fixed'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
       return;
     }
     
@@ -154,7 +156,6 @@ export default function Feedback() {
           }
         })
         .catch((err) => {
-          console.error('Error checking encoding status:', err)
           // 404 에러인 경우 인터벌 중지
           if (err.response?.status === 404) {
             clearInterval(interval)
@@ -209,55 +210,35 @@ export default function Feedback() {
 
   useEffect(() => {
     if (!project_id) {
-      console.log('[Feedback] Project ID not available yet')
       return
     }
     
     const abortController = new AbortController()
     
-    console.log('[Feedback] Loading feedback for project:', project_id)
     GetFeedBack(project_id, { signal: abortController.signal })
       .then((res) => {
-        console.log('Feedback data:', res.data.result)
-        console.log('Files URL:', res.data.result?.files)
-        console.log('Full response:', res.data)
-        
         // 파일 URL 디버깅
         if (res.data.result?.files) {
-          console.log('File URL type:', typeof res.data.result.files);
-          console.log('File URL value:', res.data.result.files);
-          
+
           // 파일 존재 여부 테스트
           const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net';
           const testUrl = res.data.result.files.startsWith('http') 
             ? res.data.result.files 
             : `${apiUrl}${res.data.result.files.startsWith('/') ? '' : '/'}${res.data.result.files}`;
-          
-          console.log('Testing URL:', testUrl);
-          
+
           // HEAD 요청으로 파일 존재 확인
           fetch(testUrl, { method: 'HEAD' })
-            .then(response => {
-              console.log('File check response:', response.status, response.statusText);
-              console.log('Response headers:', response.headers);
-            })
-            .catch(error => {
-              console.error('File check error:', error);
-            });
+            .then(response => {})
+            .catch(error => {});
         }
         
         set_current_project(res.data.result)
         setIsLoading(false)
         
         // 피드백 데이터 구조 확인
-        console.log('Feedback array:', res.data.result?.feedback)
-        console.log('Number of feedbacks:', res.data.result?.feedback?.length || 0)
-        if (res.data.result?.feedback?.length > 0) {
-          console.log('First feedback:', res.data.result.feedback[0])
-        }
+        
       })
       .catch((err) => {
-        console.error('[Feedback] Failed to load project:', err)
         if (err.response?.status === 401) {
           window.alert('로그인이 필요합니다.')
           navigate('/Login')
@@ -294,11 +275,9 @@ export default function Feedback() {
       } catch (error) {
         if (error.response?.status === 401) {
           // AI 서비스가 현재 사용 불가능한 경우 무시
-          console.log('AI teacher service not available or not authenticated')
-        } else {
+          } else {
           // 네트워크 에러 등은 조용히 무시
-          console.log('Could not fetch AI teachers')
-        }
+          }
       }
     }
     
@@ -370,14 +349,13 @@ export default function Feedback() {
       return;
     }
 
-    console.log(`[WebSocket] 연결 시도... (${connectionAttempts + 1}/${maxReconnectAttempts})`)
+    `)
     setConnectionStatus('connecting')
     
     try {
       ws.current = new WebSocket(webSocketUrl)
 
       ws.current.onopen = () => {
-        console.log('[WebSocket] 연결 성공')
         setSocketConnected(true)
         setConnectionStatus('connected')
         setConnectionAttempts(0) // 성공 시 재시도 횟수 리셋
@@ -392,7 +370,6 @@ export default function Feedback() {
       }
 
       ws.current.onclose = (event) => {
-        console.log('[WebSocket] 연결 끊김:', event.code, event.reason)
         setSocketConnected(false)
         setConnectionStatus('disconnected')
         
@@ -400,20 +377,16 @@ export default function Feedback() {
         if (event.code !== 1000 && connectionAttempts < maxReconnectAttempts) {
           setConnectionStatus('reconnecting')
           const delay = Math.min(baseReconnectDelay * Math.pow(2, connectionAttempts), 30000) // 최대 30초
-          console.log(`[WebSocket] ${delay}ms 후 재연결 시도...`)
-          
           reconnectTimeoutRef.current = setTimeout(() => {
             setConnectionAttempts(prev => prev + 1)
             connectWebSocket()
           }, delay)
         } else if (connectionAttempts >= maxReconnectAttempts) {
-          console.log('[WebSocket] 최대 재연결 시도 횟수 초과')
           setConnectionStatus('disconnected')
         }
       }
 
       ws.current.onerror = (error) => {
-        console.error('[WebSocket] 연결 오류:', error)
         setConnectionStatus('disconnected')
       }
 
@@ -421,19 +394,15 @@ export default function Feedback() {
         try {
           const data = JSON.parse(evt.data)
           setItems((prevItems) => [...prevItems, data.result])
-        } catch (err) {
-          console.error('[WebSocket] 메시지 파싱 오류:', err)
-        }
+        } catch (err) {}
       }
     } catch (error) {
-      console.error('[WebSocket] 연결 생성 오류:', error)
       setConnectionStatus('disconnected')
     }
   }, [webSocketUrl, project_id, connectionAttempts, maxReconnectAttempts, baseReconnectDelay])
 
   // 수동 재연결 함수
   const manualReconnect = React.useCallback(() => {
-    console.log('[WebSocket] 수동 재연결 시도')
     setConnectionAttempts(0)
     
     // 기존 연결 정리
@@ -456,8 +425,6 @@ export default function Feedback() {
 
     // 컴포넌트 언마운트 시 정리
     return () => {
-      console.log('[WebSocket] 컴포넌트 언마운트 - 연결 정리')
-      
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current)
         reconnectTimeoutRef.current = null
@@ -524,8 +491,6 @@ export default function Feedback() {
       // 초대 목록 새로고침
       loadProjectInvitations()
     } catch (error) {
-      console.error('초대 실패:', error)
-      
       // 409 Conflict 처리 (이미 초대된 이메일)
       if (error.response?.status === 409) {
         if (window.confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
@@ -543,9 +508,7 @@ export default function Feedback() {
     try {
       const response = await GetProjectInvitations(project_id)
       setProjectInvitations(response.data.invitations || [])
-    } catch (error) {
-      console.error('초대 목록 조회 실패:', error)
-    }
+    } catch (error) {}
   }
 
   const loadQuickInviteLists = async () => {
@@ -556,7 +519,6 @@ export default function Feedback() {
       setFriends([]) // 친구 목록 비활성화
       setRecentInvitations(recentResponse.data?.recent_invitations || [])
     } catch (error) {
-      console.error('빠른 초대 목록 로드 실패:', error)
       setFriends([])
       setRecentInvitations([])
     } finally {
@@ -591,7 +553,6 @@ export default function Feedback() {
       alert('초대를 취소했습니다.')
       loadProjectInvitations() // 목록 새로고침
     } catch (error) {
-      console.error('초대 취소 실패:', error)
       alert(error.response?.data?.message || '초대 취소 중 오류가 발생했습니다.')
     }
   }
@@ -654,16 +615,16 @@ export default function Feedback() {
         <div className="member">
           {/* 관리자만 초대 버튼 표시 */}
           {is_admin && (
-            <div className="member_header">
-              <button
-                onClick={handleOpenInviteModal}
+            <div className={styles.member_header}>
+              <UnifiedButton
+                onClick={handleOpenInviteModal} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && handleOpenInviteModal}
                 className={styles.inviteButton}
-              >
+               aria-label="Click">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
                 <span>멤버 초대</span>
-              </button>
+              </UnifiedButton>
             </div>
           )}
 
@@ -703,20 +664,20 @@ export default function Feedback() {
 
           {/* 초대 현황 표시 (관리자만) */}
           {is_admin && projectInvitations.length > 0 && (
-            <div className="invitation_section">
-              <h4 className="section_title">초대 현황</h4>
-              <div className="invitation_list">
+            <div className={styles.invitation_section}>
+              <h4 className={styles.section_title}>초대 현황</h4>
+              <div className={styles.invitation_list}>
                 {projectInvitations.map((invitation, index) => (
                   <div 
                     key={index}
-                    className="invitation_item"
+                    className={styles.invitation_item}
                   >
-                    <div className="invitation_info">
-                      <div className="invitation_email">{invitation.invitee_email}</div>
-                      <div className="invitation_date">{moment(invitation.created).format('YYYY.MM.DD HH:mm')}</div>
+                    <div className={styles.invitation_info}>
+                      <div className={styles.invitation_email}>{invitation.invitee_email}</div>
+                      <div className={styles.invitation_date}>{moment(invitation.created).format('YYYY.MM.DD HH:mm')}</div>
                     </div>
-                    <div className="invitation_actions">
-                      <span className={`invitation_status ${invitation.status}`}>
+                    <div className={styles.invitation_actions}>
+                      <span className={`${styles.invitation_status} ${styles[invitation.status]}`}>
                         {invitation.status === 'pending' ? '대기중' :
                          invitation.status === 'accepted' ? '수락됨' :
                          invitation.status === 'declined' ? '거절됨' :
@@ -724,8 +685,12 @@ export default function Feedback() {
                       </span>
                       {invitation.status === 'pending' && (
                         <>
-                          <button
-                            onClick={async () => {
+                          <Button onClick={async () = aria-label="Click"> {
+                              try {
+                                await InviteProjectMember(project_id, {
+                                  email: invitation.invitee_email,
+                                  resend: true
+                                } onKeyDown={(e) => e.key === 'Enter' && async () = aria-label="Click"> {
                               try {
                                 await InviteProjectMember(project_id, {
                                   email: invitation.invitee_email,
@@ -758,9 +723,8 @@ export default function Feedback() {
                             title="초대 재전송"
                           >
                             재전송
-                          </button>
-                          <button
-                            onClick={() => handleCancelInvitation(invitation.id)}
+                          </Button>
+                          <Button onClick={() = aria-label="Click"> handleCancelInvitation(invitation.id)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleCancelInvitation(invitation.id)}
                             style={{
                               background: 'none',
                               border: '1px solid #dc3545',
@@ -782,12 +746,16 @@ export default function Feedback() {
                             title="초대 취소"
                           >
                             취소
-                          </button>
+                          </Button>
                         </>
                       )}
                       {(invitation.status === 'cancelled' || invitation.status === 'declined') && (
-                        <button
-                          onClick={async () => {
+                        <Button onClick={async () = aria-label="Click"> {
+                            try {
+                              await InviteProjectMember(project_id, {
+                                email: invitation.invitee_email,
+                                resend: true
+                              } onKeyDown={(e) => e.key === 'Enter' && async () = aria-label="Click"> {
                             try {
                               await InviteProjectMember(project_id, {
                                 email: invitation.invitee_email,
@@ -820,7 +788,7 @@ export default function Feedback() {
                           title="초대 재전송"
                         >
                           재전송
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -859,7 +827,6 @@ export default function Feedback() {
   function FileChange(e) {
     const files = e.target.files[0]
     if (!files) {
-      console.error('No file selected')
       return
     }
     
@@ -882,29 +849,19 @@ export default function Feedback() {
       return;
     }
     
-    console.log('Selected file:', files.name, 'Size:', files.size, 'Type:', files.type)
-    
     const formData = new FormData()
     formData.append('files', files)
     formData.append('filename', files.name) // 파일명 추가
-    
-    console.log('FormData contents:');
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-    }
+
+    for (let pair of formData.entries()) {}
     
     if (window.confirm('파일을 업로드 하시겠습니까?')) {
       SetVideoLoad(true)
       setUploadProgress(0)
-      console.log('Uploading file to project:', project_id)
-      console.log('Backend URL:', process.env.NEXT_PUBLIC_API_URL)
-      
       const onUploadProgress = (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
         setUploadProgress(percentCompleted)
-        console.log('Upload progress:', percentCompleted + '%')
-        console.log('Loaded:', progressEvent.loaded, 'Total:', progressEvent.total)
-        console.log('Time:', new Date().toISOString())
+        .toISOString())
         
         // 진행률이 멈춘 경우 감지
         if (percentCompleted > 0 && percentCompleted < 100) {
@@ -914,9 +871,7 @@ export default function Feedback() {
           // 10초 후에도 진행이 없으면 경고
           const timeoutId = setTimeout(() => {
             const timeSinceLastProgress = new Date().getTime() - window.lastProgressTime
-            if (timeSinceLastProgress > 9000 && percentCompleted < 100) {
-              console.error('Upload appears to be stalled. Last progress:', timeSinceLastProgress / 1000, 'seconds ago')
-            }
+            
           }, 10000)
           
           // 타임아웃 ID를 저장하여 나중에 정리할 수 있도록 함
@@ -927,9 +882,6 @@ export default function Feedback() {
       
       FeedbackFile(formData, project_id, onUploadProgress)
         .then((res) => {
-          console.log('Upload success:', res)
-          console.log('Response data:', res.data)
-          console.log('Uploaded file URL:', res.data?.file_url || res.data?.files || 'No URL returned')
           SetVideoLoad(false)
           setUploadProgress(100)
           
@@ -959,10 +911,6 @@ export default function Feedback() {
           window.uploadTimeouts.push(resetProgressTimeout)
         })
         .catch((err) => {
-          console.error('Upload error:', err)
-          console.error('Error response:', err.response)
-          console.error('Error status:', err.response?.status)
-          console.error('Error data:', err.response?.data)
           e.target.value = ''
           SetVideoLoad(false)
           setUploadProgress(0)
@@ -1101,7 +1049,6 @@ export default function Feedback() {
         setTimeout(checkAnalysisStatus, 3000)
       }
     } catch (error) {
-      console.error('Analysis error:', error)
       window.alert(error.message || '분석 중 오류가 발생했습니다.')
       setAnalysisStatus('error')
       setAnalysisLoading(false)
@@ -1121,7 +1068,7 @@ export default function Feedback() {
       <PageTemplate>
         <div className="cms_wrap">
           <SideBar tab="feedback" />
-          <main>
+          <main role="main">
             <div className="loading-overlay">
               <div className="loading-spinner"></div>
               <p>피드백 데이터를 불러오는 중...</p>
@@ -1136,7 +1083,7 @@ export default function Feedback() {
     <PageTemplate>
       <div className="cms_wrap">
         {!isGuestMode && <SideBar tab="feedback" />}
-        <main style={isGuestMode ? { marginLeft: 0, width: '100%' } : {}}>
+        <main style={isGuestMode ? { marginLeft: 0, width: '100%' } : {}} role="main">
           <div className="content feedback">
             {current_project ? (
               <div className="flex">
@@ -1152,45 +1099,33 @@ export default function Feedback() {
                         ref={videoPlayerRef}
                         videoUrl={(() => {
                           const fileUrl = current_project.files;
-                          console.log('[VideoPlayer] === VIDEO URL DEBUG ===');
-                          console.log('[VideoPlayer] Current project:', current_project);
-                          console.log('[VideoPlayer] Original file URL:', fileUrl);
-                          console.log('[VideoPlayer] File URL type:', typeof fileUrl);
-                          
+
                           // 파일 URL이 없는 경우
                           if (!fileUrl) {
-                            console.warn('[VideoPlayer] No file URL provided');
+                            
                             return '';
                           }
                         
                         // 이미 전체 URL인 경우 (백엔드에서 완전한 URL 반환)
                         if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
-                          console.log('[VideoPlayer] Using complete URL from backend:', fileUrl);
-                          
+
                           // 비디오 URL 유효성 검사를 위한 테스트 요청
                           fetch(fileUrl, { method: 'HEAD' })
                             .then(response => {
-                              console.log('[VideoPlayer] URL test response:', {
-                                status: response.status,
-                                ok: response.ok,
-                                contentType: response.headers.get('content-type'),
+                              ,
                                 contentLength: response.headers.get('content-length')
                               });
                             })
-                            .catch(error => {
-                              console.error('[VideoPlayer] URL test failed:', error);
-                            });
+                            .catch(error => {});
                           
                           // URL이 이미 인코딩되어 있는지 확인하고 필요시 디코딩
                           try {
                             const decodedUrl = decodeURI(fileUrl);
                             if (decodedUrl !== fileUrl) {
-                              console.log('[VideoPlayer] URL was already encoded, using as is');
+                              
                               return fileUrl;
                             }
-                          } catch (e) {
-                            console.log('[VideoPlayer] URL decode failed, using as is');
-                          }
+                          } catch (e) {}
                           return fileUrl;
                         }
                         
@@ -1213,9 +1148,7 @@ export default function Feedback() {
                           // 상대 경로
                           fullUrl = `${adjustedBackendUrl}/${fileUrl}`;
                         }
-                        
-                        console.log('[VideoPlayer] Constructed URL:', fullUrl);
-                        console.log('[VideoPlayer] Current hostname:', typeof window !== 'undefined' && window.location.hostname);
+
                         return fullUrl;
                       })()}
                       initialTime={currentVideoTime}
@@ -1233,7 +1166,6 @@ export default function Feedback() {
                         changeItem(0)
                       }}
                       onError={(error) => {
-                        console.error('Video playback error:', error)
                         // 비디오 로드 실패 시에도 페이지는 정상 작동하도록
                         SetVideoLoad(false)
                       }}
@@ -1254,14 +1186,13 @@ export default function Feedback() {
                         <div style={{
                           textAlign: 'center'
                         }}>
-                          <input
-                            type="file"
+                          <UnifiedInput type="file"
                             accept="video/*"
                             onChange={FileChange}
                             name="files"
                             id="video-center-upload"
                             className={styles.visuallyHidden}
-                          />
+                           / aria-label="files">
                           <label 
                             htmlFor="video-center-upload" 
                             className="feedback-upload-label"
@@ -1348,45 +1279,53 @@ export default function Feedback() {
                   <div className={styles.actionButtonGroup}>
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
-                      <button
-                      onClick={() => {
+                      <UnifiedButton
+                      onClick={() = aria-label="Click" type="button"> {
                         try {
                           if (videoPlayerRef.current) {
-                            console.log('[Feedback] Video player ref available:', !!videoPlayerRef.current);
-                            
+
                             // 플레이어 준비 상태 확인
                             const isPlayerReady = videoPlayerRef.current.isReady && videoPlayerRef.current.isReady();
-                            console.log('[Feedback] Player ready state:', isPlayerReady);
-                            
+
                             // 현재 시간 가져오기
                             const currentTime = videoPlayerRef.current.getCurrentTime ? videoPlayerRef.current.getCurrentTime() : 0;
-                            console.log('[Feedback] Current time:', currentTime);
-                            
+
                             // 비디오 일시정지
                             if (videoPlayerRef.current.pause && typeof videoPlayerRef.current.pause === 'function') {
-                              console.log('[Feedback] Attempting to pause video player');
+                              
                               const pauseResult = videoPlayerRef.current.pause();
-                              console.log('[Feedback] Pause result:', pauseResult);
-                            } else {
-                              console.warn('[Feedback] Pause method not available');
-                            }
+                              
+                            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                        try {
+                          if (videoPlayerRef.current) {
+
+                            // 플레이어 준비 상태 확인
+                            const isPlayerReady = videoPlayerRef.current.isReady && videoPlayerRef.current.isReady();
+
+                            // 현재 시간 가져오기
+                            const currentTime = videoPlayerRef.current.getCurrentTime ? videoPlayerRef.current.getCurrentTime() : 0;
+
+                            // 비디오 일시정지
+                            if (videoPlayerRef.current.pause && typeof videoPlayerRef.current.pause === 'function') {
+                              
+                              const pauseResult = videoPlayerRef.current.pause();
+                              
+                            } else {}
                             
                             // 시간 포맷팅
                             const minutes = Math.floor(currentTime / 60);
                             const seconds = Math.floor(currentTime % 60);
                             const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                            
-                            console.log('[Feedback] Setting feedback time:', timeStr);
-                            
+
                             // 피드백 등록 탭으로 전환하고 시간 설정
                             setFeedbackTime(timeStr);
                             changeItem(0); // 피드백 등록 탭으로 이동
                           } else {
-                            console.warn('[Feedback] Video player ref not available');
+                            
                             window.alert('비디오 플레이어가 준비되지 않았습니다.');
                           }
                         } catch (error) {
-                          console.error('[Feedback] Error in feedback button click:', error);
+                          
                           window.alert('피드백 버튼 클릭 중 오류가 발생했습니다: ' + error.message);
                         }
                       }}
@@ -1397,20 +1336,18 @@ export default function Feedback() {
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13v6l5.25 3.15.75-1.23-4.5-2.67V7h-1.5z" fill="currentColor"/>
                       </svg>
-                      </button>
+                      </UnifiedButton>
                     )}
-
 
                     {/* 영상 업로드/교체 버튼 */}
                     <div className="file-upload-wrapper">
-                      <input
-                        type="file"
+                      <UnifiedInput type="file"
                         accept="video/*"
                         onChange={FileChange}
                         name="files"
                         id="video-replace-button"
                         className={styles.visuallyHidden}
-                      />
+                       / aria-label="files">
                       <label 
                         htmlFor="video-replace-button" 
                         className={styles.feedbackButtonIconOnly}
@@ -1431,8 +1368,8 @@ export default function Feedback() {
 
                     {/* 영상 삭제 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
-                      <button
-                        onClick={DeleteFile}
+                      <UnifiedButton
+                        onClick={DeleteFile} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && DeleteFile}
                         className={styles.feedbackButtonIconOnly}
                         aria-label="영상 삭제"
                         title="영상 삭제"
@@ -1440,13 +1377,13 @@ export default function Feedback() {
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                      </button>
+                      </UnifiedButton>
                     )}
                     
                     {/* 공유 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
-                      <button
-                        onClick={() => CopyFileUrl(current_project.files)}
+                      <UnifiedButton
+                        onClick={() = aria-label="Click" type="button"> CopyFileUrl(current_project.files)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> CopyFileUrl(current_project.files)}
                         className={styles.feedbackButtonIconOnly}
                         aria-label="영상 링크 공유"
                         title="링크 복사"
@@ -1454,13 +1391,32 @@ export default function Feedback() {
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                           <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                      </button>
+                      </UnifiedButton>
                     )}
                     
                     {/* 스크린샷 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
-                      <button
-                        onClick={() => {
+                      <UnifiedButton
+                        onClick={() = aria-label="Click" type="button"> {
+                          if (videoPlayerRef.current) {
+                            // 비디오 일시정지
+                            videoPlayerRef.current.pause();
+                            
+                            // 스크린샷 캡처 기능 구현
+                            const video = videoPlayerRef.current.el().querySelector('video');
+                            if (video) {
+                              const canvas = document.createElement('canvas');
+                              canvas.width = video.videoWidth;
+                              canvas.height = video.videoHeight;
+                              const ctx = canvas.getContext('2d');
+                              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                              
+                              // 이미지 다운로드
+                              canvas.toBlob((blob) => {
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                const currentTime = videoPlayerRef.current.getCurrentTime();
+                                const timeStr = `${Math.floor(currentTime / 60)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
                           if (videoPlayerRef.current) {
                             // 비디오 일시정지
                             videoPlayerRef.current.pause();
@@ -1496,7 +1452,7 @@ export default function Feedback() {
                           <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           <circle cx="12" cy="13" r="4" stroke="currentColor" strokeWidth="2"/>
                         </svg>
-                      </button>
+                      </UnifiedButton>
                     )}
                     
                   </div>
@@ -1509,8 +1465,9 @@ export default function Feedback() {
                     <div className="header_actions">
                       {/* 피드백 전체보기 버튼 - 피드백 관리 탭에서만 표시 */}
                       {currentItem && currentItem.tab === '피드백 관리' && (
-                        <button
-                          onClick={() =>
+                        <UnifiedButton
+                          onClick={() = aria-label="Click" type="button">
+                            navigate(`/FeedbackAll?projectId=${project_id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click">
                             navigate(`/FeedbackAll?projectId=${project_id}`)
                           }
                           className={styles.feedbackButtonSecondary}
@@ -1521,7 +1478,7 @@ export default function Feedback() {
                             <line x1="9" y1="9" x2="9" y2="21" stroke="currentColor" strokeWidth="2"/>
                           </svg>
                           전체보기
-                        </button>
+                        </UnifiedButton>
                       )}
                     </div>
                   </div>
@@ -1545,32 +1502,32 @@ export default function Feedback() {
                             </div>
                           </div>
                         </div>
-                        <button
-                          onClick={() => setSelectedFeedback(null)}
+                        <UnifiedButton
+                          onClick={() = aria-label="Click" type="button"> setSelectedFeedback(null)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setSelectedFeedback(null)}
                           className="close-btn"
                         >
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                           </svg>
-                        </button>
+                        </UnifiedButton>
                       </div>
                       <div className="feedback-content">
                         <p>{selectedFeedback.text}</p>
                       </div>
                       <div className="feedback-actions">
-                        <button>
+                        <UnifiedButton aria-label="Click" type="button">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                             <path d="M7 7H17C19 7 21 9 21 11V18C21 20 19 22 17 22H7C5 22 3 20 3 18V11C3 9 5 7 7 7Z" stroke="currentColor" strokeWidth="2"/>
                             <path d="M8 7V5C8 3 10 1 12 1C14 1 16 3 16 5V7" stroke="currentColor" strokeWidth="2"/>
                           </svg>
                           답글
-                        </button>
-                        <button>
+                        </UnifiedButton>
+                        <UnifiedButton aria-label="Click" type="button">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                             <path d="M12 2L15 9L22 10L17 15L18 22L12 18L6 22L7 15L2 10L9 9L12 2Z" stroke="currentColor" strokeWidth="2" fill="none"/>
                           </svg>
                           중요 표시
-                        </button>
+                        </UnifiedButton>
                       </div>
                     </div>
                   )}
@@ -1599,8 +1556,8 @@ export default function Feedback() {
                   <div className="b_title">
                   <div className={styles.projectHeader}>
                     <span className={styles.projectTitle}>{current_project?.name || '프로젝트'}</span>
-                    <button 
-                      onClick={() => setShowProjectInfo(!showProjectInfo)}
+                    <UnifiedButton 
+                      onClick={() = aria-label="Click" type="button"> setShowProjectInfo(!showProjectInfo)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowProjectInfo(!showProjectInfo)}
                       className={showProjectInfo ? `${styles.infoButton} ${styles.active}` : styles.infoButton}
                       title="프로젝트 정보"
                       aria-label="프로젝트 정보"
@@ -1610,7 +1567,7 @@ export default function Feedback() {
                         <circle cx="12" cy="8" r="1" fill="currentColor"/>
                         <rect x="11" y="11" width="2" height="6" fill="currentColor"/>
                       </svg>
-                    </button>
+                    </UnifiedButton>
                   </div>
                   {showProjectInfo && current_project && (
                     <div style={{
@@ -1674,12 +1631,12 @@ export default function Feedback() {
                         </div>
                       )}
                       {is_admin && (
-                        <button
+                        <UnifiedButton
                           className={styles.feedbackButtonPrimaryFull}
-                          onClick={() => navigate(`/ProjectEdit/${project_id}`)}
+                          onClick={() = aria-label="Click" type="button"> navigate(`/ProjectEdit/${project_id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/ProjectEdit/${project_id}`)}
                         >
                           프로젝트 관리
-                        </button>
+                        </UnifiedButton>
                       )}
                     </div>
                   )}
@@ -1688,13 +1645,13 @@ export default function Feedback() {
                   <div className={styles.tabMenu}>
                     {content.map((section, index) => (
                       section && section.tab ? (
-                        <button 
+                        <UnifiedButton 
                           key={index}
-                          onClick={() => changeItem(index)}
+                          onClick={() = aria-label="Click" type="button"> changeItem(index)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> changeItem(index)}
                           className={currentItem && currentItem.tab === section.tab ? `${styles.tabButton} ${styles.active}` : styles.tabButton}
                         >
                           {section.tab}
-                        </button>
+                        </UnifiedButton>
                       ) : null
                     ))}
                   </div>
@@ -1719,12 +1676,15 @@ export default function Feedback() {
       
       {/* AI 선생님 모달 */}
       {showTeacherModal && (
-        <div className="ai-teacher-modal-overlay" onClick={(e) => {
+        <div className="ai-teacher-modal-overlay" onClick={(e) = role="dialog" aria-modal="true"> {
+          if (e.target.classList.contains('ai-teacher-modal-overlay')) {
+            setShowTeacherModal(false)
+          } onKeyDown={(e) => e.key === 'Enter' && (e) = role="dialog" aria-modal="true"> {
           if (e.target.classList.contains('ai-teacher-modal-overlay')) {
             setShowTeacherModal(false)
           }
         }}>
-          <div className="ai-teacher-modal">
+          <div className="ai-teacher-modal" role="dialog" aria-modal="true">
             {analysisStatus === 'idle' && (
               <>
                 <div className="ai-teacher-header">
@@ -1737,7 +1697,7 @@ export default function Feedback() {
                       <div
                         key={teacher.id}
                         className={`teacher-card ${selectedTeacher?.id === teacher.id ? 'selected' : ''}`}
-                        onClick={() => setSelectedTeacher(teacher)}
+                        onClick={() => setSelectedTeacher(teacher)} onKeyDown={(e) => e.key === 'Enter' && () => setSelectedTeacher(teacher)}
                       >
                         <span className="teacher-emoji">{teacher.emoji}</span>
                         <div className="teacher-info">
@@ -1764,16 +1724,16 @@ export default function Feedback() {
                     )}
                   </div>
                   <div className={styles.footerButtons}>
-                    <button className={styles.btnCancel} onClick={() => setShowTeacherModal(false)}>
+                    <UnifiedButton className={styles.btnCancel} onClick={() = aria-label="Click" type="button"> setShowTeacherModal(false)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowTeacherModal(false)}>
                       취소
-                    </button>
-                    <button 
+                    </UnifiedButton>
+                    <UnifiedButton 
                       className={styles.btnAnalyze} 
-                      onClick={startVideoAnalysis}
+                      onClick={startVideoAnalysis} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && startVideoAnalysis}
                       disabled={!selectedTeacher}
-                    >
+                     aria-label="Click">
                       분석 시작
-                    </button>
+                    </UnifiedButton>
                   </div>
                 </div>
               </>
@@ -1877,7 +1837,7 @@ export default function Feedback() {
                           <div key={index} className="comment-item">
                             <span 
                               className="timestamp"
-                              onClick={() => handleTimestampClick(comment.timestamp)}
+                              onClick={() => handleTimestampClick(comment.timestamp)} onKeyDown={(e) => e.key === 'Enter' && () => handleTimestampClick(comment.timestamp)}
                             >
                               {Math.floor(comment.timestamp / 60)}:{Math.floor(comment.timestamp % 60).toString().padStart(2, '0')}
                             </span>
@@ -1896,9 +1856,9 @@ export default function Feedback() {
                 </div>
                 <div className="ai-teacher-footer">
                   <div></div>
-                  <button className={styles.btnAnalyze} onClick={() => setShowTeacherModal(false)}>
+                  <UnifiedButton className={styles.btnAnalyze} onClick={() = aria-label="Click" type="button"> setShowTeacherModal(false)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowTeacherModal(false)}>
                     닫기
-                  </button>
+                  </UnifiedButton>
                 </div>
               </div>
             )}
@@ -1907,12 +1867,15 @@ export default function Feedback() {
               <div className="analysis-progress">
                 <h3>분석 중 오류가 발생했습니다</h3>
                 <p>다시 시도해주세요</p>
-                <button className={styles.btnAnalyze} onClick={() => {
+                <UnifiedButton className={styles.btnAnalyze} onClick={() = aria-label="Click" type="button"> {
+                  setAnalysisStatus('idle')
+                  setSelectedTeacher(null)
+                } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
                   setAnalysisStatus('idle')
                   setSelectedTeacher(null)
                 }}>
                   다시 시도
-                </button>
+                </UnifiedButton>
               </div>
             )}
           </div>
@@ -1932,7 +1895,7 @@ export default function Feedback() {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 10000
-        }} onClick={handleCloseInviteModal}>
+        }} onClick={handleCloseInviteModal} onKeyDown={(e) => e.key === 'Enter' && handleCloseInviteModal} role="dialog" aria-modal="true">
           <div style={{
             backgroundColor: 'white',
             borderRadius: '12px',
@@ -1942,7 +1905,7 @@ export default function Feedback() {
             maxHeight: '80vh',
             overflowY: 'auto',
             boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)'
-          }} onClick={(e) => e.stopPropagation()}>
+          }} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -1952,8 +1915,7 @@ export default function Feedback() {
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
                 멤버 초대
               </h3>
-              <button
-                onClick={handleCloseInviteModal}
+              <Button onClick={handleCloseInviteModal} onKeyDown={(e) => e.key === 'Enter' && handleCloseInviteModal}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -1967,17 +1929,18 @@ export default function Feedback() {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
-              >
+               aria-label="Click">
                 ×
-              </button>
+              </Button>
             </div>
             
             <InviteInput
               project_id={project_id}
               set_current_project={refetch}
-              pending_list={current_project?.pending_list || []}
+              pending_list={projectInvitations || current_project?.pending_list || []}
               onInvitationSent={() => {
                 // 초대 성공 시 모달 닫고 프로젝트 정보 새로고침
+                loadProjectInvitations()
                 setTimeout(() => {
                   handleCloseInviteModal()
                   refetch()

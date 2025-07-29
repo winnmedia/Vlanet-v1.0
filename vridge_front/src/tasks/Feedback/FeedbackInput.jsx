@@ -1,8 +1,10 @@
-import useInput from '../../hooks/UseInput'
-import React, { useState, useEffect } from 'react'
-import styles from './FeedbackInput.module.scss'
+import useInput from '../../hooks/UseInput';
+import React, { useState, useEffect } from 'react';
+import styles from '../../page/Cms/FeedbackButtonStyles.module.scss';
 
-import { CreateFeedback, CreateGuestFeedback } from '../../api/feedback'
+import { CreateFeedback, CreateGuestFeedback } from '../../api/feedback';
+import { Button } from '../../components/unified/Button';
+import { Input } from '../../components/unified/Input';
 
 export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onFeedbackSuccess, isGuestMode, guestSession }) {
   const initial = {
@@ -10,120 +12,112 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
     title: '',
     section: initialTime || '',
     contents: '',
-    nickname: '', // 닉네임 모드일 때 사용
-  }
+    nickname: '' // 닉네임 모드일 때 사용
+  };
 
-  const { inputs, onChange, set_inputs } = useInput(initial)
-  const { secret, section, contents, nickname } = inputs
-  const [feedbackMode, setFeedbackMode] = useState('anonymous') // 기본값: 익명
-  
+  const { inputs, onChange, set_inputs } = useInput(initial);
+  const { secret, section, contents, nickname } = inputs;
+  const [feedbackMode, setFeedbackMode] = useState('anonymous'); // 기본값: 익명
+
   // initialTime이 변경될 때 section 값 업데이트
   useEffect(() => {
     if (initialTime) {
-      set_inputs(prevInputs => ({
+      set_inputs((prevInputs) => ({
         ...prevInputs,
         section: initialTime
-      }))
+      }));
     }
-  }, [initialTime, set_inputs])
+  }, [initialTime, set_inputs]);
 
   function SendFeedback() {
     // 보안: 사용자 입력 데이터 로깅 제거
-    // console.log('SendFeedback called')
-    
-    // 게스트 모드가 아닐 때만 닉네임 검증
+    // // 게스트 모드가 아닐 때만 닉네임 검증
     if (!isGuestMode && feedbackMode === 'nickname' && !nickname.trim()) {
-      window.alert('닉네임을 입력해주세요.')
-      return
+      window.alert('닉네임을 입력해주세요.');
+      return;
     }
-    
+
     if (section && contents) {
       const feedbackData = {
         ...inputs,
         secret: feedbackMode === 'anonymous' ? true : false,
-        display_mode: feedbackMode, // 백엔드에서 표시 모드 구분용
-      }
-      
-      console.log('Sending feedback data:', feedbackData)
-      
+        display_mode: feedbackMode // 백엔드에서 표시 모드 구분용
+      };
+
       // 게스트 모드와 일반 모드 구분
-      const createFeedbackPromise = isGuestMode && guestSession
-        ? CreateGuestFeedback(project_id, guestSession.sessionId, feedbackData)
-        : CreateFeedback(feedbackData, project_id)
-      
-      createFeedbackPromise
-        .then((res) => {
-          console.log('Feedback creation success:', res)
-          window.alert('피드백 등록이 되었습니다.')
-          set_inputs({
-            secret: 'anonymous',
-            title: '',
-            section: '',
-            contents: '',
-            nickname: '',
-          })
-          setFeedbackMode('anonymous')
-          // 시간 초기화 콜백 호출
-          if (onTimeChange) {
-            onTimeChange('')
-          }
-          refetch()
-          // 피드백 등록 성공 후 관리 탭으로 전환
-          if (onFeedbackSuccess) {
-            setTimeout(() => onFeedbackSuccess(), 500)
-          }
-        })
-        .catch((err) => {
-          console.error('Feedback creation error:', err)
-          console.error('Error response:', err.response)
-          console.error('Error status:', err.response?.status)
-          console.error('Error data:', err.response?.data)
-          
-          if (err.response && err.response.data && err.response.data.message) {
-            window.alert(`오류: ${err.response.data.message}`)
-          } else if (err.message) {
-            window.alert(`오류: ${err.message}`)
-          } else {
-            window.alert('피드백 등록 중 오류가 발생했습니다.')
-          }
-        })
+      const createFeedbackPromise = isGuestMode && guestSession ?
+      CreateGuestFeedback(project_id, guestSession.sessionId, feedbackData) :
+      CreateFeedback(feedbackData, project_id);
+
+      createFeedbackPromise.
+      then((res) => {
+
+        window.alert('피드백 등록이 되었습니다.');
+        set_inputs({
+          secret: 'anonymous',
+          title: '',
+          section: '',
+          contents: '',
+          nickname: ''
+        });
+        setFeedbackMode('anonymous');
+        // 시간 초기화 콜백 호출
+        if (onTimeChange) {
+          onTimeChange('');
+        }
+        refetch();
+        // 피드백 등록 성공 후 관리 탭으로 전환
+        if (onFeedbackSuccess) {
+          setTimeout(() => onFeedbackSuccess(), 500);
+        }
+      }).
+      catch((err) => {
+
+        if (err.response && err.response.data && err.response.data.message) {
+          window.alert(`오류: ${err.response.data.message}`);
+        } else if (err.message) {
+          window.alert(`오류: ${err.message}`);
+        } else {
+          window.alert('피드백 등록 중 오류가 발생했습니다.');
+        }
+      });
     } else {
-      console.log('Validation failed:', { section, contents })
-      window.alert('입력란을 채워주세요.')
+
+      window.alert('입력란을 채워주세요.');
     }
   }
 
   return (
     <div className={styles.feedbackForm}>
       <div className={styles.userTypeSelector}>
-        {isGuestMode && guestSession ? (
-          <div className={styles.guestInfo}>
+        {isGuestMode && guestSession ?
+        <div className={styles.guestInfo}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
-              <circle cx="12" cy="8" r="3" stroke="#6c757d" strokeWidth="2"/>
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#6c757d" strokeWidth="2"/>
+              <circle cx="12" cy="8" r="3" stroke="#6c757d" strokeWidth="2" />
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#6c757d" strokeWidth="2" />
             </svg>
             <span>게스트: {guestSession.guestName}</span>
-          </div>
-        ) : (
-          <>
+          </div> :
+
+        <>
             <div className={styles.feedbackModeOptions}>
               <label className={feedbackMode === 'anonymous' ? styles.active : ''}>
                 <input
-                  type="radio"
-                  name="feedbackMode"
-                  value="anonymous"
-                  checked={feedbackMode === 'anonymous'}
-                  onChange={(e) => {
-                    setFeedbackMode(e.target.value)
-                    set_inputs(prevInputs => ({
-                      ...prevInputs,
-                      secret: 'anonymous'
-                    }))
-                  }}
-                />
+                type="radio"
+                name="feedbackMode"
+                value="anonymous"
+                checked={feedbackMode === 'anonymous'}
+                onChange={(e) = aria-label="feedbackMode"> {
+                  setFeedbackMode(e.target.value);
+                  set_inputs((prevInputs) => ({
+                    ...prevInputs,
+                    secret: 'anonymous'
+                  }));
+                }} />
+
                 <span className={styles.radioLabel}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="2" />
                   </svg>
                   익명
                 </span>
@@ -131,22 +125,22 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
               
               <label className={feedbackMode === 'nickname' ? styles.active : ''}>
                 <input
-                  type="radio"
-                  name="feedbackMode"
-                  value="nickname"
-                  checked={feedbackMode === 'nickname'}
-                  onChange={(e) => {
-                    setFeedbackMode(e.target.value)
-                    set_inputs(prevInputs => ({
-                      ...prevInputs,
-                      secret: 'nickname'
-                    }))
-                  }}
-                />
+                type="radio"
+                name="feedbackMode"
+                value="nickname"
+                checked={feedbackMode === 'nickname'}
+                onChange={(e) = aria-label="feedbackMode"> {
+                  setFeedbackMode(e.target.value);
+                  set_inputs((prevInputs) => ({
+                    ...prevInputs,
+                    secret: 'nickname'
+                  }));
+                }} />
+
                 <span className={styles.radioLabel}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2"/>
-                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" />
                   </svg>
                   닉네임
                 </span>
@@ -154,21 +148,21 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
               
               <label className={feedbackMode === 'realname' ? styles.active : ''}>
                 <input
-                  type="radio"
-                  name="feedbackMode"
-                  value="realname"
-                  checked={feedbackMode === 'realname'}
-                  onChange={(e) => {
-                    setFeedbackMode(e.target.value)
-                    set_inputs(prevInputs => ({
-                      ...prevInputs,
-                      secret: 'realname'
-                    }))
-                  }}
-                />
+                type="radio"
+                name="feedbackMode"
+                value="realname"
+                checked={feedbackMode === 'realname'}
+                onChange={(e) = aria-label="feedbackMode"> {
+                  setFeedbackMode(e.target.value);
+                  set_inputs((prevInputs) => ({
+                    ...prevInputs,
+                    secret: 'realname'
+                  }));
+                }} />
+
                 <span className={styles.radioLabel}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" strokeWidth="2" />
                   </svg>
                   실명
                 </span>
@@ -176,33 +170,31 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
             </div>
             
             {/* 닉네임 모드일 때 닉네임 입력 필드 표시 */}
-            {feedbackMode === 'nickname' && (
-              <div className={styles.nicknameInput}>
-                <input
-                  type="text"
-                  name="nickname"
-                  value={nickname}
-                  onChange={onChange}
-                  placeholder="사용할 닉네임을 입력하세요"
-                  maxLength={20}
-                />
+            {feedbackMode === 'nickname' &&
+          <div className={styles.nicknameInput}>
+                <UnifiedInput type="text"
+              name="nickname"
+              value={nickname}
+              onChange={onChange}
+              placeholder="사용할 닉네임을 입력하세요"
+              maxLength={20}  / aria-label="사용할 닉네임을 입력하세요">
+
               </div>
-            )}
+          }
           </>
-        )}
+        }
       </div>
       <div className={`${styles.timeInput} input-group`}>
         <label>시간</label>
-        <input
-          type="text"
+        <UnifiedInput type="text"
           name="section"
           value={section}
           placeholder="00분 00초"
-          onChange={onChange}
-        />
+          onChange={onChange}  / aria-label="00분 00초">
+
         <div className={styles.helpText}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/>
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor" />
           </svg>
           현재 영상 시간이 자동으로 입력됩니다
         </div>
@@ -213,16 +205,21 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
           name="contents"
           value={contents}
           placeholder="피드백 내용을 입력하세요"
-          onChange={onChange}
-        />
+          onChange={onChange} />
+
       </div>
       <div className={styles.buttonGroup}>
-        <button onClick={SendFeedback} className={styles.submitButton}>
+        <UnifiedButton
+          variant="primary"
+          size="lg"
+          onClick={SendFeedback} onKeyDown={(e) => e.key === 'Enter' && SendFeedback}
+          className={styles.submitButton} aria-label="Click">
+
           피드백 등록
-        </button>
+        </UnifiedButton>
       </div>
-    </div>
-  )
+    </div>);
+
 }
 
-React.memo(FeedbackInput)
+React.memo(FeedbackInput);

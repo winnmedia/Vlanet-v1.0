@@ -1,0 +1,278 @@
+// Input Activation System - 입력 요소 포커스 및 상호작용 스타일
+// 백업에서 추출한 핵심 기능 + 디자인 토큰 통합 (without excessive !important)
+
+@import '../../design-system/tokens/design-tokens';
+
+// 입력 요소 기본 활성화
+input,
+textarea,
+select {
+  // 기본 상호작용 활성화
+  pointer-events: auto;
+  user-select: auto;
+  -webkit-user-select: auto;
+  
+  // 기본 스타일 초기화
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  // 가시성 보장
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  z-index: 1;
+  
+  // 포커스 스타일
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    z-index: 10;
+  }
+  
+  // 비활성화 상태
+  &:disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: $color-gray-100;
+  }
+  
+  // 읽기 전용
+  &:read-only {
+    background-color: $color-gray-50;
+    cursor: default;
+  }
+}
+
+// 텍스트 입력 필드 특별 처리
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+textarea {
+  // 기본 스타일
+  background-color: white;
+  border: 1px solid $color-gray-300;
+  border-radius: $border-radius-base;
+  padding: $spacing-sm $spacing-md;
+  font-family: inherit;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $color-gray-900;
+  transition: $transition-base;
+  
+  // 호버 상태
+  &:hover:not(:focus):not(:disabled) {
+    border-color: $color-gray-400;
+  }
+  
+  // 포커스 애니메이션
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+  
+  // 플레이스홀더
+  &::placeholder {
+    color: $color-gray-400;
+    opacity: 1;
+  }
+}
+
+// 셀렉트 박스 스타일
+select {
+  background-color: white;
+  border: 1px solid $color-gray-300;
+  border-radius: $border-radius-base;
+  padding: $spacing-sm $spacing-md;
+  padding-right: $spacing-2xl;
+  font-family: inherit;
+  font-size: $font-size-base;
+  color: $color-gray-900;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M5.293 8.293a1 1 0 0 0 1.414 0l3-3a1 1 0 0 0-1.414-1.414L6 6.172 3.707 3.879a1 1 0 0 0-1.414 1.414l3 3z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $spacing-md center;
+  
+  &:hover:not(:disabled) {
+    border-color: $color-gray-400;
+  }
+  
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+}
+
+// 체크박스와 라디오 버튼
+input[type="checkbox"],
+input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// 파일 업로드
+input[type="file"] {
+  cursor: pointer;
+  
+  &::file-selector-button {
+    background: $color-primary;
+    color: white;
+    border: none;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-base;
+    font-family: inherit;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    margin-right: $spacing-md;
+    transition: $transition-base;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
+  }
+}
+
+// 라벨 상호작용
+label {
+  cursor: pointer;
+  user-select: none;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+  
+  // 필수 필드 표시
+  &.required::after {
+    content: ' *';
+    color: $color-danger;
+  }
+}
+
+// 버튼 포커스
+button,
+.btn,
+[role="button"] {
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// 피드백 페이지 특별 처리
+.Feedback,
+.feedback-page {
+  // 입력 영역 활성화
+  .opinion-input-container,
+  .feedback-input-container {
+    position: relative;
+    z-index: 1;
+    
+    textarea,
+    input,
+    select {
+      position: relative;
+      z-index: 2;
+    }
+  }
+  
+  // 탭 컨텐츠 활성화
+  .tab-content {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// 모달 내부 입력 요소
+.modal,
+.modal-content {
+  input,
+  textarea,
+  select,
+  button {
+    position: relative;
+    z-index: 1051; // Bootstrap modal z-index + 1
+  }
+}
+
+// 드롭다운 메뉴
+.dropdown-menu,
+.select-dropdown {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+// 에러 상태
+.has-error {
+  input,
+  textarea,
+  select {
+    border-color: $color-danger;
+    
+    &:focus {
+      border-color: $color-danger;
+      box-shadow: 0 0 0 3px rgba($color-danger, 0.1);
+    }
+  }
+  
+  .error-message {
+    color: $color-danger;
+    font-size: $font-size-sm;
+    margin-top: $spacing-xs;
+  }
+}
+
+// 성공 상태
+.has-success {
+  input,
+  textarea,
+  select {
+    border-color: $color-success;
+    
+    &:focus {
+      border-color: $color-success;
+      box-shadow: 0 0 0 3px rgba($color-success, 0.1);
+    }
+  }
+  
+  .success-message {
+    color: $color-success;
+    font-size: $font-size-sm;
+    margin-top: $spacing-xs;
+  }
+}
+
+// 접근성 개선
+@media (prefers-reduced-motion: reduce) {
+  input,
+  textarea,
+  select,
+  button {
+    transition: none;
+  }
+}

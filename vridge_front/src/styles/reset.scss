@@ -1,212 +1,130 @@
-@charset "utf-8";
+@import '../styles/design-tokens';
 
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-input,
-select,
-textarea,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
-  padding: 0px;
-  margin: 0px;
-  vertical-align: top;
-  white-space: normal;
-  word-wrap: break-word;
-  word-break: normal;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
-html {
-  overflow-y: auto;
+
+* {
+  margin: $spacing-0;
+  padding: $spacing-0;
 }
-html,
+
+html, body {
+  height: 100%;
+}
+
 body {
-  width: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  line-height: $line-height-base;
+  -webkit-font-smoothing: antialiased;
 }
-body {
-  min-width: 320px;
-}
-ul,
-ol {
-  list-style-type: none;
-}
-li {
-  list-style: none;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-th {
-  font-weight: 400;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-img,
-fieldset {
-  border: 0;
-  outline: none;
-}
-label {
-  cursor: pointer;
-}
-i,
-em,
-address {
-  font-style: normal;
-}
-caption,
-legend {
-  visibility: hidden;
-  width: 0px;
-  height: 0px;
-  font-size: 0px;
-  line-height: 0px;
-}
-img {
+
+img, picture, video, canvas, svg {
+  display: block;
   max-width: 100%;
 }
 
-/* html5 ie9 else */
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-  display: block;
-  padding: 0;
-  margin: 0;
+input, button, textarea, select {
+  font: inherit;
 }
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+#root, #__next {
+  isolation: isolate;
+}
+
 a {
-  text-decoration: none;
   color: inherit;
+  text-decoration: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  background: none;
+  border: none;
   cursor: pointer;
 }
-a:hover,
-a:focus,
-a:active {
-  text-decoration: none;
-}
-header,
-nav,
-main,
-section,
-aside,
-footer {
-  display: block;
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
 }
 
-@font-face {
-  font-family: 'suit';
-  src: url('../font/SUIT-Variable.ttf') format('truetype');
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-@font-face {
-  font-family: 'pb';
-  src: url('../font/Poppins-Bold.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'pl';
-  src: url('../font/Poppins-Light.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'pm';
-  src: url('../font/Poppins-Medium.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'pr';
-  src: url('../font/Poppins-Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'psb';
-  src: url('../font/Poppins-SemiBold.ttf') format('truetype');
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
+  }
 }

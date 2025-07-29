@@ -1,0 +1,334 @@
+// 키보드 네비게이션 접근성
+// WCAG 2.1 Success Criterion 2.1: Keyboard Accessible
+
+@use '../tokens' as *;
+
+// ========== 탭 인덱스 관리 ==========
+// 포커스 가능한 요소
+[tabindex="0"],
+.focusable {
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// 프로그래밍적으로만 포커스 가능
+[tabindex="-1"],
+.programmatic-focus {
+  &:focus {
+    outline: none;
+  }
+}
+
+// 포커스 불가능
+[tabindex="-2"],
+.not-focusable {
+  pointer-events: none;
+  user-select: none;
+}
+
+// ========== 키보드 전용 스타일 ==========
+// 키보드 사용자 감지
+@media (prefers-reduced-motion: no-preference) {
+  body:has(:focus-visible) {
+    .keyboard-indicator {
+      display: block;
+    }
+  }
+}
+
+// ========== 스킵 네비게이션 ==========
+.skip-navigation {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: $z-tooltip;
+  
+  &:focus {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: $color-primary;
+    color: $color-white;
+    padding: $spacing-md;
+    text-align: center;
+    text-decoration: none;
+  }
+}
+
+// 스킵 링크 목록
+.skip-links {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: $z-tooltip;
+  
+  a {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: $color-primary;
+    color: $color-white;
+    padding: $spacing-sm $spacing-md;
+    text-decoration: none;
+    
+    &:focus {
+      left: 0;
+    }
+  }
+}
+
+// ========== 키보드 트랩 방지 ==========
+// 모달/다이얼로그 포커스 관리
+.modal,
+[role="dialog"] {
+  // 첫 번째와 마지막 포커스 가능 요소
+  .focus-start,
+  .focus-end {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+  }
+}
+
+// ========== 키보드 단축키 표시 ==========
+// 키보드 단축키 힌트
+.keyboard-shortcut {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    font-family: $font-family-mono;
+    font-size: $font-size-xs;
+    line-height: 1;
+    color: $color-text-primary;
+    background-color: $color-gray-100;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    box-shadow: 0 1px 0 $color-gray-300;
+  }
+}
+
+// 접근 키 표시
+[accesskey]::after {
+  content: ' [' attr(accesskey) ']';
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  margin-left: $spacing-xs;
+}
+
+// ========== 드롭다운/메뉴 키보드 네비게이션 ==========
+[role="menu"],
+.dropdown-menu {
+  [role="menuitem"] {
+    &:hover,
+    &:focus {
+      background-color: $color-gray-100;
+      outline: none;
+    }
+    
+    &[aria-disabled="true"] {
+      opacity: $opacity-disabled;
+      pointer-events: none;
+    }
+  }
+}
+
+// ========== 탭 패널 키보드 네비게이션 ==========
+[role="tablist"] {
+  display: flex;
+  
+  [role="tab"] {
+    cursor: pointer;
+    
+    &[aria-selected="true"] {
+      border-bottom: 2px solid $color-primary;
+    }
+    
+    &:focus-visible {
+      @include focus-ring;
+    }
+    
+    // 화살표 키 네비게이션 표시
+    &:not(:first-child)::before {
+      @include sr-only;
+      content: '왼쪽 화살표 키로 이전 탭';
+    }
+    
+    &:not(:last-child)::after {
+      @include sr-only;
+      content: '오른쪽 화살표 키로 다음 탭';
+    }
+  }
+}
+
+// ========== 테이블 키보드 네비게이션 ==========
+table {
+  &[role="grid"] {
+    td,
+    th {
+      &:focus {
+        @include focus-ring;
+      }
+    }
+    
+    // 정렬 가능한 컬럼
+    th[aria-sort] {
+      cursor: pointer;
+      
+      &:hover {
+        background-color: $color-gray-50;
+      }
+      
+      &::after {
+        content: '';
+        display: inline-block;
+        margin-left: $spacing-xs;
+        
+        @include sr-only;
+        content: attr(aria-sort) ' 정렬';
+      }
+    }
+  }
+}
+
+// ========== 폼 키보드 네비게이션 ==========
+form {
+  // Enter 키로 제출 방지 (특정 필드)
+  input[data-prevent-enter-submit] {
+    &:focus {
+      &::after {
+        @include sr-only;
+        content: 'Enter 키로 제출되지 않습니다';
+      }
+    }
+  }
+}
+
+// 라디오 그룹 화살표 키 네비게이션
+[role="radiogroup"] {
+  input[type="radio"] {
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+}
+
+// ========== 슬라이더 키보드 컨트롤 ==========
+[role="slider"],
+input[type="range"] {
+  &:focus-visible {
+    @include focus-ring;
+  }
+  
+  // 키보드 컨트롤 힌트
+  &::after {
+    @include sr-only;
+    content: '좌우 화살표 키로 조절, Page Up/Down으로 큰 단위 조절';
+  }
+}
+
+// ========== 트리뷰 키보드 네비게이션 ==========
+[role="tree"] {
+  [role="treeitem"] {
+    cursor: pointer;
+    
+    &:focus {
+      background-color: $color-primary-light;
+      outline: none;
+    }
+    
+    &[aria-expanded] {
+      &::before {
+        content: '▶';
+        display: inline-block;
+        margin-right: $spacing-xs;
+        transition: transform $transition-fast;
+      }
+      
+      &[aria-expanded="true"]::before {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}
+
+// ========== 캐러셀 키보드 컨트롤 ==========
+.carousel {
+  [role="region"] {
+    &:focus {
+      @include focus-ring;
+    }
+  }
+  
+  // 키보드 컨트롤 표시
+  .carousel-controls {
+    button {
+      &:focus-visible {
+        @include focus-shadow;
+      }
+    }
+  }
+}
+
+// ========== 가상 스크롤 키보드 지원 ==========
+.virtual-scroll {
+  [role="list"] {
+    &:focus {
+      @include focus-ring;
+    }
+    
+    [role="listitem"] {
+      &[tabindex="0"] {
+        &:focus {
+          background-color: $color-primary-light;
+        }
+      }
+    }
+  }
+}
+
+// ========== 키보드 네비게이션 유틸리티 ==========
+// 포커스 이동 방향 표시
+.focus-flow-horizontal {
+  &:focus-visible {
+    &::after {
+      @include sr-only;
+      content: '좌우 화살표 키로 이동';
+    }
+  }
+}
+
+.focus-flow-vertical {
+  &:focus-visible {
+    &::after {
+      @include sr-only;
+      content: '상하 화살표 키로 이동';
+    }
+  }
+}
+
+// 포커스 루프
+.focus-loop {
+  &:first-child:focus {
+    &::before {
+      @include sr-only;
+      content: 'Tab 키로 다음, Shift+Tab으로 마지막 항목으로';
+    }
+  }
+  
+  &:last-child:focus {
+    &::after {
+      @include sr-only;
+      content: 'Tab 키로 첫 번째 항목으로, Shift+Tab으로 이전';
+    }
+  }
+}

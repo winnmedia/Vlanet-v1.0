@@ -14,14 +14,12 @@ export const formatDateForBackend = (date) => {
     
     // 유효한 날짜인지 확인
     if (!momentDate.isValid()) {
-      console.warn('Invalid date:', date)
       return null
     }
     
     // YYYY-MM-DD HH:mm 형식으로 반환
     return momentDate.format('YYYY-MM-DD HH:mm')
   } catch (error) {
-    console.error('Date formatting error:', error)
     return null
   }
 }

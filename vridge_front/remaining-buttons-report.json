@@ -1,0 +1,196 @@
+[
+  {
+    "file": "src/page/Admin/AdminDashboard.jsx",
+    "count": 19,
+    "instances": [
+      {
+        "lineNumber": 359,
+        "line": "<Button",
+        "context": "        <Space size=\"middle\">\n          <Button \n            size=\"small\" "
+      },
+      {
+        "lineNumber": 423,
+        "line": "<Button",
+        "context": "        <Space size=\"small\">\n          <Button\n            size=\"small\""
+      },
+      {
+        "lineNumber": 497,
+        "line": "<Button",
+        "context": "        <Space size=\"small\">\n          <Button\n            size=\"small\""
+      }
+    ]
+  },
+  {
+    "file": "src/page/NotFound.jsx",
+    "count": 2,
+    "instances": [
+      {
+        "lineNumber": 15,
+        "line": "<Button",
+        "context": "        extra={[\n          <Button \n            type=\"primary\" "
+      },
+      {
+        "lineNumber": 26,
+        "line": "<Button",
+        "context": "          </Button>,\n          <Button \n            key=\"back\""
+      }
+    ]
+  },
+  {
+    "file": "src/page/Admin/AdminRedirect.jsx",
+    "count": 2,
+    "instances": [
+      {
+        "lineNumber": 55,
+        "line": "<Button",
+        "context": "          <Space direction=\"vertical\" size=\"middle\" style={{ width: '100%' }}>\n            <Button \n              type=\"primary\" "
+      },
+      {
+        "lineNumber": 70,
+        "line": "<Button",
+        "context": "            \n            <Button \n              size=\"large\" "
+      }
+    ]
+  },
+  {
+    "file": "src/components/ProjectForm.jsx",
+    "count": 2,
+    "instances": [
+      {
+        "lineNumber": 306,
+        "line": "<Button onClick={() => window.history.back()}>",
+        "context": "        <div className=\"form-actions\">\n          <Button onClick={() => window.history.back()}>\n            취소"
+      },
+      {
+        "lineNumber": 309,
+        "line": "<Button type=\"primary\" htmlType=\"submit\" size=\"large\">",
+        "context": "          </Button>\n          <Button type=\"primary\" htmlType=\"submit\" size=\"large\">\n            {isEdit ? '프로젝트 수정' : '프로젝트 생성'}"
+      }
+    ]
+  },
+  {
+    "file": "src/components/ImageCropper.jsx",
+    "count": 2,
+    "instances": [
+      {
+        "lineNumber": 131,
+        "line": "<Button variant=\"secondary\" onClick={onCancel} disabled>",
+        "context": "        <div className=\"cropper-actions\">\n          <Button variant=\"secondary\" onClick={onCancel} disabled>\n            취소"
+      },
+      {
+        "lineNumber": 134,
+        "line": "<Button onClick={handleCropComplete} disabled>",
+        "context": "          </Button>\n          <Button onClick={handleCropComplete} disabled>\n            {loading ? '처리 중...' : '적용'}"
+      }
+    ]
+  },
+  {
+    "file": "src/components/ErrorBoundary.jsx",
+    "count": 2,
+    "instances": [
+      {
+        "lineNumber": 35,
+        "line": "<Button onClick={() => { if (typeof window !== 'undefined') window.location.reload(); }}",
+        "context": "          <div style={{ display: 'flex', gap: '10px' }}>\n            <Button onClick={() => { if (typeof window !== 'undefined') window.location.reload(); }}\n              style={{"
+      },
+      {
+        "lineNumber": 47,
+        "line": "<Button onClick={() => { if (typeof window !== 'undefined') window.location.href = '/'; }}",
+        "context": "            </Button>\n            <Button onClick={() => { if (typeof window !== 'undefined') window.location.href = '/'; }}\n              style={{"
+      }
+    ]
+  },
+  {
+    "file": "src/components/ui/Button.jsx",
+    "count": 2,
+    "instances": [
+      {
+        "lineNumber": 36,
+        "line": "<button",
+        "context": "  return (\n    <button\n      type={type}"
+      },
+      {
+        "lineNumber": 57,
+        "line": "<button",
+        "context": "  return (\n    <button\n      className={classNames('btn', 'btn-icon', `btn-${variant}`, size !== 'md' && `btn-${size}`)}"
+      }
+    ]
+  },
+  {
+    "file": "src/tasks/Project/ProcessDate.jsx",
+    "count": 1,
+    "instances": [
+      {
+        "lineNumber": 25,
+        "line": "<button",
+        "context": "  const ExampleCustomInput = forwardRef((props, ref) => (\n    <button\n      className={"
+      }
+    ]
+  },
+  {
+    "file": "src/page/User/ResetPw.jsx",
+    "count": 1,
+    "instances": [
+      {
+        "lineNumber": 40,
+        "line": "<button",
+        "context": "      password1.length > 9 && (\n        <button\n          onClick={() => {"
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/layout/Toast.tsx",
+    "count": 1,
+    "instances": [
+      {
+        "lineNumber": 48,
+        "line": "<button className={styles.toastClose} onClick={onClose}>",
+        "context": "      <span className={styles.toastMessage}>{message}</span>\n      <button className={styles.toastClose} onClick={onClose}>\n        ✕"
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/Button/FeedbackButton.tsx",
+    "count": 1,
+    "instances": [
+      {
+        "lineNumber": 23,
+        "line": "<button",
+        "context": "    return (\n      <button\n        ref={ref}"
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/Button/Button.tsx",
+    "count": 1,
+    "instances": [
+      {
+        "lineNumber": 44,
+        "line": "<button",
+        "context": "    return (\n      <button\n        ref={ref}"
+      }
+    ]
+  },
+  {
+    "file": "src/components/VideoUploadGuide.jsx",
+    "count": 1,
+    "instances": [
+      {
+        "lineNumber": 10,
+        "line": "<Button variant=\"secondary\" onClick={onClose}>×</Button>",
+        "context": "          <h3>영상 업로드 가이드</h3>\n          <Button variant=\"secondary\" onClick={onClose}>×</Button>\n        </div>"
+      }
+    ]
+  },
+  {
+    "file": "src/components/minimal/MinimalButton.jsx",
+    "count": 1,
+    "instances": [
+      {
+        "lineNumber": 77,
+        "line": "<button",
+        "context": "  return (\n    <button\n      type={type}"
+      }
+    ]
+  }
+]

@@ -1,0 +1,453 @@
+@import '../styles/design-tokens';
+
+// Home Page Alignment - 표준 브레이크포인트 적용 버전
+// 홈페이지 정렬 및 레이아웃 일관성 개선
+
+// 임시 변수 및 믹스인 정의
+$container-max-width-xl: 1280px;
+$spacing-xl: 32px;
+$spacing-lg: 16px;
+$spacing-3xl: 48px;
+$spacing-2xl: 24px;
+$spacing-md: 12px;
+$spacing-sm: 8px;
+$spacing-4xl: 64px;
+$transition-button: all 0.3s ease;
+$font-size-3xl: 2.25rem;
+$font-size-2xl: 1.875rem;
+$font-size-xl: 1.5rem;
+$font-size-lg: 1.125rem;
+$font-size-base: 1rem;
+$line-height-heading: 1.2;
+$line-height-relaxed: 1.6;
+
+@mixin mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin media-down($breakpoint) {
+  @if $breakpoint == 'md' {
+    @media (max-width: 1023px) {
+      @content;
+    }
+  }
+}
+
+@mixin tablet {
+  @media (min-width: $breakpoint-md) and (max-width: 1023px) {
+    @content;
+  }
+}
+
+#Home {
+  /* 전체 레이아웃 중앙 정렬 */
+  #container {
+    .visual,
+    .function,
+    .contents,
+    .schedule,
+    .feedback {
+      .inner {
+        max-width: $container-max-width-xl;
+        margin: $spacing-0 auto;
+        padding: $spacing-0 $spacing-xl;
+        
+        @include mobile {
+          padding: $spacing-0 $spacing-lg;
+        }
+      }
+    }
+  }
+
+  /* 비주얼 섹션 정렬 */
+  .visual {
+    .txt {
+      text-align: left;
+      
+      > div {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-lg;
+      }
+      
+      h1, h2, p {
+        text-align: left;
+        margin: $spacing-0;
+      }
+      
+      button {
+        align-self: flex-start;
+      }
+      
+      // 태블릿 이하에서 중앙 정렬
+      @include media-down('md') {
+        text-align: center;
+        
+        > div {
+          align-items: center;
+        }
+        
+        h1, h2, p {
+          text-align: center;
+        }
+        
+        button {
+          align-self: center;
+        }
+      }
+    }
+  }
+
+  /* 기능 섹션 정렬 */
+  .function {
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $spacing-3xl;
+      align-items: center;
+      
+      .txt {
+        > div {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: $spacing-lg;
+        }
+        
+        h3, p {
+          text-align: left;
+          margin: $spacing-0;
+        }
+        
+        button {
+          margin-top: $spacing-xl;
+        }
+      }
+      
+      .img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        img {
+          max-width: 100%;
+          height: auto;
+        }
+      }
+      
+      // 태블릿 이하에서 단일 컬럼
+      @include media-down('lg') {
+        grid-template-columns: 1fr;
+        gap: $spacing-2xl;
+        
+        .txt {
+          > div {
+            align-items: center;
+          }
+          
+          h3, p {
+            text-align: center;
+          }
+          
+          button {
+            margin: $spacing-xl auto 0;
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  /* 컨텐츠 섹션 정렬 */
+  .contents {
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $spacing-3xl;
+      align-items: center;
+      
+      &.reverse {
+        .img {
+          order: -1;
+        }
+      }
+      
+      .txt {
+        > div {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: $spacing-lg;
+        }
+        
+        h3, p {
+          text-align: left;
+          margin: $spacing-0;
+        }
+        
+        button {
+          margin-top: $spacing-xl;
+        }
+      }
+      
+      .img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        img {
+          max-width: 100%;
+          height: auto;
+          object-fit: contain;
+        }
+      }
+      
+      // 태블릿 이하에서 단일 컬럼
+      @include media-down('lg') {
+        grid-template-columns: 1fr;
+        gap: $spacing-2xl;
+        
+        &.reverse .img {
+          order: 0;
+        }
+        
+        .txt {
+          > div {
+            align-items: center;
+          }
+          
+          h3, p {
+            text-align: center;
+          }
+          
+          button {
+            margin: $spacing-xl auto 0;
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  /* 스케줄 섹션 정렬 */
+  .schedule {
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $spacing-4xl;
+      align-items: center;
+      
+      .txt {
+        > div {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: $spacing-lg;
+        }
+        
+        h3, p {
+          text-align: left;
+          margin: $spacing-0;
+        }
+        
+        button {
+          margin-top: $spacing-xl;
+        }
+      }
+      
+      .img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        
+        img {
+          width: 100%;
+          max-width: 800px;
+          height: auto;
+        }
+      }
+      
+      // 노트북 이하에서 이미지 크기 조정
+      @include media-down('xl') {
+        .img img {
+          max-width: 600px;
+        }
+      }
+      
+      // 태블릿 이하에서 단일 컬럼
+      @include media-down('lg') {
+        grid-template-columns: 1fr;
+        gap: $spacing-2xl;
+        
+        .txt {
+          > div {
+            align-items: center;
+          }
+          
+          h3, p {
+            text-align: center;
+          }
+          
+          button {
+            margin: $spacing-xl auto 0;
+            display: block;
+          }
+        }
+        
+        .img img {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+
+  /* 피드백 섹션 정렬 */
+  .feedback {
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $spacing-4xl;
+      align-items: center;
+      
+      .txt {
+        > div {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: $spacing-lg;
+        }
+        
+        h3, p {
+          text-align: left;
+          margin: $spacing-0;
+        }
+        
+        button {
+          margin-top: $spacing-xl;
+        }
+      }
+      
+      .img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        
+        img {
+          width: 100%;
+          max-width: 800px;
+          height: auto;
+        }
+      }
+      
+      // 노트북 이하에서 이미지 크기 조정
+      @include media-down('xl') {
+        .img img {
+          max-width: 600px;
+        }
+      }
+      
+      // 태블릿 이하에서 단일 컬럼
+      @include media-down('lg') {
+        grid-template-columns: 1fr;
+        gap: $spacing-2xl;
+        
+        .txt {
+          > div {
+            align-items: center;
+          }
+          
+          h3, p {
+            text-align: center;
+          }
+          
+          button {
+            margin: $spacing-xl auto 0;
+            display: block;
+          }
+        }
+        
+        .img img {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+
+  /* 버튼 정렬 일관성 */
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: $transition-button;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* 모바일 최적화 */
+  @include mobile {
+    .visual {
+      padding: $spacing-3xl 0;
+      
+      .txt {
+        h1 {
+          font-size: $font-size-3xl;
+          line-height: $line-height-heading;
+        }
+        
+        h2 {
+          font-size: $font-size-2xl;
+        }
+        
+        p {
+          font-size: $font-size-base;
+        }
+      }
+    }
+    
+    .function,
+    .contents,
+    .schedule,
+    .feedback {
+      padding: $spacing-2xl 0;
+      
+      h3 {
+        font-size: $font-size-2xl;
+        margin-bottom: $spacing-md;
+      }
+      
+      p {
+        font-size: $font-size-base;
+        line-height: $line-height-relaxed;
+      }
+    }
+  }
+
+  /* 반응형 간격 조정 */
+  @include tablet {
+    section {
+      padding: $spacing-3xl 0;
+    }
+  }
+  
+  @include desktop {
+    section {
+      padding: $spacing-4xl 0;
+    }
+  }
+  
+  @include wide {
+    section {
+      padding: $spacing-5xl 0;
+    }
+  }
+}

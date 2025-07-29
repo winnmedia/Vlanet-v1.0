@@ -1,4 +1,14 @@
-import ProjectView from '../../src/page/Cms/ProjectView-fixed'
+import dynamic from 'next/dynamic'
+import LoadingAnimation from '../../src/components/LoadingAnimation'
+
+// 코드 스플리팅 적용
+const ProjectView = dynamic(
+  () => import('../../src/page/Cms/ProjectView-fixed'),
+  {
+    loading: () => <LoadingAnimation />,
+    ssr: true
+  }
+)
 
 export default ProjectView
 

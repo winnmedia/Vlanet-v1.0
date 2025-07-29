@@ -94,7 +94,7 @@ const responseErrorInterceptor = async (error) => {
     // HTML 페이지를 받은 경우 (주로 404 또는 서버 에러)
     const contentType = error.response.headers['content-type'];
     if (contentType && contentType.includes('text/html')) {
-      console.error('Received HTML instead of JSON:', error.response.status);
+      
       error.response.data = {
         message: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
         status: error.response.status

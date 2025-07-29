@@ -1,30 +1,22 @@
-import React, { useState } from 'react'
-import { Modal, ModalProps } from 'antd'
-
-export default function CalendarModal({ ModalTitle, ModalText, visible }) {
+import React, { useState } from 'react';
+;
+import UnifiedModal from "../../components/unified/UnifiedModal";
+export default function CalendarModal({
+  ModalTitle,
+  ModalText,
+  visible,
+  onClose
+}) {
   return (
-    <Modal
-      //   wrapClassName="mo"
-      footer={false}
-      centered
-      //   width={width}
-      //   style={style}
-      open={visible ? visible : false}
-      //   onCancel={() => {
-      //     dispatch(
-      //       updateCommonStore({
-      //         commonModalVisible: false,
-      //       }),
-      //     )
-      //     if (onCancel) onCancel()
-      //   }}
-      closable={false}
-      // maskClosable={true}
+    <UnifiedModal
+      open={visible || false}
+      onClose={onClose || (() => {})}
+      title={ModalTitle}
+      closeOnBackdrop={false}
+      closeOnEsc={false}
     >
-      {ModalTitle}
       {ModalText}
-    </Modal>
-  )
+    </UnifiedModal>
+  );
 }
-
-React.memo(CalendarModal)
+React.memo(CalendarModal);

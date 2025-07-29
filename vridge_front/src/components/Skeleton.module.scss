@@ -1,0 +1,290 @@
+@import '../styles/design-tokens';
+
+// 기본 스켈레톤
+.skeleton {
+  background: $color-gray-200;
+  position: relative;
+  overflow: hidden;
+  
+  &.animate::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba($color-white, 0.4) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+  
+  // 변형
+  &.text {
+    border-radius: $border-radius-sm;
+  }
+  
+  &.circular {
+    border-radius: 50%;
+  }
+  
+  &.rectangular {
+    border-radius: $border-radius-md;
+  }
+  
+  &.button {
+    border-radius: $border-radius-md;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+// 텍스트 스켈레톤 래퍼
+.textSkeletonWrapper {
+  width: 100%;
+}
+
+// 카드 스켈레톤
+.cardSkeleton {
+  background: $color-white;
+  border: $border-width-thin solid $color-gray-200;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  
+  .cardImage {
+    border-radius: 0;
+  }
+  
+  .cardContent {
+    padding: $spacing-lg;
+  }
+  
+  .cardActions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+  }
+}
+
+// 리스트 아이템 스켈레톤
+.listItemSkeleton {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  
+  .avatar {
+    flex-shrink: 0;
+  }
+  
+  .listContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+}
+
+// 테이블 스켈레톤
+.tableSkeleton {
+  width: 100%;
+  
+  .tableHeader {
+    display: grid;
+    grid-template-columns: repeat(var(--columns, 4), 1fr);
+    gap: $spacing-md;
+    padding: $spacing-md;
+    border-bottom: $border-width-thin solid $color-gray-200;
+  }
+  
+  .tableRow {
+    display: grid;
+    grid-template-columns: repeat(var(--columns, 4), 1fr);
+    gap: $spacing-md;
+    padding: $spacing-md;
+    border-bottom: $border-width-thin solid $color-gray-100;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// 프로젝트 카드 확장
+.projectMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: $spacing-md;
+}
+
+// 피드백 스켈레톤
+.feedbackSkeleton {
+  padding: $spacing-md;
+  border: $border-width-thin solid $color-gray-200;
+  border-radius: $border-radius-md;
+  
+  .feedbackHeader {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+  
+  .feedbackMeta {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+}
+
+// 비디오 플레이어 스켈레톤
+.videoSkeleton {
+  width: 100%;
+  
+  .videoPlayer {
+    aspect-ratio: 16 / 9;
+    background: $color-gray-900;
+  }
+  
+  .videoControls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    background: $color-gray-100;
+  }
+}
+
+// 폼 필드 스켈레톤
+.formFieldSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  
+  .label {
+    margin-bottom: $spacing-xs;
+  }
+}
+
+// 통계 카드 스켈레톤
+.statCardSkeleton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+  background: $color-white;
+  border: $border-width-thin solid $color-gray-200;
+  border-radius: $border-radius-lg;
+  
+  .statContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+}
+
+// 반응형
+@media (max-width: $breakpoint-mobile) {
+  .cardSkeleton {
+    .cardContent {
+      padding: $spacing-md;
+    }
+  }
+  
+  .videoSkeleton {
+    .videoPlayer {
+      height: 200;
+    }
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: $spacing-md; /* Prevent zoom on iOS */
+  }
+}

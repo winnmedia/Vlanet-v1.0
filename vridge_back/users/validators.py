@@ -26,12 +26,27 @@ class InputValidator:
         if len(email) > 254:  # RFC 5321 표준
             return False, "이메일이 너무 깁니다. (최대 254자)"
         
+        # SQL Injection 패턴 검증
+        sql_patterns = [
+            "';", '";', '--', '/*', '*/', 'union', 'select', 'drop', 'delete', 
+            'insert', 'update', 'exec', 'execute', 'xp_', 'sp_', 'cmd',
+            'concat', 'char(', 'nchar(', 'varchar(', 'cast(', 'convert(',
+            'waitfor', 'delay', 'benchmark', 'sleep'
+        ]
+        email_lower = email.lower()
+        for pattern in sql_patterns:
+            if pattern in email_lower:
+                return False, "이메일에 허용되지 않는 문자가 포함되어 있습니다."
+        
         # 기본 형식 검증
         if not cls.EMAIL_REGEX.match(email):
             return False, "올바른 이메일 형식이 아닙니다."
         
         # 도메인 부분 검증
-        local_part, domain = email.rsplit('@', 1)
+        try:
+            local_part, domain = email.rsplit('@', 1)
+        except ValueError:
+            return False, "올바른 이메일 형식이 아닙니다."
         
         # 로컬 부분 길이 검증 (RFC 5321)
         if len(local_part) > 64:
@@ -48,7 +63,7 @@ class InputValidator:
         # XSS 패턴 검증
         xss_patterns = ['<script', 'javascript:', 'onload=', 'onerror=', '<iframe']
         for pattern in xss_patterns:
-            if pattern.lower() in email.lower():
+            if pattern.lower() in email_lower:
                 return False, "이메일에 허용되지 않는 문자가 포함되어 있습니다."
         
         return True, None

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { useRouter } from '../../util/nextNavigation'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
@@ -93,13 +95,11 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
     <aside className={classNames('enhanced-sidebar', { collapsed })}>
       {/* 로고 영역 */}
       <div className="sidebar-header">
-        <div className="logo-wrapper" onClick={() => navigate('/cmshome')}>
-          <img src="/images/logo.svg" alt="VideoPlanet" className="logo" />
+        <div className="logo-wrapper" onClick={() => navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/cmshome')}>
+          <img src="/images/logo.svg" alt="VideoPlanet" className="logo" / loading="lazy">
           {!collapsed && <span className="logo-text">VideoPlanet</span>}
         </div>
-        <button 
-          className="collapse-toggle"
-          onClick={() => setCollapsed(!collapsed)}
+        <Button  aria-label="Click"> setCollapsed(!collapsed)}
           title={collapsed ? '사이드바 펼치기' : '사이드바 접기'}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -109,17 +109,17 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
               <polyline points="15 18 9 12 15 6"></polyline>
             )}
           </svg>
-        </button>
+        </Button>
       </div>
       
       {/* 메인 메뉴 */}
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Main navigation">
         <ul className="nav-list">
           {menuItems.map(item => (
             <li key={item.id}>
-              <button
+              <UnifiedButton
                 className={classNames('nav-item', { active: activeTab === item.id })}
-                onClick={() => handleNavigation(item.path)}
+                onClick={() = aria-label="Click" type="button"> handleNavigation(item.path)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleNavigation(item.path)}
                 title={collapsed ? item.label : undefined}
               >
                 <span className="nav-icon">{item.icon}</span>
@@ -133,7 +133,7 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
                     )}
                   </>
                 )}
-              </button>
+              </UnifiedButton>
             </li>
           ))}
         </ul>
@@ -148,24 +148,22 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
               <Badge variant="light" size="sm">{activeProjectCount}</Badge>
             </>
           )}
-          <button
-            className="projects-toggle"
-            onClick={() => setExpandedProjects(!expandedProjects)}
+          <Button  aria-label="Click"> setExpandedProjects(!expandedProjects)}
             title={expandedProjects ? '프로젝트 접기' : '프로젝트 펼치기'}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points={expandedProjects ? "6 9 12 15 18 9" : "9 18 15 12 9 6"}></polyline>
             </svg>
-          </button>
+          </Button>
         </div>
         
         {expandedProjects && !collapsed && (
           <ul className="projects-list">
             {project_list?.slice(0, 5).map(project => (
               <li key={project.id}>
-                <button
+                <UnifiedButton
                   className={classNames('project-item', { active: activeMenu === project.id })}
-                  onClick={() => handleProjectClick(project.id)}
+                  onClick={() = aria-label="Click" type="button"> handleProjectClick(project.id)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleProjectClick(project.id)}
                 >
                   <span 
                     className="project-color" 
@@ -177,17 +175,15 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
                       {project.feedback_count}
                     </Badge>
                   )}
-                </button>
+                </UnifiedButton>
               </li>
             ))}
             {project_list?.length > 5 && (
               <li>
-                <button 
-                  className="view-all-projects"
-                  onClick={() => navigate('/projects')}
+                <Button  aria-label="Click"> navigate('/projects')}
                 >
                   모든 프로젝트 보기
-                </button>
+                </Button>
               </li>
             )}
           </ul>
@@ -199,14 +195,14 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
         <ul className="nav-list">
           {bottomMenuItems.map(item => (
             <li key={item.id}>
-              <button
+              <UnifiedButton
                 className={classNames('nav-item', { active: activeTab === item.id })}
-                onClick={() => handleNavigation(item.path)}
+                onClick={() = aria-label="Click" type="button"> handleNavigation(item.path)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleNavigation(item.path)}
                 title={collapsed ? item.label : undefined}
               >
                 <span className="nav-icon">{item.icon}</span>
                 {!collapsed && <span className="nav-label">{item.label}</span>}
-              </button>
+              </UnifiedButton>
             </li>
           ))}
         </ul>
@@ -227,3 +223,4 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
     </aside>
   )
 }
+import { Button } from '../unified/Button'

@@ -1,0 +1,257 @@
+@import '../../styles/minimal-design-system';
+
+// 메인 레이아웃
+.main {
+  padding: var(--spacing-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-4);
+  }
+}
+
+// 헤더
+.header {
+  margin-bottom: var(--spacing-6);
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: var(--muted);
+  margin: 0;
+}
+
+// 폼 요소
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-tight);
+}
+
+.input {
+  @include input-minimal;
+}
+
+.textarea {
+  @include input-minimal;
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: var(--leading-normal);
+}
+
+.charCount {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  text-align: right;
+  margin-top: calc(var(--spacing-1) * -1);
+}
+
+// 프레임워크 선택
+.frameworkGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-4);
+}
+
+.frameworkCard {
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+  
+  &.selected {
+    border-color: var(--blue);
+    background: linear-gradient(to bottom, rgba(0, 102, 255, 0.02), transparent);
+  }
+  
+  &:hover:not(.selected) {
+    transform: translateY(-2px);
+  }
+}
+
+.selectedIcon {
+  width: 24px;
+  height: 24px;
+  background: var(--blue);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: var(--font-semibold);
+}
+
+.frameworkDesc {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin: 0 0 var(--spacing-3) 0;
+  line-height: var(--leading-normal);
+}
+
+.stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+}
+
+.stage {
+  font-size: var(--text-xs);
+  padding: 4px 8px;
+  background: var(--hover);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+}
+
+// 스토리 컨테이너
+.storyContainer {
+  min-height: 400px;
+}
+
+.storyList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.storyCard {
+  animation: fadeIn var(--duration-normal) var(--ease-out);
+  animation-fill-mode: both;
+  
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+// 로딩 상태
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  text-align: center;
+  
+  p {
+    margin-top: var(--spacing-3);
+    color: var(--muted);
+  }
+}
+
+.loadingSpinner {
+  @include loading-spinner;
+}
+
+// 에러 상태
+.error {
+  font-size: var(--text-sm);
+  color: var(--danger);
+  padding: var(--spacing-3);
+  background: rgba(255, 59, 48, 0.05);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 59, 48, 0.2);
+}
+
+// 빈 상태
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  text-align: center;
+  color: var(--muted);
+  
+  p {
+    font-size: var(--text-base);
+    margin: 0;
+  }
+}
+
+// 완료 화면
+.completion {
+  text-align: center;
+  padding: var(--spacing-6) 0;
+}
+
+.completionIcon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-4);
+  animation: scaleIn var(--duration-normal) var(--ease-bounce);
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.completionTitle {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.completionDesc {
+  font-size: var(--text-base);
+  color: var(--muted);
+  margin: 0 0 var(--spacing-6) 0;
+}
+
+// 요약 정보
+.summary {
+  @include card-minimal;
+  padding: var(--spacing-4);
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2) 0;
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+.summaryLabel {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.summaryValue {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}

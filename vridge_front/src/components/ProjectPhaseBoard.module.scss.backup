@@ -1,0 +1,697 @@
+// 완료 버튼 스타일
+.completeBtn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: #1631F8;
+    transform: scale(1.1);
+  }
+  
+  &.completed {
+    color: #1631F8;
+    
+    &:hover {
+      color: #0F23C9;
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.projectPhaseBoard {
+  margin-top: 32px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  
+  // 헤더 스타일
+  .phaseBoardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E9ECEF;
+    
+    .phaseBoardTitle {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1f36;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+    
+    .phaseBoardControls {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      
+      .filterTabs {
+        display: flex;
+        gap: 12px;
+        background: transparent;
+        padding: 0;
+        
+        .filterTab {
+          padding: 10px 20px;
+          border: 1px solid #e0e0e0;
+          background: #ffffff;
+          color: #495057;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          border-radius: 8px;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+          
+          .count {
+            font-size: 16px;
+            font-weight: 700;
+            padding: 4px 10px;
+            background: #f0f1f3;
+            border-radius: 6px;
+            min-width: 32px;
+            text-align: center;
+            color: #495057;
+            
+            &.delayed {
+              background: #fee;
+              color: #dc3545;
+            }
+          }
+          
+          &:hover {
+            background: #f8f9fa;
+            border-color: #1631F8;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(22, 49, 248, 0.15);
+            
+            .count {
+              background: #e8ecff;
+              color: #1631F8;
+            }
+          }
+          
+          &.active {
+            background: #1631F8;
+            color: white;
+            border-color: #1631F8;
+            box-shadow: 0 2px 8px rgba(22, 49, 248, 0.25);
+            
+            .count {
+              background: rgba(255, 255, 255, 0.2);
+              color: white;
+            }
+          }
+        }
+      }
+      
+      .collapseBtn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        color: #6C757D;
+        
+        &:hover {
+          background: #F8F9FA;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          color: #1631F8;
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+        
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+  
+  .boardHeader {
+    margin-bottom: 0;
+    
+    .collapseBtn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(22, 49, 248, 0.25);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.35);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
+      }
+      
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  // 프로젝트 카운트 섹션 - 백업과 동일한 스타일
+  .projectCountsSection {
+    margin-bottom: 30px;
+    
+    ul.schedule {
+      display: grid;
+      grid-gap: 0px 20px;
+      grid-template-columns: repeat(4, 1fr);
+      
+      li {
+        background: #25282f;
+        border-radius: 25px;
+        height: 140px;
+        padding: 0 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 22px;
+        color: #fff;
+        
+        br {
+          display: block;
+        }
+        
+        span {
+          display: block;
+          font-weight: bold;
+          font-size: 50px;
+          margin-top: 10px;
+        }
+        
+        &:first-child {
+          background: #0131ff;
+        }
+      }
+    }
+  }
+  
+  .boardContent {
+    animation: fadeIn 0.3s ease;
+    
+    .projectsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .emptyState {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      
+      svg {
+        margin-bottom: 16px;
+      }
+      
+      p {
+        color: #6C757D;
+        font-size: 14px;
+        margin: 0;
+      }
+    }
+  }
+  
+  .projectCard {
+    background: white;
+    border: 1px solid #E9ECEF;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    
+    &.hasDelayed {
+      border-color: rgba(220, 53, 69, 0.2);
+      
+      &:hover {
+        border-color: rgba(220, 53, 69, 0.3);
+        box-shadow: 0 8px 24px rgba(220, 53, 69, 0.1);
+      }
+    }
+    
+    &:hover {
+      border-color: rgba(22, 49, 248, 0.2);
+      box-shadow: 0 8px 24px rgba(22, 49, 248, 0.08);
+      transform: translateY(-2px);
+    }
+    
+    .projectHeader {
+      padding: 20px 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+      
+      &:hover {
+        background: #FAFBFD;
+      }
+      
+      .projectMainInfo {
+        flex: 1;
+        
+        .projectTitleRow {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 8px;
+          
+          .projectName {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1f36;
+            margin: 0;
+            letter-spacing: -0.3px;
+          }
+          
+          .delayIndicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            
+            svg {
+              animation: pulse 2s infinite;
+            }
+          }
+        }
+        
+        .projectDetails {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          
+          .projectDates {
+            font-size: 13px;
+            color: #6C757D;
+            font-weight: 500;
+          }
+          
+          .projectDuration {
+            font-size: 13px;
+            color: #6C757D;
+            padding: 2px 8px;
+            background: #F8F9FA;
+            border-radius: 12px;
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .projectActions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        
+        .progressIndicator {
+          position: relative;
+          width: 48px;
+          height: 48px;
+          
+          .progressRing {
+            transform: rotate(-90deg);
+          }
+          
+          .progressText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a1f36;
+          }
+        }
+        
+        .expandToggle {
+          width: 32px;
+          height: 32px;
+          border: none;
+          background: #F8F9FA;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6C757D;
+          
+          &:hover {
+            background: #E9ECEF;
+            color: #1631F8;
+          }
+          
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+    
+    // 타임라인 스타일
+    .phasesTimeline {
+      padding: 24px;
+      background: #FAFBFD;
+      border-top: 1px solid #E9ECEF;
+      
+      .phaseItem {
+        display: flex;
+        align-items: flex-start;
+        position: relative;
+        
+        &:last-child .phaseLine {
+          display: none;
+        }
+        
+        .phaseDot {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: #E9ECEF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          position: relative;
+          z-index: 2;
+          transition: all 0.3s ease;
+          
+          .pulseDot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+          }
+        }
+        
+        .phaseLine {
+          position: absolute;
+          left: 11px;
+          top: 24px;
+          width: 2px;
+          height: calc(100% + 16px);
+          background: #E9ECEF;
+          z-index: 1;
+        }
+        
+        &.completed {
+          .phaseDot {
+            background: #28a745;
+            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+          }
+          
+          .phaseLine {
+            background: #28a745;
+          }
+        }
+        
+        &.inProgress {
+          .phaseDot {
+            background: #1631F8;
+            box-shadow: 0 0 0 4px rgba(22, 49, 248, 0.1);
+          }
+          
+          .phaseLine {
+            background: linear-gradient(to bottom, #1631F8 0%, #E9ECEF 100%);
+          }
+        }
+        
+        &.delayed {
+          .phaseDot {
+            background: #dc3545;
+            box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
+          }
+        }
+        
+        &.pending {
+          opacity: 0.6;
+        }
+        
+        .phaseContent {
+          flex: 1;
+          margin-left: 16px;
+          padding-bottom: 24px;
+        }
+        
+        .phaseHeader {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          margin-bottom: 4px;
+          
+          .phaseName {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1f36;
+            letter-spacing: -0.2px;
+          }
+        }
+        
+        .phaseDates {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .dateRange {
+            font-size: 12px;
+            color: #6C757D;
+            font-weight: 500;
+          }
+          
+          .delayBadge {
+            font-size: 11px;
+            color: #dc3545;
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 10px;
+          }
+        }
+        
+        .noDataMessage {
+          font-size: 12px;
+          color: #ADB5BD;
+          font-style: italic;
+        }
+      }
+    }
+  }
+  
+  // 반응형 디자인
+  @media (max-width: 768px) {
+    padding: 16px;
+    
+    .boardHeader {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .projectCard {
+      .projectHeader {
+        flex-wrap: wrap;
+        
+        .projectInfo {
+          flex: 100%;
+          margin-bottom: 8px;
+        }
+      }
+      
+      .projectPhases {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+  
+    // 프로젝트 카운트 섹션 스타일
+  .projectCountsSection {
+    margin: 24px 0;
+    animation: fadeIn 0.3s ease;
+    
+    ul.schedule {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 16px !important;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      
+      li {
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
+        border-radius: 16px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100px !important;
+        padding: 16px !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+        text-align: center !important;
+        box-shadow: 0 4px 12px rgba(22, 49, 248, 0.15) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+        
+        &:hover {
+          transform: translateY(-3px) !important;
+          box-shadow: 0 8px 24px rgba(22, 49, 248, 0.25) !important;
+          
+          &::before {
+            opacity: 1;
+          }
+        }
+        
+        br {
+          display: none !important;
+        }
+        
+        span {
+          font-weight: 700 !important;
+          font-size: 28px !important;
+          margin-top: 6px !important;
+          display: block !important;
+        }
+        
+        &:first-child {
+          background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%) !important;
+        }
+        
+        &:nth-child(2) {
+          background: linear-gradient(135deg, #212529 0%, #000000 100%) !important;
+        }
+        
+        &:nth-child(3) {
+          background: linear-gradient(135deg, #212529 0%, #000000 100%) !important;
+        }
+      }
+    }
+  }
+}
+
+// 반응형 스타일 추가
+@media (max-width: 1200px) {
+  .projectPhaseBoard {
+    .projectCountsSection {
+      ul.schedule li {
+        font-size: 13px !important;
+        height: 90px !important;
+        padding: 12px !important;
+        
+        span {
+          font-size: 24px !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .projectPhaseBoard {
+    .projectCountsSection {
+      ul.schedule {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        
+        li {
+          height: 70px !important;
+          flex-direction: row !important;
+          justify-content: space-between !important;
+          padding: 12px 20px !important;
+          
+          span {
+            font-size: 22px !important;
+            margin-top: 0 !important;
+            margin-left: 12px !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}

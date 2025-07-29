@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import UnifiedCard from '../../components/unified/UnifiedCard';
+import UnifiedModal from '../components/unified/UnifiedModal';
+import dynamic from 'next/dynamic';
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import { setGlobalLoading } from '../../redux/loading'
@@ -9,8 +14,6 @@ import PageTemplate from '../../components/PageTemplate'
 import SideBar from '../../components/SideBar'
 import CalendarHeader from '../../tasks/Calendar/CalendarHeader'
 import CalendarBody from '../../tasks/Calendar/CalendarBody'
-import CalendarEnhanced from '../../components/CalendarEnhanced'
-import ProjectPhaseBoard from '../../components/ProjectPhaseBoard'
 
 import { Select } from 'antd'
 import moment from 'moment'
@@ -19,7 +22,6 @@ import 'moment/locale/ko'
 import down from '../../images/Cms/down_icon.svg'
 import { UpdateDate } from '../../api/project'
 import InviteInput from '../../tasks/Project/InviteInput'
-
 
 export default function ProjectView() {
   const router = useRouter()
@@ -63,7 +65,6 @@ export default function ProjectView() {
     }
     
     if (!project_id) {
-      console.error('Project ID is missing - redirecting to home')
       navigate('/cmshome', { replace: true })
     }
   }, [project_id, navigate])
@@ -90,7 +91,6 @@ export default function ProjectView() {
     UpdateDate(data, projectId)
       .then(() => refetch())
       .catch(err => {
-        console.error('Failed to update phase:', err)
         window.alert('프로젝트 단계 업데이트에 실패했습니다.')
       })
   }
@@ -117,6 +117,15 @@ export default function ProjectView() {
         --pre_year
         pre_month = 11
       }
+import { Button } from '../../components/unified/Button'
+const ProjectPhaseBoard = dynamic(() => import('../../components/ProjectPhaseBoard'), {
+  loading: () => <div>Loading...</UnifiedCard>,
+  ssr: false
+});
+const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced'), {
+  loading: () => <div>Loading...</UnifiedCard>,
+  ssr: false
+});
       for (let i = 0; i < PVLastDay + 1; i++) {
         PVLD.unshift(new Date(pre_year, pre_month, PVLastDate - i))
       }
@@ -183,10 +192,10 @@ export default function ProjectView() {
       <PageTemplate>
         <div className="cms_wrap">
           <SideBar />
-          <main className="project">
+          <main className="project" role="main">
             {/* 글로벌 로딩이 표시되므로 여기서는 빈 컨테이너만 */}
           </main>
-        </div>
+        </UnifiedCard>
       </PageTemplate>
     )
   }
@@ -195,7 +204,7 @@ export default function ProjectView() {
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar />
-        <main className="project">
+        <main className="project" role="main">
           {current_project ? (
             <>
               <Info 
@@ -210,17 +219,17 @@ export default function ProjectView() {
                 <div style={{ marginBottom: '20px' }}>
                   <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     개별 일정표
-                    <button 
+                    <UnifiedButton 
                       className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
-                      onClick={() => setIsCollapsed(!isCollapsed)}
+                      onClick={() = aria-label="Click" type="button"> setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)}
                     />
                     
                     <div style={{ marginLeft: '20px', display: 'flex', gap: '6px' }}>
                       {['month', 'timeline', 'gantt'].map(mode => (
-                        <button 
+                        <UnifiedButton 
                           key={mode}
                           className={`view-btn ${viewMode === mode ? 'active' : ''}`}
-                          onClick={() => setViewMode(mode)}
+                          onClick={() = aria-label="Click" type="button"> setViewMode(mode)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode(mode)}
                           style={{
                             padding: '5px 15px',
                             border: '1px solid #012fff',
@@ -235,11 +244,11 @@ export default function ProjectView() {
                           }}
                         >
                           {mode === 'month' ? '월간보기' : mode === 'timeline' ? '타임라인' : '간트차트'}
-                        </button>
+                        </UnifiedButton>
                       ))}
-                    </div>
-                  </div>
-                </div>
+                    </UnifiedCard>
+                  </UnifiedCard>
+                </UnifiedCard>
                 
                 {!isCollapsed && (
                   <>
@@ -269,15 +278,15 @@ export default function ProjectView() {
                           }))}
                         />
                         {is_admin && (
-                          <button
-                            onClick={() => navigate(`/project/${current_project.id}/edit`)}
+                          <UnifiedButton
+                            onClick={() = aria-label="Click" type="button"> navigate(`/project/${current_project.id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/project/${current_project.id}/edit`)}
                             className="submit"
                           >
                             프로젝트 관리
-                          </button>
+                          </UnifiedButton>
                         )}
-                      </div>
-                    </div>
+                      </UnifiedCard>
+                    </UnifiedCard>
                     
                     {totalDate && viewMode === 'month' && (
                       <CalendarBody
@@ -314,10 +323,10 @@ export default function ProjectView() {
                         <li><span className="seven"></span>최종 컨펌</li>
                         <li><span className="eighth"></span>영상 납품</li>
                       </ul>
-                    </div>
+                    </UnifiedCard>
                   </>
                 )}
-              </div>
+              </UnifiedCard>
               
               <div className="content" style={{ marginTop: '30px' }}>
                 <ProjectPhaseBoard 
@@ -326,11 +335,11 @@ export default function ProjectView() {
                   onPhaseUpdate={handlePhaseUpdate}
                   showTitle={true}
                 />
-              </div>
+              </UnifiedCard>
             </>
           ) : null}
         </main>
-      </div>
+      </UnifiedCard>
     </PageTemplate>
   )
 }
@@ -357,30 +366,29 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
   return (
     <div className="info_wrap">
       <div className="name_box flex align_center space_between">
-        <div className="s_title">{current_project.name}</div>
+        <div className="s_title">{current_project.name}</UnifiedCard>
         <div className="flex align_center" style={{ gap: '15px' }}>
           <div>
             최종 업데이트 날짜 | {moment(current_project.updated).format('YYYY.MM.DD')}
-          </div>
-          <button className={isExpanded ? 'on' : ''} onClick={() => setIsExpanded(!isExpanded)}>
+          </UnifiedCard>
+          <UnifiedButton className={isExpanded ? 'on' : ''} onClick={() = aria-label="Click" type="button"> setIsExpanded(!isExpanded)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsExpanded(!isExpanded)}>
             프로젝트 정보
-          </button>
-        </div>
-      </div>
+          </UnifiedButton>
+        </UnifiedCard>
+      </UnifiedCard>
       
-      <div className="box" style={{ height: isExpanded ? 'auto' : '0', overflow: 'hidden', transition: 'height 0.3s ease' }}>
+      <UnifiedCard variant="default" className="box" style={{ height: isExpanded ? 'auto' : '0', overflow: 'hidden', transition: 'height 0.3s ease' }}>
         <div className="inner">
           <div className="explanation">
-            <div className="ss_title"><span>프로젝트 설명</span></div>
+            <div className="ss_title"><span>프로젝트 설명</span></UnifiedCard>
             <p>{current_project.description}</p>
-          </div>
+          </UnifiedCard>
           
           <div className="member">
             <div className="ss_title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>멤버</span>
               {is_admin && (
-                <button
-                  onClick={() => setShowInviteModal(true)}
+                <Button onClick={() = aria-label="Click"> setShowInviteModal(true)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowInviteModal(true)}
                   style={{
                     background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                     color: 'white',
@@ -393,9 +401,9 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                   }}
                 >
                   + 초대
-                </button>
+                </Button>
               )}
-            </div>
+            </UnifiedCard>
             
             <ul>
               <li className="admin">
@@ -405,11 +413,11 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                   } : {}
-                }></div>
+                }></UnifiedCard>
                 <div className="txt">
                   {current_project.owner_nickname}(관리자)
                   <span>{current_project.owner_email}</span>
-                </div>
+                </UnifiedCard>
               </li>
               
               {current_project.member_list.map((member, index) => (
@@ -420,18 +428,18 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                       backgroundSize: 'cover',
                       backgroundPosition: 'center'
                     } : {}
-                  }></div>
+                  }></UnifiedCard>
                   <div className="txt">
                     {member.nickname}({member.rating === 'manager' ? '관리자' : '일반'})
                     <span>{member.email}</span>
-                  </div>
+                  </UnifiedCard>
                 </li>
               ))}
             </ul>
-          </div>
+          </UnifiedCard>
           
           <div className="info">
-            <div className="ss_title"><span>프로젝트 정보</span></div>
+            <div className="ss_title"><span>프로젝트 정보</span></UnifiedCard>
             <dl>
               <dt>작업자</dt>
               <dd>{current_project.manager}</dd>
@@ -448,16 +456,16 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               <dt>등록 파일</dt>
               <dd>
                 {current_project.files.map((item, index) => (
-                  <div key={index} onClick={() => download(item.files)}>
+                  <div key={index} onClick={() => download(item.files)} onKeyDown={(e) => e.key === 'Enter' && () => download(item.files)}>
                     {filename(item.file_name)}
-                    <i><img src={down.src || down} alt="download" /></i>
-                  </div>
+                    <i><img src={down.src || down} alt="download" / loading="lazy"></i>
+                  </UnifiedCard>
                 ))}
               </dd>
             </dl>
-          </div>
-        </div>
-      </div>
+          </UnifiedCard>
+        </UnifiedCard>
+      </UnifiedCard>
       
       {/* 멤버 초대 모달 */}
       {showInviteModal && (
@@ -474,7 +482,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
             justifyContent: 'center',
             zIndex: 1000
           }}
-          onClick={() => setShowInviteModal(false)}
+          onClick={() => setShowInviteModal(false)} onKeyDown={(e) => e.key === 'Enter' && () => setShowInviteModal(false)}
         >
           <div 
             style={{
@@ -486,12 +494,11 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               maxHeight: '80vh',
               overflowY: 'auto'
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0 }}>멤버 초대</h3>
-              <button
-                onClick={() => setShowInviteModal(false)}
+              <Button onClick={() = aria-label="Click"> setShowInviteModal(false)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowInviteModal(false)}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -500,8 +507,8 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                 }}
               >
                 ×
-              </button>
-            </div>
+              </Button>
+            </UnifiedCard>
             
             <InviteInput
               project_id={project_id}
@@ -512,9 +519,9 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                 setTimeout(refetch, 500)
               }}
             />
-          </div>
-        </div>
+          </UnifiedCard>
+        </UnifiedCard>
       )}
-    </div>
+    </UnifiedCard>
   )
 })

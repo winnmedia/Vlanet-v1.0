@@ -1,4 +1,10 @@
-import Signup from '../src/page/User/Signup'
+import dynamic from 'next/dynamic'
+import LoadingAnimation from '../src/components/LoadingAnimation'
+
+const Signup = dynamic(() => import('../src/page/User/Signup'), {
+  loading: () => <LoadingAnimation />,
+  ssr: false
+})
 
 export default Signup
 

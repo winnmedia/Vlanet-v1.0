@@ -1,3 +1,5 @@
+@import '../styles/design-tokens';
+
 @import '../styles/minimal-design-system-v2';
 
 .virtualList {
@@ -8,7 +10,7 @@
   
   // 스크롤바 스타일링
   &::-webkit-scrollbar {
-    width: 12px;
+    width: $spacing-sm + $spacing-xs;
   }
   
   &::-webkit-scrollbar-track {
@@ -19,7 +21,7 @@
   &::-webkit-scrollbar-thumb {
     background: var(--gray-400);
     border-radius: var(--radius-md);
-    border: 2px solid var(--gray-100);
+    border: $spacing-2xs solid var(--gray-100);
     
     &:hover {
       background: var(--gray-500);
@@ -40,9 +42,7 @@
   }
   
   // 모바일 최적화
-  @media (max-width: 768px) {
-    &::-webkit-scrollbar {
-      width: 4px;
+  @media (max-width: $breakpoint-md) { &::-webkit-scrollbar { width: $spacing-xs;
     }
   }
 }
@@ -75,8 +75,8 @@
   &::after {
     content: '';
     @include loading-spinner;
-    width: 24px;
-    height: 24px;
+    width: $spacing-lg;
+    height: $spacing-lg;
     margin-left: var(--spacing-2);
   }
 }
@@ -92,14 +92,14 @@
   color: var(--muted);
   
   svg {
-    width: 48px;
-    height: 48px;
+    width: $spacing-3xl;
+    height: $spacing-3xl;
     margin-bottom: var(--spacing-3);
     opacity: 0.5;
   }
   
   p {
-    margin: 0;
+    margin: $spacing-0;
     font-size: var(--text-base);
   }
 }
@@ -131,15 +131,15 @@
 // 고대비 모드
 @media (prefers-contrast: high) {
   .virtualList {
-    border: 2px solid var(--border);
+    border: $spacing-2xs solid var(--border);
     
     &::-webkit-scrollbar-thumb {
-      border-width: 1px;
+      border-width: $spacing-2xs;
     }
   }
   
   .listItem {
-    border-bottom: 1px solid var(--border);
+    border-bottom: $spacing-2xs solid var(--border);
   }
 }
 

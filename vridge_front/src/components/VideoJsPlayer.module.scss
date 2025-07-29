@@ -1,17 +1,16 @@
-// VideoJsPlayer 스타일
-.videoJsPlayerWrapper {
-  width: 100%;
+@import '../styles/design-tokens';width: 100%;
   height: 100%;
   position: relative;
-  background: #000;
+  background: $color-black;
   display: flex;
   align-items: center;
   justify-content: center;
   
   // 비디오 플레이어 기본 스타일
   :global(.video-js) {
-    width: 100% !important;
-    height: 100% !important;
+    // VideoJsPlayer 스타일
+.videoJsPlayerWrapper.videoJsPlayerWrapper { width: 100%; }
+    height: 100% ;
     max-width: 100%;
     max-height: 100%;
     
@@ -20,23 +19,22 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      margin: 0;
-    }
+      margin: $spacing-0;
     
     // 컨트롤바 스타일
     .vjs-control-bar {
-      background: rgba(0, 0, 0, 0.7);
-      height: 40px;
+      background: rgba($color-black, 0.7);
+      height: $spacing-2xl;
     }
     
     // 진행 바 스타일
     .vjs-progress-control {
       .vjs-progress-holder {
-        height: 4px;
-        margin-top: 18px;
+        height: $spacing-xs;
+        margin-top: $spacing-md + $spacing-2xs;
         
         .vjs-play-progress {
-          background: #1631F8;
+          background: $color-primary;
           
           &:before {
             display: none;
@@ -47,8 +45,8 @@
     
     // 시간 표시 스타일
     .vjs-time-control {
-      font-size: 14px;
-      line-height: 40px;
+      font-size: $font-size-sm;
+      line-height: $spacing-2xl;
     }
     
     // 볼륨 컨트롤
@@ -62,12 +60,92 @@
   // 일시정지 아이콘 애니메이션
   .pauseIconOverlay {
     pointer-events: none;
-    z-index: 100;
+    z-index: $z-index-sticky;
   }
   
   // 로딩 스피너 스타일 - 전역 스타일로 video.js에서 사용
   :global(.vjs-loading-spinner) {
-    border-color: rgba(255, 255, 255, 0.3);
-    border-top-color: #fff;
+    border-color: rgba($color-white, 0.3);
+    border-top-color: $color-white;
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: $spacing-md; /* Prevent zoom on iOS */
   }
 }

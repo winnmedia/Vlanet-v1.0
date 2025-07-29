@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react'
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import DatePicker from 'react-datepicker'
 
 import { ko } from 'date-fns/locale'
@@ -174,7 +177,7 @@ export default function ProcessDateEnhanced({ process, set_process }) {
             <input
               type="checkbox"
               checked={autocalculate}
-              onChange={(e) => setAutocalculate(e.target.checked)}
+              onChange={(e) = aria-label="checkbox input"> setAutocalculate(e.target.checked)}
             />
             <div className="toggle-switch"></div>
             <span>자동 일정 계산</span>
@@ -212,17 +215,17 @@ export default function ProcessDateEnhanced({ process, set_process }) {
         <h4>빠른 설정</h4>
         <div className="template-buttons">
           {Object.entries(PROJECT_TEMPLATES).map(([key, template]) => (
-            <button
+            <UnifiedButton
               key={key}
               className={`template-btn ${selectedTemplate === key ? 'active' : ''}`}
-              onClick={() => applyTemplate(key)}
+              onClick={() = aria-label="Click" type="button"> applyTemplate(key)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> applyTemplate(key)}
             >
               {template.name}
-            </button>
+            </UnifiedButton>
           ))}
-          <button className="template-btn clear" onClick={clearDates}>
+          <Button onClick={clearDates} onKeyDown={(e) => e.key === 'Enter' && clearDates} aria-label="Click">
             초기화
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -295,23 +298,37 @@ export default function ProcessDateEnhanced({ process, set_process }) {
               {/* 빠른 기간 설정 버튼 */}
               {range.startDate && !range.endDate && (
                 <div className="quick-duration">
-                  <button onClick={() => {
+                  <Button onClick={() = aria-label="Click"> {
                     const updated = [...process]
                     updated[index].endDate = setDefaultTime(new Date(range.startDate), 18, 0)
                     set_process(updated)
-                  }}>당일</button>
-                  <button onClick={() => {
+                  } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                    const updated = [...process]
+                    updated[index].endDate = setDefaultTime(new Date(range.startDate), 18, 0)
+                    set_process(updated)
+                  }}>당일</Button>
+                  <Button onClick={() = aria-label="Click"> {
                     const updated = [...process]
                     const endDate = addDays(new Date(range.startDate), 2)
                     updated[index].endDate = setDefaultTime(endDate, 18, 0)
                     set_process(updated)
-                  }}>3일</button>
-                  <button onClick={() => {
+                  } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                    const updated = [...process]
+                    const endDate = addDays(new Date(range.startDate), 2)
+                    updated[index].endDate = setDefaultTime(endDate, 18, 0)
+                    set_process(updated)
+                  }}>3일</Button>
+                  <Button onClick={() = aria-label="Click"> {
                     const updated = [...process]
                     const endDate = addDays(new Date(range.startDate), 6)
                     updated[index].endDate = setDefaultTime(endDate, 18, 0)
                     set_process(updated)
-                  }}>1주</button>
+                  } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                    const updated = [...process]
+                    const endDate = addDays(new Date(range.startDate), 6)
+                    updated[index].endDate = setDefaultTime(endDate, 18, 0)
+                    set_process(updated)
+                  }}>1주</Button>
                 </div>
               )}
             </div>
@@ -335,3 +352,4 @@ export default function ProcessDateEnhanced({ process, set_process }) {
     </div>
   )
 }
+import { Button } from '../../components/unified/Button'

@@ -20,15 +20,14 @@ export const Input = forwardRef(({
           {required && <span className="required"> *</span>}
         </label>
       )}
-      <input
-        ref={ref}
+      <UnifiedInput ref={ref}
         id={inputId}
         type={type}
         className="form-input"
         aria-invalid={!!error}
         aria-describedby={error ? `${inputId}-error` : helpText ? `${inputId}-help` : undefined}
         {...props}
-      />
+       / aria-label="Input field">
       {helpText && !error && (
         <div id={`${inputId}-help`} className="help-text">{helpText}</div>
       )}
@@ -138,13 +137,12 @@ export const Checkbox = forwardRef(({
   
   return (
     <div className={classNames('form-checkbox', error && 'error', className)}>
-      <input
-        ref={ref}
+      <UnifiedInput ref={ref}
         id={checkboxId}
         type="checkbox"
         aria-invalid={!!error}
         {...props}
-      />
+       / aria-label="checkbox input">
       {label && (
         <label htmlFor={checkboxId}>{label}</label>
       )}
@@ -167,13 +165,12 @@ export const Radio = forwardRef(({
   
   return (
     <div className={classNames('form-radio', error && 'error', className)}>
-      <input
-        ref={ref}
+      <UnifiedInput ref={ref}
         id={radioId}
         type="radio"
         aria-invalid={!!error}
         {...props}
-      />
+       / aria-label="radio input">
       {label && (
         <label htmlFor={radioId}>{label}</label>
       )}

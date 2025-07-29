@@ -1,4 +1,7 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react'
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
+import { Input } from '../../components/unified/Input'
 import { useRouter } from '../../util/nextNavigation'
 import { useSelector } from 'react-redux'
 import dynamic from 'next/dynamic'
@@ -134,9 +137,7 @@ export default function AdminDashboard() {
         setRecentProjects(sortedProjects.slice(0, 5))
       }
       
-    } catch (error) {
-      console.error('대시보드 데이터 로드 실패:', error)
-    } finally {
+    } catch (error) {} finally {
       setLoading(false)
     }
   }
@@ -166,11 +167,8 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.error('사용자 목록 로드 타임아웃')
         message.error('데이터 로드 시간이 초과되었습니다.')
-      } else {
-        console.error('사용자 목록 로드 실패:', error)
-      }
+      } else {}
       setUsers([])
     }
   }
@@ -200,11 +198,8 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.error('프로젝트 목록 로드 타임아웃')
         message.error('데이터 로드 시간이 초과되었습니다.')
-      } else {
-        console.error('프로젝트 목록 로드 실패:', error)
-      }
+      } else {}
       setProjects([])
     }
   }
@@ -225,11 +220,8 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.error('피드백 통계 로드 타임아웃')
         message.error('데이터 로드 시간이 초과되었습니다.')
-      } else {
-        console.error('피드백 통계 로드 실패:', error)
-      }
+      } else {}
       setFeedbackStats(null)
     }
   }
@@ -250,11 +242,8 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.error('시스템 정보 로드 타임아웃')
         message.error('데이터 로드 시간이 초과되었습니다.')
-      } else {
-        console.error('시스템 정보 로드 실패:', error)
-      }
+      } else {}
       setSystemInfo(null)
     }
   }
@@ -322,7 +311,7 @@ export default function AdminDashboard() {
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <a onClick={() => navigate(`/ProjectView/${record.id}`)}>
+        <a onClick={() => navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${record.id}`)}>
           <Tag color={record.color}>{text}</Tag>
         </a>
       )
@@ -358,7 +347,7 @@ export default function AdminDashboard() {
           <Button 
             size="small" 
             type="link"
-            onClick={() => navigate(`/ProjectView/${record.id}`)}
+            onClick={() = aria-label="Click"> navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/ProjectView/${record.id}`)}
           >
             보기
           </Button>
@@ -422,7 +411,7 @@ export default function AdminDashboard() {
           <Button
             size="small"
             type="link"
-            onClick={() => handleUserAction(record.id, 'toggle_active')}
+            onClick={() = aria-label="Click"> handleUserAction(record.id, 'toggle_active')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleUserAction(record.id, 'toggle_active')}
           >
             {record.is_active ? '비활성화' : '활성화'}
           </Button>
@@ -439,7 +428,7 @@ export default function AdminDashboard() {
       render: (text, record) => (
         <Space>
           <div style={{ width: 12, height: 12, backgroundColor: record.color, borderRadius: '50%' }} />
-          <a onClick={() => navigate(`/ProjectView/${record.id}`)}>{text}</a>
+          <a onClick={() => navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${record.id}`)}>{text}</a>
         </Space>
       )
     },
@@ -496,15 +485,15 @@ export default function AdminDashboard() {
           <Button
             size="small"
             type="link"
-            icon={<EyeOutlined />}
-            onClick={() => navigate(`/ProjectView/${record.id}`)}
+            icon={<EyeOutlined / aria-label="Click">}
+            onClick={() => navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${record.id}`)}
           />
           <Button
             size="small"
             type="link"
             danger
-            icon={<DeleteOutlined />}
-            onClick={() => handleProjectDelete(record.id)}
+            icon={<DeleteOutlined / aria-label="Click">}
+            onClick={() => handleProjectDelete(record.id)} onKeyDown={(e) => e.key === 'Enter' && () => handleProjectDelete(record.id)}
           />
         </Space>
       )
@@ -516,14 +505,14 @@ export default function AdminDashboard() {
       <PageTemplate>
         <div className="cms_wrap">
           <SideBar />
-          <main className="admin-dashboard">
+          <main className="admin-dashboard" role="main">
             <Alert
               message="권한 없음"
               description="관리자 권한이 필요한 페이지입니다."
               type="warning"
               showIcon
               action={
-                <Button size="small" onClick={() => navigate('/cmshome')}>
+                <Button size="small" onClick={() = aria-label="Click"> navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate('/cmshome')}>
                   홈으로 이동
                 </Button>
               }
@@ -538,21 +527,21 @@ export default function AdminDashboard() {
     <PageTemplate>
       <div className="cms_wrap">
         <SideBar />
-        <main className="admin-dashboard enhanced">
+        <main className="admin-dashboard enhanced" role="main">
           <div className="dashboard-header">
             <h1 className="title">
               <SettingOutlined /> 관리자 대시보드
             </h1>
             <Space>
               <Button 
-                icon={<DatabaseOutlined />}
-                onClick={handleGoToBackendAdmin}
+                icon={<DatabaseOutlined / aria-label="Click">}
+                onClick={handleGoToBackendAdmin} onKeyDown={(e) => e.key === 'Enter' && handleGoToBackendAdmin}
               >
                 Django Admin
               </Button>
               <Button 
-                icon={<MailOutlined />}
-                onClick={handleGoToEmailMonitor}
+                icon={<MailOutlined / aria-label="Click">}
+                onClick={handleGoToEmailMonitor} onKeyDown={(e) => e.key === 'Enter' && handleGoToEmailMonitor}
               >
                 이메일 모니터
               </Button>
@@ -594,7 +583,7 @@ export default function AdminDashboard() {
                                   </span>
                                 }
                               />
-                            </Card>
+                            </UnifiedCard>
                           </Col>
                           <Col xs={24} sm={12} lg={6}>
                             <Card>
@@ -609,7 +598,7 @@ export default function AdminDashboard() {
                                   </span>
                                 }
                               />
-                            </Card>
+                            </UnifiedCard>
                           </Col>
                           <Col xs={24} sm={12} lg={6}>
                             <Card>
@@ -622,7 +611,7 @@ export default function AdminDashboard() {
                                   <Badge count={stats?.feedbacks?.pending || 0} />
                                 }
                               />
-                            </Card>
+                            </UnifiedCard>
                           </Col>
                           <Col xs={24} sm={12} lg={6}>
                             <Card>
@@ -639,14 +628,14 @@ export default function AdminDashboard() {
                                   />
                                 }
                               />
-                            </Card>
+                            </UnifiedCard>
                           </Col>
                         </Row>
 
                         {/* 차트 섹션 */}
                         <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
                           <Col xs={24} lg={12}>
-                            <Card title="가입자 추이 (최근 30일)">
+                            <UnifiedCard title="가입자 추이 (최근 30일)">
                               {stats?.trends?.daily_signups && (
                                 <Line
                                   data={stats.trends.daily_signups.reverse()}
@@ -660,10 +649,10 @@ export default function AdminDashboard() {
                                   }}
                                 />
                               )}
-                            </Card>
+                            </UnifiedCard>
                           </Col>
                           <Col xs={24} lg={12}>
-                            <Card title="로그인 방법별 사용자">
+                            <UnifiedCard title="로그인 방법별 사용자">
                               {stats?.users?.by_login_method && (
                                 <Column
                                   data={stats.users.by_login_method}
@@ -684,19 +673,19 @@ export default function AdminDashboard() {
                                   }}
                                 />
                               )}
-                            </Card>
+                            </UnifiedCard>
                           </Col>
                         </Row>
 
                         {/* 빠른 액션 */}
-                        <Card title="빠른 액션" className="quick-actions" style={{ marginTop: 24 }}>
+                        <UnifiedCard title="빠른 액션" className="quick-actions" style={{ marginTop: 24 }}>
                           <Row gutter={[16, 16]}>
                             <Col xs={24} sm={12} md={8} lg={6}>
                               <Button 
                                 type="primary" 
                                 block 
-                                icon={<UserOutlined />}
-                                onClick={() => setActiveTab('users')}
+                                icon={<UserOutlined / aria-label="Click">}
+                                onClick={() => setActiveTab('users')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('users')}
                                 style={{
                                   background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                                   border: 'none'
@@ -708,8 +697,8 @@ export default function AdminDashboard() {
                             <Col xs={24} sm={12} md={8} lg={6}>
                               <Button 
                                 block 
-                                icon={<ProjectOutlined />}
-                                onClick={() => setActiveTab('projects')}
+                                icon={<ProjectOutlined / aria-label="Click">}
+                                onClick={() => setActiveTab('projects')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('projects')}
                               >
                                 프로젝트 관리
                               </Button>
@@ -717,8 +706,8 @@ export default function AdminDashboard() {
                             <Col xs={24} sm={12} md={8} lg={6}>
                               <Button 
                                 block 
-                                icon={<CommentOutlined />}
-                                onClick={() => setActiveTab('feedbacks')}
+                                icon={<CommentOutlined / aria-label="Click">}
+                                onClick={() => setActiveTab('feedbacks')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('feedbacks')}
                               >
                                 피드백 분석
                               </Button>
@@ -726,17 +715,17 @@ export default function AdminDashboard() {
                             <Col xs={24} sm={12} md={8} lg={6}>
                               <Button 
                                 block 
-                                icon={<InfoCircleOutlined />}
-                                onClick={() => setActiveTab('system')}
+                                icon={<InfoCircleOutlined / aria-label="Click">}
+                                onClick={() => setActiveTab('system')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('system')}
                               >
                                 시스템 정보
                               </Button>
                             </Col>
                           </Row>
-                        </Card>
+                        </UnifiedCard>
 
                         {/* 최근 프로젝트 */}
-                        <Card title="최근 생성된 프로젝트" className="recent-projects" style={{ marginTop: 24 }}>
+                        <UnifiedCard title="최근 생성된 프로젝트" className="recent-projects" style={{ marginTop: 24 }}>
                           <Table 
                             columns={projectColumns} 
                             dataSource={recentProjects}
@@ -744,7 +733,7 @@ export default function AdminDashboard() {
                             pagination={false}
                             size="small"
                           />
-                        </Card>
+                        </UnifiedCard>
                       </>
                     )
                   },
@@ -758,13 +747,11 @@ export default function AdminDashboard() {
                     ),
                     children: (
                       <>
-                        <Card 
-                          title="사용자 목록"
+                        <UnifiedCard title="사용자 목록"
                           extra={
                             <Space>
-                              <Input
-                                placeholder="사용자 검색"
-                                prefix={<SearchOutlined />}
+                              <UnifiedInput placeholder="사용자 검색"
+                                prefix={<SearchOutlined  / aria-label="사용자 검색">}
                                 value={userSearch}
                                 onChange={(e) => setUserSearch(e.target.value)}
                                 onPressEnter={() => loadUserList(1, userSearch, userFilter)}
@@ -791,8 +778,8 @@ export default function AdminDashboard() {
                                 <Select.Option value="naver">네이버</Select.Option>
                               </Select>
                               <Button
-                                icon={<ReloadOutlined />}
-                                onClick={() => loadUserList(1, userSearch, userFilter)}
+                                icon={<ReloadOutlined / aria-label="Click">}
+                                onClick={() => loadUserList(1, userSearch, userFilter)} onKeyDown={(e) => e.key === 'Enter' && () => loadUserList(1, userSearch, userFilter)}
                               />
                             </Space>
                           }
@@ -808,7 +795,7 @@ export default function AdminDashboard() {
                               onChange: (page) => loadUserList(page, userSearch, userFilter)
                             }}
                           />
-                        </Card>
+                        </UnifiedCard>
                       </>
                     )
                   },
@@ -822,13 +809,11 @@ export default function AdminDashboard() {
                     ),
                     children: (
                       <>
-                        <Card
-                          title="프로젝트 목록"
+                        <UnifiedCard title="프로젝트 목록"
                           extra={
                             <Space>
-                              <Input
-                                placeholder="프로젝트 검색"
-                                prefix={<SearchOutlined />}
+                              <UnifiedInput placeholder="프로젝트 검색"
+                                prefix={<SearchOutlined  / aria-label="프로젝트 검색">}
                                 value={projectSearch}
                                 onChange={(e) => setProjectSearch(e.target.value)}
                                 onPressEnter={() => loadProjectList(1, projectSearch, projectFilter)}
@@ -855,13 +840,13 @@ export default function AdminDashboard() {
                                 <Select.Option value="completed">완료</Select.Option>
                               </Select>
                               <Button
-                                icon={<ReloadOutlined />}
-                                onClick={() => loadProjectList(1, projectSearch, projectFilter)}
+                                icon={<ReloadOutlined / aria-label="Click">}
+                                onClick={() => loadProjectList(1, projectSearch, projectFilter)} onKeyDown={(e) => e.key === 'Enter' && () => loadProjectList(1, projectSearch, projectFilter)}
                               />
                               <Button
                                 type="primary"
-                                icon={<PlusOutlined />}
-                                onClick={() => navigate('/project/create')}
+                                icon={<PlusOutlined / aria-label="Click">}
+                                onClick={() => navigate('/project/create')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/project/create')}
                                 style={{
                                   background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                                   border: 'none'
@@ -883,7 +868,7 @@ export default function AdminDashboard() {
                               onChange: (page) => loadProjectList(page, projectSearch, projectFilter)
                             }}
                           />
-                        </Card>
+                        </UnifiedCard>
                       </>
                     )
                   },
@@ -907,7 +892,7 @@ export default function AdminDashboard() {
                                     value={feedbackStats.total}
                                     prefix={<CommentOutlined />}
                                   />
-                                </Card>
+                                </UnifiedCard>
                               </Col>
                               <Col span={12}>
                                 <Card>
@@ -917,11 +902,11 @@ export default function AdminDashboard() {
                                     prefix={<Badge status="processing" />}
                                     valueStyle={{ color: '#fa8c16' }}
                                   />
-                                </Card>
+                                </UnifiedCard>
                               </Col>
                             </Row>
                             
-                            <Card title="프로젝트별 피드백 현황" style={{ marginTop: 16 }}>
+                            <UnifiedCard title="프로젝트별 피드백 현황" style={{ marginTop: 16 }}>
                               {feedbackStats.by_project?.length > 0 ? (
                                 <Table
                                   dataSource={feedbackStats.by_project}
@@ -954,7 +939,7 @@ export default function AdminDashboard() {
                                         <Button
                                           size="small"
                                           type="link"
-                                          onClick={() => navigate(`/Feedback/${record.project__id}`)}
+                                          onClick={() = aria-label="Click"> navigate(`/Feedback/${record.project__id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/Feedback/${record.project__id}`)}
                                         >
                                           보기
                                         </Button>
@@ -965,9 +950,9 @@ export default function AdminDashboard() {
                               ) : (
                                 <Empty description="피드백 데이터가 없습니다" />
                               )}
-                            </Card>
+                            </UnifiedCard>
                             
-                            <Card title="최근 피드백" style={{ marginTop: 16 }}>
+                            <UnifiedCard title="최근 피드백" style={{ marginTop: 16 }}>
                               {feedbackStats.recent?.length > 0 ? (
                                 <Table
                                   dataSource={feedbackStats.recent}
@@ -1006,7 +991,7 @@ export default function AdminDashboard() {
                               ) : (
                                 <Empty description="최근 피드백이 없습니다" />
                               )}
-                            </Card>
+                            </UnifiedCard>
                           </>
                         ) : (
                           <div style={{ textAlign: 'center', padding: 50 }}>
@@ -1030,7 +1015,7 @@ export default function AdminDashboard() {
                           <>
                             <Row gutter={[16, 16]}>
                               <Col xs={24} lg={12}>
-                                <Card title="시스템 환경">
+                                <UnifiedCard title="시스템 환경">
                                   <p><strong>Django 버전:</strong> {systemInfo.django_version}</p>
                                   <p><strong>Python 버전:</strong> {systemInfo.python_version}</p>
                                   <p><strong>디버그 모드:</strong> {systemInfo.debug_mode ? '활성' : '비활성'}</p>
@@ -1039,10 +1024,10 @@ export default function AdminDashboard() {
                                   <Divider />
                                   <p><strong>프론트엔드 버전:</strong> {process.env.NEXT_PUBLIC_VERSION || '0.2.4'}</p>
                                   <p><strong>API 서버:</strong> {process.env.NEXT_PUBLIC_API_URL}</p>
-                                </Card>
+                                </UnifiedCard>
                               </Col>
                               <Col xs={24} lg={12}>
-                                <Card title="데이터베이스 통계">
+                                <UnifiedCard title="데이터베이스 통계">
                                   <p><strong>총 레코드 수:</strong> {systemInfo.database.total_records.toLocaleString()}</p>
                                   <Divider />
                                   <p><strong>사용자:</strong> {systemInfo.database.tables.users.toLocaleString()}명</p>
@@ -1050,46 +1035,46 @@ export default function AdminDashboard() {
                                   <p><strong>피드백:</strong> {systemInfo.database.tables.feedbacks.toLocaleString()}개</p>
                                   <p><strong>영상 기획:</strong> {systemInfo.database.tables.planning.toLocaleString()}개</p>
                                   <p><strong>미디어 파일:</strong> {systemInfo.media.total_files.toLocaleString()}개</p>
-                                </Card>
+                                </UnifiedCard>
                               </Col>
                             </Row>
                             
-                            <Card title="허용된 호스트" style={{ marginTop: 16 }}>
+                            <UnifiedCard title="허용된 호스트" style={{ marginTop: 16 }}>
                               <Space wrap>
                                 {systemInfo.allowed_hosts.map((host, index) => (
                                   <Tag key={index}>{host}</Tag>
                                 ))}
                               </Space>
-                            </Card>
+                            </UnifiedCard>
                             
-                            <Card title="관리 도구" style={{ marginTop: 16 }}>
+                            <UnifiedCard title="관리 도구" style={{ marginTop: 16 }}>
                               <Space wrap>
                                 <Button
-                                  icon={<DatabaseOutlined />}
-                                  onClick={handleGoToBackendAdmin}
+                                  icon={<DatabaseOutlined / aria-label="Click">}
+                                  onClick={handleGoToBackendAdmin} onKeyDown={(e) => e.key === 'Enter' && handleGoToBackendAdmin}
                                 >
                                   Django Admin
                                 </Button>
                                 <Button
-                                  icon={<MailOutlined />}
-                                  onClick={handleGoToEmailMonitor}
+                                  icon={<MailOutlined / aria-label="Click">}
+                                  onClick={handleGoToEmailMonitor} onKeyDown={(e) => e.key === 'Enter' && handleGoToEmailMonitor}
                                 >
                                   이메일 모니터
                                 </Button>
                                 <Button
-                                  icon={<ExportOutlined />}
+                                  icon={<ExportOutlined / aria-label="Click">}
                                   disabled
                                 >
                                   데이터 내보내기
                                 </Button>
                                 <Button
-                                  icon={<ReloadOutlined />}
-                                  onClick={() => loadSystemInfo()}
+                                  icon={<ReloadOutlined / aria-label="Click">}
+                                  onClick={() => loadSystemInfo()} onKeyDown={(e) => e.key === 'Enter' && () => loadSystemInfo()}
                                 >
                                   새로고침
                                 </Button>
                               </Space>
-                            </Card>
+                            </UnifiedCard>
                           </>
                         ) : (
                           <div style={{ textAlign: 'center', padding: 50 }}>

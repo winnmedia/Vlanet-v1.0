@@ -10,6 +10,7 @@ from . import views_profile_upload
 from . import views_email_monitor
 
 urlpatterns = [
+    path("csrf-token/", views.get_csrf_token, name="get_csrf_token"),  # CSRF 토큰 발급
     path("login/", views.SignIn.as_view()),
     path("signup/", views.SignUp.as_view()),  # 기존 회원가입 (임시 유지)
     path("me/", views.UserMe.as_view()),  # 현재 사용자 정보

@@ -1,0 +1,208 @@
+@import '../styles/design-tokens';
+
+// 주인공 설정 섹션 스타일
+.character-settings {
+  margin-top: $spacing-xl;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 8px rgba($color-black, 0.08);
+  border: 1px solid #e9ecef;
+  
+  .section-title {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $color-gray-900;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    padding-bottom: $spacing-sm + $spacing-xs;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .character-settings-content {
+    display: flex;
+    gap: $spacing-lg;
+    align-items: flex-start;
+    
+    @media (max-width: $breakpoint-md) {
+      flex-direction: column;
+    }
+  }
+  
+  .character-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    
+    .character-name-input,
+    .character-description-input {
+      width: 100%;
+      padding: $spacing-sm + $spacing-xs 16px;
+      border: 1px solid #dee2e6;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      transition: all 0.2s ease;
+      background: $color-background-secondary;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        background: $color-white;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+      }
+      
+      &::placeholder {
+        color: #adb5bd;
+      }
+    }
+    
+    .character-description-input {
+      resize: vertical;
+      min-height: $spacing-5xl;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+  }
+  
+  .character-image-upload {
+    flex-shrink: 0;
+    
+    .image-upload-label {
+      display: block;
+      cursor: pointer;
+      
+      input[type="file"] {
+        display: none;
+      }
+    }
+    
+    .upload-button {
+      width: 140px;
+      height: 140px;
+      border: 2px dashed #dee2e6;
+      border-radius: $border-radius-lg;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      background: $color-background-secondary;
+      position: relative;
+      overflow: hidden;
+      
+      &:hover {
+        border-color: $color-primary;
+        background: #f0f4ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($color-primary, 0.15);
+      }
+      
+      svg {
+        width: $spacing-xl;
+        height: $spacing-xl;
+        color: #6c757d;
+        margin-bottom: $spacing-sm;
+      }
+      
+      .upload-text {
+        font-size: 13px;
+        color: #6c757d;
+        text-align: center;
+        line-height: 1.4;
+        font-weight: 500;
+      }
+      
+      .image-preview {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: $border-radius-lg - 2px;
+        }
+        
+        .change-image {
+          position: absolute;
+          bottom: $spacing-0;
+          left: $spacing-0;
+          right: $spacing-0;
+          background: rgba($color-primary, 0.9);
+          color: white;
+          padding: $spacing-sm;
+          text-align: center;
+          font-size: $font-size-xs;
+          font-weight: 500;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+        
+        &:hover .change-image {
+          opacity: 1;
+        }
+      }
+    }
+    
+    .remove-image-btn {
+      margin-top: $spacing-sm + $spacing-xs;
+      width: 140px;
+      padding: $spacing-sm;
+      background: $color-danger;
+      color: white;
+      border: none;
+      border-radius: $border-radius-md - 2px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #c82$color-gray-800;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba($color-danger, 0.2);
+      }
+    }
+  }
+}
+
+// 캐릭터 보이스톤 스타일 추가
+.voice-tone-section {
+  margin-top: $spacing-lg;
+  
+  .voice-tone-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm + $spacing-xs;
+    margin-bottom: $spacing-md;
+    
+    label {
+      font-size: $font-size-sm;
+      font-weight: 500;
+      color: #495057;
+    }
+  }
+  
+  .voice-tone-input,
+  .custom-tone-input {
+    width: 100%;
+    padding: $spacing-sm + $spacing-xs 16px;
+    border: 1px solid #dee2e6;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    transition: all 0.2s ease;
+    background: $color-background-secondary;
+    
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      background: $color-white;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+    
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+}

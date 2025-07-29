@@ -1,0 +1,131 @@
+@import '../styles/design-tokens';
+
+// 통일된 토글 버튼 디자인
+.toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $spacing-xl;
+  height: $spacing-xl;
+  border: 1px solid #e0e0e0;
+  border-radius: $border-radius-sm;
+  background-color: $color-white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: $color-gray-100;
+    border-color: $color-primary;
+  }
+  
+  &.active {
+    background-color: $color-primary;
+    border-color: $color-primary;
+    
+    .arrow-icon {
+      color: $color-white;
+    }
+  }
+  
+  .arrow-icon {
+    width: $spacing-md;
+    height: $spacing-md;
+    color: $color-gray-600;
+    transition: transform 0.3s ease;
+    
+    &.down {
+      transform: rotate(0deg);
+    }
+    
+    &.up {
+      transform: rotate(180deg);
+    }
+    
+    &.right {
+      transform: rotate(-90deg);
+    }
+    
+    &.left {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+// 섹션 헤더와 함께 사용되는 토글
+.section-header-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm + $spacing-xs 16px;
+  background-color: $color-background-secondary;
+  border: 1px solid #e0e0e0;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #e8f0ff;
+    border-color: $color-primary;
+  }
+  
+  &.active {
+    background-color: #e8f0ff;
+    border-color: $color-primary;
+  }
+  
+  .section-title {
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $color-gray-800;
+  }
+  
+  .toggle-arrow {
+    width: $spacing-lg;
+    height: $spacing-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    svg, img {
+      width: $spacing-md;
+      height: $spacing-md;
+      transition: transform 0.3s ease;
+    }
+    
+    &.expanded {
+      svg, img {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+// 작은 인라인 토글
+.inline-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  cursor: pointer;
+  padding: $spacing-xs 8px;
+  border-radius: $border-radius-sm;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .toggle-text {
+    font-size: $font-size-sm;
+    color: $color-gray-600;
+  }
+  
+  .toggle-icon {
+    width: $spacing-sm + $spacing-xs;
+    height: $spacing-sm + $spacing-xs;
+    transition: transform 0.3s ease;
+    
+    &.expanded {
+      transform: rotate(180deg);
+    }
+  }
+}

@@ -1,0 +1,586 @@
+@import '../styles/design-tokens';
+
+// VideoPlanet 캘린더 통합 스타일
+// CalendarLayout, CalendarResponsive, CalendarToolbar, CalendarEnhanced 통합
+
+@use '../../tokens' as *;
+
+// ========== 캘린더 컨테이너 ==========
+
+.calendarContainer {
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-default;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// ========== 캘린더 툴바 ==========
+
+.calendarToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  background: $color-gray-50;
+  border-bottom: $spacing-2xs solid $color-border-light;
+  gap: $spacing-md;
+  flex-shrink: 0;
+  
+  @media (max-width: $breakpoint-md) { padding: $spacing-sm $spacing-md;
+    flex-wrap: wrap;
+  }
+  
+  .toolbarLeft,
+  .toolbarCenter,
+  .toolbarRight {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+  
+  .toolbarCenter {
+    flex: 1;
+    justify-content: center;
+    
+    @media (max-width: $breakpoint-md) { order: -1;
+      width: 100%;
+      margin-bottom: $spacing-sm;
+    }
+  }
+}
+
+// 네비게이션 버튼
+.navButton {
+  width: $spacing-xl + $spacing-xs;
+  height: $spacing-xl + $spacing-xs;
+  border-radius: $radius-md;
+  background: $color-white;
+  border: $spacing-2xs solid $color-border-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-fast;
+  
+  &:hover {
+    background: $color-gray-100;
+    border-color: $color-gray-300;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  svg {
+    width: $spacing-md + $spacing-2xs;
+    height: $spacing-md + $spacing-2xs;
+    color: $color-text-secondary;
+  }
+}
+
+// 현재 날짜 표시
+.currentDate {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  min-width: $spacing-6xl * 2 + $spacing-sm;
+  text-align: center;
+  
+  @media (max-width: $breakpoint-sm) { font-size: $font-size-base;
+    min-width: auto;
+  }
+}
+
+// 오늘 버튼
+.todayButton {
+  padding: $spacing-xs $spacing-md;
+  background: $color-primary;
+  color: $color-white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-fast;
+  white-space: nowrap;
+  
+  &:hover {
+    background: $color-primary-hover;
+    transform: translateY(-$spacing-2xs);
+    box-shadow: $shadow-sm;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @media (max-width: $breakpoint-sm) { padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
+  }
+}
+
+// 뷰 전환 버튼
+.viewButtons {
+  display: flex;
+  background: $color-gray-100;
+  border-radius: $radius-md;
+  padding: $spacing-2xs;
+  gap: $spacing-2xs;
+  
+  .viewButton {
+    padding: $spacing-xs $spacing-sm;
+    background: transparent;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    
+    &:hover {
+      background: rgba($color-white, $opacity-50);
+      color: $color-text-primary;
+    }
+    
+    &.active {
+      background: $color-white;
+      color: $color-primary;
+      box-shadow: $shadow-xs;
+    }
+    
+    @media (max-width: $breakpoint-sm) { padding: $spacing-xs;
+      font-size: $font-size-xs;
+    }
+  }
+}
+
+// ========== 캘린더 본체 ==========
+
+.calendarBody {
+  flex: 1;
+  overflow: auto;
+  padding: $spacing-lg;
+  
+  @media (max-width: $breakpoint-md) { padding: $spacing-md;
+  }
+  
+  @media (max-width: $breakpoint-sm) { padding: $spacing-sm;
+  }
+}
+
+// 캘린더 그리드
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: $spacing-2xs;
+  background: $color-border-light;
+  border: $spacing-2xs solid $color-border-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  height: 100%;
+  min-height: $spacing-6xl * 5 + $spacing-lg - $spacing-xs;
+  
+  @media (max-width: $breakpoint-sm) { min-height: $spacing-6xl * 4 + $spacing-md;
+  }
+}
+
+// 요일 헤더
+.weekHeader {
+  display: contents;
+  
+  .weekDay {
+    background: $color-gray-50;
+    padding: $spacing-sm;
+    text-align: center;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-text-secondary;
+    border-bottom: $spacing-2xs solid $color-border-light;
+    
+    &:first-child {
+      color: $color-danger;
+    }
+    
+    &:last-child {
+      color: $color-primary;
+    }
+    
+    @media (max-width: $breakpoint-sm) { font-size: $font-size-xs;
+      padding: $spacing-xs;
+    }
+  }
+}
+
+// 날짜 셀
+.dateCell {
+  background: $color-white;
+  padding: $spacing-sm;
+  min-height: $spacing-6xl + $spacing-xs;
+  position: relative;
+  cursor: pointer;
+  transition: all $transition-fast;
+  
+  @media (max-width: $breakpoint-md) { min-height: $spacing-5xl;
+    padding: $spacing-xs;
+  }
+  
+  @media (max-width: $breakpoint-sm) { min-height: $spacing-4xl - $spacing-xs;
+  }
+  
+  &:hover {
+    background: $color-gray-50;
+  }
+  
+  &.otherMonth {
+    background: $color-gray-50;
+    
+    .dateNumber {
+      color: $color-text-muted;
+    }
+  }
+  
+  &.today {
+    background: $color-primary-light;
+    
+    .dateNumber {
+      color: $color-primary;
+      font-weight: $font-weight-bold;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -$spacing-2xs;
+        left: 50%;
+        transform: translateX(-50%);
+        width: $spacing-sm - $spacing-2xs;
+        height: $spacing-sm - $spacing-2xs;
+        background: $color-primary;
+        border-radius: $border-radius-full;
+      }
+    }
+  }
+  
+  &.selected {
+    background: $color-primary;
+    
+    .dateNumber {
+      color: $color-white;
+    }
+    
+    .event {
+      background: rgba($color-white, 0.2);
+      color: $color-white;
+    }
+  }
+  
+  &.hasEvent {
+    .dateNumber::before {
+      content: '';
+      position: absolute;
+      top: -$spacing-2xs;
+      right: -$spacing-2xs;
+      width: $spacing-sm;
+      height: $spacing-sm;
+      background: $color-danger;
+      border-radius: $border-radius-full;
+    }
+  }
+}
+
+.dateNumber {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  position: relative;
+  display: inline-block;
+  
+  @media (max-width: $breakpoint-sm) { font-size: $font-size-xs;
+  }
+}
+
+// 이벤트 표시
+.events {
+  margin-top: $spacing-xs;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.event {
+  padding: $spacing-2xs $spacing-xs + $spacing-2xs;
+  background: $color-primary-light;
+  color: $color-primary;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: all $transition-fast;
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
+  
+  &.project {
+    background: $color-info-light;
+    color: $color-info;
+    
+    &:hover {
+      background: $color-info;
+      color: $color-white;
+    }
+  }
+  
+  &.deadline {
+    background: $color-danger-light;
+    color: $color-danger;
+    
+    &:hover {
+      background: $color-danger;
+      color: $color-white;
+    }
+  }
+  
+  &.meeting {
+    background: $color-warning-light;
+    color: $color-warning;
+    
+    &:hover {
+      background: $color-warning;
+      color: $color-white;
+    }
+  }
+  
+  @media (max-width: $breakpoint-md) { display: none;
+    
+    &:first-child {
+      display: block;
+    }
+  }
+}
+
+.moreEvents {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  text-align: center;
+  cursor: pointer;
+  margin-top: $spacing-2xs;
+  
+  &:hover {
+    color: $color-primary;
+    text-decoration: underline;
+  }
+}
+
+// ========== 주간/일간 뷰 ==========
+
+.weekView,
+.dayView {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: $spacing-2xs;
+  background: $color-border-light;
+  border: $spacing-2xs solid $color-border-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: $spacing-4xl 1fr;
+  height: 100%;
+  
+  @media (max-width: $breakpoint-sm) { grid-template-columns: $spacing-2xl 1fr;
+  }
+}
+
+.timeColumn {
+  background: $color-gray-50;
+  border-right: $spacing-2xs solid $color-border-light;
+}
+
+.timeSlot {
+  height: $spacing-4xl - $spacing-xs;
+  padding: $spacing-xs;
+  text-align: right;
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  border-bottom: $spacing-2xs solid $color-border-light;
+  
+  @media (max-width: $breakpoint-sm) { padding: $spacing-2xs $spacing-xs;
+    font-size: $spacing-sm + $spacing-2xs;
+  }
+}
+
+.eventsColumn {
+  position: relative;
+  background: $color-white;
+}
+
+.timeEvent {
+  position: absolute;
+  left: $spacing-xs;
+  right: $spacing-xs;
+  background: $color-primary;
+  color: $color-white;
+  padding: $spacing-xs;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  box-shadow: $shadow-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+  overflow: hidden;
+  
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: $shadow-md;
+    z-index: $z-index-fixed;
+  }
+  
+  .eventTime {
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-2xs;
+  }
+  
+  .eventTitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// ========== 리스트 뷰 ==========
+
+.listView {
+  .listHeader {
+    display: grid;
+    grid-template-columns: $spacing-6xl + $font-size-2xl 1fr $spacing-6xl + $spacing-xs $spacing-6xl + $spacing-xs;
+    gap: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    background: $color-gray-50;
+    border-bottom: $spacing-2xs solid $color-border-light;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-text-secondary;
+    
+    @media (max-width: $breakpoint-md) { grid-template-columns: $spacing-6xl + $spacing-xs 1fr;
+      
+      > *:nth-child(n+3) {
+        display: none;
+      }
+    }
+  }
+  
+  .listItem {
+    display: grid;
+    grid-template-columns: $spacing-6xl + $font-size-2xl 1fr $spacing-6xl + $spacing-xs $spacing-6xl + $spacing-xs;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    border-bottom: $spacing-2xs solid $color-border-light;
+    transition: all $transition-fast;
+    cursor: pointer;
+    
+    @media (max-width: $breakpoint-md) { grid-template-columns: $spacing-6xl + $spacing-xs 1fr;
+      
+      > *:nth-child(n+3) {
+        display: none;
+      }
+    }
+    
+    &:hover {
+      background: $color-gray-50;
+    }
+    
+    .listDate {
+      font-weight: $font-weight-medium;
+      color: $color-text-secondary;
+    }
+    
+    .listTitle {
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+    }
+    
+    .listType {
+      color: $color-text-muted;
+      font-size: $font-size-sm;
+    }
+    
+    .listStatus {
+      text-align: right;
+      
+      .statusBadge {
+        display: inline-block;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $radius-full;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-medium;
+        
+        &.pending {
+          background: $color-warning-light;
+          color: $color-warning;
+        }
+        
+        &.completed {
+          background: $color-success-light;
+          color: $color-success;
+        }
+      }
+    }
+  }
+}
+
+// ========== 이벤트 생성 버튼 ==========
+
+.createEventButton {
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  width: $spacing-4xl - $spacing-sm;
+  height: $spacing-4xl - $spacing-sm;
+  border-radius: $border-radius-full;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+  color: $color-white;
+  border: none;
+  box-shadow: $shadow-button-hover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-button;
+  z-index: $z-index-sticky;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: $shadow-xl;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  svg {
+    width: $spacing-lg;
+    height: $spacing-lg;
+  }
+  
+  @media (max-width: $breakpoint-md) { bottom: $spacing-lg;
+    right: $spacing-lg;
+    width: $spacing-3xl;
+    height: $spacing-3xl;
+    
+    svg {
+      width: $spacing-lg - $spacing-xs;
+      height: $spacing-lg - $spacing-xs;
+    }
+  }
+}

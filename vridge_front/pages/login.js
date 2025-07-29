@@ -1,4 +1,10 @@
-import Login from '../src/page/User/Login'
+import dynamic from 'next/dynamic'
+import LoadingAnimation from '../src/components/LoadingAnimation'
+
+const Login = dynamic(() => import('../src/page/User/Login'), {
+  loading: () => <LoadingAnimation />,
+  ssr: false
+})
 
 export default Login
 

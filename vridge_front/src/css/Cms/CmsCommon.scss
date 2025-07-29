@@ -1,32 +1,112 @@
+@import '../../styles/design-tokens';
+
 // CMS Common Styles - 모든 CMS 페이지에 적용되는 공통 스타일
 
-// 레이아웃 관련 공통 스타일들을 임포트
-@import './LayoutFix.scss';
-@import './SidebarSpacingFix.scss';
-@import './ModalOpacityFix.scss';
-@import './SidebarResize.scss';
-@import './SidebarProjectSpacing.scss';
-@import './CmsHomeFix.scss';
-@import './LoadingAnimationFix.scss';
+// 삭제된 파일들의 import 제거
+// @import './LayoutFix.scss';
+// @import './SidebarSpacingFix.scss';
+// @import './ModalOpacityFix.scss';
+// @import './SidebarResize.scss';
+// @import './SidebarProjectSpacing.scss';
+// @import './CmsHomeFix.scss';
+// @import './LoadingAnimationFix.scss';
 
 // 추가 공통 스타일이 필요한 경우 여기에 작성
 
-/* 로딩 스피너 스타일 */
 .loading-spinner {
   text-align: center;
   
   .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f0f0f0;
-    border-top: 4px solid #1631F8;
-    border-radius: 50%;
+    width: $spacing-3xl + $spacing-2xs;
+    height: $spacing-3xl + $spacing-2xs;
+    border: $spacing-xs solid $color-gray-200;
+    border-top: $spacing-xs solid $color-primary;
+    border-radius: $border-radius-full;
     animation: spin 1s linear infinite;
-    margin: 0 auto;
+    margin: $spacing-0 auto;
   }
   
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

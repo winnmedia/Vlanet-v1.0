@@ -1,0 +1,3785 @@
+@import '../styles/design-tokens';
+
+.video-planning {
+  padding: $spacing-lg - $spacing-xs $spacing-xl - $spacing-2xs; // 상하 $font-size-xl, 좌우 $font-size-3xl로 조정
+  background: $color-background-secondary;
+  min-height: calc(100vh - $spacing-6xl + $font-size-2xl);
+  
+  // 원형 토글 버튼 스타일
+  .collapse-btn {
+    width: $spacing-xl;
+    height: $spacing-xl;
+    min-width: $spacing-xl;
+    border-radius: $border-radius-full;
+    background: $color-gray-100;
+    border: $spacing-2xs solid $color-vp-gray-light-2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $transition-base;
+    position: relative;
+    padding: $spacing-0;
+    
+    // 플러스/마이너스 아이콘
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: $color-gray-600;
+      transition: $transition-base;
+    }
+    
+    // 가로선 (항상 표시)
+    &::before {
+      width: $spacing-md - $spacing-2xs;
+      height: $spacing-2xs;
+    }
+    
+    // 세로선 (접혔을 때만 표시)
+    &::after {
+      width: $spacing-2xs;
+      height: $spacing-md - $spacing-2xs;
+      opacity: 0;
+      transform: rotate(90deg);
+    }
+    
+    // 접힌 상태 (플러스 표시)
+    &.collapsed {
+      &::after {
+        opacity: 1;
+        transform: rotate(0deg);
+      }
+    }
+    
+    // 호버 효과
+    &:hover {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+      border-color: $color-primary;
+      transform: scale(1.1);
+      box-shadow: $shadow;
+      
+      &::before,
+      &::after {
+        background: white;
+      }
+    }
+    
+    // 활성 상태
+    &:active {
+      transform: scale(0.95);
+    }
+    
+    // 포커스 시 아웃라인 제거
+    &:focus {
+      outline: none;
+    }
+  }
+  
+  .step-content-with-sidebar {
+    display: flex;
+    gap: $spacing-lg;
+    
+    .step-content {
+      flex: 1;
+      min-width: $spacing-0; // flexbox 오버플로우 방지
+    }
+    
+    .recent-plannings-sidebar {
+      width: $spacing-6xl * 2.7; // 280px에서 260px로 추가 축소
+      flex-shrink: 0; // 축소 방지
+      background: white;
+      border-radius: $border-radius-lg;
+      padding: $spacing-md; // $font-size-xl에서 $font-size-base로 축소
+      height: fit-content;
+      box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.08);
+      
+      // 화면이 좁을 때 숨김
+      @media (max-width: 1500px) { display: none;
+      }
+      
+      h4 {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-gray-900;
+        margin-bottom: $spacing-lg - $spacing-xs;
+        padding-bottom: $spacing-sm + $spacing-xs;
+        border-bottom: $spacing-2xs solid $color-gray-200;
+      }
+      
+      .recent-plannings-list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+      }
+      
+      .recent-planning-item {
+        display: flex;
+        gap: $spacing-sm + $spacing-xs;
+        padding: $spacing-md;
+        background: $color-background-secondary;
+        border-radius: $border-radius-md;
+        transition: $transition-base;
+        position: relative;
+        
+        &:hover {
+          background: $color-gray-100;
+          
+          .delete-planning-btn {
+            opacity: 1;
+          }
+        }
+        
+        .planning-content {
+          display: flex;
+          gap: $spacing-sm + $spacing-xs;
+          flex: 1;
+          cursor: pointer;
+          
+          &:hover {
+            transform: translateX($spacing-xs);
+          }
+        }
+        
+        .planning-number {
+          width: $spacing-xl;
+          height: $spacing-xl;
+          background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+          color: white;
+          border-radius: $border-radius-full;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: $font-size-sm;
+          flex-shrink: 0;
+        }
+        
+        .planning-info {
+          flex: 1;
+          
+          .planning-title {
+            font-size: $font-size-sm;
+            font-weight: 600;
+            color: $color-gray-900;
+            margin-bottom: $spacing-sm - $spacing-2xs;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+          
+          .planning-meta {
+            .planning-date {
+              font-size: $font-size-xs;
+              color: $color-gray-600;
+              display: block;
+              margin-bottom: $spacing-sm;
+            }
+            
+            .planning-tags {
+              display: flex;
+              gap: $spacing-sm - $spacing-2xs;
+              flex-wrap: wrap;
+              
+              .tag {
+                font-size: $spacing-sm + $spacing-xs;
+                padding: $spacing-xs - $spacing-2xs $spacing-sm;
+                border-radius: $border-radius-lg;
+                font-weight: 500;
+                
+                &.tone {
+                  background: $color-vp-blue-bg-1;
+                  color: $color-info;
+                }
+                
+                &.genre {
+                  background: lighten($color-primary-light, 40%);
+                  color: darken($color-primary, 20%);
+                }
+                
+                &.target {
+                  background: $color-vp-green-bg-1;
+                  color: $color-success;
+                }
+              }
+            }
+          }
+          
+          .planning-status {
+            margin-top: $spacing-sm;
+            
+            .step-indicator {
+              font-size: $spacing-sm + $spacing-xs;
+              padding: $spacing-xs $spacing-sm + $spacing-2xs;
+              border-radius: $border-radius-md - $border-radius-sm / 2;
+              font-weight: 600;
+              display: inline-block;
+              
+              &.step-1 {
+                background: $color-vp-yellow-bg-1;
+                color: darken($color-warning, 20%);
+              }
+              
+              &.step-2 {
+                background: $color-vp-green-bg-1;
+                color: $color-success-dark;
+              }
+              
+              &.step-3 {
+                background: $color-vp-blue-bg-1;
+                color: $color-info-dark;
+              }
+              
+              &.step-4 {
+                background: lighten($color-primary-light, 40%);
+                color: darken($color-primary, 25%);
+              }
+              
+              &.step-5 {
+                background: lighten($color-info, 45%);
+                color: darken($color-info, 25%);
+              }
+            }
+          }
+        }
+        
+        .delete-planning-btn {
+          position: absolute;
+          top: $spacing-sm;
+          right: $spacing-sm;
+          width: $spacing-lg;
+          height: $spacing-lg;
+          border: none;
+          background: $color-danger;
+          color: white;
+          border-radius: $border-radius-full;
+          cursor: pointer;
+          opacity: 0;
+          transition: $transition-base;
+          font-size: $font-size-base;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: $spacing-0;
+          
+          &:hover {
+            background: $color-gray-800;
+            transform: scale(1.1);
+          }
+        }
+      }
+      
+      .no-recent-plannings {
+        text-align: center;
+        padding: $spacing-4xl - $spacing-xs $spacing-2xl;
+        background: linear-gradient(135deg, $color-vp-blue-bg-1 0%, lighten($color-primary, 40%) 100%);
+        border: $spacing-2xs dashed lighten($color-primary, 30%);
+        border-radius: $border-radius-xl;
+        margin: $spacing-lg 0;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: "🎬";
+          position: absolute;
+          top: -$spacing-lg - $spacing-xs;
+          right: -$spacing-lg - $spacing-xs;
+          font-size: $spacing-6xl + $spacing-lg;
+          opacity: 0.1;
+          transform: rotate(-15deg);
+        }
+        
+        p {
+          color: $color-text-secondary;
+          margin-bottom: $spacing-sm + $spacing-xs;
+          font-size: $font-size-lg;
+          font-weight: 500;
+          position: relative;
+          z-index: $z-index-base;
+          
+          &.hint {
+            color: $color-gray-600;
+            font-size: $font-size-base;
+            font-weight: 400;
+            margin-top: $spacing-sm;
+          }
+        }
+        
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: $spacing-0;
+          left: $spacing-0;
+          right: $spacing-0;
+          height: $spacing-xs;
+          background: linear-gradient(90deg, $color-primary 0%, $color-primary-dark 100%);
+          opacity: 0.3;
+        }
+      }
+    }
+  }
+  
+  // 통일된 섹션 타이틀 스타일
+  .section-title {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $color-gray-900;
+    margin-bottom: $spacing-lg;
+    position: relative;
+    padding-left: $spacing-md;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: $spacing-0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: $spacing-xs;
+      height: $spacing-lg;
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+      border-radius: $border-radius-sm / 2;
+    }
+  }
+
+  .planning-content-section {
+    margin-bottom: $spacing-xl;
+    
+    .planning-input {
+      margin-top: -$spacing-sm;
+    }
+  }
+
+  .planning-header {
+    text-align: center;
+    margin-bottom: $spacing-2xl;
+    padding: $spacing-2xl;
+    background: linear-gradient(135deg, $color-gray-100 0%, $color-gray-300 100%);
+    border-radius: $border-radius-xl;
+    box-shadow: $shadow;
+
+    h2 {
+      font-size: $spacing-lg + $spacing-xs;
+      font-weight: 700;
+      color: $color-gray-800;
+      margin-bottom: $spacing-sm + $spacing-xs;
+    }
+
+    p {
+      font-size: $font-size-base;
+      color: $color-gray-600;
+    }
+  }
+
+  // 최근 기획안 섹션
+  .recent-plannings-section {
+    background: $color-white;
+    border: $spacing-2xs solid $color-vp-gray-light-2;
+    border-radius: $border-radius-xl;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-lg;
+    box-shadow: $shadow-sm;
+    
+    .recent-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-lg - $spacing-xs;
+      
+      h3 {
+        font-size: $font-size-xl;
+        font-weight: 600;
+        color: $color-gray-900;
+        margin: $spacing-0;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+      }
+      
+      .recent-count {
+        font-size: $font-size-sm;
+        color: $color-gray-600;
+        background: $color-gray-200;
+        padding: $spacing-xs $spacing-sm + $spacing-xs;
+        border-radius: $spacing-lg - $spacing-xs;
+      }
+    }
+    
+    .recent-list {
+      display: grid;
+      gap: $spacing-md;
+      
+      .recent-item {
+        display: flex;
+        gap: $spacing-md;
+        padding: $spacing-md;
+        background: $color-background-secondary;
+        border: $spacing-2xs solid $color-vp-gray-light-2;
+        border-radius: $border-radius-lg;
+        transition: $transition-base;
+        position: relative;
+        
+        &:hover {
+          background: $color-gray-200;
+          border-color: $color-primary-dark;
+          box-shadow: $shadow;
+          
+          .delete-planning-btn {
+            opacity: 1;
+          }
+        }
+        
+        .recent-content {
+          display: flex;
+          gap: $spacing-md;
+          flex: 1;
+          cursor: pointer;
+          
+          &:hover {
+            transform: translateY(-$spacing-2xs);
+          }
+        }
+        
+        .recent-number {
+          width: $spacing-xl + $spacing-xs;
+          height: $spacing-xl + $spacing-xs;
+          background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+          color: white;
+          border-radius: $border-radius-full;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: $font-size-base;
+          flex-shrink: 0;
+        }
+        
+        .recent-info {
+          flex: 1;
+          
+          .recent-title {
+            font-size: $font-size-base;
+            font-weight: 600;
+            color: $color-gray-900;
+            margin-bottom: $spacing-sm;
+            line-height: 1.4;
+          }
+          
+          .recent-meta {
+            .recent-date {
+              font-size: $spacing-md - $spacing-xs;
+              color: $color-gray-600;
+              margin-bottom: $spacing-sm;
+              display: block;
+            }
+            
+            .recent-tags {
+              display: flex;
+              gap: $spacing-sm;
+              flex-wrap: wrap;
+              
+              .tag {
+                font-size: $font-size-xs;
+                padding: $spacing-xs - $spacing-2xs $spacing-sm + $spacing-2xs;
+                border-radius: $border-radius-lg;
+                font-weight: 500;
+                
+                &.tone {
+                  background: lighten($color-info, 40%);
+                  color: $color-info-dark;
+                }
+                
+                &.genre {
+                  background: lighten($color-primary, 42%);
+                  color: darken($color-primary, 15%);
+                }
+                
+                &.step {
+                  background: lighten($color-success, 40%);
+                  color: darken($color-success, 30%);
+                  
+                  &.step-1 {
+                    background: lighten($color-info, 38%);
+                    color: darken($color-info, 15%);
+                  }
+                  
+                  &.step-2 {
+                    background: lighten($color-success, 38%);
+                    color: darken($color-success, 25%);
+                  }
+                  
+                  &.step-3 {
+                    background: lighten($color-warning, 30%);
+                    color: darken($color-warning, 30%);
+                  }
+                  
+                  &.step-4 {
+                    background: lighten($color-primary, 38%);
+                    color: darken($color-primary, 30%);
+                  }
+                  
+                  &.step-5 {
+                    background: lighten($color-danger, 35%);
+                    color: $color-danger-dark;
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        .recent-actions {
+          position: absolute;
+          top: $spacing-sm + $spacing-xs;
+          right: $spacing-sm + $spacing-xs;
+          display: flex;
+          gap: $spacing-sm;
+          opacity: 0;
+          transition: $transition-base;
+        }
+
+        &:hover .recent-actions {
+          opacity: 1;
+        }
+
+        .pdf-download-btn {
+          border: none;
+          background: $color-primary;
+          color: white;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          cursor: pointer;
+          transition: $transition-base;
+          font-size: $spacing-md - $spacing-xs;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+          
+          &:hover {
+            background: $color-primary-dark;
+            transform: translateY(-$spacing-2xs);
+            box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-primary, 0.3);
+          }
+        }
+
+        .delete-planning-btn {
+          width: $spacing-lg + $spacing-xs;
+          height: $spacing-lg + $spacing-xs;
+          border: none;
+          background: $color-danger;
+          color: white;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          cursor: pointer;
+          transition: $transition-base;
+          font-size: $font-size-base;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: $spacing-0;
+          
+          &:hover {
+            background: $color-gray-800;
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+  }
+
+  .planning-history-section {
+    background: $color-background-secondary;
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-xl;
+    
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-md;
+      
+      h3 {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-gray-900;
+        margin: $spacing-0;
+      }
+      
+      .history-count {
+        font-size: $font-size-sm;
+        color: $color-gray-600;
+        background: white;
+        padding: $spacing-xs $spacing-sm + $spacing-xs;
+        border-radius: $spacing-lg - $spacing-xs;
+        font-weight: 500;
+      }
+    }
+    
+    .history-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: $spacing-sm + $spacing-xs;
+      
+      .history-item {
+        background: white;
+        padding: $spacing-md;
+        border-radius: $border-radius-md;
+        cursor: pointer;
+        transition: $transition-base;
+        border: $spacing-2xs solid $color-vp-gray-light-2;
+        
+        &:hover {
+          border-color: $color-info;
+          box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-info, 0.1);
+          transform: translateY(-$spacing-2xs);
+        }
+        
+        .history-title {
+          font-size: $spacing-md - $spacing-2xs;
+          font-weight: 500;
+          color: $color-gray-900;
+          margin-bottom: $spacing-sm;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        
+        .history-date {
+          font-size: $spacing-md - $spacing-xs;
+          color: $color-gray-500;
+        }
+      }
+    }
+  }
+
+  .planning-navigation {
+    display: flex;
+    justify-content: center;
+    margin-bottom: $spacing-2xl;
+    background: $color-gray-100;
+    border-radius: $border-radius-md;
+    padding: $spacing-lg - $spacing-xs;
+
+    .nav-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: $spacing-0 $spacing-xl - $spacing-2xs;
+      cursor: pointer;
+      transition: $transition-base;
+
+      .step-number {
+        width: $spacing-3xl + $spacing-2xs;
+        height: $spacing-3xl + $spacing-2xs;
+        border-radius: $border-radius-full;
+        background: $color-gray-300;
+        color: $color-gray-500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: $spacing-sm;
+        transition: $transition-base;
+        font-size: $font-size-lg;
+      }
+
+      .step-name {
+        font-size: $font-size-sm;
+        color: $color-gray-500;
+        transition: $transition-base;
+      }
+
+      &.active {
+        .step-number {
+          background: lighten($color-info, 10%);
+          color: white;
+        }
+
+        .step-name {
+          color: $color-gray-800;
+          font-weight: 500;
+        }
+      }
+
+      &.current {
+        .step-number {
+          background: darken($color-info, 20%);
+          color: white;
+          box-shadow: $shadow;
+        }
+
+        .step-name {
+          color: darken($color-info, 20%);
+          font-weight: bold;
+        }
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      &:hover:not(.disabled) {
+        transform: translateY(-$spacing-2xs);
+      }
+    }
+  }
+
+  .planning-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: $spacing-3xl + $spacing-2xs;
+    padding: $spacing-0 $spacing-lg - $spacing-xs;
+
+    .step {
+      display: flex;
+      align-items: center;
+      position: relative;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+
+      &.active {
+        opacity: 1;
+      }
+
+      &:not(:last-child) {
+        &::after {
+          content: '';
+          position: absolute;
+          right: -$spacing-4xl - $spacing-xs;
+          width: $spacing-3xl + $spacing-2xs;
+          height: $spacing-2xs;
+          background: $color-gray-300;
+        }
+
+        margin-right: $spacing-6xl + $spacing-lg;
+      }
+
+      .step-number {
+        width: $spacing-2xl;
+        height: $spacing-2xl;
+        border-radius: $border-radius-full;
+        background: $color-gray-300;
+        color: $color-gray-500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: $spacing-sm + $spacing-xs;
+        transition: $transition-base;
+      }
+
+      .step-name {
+        font-size: $font-size-base;
+        font-weight: 600;
+        color: $color-gray-600;
+        transition: color 0.3s ease;
+      }
+
+      &.active {
+        .step-number {
+          background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+          color: white;
+        }
+
+        .step-name {
+          color: $color-gray-800;
+        }
+      }
+    }
+  }
+
+  .step-content {
+    max-width: 1400px; // $breakpoint-xl에서 1400px로 확대
+    margin: $spacing-0 auto;
+    background: white;
+    border-radius: $border-radius-lg;
+    padding: $spacing-2xl;
+    box-shadow: 0 $spacing-2xs $font-size-xs rgba($color-black, 0.08);
+    
+    // 사이드바가 없을 때는 더 넓게
+    @media (max-width: 1600px) { max-width: 100%;
+    }
+
+    h3 {
+      font-size: $font-size-2xl;
+      font-weight: 700;
+      color: $color-gray-800;
+      margin-bottom: $spacing-sm + $spacing-xs;
+    }
+
+    .step-description {
+      font-size: $font-size-base;
+      color: $color-gray-600;
+      margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+      line-height: 1.6;
+      background: $color-vp-blue-bg-1;
+      padding: $spacing-lg - $spacing-xs;
+      border-radius: $border-radius-lg;
+      border-left: $spacing-xs solid $color-primary;
+      box-shadow: $shadow-sm;
+    }
+
+    .recent-scenarios {
+      background: $color-background-secondary;
+      border-radius: $border-radius-lg;
+      padding: $spacing-lg - $spacing-xs;
+      margin-bottom: $spacing-lg;
+
+      h4 {
+        font-size: $font-size-base;
+        color: $color-gray-800;
+        margin-bottom: $spacing-sm + $spacing-xs;
+        font-weight: 600;
+      }
+
+      .recent-scenarios-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax($spacing-6xl * 2.08, 1fr));
+        gap: $spacing-sm + $spacing-xs;
+
+        .recent-scenario-item {
+          background: white;
+          border: $spacing-2xs solid $color-gray-300;
+          border-radius: $border-radius-md;
+          padding: $spacing-sm + $spacing-xs $spacing-md;
+          cursor: pointer;
+          transition: $transition-base;
+
+          &:hover {
+            border-color: lighten($color-info, 10%);
+            box-shadow: 0 $spacing-2xs $spacing-sm rgba(lighten($color-info, 10%), 0.1);
+          }
+
+          .scenario-title {
+            font-size: $font-size-sm;
+            color: $color-gray-800;
+            font-weight: 500;
+            margin-bottom: $spacing-xs;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .scenario-date {
+            font-size: $font-size-xs;
+            color: $color-gray-500;
+          }
+        }
+      }
+    }
+
+    .planning-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: $spacing-lg - $spacing-xs;
+      margin-bottom: $spacing-lg;
+      padding: $spacing-lg - $spacing-xs;
+      background: $color-background-secondary;
+      border-radius: $border-radius-lg;
+      
+      // 화면 크기에 따른 반응형 그리드
+      @media (max-width: $breakpoint-xl) { grid-template-columns: repeat(2, 1fr);
+      }
+      
+      @media (max-width: $breakpoint-md) { grid-template-columns: 1fr;
+      }
+
+      .option-group {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+
+        label {
+          font-size: $font-size-sm;
+          font-weight: 600;
+          color: $color-gray-800;
+        }
+
+        select {
+          padding: $spacing-sm + $spacing-2xs $spacing-sm + $spacing-xs;
+          border: $spacing-2xs solid $color-gray-300;
+          border-radius: $border-radius-md;
+          font-size: $font-size-sm;
+          background: white;
+          cursor: pointer;
+          transition: $transition-base;
+
+          &:hover {
+            border-color: lighten($color-info, 10%);
+          }
+
+          &:focus {
+            outline: none;
+            border-color: $color-white;
+            box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.1);
+          }
+        }
+      }
+    }
+
+    .planning-input {
+      width: 100%;
+      padding: $spacing-lg - $spacing-xs;
+      border: $spacing-2xs solid $color-gray-300;
+      border-radius: $border-radius-md;
+      font-size: $font-size-base;
+      line-height: 1.6;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+      font-family: inherit;
+
+      &:focus {
+        outline: none;
+        border-color: $color-white;
+      }
+    }
+    
+    .planning-actions {
+      margin-top: $spacing-lg - $spacing-xs;
+      
+      .planning-title-input {
+        width: 100%;
+        padding: $spacing-sm + $spacing-xs $spacing-md;
+        margin-bottom: $spacing-md;
+        margin-top: -$spacing-sm;
+        border: $spacing-2xs solid $color-gray-300;
+        border-radius: $border-radius-md;
+        font-size: $spacing-md - $spacing-2xs;
+        transition: border-color 0.3s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: $color-white;
+        }
+      }
+      
+      .button-group {
+        display: flex;
+        gap: $spacing-sm + $spacing-xs;
+        justify-content: center;
+      }
+    }
+
+    .generate-btn, .save-btn {
+      padding: $spacing-md - $spacing-2xs $spacing-xl;
+      background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+      color: white;
+      border: none;
+      border-radius: $border-radius-md;
+      font-size: $font-size-base;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-base;
+      min-width: 140px;
+      height: $spacing-3xl;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, $color-primary-dark, $color-info);
+        transform: translateY(-$spacing-2xs);
+      }
+
+      &:disabled {
+        background: $color-gray-400;
+        cursor: not-allowed;
+      }
+    }
+    
+    .save-btn {
+      background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+      
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, $color-primary-dark, $color-info);
+      }
+    }
+  }
+
+  .result-box {
+    background: $color-background-secondary;
+    border-radius: $border-radius-md;
+    padding: $spacing-lg + $spacing-xs + $spacing-2xs;
+    margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+    h4 {
+      font-size: $font-size-xl;
+      font-weight: 700;
+      color: $color-gray-800;
+      margin-bottom: $spacing-lg - $spacing-xs;
+    }
+
+    .structure-content {
+      h5 {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-white;
+        margin-bottom: $spacing-lg - $spacing-xs;
+      }
+
+      .sections {
+        .section-item {
+          background: white;
+          padding: $spacing-lg - $spacing-xs;
+          border-radius: $border-radius-md;
+          margin-bottom: $spacing-md - $spacing-2xs;
+          border: $spacing-2xs solid $color-gray-300;
+
+          h6 {
+            font-size: $font-size-base;
+            font-weight: 600;
+            color: $color-gray-800;
+            margin-bottom: $spacing-sm + $spacing-2xs;
+          }
+
+          p {
+            font-size: $spacing-md - $spacing-2xs;
+            color: $color-gray-600;
+            line-height: 1.6;
+            margin-bottom: $spacing-sm + $spacing-2xs;
+          }
+
+          .duration {
+            font-size: $font-size-sm;
+            color: $color-gray-500;
+            font-style: italic;
+          }
+        }
+      }
+    }
+
+    .story-content {
+      .story-text {
+        background: white;
+        padding: $spacing-lg + $spacing-2xs;
+        border-radius: $border-radius-md;
+        font-size: $font-size-base;
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: $spacing-lg - $spacing-xs;
+        white-space: pre-wrap;
+      }
+
+      .story-details {
+        p {
+          font-size: $spacing-md - $spacing-2xs;
+          color: $color-gray-600;
+          margin-bottom: $spacing-sm;
+
+          strong {
+            color: $color-gray-800;
+            margin-right: $spacing-sm;
+          }
+        }
+      }
+    }
+
+    .shots-content {
+      .shots-list {
+        .shot-item {
+          background: white;
+          padding: $spacing-lg - $spacing-xs;
+          border-radius: $border-radius-md;
+          margin-bottom: $spacing-md - $spacing-2xs;
+          border: $spacing-2xs solid $color-gray-300;
+
+          .shot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: $spacing-sm + $spacing-xs;
+
+            .shot-number {
+              font-size: $font-size-sm;
+              font-weight: 700;
+              color: $color-white;
+            }
+
+            .shot-type {
+              font-size: $spacing-md - $spacing-xs;
+              padding: $spacing-xs $spacing-sm + $spacing-xs;
+              background: $color-info;
+              color: $color-white;
+              border-radius: $border-radius-sm;
+              font-weight: 600;
+            }
+          }
+
+          .shot-description {
+            font-size: $spacing-md - $spacing-2xs;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: $spacing-sm + $spacing-xs;
+          }
+
+          .shot-details {
+            display: flex;
+            gap: $spacing-lg - $spacing-xs;
+
+            span {
+              font-size: $font-size-sm;
+              color: $color-gray-600;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .planning-summary-section {
+    background: white;
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg - $spacing-xs;
+    margin-bottom: $spacing-lg;
+    box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.08);
+
+    .planning-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-md;
+
+      h4 {
+        margin: $spacing-0;
+        color: $color-gray-800;
+        font-size: $font-size-lg;
+      }
+
+      .toggle-detail-btn {
+        padding: $spacing-sm - $spacing-2xs $spacing-md;
+        background: $color-gray-200;
+        border: none;
+        border-radius: $border-radius-md - $border-radius-sm / 2;
+        cursor: pointer;
+        font-size: $font-size-sm;
+        transition: $transition-base;
+
+        &:hover {
+          background: $color-gray-300;
+        }
+      }
+    }
+
+    .planning-content {
+      transition: $transition-base;
+
+      &.collapsed {
+        .planning-text {
+          max-height: $spacing-4xl - $spacing-xs;
+          overflow: hidden;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: $spacing-0;
+            left: $spacing-0;
+            right: $spacing-0;
+            height: $spacing-lg - $spacing-xs;
+            background: linear-gradient(to bottom, transparent, white);
+          }
+        }
+      }
+
+      &.expanded {
+        .planning-text {
+          max-height: none;
+        }
+      }
+
+      .planning-text {
+        color: $color-gray-600;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        margin-bottom: $spacing-md;
+      }
+
+      .planning-options-detail {
+        border-top: $spacing-2xs solid $color-gray-200;
+        padding-top: $spacing-md;
+
+        h5 {
+          margin: $spacing-0 0 $spacing-sm + $spacing-xs;
+          color: $color-gray-800;
+          font-size: $font-size-base;
+        }
+
+        .options-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax($spacing-6xl * 2.08, 1fr));
+          gap: $spacing-sm + $spacing-xs;
+
+          .option-item {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+
+            .option-label {
+              font-weight: 600;
+              color: #555;
+            }
+
+            .option-value {
+              color: lighten($color-info, 10%);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .stories-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: $spacing-lg - $spacing-xs;
+    margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+    .story-card {
+      background: $color-background-secondary;
+      border: $spacing-2xs solid $color-gray-300;
+      border-radius: $border-radius-lg;
+      padding: $spacing-lg - $spacing-xs;
+      cursor: pointer;
+      transition: $transition-base;
+      position: relative;
+      overflow: hidden;
+
+      &:hover {
+        transform: translateY(-$spacing-2xs);
+        box-shadow: $shadow;
+        border-color: lighten($color-info, 10%);
+      }
+
+      &.expanded {
+        background: $color-vp-blue-bg-1;
+        border-color: lighten($color-info, 10%);
+      }
+
+      &.selected {
+        border-color: lighten($color-info, 10%);
+        background: $color-vp-blue-bg-1;
+      }
+
+      .story-stage-badge {
+        background: darken($color-info, 20%);
+        color: white;
+        padding: $spacing-sm $spacing-md;
+        border-radius: $border-radius-md;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: $spacing-5xl;
+
+        .stage-label {
+          font-size: $font-size-2xl;
+          font-weight: bold;
+          line-height: 1;
+        }
+
+        .stage-name {
+          font-size: $font-size-xs;
+          margin-top: $spacing-2xs;
+        }
+      }
+
+      h4 {
+        color: lighten($color-info, 10%);
+        margin-bottom: $spacing-sm + $spacing-2xs;
+      }
+
+      .story-title {
+        font-weight: bold;
+        font-size: $font-size-lg;
+        margin-bottom: $spacing-sm + $spacing-xs;
+        margin-right: $spacing-6xl + $spacing-xs;
+        color: $color-gray-800;
+      }
+
+      .story-summary {
+        color: $color-gray-600;
+        line-height: 1.6;
+        margin-bottom: $spacing-md;
+      }
+
+      .story-meta {
+        margin-bottom: $spacing-sm + $spacing-xs;
+        font-size: $font-size-sm;
+        color: #555;
+
+        span {
+          display: block;
+          padding: $spacing-sm 0;
+        }
+      }
+
+      .story-characters {
+        font-size: $spacing-md - $spacing-xs;
+        color: #777;
+        font-style: italic;
+      }
+
+      .expand-indicator {
+        position: absolute;
+        bottom: $spacing-sm + $spacing-2xs;
+        right: $spacing-sm + $spacing-2xs;
+        font-size: $font-size-xs;
+        color: lighten($color-info, 10%);
+        font-weight: 600;
+      }
+      
+      .expand-toggle-btn {
+        width: auto;
+        display: inline-block;
+        margin-top: $spacing-md;
+        padding: $spacing-sm + $spacing-2xs $spacing-lg;
+        background: lighten($color-info, 10%);
+        color: white;
+        border: none;
+        border-radius: $border-radius-md;
+        cursor: pointer;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        transition: $transition-base;
+        
+        &:hover {
+          background: $color-info;
+          transform: translateY(-$spacing-2xs);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+      }
+      
+      .full-summary {
+        .detailed-content {
+          margin-top: $spacing-md;
+          padding: $spacing-md;
+          background: rgba($color-white, 0.7);
+          border-radius: $border-radius-md;
+          
+          h5 {
+            margin: $spacing-0 0 $spacing-sm 0;
+            color: $color-gray-800;
+            font-size: $font-size-sm;
+            font-weight: 600;
+          }
+          
+          p {
+            margin: $spacing-0;
+            line-height: 1.5;
+          }
+        }
+      }
+
+      .story-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: $spacing-sm + $spacing-xs;
+        
+        .story-header-buttons {
+          display: flex;
+          gap: $spacing-sm;
+          align-items: center;
+        }
+        
+        .toggle-story-btn {
+          background: $color-gray-600;
+          color: white;
+          border: none;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          font-size: $font-size-sm;
+          cursor: pointer;
+          transition: $transition-base;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: $spacing-xl;
+          height: $spacing-xl;
+          
+          &:hover {
+            background: $color-gray-600;
+            transform: translateY(-$spacing-2xs);
+          }
+        }
+        
+        .edit-story-btn {
+          background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+          color: white;
+          border: none;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          font-size: $font-size-xs;
+          font-weight: 500;
+          cursor: pointer;
+          transition: $transition-base;
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          
+          &:hover {
+            background: linear-gradient(135deg, $color-primary-dark, $color-info);
+            transform: translateY(-$spacing-2xs);
+          }
+          
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .edit-story-form {
+        .edit-story-textarea {
+          width: 100%;
+          min-height: $spacing-6xl + $spacing-lg;
+          padding: $spacing-sm + $spacing-xs $spacing-md;
+          border: $spacing-2xs solid $color-gray-300;
+          border-radius: $border-radius-md;
+          font-size: $font-size-sm;
+          line-height: 1.6;
+          resize: vertical;
+          transition: $transition-base;
+          
+          &:focus {
+            outline: none;
+            border-color: $color-primary-dark;
+            box-shadow: 0 0 0 $spacing-xs rgba($color-primary-dark, 0.1);
+          }
+          
+          &::placeholder {
+            color: $color-gray-500;
+          }
+        }
+        
+        .edit-story-buttons {
+          display: flex;
+          gap: $spacing-sm + $spacing-xs;
+          margin-top: $spacing-sm + $spacing-xs;
+          
+          .save-story-btn {
+            background: $color-success;
+            color: white;
+            border: none;
+            padding: $spacing-sm $spacing-md;
+            border-radius: $border-radius-md - $border-radius-sm / 2;
+            font-size: $font-size-sm;
+            font-weight: 500;
+            cursor: pointer;
+            transition: $transition-base;
+            
+            &:hover {
+              background: $color-success;
+            }
+          }
+          
+          .cancel-story-btn {
+            background: $color-danger;
+            color: white;
+            border: none;
+            padding: $spacing-sm $spacing-md;
+            border-radius: $border-radius-md - $border-radius-sm / 2;
+            font-size: $font-size-sm;
+            font-weight: 500;
+            cursor: pointer;
+            transition: $transition-base;
+            
+            &:hover {
+              background: $color-danger;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .story-framework-section {
+    margin-top: $spacing-xl;
+    padding: $spacing-lg;
+    background: $color-background-secondary;
+    border-radius: $border-radius-lg;
+
+    .framework-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax($spacing-6xl * 2.5, 1fr));
+      gap: $spacing-md;
+      margin-bottom: $spacing-xl;
+
+      .framework-card {
+        padding: $spacing-lg - $spacing-xs;
+        background: white;
+        border: $spacing-2xs solid $color-gray-300;
+        border-radius: $border-radius-lg - $border-radius-sm / 2;
+        cursor: pointer;
+        transition: $transition-base;
+        position: relative;
+        overflow: hidden;
+
+        &:hover {
+          transform: translateY(-$spacing-2xs);
+          box-shadow: $shadow;
+          border-color: lighten($color-info, 10%);
+        }
+
+        &.active {
+          border-color: $color-white;
+          background: $color-gray-100;
+
+          &::after {
+            content: '✓';
+            position: absolute;
+            top: $spacing-sm + $spacing-xs;
+            right: $spacing-sm + $spacing-xs;
+            width: $spacing-lg;
+            height: $spacing-lg;
+            background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+            color: white;
+            border-radius: $border-radius-full;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+          }
+        }
+
+        h5 {
+          font-size: $font-size-base;
+          font-weight: 600;
+          color: $color-gray-800;
+          margin-bottom: $spacing-sm;
+        }
+
+        p {
+          font-size: $font-size-sm;
+          color: $color-gray-600;
+          line-height: 1.5;
+          margin-bottom: $spacing-sm + $spacing-xs;
+        }
+
+        .framework-stages {
+          font-size: $spacing-md - $spacing-xs;
+          color: $color-gray-500;
+          background: $color-gray-100;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+          border-radius: $spacing-lg - $spacing-xs;
+          display: inline-block;
+        }
+      }
+    }
+
+    .development-level {
+      background: white;
+      padding: $spacing-lg;
+      border-radius: $border-radius-lg - $border-radius-sm / 2;
+      border: $spacing-2xs solid $color-gray-300;
+
+      .level-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: $spacing-sm + $spacing-xs;
+
+        .level-btn {
+          padding: $spacing-md $spacing-sm + $spacing-xs;
+          background: white;
+          border: $spacing-2xs solid $color-gray-300;
+          border-radius: $border-radius-lg - $border-radius-sm / 2;
+          cursor: pointer;
+          transition: $transition-base;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: $spacing-sm;
+
+          &:hover {
+            transform: translateY(-$spacing-2xs);
+            box-shadow: $shadow;
+          }
+
+          // 그대로 버튼 - 회색 계열
+          &:nth-child(1) {
+            border-color: $color-gray-400;
+            
+            &:hover {
+              border-color: $color-gray-600;
+              background: $color-gray-100;
+            }
+            
+            &.active {
+              border-color: $color-gray-400;
+              background: $color-gray-100;
+              
+              .level-name {
+                color: $color-gray-600;
+                font-weight: 600;
+              }
+            }
+          }
+
+          // 가벼움 버튼 - 파란색 계열
+          &:nth-child(2) {
+            border-color: $color-info;
+            
+            &:hover {
+              border-color: $color-primary;
+              background: $color-vp-blue-bg-1;
+            }
+            
+            &.active {
+              border-color: $color-info;
+              background: $color-vp-blue-bg-1;
+              
+              .level-name {
+                color: $color-info-dark;
+                font-weight: 600;
+              }
+            }
+          }
+
+          // 균형 버튼 - 보라색 계열 (기본 브랜드 컬러)
+          &:nth-child(3) {
+            border-color: $color-primary-dark;
+            
+            &:hover {
+              border-color: $color-primary;
+              background: $color-vp-blue-bg-1;
+            }
+            
+            &.active {
+              border-color: $color-primary-dark;
+              background: $color-vp-blue-bg-1;
+              
+              .level-name {
+                color: $color-primary-dark;
+                font-weight: 600;
+              }
+            }
+          }
+
+          // 상세 버튼 - 주황색 계열
+          &:nth-child(4) {
+            border-color: $color-danger;
+            
+            &:hover {
+              border-color: $color-danger;
+              background: $color-vp-yellow-bg-1;
+            }
+            
+            &.active {
+              border-color: $color-danger;
+              background: $color-vp-yellow-bg-1;
+              
+              .level-name {
+                color: darken($color-warning, 20%);
+                font-weight: 600;
+              }
+            }
+          }
+
+          .level-icon {
+            display: none; /* 이모지 아이콘 숨김 */
+          }
+
+          .level-name {
+            font-size: $spacing-md - $spacing-2xs;
+            font-weight: 500;
+            color: $color-gray-800;
+          }
+
+          .level-desc {
+            font-size: $font-size-xs;
+            color: $color-gray-600;
+          }
+        }
+      }
+    }
+
+    .character-settings {
+      background: $color-white;
+      padding: $spacing-xl;
+      border-radius: $border-radius-xl;
+      border: $spacing-2xs solid $color-vp-gray-light-2;
+      margin-top: $spacing-xl;
+      box-shadow: $shadow-sm;
+      position: relative;
+      transition: $transition-base;
+
+      &:hover {
+        border-color: $color-gray-300;
+        box-shadow: $shadow;
+      }
+
+
+      .character-settings-content {
+        display: flex;
+        gap: $spacing-lg;
+        align-items: flex-start;
+
+        @media (max-width: $breakpoint-md) { flex-direction: column;
+        }
+
+        .character-input-group {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-lg - $spacing-xs;
+
+          .character-name-input {
+            width: 100%;
+            padding: $spacing-md - $spacing-2xs $spacing-md + $spacing-2xs;
+            border: $spacing-2xs solid $color-vp-gray-light-2;
+            border-radius: $border-radius-md;
+            font-size: $font-size-base;
+            transition: $transition-base;
+            background: $color-white;
+            font-weight: 500;
+
+            &:focus {
+              outline: none;
+              border-color: $color-primary;
+              box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.08);
+            }
+
+            &::placeholder {
+              color: $color-gray-500;
+              font-size: $spacing-md - $spacing-2xs;
+              font-weight: 400;
+            }
+          }
+
+          .character-description-input {
+            width: 100%;
+            padding: $spacing-md - $spacing-2xs $spacing-md + $spacing-2xs;
+            border: $spacing-2xs solid $color-vp-gray-light-2;
+            border-radius: $border-radius-md;
+            font-size: $spacing-md - $spacing-2xs;
+            resize: vertical;
+            min-height: $spacing-6xl + $spacing-lg;
+            font-family: inherit;
+            transition: $transition-base;
+            background: $color-white;
+            line-height: 1.6;
+
+            &:focus {
+              outline: none;
+              border-color: $color-primary;
+              box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.08);
+            }
+
+            &::placeholder {
+              color: $color-gray-500;
+              font-size: $spacing-md - $spacing-2xs;
+              font-weight: 400;
+            }
+          }
+        }
+
+        .character-image-upload {
+          width: $spacing-6xl + $spacing-5xl + $spacing-xs;
+          flex-shrink: 0;
+
+          .image-upload-label {
+            cursor: pointer;
+            display: block;
+
+            input[type="file"] {
+              display: none;
+            }
+
+            .upload-button {
+              width: $spacing-6xl + $spacing-5xl + $spacing-xs;
+              height: $spacing-6xl + $spacing-5xl + $spacing-xs;
+              border: $spacing-2xs dashed $color-vp-gray-light-2;
+              border-radius: $border-radius-lg;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              gap: $spacing-sm;
+              background: $color-background-secondary;
+              transition: $transition-base;
+              position: relative;
+              overflow: hidden;
+
+              &:hover {
+                border-color: $color-primary;
+                background: $color-vp-blue-bg-1;
+                transform: scale(1.02);
+              }
+
+              .upload-icon {
+                font-size: $spacing-xl;
+                color: $color-gray-500;
+              }
+
+              .upload-text {
+                font-size: $spacing-md - $spacing-xs;
+                color: $color-gray-600;
+                text-align: center;
+                padding: $spacing-0 $spacing-sm + $spacing-2xs;
+                font-weight: 500;
+                line-height: 1.4;
+              }
+
+              .image-preview {
+                width: 100%;
+                height: 100%;
+                position: relative;
+
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  border-radius: $border-radius-lg - $border-radius-sm / 2;
+                }
+
+                .change-image {
+                  position: absolute;
+                  bottom: $spacing-0;
+                  left: $spacing-0;
+                  right: $spacing-0;
+                  background: rgba($color-black, 0.7);
+                  color: white;
+                  padding: $spacing-sm;
+                  font-size: $font-size-xs;
+                  text-align: center;
+                  opacity: 0;
+                  transition: opacity 0.3s ease;
+                }
+
+                &:hover .change-image {
+                  opacity: 1;
+                }
+              }
+            }
+          }
+
+          .remove-image-btn {
+            width: 100%;
+            margin-top: $spacing-sm;
+            padding: $spacing-sm $spacing-sm + $spacing-xs;
+            background: $color-white;
+            color: $color-danger;
+            border: $spacing-2xs solid $color-danger;
+            border-radius: $border-radius-md - $border-radius-sm / 2;
+            font-size: $spacing-md - $spacing-xs;
+            font-weight: 500;
+            cursor: pointer;
+            transition: $transition-base;
+
+            &:hover {
+              background: $color-danger;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .storyboard-style-selector {
+    background: $color-background-secondary;
+    padding: $spacing-lg - $spacing-xs;
+    border-radius: $border-radius-lg;
+    margin-bottom: $spacing-lg;
+
+    label {
+      display: block;
+      font-size: $font-size-base;
+      font-weight: 600;
+      color: $color-gray-800;
+      margin-bottom: $spacing-md;
+    }
+
+    .style-select {
+      width: 100%;
+      padding: $spacing-sm + $spacing-xs;
+      border: $spacing-2xs solid $color-gray-300;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      background: white;
+      cursor: pointer;
+      transition: $transition-base;
+
+      &:hover {
+        border-color: lighten($color-info, 10%);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $color-white;
+        box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.1);
+      }
+    }
+
+    .style-options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: $spacing-sm + $spacing-xs;
+
+      .style-option {
+        padding: $spacing-md $spacing-sm + $spacing-xs;
+        border: $spacing-2xs solid;
+        background: white;
+        border-radius: $border-radius-lg - $border-radius-sm / 2;
+        font-size: $font-size-sm;
+        cursor: pointer;
+        transition: $transition-base;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-xs;
+        min-height: $spacing-5xl;
+        justify-content: center;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: $spacing-0;
+          left: $spacing-0;
+          right: $spacing-0;
+          bottom: $spacing-0;
+          background: currentColor;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .style-name {
+          font-weight: 600;
+          font-size: $spacing-md - $spacing-2xs;
+          display: block;
+          position: relative;
+          z-index: $z-index-base;
+        }
+
+        .style-desc {
+          font-size: $font-size-xs;
+          opacity: 0.8;
+          display: block;
+          position: relative;
+          z-index: $z-index-base;
+        }
+
+        &:hover:not(.active) {
+          transform: translateY(-$spacing-2xs);
+          box-shadow: $shadow;
+          
+          &::before {
+            opacity: 0.1;
+          }
+        }
+
+        &.active {
+          color: white;
+          border-width: $spacing-xs - $spacing-2xs;
+
+          &::before {
+            opacity: 1;
+          }
+
+          .style-name,
+          .style-desc {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  .scenes-with-storyboards-container {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+    .scene-with-storyboard {
+      display: flex;
+      gap: $spacing-lg - $spacing-xs;
+      align-items: stretch;
+
+      .storyboard-section {
+        flex: 0 0 $spacing-6xl * 3.125;
+        background: $color-background-secondary;
+        border-radius: $border-radius-lg;
+        overflow: hidden;
+        border: $spacing-2xs solid $color-gray-300;
+
+        .storyboard-content {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+
+          .storyboard-image {
+            width: 100%;
+            height: $spacing-6xl * 2 + $spacing-sm;
+            object-fit: cover;
+            background: $color-gray-800;
+          }
+
+          .storyboard-placeholder {
+            width: 100%;
+            height: $spacing-6xl * 2 + $spacing-sm;
+            background: $color-gray-300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $color-gray-500;
+            font-size: $font-size-base;
+          }
+
+          .storyboard-info {
+            padding: $spacing-md;
+            font-size: $font-size-sm;
+            color: $color-gray-600;
+            line-height: 1.6;
+            position: relative;
+
+            .storyboard-description-kr {
+              font-size: $font-size-base;
+              color: $color-gray-800;
+              font-weight: 500;
+              margin-bottom: $spacing-sm + $spacing-xs;
+              padding: $spacing-sm + $spacing-2xs $spacing-md - $spacing-2xs;
+              background: $color-background-secondary;
+              border-left: $spacing-xs - $spacing-2xs solid lighten($color-info, 10%);
+              border-radius: $border-radius-sm;
+              line-height: 1.5;
+            }
+
+            .storyboard-actions {
+              display: flex;
+              gap: $spacing-sm;
+              margin-top: $spacing-sm + $spacing-xs;
+            }
+
+            .edit-storyboard-btn,
+            .regenerate-storyboard-btn,
+            .download-storyboard-btn {
+              padding: $spacing-sm $spacing-md;
+              background: $color-gray-200;
+              color: $color-gray-800;
+              border: $spacing-2xs solid $color-gray-300;
+              border-radius: $border-radius-sm;
+              font-size: $spacing-md - $spacing-xs;
+              cursor: pointer;
+              transition: $transition-base;
+              display: inline-block;
+
+              &:hover {
+                background: $color-gray-300;
+                border-color: $color-gray-400;
+              }
+
+              &:active {
+                transform: translateY($spacing-2xs);
+              }
+
+              &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+              }
+            }
+
+            .edit-storyboard-btn {
+              background: $color-danger;
+              color: white;
+              border-color: $color-danger;
+              
+              &:hover {
+                background: $color-danger;
+                border-color: $color-danger;
+              }
+            }
+
+            .regenerate-storyboard-btn {
+              background: $color-success;
+              color: white;
+              border-color: $color-success;
+              
+              &:hover {
+                background: $color-success;
+                border-color: $color-success;
+              }
+            }
+
+            .storyboard-edit-mode {
+              width: 100%;
+
+              .storyboard-edit-input {
+                width: 100%;
+                padding: $spacing-sm;
+                border: $spacing-2xs solid $color-gray-300;
+                border-radius: $border-radius-sm;
+                font-size: $spacing-md - $spacing-xs;
+                resize: vertical;
+                font-family: inherit;
+                margin-bottom: $spacing-sm;
+
+                &:focus {
+                  outline: none;
+                  border-color: lighten($color-info, 10%);
+                }
+              }
+
+              .edit-actions {
+                display: flex;
+                gap: $spacing-sm;
+
+                button {
+                  padding: $spacing-sm - $spacing-2xs $spacing-md;
+                  font-size: $spacing-md - $spacing-xs;
+                  border: none;
+                  border-radius: $border-radius-sm;
+                  cursor: pointer;
+                  transition: $transition-base;
+
+                  &.save-edit-btn {
+                    background: $color-success;
+                    color: white;
+
+                    &:hover {
+                      background: $color-success;
+                    }
+                  }
+
+                  &.cancel-edit-btn {
+                    background: $color-danger;
+                    color: white;
+
+                    &:hover {
+                      background: $color-danger;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .storyboard-empty {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: $spacing-lg - $spacing-xs;
+
+          .generate-storyboard-btn {
+            padding: $spacing-sm + $spacing-xs $spacing-lg;
+            background: lighten($color-info, 10%);
+            color: white;
+            border: none;
+            border-radius: $border-radius-md;
+            font-size: $font-size-sm;
+            font-weight: 600;
+            cursor: pointer;
+            transition: $transition-base;
+
+            &:hover:not(:disabled) {
+              background: $color-info;
+              transform: translateY(-$spacing-2xs);
+            }
+
+            &:disabled {
+              background: $color-gray-400;
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+
+      .scene-card {
+        flex: 1;
+      }
+    }
+  }
+
+  .scenes-container {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg - $spacing-xs;
+    margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+    .scene-card {
+      background: $color-white;
+      border: $spacing-2xs solid $color-gray-300;
+      border-radius: $border-radius-lg;
+      padding: $spacing-lg;
+      cursor: pointer;
+      transition: $transition-base;
+
+      &:hover {
+        transform: translateX($spacing-xs);
+        box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.1);
+      }
+
+      &.selected {
+        border-color: lighten($color-info, 10%);
+        background: $color-vp-blue-bg-3;
+      }
+
+      .scene-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-md;
+
+        h4 {
+          color: darken($color-info, 20%);
+          font-size: $font-size-lg;
+        }
+
+        .scene-time {
+          background: $color-danger;
+          color: $color-danger-dark;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+          border-radius: $spacing-lg - $spacing-xs;
+          font-size: $font-size-sm;
+          font-weight: 500;
+        }
+
+        .scene-stage {
+          background: $color-vp-blue-bg-1;
+          color: $color-info;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+          border-radius: $spacing-lg - $spacing-xs;
+          font-size: $spacing-md - $spacing-xs;
+          font-weight: 500;
+          margin-left: $spacing-sm;
+        }
+      }
+
+      .scene-description {
+        color: $color-gray-800;
+        line-height: 1.8;
+        margin-bottom: $spacing-md;
+        font-size: $spacing-md - $spacing-2xs;
+      }
+
+      .scene-details {
+        background: $color-gray-100;
+        padding: $spacing-md;
+        border-radius: $border-radius-md;
+
+        p {
+          margin: $spacing-sm 0;
+          font-size: $font-size-sm;
+          color: $color-gray-600;
+
+          strong {
+            color: $color-gray-800;
+          }
+        }
+      }
+    }
+  }
+
+  .shots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($spacing-6xl * 3.125, 1fr));
+    gap: $spacing-lg - $spacing-xs;
+    margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+    .shot-card {
+      background: $color-white;
+      border: $spacing-2xs solid $color-gray-300;
+      border-radius: $border-radius-lg - $border-radius-sm / 2;
+      padding: $spacing-lg - $spacing-xs;
+      cursor: pointer;
+      transition: $transition-base;
+
+      &:hover {
+        transform: scale(1.02);
+        box-shadow: $shadow;
+      }
+
+      &.selected {
+        border-color: lighten($color-info, 10%);
+        background: $color-vp-blue-bg-3;
+      }
+
+      .shot-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-sm + $spacing-xs;
+
+        .shot-number {
+          font-weight: bold;
+          color: lighten($color-info, 10%);
+          font-size: $font-size-base;
+        }
+
+        .shot-type {
+          background: $color-vp-blue-bg-1;
+          color: $color-info;
+          padding: $spacing-xs $spacing-sm + $spacing-xs;
+          border-radius: $border-radius-xl;
+          font-size: $font-size-xs;
+          font-weight: 500;
+        }
+      }
+
+      .shot-description {
+        margin-bottom: $spacing-md;
+        line-height: 1.6;
+        color: $color-gray-800;
+      }
+
+      .shot-technical {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        font-size: $spacing-md - $spacing-xs;
+        color: $color-gray-600;
+        padding: $spacing-sm + $spacing-xs;
+        background: $color-gray-100;
+        border-radius: $border-radius-md - $border-radius-sm / 2;
+
+        span {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+        }
+      }
+
+      .shot-dialogue {
+        margin-top: $spacing-sm + $spacing-xs;
+        padding: $spacing-sm + $spacing-2xs;
+        background: $color-danger;
+        border-left: $spacing-xs solid $color-warning;
+        border-radius: $border-radius-sm;
+        font-style: italic;
+        font-size: $font-size-sm;
+        color: $color-warning-dark;
+      }
+    }
+  }
+
+  .storyboards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax($spacing-6xl * 4.17, 1fr));
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+    .storyboard-card {
+      background: $color-white;
+      border: $spacing-2xs solid $color-gray-300;
+      border-radius: $border-radius-lg;
+      overflow: hidden;
+      box-shadow: $shadow-sm;
+
+      .board-frame {
+        background: $color-gray-800;
+        padding: $spacing-lg - $spacing-xs;
+        min-height: $spacing-6xl * 2 + $spacing-sm;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: auto;
+          display: block;
+          max-height: $spacing-6xl * 4 + $spacing-md;
+          object-fit: contain;
+        }
+
+        .frame-placeholder {
+          width: 100%;
+          height: $spacing-6xl + $spacing-5xl + $spacing-xs;
+          background: $color-gray-200;
+          border: $spacing-2xs dashed $color-gray-500;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: $color-gray-600;
+          font-size: $font-size-lg;
+          font-weight: bold;
+
+          small {
+            font-weight: normal;
+            font-size: $font-size-sm;
+          }
+        }
+      }
+
+      .board-details {
+        padding: $spacing-lg - $spacing-xs;
+
+        h5 {
+          color: darken($color-info, 20%);
+          margin-bottom: $spacing-sm + $spacing-2xs;
+          font-size: $font-size-base;
+        }
+
+        .board-composition {
+          color: $color-gray-800;
+          line-height: 1.6;
+          margin-bottom: $spacing-md;
+        }
+
+        .board-notes {
+          background: $color-gray-100;
+          padding: $spacing-sm + $spacing-xs;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          margin-bottom: $spacing-sm + $spacing-xs;
+
+          p {
+            margin: $spacing-sm - $spacing-2xs 0;
+            font-size: $font-size-sm;
+            color: $color-gray-600;
+
+            strong {
+              color: $color-gray-800;
+            }
+          }
+        }
+
+        .board-additional-notes {
+          font-size: $font-size-sm;
+          color: $color-gray-600;
+          font-style: italic;
+          padding: $spacing-sm $spacing-sm + $spacing-xs;
+          background: $color-danger;
+          border-left: $spacing-xs - $spacing-2xs solid $color-danger;
+          border-radius: $border-radius-sm;
+        }
+      }
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: $spacing-sm + $spacing-xs;
+    justify-content: center;
+    margin-top: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+    button {
+      width: auto;
+      min-width: $spacing-6xl + $spacing-5xl + $spacing-xs;
+      padding: $spacing-0 $spacing-xl;
+      height: $spacing-3xl;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .back-btn {
+      padding: $spacing-md - $spacing-2xs $spacing-xl;
+      background: white;
+      color: $color-primary-dark;
+      border: $spacing-2xs solid $color-primary-dark;
+      border-radius: $border-radius-md;
+      font-size: $spacing-md - $spacing-2xs;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-base;
+
+      &:hover {
+        background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+        color: white;
+        transform: translateY(-$spacing-2xs);
+      }
+    }
+
+    .generate-btn {
+      padding: $spacing-md - $spacing-2xs $spacing-xl;
+      background: $color-primary-dark;
+      color: white;
+      border: none;
+      border-radius: $border-radius-md;
+      font-size: $spacing-md - $spacing-2xs;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-base;
+      margin-top: $spacing-0;
+
+      &:hover:not(:disabled) {
+        background: $color-primary;
+        transform: translateY(-$spacing-2xs);
+      }
+
+      &:disabled {
+        background: $color-gray-400;
+        cursor: not-allowed;
+      }
+    }
+
+    .new-btn {
+      padding: $spacing-md - $spacing-2xs $spacing-xl;
+      background: $color-success;
+      color: white;
+      border: none;
+      border-radius: $border-radius-md;
+      font-size: $spacing-md - $spacing-2xs;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-base;
+
+      &:hover {
+        background: $color-success;
+        transform: translateY(-$spacing-2xs);
+      }
+    }
+    
+    .export-btn {
+      padding: $spacing-md - $spacing-2xs $spacing-xl;
+      background: $color-vp-red-1;
+      color: white;
+      border: none;
+      border-radius: $border-radius-md;
+      font-size: $spacing-md - $spacing-2xs;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-base;
+      display: inline-flex;
+      align-items: center;
+      gap: $spacing-0;
+      
+      &:hover {
+        background: $color-danger;
+        transform: translateY(-$spacing-2xs);
+      }
+    }
+  }
+
+  .error-message, .success-message {
+    max-width: 900px;
+    margin: $spacing-0 auto $spacing-lg - $spacing-xs;
+    padding: $spacing-md $spacing-2xl $spacing-md $spacing-lg - $spacing-xs;
+    border-radius: $border-radius-md;
+    text-align: center;
+    position: relative;
+    animation: slideDown 0.3s ease;
+
+    p {
+      margin: $spacing-0;
+      font-size: $spacing-md - $spacing-2xs;
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      right: $spacing-sm + $spacing-xs;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: $font-size-2xl;
+      cursor: pointer;
+      padding: $spacing-0;
+      width: $spacing-lg + $spacing-xs + $spacing-2xs;
+      height: $spacing-lg + $spacing-xs + $spacing-2xs;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $border-radius-full;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba($color-black, 0.1);
+      }
+    }
+  }
+
+  .error-message {
+    background: #fee;
+    border: $spacing-2xs solid #fcc;
+    color: #c00;
+
+    button {
+      color: #c00;
+    }
+  }
+
+  .success-message {
+    background: $color-success;
+    border: $spacing-2xs solid $color-success;
+    color: $color-success-dark;
+
+    button {
+      color: $color-success-dark;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-$spacing-sm + $spacing-2xs);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .custom-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm + $spacing-2xs;
+    
+    input {
+      width: 100%;
+      padding: $spacing-sm + $spacing-xs $spacing-md;
+      font-size: $spacing-md - $spacing-2xs;
+      border: $spacing-2xs solid lighten($color-info, 10%);
+      border-radius: $border-radius-md - $border-radius-sm / 2;
+      background: $color-gray-100;
+      transition: $transition-base;
+      font-weight: 500;
+      
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        background: $color-white;
+        box-shadow: 0 0 0 $spacing-xs rgba(lighten($color-info, 10%), 0.1);
+      }
+      
+      &::placeholder {
+        color: $color-info;
+        font-weight: 400;
+      }
+    }
+  }
+  
+  .cancel-custom-btn {
+    padding: $spacing-sm $spacing-md;
+    background: $color-gray-600;
+    color: white;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+    margin-top: $spacing-sm;
+    align-self: flex-start;
+    
+    &:hover {
+      background: $color-gray-600;
+    }
+  }
+
+  // 단계별 미리보기 섹션
+  .step-preview-section {
+    margin-top: $spacing-2xl;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg - $spacing-xs;
+
+    .step-preview {
+      background: white;
+      border-radius: $border-radius-lg;
+      padding: $spacing-lg;
+      box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.08);
+      border-left: $spacing-xs solid $color-gray-300;
+      transition: $transition-base;
+
+      &.active {
+        border-left-color: $color-primary;
+        box-shadow: $shadow;
+      }
+
+      &.expanded {
+        .preview-content {
+          max-height: none;
+          
+          .full-content {
+            animation: fadeIn 0.3s ease;
+          }
+        }
+      }
+
+      .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-md;
+
+        h4 {
+          font-size: $font-size-lg;
+          font-weight: 600;
+          color: $color-gray-900;
+          margin: $spacing-0;
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+
+          &::before {
+            content: '';
+            width: $spacing-sm - $spacing-2xs;
+            height: $spacing-sm - $spacing-2xs;
+            background: $color-primary;
+            border-radius: $border-radius-full;
+          }
+        }
+
+        .toggle-detail-btn {
+          background: $color-vp-blue-bg-1;
+          color: $color-primary;
+          border: none;
+          padding: $spacing-xs $spacing-sm;
+          border-radius: $border-radius-sm;
+          font-size: $font-size-xs;
+          font-weight: 500;
+          cursor: pointer;
+          transition: $transition-base;
+          display: flex;
+          align-items: center;
+          gap: $spacing-2xs;
+          width: $spacing-4xl - $spacing-xs;
+          height: $spacing-lg;
+          justify-content: center;
+
+          &:hover {
+            background: $color-info;
+          }
+
+          &:active {
+            transform: scale(0.95);
+          }
+        }
+      }
+
+      .preview-content {
+        p {
+          font-size: $spacing-md - $spacing-2xs;
+          color: $color-gray-600;
+          line-height: 1.6;
+          margin-bottom: $spacing-md;
+        }
+
+        h5 {
+          font-size: $font-size-base;
+          font-weight: 600;
+          color: $color-gray-800;
+          margin-bottom: $spacing-sm;
+        }
+
+        .story-stage {
+          font-size: $spacing-md - $spacing-xs;
+          color: $color-primary;
+          background: $color-vp-blue-bg-1;
+          padding: $spacing-xs $spacing-sm;
+          border-radius: $border-radius-sm;
+          display: inline-block;
+          margin-bottom: $spacing-sm + $spacing-xs;
+        }
+
+        .view-detail-btn {
+          background: $color-primary;
+          color: white;
+          border: none;
+          padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          font-size: $font-size-xs;
+          font-weight: 500;
+          cursor: pointer;
+          transition: $transition-base;
+          display: inline-flex;
+          align-items: center;
+          gap: $spacing-xs;
+          width: $spacing-5xl;
+          height: $spacing-lg + $spacing-xs;
+          justify-content: center;
+
+          &:hover {
+            background: $color-primary-dark;
+            transform: translateX($spacing-2xs);
+          }
+
+          &:active {
+            transform: translateX($spacing-2xs);
+          }
+        }
+
+        // 스토리 미리보기 스타일
+        .stories-preview {
+          .story-preview-item {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm + $spacing-xs;
+            padding: $spacing-sm + $spacing-2xs $spacing-md - $spacing-2xs;
+            background: $color-vp-blue-bg-1;
+            border-radius: $border-radius-md;
+            margin-bottom: $spacing-sm + $spacing-2xs;
+            border: $spacing-2xs solid $color-info;
+
+            .story-stage-badge {
+              font-size: $font-size-sm;
+              font-weight: 700;
+              color: $color-primary;
+              background: white;
+              padding: $spacing-sm - $spacing-2xs $spacing-sm + $spacing-xs;
+              border-radius: $border-radius-md - $border-radius-sm / 2;
+              min-width: $spacing-2xl;
+              text-align: center;
+              box-shadow: $shadow-sm;
+            }
+
+            .story-title {
+              font-size: $font-size-sm;
+              color: $color-gray-800;
+              font-weight: 500;
+              flex: 1;
+            }
+          }
+
+          .more-stories {
+            text-align: center;
+            color: $color-gray-600;
+            font-size: $spacing-md - $spacing-xs;
+            padding: $spacing-sm;
+            background: $color-background-secondary;
+            border-radius: $border-radius-md - $border-radius-sm / 2;
+            margin-top: $spacing-sm;
+          }
+        }
+
+        // 씬 미리보기 스타일
+        .scenes-preview {
+          .scene-preview-item {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm + $spacing-xs;
+            padding: $spacing-sm $spacing-sm + $spacing-xs;
+            background: $color-background-secondary;
+            border-radius: $border-radius-md - $border-radius-sm / 2;
+            margin-bottom: $spacing-sm;
+
+            .scene-number {
+              font-size: $spacing-md - $spacing-xs;
+              font-weight: 600;
+              color: $color-primary;
+              background: white;
+              padding: $spacing-xs $spacing-sm;
+              border-radius: $border-radius-sm;
+              min-width: $spacing-4xl - $spacing-xs;
+              text-align: center;
+            }
+
+            .scene-location {
+              font-size: $font-size-sm;
+              color: $color-gray-800;
+              flex: 1;
+            }
+
+            .has-storyboard {
+              font-size: $font-size-xs;
+              color: $color-success;
+              background: $color-gray-100;
+              padding: $spacing-2xs $spacing-xs + $spacing-2xs;
+              border-radius: $border-radius-sm;
+              font-weight: 500;
+            }
+          }
+
+          .more-scenes {
+            font-size: $spacing-md - $spacing-xs;
+            color: $color-gray-600;
+            text-align: center;
+            padding: $spacing-sm;
+            font-style: italic;
+          }
+        }
+
+        // 전체 내용 표시 스타일
+        .full-content {
+          .planning-options-display {
+            margin-top: $spacing-lg - $spacing-xs;
+            padding: $spacing-md;
+            background: $color-background-secondary;
+            border-radius: $border-radius-md;
+
+            h5 {
+              font-size: $font-size-sm;
+              font-weight: 600;
+              color: $color-gray-800;
+              margin-bottom: $spacing-sm + $spacing-xs;
+            }
+
+            .options-grid {
+              display: flex;
+              flex-wrap: wrap;
+              gap: $spacing-sm;
+
+              .option-tag {
+                background: $color-info;
+                color: $color-primary;
+                padding: $spacing-xs $spacing-sm + $spacing-2xs;
+                border-radius: $border-radius-xl;
+                font-size: $font-size-xs;
+                font-weight: 500;
+              }
+            }
+          }
+
+          .story-preview-full {
+            padding: $spacing-lg - $spacing-xs;
+            background: $color-background-secondary;
+            border-radius: $border-radius-md;
+            margin-bottom: $spacing-md;
+
+            h5 {
+              font-size: $font-size-base;
+              font-weight: 600;
+              color: $color-gray-900;
+              margin-bottom: $spacing-sm;
+            }
+
+            .story-stage-name {
+              font-size: $spacing-md - $spacing-xs;
+              color: $color-primary;
+              background: $color-vp-blue-bg-1;
+              padding: $spacing-xs $spacing-sm + $spacing-2xs;
+              border-radius: $border-radius-sm;
+              display: inline-block;
+              margin-bottom: $spacing-sm + $spacing-xs;
+            }
+
+            .story-summary {
+              font-size: $font-size-sm;
+              color: $color-gray-800;
+              line-height: 1.6;
+              margin-bottom: $spacing-sm + $spacing-xs;
+            }
+
+            .story-detail {
+              margin-top: $spacing-md;
+              padding: $spacing-sm + $spacing-xs;
+              background: white;
+              border-radius: $border-radius-md - $border-radius-sm / 2;
+              border-left: $spacing-xs - $spacing-2xs solid $color-primary;
+
+              h6 {
+                font-size: $spacing-md - $spacing-xs;
+                font-weight: 600;
+                color: $color-gray-800;
+                margin-bottom: $spacing-sm;
+              }
+
+              p {
+                font-size: $spacing-md - $spacing-xs;
+                color: $color-gray-600;
+                line-height: 1.5;
+              }
+            }
+
+            .story-characters {
+              font-size: $spacing-md - $spacing-xs;
+              color: $color-gray-600;
+              margin-top: $spacing-sm;
+            }
+          }
+
+          &.scenes-full {
+            .scene-preview-full {
+              padding: $spacing-lg - $spacing-xs;
+              background: $color-background-secondary;
+              border-radius: $border-radius-md;
+              margin-bottom: $spacing-md;
+
+              .scene-header-full {
+                display: flex;
+                align-items: center;
+                gap: $spacing-sm + $spacing-xs;
+                margin-bottom: $spacing-sm + $spacing-xs;
+
+                h5 {
+                  font-size: $font-size-base;
+                  font-weight: 600;
+                  color: $color-gray-900;
+                  margin: $spacing-0;
+                }
+
+                .scene-time {
+                  font-size: $spacing-md - $spacing-xs;
+                  color: $color-gray-600;
+                  background: white;
+                  padding: $spacing-xs $spacing-sm;
+                  border-radius: $border-radius-sm;
+                }
+
+                .scene-stage-tag {
+                  font-size: $font-size-xs;
+                  color: $color-primary;
+                  background: $color-vp-blue-bg-1;
+                  padding: $spacing-xs $spacing-sm;
+                  border-radius: $border-radius-sm;
+                  font-weight: 500;
+                }
+              }
+
+              .scene-description {
+                font-size: $font-size-sm;
+                color: $color-gray-800;
+                line-height: 1.6;
+                margin-bottom: $spacing-sm + $spacing-xs;
+              }
+
+              .scene-dialogue,
+              .scene-purpose,
+              .scene-characters {
+                font-size: $spacing-md - $spacing-xs;
+                color: $color-gray-600;
+                margin-bottom: $spacing-sm;
+
+                strong {
+                  color: $color-gray-800;
+                  font-weight: 600;
+                }
+              }
+
+              .scene-storyboard-preview {
+                margin-top: $spacing-md;
+                padding: $spacing-sm + $spacing-xs;
+                background: white;
+                border-radius: $border-radius-md;
+                text-align: center;
+
+                img {
+                  max-width: 100%;
+                  max-height: $spacing-6xl * 3 + $spacing-sm + $spacing-xs;
+                  border-radius: $border-radius-md - $border-radius-sm / 2;
+                  box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.1);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 애니메이션 정의
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-$spacing-sm + $spacing-2xs);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // 네비게이션 스타일 개선
+  .planning-navigation {
+    .nav-step {
+      cursor: pointer;
+      transition: $transition-base;
+
+      &:hover:not(.disabled) {
+        opacity: 0.8;
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
+      }
+
+      &.current {
+        .step-number {
+          box-shadow: 0 0 0 $spacing-xs rgba($color-primary, 0.2);
+        }
+      }
+    }
+  }
+
+  // 버튼 그룹 스타일 (가로 길이 고정)
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-md;
+    margin-top: $spacing-lg + $spacing-xs + $spacing-2xs;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    
+    button {
+      min-width: 140px; // 최소 가로 길이 고정
+      padding: $spacing-sm + $spacing-xs $spacing-lg;
+      border: none;
+      border-radius: $border-radius-md;
+      font-size: $font-size-base;
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-base;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-sm;
+      
+      &.back-btn {
+        background: $color-gray-600;
+        color: white;
+        
+        &:hover {
+          background: $color-gray-600;
+          transform: translateY(-$spacing-2xs);
+        }
+      }
+      
+      &.generate-btn,
+      &.next-btn {
+        background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+        color: white;
+        
+        &:hover {
+          background: linear-gradient(135deg, $color-primary-dark, $color-info);
+          transform: translateY(-$spacing-2xs);
+        }
+        
+        &:disabled {
+          background: $color-gray-400$color-gray-400;
+          color: $color-gray-600$color-gray-600;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+      
+      &.export-btn {
+        background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+        color: white;
+        
+        &:hover {
+          background: linear-gradient(135deg, $color-primary-dark, $color-info);
+          transform: translateY(-$spacing-2xs);
+        }
+      }
+      
+      &.reset-btn {
+        background: $color-danger;
+        color: white;
+        
+        &:hover {
+          background: $color-gray-800;
+          transform: translateY(-$spacing-2xs);
+        }
+      }
+    }
+  }
+
+  // 고속 콘티 생성 관련 스타일
+  .batch-actions {
+    background: white;
+    padding: $spacing-lg - $spacing-xs;
+    border-radius: $border-radius-lg;
+    border: $spacing-2xs solid $color-gray-300;
+    margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+    
+    .batch-buttons {
+      display: flex;
+      gap: $spacing-sm + $spacing-xs;
+      margin-bottom: $spacing-md;
+      flex-wrap: wrap;
+      
+      .generate-all-btn {
+        background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+        color: white;
+        border: none;
+        padding: $spacing-sm + $spacing-xs $spacing-lg - $spacing-xs;
+        border-radius: $border-radius-md;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        min-width: $spacing-6xl + $spacing-4xl;
+        justify-content: center;
+        
+        &:hover:not(:disabled) {
+          background: linear-gradient(135deg, $color-primary-dark, $color-info);
+          transform: translateY(-$spacing-2xs);
+        }
+        
+        &:disabled {
+          background: $color-gray-400$color-gray-400;
+          color: $color-gray-600$color-gray-600;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+      
+      .generate-all-fast-btn {
+        background: linear-gradient(135deg, $color-danger, $color-danger);
+        color: white;
+        border: none;
+        padding: $spacing-sm + $spacing-xs $spacing-lg - $spacing-xs;
+        border-radius: $border-radius-md;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        min-width: $spacing-6xl + $spacing-4xl;
+        justify-content: center;
+        box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-danger, 0.3);
+        
+        &:hover:not(:disabled) {
+          background: linear-gradient(135deg, $color-danger, $color-danger);
+          transform: translateY(-$spacing-2xs);
+          box-shadow: $shadow;
+        }
+        
+        &:disabled {
+          background: $color-gray-400$color-gray-400;
+          color: $color-gray-600$color-gray-600;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: $shadow-none;
+        }
+      }
+    }
+    
+    .batch-info {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-sm + $spacing-xs;
+      
+      > span {
+        font-size: $font-size-sm;
+        color: $color-gray-600;
+      }
+      
+      .generation-progress {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $spacing-sm;
+        
+        .progress-item {
+          padding: $spacing-xs $spacing-sm;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          font-size: $font-size-xs;
+          font-weight: 500;
+          
+          &.pending {
+            background: $color-gray-100;
+            color: $color-gray-600;
+          }
+          
+          &.generating {
+            background: $color-danger;
+            color: $color-warning-dark;
+            animation: pulse 1.5s ease-in-out infinite;
+          }
+          
+          &.completed {
+            background: $color-success;
+            color: $color-success-dark;
+          }
+          
+          &.error {
+            background: $color-danger;
+            color: $color-danger-dark;
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  // 영상 업로드 섹션 스타일
+  .video-upload-section {
+    max-width: 800px;
+    margin: $spacing-0 auto;
+
+    .upload-area {
+      background: $color-background-secondary;
+      border: $spacing-2xs dashed $color-gray-200;
+      border-radius: $border-radius-lg;
+      padding: $spacing-2xl $spacing-lg - $spacing-xs;
+      text-align: center;
+      margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+      transition: $transition-base;
+
+      &:hover {
+        border-color: $color-primary-dark;
+        background: $color-gray-100;
+      }
+
+      .upload-icon {
+        font-size: $font-size-5xl;
+        margin-bottom: $spacing-md;
+      }
+
+      h4 {
+        font-size: $font-size-xl;
+        font-weight: 600;
+        color: $color-gray-900;
+        margin-bottom: $spacing-sm;
+      }
+
+      p {
+        color: $color-gray-600;
+        margin-bottom: $spacing-lg;
+        font-size: $font-size-sm;
+      }
+
+      .upload-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+        color: white;
+        padding: $spacing-sm + $spacing-xs $spacing-lg;
+        border-radius: $border-radius-md;
+        text-decoration: none;
+        font-weight: 600;
+        margin-right: $spacing-sm + $spacing-xs;
+        cursor: pointer;
+        transition: $transition-base;
+        min-width: 140px;
+
+        &:hover {
+          background: linear-gradient(135deg, $color-primary-dark, $color-info);
+          transform: translateY(-$spacing-2xs);
+        }
+      }
+
+      .upload-guide-btn {
+        background: $color-gray-600;
+        color: white;
+        border: none;
+        padding: $spacing-sm + $spacing-xs $spacing-lg;
+        border-radius: $border-radius-md;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+        min-width: 140px;
+
+        &:hover {
+          background: $color-gray-600;
+          transform: translateY(-$spacing-2xs);
+        }
+      }
+    }
+
+    .uploaded-video-preview {
+      background: white;
+      border-radius: $border-radius-lg;
+      padding: $spacing-lg;
+      box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.1);
+      margin-bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+
+      h5 {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $color-gray-900;
+        margin-bottom: $spacing-md;
+      }
+
+      video {
+        margin-bottom: $spacing-md;
+        box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.1);
+      }
+
+      .video-info {
+        background: $color-background-secondary;
+        padding: $spacing-md;
+        border-radius: $border-radius-md;
+        margin-bottom: $spacing-md;
+
+        p {
+          margin: $spacing-xs 0;
+          font-size: $font-size-sm;
+          color: $color-gray-800;
+
+          strong {
+            color: $color-gray-900;
+          }
+        }
+      }
+
+      .video-actions {
+        display: flex;
+        gap: $spacing-sm + $spacing-xs;
+
+        button {
+          border: none;
+          padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          font-weight: 500;
+          cursor: pointer;
+          transition: $transition-base;
+          min-width: 140px;
+
+          &.replace-video-btn {
+            background: $color-warning;
+            color: $color-gray-800;
+
+            &:hover {
+              background: $color-warning-dark;
+              transform: translateY(-$spacing-2xs);
+            }
+          }
+
+          &.delete-video-btn {
+            background: $color-danger;
+            color: white;
+
+            &:hover {
+              background: $color-gray-800;
+              transform: translateY(-$spacing-2xs);
+            }
+          }
+        }
+      }
+    }
+
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: $spacing-md;
+
+      .prev-step-btn {
+        background: $color-gray-600;
+        color: white;
+        border: none;
+        padding: $spacing-sm + $spacing-xs $spacing-lg;
+        border-radius: $border-radius-md;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+        min-width: 140px;
+
+        &:hover {
+          background: $color-gray-600;
+          transform: translateY(-$spacing-2xs);
+        }
+      }
+
+      .complete-project-btn {
+        background: linear-gradient(135deg, $color-success, $color-success);
+        color: white;
+        border: none;
+        padding: $spacing-md - $spacing-2xs $spacing-lg + $spacing-xs;
+        border-radius: $border-radius-md;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+        font-size: $font-size-base;
+        min-width: $spacing-6xl + $spacing-5xl + $spacing-xs;
+
+        &:hover:not(:disabled) {
+          background: linear-gradient(135deg, $color-success-dark, $color-success);
+          transform: translateY(-$spacing-2xs);
+          box-shadow: $shadow;
+        }
+
+        &:disabled {
+          background: $color-gray-200;
+          color: $color-gray-600;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: $shadow-none;
+        }
+      }
+    }
+  }
+  
+  // 프레임워크 선택 스타일
+  .framework-selection {
+    background: white;
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg - $spacing-xs;
+    margin-bottom: $spacing-lg;
+    box-shadow: 0 $spacing-2xs $spacing-sm rgba($color-black, 0.08);
+    
+    .framework-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-md;
+      
+      h4 {
+        font-size: $font-size-base;
+        font-weight: 600;
+        color: $color-gray-800;
+        margin: $spacing-0;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+      }
+      
+      .framework-select-btn {
+        background: white;
+        border: $spacing-2xs solid $color-primary;
+        color: $color-primary;
+        padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+        border-radius: $border-radius-md;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        cursor: pointer;
+        transition: $transition-base;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        
+        &:hover {
+          background: $color-primary;
+          color: white;
+        }
+        
+        .arrow {
+          font-size: $spacing-sm + $spacing-2xs;
+          transition: transform 0.3s ease;
+        }
+      }
+    }
+    
+    .framework-dropdown {
+      background: $color-background-secondary;
+      border: $spacing-2xs solid $color-gray-300;
+      border-radius: $border-radius-md;
+      padding: $spacing-sm + $spacing-xs;
+      margin-bottom: $spacing-md;
+      
+      .no-framework {
+        text-align: center;
+        padding: $spacing-lg - $spacing-xs;
+        
+        p {
+          color: $color-gray-600;
+          margin-bottom: $spacing-sm + $spacing-xs;
+        }
+        
+        .create-framework-btn {
+          background: $color-primary;
+          color: white;
+          border: none;
+          padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          font-size: $font-size-sm;
+          font-weight: 500;
+          cursor: pointer;
+          transition: $transition-base;
+          
+          &:hover {
+            background: $color-primary-dark;
+          }
+        }
+      }
+      
+      .framework-list {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        
+        .framework-option {
+          background: white;
+          padding: $spacing-sm + $spacing-xs $spacing-md;
+          border-radius: $border-radius-md;
+          cursor: pointer;
+          transition: $transition-base;
+          border: $spacing-2xs solid transparent;
+          
+          &:hover {
+            border-color: $color-primary;
+            box-shadow: $shadow-sm;
+          }
+          
+          &.selected {
+            border-color: $color-primary;
+            background: $color-vp-blue-bg-1;
+          }
+          
+          .framework-name {
+            font-size: $font-size-sm;
+            font-weight: 600;
+            color: $color-gray-800;
+            margin-bottom: $spacing-xs;
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+            
+            .default-badge {
+              background: $color-primary;
+              color: white;
+              font-size: $spacing-sm + $spacing-xs;
+              padding: $spacing-2xs $spacing-sm;
+              border-radius: $border-radius-lg;
+              font-weight: 500;
+            }
+          }
+          
+          .framework-preview {
+            font-size: $font-size-xs;
+            color: $color-gray-600;
+            
+            .preview-item {
+              display: block;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
+    
+    .selected-framework-info {
+      background: $color-vp-blue-bg-1;
+      border-radius: $border-radius-md;
+      padding: $spacing-md;
+      
+      h5 {
+        font-size: $font-size-sm;
+        font-weight: 600;
+        color: $color-primary;
+        margin-bottom: $spacing-sm + $spacing-xs;
+      }
+      
+      .framework-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: $spacing-sm + $spacing-xs;
+        
+        .detail-item {
+          background: white;
+          padding: $spacing-sm + $spacing-xs;
+          border-radius: $border-radius-md - $border-radius-sm / 2;
+          
+          strong {
+            display: block;
+            font-size: $font-size-xs;
+            color: $color-primary;
+            margin-bottom: $spacing-xs;
+          }
+          
+          p {
+            font-size: $font-size-xs;
+            color: $color-gray-600;
+            line-height: 1.5;
+            margin: $spacing-0;
+          }
+        }
+      }
+    }
+  }
+  
+  // 개별 씬 로딩 인디케이터 스타일
+  .scene-loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-2xl $spacing-lg - $spacing-xs;
+    min-height: $spacing-6xl * 2 + $spacing-sm;
+    
+    .loading-spinner {
+      width: $spacing-2xl;
+      height: $spacing-2xl;
+      border: $spacing-xs solid $color-gray-200;
+      border-top: $spacing-xs - $spacing-2xs solid $color-primary;
+      border-radius: $border-radius-full;
+      animation: spin 1s linear infinite;
+      margin-bottom: $spacing-md;
+    }
+    
+    .loading-message {
+      font-size: $font-size-sm;
+      color: $color-gray-600;
+      text-align: center;
+      margin-bottom: $spacing-md;
+      line-height: 1.5;
+    }
+    
+    .loading-progress {
+      width: 100%;
+      max-width: $spacing-6xl * 2 + $spacing-sm;
+      height: $spacing-sm - $spacing-2xs;
+      background: $color-gray-200;
+      border-radius: $border-radius-sm - $spacing-2xs;
+      overflow: hidden;
+      
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+        transition: width 0.3s ease;
+        border-radius: $border-radius-sm - $spacing-2xs;
+      }
+    }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  // 콘티 섹션 스타일 개선
+  .storyboard-section {
+    position: relative;
+    
+    &.loading {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    
+    .storyboard-empty {
+      background: $color-background-secondary;
+      border: $spacing-2xs dashed $color-gray-300;
+      border-radius: $border-radius-md;
+      min-height: $spacing-6xl * 2 + $spacing-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      .generate-storyboard-btn {
+        background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+        color: white;
+        border: none;
+        padding: $spacing-sm + $spacing-xs $spacing-lg;
+        border-radius: $border-radius-md - $border-radius-sm / 2;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+        
+        &:hover:not(:disabled) {
+          transform: translateY(-$spacing-2xs);
+          box-shadow: $shadow;
+        }
+        
+        &:disabled {
+          background: $color-gray-400$color-gray-400;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+    }
+    
+    .storyboard-content {
+      position: relative;
+      
+      .regenerate-storyboard-btn {
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}

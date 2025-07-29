@@ -1,4 +1,9 @@
-import InvitationAccept from '../../src/page/Cms/InvitationAccept'
+
+import dynamic from 'next/dynamic'
+const InvitationAccept = dynamic(() => import('../../src/page/Cms/InvitationAccept'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});;
 
 export default InvitationAccept
 

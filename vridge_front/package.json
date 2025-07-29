@@ -1,6 +1,6 @@
 {
   "name": "videoplanet-frontend",
-  "version": "1.0.26",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -17,7 +17,32 @@
     "test:e2e": "start-server-and-test dev http://localhost:3000 cy:run",
     "test:e2e:open": "start-server-and-test dev http://localhost:3000 cy:open",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test:visual": "playwright test tests/visual",
+    "test:a11y": "playwright test tests/accessibility",
+    "test:update": "playwright test --update-snapshots",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "style:analyze": "node scripts/analyze-styles.js",
+    "style:imports": "node scripts/find-style-imports.js",
+    "style:health": "node scripts/style-health-check.js",
+    "style:clean": "npm run style:imports && bash scripts/delete-unused-styles.sh",
+    "design:consistency": "node scripts/design-consistency-analyzer.js",
+    "design:visual-diff": "node scripts/visual-diff-analyzer.js",
+    "design:analyze": "npm run design:consistency && npm run design:visual-diff",
+    "tokenize": "node scripts/auto-tokenize.js",
+    "tokenize:advanced": "node scripts/advanced-tokenizer.js",
+    "analyze:buttons": "grep -r 'button\\|btn\\|Button' src --include='*.scss' --include='*.css' | wc -l",
+    "setup:linter": "npm install --save-dev stylelint stylelint-config-standard-scss stylelint-config-prettier-scss stylelint-scss stylelint-order",
+    "lint:styles": "stylelint 'src/**/*.scss' --fix",
+    "prepare": "husky install",
+    "console:analyze": "node scripts/console-log-analyzer.js",
+    "console:remove-debug": "node scripts/console-log-analyzer.js --remove --no-dry-run",
+    "console:remove-all": "node scripts/console-log-analyzer.js --remove-all --no-dry-run",
+    "console:safe-analyze": "node scripts/safe-console-remover.js --analyze",
+    "console:safe-remove": "node scripts/safe-console-remover.js --remove --no-dry-run",
+    "console:safe-wrap": "node scripts/safe-console-remover.js --wrap --no-dry-run",
+    "console:cleanup": "node scripts/safe-console-remover.js --phased"
   },
   "dependencies": {
     "@ant-design/plots": "^2.6.1",
@@ -54,15 +79,20 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.54.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "babel-jest": "^30.0.5",
     "babel-plugin-styled-components": "^2.1.4",
+    "glob": "^11.0.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
     "typescript": "5.8.3"
   }
 }

@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , Suspense } from 'react'
+import dynamic from 'next/dynamic';;
+;
+
 import { axiosCredentials } from '../../util/util';
 
 import moment from 'moment';
 import 'moment/locale/ko';
+import { Button } from '../../components/unified/Button'
+const UnifiedCard = dynamic(() => import('../../components/unified/UnifiedCard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});;
 
 moment.locale('ko');
 
@@ -48,7 +56,7 @@ const EmailMonitor = () => {
         hours: selectedHours,
         limit: 100
       });
-      
+
       if (selectedType) {
         params.append('type', selectedType);
       }
@@ -64,9 +72,7 @@ const EmailMonitor = () => {
         setRecentEmails(recent_emails);
         setQueueStatus(queue_status);
       }
-    } catch (error) {
-      console.error('대시보드 데이터 로드 실패:', error);
-    } finally {
+    } catch (error) {} finally {
       setLoading(false);
       setRefreshing(false);
     }
@@ -74,7 +80,7 @@ const EmailMonitor = () => {
 
   useEffect(() => {
     fetchDashboardData();
-    
+
     // 10초마다 자동 새로고침
     const interval = setInterval(fetchDashboardData, 10000);
     return () => clearInterval(interval);
@@ -95,7 +101,7 @@ const EmailMonitor = () => {
       }
     } catch (error) {
       alert('이메일 재발송에 실패했습니다.');
-      console.error('재발송 실패:', error);
+      
     }
   };
 
@@ -124,7 +130,7 @@ const EmailMonitor = () => {
       }
     } catch (error) {
       alert('기록 정리에 실패했습니다.');
-      console.error('정리 실패:', error);
+      
     }
   };
 
@@ -137,10 +143,10 @@ const EmailMonitor = () => {
       <div className="monitor-header">
         <h1>이메일 발송 모니터링</h1>
         <div className="monitor-controls">
-          <select 
-            value={selectedHours} 
-            onChange={(e) => setSelectedHours(Number(e.target.value))}
-          >
+          <select
+            value={selectedHours}
+            onChange={(e) => setSelectedHours(Number(e.target.value))}>
+
             <option value={1}>최근 1시간</option>
             <option value={6}>최근 6시간</option>
             <option value={24}>최근 24시간</option>
@@ -148,10 +154,10 @@ const EmailMonitor = () => {
             <option value={168}>최근 7일</option>
           </select>
           
-          <select 
-            value={selectedType} 
-            onChange={(e) => setSelectedType(e.target.value)}
-          >
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}>
+
             <option value="">모든 타입</option>
             <option value="verification">인증 이메일</option>
             <option value="invitation">초대 이메일</option>
@@ -160,43 +166,36 @@ const EmailMonitor = () => {
             <option value="general">일반</option>
           </select>
           
-          <button 
-            className="btn-refresh"
-            onClick={fetchDashboardData}
-            disabled={refreshing}
-          >
+          <UnifiedButton onClick={fetchDashboardData} onKeyDown={(e) => e.key === 'Enter' && fetchDashboardData} disabled aria-label="Click">
             {refreshing ? '새로고침중...' : '새로고침'}
-          </button>
+          </UnifiedButton>
           
-          <button 
-            className="btn-cleanup"
-            onClick={handleCleanup}
-          >
+          <UnifiedButton onClick={handleCleanup} onKeyDown={(e) => e.key === 'Enter' && handleCleanup} aria-label="Click">
             오래된 기록 정리
-          </button>
+          </UnifiedButton>
         </div>
       </div>
 
       {/* 통계 요약 */}
       <div className="statistics-summary">
-        <div className="stat-card">
+        <UnifiedCard className="stat-card">
           <h3>전체 발송</h3>
           <div className="stat-value">{statistics?.total_sent || 0}</div>
-        </div>
-        <div className="stat-card">
+        </UnifiedCard>
+        <UnifiedCard className="stat-card">
           <h3>전달 완료</h3>
           <div className="stat-value success">{statistics?.total_delivered || 0}</div>
-        </div>
-        <div className="stat-card">
+        </UnifiedCard>
+        <UnifiedCard className="stat-card">
           <h3>실패</h3>
           <div className="stat-value danger">{statistics?.total_failed || 0}</div>
-        </div>
-        <div className="stat-card">
+        </UnifiedCard>
+        <UnifiedCard className="stat-card">
           <h3>전달률</h3>
           <div className="stat-value">
             {statistics?.delivery_rate ? `${statistics.delivery_rate.toFixed(1)}%` : '0%'}
           </div>
-        </div>
+        </UnifiedCard>
       </div>
 
       {/* 큐 상태 */}
@@ -213,12 +212,12 @@ const EmailMonitor = () => {
       </div>
 
       {/* 타입별 통계 */}
-      {statistics?.by_type && Object.keys(statistics.by_type).length > 0 && (
-        <div className="type-statistics">
+      {statistics?.by_type && Object.keys(statistics.by_type).length > 0 &&
+      <div className="type-statistics">
           <h2>타입별 통계</h2>
           <div className="type-grid">
-            {Object.entries(statistics.by_type).map(([type, stats]) => (
-              <div key={type} className="type-card">
+            {Object.entries(statistics.by_type).map(([type, stats]) =>
+          <div key={type} className="type-card">
                 <h4>{emailTypeLabels[type] || type}</h4>
                 <div className="type-stats">
                   <div>발송: {stats.sent}</div>
@@ -226,10 +225,10 @@ const EmailMonitor = () => {
                   <div>실패: {stats.failed}</div>
                 </div>
               </div>
-            ))}
+          )}
           </div>
         </div>
-      )}
+      }
 
       {/* 최근 이메일 목록 */}
       <div className="recent-emails">
@@ -248,8 +247,8 @@ const EmailMonitor = () => {
               </tr>
             </thead>
             <tbody>
-              {recentEmails.map((email) => (
-                <tr key={email.id}>
+              {recentEmails.map((email) =>
+              <tr key={email.id}>
                   <td>{moment(email.created_at).format('MM/DD HH:mm')}</td>
                   <td>{email.recipient}</td>
                   <td className="email-subject">{email.subject}</td>
@@ -259,66 +258,64 @@ const EmailMonitor = () => {
                     </span>
                   </td>
                   <td>
-                    <span 
-                      className="email-status"
-                      style={{ color: emailStatusColors[email.status] }}
-                    >
+                    <span
+                    className="email-status"
+                    style={{ color: emailStatusColors[email.status] }}>
+
                       {emailStatusLabels[email.status] || email.status}
                     </span>
                   </td>
                   <td>{email.attempts || 1}</td>
                   <td>
-                    {email.status === 'failed' && (
-                      <button 
-                        className="btn-resend"
-                        onClick={() => handleResendEmail(email.id)}
+                    {email.status === 'failed' &&
+                  <UnifiedButton aria-label="Click"> handleResendEmail(email.id)}
                       >
                         재발송
-                      </button>
-                    )}
+                      </UnifiedButton>
+                  }
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
           
-          {recentEmails.length === 0 && (
-            <div className="no-emails">
+          {recentEmails.length === 0 &&
+          <div className="no-emails">
               선택한 기간에 발송된 이메일이 없습니다.
             </div>
-          )}
+          }
         </div>
       </div>
 
       {/* 시간별 차트 (간단한 텍스트 차트) */}
-      {statistics?.hourly && statistics.hourly.length > 0 && (
-        <div className="hourly-chart">
+      {statistics?.hourly && statistics.hourly.length > 0 &&
+      <div className="hourly-chart">
           <h2>시간별 발송 현황</h2>
           <div className="chart-container">
             {statistics.hourly.slice(0, 24).reverse().map((hour) => {
-              const maxValue = Math.max(...statistics.hourly.map(h => h.data.sent || 0));
-              const barHeight = maxValue > 0 ? (hour.data.sent / maxValue) * 100 : 0;
-              
-              return (
-                <div key={hour.hour} className="chart-bar">
-                  <div 
-                    className="bar" 
-                    style={{ height: `${barHeight}%` }}
-                    title={`${hour.data.sent}건`}
-                  >
+            const maxValue = Math.max(...statistics.hourly.map((h) => h.data.sent || 0));
+            const barHeight = maxValue > 0 ? hour.data.sent / maxValue * 100 : 0;
+
+            return (
+              <div key={hour.hour} className="chart-bar">
+                  <div
+                  className="bar"
+                  style={{ height: `${barHeight}%` }}
+                  title={`${hour.data.sent}건`}>
+
                     {hour.data.sent > 0 && <span>{hour.data.sent}</span>}
                   </div>
                   <div className="hour-label">
                     {moment(hour.hour).format('HH')}
                   </div>
-                </div>
-              );
-            })}
+                </div>);
+
+          })}
           </div>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 };
 
 export default EmailMonitor;

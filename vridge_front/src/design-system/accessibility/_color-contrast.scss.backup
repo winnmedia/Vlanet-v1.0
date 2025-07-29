@@ -1,0 +1,282 @@
+// 색상 대비 접근성
+// WCAG 2.1 Success Criterion 1.4.3: Contrast (Minimum)
+// AA 기준: 일반 텍스트 4.5:1, 큰 텍스트 3:1
+
+@use '../tokens' as *;
+
+// ========== 색상 대비 검증 함수 ==========
+@function get-contrast-ratio($foreground, $background) {
+  // 상대 휘도 계산
+  $l1: luminance($foreground);
+  $l2: luminance($background);
+  
+  @if $l1 > $l2 {
+    @return ($l1 + 0.05) / ($l2 + 0.05);
+  } @else {
+    @return ($l2 + 0.05) / ($l1 + 0.05);
+  }
+}
+
+@function luminance($color) {
+  $r: red($color) / 255;
+  $g: green($color) / 255;
+  $b: blue($color) / 255;
+  
+  $r: if($r <= 0.03928, $r / 12.92, pow(($r + 0.055) / 1.055, 2.4));
+  $g: if($g <= 0.03928, $g / 12.92, pow(($g + 0.055) / 1.055, 2.4));
+  $b: if($b <= 0.03928, $b / 12.92, pow(($b + 0.055) / 1.055, 2.4));
+  
+  @return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+}
+
+// ========== 고대비 색상 팔레트 ==========
+// 배경색에 따른 텍스트 색상
+$high-contrast-colors: (
+  // 밝은 배경
+  on-white: $color-gray-900,          // 대비율 21:1
+  on-gray-50: $color-gray-900,        // 대비율 19.5:1
+  on-gray-100: $color-gray-900,       // 대비율 18:1
+  on-primary-light: $color-primary-dark, // 대비율 7:1
+  
+  // 어두운 배경
+  on-black: $color-white,             // 대비율 21:1
+  on-gray-900: $color-white,          // 대비율 17:1
+  on-primary: $color-white,           // 대비율 4.5:1
+  on-primary-dark: $color-white       // 대비율 4.5:1
+);
+
+// ========== 텍스트 대비 클래스 ==========
+// 일반 텍스트 (4.5:1 이상)
+.text-high-contrast {
+  &-on-light {
+    color: $color-gray-900;
+  }
+  
+  &-on-dark {
+    color: $color-white;
+  }
+  
+  &-on-primary {
+    color: $color-white;
+  }
+}
+
+// 큰 텍스트 (3:1 이상, 18pt/24px 이상 또는 14pt/18.66px bold)
+.text-large-contrast {
+  font-size: $font-size-xl;
+  
+  &-on-light {
+    color: $color-gray-700;
+  }
+  
+  &-on-dark {
+    color: $color-gray-100;
+  }
+}
+
+// ========== 컴포넌트 대비 개선 ==========
+// 버튼
+.button {
+  // 기본 버튼 (대비율 확보)
+  &.button-primary {
+    background-color: $color-primary;
+    color: $color-white;
+    
+    &:hover {
+      background-color: $color-primary-dark;
+    }
+    
+    &:disabled {
+      background-color: $color-gray-300;
+      color: $color-gray-600;
+    }
+  }
+  
+  &.button-secondary {
+    background-color: $color-gray-100;
+    color: $color-gray-900;
+    border: 1px solid $color-gray-400;
+  }
+}
+
+// 링크
+a {
+  color: $color-primary-dark; // 흰 배경 대비 4.5:1 이상
+  
+  &:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+  
+  &:visited {
+    color: $color-purple-700; // 방문한 링크도 대비 확보
+  }
+}
+
+// 폼 요소
+input,
+textarea,
+select {
+  background-color: $color-white;
+  color: $color-gray-900;
+  border: 1px solid $color-gray-400;
+  
+  &::placeholder {
+    color: $color-gray-600; // 4.5:1 대비
+  }
+  
+  &:disabled {
+    background-color: $color-gray-100;
+    color: $color-gray-600;
+    border-color: $color-gray-300;
+  }
+}
+
+// 에러 메시지
+.error-message {
+  color: $color-danger-dark; // 흰 배경 대비 4.5:1 이상
+}
+
+// 성공 메시지
+.success-message {
+  color: $color-success-dark; // 흰 배경 대비 4.5:1 이상
+}
+
+// ========== 고대비 모드 ==========
+@media (prefers-contrast: high) {
+  // 색상 강화
+  :root {
+    --color-primary: #{$color-primary-dark};
+    --color-danger: #{$color-danger-dark};
+    --color-success: #{$color-success-dark};
+  }
+  
+  // 테두리 강화
+  * {
+    border-color: $color-gray-900 !important;
+  }
+  
+  // 그림자 제거
+  * {
+    box-shadow: none !important;
+  }
+  
+  // 텍스트 대비 최대화
+  body {
+    color: $color-gray-900;
+    background-color: $color-white;
+  }
+  
+  // 링크 밑줄 항상 표시
+  a {
+    text-decoration: underline !important;
+  }
+}
+
+// ========== 다크 모드 대비 ==========
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: $color-gray-900;
+    color: $color-gray-100;
+  }
+  
+  // 링크
+  a {
+    color: $color-primary-light;
+    
+    &:visited {
+      color: $color-purple-300;
+    }
+  }
+  
+  // 버튼
+  .button-primary {
+    background-color: $color-primary;
+    color: $color-white;
+  }
+  
+  // 폼 요소
+  input,
+  textarea,
+  select {
+    background-color: $color-gray-800;
+    color: $color-gray-100;
+    border-color: $color-gray-600;
+    
+    &::placeholder {
+      color: $color-gray-400;
+    }
+  }
+}
+
+// ========== 대비 검사 유틸리티 ==========
+// 개발 모드에서 대비 부족 요소 표시
+@if $debug-mode {
+  .contrast-check {
+    * {
+      position: relative;
+      
+      &[data-contrast-fail]::after {
+        content: '대비 부족: ' attr(data-contrast-ratio);
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: $color-danger;
+        color: $color-white;
+        font-size: $font-size-xs;
+        padding: 2px 4px;
+        z-index: $z-tooltip;
+      }
+    }
+  }
+}
+
+// ========== 색맹 친화적 색상 ==========
+// 색상에만 의존하지 않는 표시
+.status {
+  &-success {
+    color: $color-success-dark;
+    
+    &::before {
+      content: '✓ ';
+    }
+  }
+  
+  &-error {
+    color: $color-danger-dark;
+    
+    &::before {
+      content: '✗ ';
+    }
+  }
+  
+  &-warning {
+    color: $color-warning-dark;
+    
+    &::before {
+      content: '⚠ ';
+    }
+  }
+  
+  &-info {
+    color: $color-info-dark;
+    
+    &::before {
+      content: 'ⓘ ';
+    }
+  }
+}
+
+// ========== 대비 보장 믹스인 ==========
+@mixin ensure-contrast($bg-color) {
+  @if lightness($bg-color) > 50% {
+    color: $color-gray-900;
+  } @else {
+    color: $color-white;
+  }
+}
+
+// 사용 예시
+.dynamic-bg {
+  @include ensure-contrast($color-primary);
+}

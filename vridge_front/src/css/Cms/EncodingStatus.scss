@@ -1,47 +1,49 @@
+@import '../../styles/design-tokens';
+
 // 영상 인코딩 상태 표시 스타일
 .encoding-status {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: $spacing-0;
+  left: $spacing-0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba($color-black, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  backdrop-filter: blur(5px);
+  z-index: $z-index-sticky;
+  backdrop-filter: blur($spacing-sm);
   
   .encoding-content {
     text-align: center;
-    color: white;
-    padding: 40px;
+    color: $color-white;
+    padding: $spacing-2xl;
     
     .spinner {
-      width: 50px;
-      height: 50px;
-      margin: 0 auto 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #0059db;
-      border-radius: 50%;
+      width: $spacing-3xl + $spacing-2xs;
+      height: $spacing-3xl + $spacing-2xs;
+      margin: $spacing-0 auto $spacing-lg - $spacing-xs;
+      border: $spacing-xs solid rgba($color-white, 0.3);
+      border-top-color: $color-primary;
+      border-radius: $border-radius-full;
       animation: spin 1s linear infinite;
     }
     
     .error-icon, .warning-icon {
-      font-size: 48px;
-      margin-bottom: 20px;
+      font-size: $font-size-5xl;
+      margin-bottom: $spacing-lg - $spacing-xs;
     }
     
     .encoding-message {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 10px;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-sm + $spacing-2xs;
     }
     
     .encoding-info {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.8);
-      margin-top: 10px;
+      font-size: $font-size-sm;
+      color: rgba($color-white, 0.8);
+      margin-top: $spacing-sm + $spacing-2xs;
     }
   }
   
@@ -51,18 +53,94 @@
 }
 
 // 모바일 반응형
-@media (max-width: 768px) {
-  .encoding-status {
-    .encoding-content {
-      padding: 20px;
+@media (max-width: $breakpoint-md) { .encoding-status { .encoding-content { padding: $spacing-lg - $spacing-xs;
       
       .encoding-message {
-        font-size: 18px;
+        font-size: $font-size-lg;
       }
       
       .encoding-info {
-        font-size: 12px;
+        font-size: $font-size-xs;
       }
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

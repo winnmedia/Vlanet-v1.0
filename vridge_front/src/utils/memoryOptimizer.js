@@ -32,8 +32,7 @@ export const detectMemoryLeaks = () => {
         const growthRate = (recentGrowth[4].usedJSHeapSize - recentGrowth[0].usedJSHeapSize) / recentGrowth[0].usedJSHeapSize
         
         if (growthRate > 0.2) { // 20% 이상 증가
-          console.warn('⚠️ 메모리 누수 가능성 감지:', {
-            growthRate: `${(growthRate * 100).toFixed(1)}%`,
+          .toFixed(1)}%`,
             currentUsage: `${(snapshot.usedJSHeapSize / 1024 / 1024).toFixed(1)}MB`
           })
         }

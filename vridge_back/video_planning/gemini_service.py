@@ -236,41 +236,64 @@ class GeminiService:
     
     def generate_insert_shots(self, scene_data, planning_options=None):
         """씬 데이터를 기반으로 인서트 샷을 추천합니다."""
-        prompt = f"""
-        당신은 전문 영상 촬영 감독입니다. 다음 씬의 내용을 보고, 이 씬에서 확보할 수 있는 인서트 샷 5가지를 추천해주세요.
+        location = scene_data.get('location', '장소')
+        time = scene_data.get('time', '') or scene_data.get('time_of_day', '시간')
+        action = scene_data.get('description', '') or scene_data.get('action', '행동')
+        characters = ', '.join(scene_data.get('characters', [])) if scene_data.get('characters') else '인물'
+        mood = scene_data.get('mood', '분위기')
+        dialogue = scene_data.get('dialogue', '')
         
-        인서트 샷이란 주요 장면 사이에 삽입되어 이야기의 흐름을 돕고, 감정을 강조하거나 정보를 제공하는 짧은 컷입니다.
+        prompt = f"""
+        당신은 20년 경력의 베테랑 영상 촬영 감독입니다. 다음 씬을 분석하고, 이 씬의 감정과 메시지를 강화할 수 있는 구체적인 인서트 샷 5개를 추천해주세요.
         
         씬 정보:
-        - 장소: {scene_data.get('location', '')}
-        - 시간: {scene_data.get('time', '') or scene_data.get('time_of_day', '')}
-        - 설명: {scene_data.get('description', '') or scene_data.get('action', '')}
-        - 등장인물: {', '.join(scene_data.get('characters', []))}
-        - 분위기: {scene_data.get('mood', '')}
-        - 대사: {scene_data.get('dialogue', '')}
+        - 장소: {location}
+        - 시간: {time}
+        - 주요 행동: {action}
+        - 등장인물: {characters}
+        - 분위기: {mood}
+        - 대사: {dialogue}
         
-        인서트 샷 추천 기준:
-        1. 감정 강조: 인물의 표정, 손동작, 발걸음 등 디테일
-        2. 환경 묘사: 장소의 특징적인 요소, 시간대를 나타내는 요소
-        3. 소품/오브젝트: 이야기와 연관된 의미있는 사물
-        4. 분위기 조성: 빛, 그림자, 질감 등 시각적 요소
-        5. 시간 경과: 시계, 태양, 그림자 변화 등
+        인서트 샷 작성 원칙:
+        1. 매우 구체적이고 상세하게 묘사하세요
+        2. 카메라맨이 즉시 이해하고 촬영할 수 있도록 명확하게 작성하세요
+        3. 각 샷은 씬의 맥락과 직접적으로 연결되어야 합니다
+        4. 촬영 가능한 현실적인 샷만 제안하세요
+        5. 각 샷은 2-5초 정도의 짧은 컷으로 활용 가능해야 합니다
         
-        매우 구체적이고 실제 촬영 가능한 인서트 샷 5개를 추천해주세요.
-        추상적인 표현을 피하고, 카메라맨이 바로 이해할 수 있는 구체적인 샷을 설명하세요.
+        인서트 샷 카테고리별 예시:
         
-        예시:
-        - 나쁜 예: "감정 표현"
-        - 좋은 예: "주인공이 창문에 비친 자신의 모습을 바라보는 클로즈업"
+        [감정 표현 샷]
+        - 나쁜 예: "손 클로즈업"
+        - 좋은 예: "테이블 위에서 불안하게 손가락을 두드리는 주인공의 손 익스트림 클로즈업 (3초)"
+        
+        [환경/공간 샷]
+        - 나쁜 예: "창문 샷"
+        - 좋은 예: "카페 창문에 빗방울이 천천히 흘러내리는 모습, 창 너머로 흐릿한 거리 풍경이 보이는 샷 (4초)"
+        
+        [소품/오브젝트 샷]
+        - 나쁜 예: "커피잔"
+        - 좋은 예: "테이블 위의 커피잔에서 올라오는 김이 창문 빛을 받아 반짝이는 모습의 매크로 샷 (3초)"
+        
+        [시간 경과 샷]
+        - 나쁜 예: "시계"
+        - 좋은 예: "벽시계의 초침이 12시를 가리키는 순간, 시계 종소리와 함께 클로즈업 (2초)"
+        
+        [동작 디테일 샷]
+        - 나쁜 예: "걷는 모습"
+        - 좋은 예: "비 오는 거리를 걷는 주인공의 구두가 물웅덩이를 밟는 순간의 로우앵글 슬로모션 샷 (3초)"
+        
+        위의 예시를 참고하여, 이 씬의 맥락에 완벽하게 맞는 구체적인 인서트 샷 5개를 제안하세요.
+        각 샷은 씬의 감정과 메시지를 강화하는 역할을 해야 합니다.
         
         JSON 형식으로 응답해주세요:
         {{
             "insert_shots": [
-                "첫 번째 인서트 샷 설명",
-                "두 번째 인서트 샷 설명",
-                "세 번째 인서트 샷 설명",
-                "네 번째 인서트 샷 설명",
-                "다섯 번째 인서트 샷 설명"
+                "구체적인 첫 번째 인서트 샷 설명 (촬영 시간 포함)",
+                "구체적인 두 번째 인서트 샷 설명 (촬영 시간 포함)",
+                "구체적인 세 번째 인서트 샷 설명 (촬영 시간 포함)",
+                "구체적인 네 번째 인서트 샷 설명 (촬영 시간 포함)",
+                "구체적인 다섯 번째 인서트 샷 설명 (촬영 시간 포함)"
             ]
         }}
         """
@@ -291,13 +314,41 @@ class GeminiService:
             logger.error(f"Error generating insert shots: {e}")
             # 에러 발생 시 기본 인서트 샷 제공
             location = scene_data.get('location', '장소')
-            return [
-                f"{location}의 입구나 상징적인 부분을 천천히 패닝하는 와이드 샷",
-                "주인공의 손이 무언가를 만지거나 집는 순간의 익스트림 클로즈업",
-                f"{location}에서 빛이 들어오는 창문이나 문틈의 클로즈업 샷",
-                "주인공의 발걸음이나 그림자가 바닥에 드리워지는 로우앵글 샷",
-                "씬의 핵심 소품이나 오브젝트를 포커스 랙으로 강조하는 샷"
-            ]
+            time = scene_data.get('time', '') or scene_data.get('time_of_day', '시간')
+            
+            # 장소와 시간에 따른 구체적인 기본 인서트 샷
+            default_shots = []
+            
+            # 장소별 특화 샷
+            if '카페' in location or '커피' in location:
+                default_shots.append("에스프레소 머신에서 커피가 추출되는 클로즈업, 갈색 크레마가 형성되는 모습 (3초)")
+                default_shots.append("손님이 떠난 테이블 위의 빈 커피잔과 접시, 창밖의 거리가 보이는 구도 (4초)")
+            elif '사무실' in location or '회사' in location:
+                default_shots.append("컴퓨터 모니터에 반사된 주인공의 피곤한 얼굴 클로즈업 (3초)")
+                default_shots.append("사무실 창밖으로 보이는 도시 야경, 불 켜진 건물들의 실루엣 (4초)")
+            elif '집' in location or '방' in location:
+                default_shots.append("탁자 위의 가족사진 프레임에 먼지가 쌓인 모습의 클로즈업 (3초)")
+                default_shots.append("커튼 사이로 들어오는 햇살이 바닥에 선을 그리는 모습 (4초)")
+            else:
+                default_shots.append(f"{location}의 특징적인 디테일을 보여주는 클로즈업 샷 (3초)")
+            
+            # 시간대별 특화 샷
+            if '아침' in time or '새벽' in time:
+                default_shots.append("창문 너머로 서서히 밝아오는 하늘, 첫 햇살이 비치는 순간 (5초)")
+            elif '저녁' in time or '밤' in time:
+                default_shots.append("가로등 불빛 아래 길게 늘어진 그림자의 움직임 (3초)")
+            elif '비' in time or '우천' in time:
+                default_shots.append("우산에 떨어지는 빗방울의 리듬감 있는 클로즈업 (3초)")
+            
+            # 감정/행동 디테일 샷
+            default_shots.extend([
+                "주인공의 손가락이 테이블을 두드리는 리듬의 익스트림 클로즈업, 불안함이 느껴지는 템포 (3초)",
+                "발걸음이 바닥에 닿는 순간의 로우앵글 샷, 발소리와 함께 (2초)",
+                "시계의 초침이 움직이는 매크로 샷, 째깍거리는 소리 강조 (3초)"
+            ])
+            
+            # 5개만 선택하여 반환
+            return default_shots[:5]
     
     def _get_framework_json_template(self, framework):
         """프레임워크별 JSON 템플릿 반환"""

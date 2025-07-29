@@ -7,6 +7,7 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import UserAvatar from './UserAvatar'
 import styles from './Header.module.scss'
+import { UnifiedButton } from './unified/UnifiedButton'
 
 const Header = memo(function Header({
   // 초기값 지정
@@ -20,8 +21,10 @@ const Header = memo(function Header({
   const [showNotifications, setShowNotifications] = useState(false)
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const dropdownRef = useRef(null)
   const notificationRef = useRef(null)
+  const mobileMenuRef = useRef(null)
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
@@ -31,6 +34,9 @@ const Header = memo(function Header({
       }
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
         setShowNotifications(false)
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setShowMobileMenu(false)
       }
     }
 
@@ -46,9 +52,7 @@ const Header = memo(function Header({
       const response = await GetNotifications()
       setNotifications(response.data.notifications || [])
       setUnreadCount(response.data.unread_count || 0)
-    } catch (error) {
-      console.error('알림 로드 실패:', error)
-    }
+    } catch (error) {}
   }, [])
 
   // 알림 읽음 처리
@@ -60,9 +64,7 @@ const Header = memo(function Header({
         setNotifications(prev => 
           prev.map(n => n.id === notification.id ? { ...n, is_read: true } : n)
         )
-      } catch (error) {
-        console.error('알림 읽음 처리 실패:', error)
-      }
+      } catch (error) {}
     }
 
     // 알림과 관련된 페이지로 이동
@@ -80,9 +82,7 @@ const Header = memo(function Header({
       setNotifications(prev => 
         prev.map(n => ({ ...n, is_read: true }))
       )
-    } catch (error) {
-      console.error('모든 알림 읽음 처리 실패:', error)
-    }
+    } catch (error) {}
   }
 
   // 컴포넌트 마운트 시 알림 로드
@@ -139,7 +139,20 @@ const Header = memo(function Header({
 
   return (
     <div className={styles.Header}>
-      <div>{left}</div>
+      {/* 모바일 햄버거 메뉴 버튼 */}
+      <UnifiedButton 
+        className={styles['mobile-menu-btn']}
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        onKeyDown={(e) => e.key === 'Enter' && setShowMobileMenu(!showMobileMenu)}
+        aria-label="메뉴 열기"
+        type="button"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </UnifiedButton>
+
+      <div className={styles['desktop-left']}>{left}</div>
       
       {/* 우측 영역: 알림 아이콘 + 프로필 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -147,7 +160,7 @@ const Header = memo(function Header({
         <div className={styles['notification-wrapper']} ref={notificationRef}>
           <div 
             className={styles['notification-icon']} 
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={() => setShowNotifications(!showNotifications)} onKeyDown={(e) => e.key === 'Enter' && () => setShowNotifications(!showNotifications)}
             style={{
               position: 'relative',
               width: '24px',
@@ -213,19 +226,20 @@ const Header = memo(function Header({
                   알림
                 </h4>
                 {unreadCount > 0 && (
-                  <button
+                  <UnifiedButton 
+                    variant="link"
+                    size="sm"
                     onClick={handleMarkAllAsRead}
+                    onKeyDown={(e) => e.key === 'Enter' && handleMarkAllAsRead}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#1631F8',
                       fontSize: '12px',
-                      cursor: 'pointer',
                       fontWeight: '500'
                     }}
+                    aria-label="모두 읽음"
+                    type="button"
                   >
                     모두 읽음
-                  </button>
+                  </UnifiedButton>
                 )}
               </div>
               
@@ -234,7 +248,7 @@ const Header = memo(function Header({
                   notifications.map((notification, index) => (
                     <div
                       key={notification.id}
-                      onClick={() => handleNotificationClick(notification)}
+                      onClick={() => handleNotificationClick(notification)} onKeyDown={(e) => e.key === 'Enter' && () => handleNotificationClick(notification)}
                       style={{
                         padding: '12px 16px',
                         borderBottom: index < notifications.length - 1 ? '1px solid #f8f9fa' : 'none',
@@ -308,12 +322,15 @@ const Header = memo(function Header({
 
         {/* 프로필 */}
         <div className={styles['profile-wrapper']} ref={dropdownRef}>
-          <div className={styles.profile} onClick={() => setShowDropdown(!showDropdown)}>
+          <div className={styles.profile} onClick={() => setShowDropdown(!showDropdown)} onKeyDown={(e) => e.key === 'Enter' && () => setShowDropdown(!showDropdown)}>
             {right}
           </div>
           {showDropdown && (
             <div className={styles['dropdown-menu']}>
               <div className={styles['dropdown-item']} onClick={() => {
+                setShowDropdown(false)
+                navigate('/mypage')
+              } onKeyDown={(e) => e.key === 'Enter' && () => {
                 setShowDropdown(false)
                 navigate('/mypage')
               }}>
@@ -322,17 +339,44 @@ const Header = memo(function Header({
               <div className={styles['dropdown-item']} onClick={() => {
                 setShowDropdown(false)
                 navigate('/cmshome')
+              } onKeyDown={(e) => e.key === 'Enter' && () => {
+                setShowDropdown(false)
+                navigate('/cmshome')
               }}>
                 홈으로
               </div>
               <div className={styles['dropdown-divider']}></div>
-              <div className={cx(styles['dropdown-item'], styles.logout)} onClick={handleLogout}>
+              <div className={cx(styles['dropdown-item'], styles.logout)} onClick={handleLogout} onKeyDown={(e) => e.key === 'Enter' && handleLogout}>
                 로그아웃
               </div>
             </div>
           )}
         </div>
       </div>
+      
+      {/* 모바일 메뉴 */}
+      {showMobileMenu && (
+        <div className={styles['mobile-menu']} ref={mobileMenuRef}>
+          <div className={styles['mobile-menu-overlay']} onClick={() => setShowMobileMenu(false)} onKeyDown={(e) => e.key === 'Enter' && () => setShowMobileMenu(false)} />
+          <div className={styles['mobile-menu-content']}>
+            <div className={styles['mobile-menu-header']}>
+              <h2>메뉴</h2>
+              <UnifiedButton onClick={() => setShowMobileMenu(false)} onKeyDown={(e) => e.key === 'Enter' && setShowMobileMenu(false)} aria-label="메뉴 닫기" type="button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </UnifiedButton>
+            </div>
+            <nav className={styles['mobile-menu-nav']} aria-label="Main navigation">
+              {leftItems.map((item, index) => (
+                <a key={index} href={item.link} onClick={() = aria-label="Link"> setShowMobileMenu(false)} onKeyDown={(e) => e.key === 'Enter' && () => setShowMobileMenu(false)}>
+                  {item.label || item.text}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   )
 })
@@ -345,7 +389,7 @@ function makeHtml(items = [], navigate, onProfileClick) {
         <div key={i} className={styles[item.className]}>
           <img
             style={{ cursor: 'pointer' }}
-            onClick={() => navigate('/cmshome')}
+            onClick={() = alt="image" loading="lazy"> navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () = alt="image"> navigate('/cmshome')}
             alt={`img_${i}`}
             src={item.src}
           />
@@ -361,7 +405,7 @@ function makeHtml(items = [], navigate, onProfileClick) {
           size={40}
           showBorder={true}
           className={item.className}
-          onClick={onProfileClick}
+          onClick={onProfileClick} onKeyDown={(e) => e.key === 'Enter' && onProfileClick}
         />
       )
     } else if (item.type === 'string') {

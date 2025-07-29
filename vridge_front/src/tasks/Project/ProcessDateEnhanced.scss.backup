@@ -1,0 +1,534 @@
+// VideoPlanet 브랜드 대표 색상
+// @import '../../styles/_variables';
+
+// 임시 변수 정의 - 나중에 디자인 시스템으로 이동
+$border-light: #e5e7eb;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$primary-color: #1631F8;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$hover-bg: #f9fafb;
+$border-radius: 8px;
+$spacing-unit: 8px;
+$primary-gradient-start: #1631F8;
+$primary-gradient-end: #0F23C9;
+$border-main: #e5e7eb;
+$primary-hover: #0F23C9;
+
+.process-date-enhanced {
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid $border-light;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid $gray-100;
+    
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: $text-primary;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &::before {
+        content: '';
+        width: 4px;
+        height: 24px;
+        background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+        border-radius: 2px;
+      }
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      
+      .autocalc-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 8px 16px;
+        background: $gray-50;
+        border-radius: 100px;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        font-weight: 500;
+        color: $text-secondary;
+        
+        &:hover {
+          background: $gray-100;
+        }
+        
+        input[type="checkbox"] {
+          width: 0;
+          height: 0;
+          opacity: 0;
+          position: absolute;
+          
+          &:checked ~ span {
+            color: $primary-color;
+          }
+          
+          &:checked + .toggle-switch {
+            background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+            
+            &::after {
+              transform: translateX(20px);
+              background: white;
+            }
+          }
+        }
+        
+        .toggle-switch {
+          position: relative;
+          width: 44px;
+          height: 24px;
+          background: $gray-300;
+          border-radius: 100px;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+          }
+        }
+        
+        span {
+          font-weight: 500;
+          transition: color 0.3s ease;
+        }
+      }
+    }
+  }
+
+  // 프로젝트 요약 정보
+  .project-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(22, 49, 248, 0.05) 0%, rgba(15, 35, 201, 0.05) 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(22, 49, 248, 0.1);
+    
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      
+      .label {
+        font-size: 13px;
+        color: $text-secondary;
+        font-weight: 500;
+      }
+      
+      .value {
+        font-size: 16px;
+        font-weight: 700;
+        color: $primary-color;
+      }
+    }
+  }
+
+  // 자동 계산 안내
+  .auto-calc-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(22, 49, 248, 0.05);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(22, 49, 248, 0.1);
+    
+    &::before {
+      content: 'ℹ️';
+      font-size: 16px;
+    }
+    
+    span {
+      font-size: 14px;
+      color: $primary-color;
+      font-weight: 500;
+    }
+  }
+  
+  // 템플릿 섹션
+  .template-section {
+    margin-bottom: 24px;
+    
+    h4 {
+      margin: 0 0 12px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+    
+    .template-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      
+      .template-btn {
+        padding: 10px 20px;
+        border: 1px solid $border-light;
+        background: white;
+        color: $text-primary;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 0;
+          height: 100%;
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          transition: width 0.3s ease;
+          z-index: -1;
+        }
+        
+        &:hover {
+          border-color: $primary-color;
+          color: $primary-color;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(22, 49, 248, 0.15);
+        }
+        
+        &.active {
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          color: white;
+          border-color: transparent;
+          box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+          
+          &::before {
+            width: 100%;
+          }
+        }
+        
+        &.clear {
+          background: $gray-50;
+          border-color: $gray-300;
+          color: $text-secondary;
+          
+          &:hover {
+            background: $gray-100;
+            border-color: $gray-400;
+            color: $text-primary;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
+  
+  // 날짜 선택 리스트
+  .date-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    .date-item {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      background: $gray-50;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: white;
+        border-color: $border-light;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      
+      .process-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .process-number {
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: 14px;
+          flex-shrink: 0;
+        }
+        
+        .process-name {
+          font-size: 15px;
+          font-weight: 600;
+          color: $text-primary;
+          flex: 1;
+        }
+        
+        .duration-badge {
+          padding: 4px 12px;
+          background: rgba(22, 49, 248, 0.1);
+          color: $primary-color;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 600;
+        }
+      }
+      
+      .date-inputs {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-left: 44px; // process-number width + gap
+        
+        .date-input-group {
+          flex: 1;
+          
+          label {
+            display: block;
+            font-size: 13px;
+            color: $text-secondary;
+            margin-bottom: 6px;
+            font-weight: 500;
+          }
+          
+          .date-picker-wrapper {
+            position: relative;
+            
+            svg {
+              position: absolute;
+              left: 12px;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 18px;
+              height: 18px;
+              stroke: $text-secondary;
+              stroke-width: 2;
+            }
+            
+            .date-input {
+              width: 100%;
+              padding: 10px 12px 10px 40px;
+              border: 1px solid $border-light;
+              border-radius: 8px;
+              font-size: 14px;
+              transition: all 0.3s ease;
+              background: white;
+              
+              &:hover {
+                border-color: $border-main;
+              }
+              
+              &:focus {
+                outline: none;
+                border-color: $primary-color;
+                box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+              }
+              
+              &:disabled {
+                background: $gray-100;
+                cursor: not-allowed;
+                opacity: 0.6;
+              }
+            }
+          }
+        }
+        
+        .date-arrow {
+          font-size: 20px;
+          color: $text-secondary;
+          margin-top: 20px;
+        }
+        
+        .quick-duration {
+          display: flex;
+          gap: 4px;
+          margin-top: 20px;
+          
+          button {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid $border-light;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: $text-secondary;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              border-color: $primary-color;
+              color: $primary-color;
+              background: rgba(22, 49, 248, 0.05);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 타임라인 뷰
+  .timeline-view {
+    margin-top: 32px;
+    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid $border-light;
+    
+    h4 {
+      margin: 0 0 20px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+    
+    .timeline-container {
+      position: relative;
+      overflow-x: auto;
+      padding: 20px 0;
+      
+      .timeline-track {
+        position: relative;
+        min-height: 60px;
+        background: $gray-50;
+        border-radius: 8px;
+        padding: 10px;
+        
+        .timeline-item {
+          position: absolute;
+          height: 40px;
+          background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          padding: 0 12px;
+          color: white;
+          font-size: 13px;
+          font-weight: 500;
+          box-shadow: 0 2px 8px rgba(22, 49, 248, 0.2);
+          transition: all 0.2s ease;
+          cursor: pointer;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+            z-index: 10;
+          }
+          
+          &.overlap {
+            opacity: 0.8;
+            top: 50px;
+          }
+        }
+      }
+      
+      .timeline-axis {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding: 0 10px;
+        font-size: 12px;
+        color: $text-secondary;
+      }
+    }
+  }
+}
+
+// React DatePicker 커스텀 스타일
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container {
+  width: 100%;
+}
+
+.react-datepicker-popper {
+  z-index: 100;
+  
+  .react-datepicker {
+    font-family: inherit;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    
+    .react-datepicker__header {
+      background: linear-gradient(135deg, $primary-gradient-start 0%, $primary-gradient-end 100%);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding-top: 12px;
+      
+      .react-datepicker__current-month,
+      .react-datepicker__day-name {
+        color: white;
+      }
+    }
+    
+    .react-datepicker__day--selected,
+    .react-datepicker__day--keyboard-selected {
+      background: $primary-color;
+      color: white;
+      
+      &:hover {
+        background: $primary-hover;
+      }
+    }
+    
+    .react-datepicker__day:hover {
+      background: rgba(22, 49, 248, 0.1);
+    }
+    
+    .react-datepicker__time-container {
+      border-left: 1px solid $border-light;
+      
+      .react-datepicker__time-list-item--selected {
+        background: $primary-color;
+        color: white;
+      }
+    }
+  }
+}

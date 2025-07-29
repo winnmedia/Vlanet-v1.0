@@ -120,6 +120,26 @@ class ProjectList(View):
                     first_date = i.video_delivery.start_date
                 else:
                     first_date = None
+                
+                # 현재 단계 결정
+                if i.video_delivery and i.video_delivery.end_date:
+                    current_phase = "영상 납품"
+                elif i.confirmation and i.confirmation.start_date:
+                    current_phase = "최종 컨펌"
+                elif i.video_preview and i.video_preview.start_date:
+                    current_phase = "비디오 시사"
+                elif i.post_work and i.post_work.start_date:
+                    current_phase = "후반 작업"
+                elif i.video_edit and i.video_edit.start_date:
+                    current_phase = "비디오 편집"
+                elif i.filming and i.filming.start_date:
+                    current_phase = "촬영"
+                elif i.story_board and i.story_board.start_date:
+                    current_phase = "스토리보드"
+                elif i.basic_plan and i.basic_plan.start_date:
+                    current_phase = "기초 기획"
+                else:
+                    current_phase = "시작 전"
 
                 result.append(
                     {
@@ -129,6 +149,11 @@ class ProjectList(View):
                         "consumer": i.consumer,
                         "description": i.description,
                         "color": i.color,
+                        "updated": i.updated,
+                        "current_phase": current_phase,
+                        "tone_manner": i.tone_manner,
+                        "genre": i.genre,
+                        "concept": i.concept,
                         "basic_plan": {
                             "start_date": i.basic_plan.start_date if i.basic_plan else None,
                             "end_date": i.basic_plan.end_date if i.basic_plan else None,
@@ -163,6 +188,7 @@ class ProjectList(View):
                         },
                         "first_date": first_date,
                         "end_date": end_date,
+                        "deadline": end_date,
                         "created": i.created,
                         "updated": i.updated,
                         "owner_nickname": i.user.nickname,
@@ -183,9 +209,32 @@ class ProjectList(View):
                         # "pending_list": list(i.invites.all().values("id", "email")),
                         "member_list": list(
                             i.members.all()
-                            .annotate(email=F("user__username"), nickname=F("user__nickname"))
-                            .values("id", "rating", "email", "nickname")
+                            .annotate(email=F("user__username"), nickname=F("user__nickname"), name=F("user__name"))
+                            .values("id", "rating", "email", "nickname", "name")
                         ),
+                        "members": [
+                            {
+                                "id": member.id,
+                                "rating": member.rating,
+                                "user": {
+                                    "id": member.user.id,
+                                    "username": member.user.username,
+                                    "nickname": member.user.nickname,
+                                    "name": member.user.name,
+                                    "email": member.user.username,
+                                }
+                            }
+                            for member in i.members.all()
+                        ],
+                        "memos": [
+                            {
+                                "id": memo.id,
+                                "text": memo.text,
+                                "date": memo.date,
+                                "created": memo.created,
+                            }
+                            for memo in i.memos.all() if hasattr(i, 'memos')
+                        ] if hasattr(i, 'memos') else [],
                         # "files": list(i.files.all().values("id", "files")),
                     }
                 )
@@ -241,6 +290,27 @@ class ProjectList(View):
                     first_date = i.project.video_delivery.start_date
                 else:
                     first_date = None
+                
+                # 현재 단계 결정
+                if i.project.video_delivery and i.project.video_delivery.end_date:
+                    current_phase = "영상 납품"
+                elif i.project.confirmation and i.project.confirmation.start_date:
+                    current_phase = "최종 컨펌"
+                elif i.project.video_preview and i.project.video_preview.start_date:
+                    current_phase = "비디오 시사"
+                elif i.project.post_work and i.project.post_work.start_date:
+                    current_phase = "후반 작업"
+                elif i.project.video_edit and i.project.video_edit.start_date:
+                    current_phase = "비디오 편집"
+                elif i.project.filming and i.project.filming.start_date:
+                    current_phase = "촬영"
+                elif i.project.story_board and i.project.story_board.start_date:
+                    current_phase = "스토리보드"
+                elif i.project.basic_plan and i.project.basic_plan.start_date:
+                    current_phase = "기초 기획"
+                else:
+                    current_phase = "시작 전"
+                    
                 result.append(
                     {
                         "id": i.project.id,
@@ -249,6 +319,11 @@ class ProjectList(View):
                         "consumer": i.project.consumer,
                         "description": i.project.description,
                         "color": i.project.color,
+                        "updated": i.project.updated,
+                        "current_phase": current_phase,
+                        "tone_manner": i.project.tone_manner,
+                        "genre": i.project.genre,
+                        "concept": i.project.concept,
                         "basic_plan": {
                             "start_date": i.project.basic_plan.start_date if i.project.basic_plan else None,
                             "end_date": i.project.basic_plan.end_date if i.project.basic_plan else None,
@@ -283,6 +358,7 @@ class ProjectList(View):
                         },
                         "first_date": first_date,
                         "end_date": end_date,
+                        "deadline": end_date,
                         "created": i.project.created,
                         "updated": i.project.updated,
                         "owner_nickname": i.project.user.nickname,
@@ -303,9 +379,32 @@ class ProjectList(View):
                         # "pending_list": list(i.project.invites.all().values("id", "email")),
                         "member_list": list(
                             i.project.members.all()
-                            .annotate(email=F("user__username"), nickname=F("user__nickname"))
-                            .values("id", "rating", "email", "nickname")
+                            .annotate(email=F("user__username"), nickname=F("user__nickname"), name=F("user__name"))
+                            .values("id", "rating", "email", "nickname", "name")
                         ),
+                        "members": [
+                            {
+                                "id": member.id,
+                                "rating": member.rating,
+                                "user": {
+                                    "id": member.user.id,
+                                    "username": member.user.username,
+                                    "nickname": member.user.nickname,
+                                    "name": member.user.name,
+                                    "email": member.user.username,
+                                }
+                            }
+                            for member in i.project.members.all()
+                        ],
+                        "memos": [
+                            {
+                                "id": memo.id,
+                                "text": memo.text,
+                                "date": memo.date,
+                                "created": memo.created,
+                            }
+                            for memo in i.project.memos.all() if hasattr(i.project, 'memos')
+                        ] if hasattr(i.project, 'memos') else [],
                         # "files": list(i.project.files.all().values("id", "files")),
                     }
                 )

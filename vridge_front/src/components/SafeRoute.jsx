@@ -16,7 +16,6 @@ export function SafeRoute({ children, checkResource, resourceId, resourceType = 
           setHasError(false)
         })
         .catch((error) => {
-          console.error('[SafeRoute] Resource check failed:', error)
           setIsLoading(false)
           
           if (error.response?.status === 404) {

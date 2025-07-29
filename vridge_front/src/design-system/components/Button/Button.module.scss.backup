@@ -1,0 +1,287 @@
+// VideoPlanet 통합 버튼 스타일
+// 모든 버튼 스타일을 하나로 통합
+
+@use '../../tokens' as *;
+@use 'sass:color';
+
+// 버튼 베이스 스타일
+.button {
+  // 레이아웃
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  position: relative;
+  
+  // 박스 모델
+  border: none;
+  border-radius: $radius-md;
+  min-height: 44px; // 모바일 터치 타겟
+  min-width: 44px;
+  
+  // 타이포그래피
+  font-family: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  
+  // 인터랙션
+  cursor: pointer;
+  transition: all $transition-button;
+  user-select: none;
+  outline: none;
+  
+  // 아이콘
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  
+  // 포커스 스타일 (접근성)
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+  
+  // 비활성화 상태
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  // 로딩 상태
+  &.loading {
+    color: transparent;
+    pointer-events: none;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+}
+
+// 크기 변형
+.sm {
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-sm;
+  min-height: 36px;
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.md {
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  min-height: 44px;
+}
+
+.lg {
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-lg;
+  min-height: 52px;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// 색상 변형
+.primary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+  color: white;
+  box-shadow: $shadow-button;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.secondary {
+  background: white;
+  color: $color-primary;
+  border: 1px solid $color-border-light;
+  box-shadow: $shadow-sm;
+  
+  &:hover:not(:disabled) {
+    background: $color-gray-50;
+    border-color: $color-primary;
+    box-shadow: $shadow-default;
+  }
+  
+  &:active:not(:disabled) {
+    background: $color-gray-100;
+  }
+}
+
+.danger {
+  background: linear-gradient(135deg, $color-danger 0%, $color-danger-hover 100%);
+  color: white;
+  box-shadow: $shadow-button;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($color-danger, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: $color-text-primary;
+  border: 1px solid transparent;
+  
+  &:hover:not(:disabled) {
+    background: $color-gray-100;
+    color: $color-primary;
+  }
+  
+  &:active:not(:disabled) {
+    background: $color-gray-200;
+  }
+}
+
+.text {
+  background: transparent;
+  color: $color-primary;
+  border: none;
+  box-shadow: none;
+  padding: $spacing-xs $spacing-sm;
+  min-height: auto;
+  
+  &:hover:not(:disabled) {
+    background: rgba($color-primary, 0.05);
+  }
+  
+  &:active:not(:disabled) {
+    background: rgba($color-primary, 0.1);
+  }
+}
+
+// 특수 스타일
+.fullWidth {
+  width: 100%;
+}
+
+.iconOnly {
+  padding: $spacing-sm;
+  
+  &.sm {
+    padding: $spacing-xs;
+    min-width: 36px;
+  }
+  
+  &.lg {
+    padding: $spacing-md;
+    min-width: 52px;
+  }
+}
+
+// 피드백 페이지 전용 스타일
+.feedbackAction {
+  @extend .button;
+  @extend .sm;
+  background: white;
+  color: $color-text-secondary;
+  border: 1px solid $color-border-light;
+  min-width: 60px;
+  padding: 6px 12px;
+  font-size: 13px;
+  
+  &:hover:not(:disabled) {
+    background: $color-gray-50;
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+  
+  &.active {
+    background: $color-primary;
+    color: white;
+    border-color: $color-primary;
+  }
+  
+  // 특정 액션 버튼 너비
+  &.like,
+  &.dislike,
+  &.reply {
+    min-width: 60px;
+  }
+  
+  &.needExplanation {
+    min-width: 110px;
+  }
+  
+  &.important {
+    min-width: 70px;
+  }
+}
+
+// 반응형
+@media (max-width: $breakpoint-sm) {
+  .button {
+    min-height: 44px; // 모바일에서도 44px 유지
+    
+    &.sm {
+      font-size: $font-size-xs;
+    }
+  }
+  
+  .feedbackAction {
+    min-width: 44px;
+    font-size: 12px;
+    
+    &.needExplanation {
+      min-width: 90px;
+    }
+  }
+}
+
+// 애니메이션
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 리플 효과 (선택사항)
+.ripple {
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
+}

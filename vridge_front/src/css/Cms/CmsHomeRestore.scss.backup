@@ -1,0 +1,393 @@
+// CMS Home Layout Restoration - 프로젝트 관리 페이지 레이아웃 복원
+// 백업에서 추출한 핵심 스타일 + 디자인 토큰 통합
+
+@import '../../design-system/tokens/design-tokens';
+
+// CMS 홈 페이지 전체 레이아웃
+.cms-home,
+.project-management {
+  // 헤더 섹션
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-xl 0;
+    margin-bottom: $spacing-2xl;
+    
+    .title {
+      font-size: $font-size-3xl;
+      font-weight: 700;
+      color: $color-gray-900;
+    }
+    
+    .actions {
+      display: flex;
+      gap: $spacing-md;
+      
+      button {
+        height: 44px;
+        padding: 0 $spacing-xl;
+        font-size: $font-size-base;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  // 필터 섹션
+  .filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+    
+    .filter-tabs {
+      display: flex;
+      gap: $spacing-sm;
+      
+      button {
+        padding: 8px 16px;
+        border: 1px solid $color-gray-300;
+        border-radius: $border-radius-base;
+        background: white;
+        color: $color-gray-700;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        cursor: pointer;
+        transition: $transition-base;
+        
+        &.active {
+          background: $color-gray-900;
+          border-color: $color-gray-900;
+          color: white;
+        }
+        
+        &:hover:not(.active) {
+          border-color: $color-gray-400;
+          background: $color-gray-50;
+        }
+        
+        .count {
+          margin-left: 4px;
+          font-weight: 600;
+        }
+      }
+    }
+    
+    .view-options {
+      display: flex;
+      gap: $spacing-sm;
+      
+      button {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $color-gray-300;
+        border-radius: $border-radius-base;
+        background: white;
+        cursor: pointer;
+        
+        &.active {
+          background: $color-gray-100;
+          border-color: $color-gray-400;
+        }
+      }
+    }
+  }
+  
+  // 프로젝트 리스트
+  .project-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: $spacing-xl;
+    
+    .project-card {
+      background: white;
+      border: 1px solid $color-gray-200;
+      border-radius: $border-radius-lg;
+      padding: $spacing-xl;
+      transition: $transition-base;
+      cursor: pointer;
+      
+      &:hover {
+        border-color: $color-primary;
+        box-shadow: $shadow-md;
+      }
+      
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: $spacing-lg;
+        
+        .title-section {
+          flex: 1;
+          
+          .project-title {
+            font-size: $font-size-xl;
+            font-weight: 600;
+            color: $color-gray-900;
+            margin-bottom: $spacing-xs;
+            line-height: 1.3;
+          }
+          
+          .project-meta {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
+            font-size: $font-size-sm;
+            color: $color-gray-500;
+            
+            .update-time {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              
+              svg {
+                width: 14px;
+                height: 14px;
+              }
+            }
+          }
+        }
+        
+        .status-badge {
+          padding: 4px 12px;
+          border-radius: 9999px;
+          font-size: $font-size-sm;
+          font-weight: 500;
+          flex-shrink: 0;
+          
+          &.active {
+            background: #e6f3ff;
+            color: #0066cc;
+          }
+          
+          &.delayed {
+            background: #fef3e6;
+            color: #cc6600;
+          }
+          
+          &.completed {
+            background: #e6f7e6;
+            color: #009900;
+          }
+        }
+      }
+      
+      .card-body {
+        .progress-section {
+          margin-bottom: $spacing-lg;
+          
+          .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: $spacing-sm;
+            font-size: $font-size-sm;
+            
+            .progress-label {
+              color: $color-gray-600;
+            }
+            
+            .progress-value {
+              font-weight: 600;
+              color: $color-gray-900;
+            }
+          }
+          
+          .progress-bar {
+            height: 8px;
+            background: $color-gray-200;
+            border-radius: 4px;
+            overflow: hidden;
+            
+            .progress-fill {
+              height: 100%;
+              background: linear-gradient(90deg, $color-primary 0%, lighten($color-primary, 10%) 100%);
+              border-radius: 4px;
+              transition: width 0.3s ease;
+            }
+          }
+        }
+        
+        .members-section {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+          
+          .member-avatars {
+            display: flex;
+            
+            .avatar {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              border: 2px solid white;
+              margin-left: -8px;
+              
+              &:first-child {
+                margin-left: 0;
+              }
+            }
+            
+            .more-count {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              background: $color-gray-200;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: $font-size-sm;
+              font-weight: 500;
+              color: $color-gray-600;
+              margin-left: -8px;
+            }
+          }
+          
+          .member-count {
+            font-size: $font-size-sm;
+            color: $color-gray-600;
+          }
+        }
+      }
+      
+      .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: $spacing-lg;
+        border-top: 1px solid $color-gray-200;
+        margin-top: $spacing-lg;
+        
+        .footer-actions {
+          display: flex;
+          gap: $spacing-sm;
+          
+          button {
+            padding: 6px 12px;
+            font-size: $font-size-sm;
+            border: 1px solid $color-gray-300;
+            border-radius: $border-radius-base;
+            background: white;
+            color: $color-gray-700;
+            cursor: pointer;
+            
+            &:hover {
+              border-color: $color-primary;
+              color: $color-primary;
+            }
+          }
+        }
+        
+        .footer-info {
+          font-size: $font-size-sm;
+          color: $color-gray-500;
+        }
+      }
+    }
+  }
+  
+  // 프로젝트 정보 토글 섹션
+  .project-info-toggle {
+    background: $color-gray-50;
+    border-radius: $border-radius-base;
+    padding: $spacing-md;
+    margin-top: $spacing-md;
+    
+    .toggle-content {
+      padding-top: $spacing-md;
+      
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-md;
+        
+        .info-item {
+          .label {
+            font-size: $font-size-sm;
+            color: $color-gray-600;
+            margin-bottom: 4px;
+          }
+          
+          .value {
+            font-size: $font-size-base;
+            color: $color-gray-900;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 빈 상태
+.empty-state {
+  text-align: center;
+  padding: $spacing-4xl 0;
+  
+  .empty-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto $spacing-xl;
+    opacity: 0.3;
+  }
+  
+  .empty-title {
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: $color-gray-900;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .empty-description {
+    font-size: $font-size-base;
+    color: $color-gray-600;
+    margin-bottom: $spacing-xl;
+  }
+  
+  button {
+    min-width: 160px;
+    height: 44px;
+  }
+}
+
+// 모바일 반응형
+@media (max-width: 768px) {
+  .cms-home {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+      
+      .actions {
+        width: 100%;
+        
+        button {
+          flex: 1;
+        }
+      }
+    }
+    
+    .filter-section {
+      flex-direction: column;
+      gap: $spacing-md;
+      
+      .filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        
+        button {
+          flex-shrink: 0;
+        }
+      }
+    }
+    
+    .project-list {
+      grid-template-columns: 1fr;
+    }
+  }
+}

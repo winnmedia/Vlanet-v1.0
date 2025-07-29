@@ -1,4 +1,9 @@
-import ProjectEdit from '../../../src/page/Cms/ProjectEdit'
+
+import dynamic from 'next/dynamic'
+const ProjectEdit = dynamic(() => import('../../../src/page/Cms/ProjectEdit'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});;
 
 export default ProjectEdit
 

@@ -1,4 +1,6 @@
 import React from 'react'
+import UnifiedCard from '../../components/unified/UnifiedCard';
+
 // import 제거 - JavaScript 변환
 import styles from './MinimalCard.module.scss'
 

@@ -1,0 +1,757 @@
+.feedback_wrap {
+  // 헤더 영역 정렬
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg 0;
+    border-bottom: $spacing-2xs solid $color-gray-200;
+    margin-bottom: $spacing-xl;
+    
+    .title {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: $color-gray-900;
+    }
+    
+    .actions {
+      display: flex;
+      gap: $spacing-md;
+    }
+  }
+  
+  // 비디오 섹션 레이아웃
+  .video_section {
+    display: flex;
+    gap: $spacing-xl;
+    margin-bottom: $spacing-2xl;
+    
+    .video_inner {
+      flex: 1;
+      position: relative;
+      
+      .video-player-section {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; // 16:9 비율
+        background: $color-gray-900;
+        border-radius: $border-radius-lg;
+        overflow: visible; // 콘솔 버튼 표시를 위해
+      }
+    }
+    
+    .info_panel {
+      width: $spacing-6xl * 3.33;
+      flex-shrink: 0;
+    }
+  }
+  
+  // 탭 레이아웃
+  .tab_section {
+    .tab_header {
+      display: flex;
+      border-bottom: $spacing-2xs solid $color-gray-200;
+      margin-bottom: $spacing-xl;
+      
+      .tab_item {
+        padding: $spacing-md $spacing-xl;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-medium;
+        color: $color-gray-600;
+        border-bottom: $spacing-2xs solid transparent;
+        margin-bottom: -$spacing-2xs;
+        cursor: pointer;
+        transition: $transition-base;
+        
+        &.active {
+          color: $color-primary;
+          border-bottom-color: $color-primary;
+        }
+        
+        &:hover:not(.active) {
+          color: $color-gray-800;
+        }
+      }
+    }
+  }
+  
+  // 컨트롤 박스 레이아웃
+  .etc_box {
+    background: $color-gray-50;
+    padding: $spacing-lg;
+    border-radius: $border-radius-md;
+    margin-bottom: $spacing-xl;
+    
+    .flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: $spacing-md;
+      
+      .left {
+        display: flex;
+        gap: $spacing-sm;
+      }
+      
+      .good {
+        display: flex;
+        gap: $spacing-sm;
+        
+        button {
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          
+          span {
+            font-weight: $font-weight-medium;
+          }
+        }
+      }
+      
+      .right {
+        display: flex;
+        gap: $spacing-sm;
+      }
+    }
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-button {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  svg {
+    width: $spacing-md;
+    height: $spacing-md;
+  }
+  
+  &:hover {
+    transform: translateY(-$spacing-2xs);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-button-container {
+  display: flex;
+  gap: $spacing-sm + $spacing-xs;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: $spacing-lg - $spacing-xs;
+}
+
+// Source: FeedbackButtons.scss
+.feedback-button-danger {
+  @extend .feedback-button;
+  background: linear-gradient(135deg, $color-danger 0%, $color-gray-800 100%);
+  color: $color-white;
+  box-shadow: $shadow-md;
+  
+  &:hover {
+    box-shadow: 0 $spacing-sm $font-size-xl rgba($color-danger, 0.4);
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-button-outline {
+  @extend .feedback-button;
+  background: $color-white;
+  color: $color-primary;
+  border: $spacing-2xs solid $color-primary;
+  
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+    box-shadow: $shadow-md;
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-button-primary {
+  @extend .feedback-button;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  box-shadow: $shadow-md;
+  
+  &:hover {
+    box-shadow: 0 $spacing-sm $font-size-xl rgba($color-primary, 0.4);
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-button-secondary {
+  @extend .feedback-button;
+  background: linear-gradient(135deg, $color-gray-600 0%, $color-gray-600 100%);
+  color: $color-white;
+  box-shadow: $shadow-md;
+  
+  &:hover {
+    box-shadow: 0 $spacing-sm $font-size-xl rgba($color-gray-600, 0.4);
+  }
+}
+
+// Source: FeedbackButtons.scss
+.feedback-button-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: $color-background-secondary;
+  color: $color-gray-700;
+  border: $spacing-2xs solid $color-vp-gray-light-3;
+  border-radius: $border-radius-md - $border-radius-sm / 2;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    background: $color-vp-gray-light-2;
+    color: $color-gray-900;
+  }
+  
+  &:active {
+    background: $color-vp-gray-light-3;
+  }
+}
+
+// Source: FeedbackPage.scss
+.feedback-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-gray-100;
+}
+
+// Source: FeedbackGridLayout.module.scss
+.feedback-date-group {
+  margin-bottom: $spacing-lg;
+  
+  .date-header {
+    font-size: $spacing-md - $spacing-xs;
+    font-weight: $font-weight-bold;
+    color: $color-gray-700;
+    margin-bottom: $spacing-md;
+    padding-left: $spacing-sm - $spacing-2xs;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: $spacing-0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: $spacing-2xs;
+      height: $spacing-md;
+      background: $color-primary;
+      border-radius: $spacing-2xs;
+    }
+    
+    &::after {
+      content: '';
+      flex: 1;
+      height: $spacing-2xs;
+      background: linear-gradient(90deg, $color-vp-gray-light-2 0%, transparent 100%);
+    }
+  }
+  
+  .feedback-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($spacing-6xl * 4.4, 1fr));
+    gap: $spacing-sm;
+  }
+}
+
+// Source: FeedbackMoreStyle.scss
+          .feedback-detail {
+            padding: $spacing-sm + $spacing-xs;
+            
+            .detail-header {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: $spacing-sm;
+            }
+          }
+
+// Source: FeedbackMoreStyle.scss
+.feedback-grid-container {
+  .author-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm - $spacing-2xs;
+    font-size: $font-size-xs;
+    color: $color-gray-600;
+    margin-left: auto;
+    
+    .dot {
+      font-weight: $font-weight-bold;
+    }
+  }
+  
+  .privacy-badge {
+    font-size: $font-size-xs;
+    color: $color-danger;
+    background: $color-danger;
+    padding: $spacing-2xs $spacing-sm;
+    border-radius: $border-radius-lg;
+    font-weight: $font-weight-medium;
+  }
+}
+
+// Source: FeedbackPage.scss
+.feedback-input-section {
+  border-top: $spacing-2xs solid $color-gray-300;
+  padding: $spacing-lg - $spacing-xs;
+  background: $color-white;
+  
+  .feedback-input-wrapper {
+    display: flex;
+    gap: $spacing-md - $spacing-2xs;
+    align-items: flex-end;
+    
+    .input-group {
+      flex: 1;
+      
+      .time-input {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + $spacing-2xs;
+        margin-bottom: $spacing-sm + $spacing-2xs;
+        
+        label {
+          font-size: $font-size-sm;
+          color: $color-gray-600;
+        }
+        
+        input {
+          width: $spacing-6xl + $spacing-xs;
+          padding: $spacing-xs $spacing-sm + $spacing-2xs;
+          border: $spacing-2xs solid $color-gray-300;
+          border-radius: $border-radius-sm;
+          font-size: $font-size-sm;
+        }
+        
+        button {
+          padding: $spacing-xs $spacing-sm + $spacing-2xs;
+          background: $color-gray-200;
+          border: $spacing-2xs solid $color-gray-300;
+          border-radius: $border-radius-sm;
+          cursor: pointer;
+          font-size: $font-size-xs;
+          
+          &:hover {
+            background: $color-gray-300;
+          }
+        }
+      }
+      
+      textarea {
+        width: 100%;
+        min-height: $spacing-4xl - $spacing-xs;
+        padding: $spacing-sm + $spacing-2xs;
+        border: $spacing-2xs solid $color-gray-300;
+        border-radius: $border-radius-sm;
+        resize: vertical;
+        font-family: inherit;
+        font-size: $font-size-sm;
+        
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+        }
+      }
+    }
+    
+    .submit-button {
+      padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+      background: linear-gradient(to bottom, $color-primary, $color-primary-dark);
+      color: $color-white;
+      border: none;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      font-weight: $font-weight-medium;
+      white-space: nowrap;
+      
+      &:hover {
+        transform: translateY(-$spacing-2xs);
+        box-shadow: $shadow-sm;
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+// Source: FeedbackPage.scss
+  .feedback-input-wrapper {
+    flex-direction: column;
+    
+    .submit-button {
+      width: 100%;
+    }
+  }
+
+// Source: FeedbackPage.scss
+.feedback-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg - $spacing-xs;
+  
+  .feedback-item {
+    display: flex;
+    gap: $spacing-md - $spacing-2xs;
+    margin-bottom: $spacing-lg - $spacing-xs;
+    
+    .feedback-avatar {
+      width: $spacing-2xl;
+      height: $spacing-2xl;
+      border-radius: $border-radius-full;
+      background: $color-primary;
+      color: $color-white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: $font-weight-bold;
+      flex-shrink: 0;
+    }
+    
+    .feedback-content {
+      flex: 1;
+      
+      .feedback-header {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm + $spacing-2xs;
+        margin-bottom: $spacing-xs;
+        
+        .feedback-author {
+          font-weight: $font-weight-semibold;
+          color: $color-gray-800;
+        }
+        
+        .feedback-time {
+          font-size: $font-size-xs;
+          color: $color-gray-600;
+          background: $color-gray-200;
+          padding: $spacing-2xs $spacing-sm;
+          border-radius: $border-radius-lg;
+        }
+        
+        .feedback-date {
+          font-size: $font-size-xs;
+          color: $color-gray-500;
+          margin-left: auto;
+        }
+      }
+      
+      .feedback-message {
+        color: $color-gray-800;
+        line-height: $line-height-base;
+      }
+    }
+  }
+}
+
+// Source: FeedbackMoreStyle.scss
+.feedback-list-container {
+  .box {
+    margin-bottom: $spacing-lg - $spacing-xs;
+    
+    .day {
+      font-size: $spacing-md - $spacing-xs;
+      font-weight: $font-weight-semibold;
+      color: $text-gray;
+      margin-bottom: $spacing-sm;
+      padding-left: $spacing-xs;
+    }
+    
+    ul {
+      list-style: none;
+      padding: $spacing-0;
+      margin: $spacing-0;
+      
+      .feedback-item-wrapper {
+        margin-bottom: $spacing-sm;
+        background: $color-white;
+        border-radius: $border-radius-md;
+        overflow: hidden;
+        border: $spacing-2xs solid $border-color;
+        transition: $transition-base;
+        
+        &:hover {
+          border-color: rgba($primary-color, 0.3);
+          box-shadow: $shadow-sm;
+        }
+        
+        .feedback-item {
+          padding: $spacing-sm + $spacing-xs $spacing-md;
+          cursor: pointer;
+          transition: $transition-base;
+          
+          &:hover {
+            background: rgba($primary-color, 0.05);
+          }
+          
+          &.expanded {
+            background: rgba($primary-color, 0.05);
+            
+            .expand-icon {
+              transform: rotate(180deg);
+            }
+          }
+          
+          .feedback-summary {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm + $spacing-xs;
+            
+            .feedback-time-marker {
+              background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
+              color: $color-white;
+              padding: $spacing-sm - $spacing-2xs $spacing-md - $spacing-2xs;
+              border-radius: $spacing-lg - $spacing-xs;
+              font-size: $spacing-md - $spacing-xs;
+              font-weight: $font-weight-semibold;
+              flex-shrink: 0;
+              transition: $transition-base;
+              box-shadow: $shadow-sm;
+            }
+            
+            .feedback-preview {
+              flex: 1;
+              font-size: $font-size-sm;
+              color: $text-gray;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            
+            .expand-icon {
+              width: $spacing-md;
+              height: $spacing-md;
+              stroke: $text-gray;
+              flex-shrink: 0;
+              transition: transform 0.2s ease;
+            }
+          }
+          
+          &:hover .feedback-time-marker {
+            background: $primary-hover;
+          }
+        }
+        
+        .feedback-detail {
+          background: $background-light;
+          padding: $spacing-md;
+          border-top: $spacing-2xs solid $border-color;
+          animation: slideDown 0.2s ease;
+          
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-$spacing-sm + $spacing-2xs);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: $spacing-sm + $spacing-xs;
+            
+            .author-info {
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm + $spacing-xs;
+              
+              .author-name {
+                font-size: $font-size-sm;
+                font-weight: $font-weight-semibold;
+                color: $text-dark;
+              }
+              
+              .created-date {
+                font-size: $font-size-xs;
+                color: $text-gray;
+              }
+            }
+            
+            .feedback-type {
+              font-size: $font-size-xs;
+              padding: $spacing-xs $spacing-sm + $spacing-2xs;
+              border-radius: $border-radius-lg;
+              font-weight: $font-weight-medium;
+              
+              &.public {
+                background: rgba($success-color, 0.1);
+                color: $success-color;
+              }
+              
+              &.private {
+                background: rgba($warning-color, 0.1);
+                color: darken($warning-color, 10%);
+              }
+            }
+          }
+          
+          .detail-content {
+            p {
+              font-size: $font-size-sm;
+              line-height: $line-height-relaxed;
+              color: $text-dark;
+              margin: $spacing-0;
+              word-break: break-word;
+            }
+          }
+          
+          .detail-title {
+            margin-top: $spacing-sm + $spacing-xs;
+            padding-top: $spacing-sm + $spacing-xs;
+            border-top: $spacing-2xs solid $border-color;
+            font-size: $spacing-md - $spacing-xs;
+            color: $text-gray;
+            
+            strong {
+              color: $text-dark;
+              font-weight: $font-weight-semibold;
+            }
+          }
+          
+          .detail-actions {
+            display: flex;
+            gap: $spacing-md;
+            margin-top: $spacing-md;
+            padding-top: $spacing-md;
+            border-top: $spacing-2xs solid $border-color;
+            
+            .reaction-btn {
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm - $spacing-2xs;
+              padding: $spacing-sm - $spacing-2xs $spacing-md - $spacing-2xs;
+              border: $spacing-2xs solid $color-vp-gray-light-2;
+              border-radius: $spacing-lg - $spacing-xs;
+              background: $color-white;
+              color: $color-gray-600;
+              font-size: $spacing-md - $spacing-xs;
+              font-weight: $font-weight-medium;
+              cursor: pointer;
+              transition: $transition-base;
+              
+              svg {
+                width: $spacing-md;
+                height: $spacing-md;
+                stroke-width: 2;
+              }
+              
+              &:hover {
+                border-color: $color-gray-400;
+                background: $color-background-secondary;
+              }
+              
+              &.like {
+                &.active {
+                  background: rgba($primary-color, 0.1);
+                  border-color: $primary-color;
+                  color: $primary-color;
+                  
+                  svg {
+                    fill: $primary-color;
+                  }
+                }
+                
+                &:hover:not(.active) {
+                  border-color: $primary-color;
+                  color: $primary-color;
+                }
+              }
+              
+              &.dislike {
+                &.active {
+                  background: $color-vp-red-bg-1;
+                  border-color: $color-danger;
+                  color: $color-danger;
+                  
+                  svg {
+                    fill: $color-danger;
+                  }
+                }
+                
+                &:hover:not(.active) {
+                  border-color: $color-danger;
+                  color: $color-danger;
+                }
+              }
+              
+              .count {
+                font-weight: $font-weight-semibold;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 빈 상태
+  &:empty::after {
+    content: '아직 피드백이 없습니다';
+    display: block;
+    text-align: center;
+    padding: $spacing-2xl $spacing-lg - $spacing-xs;
+    color: $text-gray;
+    font-size: $font-size-sm;
+  }
+}
+
+// Source: FeedbackPlayer.scss
+.feedback-player {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, $color-gray-900 0%, $color-gray-900 100%);
+  border-radius: $border-radius-xl;
+  overflow: visible; // 콘솔이 잘리지 않도록 수정
+  box-shadow: $shadow-md;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: $spacing-0;
+    left: $spacing-0;
+    right: $spacing-0;
+    height: $spacing-2xs;
+    background: linear-gradient(90deg, transparent, rgba($color-primary, $opacity-50), transparent);
+    opacity: 0.6;
+  }
+  
+  // 모바일에서 터치 제스처 지원
+@media (max-width: 768px) {
+  * { box-sizing: border-box; }
+  .container, .wrapper, .content { width: 100%; padding: 0 1rem; }
+}
+}

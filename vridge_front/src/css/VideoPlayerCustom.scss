@@ -1,64 +1,54 @@
-// Video.js 마커 커스텀 스타일
-.video-js {
-  // 마커 기본 스타일
+@import '../../styles/design-tokens';// 마커 기본 스타일
   .vjs-marker {
     position: absolute;
-    left: 0;
-    bottom: 0;
+    left: $spacing-0;
+    bottom: $spacing-0;
     opacity: 1;
     height: 100%;
     transition: opacity 0.2s;
     cursor: pointer;
     
     &:hover {
-      opacity: 1 !important;
-    }
-    
-    // 피드백 마커 스타일
-    &.feedback-marker {
-      background-color: #1631F8 !important;
+      // Video.js 마커 커스텀 스타일
+.video-js.js { opacity: 1; }// 피드백 마커 스타일
+    &.feedback-marker.feedback-marker { background-color: $color-primary; }
       
       &.important {
-        background-color: #dc3545 !important;
-      }
-    }
-    
-    // 커스텀 마커 스타일
-    &.custom-marker {
-      background-color: #FFC107 !important;
-    }
+        background-color: $color-danger ;
+    }// 커스텀 마커 스타일
+    &.custom-marker.custom-marker { background-color: $color-warning; }
   }
   
   // 마커 툴팁
   .vjs-tip {
     visibility: hidden;
     position: absolute;
-    z-index: 100000;
-    bottom: 30px;
-    margin-left: -23px;
-    min-width: 100px;
-    max-width: 200px;
+    z-index: $z-index-sticky$color-black;
+    bottom: $spacing-lg + $spacing-xs + $spacing-2xs;
+    margin-left: -$spacing-lg;
+    min-width: $spacing-6xl + $spacing-xs;
+    max-width: $spacing-6xl * 2 + $spacing-sm;
     
     .vjs-tip-arrow {
       visibility: hidden;
       position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top: 5px solid rgba(0, 0, 0, 0.9);
-      bottom: -5px;
+      width: $spacing-0;
+      height: $spacing-0;
+      border-left: $spacing-xs solid transparent;
+      border-right: $spacing-xs solid transparent;
+      border-top: $spacing-xs solid rgba($color-black, 0.9);
+      bottom: -$spacing-xs + $spacing-2xs;
       left: 50%;
-      margin-left: -5px;
+      margin-left: -$spacing-xs + $spacing-2xs;
     }
     
     .vjs-tip-inner {
       visibility: visible;
-      border-radius: 3px;
-      padding: 5px 8px 4px 8px;
-      background-color: rgba(0, 0, 0, 0.9);
-      color: white;
-      font-size: 12px;
+      border-radius: $border-radius-sm - $spacing-2xs;
+      padding: $spacing-xs $spacing-sm $spacing-xs $spacing-sm;
+      background-color: rgba($color-black, 0.9);
+      color: $color-white;
+      font-size: $font-size-xs;
       word-wrap: break-word;
     }
   }
@@ -76,7 +66,7 @@
   .vjs-progress-holder {
     .vjs-marker {
       height: 100%;
-      top: 0;
+      top: $spacing-0;
     }
   }
 }
@@ -87,48 +77,127 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 10000;
-  max-width: 500px;
+  background: $color-white;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow;
+  z-index: $z-index-fixed$color-black;
+  max-width: $spacing-6xl * 5 + $spacing-lg - $spacing-xs;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
   
   h3 {
-    margin: 0 0 16px 0;
-    font-size: 20px;
-    color: #333;
+    margin: $spacing-0 0 $spacing-md 0;
+    font-size: $font-size-xl;
+    color: $color-gray-800;
   }
   
   .shortcut-section {
-    margin-bottom: 20px;
+    margin-bottom: $spacing-lg - $spacing-xs;
     
     h4 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
-      color: #666;
+      margin: $spacing-0 0 $spacing-sm 0;
+      font-size: $font-size-base;
+      color: $color-gray-600;
     }
     
     .shortcut-item {
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
-      font-size: 14px;
+      padding: $spacing-sm - $spacing-2xs 0;
+      font-size: $font-size-sm;
       
       .key {
         font-family: monospace;
-        background: #f0f0f0;
-        padding: 2px 6px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
+        background: $color-gray-200;
+        padding: $spacing-2xs $spacing-xs + $spacing-2xs;
+        border-radius: $border-radius-sm;
+        border: $spacing-2xs solid $color-gray-300;
       }
       
       .description {
-        color: #666;
+        color: $color-gray-600;
       }
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

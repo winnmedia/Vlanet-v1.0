@@ -1,0 +1,509 @@
+@import '../styles/design-tokens';
+
+.mypage-container {
+  // MyPage 전용 색상 변수 (다른 페이지에 영향 주지 않도록 로컬 스코프)
+  $mypage-primary: $color-vp-blue-2;   // 메인 블루
+  $mypage-primary-dark: $color-vp-blue-2-dark;    // 진한 블루
+  $mypage-primary-light: $color-white;   // 연한 블루
+  $mypage-primary-hover: $color-vp-blue-2-dark;   // 호버 블루
+  $mypage-secondary: $color-vp-red-1; // 포인트 레드
+  $mypage-success: $color-success;   // 성공 그린
+  $mypage-warning: $color-warning;   // 경고 옐로우
+  $mypage-danger: $color-danger;    // 위험 레드
+  $mypage-gradient: linear-gradient(135deg, $mypage-primary 0%, $mypage-primary-dark 100%);
+  $mypage-text-dark: $color-black;
+  $mypage-text-gray: $color-gray-600;
+  $mypage-background-light: $color-background-secondary;
+  $mypage-border-color: $color-vp-gray-light-3;
+  $mypage-$color-white: $color-white;
+  width: 100%;
+  background-color: $color-background-secondary;
+  min-height: 100vh;
+  padding-top: $spacing-4xl - $spacing-xs; // 상단 메뉴바 높이
+
+  .mypage {
+    padding: $spacing-2xl;
+    max-width: $breakpoint-xl;
+    margin: $spacing-0 auto;
+
+    .loading, .error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: $spacing-6xl * 4 + $spacing-md;
+      font-size: $font-size-lg;
+      color: $color-gray-600;
+      flex-direction: column;
+      gap: $spacing-md;
+      
+      .loading-spinner {
+        width: $spacing-2xl;
+        height: $spacing-2xl;
+        border: $spacing-xs solid $mypage-primary-light;
+        border-top-color: $mypage-primary;
+        border-radius: $border-radius-full;
+        animation: spin 1s linear infinite;
+      }
+      
+      .loading-text {
+        font-size: $font-size-lg;
+        color: $color-gray-600;
+      }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .mypage-header {
+      background: $color-white;
+      border-radius: $border-radius-xl;
+      padding: $spacing-lg $spacing-xl;
+      margin-bottom: $spacing-lg;
+      box-shadow: $shadow-sm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, $mypage-primary 0%, $mypage-primary-dark 100%);
+      color: $color-white;
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba($color-white, 0.15) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+      }
+      
+      @keyframes rotate {
+        to { transform: rotate(360deg); }
+      }
+
+      h1 {
+        font-size: $spacing-lg + $spacing-2xs;
+        font-weight: $font-weight-bold;
+        margin: $spacing-0;
+        display: flex;
+        align-items: center;
+        
+      }
+
+      .header-info {
+        .welcome-text {
+          font-size: $font-size-base;
+          opacity: 0.95;
+          font-weight: $font-weight-medium;
+        }
+      }
+    }
+
+    .mypage-tabs {
+      display: flex;
+      gap: $spacing-sm;
+      margin-bottom: $spacing-lg;
+      background: $color-white;
+      padding: $spacing-sm;
+      border-radius: $border-radius-lg;
+      box-shadow: $shadow-sm;
+      width: fit-content;
+
+      button {
+        background: transparent;
+        border: none;
+        padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+        font-size: $spacing-md - $spacing-2xs;
+        font-weight: $font-weight-medium;
+        color: $color-gray-600;
+        cursor: pointer;
+        transition: $transition-base;
+        border-radius: $border-radius-md;
+        position: relative;
+        white-space: nowrap;
+
+        &:hover {
+          color: $mypage-primary;
+          background: rgba($mypage-primary, 0.05);
+        }
+
+        &.active {
+          color: $color-white;
+          background: $mypage-primary;
+          font-weight: $font-weight-semibold;
+          box-shadow: 0 $spacing-2xs $spacing-sm rgba($mypage-primary, 0.3);
+
+          &::after {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .mypage-content {
+      background: $color-white;
+      border-radius: $border-radius-xl;
+      box-shadow: $shadow-sm;
+      padding: $spacing-xl;
+      animation: fadeIn 0.5s ease;
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY($spacing-md + $spacing-xs);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .profile-section {
+        .profile-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: $spacing-xl;
+          padding-bottom: $spacing-lg - $spacing-xs;
+          border-bottom: $spacing-2xs solid $color-gray-200;
+          width: 100%;
+
+          h2 {
+            font-size: $spacing-lg - $spacing-2xs;
+            font-weight: $font-weight-bold;
+            color: $color-text-primary;
+            margin: $spacing-0;
+            display: flex;
+            align-items: center;
+            flex: 0 1 auto;
+          }background: $mypage-primary;
+            color: $color-white;
+            border: none;
+            padding: $spacing-sm - $spacing-2xs $spacing-md;
+            border-radius: $border-radius-md - $border-radius-sm / 2;
+            cursor: pointer;
+            font-size: $spacing-md - $spacing-xs;
+            font-weight: $font-weight-medium;
+            transition: $transition-base;
+            white-space: nowrap;
+            .edit-btn.edit-btn { width: $spacing-4xl - $spacing-xs; }
+            min-width: $spacing-4xl - $spacing-xs ;
+            max-width: $spacing-4xl - $spacing-xs ;
+            flex: none;
+
+            &:hover {
+              background: $mypage-primary-dark;
+              transform: translateY(-$spacing-2xs);
+              box-shadow: $shadow;
+          }
+        }
+
+        .profile-image-section {
+          margin-bottom: $spacing-2xl;
+          
+          .profile-image-wrapper {
+            display: flex;
+            align-items: center;
+            gap: $spacing-xl;
+            padding: $spacing-xl;
+            background: linear-gradient(135deg, rgba($mypage-primary, 0.05), rgba($mypage-primary-light, 0.02));
+            border-radius: $border-radius-xl;
+            border: $spacing-2xs solid rgba($mypage-primary, 0.1);
+            margin-bottom: $spacing-lg;
+            min-height: $spacing-6xl * 2 + $spacing-lg - $spacing-2xs; // $spacing-6xl * 1.5625 이미지 + $font-size-4xl*2 패딩
+            position: relative;
+            // 레이아웃 안정성 확보
+            box-sizing: border-box;
+            overflow: hidden; // 컨텐츠 오버플로우 방지
+          }position: relative;
+            cursor: pointer;
+            width: $spacing-6xl * 1.5 + $spacing-sm;
+            height: $spacing-6xl * 1.5 + $spacing-sm;
+            margin: $spacing-0 auto;
+            
+            // UserAvatar 컴포넌트 스타일 조정
+            .profile-avatar-main {
+              .profile-image-container.profile-image-container { width: 100%; }
+              height: 100% ;
+              box-shadow: $shadow-lg;
+              transition: $transition-base;
+              
+              &:hover {
+                transform: scale(1.05);
+            }
+            
+            .image-overlay {
+              position: absolute;
+              inset: 0;
+              background: rgba($color-black, 0.7);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+              color: $color-white;
+              border-radius: $border-radius-full;
+              
+              .camera-icon {
+                width: $spacing-xl;
+                height: $spacing-xl;
+                margin-bottom: $spacing-sm;
+              }
+              
+              span {
+                font-size: $font-size-sm;
+                font-weight: $font-weight-medium;
+              }
+            }
+            
+            &:hover .image-overlay {
+              opacity: 1;
+            }
+          }
+          
+          .profile-info-summary {
+            flex: 1;
+            min-width: $spacing-0; // 텍스트 오버플로우 방지
+            max-width: 100%; // 최대 너비 제한
+            
+            h3 {
+              font-size: $spacing-lg + $spacing-xs;
+              font-weight: $font-weight-bold;
+              color: $mypage-text-dark;
+              margin: $spacing-0 0 $spacing-sm 0;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              text-overflow: ellipsis; // 긴 텍스트 처리
+              max-width: 100%;
+            }
+            
+            p {
+              font-size: $font-size-base;
+              color: $mypage-text-gray;
+              margin: $spacing-0 0 $spacing-xs 0;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              text-overflow: ellipsis; // 긴 텍스트 처리
+              max-width: 100%;
+              
+              &.company-info {
+                font-size: $spacing-md - $spacing-2xs;
+                color: $mypage-primary;
+                font-weight: $font-weight-medium;
+                margin-top: $spacing-sm;
+              }
+            }
+          }
+
+          .image-upload {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-md;
+            width: 100%;
+            
+            .upload-area {
+              border: $spacing-2xs dashed $mypage-primary;
+              border-radius: $border-radius-lg;
+              padding: $spacing-xl;
+              text-align: center;
+              background: rgba($mypage-primary, 0.02);
+              transition: $transition-base;
+              position: relative;
+              cursor: pointer;
+              
+              &.drag-over {
+                background: rgba($mypage-primary, 0.1);
+                border-color: $mypage-primary-dark;
+                transform: scale(1.02);
+              }
+              
+              &:hover {
+                background: rgba($mypage-primary, 0.05);
+                border-color: $mypage-primary-dark;
+              }
+              
+              .upload-icon {
+                width: $spacing-3xl;
+                height: $spacing-3xl;
+                margin: $spacing-0 auto $spacing-md;
+                opacity: 0.4;
+                color: $mypage-primary;
+              }
+              
+              p {
+                color: $mypage-text-gray;
+                font-size: $spacing-md - $spacing-2xs;
+                margin: $spacing-0 0 $spacing-sm 0;
+                font-weight: $font-weight-medium;
+                
+                &.upload-hint {
+                  font-size: $spacing-md - $spacing-xs;
+                  color: lighten($mypage-text-gray, 20%);
+                  font-weight: $font-weight-normal;
+                }
+              }
+            }
+            
+            .upload-actions {
+              display: flex;
+              gap: $spacing-sm + $spacing-xs;
+              
+              button {
+                padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+                border: none;
+                border-radius: $border-radius-md;
+                font-size: $font-size-sm;
+                font-weight: $font-weight-semibold;
+                cursor: pointer;
+                transition: $transition-base;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: $spacing-sm;
+                white-space: nowrap;
+                
+                .spinner {
+                  width: $spacing-md;
+                  height: $spacing-md;
+                  animation: spin 1s linear infinite;
+                }
+              }
+              
+              .upload-confirm-btn {
+                background: $mypage-primary;
+                color: $color-white;
+                min-width: $spacing-6xl + $spacing-lg;
+                
+                &:hover:not(:disabled) {
+                  background: $mypage-primary-dark;
+                  transform: translateY(-$spacing-2xs);
+                  box-shadow: $shadow;
+                }
+                
+                &:disabled {
+                  background: lighten($mypage-primary, 20%);
+                  cursor: not-allowed;
+                  opacity: 0.7;
+                }
+              }
+              
+              .cancel-upload-btn {
+                background: $mypage-$color-white;
+                color: $mypage-text-gray;
+                border: $spacing-2xs solid $mypage-border-color;
+                min-width: $spacing-5xl;
+                
+                &:hover {
+                  background: $mypage-background-light;
+                  border-color: darken($mypage-border-color, 10%);
+                }
+              }
+            }
+
+            .upload-btn {
+              background: $color-gray-200;
+              padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+              border-radius: $border-radius-md;
+              cursor: pointer;
+              font-size: $spacing-md - $spacing-2xs;
+              font-weight: $font-weight-medium;
+              transition: $transition-base;
+              color: $color-text-secondary;
+
+              &:hover {
+                background: $color-vp-gray-light-2;
+                color: $mypage-primary;
+              }
+            }
+
+            .upload-confirm-btn {
+              background: $mypage-primary;
+              color: $color-white;
+              border: none;
+              padding: $spacing-sm + $spacing-2xs $spacing-lg - $spacing-xs;
+              border-radius: $border-radius-md;
+              cursor: pointer;
+              font-size: $spacing-md - $spacing-2xs;
+              font-weight: $font-weight-medium;
+              transition: $transition-base;
+
+              &:hover {
+                background: $mypage-primary-dark;
+                transform: translateY(-$spacing-2xs);
+                box-shadow: $shadow;
+              }
+
+              &:disabled {
+                background: $color-gray-500;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: $shadow-none;
+              }
+            }
+          }
+        }
+
+        .profile-info {
+          .info-row {
+            display: grid;
+            grid-template-columns: 180 1fr;
+            gap: $spacing-lg;
+            margin-bottom: $spacing-lg;
+            align-items: center;
+            padding: $spacing-md 0;
+            border-bottom: $spacing-2xs solid $color-gray-200;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            label {
+              font-weight: $font-weight-semibold;
+              color: $color-text-secondary;
+              font-size: $font-size-sm;
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm;
+              
+              svg {
+                width: $spacing-md + $spacing-2xs;
+                height: $spacing-md + $spacing-2xs;
+                color: $mypage-primary;
+                opacity: 0.7;
+              }
+            }
+
+            .info-value {
+              color: $color-text-primary;
+              font-size: $spacing-md - $spacing-2xs;
+              font-weight: $font-weight-medium;
+            }
+
+            input, textarea {
+              width: 100%;
+              padding: $spacing-sm + $spacing-xs $spacing-md;
+              border: $spacing-2xs solid $color-vp-gray-light-2;
+              border-radius: $border-radius-md;
+              font-size: $spacing-md - $spacing-2xs;
+              transition: $transition-base;
+              background: $color-background-secondary;
+
+              &:focus {
+                outline: none;
+                border-color: $mypage-primary;
+                background: $color-white;
+                box-shadow: 0 0 0 $spacing-xs rgba($mypage-primary, 0.1);
+              }
+            }
+
+            textarea {
+              resize: vertical;
+@media (max-width: 768px) {
+  * { box-sizing: border-box; }
+  .container, .wrapper, .content { width: 100%; padding: 0 1rem; }
+}
+}}}}}}}

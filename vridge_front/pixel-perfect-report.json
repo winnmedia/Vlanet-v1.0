@@ -1,0 +1,2082 @@
+{
+  "timestamp": "2025-07-29T02:47:06.177Z",
+  "score": 0,
+  "grade": "F",
+  "totalViolations": 47,
+  "totalWarnings": 110,
+  "criticalIssues": [
+    {
+      "file": "src/styles/minimal-design-system.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        180
+      ]
+    },
+    {
+      "file": "src/page/User/MyPage.scss",
+      "type": "CRITICAL",
+      "issue": "5개의 !important 발견",
+      "impact": -2.5,
+      "line": [
+        195,
+        196,
+        197,
+        236,
+        237
+      ]
+    },
+    {
+      "file": "src/page/Cms/FeedbackButtonStyles.module.scss",
+      "type": "CRITICAL",
+      "issue": "92개의 !important 발견",
+      "impact": -46,
+      "line": [
+        24,
+        25,
+        29,
+        60,
+        62,
+        72,
+        73,
+        78,
+        79,
+        83,
+        91,
+        92,
+        97,
+        98,
+        102,
+        112,
+        113,
+        114,
+        115,
+        119,
+        128,
+        129,
+        130,
+        131,
+        132,
+        136,
+        147,
+        148,
+        149,
+        150,
+        154,
+        157,
+        158,
+        159,
+        164,
+        174,
+        175,
+        176,
+        177,
+        181,
+        184,
+        185,
+        189,
+        201,
+        202,
+        203,
+        204,
+        206,
+        264,
+        265,
+        266,
+        270,
+        355,
+        356,
+        357,
+        362,
+        367,
+        371,
+        372,
+        373,
+        376,
+        381,
+        390,
+        391,
+        392,
+        403,
+        404,
+        405,
+        406,
+        410,
+        417,
+        418,
+        422,
+        423,
+        497,
+        500,
+        624,
+        628,
+        629,
+        630,
+        631,
+        644,
+        645,
+        646,
+        647,
+        653,
+        654,
+        655,
+        659,
+        660,
+        661,
+        667
+      ]
+    },
+    {
+      "file": "src/design-system/pages/ProjectCreate/ProjectCreate.module.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        611
+      ]
+    },
+    {
+      "file": "src/design-system/accessibility/_screen-reader.scss",
+      "type": "CRITICAL",
+      "issue": "16개의 !important 발견",
+      "impact": -8,
+      "line": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ]
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "type": "CRITICAL",
+      "issue": "38개의 !important 발견",
+      "impact": -19,
+      "line": [
+        15,
+        16,
+        17,
+        18,
+        48,
+        54,
+        55,
+        61,
+        62,
+        63,
+        76,
+        82,
+        88,
+        94,
+        97,
+        104,
+        105,
+        111,
+        117,
+        135,
+        144,
+        151,
+        166,
+        202,
+        207,
+        208,
+        213,
+        222,
+        223,
+        224,
+        230,
+        233,
+        239,
+        242,
+        275,
+        281,
+        286,
+        287
+      ]
+    },
+    {
+      "file": "src/design-system/accessibility/_focus-indicators.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        190
+      ]
+    },
+    {
+      "file": "src/design-system/accessibility/_color-contrast.scss",
+      "type": "CRITICAL",
+      "issue": "2개의 !important 발견",
+      "impact": -1,
+      "line": [
+        158,
+        174
+      ]
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "type": "CRITICAL",
+      "issue": "11개의 !important 발견",
+      "impact": -5.5,
+      "line": [
+        151,
+        152,
+        153,
+        158,
+        159,
+        164,
+        165,
+        170,
+        171,
+        177,
+        178
+      ]
+    },
+    {
+      "file": "src/css/VideoPlayerCustom.scss",
+      "type": "CRITICAL",
+      "issue": "4개의 !important 발견",
+      "impact": -2,
+      "line": [
+        16,
+        21,
+        24,
+        30
+      ]
+    },
+    {
+      "file": "src/css/Home.scss",
+      "type": "CRITICAL",
+      "issue": "4개의 !important 발견",
+      "impact": -2,
+      "line": [
+        2143,
+        2159,
+        2171,
+        2187
+      ]
+    },
+    {
+      "file": "src/css/User/Auth.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        163
+      ]
+    },
+    {
+      "file": "src/css/Common/InputActivation.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        2
+      ]
+    },
+    {
+      "file": "src/css/Cms/FeedbackSectionRedesign-improved.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        4
+      ]
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "type": "CRITICAL",
+      "issue": "10개의 !important 발견",
+      "impact": -5,
+      "line": [
+        215,
+        216,
+        217,
+        218,
+        219,
+        221,
+        222,
+        223,
+        224,
+        225
+      ]
+    },
+    {
+      "file": "src/css/Cms/Cms.scss",
+      "type": "CRITICAL",
+      "issue": "30개의 !important 발견",
+      "impact": -15,
+      "line": [
+        8,
+        464,
+        465,
+        472,
+        473,
+        542,
+        879,
+        892,
+        941,
+        942,
+        2631,
+        2632,
+        2633,
+        2634,
+        2635,
+        2636,
+        2637,
+        2638,
+        2639,
+        2640,
+        2641,
+        2642,
+        2643,
+        2644,
+        2645,
+        2648,
+        2678,
+        2679,
+        2683,
+        2684
+      ]
+    },
+    {
+      "file": "src/components/VideoJsPlayer.module.scss",
+      "type": "CRITICAL",
+      "issue": "2개의 !important 발견",
+      "impact": -1,
+      "line": [
+        15,
+        16
+      ]
+    },
+    {
+      "file": "src/components/ResizablePanel.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        93
+      ]
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "type": "CRITICAL",
+      "issue": "40개의 !important 발견",
+      "impact": -20,
+      "line": [
+        560,
+        561,
+        562,
+        570,
+        571,
+        572,
+        573,
+        574,
+        575,
+        576,
+        577,
+        578,
+        579,
+        580,
+        581,
+        582,
+        584,
+        585,
+        602,
+        611,
+        615,
+        616,
+        617,
+        618,
+        622,
+        626,
+        630,
+        638,
+        639,
+        640,
+        643,
+        650,
+        651,
+        654,
+        655,
+        656,
+        657,
+        660,
+        661,
+        662
+      ]
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "type": "CRITICAL",
+      "issue": "3개의 !important 발견",
+      "impact": -1.5,
+      "line": [
+        267,
+        420,
+        538
+      ]
+    },
+    {
+      "file": "src/components/FeedbackPlayer.scss",
+      "type": "CRITICAL",
+      "issue": "1개의 !important 발견",
+      "impact": -0.5,
+      "line": [
+        689
+      ]
+    },
+    {
+      "file": "src/components/minimal/MinimalInput.module.scss",
+      "type": "CRITICAL",
+      "issue": "2개의 !important 발견",
+      "impact": -1,
+      "line": [
+        88,
+        91
+      ]
+    }
+  ],
+  "highPriorityIssues": [
+    {
+      "file": "src/styles/_design-tokens.scss",
+      "type": "HIGH",
+      "issue": "45개의 하드코딩된 색상",
+      "details": [
+        "#4B5EFF",
+        "#E8EBFF",
+        "#F5F6FF",
+        "#48b461",
+        "#d4edda",
+        "#f1f9f3",
+        "#e25563",
+        "#f8d7da",
+        "#fdf2f3",
+        "#ffcd39",
+        "#fff3cd",
+        "#fffbf0",
+        "#3ab0c3",
+        "#d1ecf1",
+        "#f0f9fa",
+        "#0059d5",
+        "#0032fc",
+        "#55a1f5",
+        "#4691e5",
+        "#0d45ac",
+        "#0a3a91",
+        "#2b2f38",
+        "#e9e9e9",
+        "#8c8c8c",
+        "#edf0f5",
+        "#f0f4ff",
+        "#e8ebff",
+        "#fff5f5",
+        "#ffebee",
+        "#1a1f36",
+        "#2d3748",
+        "#4a5568",
+        "#718096",
+        "#a0aec0",
+        "#cbd5e0",
+        "#e2e8f0",
+        "#edf2f7",
+        "#f7fafc",
+        "#777",
+        "#bfbfbf",
+        "#d9d9d9",
+        "#fee",
+        "#fcc",
+        "#c00",
+        "#f1f3f5"
+      ],
+      "impact": -13.5
+    },
+    {
+      "file": "src/page/User/LoginMinimal.module.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "type": "HIGH",
+      "issue": "2개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (max-width: $spacing-8xl * 15.6) ",
+        "@media (max-width: $spacing-8xl * 16.7) "
+      ],
+      "impact": -0.8
+    },
+    {
+      "file": "src/design-system/tokens/_colors.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/design-system/tokens/_breakpoints.scss",
+      "type": "HIGH",
+      "issue": "6개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (min-width: $value) ",
+        "@media (max-width: ($value - $spacing-2xs)) ",
+        "@media (min-width: $min-value) and (max-width: ($max-value - $spacing-2xs)) ",
+        "@media (max-width: ($next - $spacing-2xs)) ",
+        "@media (min-width: $current) and (max-width: ($next - $spacing-2xs)) ",
+        "@media (min-width: $current) "
+      ],
+      "impact": -2.4000000000000004
+    },
+    {
+      "file": "src/design-system/layout/Layout.module.scss",
+      "type": "HIGH",
+      "issue": "2개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (min-width: 1401px) ",
+        "@media (max-width: 1400px) "
+      ],
+      "impact": -0.8
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "type": "HIGH",
+      "issue": "9개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-reduced-motion: reduce) ",
+        "@media (prefers-reduced-motion: no-preference) ",
+        "@media (prefers-reduced-motion: reduce) ",
+        "@media (prefers-reduced-motion: reduce) ",
+        "@media (prefers-reduced-motion: reduce) ",
+        "@media (prefers-reduced-motion: no-preference) ",
+        "@media (prefers-reduced-motion: no-preference) ",
+        "@media (prefers-reduced-motion: no-preference) ",
+        "@media (prefers-reduced-motion: reduce) "
+      ],
+      "impact": -3.6
+    },
+    {
+      "file": "src/design-system/accessibility/_keyboard-navigation.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-reduced-motion: no-preference) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/design-system/accessibility/_focus-indicators.scss",
+      "type": "HIGH",
+      "issue": "2개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-contrast: high) ",
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.8
+    },
+    {
+      "file": "src/design-system/accessibility/_color-contrast.scss",
+      "type": "HIGH",
+      "issue": "2개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-contrast: high) ",
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.8
+    },
+    {
+      "file": "src/css/Home.scss",
+      "type": "HIGH",
+      "issue": "4개의 비표준 미디어 쿼리",
+      "details": [
+        "@media screen and (max-width: 1260px) ",
+        "@media screen and (max-width: $spacing-8xl * 15.6) ",
+        "@media screen and (max-width: 1220px) ",
+        "@media (max-width: $spacing-6xl * 5) "
+      ],
+      "impact": -1.6
+    },
+    {
+      "file": "src/css/Common/InputActivation.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-reduced-motion: reduce) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/FeedbackSectionRedesign-improved.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/CmsHomeMinimal.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/Cms.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (max-width: $spacing-8xl * 14.6) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/VirtualList.module.scss",
+      "type": "HIGH",
+      "issue": "3개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) ",
+        "@media (prefers-contrast: high) ",
+        "@media (prefers-reduced-motion: reduce) "
+      ],
+      "impact": -1.2000000000000002
+    },
+    {
+      "file": "src/components/VideoPlayer.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (max-width: $spacing-6xl * 5) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "type": "HIGH",
+      "issue": "1개의 하드코딩된 색상",
+      "details": [
+        "#fee"
+      ],
+      "impact": -0.3
+    },
+    {
+      "file": "src/components/OptimizedImage.module.scss",
+      "type": "HIGH",
+      "issue": "2개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-contrast: high) ",
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.8
+    },
+    {
+      "file": "src/components/ImageCropper.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (max-width: $spacing-6xl * 6.25) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/FeedbackPlayer.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/ExportModal.scss",
+      "type": "HIGH",
+      "issue": "1개의 하드코딩된 색상",
+      "details": [
+        "#fee"
+      ],
+      "impact": -0.3
+    },
+    {
+      "file": "src/components/CustomAlert.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (max-width: $spacing-6xl * 5) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/minimal/MinimalInput.module.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/minimal/MinimalButton.module.scss",
+      "type": "HIGH",
+      "issue": "1개의 비표준 미디어 쿼리",
+      "details": [
+        "@media (prefers-color-scheme: dark) "
+      ],
+      "impact": -0.4
+    }
+  ],
+  "mediumPriorityIssues": [
+    {
+      "file": "src/tasks/Project/ProcessDateEnhanced.scss",
+      "type": "MEDIUM",
+      "issue": "3개의 하드코딩된 border-radius",
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackManage.module.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackInput.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/styles/minimal-design-system.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "500px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/styles/minimal-design-system.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/styles/design-system.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "500px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/styles/design-system.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/styles/_design-tokens.scss",
+      "type": "MEDIUM",
+      "issue": "44개의 비표준 픽셀 값",
+      "details": [
+        "4px",
+        "2px",
+        "12px",
+        "14px",
+        "18px",
+        "20px",
+        "30px",
+        "36px",
+        "60px",
+        "1px",
+        "9999px",
+        "3px",
+        "6px",
+        "10px",
+        "15px",
+        "25px",
+        "5px",
+        "50px"
+      ],
+      "impact": -4.4
+    },
+    {
+      "file": "src/page/User/MyPage.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "180px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/page/User/MyPage.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/page/User/LoginMinimal.module.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/page/Cms/VideoPlanningMinimal.module.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "260px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "type": "MEDIUM",
+      "issue": "5개의 하드코딩된 border-radius",
+      "impact": -1
+    },
+    {
+      "file": "src/page/Cms/CmsHomeMinimal.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "340px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/page/Cms/CmsHomeMinimal.module.scss",
+      "type": "MEDIUM",
+      "issue": "8개의 하드코딩된 border-radius",
+      "impact": -1.6
+    },
+    {
+      "file": "src/design-system/tokens/_effects.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "500px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/design-system/tokens/_effects.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/design-system/layout/Layout.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "1401px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/design-system/components/Button/Button.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "110px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/design-system/accessibility/_keyboard-navigation.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "500px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/css/HomeAlignment-improved.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "1023px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/css/Home.scss",
+      "type": "MEDIUM",
+      "issue": "31개의 비표준 픽셀 값",
+      "details": [
+        "500px",
+        "123px",
+        "172px",
+        "1300px",
+        "410px",
+        "510px",
+        "130px",
+        "220px",
+        "110px",
+        "900px",
+        "1100px",
+        "1260px",
+        "1220px",
+        "540px",
+        "769px"
+      ],
+      "impact": -3.1
+    },
+    {
+      "file": "src/css/Home.scss",
+      "type": "MEDIUM",
+      "issue": "14개의 하드코딩된 border-radius",
+      "impact": -2.8000000000000003
+    },
+    {
+      "file": "src/css/User/Login.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "500px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/css/User/Login.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/User/Auth.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 비표준 픽셀 값",
+      "details": [
+        "500px",
+        "170px"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/User/Auth.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Common/ButtonAlignment.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 비표준 픽셀 값",
+      "details": [
+        "110px",
+        "140px"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Cms/VideoPlanning.scss",
+      "type": "MEDIUM",
+      "issue": "3개의 비표준 픽셀 값",
+      "details": [
+        "140px"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/css/Cms/FeedbackPage.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 비표준 픽셀 값",
+      "details": [
+        "250px"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Cms/FeedbackMoreStyle.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/FeedbackGridLayout.module.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 비표준 픽셀 값",
+      "details": [
+        "767px",
+        "110px"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Cms/FeedbackGridLayout.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Cms/FeedbackButtons.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Cms/CmsHomeRestore.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "500px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/css/Cms/CmsHomeRestore.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Cms/CmsHomeMinimal.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/Cms.scss",
+      "type": "MEDIUM",
+      "issue": "10개의 비표준 픽셀 값",
+      "details": [
+        "340px",
+        "180px",
+        "1199px",
+        "767px",
+        "500px",
+        "130px"
+      ],
+      "impact": -1
+    },
+    {
+      "file": "src/css/Cms/Cms.scss",
+      "type": "MEDIUM",
+      "issue": "29개의 하드코딩된 border-radius",
+      "impact": -5.800000000000001
+    },
+    {
+      "file": "src/components/VirtualList.module.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/SideBar.module.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 비표준 픽셀 값",
+      "details": [
+        "330px",
+        "500px"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/SideBar.module.scss",
+      "type": "MEDIUM",
+      "issue": "4개의 하드코딩된 border-radius",
+      "impact": -0.8
+    },
+    {
+      "file": "src/components/ProjectScheduleSection.module.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "140px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "140px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/LoadingAnimation.scss",
+      "type": "MEDIUM",
+      "issue": "2개의 하드코딩된 border-radius",
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/ImageCropper.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 비표준 픽셀 값",
+      "details": [
+        "250px"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/components/Header.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/CalendarEnhanced.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/unified/Input/Input.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/minimal/StepWizard.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/minimal/MinimalInput.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/minimal/MinimalButton.module.scss",
+      "type": "MEDIUM",
+      "issue": "1개의 하드코딩된 border-radius",
+      "impact": -0.2
+    }
+  ],
+  "lowPriorityIssues": [
+    {
+      "file": "src/tasks/Project/ProcessDateEnhanced.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".toggle-switch"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackManage.module.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".active"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/tasks/Feedback/FeedbackInput.module.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".radioLabel"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/page/User/MyPage.scss",
+      "type": "LOW",
+      "issue": "15개의 중복 클래스 정의",
+      "details": [
+        ".image-overlay",
+        ".upload-confirm-btn",
+        ".cancel-btn",
+        ".mypage-container",
+        ".mypage",
+        ".mypage-header",
+        ".mypage-tabs",
+        ".mypage-content",
+        ".profile-section",
+        ".profile-image-section",
+        ".profile-image-wrapper",
+        ".profile-info-summary",
+        ".profile-info",
+        ".info-row",
+        ".stats-grid"
+      ],
+      "impact": -1.5
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "type": "LOW",
+      "issue": "50개의 중복 클래스 정의",
+      "details": [
+        ".delete-planning-btn",
+        ".tag",
+        ".tone",
+        ".genre",
+        ".recent-actions",
+        ".step-number",
+        ".step-name",
+        ".step",
+        ".active",
+        ".step-content",
+        ".planning-input",
+        ".save-btn",
+        ".planning-header",
+        ".planning-content",
+        ".collapsed",
+        ".planning-text",
+        ".expanded",
+        ".level-name",
+        ".change-image",
+        ".style-desc",
+        ".scene-card",
+        ".selected",
+        ".shot-header",
+        ".shot-number",
+        ".shot-type",
+        ".shot-description",
+        ".button-group",
+        ".success-message",
+        ".toggle-detail-btn",
+        ".preview-content",
+        ".story-stage-badge",
+        ".story-title",
+        ".full-content",
+        ".options-grid",
+        ".story-summary",
+        ".story-characters",
+        ".scene-time",
+        ".scene-description",
+        ".planning-navigation",
+        ".nav-step",
+        ".disabled",
+        ".current",
+        ".back-btn",
+        ".export-btn",
+        ".upload-icon",
+        ".storyboard-section",
+        ".storyboard-empty",
+        ".generate-storyboard-btn",
+        ".storyboard-content",
+        ".regenerate-storyboard-btn"
+      ],
+      "impact": -5
+    },
+    {
+      "file": "src/page/Cms/FeedbackButtonStyles.module.scss",
+      "type": "LOW",
+      "issue": "6개의 중복 클래스 정의",
+      "details": [
+        ".actionButtonGroup",
+        ".projectHeader",
+        ".projectTitle",
+        ".infoButton",
+        ".active",
+        ".avatar"
+      ],
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/page/Cms/CmsHomeMinimal.module.scss",
+      "type": "LOW",
+      "issue": "2개의 중복 클래스 정의",
+      "details": [
+        ".active",
+        ".filterCount"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/page/Admin/AdminDashboard.scss",
+      "type": "LOW",
+      "issue": "14개의 중복 클래스 정의",
+      "details": [
+        ".ant-card-head-title",
+        ".dashboard-header",
+        ".dashboard-content",
+        ".active",
+        ".title",
+        ".admin-dashboard",
+        ".enhanced",
+        ".dashboard-tabs",
+        ".overview-section",
+        ".stats-grid",
+        ".charts-section",
+        ".projects-section",
+        ".section-header",
+        ".projects-table"
+      ],
+      "impact": -1.4000000000000001
+    },
+    {
+      "file": "src/design-system/pages/ProjectCreate/ProjectCreate.module.scss",
+      "type": "LOW",
+      "issue": "4개의 중복 클래스 정의",
+      "details": [
+        ".completed",
+        ".stepLine",
+        ".error",
+        ".uploadIcon"
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/design-system/pages/Feedback/Feedback.module.scss",
+      "type": "LOW",
+      "issue": "8개의 중복 클래스 정의",
+      "details": [
+        ".active",
+        ".feedbackContainer",
+        ".videoSection",
+        ".videoControls",
+        ".controlButton",
+        ".feedbackSidebar",
+        ".tabMenu",
+        ".tabButton"
+      ],
+      "impact": -0.8
+    },
+    {
+      "file": "src/design-system/pages/CmsHome/CmsHome.module.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".count",
+        ".active",
+        ".expanded"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/design-system/layout/Layout.module.scss",
+      "type": "LOW",
+      "issue": "6개의 중복 클래스 정의",
+      "details": [
+        ".active",
+        ".videoSection",
+        ".videoInner",
+        ".sideSection",
+        ".completed",
+        ".stepLine"
+      ],
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/design-system/components/Calendar/Calendar.module.scss",
+      "type": "LOW",
+      "issue": "2개의 중복 클래스 정의",
+      "details": [
+        ".dateNumber",
+        ".event"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/design-system/components/Button/Button.module.scss",
+      "type": "LOW",
+      "issue": "5개의 중복 클래스 정의",
+      "details": [
+        ".sm",
+        ".lg",
+        ".button",
+        ".feedbackAction",
+        ".needExplanation"
+      ],
+      "impact": -0.5
+    },
+    {
+      "file": "src/design-system/accessibility/_color-contrast.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".button-primary"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/design-system/accessibility/_aria-patterns.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".visible"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/css/VideoPlayerCustom.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".vjs-tip",
+        ".vjs-tip-arrow",
+        ".vjs-marker"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/css/HomeAlignment-improved.scss",
+      "type": "LOW",
+      "issue": "5개의 중복 클래스 정의",
+      "details": [
+        ".txt",
+        ".content",
+        ".img",
+        ".feedback",
+        ".visual"
+      ],
+      "impact": -0.5
+    },
+    {
+      "file": "src/css/Home.scss",
+      "type": "LOW",
+      "issue": "34개의 중복 클래스 정의",
+      "details": [
+        ".inner",
+        ".logo",
+        ".etc",
+        ".img",
+        ".txt",
+        ".submit",
+        ".content",
+        ".text",
+        ".visual",
+        ".txt_box",
+        ".feedback",
+        ".list",
+        ".mask",
+        ".schedule",
+        ".textbox",
+        ".function",
+        ".project",
+        ".comment",
+        ".contents",
+        ".identity",
+        ".background",
+        ".group",
+        ".ex",
+        ".part",
+        ".video",
+        ".video-wrap",
+        ".end",
+        ".ment",
+        ".brand",
+        ".plus",
+        ".pop",
+        ".mt",
+        ".onlineclass",
+        ".last"
+      ],
+      "impact": -3.4000000000000004
+    },
+    {
+      "file": "src/css/User/Auth.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".logo"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/css/Common/ToggleButton.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".arrow-icon",
+        ".active",
+        ".expanded"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/css/Common/ButtonAlignment.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".btn-size",
+        ".etc_box",
+        ".flex"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/css/Cms/VideoPlanning.scss",
+      "type": "LOW",
+      "issue": "2개의 중복 클래스 정의",
+      "details": [
+        ".character-description-input",
+        ".change-image"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/css/Cms/FeedbackSectionRedesign-improved.scss",
+      "type": "LOW",
+      "issue": "12개의 중복 클래스 정의",
+      "details": [
+        ".active",
+        ".feedback-redesign",
+        ".sidebox",
+        ".b_title",
+        ".tab_container",
+        ".tab_menu",
+        ".tab_list",
+        ".tab-pane",
+        ".feedback-item",
+        ".feedback-header",
+        ".feedback-actions",
+        ".s_title"
+      ],
+      "impact": -1.2000000000000002
+    },
+    {
+      "file": "src/css/Cms/FeedbackPage.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".feedback-section",
+        ".feedback-input-wrapper",
+        ".submit-button"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/css/Cms/FeedbackMoreStyle.scss",
+      "type": "LOW",
+      "issue": "10개의 중복 클래스 정의",
+      "details": [
+        ".expand-icon",
+        ".feedback-time-marker",
+        ".active",
+        ".author-info",
+        ".feedback-list-container",
+        ".box",
+        ".feedback-item-wrapper",
+        ".feedback-item",
+        ".feedback-detail",
+        ".detail-header"
+      ],
+      "impact": -1
+    },
+    {
+      "file": "src/css/Cms/FeedbackLayoutRestore.scss",
+      "type": "LOW",
+      "issue": "12개의 중복 클래스 정의",
+      "details": [
+        ".header",
+        ".actions",
+        ".active",
+        ".title",
+        ".feedback_wrap",
+        ".video_section",
+        ".info_panel",
+        ".flex",
+        ".right",
+        ".feedback_section",
+        ".comment_list",
+        ".reply_list"
+      ],
+      "impact": -1.2000000000000002
+    },
+    {
+      "file": "src/css/Cms/FeedbackHeader.scss",
+      "type": "LOW",
+      "issue": "10개의 중복 클래스 정의",
+      "details": [
+        ".feedback",
+        ".feedback-header",
+        ".header-content",
+        ".header-left",
+        ".project-info",
+        ".project-name",
+        ".header-right",
+        ".action-button",
+        ".tab_wrap",
+        ".tab_btn"
+      ],
+      "impact": -1
+    },
+    {
+      "file": "src/css/Cms/FeedbackGridLayout.module.scss",
+      "type": "LOW",
+      "issue": "6개의 중복 클래스 정의",
+      "details": [
+        ".important-badge",
+        ".card-actions",
+        ".active",
+        ".feedback-grid-container",
+        ".feedback-card",
+        ".delete-btn"
+      ],
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/css/Cms/FeedbackButtons.scss",
+      "type": "LOW",
+      "issue": "4개의 중복 클래스 정의",
+      "details": [
+        ".feedback-button-container",
+        ".feedback-button",
+        ".feedback-upload-area",
+        ".feedback-upload-button-large"
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/EncodingStatus.scss",
+      "type": "LOW",
+      "issue": "4개의 중복 클래스 정의",
+      "details": [
+        ".encoding-status",
+        ".encoding-content",
+        ".encoding-message",
+        ".encoding-info"
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/CmsHomeRestore.scss",
+      "type": "LOW",
+      "issue": "6개의 중복 클래스 정의",
+      "details": [
+        ".active",
+        ".page-header",
+        ".actions",
+        ".filter-section",
+        ".filter-tabs",
+        ".project-list"
+      ],
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/css/Cms/CmsHomeMinimal.scss",
+      "type": "LOW",
+      "issue": "4개의 중복 클래스 정의",
+      "details": [
+        ".project-name",
+        ".home",
+        ".project-progress-enhanced",
+        ".invitation-item"
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/css/Cms/Cms.scss",
+      "type": "LOW",
+      "issue": "57개의 중복 클래스 정의",
+      "details": [
+        ".img",
+        ".calendar",
+        ".title",
+        ".ant-select-selector",
+        ".ant-select",
+        ".part",
+        ".schedule",
+        ".today",
+        ".start",
+        ".end",
+        ".th",
+        ".td",
+        ".week",
+        ".s_title",
+        ".day",
+        ".name",
+        ".first",
+        ".second",
+        ".third",
+        ".fourth",
+        ".fifth",
+        ".sixth",
+        ".seven",
+        ".eighth",
+        ".flex",
+        ".video_box",
+        ".sidebox",
+        ".video_upload",
+        ".video_upload_label",
+        ".active",
+        ".txt_box",
+        ".admin",
+        ".email",
+        ".comment_box",
+        ".submit",
+        ".basic",
+        ".delete",
+        ".oc",
+        ".list",
+        ".img_box",
+        ".time",
+        ".on",
+        ".box",
+        ".member",
+        ".ss_title",
+        ".txt",
+        ".info",
+        ".content",
+        ".pr",
+        ".del",
+        ".type",
+        ".off",
+        ".select",
+        ".react-datepicker-wrapper",
+        ".btn-upload",
+        ".collapse-btn",
+        ".feedback"
+      ],
+      "impact": -5.7
+    },
+    {
+      "file": "src/css/Admin/AdminRedirect.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".ant-typography",
+        ".admin-redirect-card",
+        ".ant-card-body"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/components/VirtualList.module.scss",
+      "type": "LOW",
+      "issue": "2개의 중복 클래스 정의",
+      "details": [
+        ".virtualList",
+        ".listItem"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/VideoPlayer.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".native-player-container",
+        ".format-warning",
+        ".player-info"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/components/ToggleButton.module.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".icon"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/components/SideBar.module.scss",
+      "type": "LOW",
+      "issue": "4개의 중복 클래스 정의",
+      "details": [
+        ".active",
+        ".menu_project",
+        ".empty",
+        ".submit"
+      ],
+      "impact": -0.4
+    },
+    {
+      "file": "src/components/ResizablePanel.scss",
+      "type": "LOW",
+      "issue": "5개의 중복 클래스 정의",
+      "details": [
+        ".panel-right",
+        ".handle-bar",
+        ".resizable-panel",
+        ".panel-left",
+        ".resize-handle"
+      ],
+      "impact": -0.5
+    },
+    {
+      "file": "src/components/ProjectScheduleSection.module.scss",
+      "type": "LOW",
+      "issue": "17개의 중복 클래스 정의",
+      "details": [
+        ".alert-header",
+        ".deadline-item",
+        ".deadline-info",
+        ".project-indicator",
+        ".deadline-details",
+        ".project-name",
+        ".phase-name",
+        ".deadline-status",
+        ".today",
+        ".tomorrow",
+        ".urgent",
+        ".project-schedule-section",
+        ".schedule-header",
+        ".view-controls",
+        ".view-btn",
+        ".deadline-date",
+        ".date-day"
+      ],
+      "impact": -1.7000000000000002
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "type": "LOW",
+      "issue": "12개의 중복 클래스 정의",
+      "details": [
+        ".count",
+        ".collapseBtn",
+        ".phaseLine",
+        ".completed",
+        ".phaseDot",
+        ".delayed",
+        ".boardHeader",
+        ".projectCard",
+        ".projectHeader",
+        ".projectCountsSection",
+        ".schedule",
+        ".projectPhaseBoard"
+      ],
+      "impact": -1.2000000000000002
+    },
+    {
+      "file": "src/components/ProjectDashboard.scss",
+      "type": "LOW",
+      "issue": "6개의 중복 클래스 정의",
+      "details": [
+        ".active",
+        ".delayed",
+        ".anticon",
+        ".ant-progress",
+        ".ant-progress-inner",
+        ".ant-progress-bg"
+      ],
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/components/OptimizedImage.module.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".errorState",
+        ".imageContainer",
+        ".error"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/components/NotificationDropdown.scss",
+      "type": "LOW",
+      "issue": "2개의 중복 클래스 정의",
+      "details": [
+        ".notification-dropdown",
+        ".notification-dropdown-menu"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/ImageCropper.scss",
+      "type": "LOW",
+      "issue": "6개의 중복 클래스 정의",
+      "details": [
+        ".image-cropper-modal",
+        ".cropper-container",
+        ".cropper-wrapper",
+        ".cropper-header",
+        ".cropper-controls",
+        ".cropper-actions"
+      ],
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/components/FeedbackPlayer.scss",
+      "type": "LOW",
+      "issue": "11개의 중복 클래스 정의",
+      "details": [
+        ".keyboard-help",
+        ".tooltip",
+        ".feedback-player",
+        ".video-container",
+        ".controls",
+        ".control-buttons",
+        ".left-controls",
+        ".time-display",
+        ".right-controls",
+        ".icon-button",
+        ".button-text"
+      ],
+      "impact": -1.1
+    },
+    {
+      "file": "src/components/ExportModal.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".format-icon"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/components/CustomAlert.scss",
+      "type": "LOW",
+      "issue": "3개의 중복 클래스 정의",
+      "details": [
+        ".closing",
+        ".custom-alert",
+        ".alert-message"
+      ],
+      "impact": -0.30000000000000004
+    },
+    {
+      "file": "src/components/unified/Input/Input.module.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".suffix"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/components/unified/Card/Card.module.scss",
+      "type": "LOW",
+      "issue": "1개의 중복 클래스 정의",
+      "details": [
+        ".cardBody"
+      ],
+      "impact": -0.1
+    },
+    {
+      "file": "src/components/unified/Button/Button.module.scss",
+      "type": "LOW",
+      "issue": "6개의 중복 클래스 정의",
+      "details": [
+        ".button--xs",
+        ".button--sm",
+        ".button--md",
+        ".button--lg",
+        ".button--xl",
+        ".button__icon"
+      ],
+      "impact": -0.6000000000000001
+    },
+    {
+      "file": "src/components/minimal/MinimalInput.module.scss",
+      "type": "LOW",
+      "issue": "2개의 중복 클래스 정의",
+      "details": [
+        ".label",
+        ".readOnly"
+      ],
+      "impact": -0.2
+    },
+    {
+      "file": "src/components/minimal/MinimalButton.module.scss",
+      "type": "LOW",
+      "issue": "5개의 중복 클래스 정의",
+      "details": [
+        ".text",
+        ".loadingIcon",
+        ".small",
+        ".large",
+        ".tooltip"
+      ],
+      "impact": -0.5
+    }
+  ],
+  "topOffenders": [
+    {
+      "file": "src/page/Cms/FeedbackButtonStyles.module.scss",
+      "impactScore": 46.6
+    },
+    {
+      "file": "src/css/Cms/Cms.scss",
+      "impactScore": 27.9
+    },
+    {
+      "file": "src/design-system/accessibility/_reduced-motion.scss",
+      "impactScore": 22.6
+    },
+    {
+      "file": "src/components/ProjectPhaseBoard.module.scss",
+      "impactScore": 21.8
+    },
+    {
+      "file": "src/styles/_design-tokens.scss",
+      "impactScore": 17.9
+    },
+    {
+      "file": "src/css/Home.scss",
+      "impactScore": 12.9
+    },
+    {
+      "file": "src/design-system/accessibility/_screen-reader.scss",
+      "impactScore": 8
+    },
+    {
+      "file": "src/page/Cms/VideoPlanning.scss",
+      "impactScore": 6.9
+    },
+    {
+      "file": "src/css/_layout-improved.scss",
+      "impactScore": 5.5
+    },
+    {
+      "file": "src/css/Cms/DesignSystem.scss",
+      "impactScore": 5
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "action": "즉시 !important 사용을 제거하세요. CSS 특정성으로 해결 가능합니다.",
+      "impact": "+15점"
+    },
+    {
+      "priority": "HIGH",
+      "action": "모든 하드코딩된 색상을 디자인 토큰으로 교체하세요.",
+      "impact": "+10점"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "8px 그리드 시스템을 준수하여 간격을 조정하세요.",
+      "impact": "+5점"
+    }
+  ]
+}

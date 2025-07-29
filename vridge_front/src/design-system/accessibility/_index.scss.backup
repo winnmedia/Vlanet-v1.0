@@ -1,0 +1,13 @@
+// VideoPlanet 접근성 스타일 시스템
+// WCAG 2.1 AA 기준 준수
+
+@use '../tokens' as *;
+
+// 모든 접근성 관련 스타일 통합
+@import 'focus-indicators';
+@import 'screen-reader';
+@import 'keyboard-navigation';
+@import 'color-contrast';
+@import 'touch-targets';
+@import 'aria-patterns';
+@import 'reduced-motion';

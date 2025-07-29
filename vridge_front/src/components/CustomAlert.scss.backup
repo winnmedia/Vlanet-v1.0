@@ -1,0 +1,206 @@
+// 커스텀 알림 스타일
+.custom-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+  &.closing {
+    animation: fadeOut 0.3s ease;
+  }
+}
+
+.custom-alert {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  min-width: 320px;
+  max-width: 500px;
+  padding: 24px;
+  animation: slideIn 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  
+  &.closing {
+    animation: slideOut 0.3s ease;
+  }
+  
+  .alert-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    position: relative;
+  }
+  
+  .alert-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  .alert-message {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #333;
+    word-break: keep-all;
+    padding-right: 24px;
+  }
+  
+  .alert-close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: all 0.2s ease;
+    border-radius: 50%;
+    
+    &:hover {
+      background: #f5f5f5;
+      color: #333;
+    }
+  }
+  
+  .alert-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    
+    .alert-button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &.primary {
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+        color: white;
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+        }
+      }
+      
+      &.secondary {
+        background: #f5f5f5;
+        color: #666;
+        
+        &:hover {
+          background: #e5e5e5;
+          color: #333;
+        }
+      }
+    }
+  }
+  
+  // 타입별 스타일 - 대표 색상 사용
+  &.success {
+    border-top: 4px solid #28a745;
+    background: rgba(40, 167, 69, 0.08);
+    
+    .alert-icon circle {
+      fill: #28a745;
+    }
+  }
+  
+  &.error {
+    border-top: 4px solid #dc3545;
+    background: rgba(220, 53, 69, 0.08);
+    
+    .alert-icon circle {
+      fill: #dc3545;
+    }
+  }
+  
+  &.warning {
+    border-top: 4px solid #ffc107;
+    background: rgba(255, 193, 7, 0.08);
+    
+    .alert-icon path:first-child {
+      fill: #ffc107;
+    }
+  }
+  
+  &.info {
+    border-top: 4px solid #1631F8;
+    background: rgba(22, 49, 248, 0.08);
+    
+    .alert-icon circle {
+      fill: #1631F8;
+    }
+  }
+}
+
+// 애니메이션
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+// 반응형
+@media (max-width: 480px) {
+  .custom-alert {
+    min-width: 280px;
+    margin: 16px;
+    padding: 20px;
+    
+    .alert-message {
+      font-size: 14px;
+    }
+  }
+}

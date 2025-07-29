@@ -19,20 +19,38 @@ class RateLimitMiddleware:
         self.get_response = get_response
         # Rate limit 설정
         self.endpoints = {
-            '/api/users/login/': {'limit': 5, 'window': 300},  # 5분당 5회
-            '/api/users/register/': {'limit': 3, 'window': 600},  # 10분당 3회
-            '/api/users/password-reset/': {'limit': 3, 'window': 3600},  # 1시간당 3회
-            '/api/users/social-login/': {'limit': 10, 'window': 300},  # 5분당 10회
+            '/api/users/login/': {'limit': 20, 'window': 60},  # 1분당 20회 (더 합리적)
+            '/api/users/register/': {'limit': 5, 'window': 300},  # 5분당 5회
+            '/api/users/password-reset/': {'limit': 3, 'window': 600},  # 10분당 3회
+            '/api/users/social-login/': {'limit': 30, 'window': 60},  # 1분당 30회
         }
     
     def __call__(self, request):
         # Rate limiting 체크
         for endpoint, config in self.endpoints.items():
             if request.path.startswith(endpoint):
-                if not self.check_rate_limit(request, endpoint, config):
+                result = self.check_rate_limit(request, endpoint, config)
+                if not result['allowed']:
+                    # 남은 시간 계산 (초 단위)
+                    retry_after_seconds = int(result['retry_after'])
+                    
+                    # 분/초로 변환하여 사용자 친화적 메시지 생성
+                    if retry_after_seconds >= 60:
+                        minutes = retry_after_seconds // 60
+                        seconds = retry_after_seconds % 60
+                        if seconds > 0:
+                            time_msg = f"{minutes}분 {seconds}초"
+                        else:
+                            time_msg = f"{minutes}분"
+                    else:
+                        time_msg = f"{retry_after_seconds}초"
+                    
                     return JsonResponse({
-                        'error': '너무 많은 요청입니다. 잠시 후 다시 시도해주세요.',
-                        'retry_after': config['window']
+                        'message': f'요청이 너무 많습니다. {time_msg} 후에 다시 시도해주세요.',
+                        'error_code': 'RATE_LIMIT_EXCEEDED',
+                        'retry_after_seconds': retry_after_seconds,
+                        'limit': config['limit'],
+                        'window_seconds': config['window']
                     }, status=429)
         
         response = self.get_response(request)
@@ -52,13 +70,22 @@ class RateLimitMiddleware:
         
         # 제한 초과 체크
         if len(requests) >= config['limit']:
-            return False
+            # 가장 오래된 요청부터 언제 재시도 가능한지 계산
+            oldest_request = min(requests)
+            retry_after = config['window'] - (now - oldest_request)
+            return {
+                'allowed': False,
+                'retry_after': max(1, retry_after)  # 최소 1초
+            }
         
         # 새 요청 추가
         requests.append(now)
         cache.set(cache_key, requests, config['window'])
         
-        return True
+        return {
+            'allowed': True,
+            'retry_after': 0
+        }
     
     def get_client_ip(self, request):
         """클라이언트 IP 주소 가져오기"""

@@ -1,0 +1,68 @@
+@import '../styles/design-tokens';
+
+// Enhanced styles for CmsHome page with Calendar-like design
+
+// Animation keyframes
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Enhanced project progress section
+.project-progress-enhanced {
+  .s_title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm + 2px;
+    
+    .collapse-btn {
+      &:focus {
+        outline: none;
+      }
+      
+      &.collapsed {
+        svg {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+}
+
+// Enhanced feedback section
+.part .feedback-list {
+  div[style*="cursor: pointer"] {
+    &:hover {
+      transform: translateX(4px);
+    }
+  }
+}
+
+// Enhanced deadline section  
+.part .deadline-list {
+  div[style*="cursor: pointer"] {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      left: $spacing-0;
+      top: $spacing-0;
+      bottom: $spacing-0;
+      width: 3px;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+}

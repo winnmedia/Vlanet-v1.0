@@ -1,4 +1,9 @@
-import Home from '../src/page/Home'
+
+import dynamic from 'next/dynamic'
+const Home = dynamic(() => import('../src/page/Home'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});;
 
 export default Home
 

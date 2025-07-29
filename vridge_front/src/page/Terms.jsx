@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic';
 import { useRouter } from '../util/nextNavigation'
 
 export default function Terms() {

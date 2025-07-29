@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic';
+import { UnifiedButton } from '../../components/unified/UnifiedButton';
+
 import Link from 'next/link'
 import { useRouter, useLocation } from '../../util/nextNavigation'
-
 
 import PageTemplate from '../../components/PageTemplate'
 import { SignUp, CheckNickname, CheckEmail } from '../../api/auth'
@@ -38,8 +40,10 @@ export default function Signup() {
   // 비밀번호 강도 체크
   const getPasswordStrength = () => {
     if (!password) return { level: 0, text: '' };
+import { Button } from '../../components/unified/Button'
     
     let strength = 0;
+import { Input } from '../../components/unified/Input';
     if (password.length >= 10) strength++;
     if (password.length >= 14) strength++;
     if (/[A-Z]/.test(password)) strength++;
@@ -265,7 +269,7 @@ export default function Signup() {
               }, 1000);
             })
             .catch((err) => {
-              console.error('초대 수락 실패:', err);
+              
               // 초대 수락에 실패해도 홈으로 이동
               setTimeout(() => {
                 navigate('/cmshome', { replace: true });
@@ -332,7 +336,7 @@ export default function Signup() {
             </div>
           )}
           
-          <form onSubmit={handleSignUp}>
+          <form onSubmit={handleSignUp} role="form">
             {/* 이메일 입력 섹션 */}
             <div style={{ marginBottom: '25px' }}>
               <label style={{ 
@@ -345,23 +349,7 @@ export default function Signup() {
                 이메일 <span style={{ color: '#dc3545' }}>*</span>
               </label>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <input
-                  type="email"
-                  name="email"
-                  value={email}
-                  onChange={onChange}
-                  placeholder="example@email.com"
-                  style={{
-                    flex: 1,
-                    padding: '12px 16px',
-                    fontSize: '16px',
-                    border: `2px solid ${emailChecked ? (emailAvailable ? '#28a745' : '#dc3545') : '#e9ecef'}`,
-                    borderRadius: '8px',
-                    outline: 'none',
-                    transition: 'border-color 0.3s ease',
-                    backgroundColor: '#fff'
-                  }}
-                  onFocus={(e) => {
+                <UnifiedInput placeholder="example@email.com" value={email} onChange={onChange} name="email"  / aria-label="example@email.com"> {
                     if (!emailChecked) {
                       e.target.style.borderColor = '#1631F8'
                     }
@@ -372,9 +360,8 @@ export default function Signup() {
                     }
                   }}
                 />
-                <button
-                  type="button"
-                  onClick={checkEmailDuplicate}
+                <Button type="button"
+                  onClick={checkEmailDuplicate} onKeyDown={(e) => e.key === 'Enter' && checkEmailDuplicate}
                   disabled={!email || !email.includes('@') || checkingEmail}
                   style={{
                     width: '110px',
@@ -388,9 +375,9 @@ export default function Signup() {
                     cursor: (!email || !email.includes('@') || checkingEmail) ? 'not-allowed' : 'pointer',
                     transition: 'all 0.3s ease',
                   }}
-                >
+                 aria-label="Click">
                   {checkingEmail ? '확인 중...' : '중복 확인'}
-                </button>
+                </Button>
               </div>
               {emailMessage && (
                 <div style={{ 
@@ -426,24 +413,7 @@ export default function Signup() {
                 </span>
               </label>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <input
-                  type="text"
-                  name="nickname"
-                  value={nickname}
-                  onChange={onChange}
-                  placeholder="닉네임을 입력하세요"
-                  maxLength={10}
-                  style={{
-                    flex: 1,
-                    padding: '12px 16px',
-                    fontSize: '16px',
-                    border: `2px solid ${nicknameChecked ? (nicknameAvailable ? '#28a745' : '#dc3545') : '#e9ecef'}`,
-                    borderRadius: '8px',
-                    outline: 'none',
-                    transition: 'border-color 0.3s ease',
-                    backgroundColor: '#fff'
-                  }}
-                  onFocus={(e) => {
+                <UnifiedInput placeholder="닉네임을 입력하세요" value={nickname} onChange={onChange} name="nickname"  / aria-label="닉네임을 입력하세요"> {
                     if (!nicknameChecked) {
                       e.target.style.borderColor = '#1631F8'
                     }
@@ -454,9 +424,8 @@ export default function Signup() {
                     }
                   }}
                 />
-                <button
-                  type="button"
-                  onClick={checkNicknameDuplicate}
+                <Button type="button"
+                  onClick={checkNicknameDuplicate} onKeyDown={(e) => e.key === 'Enter' && checkNicknameDuplicate}
                   disabled={!nickname || nickname.length < 2 || checkingNickname}
                   style={{
                     width: '110px',
@@ -470,9 +439,9 @@ export default function Signup() {
                     cursor: (!nickname || nickname.length < 2 || checkingNickname) ? 'not-allowed' : 'pointer',
                     transition: 'all 0.3s ease',
                   }}
-                >
+                 aria-label="Click">
                   {checkingNickname ? '확인 중...' : '중복 확인'}
-                </button>
+                </Button>
               </div>
               {nicknameMessage && (
                 <div style={{ 
@@ -508,30 +477,11 @@ export default function Signup() {
                 </span>
               </label>
               <div style={{ position: 'relative' }}>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={password}
-                  onChange={onChange}
-                  placeholder="비밀번호를 입력하세요"
-                  maxLength={20}
-                  style={{
-                    width: '100%',
-                    padding: '12px 50px 12px 16px',
-                    fontSize: '16px',
-                    border: '2px solid #e9ecef',
-                    borderRadius: '8px',
-                    outline: 'none',
-                    transition: 'border-color 0.3s ease',
-                    backgroundColor: '#fff',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#1631F8'}
+                <UnifiedInput placeholder="비밀번호를 입력하세요" value={password} onChange={onChange} name="password"  / aria-label="비밀번호를 입력하세요"> e.target.style.borderColor = '#1631F8'}
                   onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                <Button type="button"
+                  onClick={() = aria-label="Click"> setShowPassword(!showPassword)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowPassword(!showPassword)}
                   style={{
                     position: 'absolute',
                     right: '8px',
@@ -564,7 +514,7 @@ export default function Signup() {
                       <line x1="1" y1="1" x2="23" y2="23"/>
                     </svg>
                   )}
-                </button>
+                </Button>
               </div>
               {password && (
                 <div style={{ marginTop: '8px' }}>
@@ -613,25 +563,7 @@ export default function Signup() {
                 비밀번호 확인 <span style={{ color: '#dc3545' }}>*</span>
               </label>
               <div style={{ position: 'relative' }}>
-                <input
-                  type={showPassword1 ? 'text' : 'password'}
-                  name="password1"
-                  value={password1}
-                  onChange={onChange}
-                  placeholder="비밀번호를 다시 입력하세요"
-                  maxLength={20}
-                  style={{
-                    width: '100%',
-                    padding: '12px 50px 12px 16px',
-                    fontSize: '16px',
-                    border: `2px solid ${password1 && (password === password1 ? '#28a745' : '#dc3545')}`,
-                    borderRadius: '8px',
-                    outline: 'none',
-                    transition: 'border-color 0.3s ease',
-                    backgroundColor: '#fff',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
+                <UnifiedInput placeholder="비밀번호를 다시 입력하세요" value={password1} onChange={onChange} name="password1"  / aria-label="비밀번호를 다시 입력하세요"> {
                     if (!password1 || password === password1) {
                       e.target.style.borderColor = '#1631F8'
                     }
@@ -646,9 +578,8 @@ export default function Signup() {
                     }
                   }}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword1(!showPassword1)}
+                <Button type="button"
+                  onClick={() = aria-label="Click"> setShowPassword1(!showPassword1)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowPassword1(!showPassword1)}
                   style={{
                     position: 'absolute',
                     right: '8px',
@@ -681,7 +612,7 @@ export default function Signup() {
                       <line x1="1" y1="1" x2="23" y2="23"/>
                     </svg>
                   )}
-                </button>
+                </Button>
               </div>
               {password1 && password !== password1 && (
                 <div style={{ 
@@ -739,8 +670,7 @@ export default function Signup() {
             )}
 
             {/* 회원가입 버튼 */}
-            <button
-              type="submit"
+            <Button type="submit"
               disabled={isLoading}
               style={{
                 width: '100%',
@@ -755,7 +685,7 @@ export default function Signup() {
                 transition: 'all 0.3s ease',
                 boxShadow: isLoading ? 'none' : '0 2px 4px rgba(22, 49, 248, 0.2)'
               }}
-              onMouseEnter={(e) => {
+              onMouseEnter={(e) = aria-label="Click"> {
                 if (!isLoading) {
                   e.target.style.backgroundColor = '#0F23C9'
                   e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'
@@ -769,7 +699,7 @@ export default function Signup() {
               }}
             >
               {isLoading ? '처리 중...' : '회원가입'}
-            </button>
+            </Button>
 
             {/* 로그인 링크 */}
             <div style={{ 

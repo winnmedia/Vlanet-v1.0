@@ -1,0 +1,976 @@
+@import '../styles/design-tokens';
+
+.mypage-container {
+  // MyPage 전용 색상 변수 (다른 페이지에 영향 주지 않도록 로컬 스코프)
+  $mypage-primary: #0058da;   // 메인 블루
+  $mypage-primary-dark: #0047b8;    // 진한 블루
+  $mypage-primary-light: #1a6$color-white;   // 연한 블루
+  $mypage-primary-hover: #0047b8;   // 호버 블루
+  $mypage-secondary: #ff6b6b; // 포인트 레드
+  $mypage-success: $color-success;   // 성공 그린
+  $mypage-warning: $color-warning;   // 경고 옐로우
+  $mypage-danger: $color-danger;    // 위험 레드
+  $mypage-gradient: linear-gradient(135deg, $mypage-primary 0%, $mypage-primary-dark 100%);
+  $mypage-text-dark: $color-black;
+  $mypage-text-gray: #707175;
+  $mypage-background-light: #f8f8f8;
+  $mypage-border-color: #efefef;
+  $mypage-white: $color-white;
+  width: 100%;
+  background-color: $color-background-secondary;
+  min-height: 100vh;
+  padding-top: $spacing-4xl - $spacing-xs; // 상단 메뉴바 높이
+
+  .mypage {
+    padding: $spacing-2xl;
+    max-width: 1200px;
+    margin: $spacing-0 auto;
+
+    .loading, .error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      font-size: $font-size-lg;
+      color: #6b7280;
+      flex-direction: column;
+      gap: $spacing-md;
+      
+      .loading-spinner {
+        width: $spacing-2xl;
+        height: $spacing-2xl;
+        border: 3px solid $mypage-primary-light;
+        border-top-color: $mypage-primary;
+        border-radius: $border-radius-full;
+        animation: spin 1s linear infinite;
+      }
+      
+      .loading-text {
+        font-size: $font-size-lg;
+        color: #6b7280;
+      }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .mypage-header {
+      background: white;
+      border-radius: $border-radius-xl;
+      padding: $spacing-lg 32px;
+      margin-bottom: $spacing-lg;
+      box-shadow: 0 1px 3px rgba($color-black, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, $mypage-primary 0%, $mypage-primary-dark 100%);
+      color: white;
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba($color-white, 0.15) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+      }
+      
+      @keyframes rotate {
+        to { transform: rotate(360deg); }
+      }
+
+      h1 {
+        font-size: 26px;
+        font-weight: 700;
+        margin: $spacing-0;
+        display: flex;
+        align-items: center;
+        
+      }
+
+      .header-info {
+        .welcome-text {
+          font-size: $font-size-base;
+          opacity: 0.95;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .mypage-tabs {
+      display: flex;
+      gap: $spacing-sm;
+      margin-bottom: $spacing-lg;
+      background: white;
+      padding: $spacing-sm;
+      border-radius: $border-radius-lg;
+      box-shadow: 0 1px 3px rgba($color-black, 0.1);
+      width: fit-content;
+
+      button {
+        background: transparent;
+        border: none;
+        padding: $spacing-sm + 2px 20px;
+        font-size: 15px;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: $border-radius-md;
+        position: relative;
+        white-space: nowrap;
+
+        &:hover {
+          color: $mypage-primary;
+          background: rgba($mypage-primary, 0.05);
+        }
+
+        &.active {
+          color: white;
+          background: $mypage-primary;
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba($mypage-primary, 0.3);
+
+          &::after {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .mypage-content {
+      background: white;
+      border-radius: $border-radius-xl;
+      box-shadow: 0 1px 3px rgba($color-black, 0.1);
+      padding: $spacing-xl;
+      animation: fadeIn 0.5s ease;
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .profile-section {
+        .profile-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: $spacing-xl;
+          padding-bottom: $spacing-lg - $spacing-xs;
+          border-bottom: 2px solid #f3f4f6;
+          width: 100%;
+
+          h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: $spacing-0;
+            display: flex;
+            align-items: center;
+            flex: 0 1 auto;
+          }
+
+          .edit-btn {
+            background: $mypage-primary;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: $border-radius-md - 2px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            white-space: nowrap;
+            width: $spacing-4xl - $spacing-xs !important;
+            min-width: $spacing-4xl - $spacing-xs !important;
+            max-width: $spacing-4xl - $spacing-xs !important;
+            flex: none;
+
+            &:hover {
+              background: $mypage-primary-dark;
+              transform: translateY(-1px);
+              box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
+            }
+          }
+        }
+
+        .profile-image-section {
+          margin-bottom: $spacing-2xl;
+          
+          .profile-image-wrapper {
+            display: flex;
+            align-items: center;
+            gap: $spacing-xl;
+            padding: $spacing-xl;
+            background: linear-gradient(135deg, rgba($mypage-primary, 0.05), rgba($mypage-primary-light, 0.02));
+            border-radius: $border-radius-xl;
+            border: 1px solid rgba($mypage-primary, 0.1);
+            margin-bottom: $spacing-lg;
+            min-height: 214px; // 150px 이미지 + 32px*2 패딩
+            position: relative;
+            // 레이아웃 안정성 확보
+            box-sizing: border-box;
+            overflow: hidden; // 컨텐츠 오버플로우 방지
+          }
+
+          .profile-image-container {
+            position: relative;
+            cursor: pointer;
+            width: 150px;
+            height: 150px;
+            margin: $spacing-0 auto;
+            
+            // UserAvatar 컴포넌트 스타일 조정
+            .profile-avatar-main {
+              width: 100% !important;
+              height: 100% !important;
+              box-shadow: 0 8px 24px rgba($color-black, 0.15);
+              transition: all 0.3s ease;
+              
+              &:hover {
+                transform: scale(1.05);
+              }
+            }
+            
+            .image-overlay {
+              position: absolute;
+              inset: 0;
+              background: rgba($color-black, 0.7);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+              color: white;
+              border-radius: $border-radius-full;
+              
+              .camera-icon {
+                width: $spacing-xl;
+                height: $spacing-xl;
+                margin-bottom: $spacing-sm;
+              }
+              
+              span {
+                font-size: $font-size-sm;
+                font-weight: 500;
+              }
+            }
+            
+            &:hover .image-overlay {
+              opacity: 1;
+            }
+          }
+          
+          .profile-info-summary {
+            flex: 1;
+            min-width: $spacing-0; // 텍스트 오버플로우 방지
+            max-width: 100%; // 최대 너비 제한
+            
+            h3 {
+              font-size: 28px;
+              font-weight: 700;
+              color: $mypage-text-dark;
+              margin: $spacing-0 0 8px 0;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              text-overflow: ellipsis; // 긴 텍스트 처리
+              max-width: 100%;
+            }
+            
+            p {
+              font-size: $font-size-base;
+              color: $mypage-text-gray;
+              margin: $spacing-0 0 4px 0;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              text-overflow: ellipsis; // 긴 텍스트 처리
+              max-width: 100%;
+              
+              &.company-info {
+                font-size: 15px;
+                color: $mypage-primary;
+                font-weight: 500;
+                margin-top: $spacing-sm;
+              }
+            }
+          }
+
+          .image-upload {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-md;
+            width: 100%;
+            
+            .upload-area {
+              border: 2px dashed $mypage-primary;
+              border-radius: $border-radius-lg;
+              padding: $spacing-xl;
+              text-align: center;
+              background: rgba($mypage-primary, 0.02);
+              transition: all 0.3s ease;
+              position: relative;
+              cursor: pointer;
+              
+              &.drag-over {
+                background: rgba($mypage-primary, 0.1);
+                border-color: $mypage-primary-dark;
+                transform: scale(1.02);
+              }
+              
+              &:hover {
+                background: rgba($mypage-primary, 0.05);
+                border-color: $mypage-primary-dark;
+              }
+              
+              .upload-icon {
+                width: $spacing-3xl;
+                height: $spacing-3xl;
+                margin: $spacing-0 auto 16px;
+                opacity: 0.4;
+                color: $mypage-primary;
+              }
+              
+              p {
+                color: $mypage-text-gray;
+                font-size: 15px;
+                margin: $spacing-0 0 8px 0;
+                font-weight: 500;
+                
+                &.upload-hint {
+                  font-size: 13px;
+                  color: lighten($mypage-text-gray, 20%);
+                  font-weight: 400;
+                }
+              }
+            }
+            
+            .upload-actions {
+              display: flex;
+              gap: $spacing-sm + $spacing-xs;
+              
+              button {
+                padding: $spacing-sm + 2px 20px;
+                border: none;
+                border-radius: $border-radius-md;
+                font-size: $font-size-sm;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: $spacing-sm;
+                white-space: nowrap;
+                
+                .spinner {
+                  width: $spacing-md;
+                  height: $spacing-md;
+                  animation: spin 1s linear infinite;
+                }
+              }
+              
+              .upload-confirm-btn {
+                background: $mypage-primary;
+                color: white;
+                min-width: 120px;
+                
+                &:hover:not(:disabled) {
+                  background: $mypage-primary-dark;
+                  transform: translateY(-2px);
+                  box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
+                }
+                
+                &:disabled {
+                  background: lighten($mypage-primary, 20%);
+                  cursor: not-allowed;
+                  opacity: 0.7;
+                }
+              }
+              
+              .cancel-upload-btn {
+                background: $mypage-white;
+                color: $mypage-text-gray;
+                border: 2px solid $mypage-border-color;
+                min-width: $spacing-5xl;
+                
+                &:hover {
+                  background: $mypage-background-light;
+                  border-color: darken($mypage-border-color, 10%);
+                }
+              }
+            }
+
+            .upload-btn {
+              background: #f3f4f6;
+              padding: $spacing-sm + 2px 20px;
+              border-radius: $border-radius-md;
+              cursor: pointer;
+              font-size: 15px;
+              font-weight: 500;
+              transition: all 0.3s;
+              color: #4b5563;
+
+              &:hover {
+                background: #e5e7eb;
+                color: $mypage-primary;
+              }
+            }
+
+            .upload-confirm-btn {
+              background: $mypage-primary;
+              color: white;
+              border: none;
+              padding: $spacing-sm + 2px 20px;
+              border-radius: $border-radius-md;
+              cursor: pointer;
+              font-size: 15px;
+              font-weight: 500;
+              transition: all 0.3s;
+
+              &:hover {
+                background: $mypage-primary-dark;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
+              }
+
+              &:disabled {
+                background: #9ca3af;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: $shadow-none;
+              }
+            }
+          }
+        }
+
+        .profile-info {
+          .info-row {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: $spacing-lg;
+            margin-bottom: $spacing-lg;
+            align-items: center;
+            padding: $spacing-md 0;
+            border-bottom: 1px solid #f3f4f6;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            label {
+              font-weight: 600;
+              color: #4b5563;
+              font-size: $font-size-sm;
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm;
+              
+              svg {
+                width: $spacing-md + 2px;
+                height: $spacing-md + 2px;
+                color: $mypage-primary;
+                opacity: 0.7;
+              }
+            }
+
+            .info-value {
+              color: #1f2937;
+              font-size: 15px;
+              font-weight: 500;
+            }
+
+            input, textarea {
+              width: 100%;
+              padding: $spacing-sm + $spacing-xs 16px;
+              border: 2px solid #e5e7eb;
+              border-radius: $border-radius-md;
+              font-size: 15px;
+              transition: all 0.3s;
+              background: #f9fafb;
+
+              &:focus {
+                outline: none;
+                border-color: $mypage-primary;
+                background: white;
+                box-shadow: 0 0 0 3px rgba($mypage-primary, 0.1);
+              }
+            }
+
+            textarea {
+              resize: vertical;
+              min-height: 100px;
+              font-family: inherit;
+            }
+          }
+
+          .profile-actions {
+            margin-top: $spacing-xl;
+            display: flex;
+            gap: $spacing-sm + $spacing-xs;
+            justify-content: flex-end;
+
+            .save-btn, .cancel-btn {
+              padding: $spacing-sm 20px;
+              border: none;
+              border-radius: $border-radius-md;
+              cursor: pointer;
+              font-size: $font-size-sm;
+              font-weight: 500;
+              transition: all 0.3s;
+              white-space: nowrap;
+            }
+
+            .save-btn {
+              background: $mypage-primary;
+              color: white;
+
+              &:hover:not(:disabled) {
+                background: $mypage-primary-dark;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba($mypage-primary, 0.3);
+              }
+
+              &:disabled {
+                background: #9ca3af;
+                cursor: not-allowed;
+              }
+            }
+
+            .cancel-btn {
+              background: #f3f4f6;
+              color: #6b7280;
+
+              &:hover {
+                background: #e5e7eb;
+                color: #4b5563;
+              }
+            }
+          }
+        }
+      }
+
+      .projects-section {
+        .project-group {
+          margin-bottom: $spacing-3xl;
+
+          &:last-child {
+            margin-bottom: $spacing-0;
+          }
+
+          h3 {
+            font-size: $font-size-lg;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: $spacing-md;
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm + $spacing-xs;
+
+          }
+
+          .sub-stats {
+            display: flex;
+            gap: $spacing-lg;
+            margin-bottom: $spacing-lg;
+            font-size: 15px;
+            color: #6b7280;
+            padding: $spacing-sm + $spacing-xs 16px;
+            background: #f9fafb;
+            border-radius: $border-radius-md;
+
+            span {
+              font-weight: 500;
+            }
+          }
+
+          .project-list {
+            display: grid;
+            gap: $spacing-md;
+
+            .project-item {
+              background: #f9fafb;
+              padding: $spacing-lg - $spacing-xs;
+              border-radius: $border-radius-lg;
+              display: grid;
+              grid-template-columns: 1fr auto;
+              gap: $spacing-lg - $spacing-xs;
+              align-items: center;
+              transition: all 0.3s;
+              border: 2px solid transparent;
+              position: relative;
+              overflow: hidden;
+
+              &::before {
+                content: '';
+                position: absolute;
+                left: $spacing-0;
+                top: $spacing-0;
+                bottom: $spacing-0;
+                width: $spacing-xs;
+                background: $mypage-primary;
+                transform: scaleY(0);
+                transition: transform 0.3s ease;
+              }
+
+              &:hover {
+                background: white;
+                border-color: rgba($mypage-primary, 0.2);
+                transform: translateX(4px);
+                box-shadow: 0 4px 16px rgba($color-black, 0.08);
+
+                &::before {
+                  transform: scaleY(1);
+                }
+              }
+
+              .project-details {
+                display: grid;
+                gap: $spacing-sm;
+
+                .project-name {
+                  font-size: $font-size-base;
+                  font-weight: 600;
+                  color: $mypage-text-dark;
+                  margin-bottom: $spacing-xs;
+                }
+
+                .project-meta {
+                  display: flex;
+                  gap: $spacing-lg - $spacing-xs;
+                  align-items: center;
+                  flex-wrap: wrap;
+
+                  .meta-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 13px;
+                    color: $mypage-text-gray;
+
+                    &.created-date {
+                      &::before {
+                        content: '';
+                        width: $spacing-md;
+                        height: $spacing-md;
+                        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2$color-black/svg" viewBox="0 0 24 24" fill="none" stroke="%23707175" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>') center/contain no-repeat;
+                      }
+                    }
+                  }
+
+                }
+              }
+
+              .project-status {
+                padding: $spacing-xs 12px;
+                border-radius: 20px;
+                font-size: $font-size-xs;
+                font-weight: 600;
+
+                &.status-planned {
+                  background: linear-gradient(135deg, rgba($mypage-warning, 0.1), rgba($mypage-warning, 0.05));
+                  color: darken($mypage-warning, 10%);
+                  border: 1px solid rgba($mypage-warning, 0.2);
+                }
+
+                &.status-progress {
+                  background: linear-gradient(135deg, rgba($mypage-primary, 0.1), rgba($mypage-primary, 0.05));
+                  color: $mypage-primary;
+                  border: 1px solid rgba($mypage-primary, 0.2);
+                }
+
+                &.status-completed {
+                  background: linear-gradient(135deg, rgba($mypage-success, 0.1), rgba($mypage-success, 0.05));
+                  color: $mypage-success;
+                  border: 1px solid rgba($mypage-success, 0.2);
+                }
+              }
+
+              .role {
+                padding: $spacing-xs 12px;
+                border-radius: 20px;
+                background: rgba($mypage-primary, 0.1);
+                color: $mypage-primary;
+                font-size: $font-size-xs;
+                font-weight: 600;
+              }
+
+              .view-project-btn {
+                background: $mypage-primary;
+                color: white;
+                border: none;
+                padding: 6px 16px;
+                border-radius: $border-radius-md - 2px;
+                cursor: pointer;
+                font-size: 13px;
+                font-weight: 500;
+                transition: all 0.3s;
+                white-space: nowrap;
+                margin-left: auto;
+                flex-shrink: 0;
+
+                &:hover {
+                  background: $mypage-primary-dark;
+                  transform: translateX(2px);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .activity-section {
+        h2, h3 {
+          font-size: $font-size-lg;
+          font-weight: 700;
+          color: #1f2937;
+          margin-bottom: $spacing-lg;
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+        }
+
+        h3 {
+          font-size: $font-size-base;
+          margin-top: $spacing-2xl;
+          
+        }
+
+        .activity-list {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-sm + $spacing-xs;
+
+          .activity-item {
+            background: #f9fafb;
+            padding: $spacing-lg - $spacing-xs;
+            border-radius: $border-radius-lg;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            border-left: $spacing-xs solid $mypage-primary;
+
+            &:hover {
+              background: white;
+              transform: translateX(4px);
+              box-shadow: 0 2px 8px rgba($color-black, 0.08);
+            }
+
+            .activity-name {
+              font-size: $font-size-base;
+              color: #1f2937;
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm + $spacing-xs;
+              font-weight: 500;
+
+              .owner-badge {
+                background: $mypage-primary;
+                color: white;
+                padding: $spacing-xs 12px;
+                border-radius: $border-radius-xl;
+                font-size: $font-size-xs;
+                font-weight: 600;
+              }
+            }
+
+            .activity-time {
+              font-size: $font-size-sm;
+              color: #9ca3af;
+            }
+          }
+        }
+
+        .memo-list {
+          display: flex;
+          flex-direction: column;
+          gap: $spacing-sm + $spacing-xs;
+
+          .memo-item {
+            background: #f9fafb;
+            padding: $spacing-lg - $spacing-xs;
+            border-radius: $border-radius-lg;
+            border-left: $spacing-xs solid $mypage-primary;
+            transition: all 0.3s;
+
+            &:hover {
+              background: white;
+              transform: translateX(4px);
+              box-shadow: 0 2px 8px rgba($color-black, 0.08);
+            }
+
+            .memo-content {
+              font-size: 15px;
+              color: #1f2937;
+              margin-bottom: $spacing-sm;
+              line-height: 1.6;
+            }
+
+            .memo-date {
+              font-size: 13px;
+              color: #9ca3af;
+            }
+          }
+        }
+      }
+
+      .stats-section {
+        h2 {
+          font-size: 22px;
+          font-weight: 700;
+          color: #1f2937;
+          margin-bottom: $spacing-xl;
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+
+        }
+
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: $spacing-lg;
+
+          .stat-card {
+            background: linear-gradient(135deg, $mypage-primary, $mypage-primary-dark);
+            padding: $spacing-xl;
+            border-radius: $border-radius-xl;
+            text-align: center;
+            transition: all 0.3s;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            
+            &:nth-child(2) {
+              background: linear-gradient(135deg, $mypage-primary-light, $mypage-primary);
+            }
+            
+            &:nth-child(3) {
+              background: linear-gradient(135deg, $mypage-success, darken($mypage-success, 10%));
+            }
+            
+            &:nth-child(4) {
+              background: linear-gradient(135deg, darken($mypage-primary, 5%), darken($mypage-primary, 15%));
+            }
+
+            &::before {
+              content: '';
+              position: absolute;
+              top: -50%;
+              right: -50%;
+              width: 200%;
+              height: 200%;
+              background: radial-gradient(circle, rgba($color-white, 0.1) 0%, transparent 70%);
+              transform: rotate(45deg);
+            }
+
+            &:hover {
+              transform: translateY(-4px);
+              box-shadow: 0 8px 24px rgba($mypage-primary, 0.3);
+            }
+
+            .stat-label {
+              font-size: $font-size-base;
+              opacity: 0.9;
+              margin-bottom: $spacing-sm + $spacing-xs;
+              font-weight: 500;
+            }
+
+            .stat-value {
+              font-size: $font-size-5xl;
+              font-weight: 700;
+              text-shadow: 2px 2px 4px rgba($color-black, 0.1);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: $breakpoint-md) {
+  .mypage-container {
+    padding-top: $spacing-3xl + 2px;
+    
+    .mypage {
+      padding: $spacing-md;
+
+      .mypage-header {
+        flex-direction: column;
+        gap: $spacing-md;
+        text-align: center;
+        padding: $spacing-lg;
+
+        h1 {
+          font-size: $font-size-2xl;
+        }
+      }
+
+      .mypage-tabs {
+        flex-wrap: wrap;
+
+        button {
+          flex: 1 1 calc(50% - $spacing-xs);
+          padding: $spacing-sm + 2px 16px;
+          font-size: $font-size-sm;
+        }
+      }
+
+      .mypage-content {
+        padding: $spacing-lg - $spacing-xs;
+
+        .profile-section {
+          .profile-image-section {
+            .profile-image-wrapper {
+              flex-direction: column;
+              text-align: center;
+              gap: $spacing-lg;
+              padding: $spacing-lg;
+            }
+            
+            .profile-info-summary {
+              text-align: center;
+              
+              h3 {
+                font-size: $font-size-2xl;
+              }
+              
+              p {
+                font-size: 15px;
+              }
+            }
+          }
+
+          .profile-info {
+            .info-row {
+              grid-template-columns: 1fr;
+              gap: $spacing-sm;
+
+              label {
+                font-size: $font-size-sm;
+                color: #9ca3af;
+              }
+            }
+          }
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}

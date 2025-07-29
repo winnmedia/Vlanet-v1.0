@@ -99,8 +99,7 @@ export const MinimalInput = React.memo(({
           </span>
         )}
         
-        <input
-          ref={inputRef}
+        <UnifiedInput ref={inputRef}
           id={inputId}
           type={type}
           name={name}
@@ -126,7 +125,7 @@ export const MinimalInput = React.memo(({
             error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
           }
           {...props}
-        />
+         / aria-label="Input field">
       </div>
       
       {(error || helperText || (showCharacterCount && maxLength)) && (

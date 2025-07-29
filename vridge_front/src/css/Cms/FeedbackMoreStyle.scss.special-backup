@@ -1,0 +1,325 @@
+@import '../styles/design-tokens';
+
+// Feedback More Component Styles - Legacy support for existing components
+
+// Color Variables
+$primary-color: $color-primary;
+$primary-hover: $color-primary-dark;
+$background-light: #f8f8f8;
+$border-color: #efefef;
+$text-dark: $color-black;
+$text-gray: #707175;
+$white: $color-white;
+$success-color: $color-success;
+$warning-color: $color-warning;
+
+// Legacy styles - kept for backward compatibility
+.feedback-list-container {
+  .box {
+    margin-bottom: $spacing-lg - $spacing-xs;
+    
+    .day {
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-gray;
+      margin-bottom: $spacing-sm;
+      padding-left: $spacing-xs;
+    }
+    
+    ul {
+      list-style: none;
+      padding: $spacing-0;
+      margin: $spacing-0;
+      
+      .feedback-item-wrapper {
+        margin-bottom: $spacing-sm;
+        background: $white;
+        border-radius: $border-radius-md;
+        overflow: hidden;
+        border: 1px solid $border-color;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          border-color: rgba($primary-color, 0.3);
+          box-shadow: 0 2px 4px rgba($color-black, 0.04);
+        }
+        
+        .feedback-item {
+          padding: $spacing-sm + $spacing-xs 16px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background: rgba($primary-color, 0.05);
+          }
+          
+          &.expanded {
+            background: rgba($primary-color, 0.05);
+            
+            .expand-icon {
+              transform: rotate(180deg);
+            }
+          }
+          
+          .feedback-summary {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm + $spacing-xs;
+            
+            .feedback-time-marker {
+              background: linear-gradient(135deg, $primary-color 0%, $primary-hover 100%);
+              color: $white;
+              padding: 6px 14px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 600;
+              flex-shrink: 0;
+              transition: all 0.2s ease;
+              box-shadow: 0 2px 4px rgba($color-primary, 0.2);
+            }
+            
+            .feedback-preview {
+              flex: 1;
+              font-size: $font-size-sm;
+              color: $text-gray;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            
+            .expand-icon {
+              width: $spacing-md;
+              height: $spacing-md;
+              stroke: $text-gray;
+              flex-shrink: 0;
+              transition: transform 0.2s ease;
+            }
+          }
+          
+          &:hover .feedback-time-marker {
+            background: $primary-hover;
+          }
+        }
+        
+        .feedback-detail {
+          background: $background-light;
+          padding: $spacing-md;
+          border-top: 1px solid $border-color;
+          animation: slideDown 0.2s ease;
+          
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: $spacing-sm + $spacing-xs;
+            
+            .author-info {
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm + $spacing-xs;
+              
+              .author-name {
+                font-size: $font-size-sm;
+                font-weight: 600;
+                color: $text-dark;
+              }
+              
+              .created-date {
+                font-size: $font-size-xs;
+                color: $text-gray;
+              }
+            }
+            
+            .feedback-type {
+              font-size: $font-size-xs;
+              padding: $spacing-xs 10px;
+              border-radius: $border-radius-lg;
+              font-weight: 500;
+              
+              &.public {
+                background: rgba($success-color, 0.1);
+                color: $success-color;
+              }
+              
+              &.private {
+                background: rgba($warning-color, 0.1);
+                color: darken($warning-color, 10%);
+              }
+            }
+          }
+          
+          .detail-content {
+            p {
+              font-size: $font-size-sm;
+              line-height: 1.6;
+              color: $text-dark;
+              margin: $spacing-0;
+              word-break: break-word;
+            }
+          }
+          
+          .detail-title {
+            margin-top: $spacing-sm + $spacing-xs;
+            padding-top: $spacing-sm + $spacing-xs;
+            border-top: 1px solid $border-color;
+            font-size: 13px;
+            color: $text-gray;
+            
+            strong {
+              color: $text-dark;
+              font-weight: 600;
+            }
+          }
+          
+          .detail-actions {
+            display: flex;
+            gap: $spacing-md;
+            margin-top: $spacing-md;
+            padding-top: $spacing-md;
+            border-top: 1px solid $border-color;
+            
+            .reaction-btn {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              padding: 6px 14px;
+              border: 1px solid #e9ecef;
+              border-radius: 20px;
+              background: white;
+              color: #6c757d;
+              font-size: 13px;
+              font-weight: 500;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              
+              svg {
+                width: $spacing-md;
+                height: $spacing-md;
+                stroke-width: 2;
+              }
+              
+              &:hover {
+                border-color: #ced4da;
+                background: $color-background-secondary;
+              }
+              
+              &.like {
+                &.active {
+                  background: rgba($primary-color, 0.1);
+                  border-color: $primary-color;
+                  color: $primary-color;
+                  
+                  svg {
+                    fill: $primary-color;
+                  }
+                }
+                
+                &:hover:not(.active) {
+                  border-color: $primary-color;
+                  color: $primary-color;
+                }
+              }
+              
+              &.dislike {
+                &.active {
+                  background: #fff5f5;
+                  border-color: $color-danger;
+                  color: $color-danger;
+                  
+                  svg {
+                    fill: $color-danger;
+                  }
+                }
+                
+                &:hover:not(.active) {
+                  border-color: $color-danger;
+                  color: $color-danger;
+                }
+              }
+              
+              .count {
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 빈 상태
+  &:empty::after {
+    content: '아직 피드백이 없습니다';
+    display: block;
+    text-align: center;
+    padding: $spacing-2xl 20px;
+    color: $text-gray;
+    font-size: $font-size-sm;
+  }
+}
+
+// Additional author info styles for grid layout
+.feedback-grid-container {
+  .author-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: $font-size-xs;
+    color: #6c757d;
+    margin-left: auto;
+    
+    .dot {
+      font-weight: 700;
+    }
+  }
+  
+  .privacy-badge {
+    font-size: $font-size-xs;
+    color: #856404;
+    background: #fff3cd;
+    padding: 2px 8px;
+    border-radius: $border-radius-lg;
+    font-weight: 500;
+  }
+}
+
+// 반응형
+@media (max-width: $breakpoint-md) {
+  .feedback-list-container {
+    .box {
+      ul {
+        .feedback-item-wrapper {
+          .feedback-item {
+            padding: $spacing-sm + 2px 12px;
+            
+            .feedback-time-marker {
+              font-size: $font-size-xs;
+              padding: $spacing-xs 10px;
+            }
+          }
+          
+          .feedback-detail {
+            padding: $spacing-sm + $spacing-xs;
+            
+            .detail-header {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: $spacing-sm;
+            }
+          }
+        }
+      }
+    }
+  }
+}

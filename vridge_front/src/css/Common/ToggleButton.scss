@@ -1,34 +1,36 @@
+@import '../../styles/design-tokens';
+
 // 통일된 토글 버튼 디자인
 .toggle-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #fff;
+  width: $spacing-xl;
+  height: $spacing-xl;
+  border: $spacing-2xs solid $color-gray-300;
+  border-radius: $border-radius-sm;
+  background-color: $color-white;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: $transition-base;
   
   &:hover {
-    background-color: #f5f5f5;
-    border-color: #1631F8;
+    background-color: $color-gray-100;
+    border-color: $color-primary;
   }
   
   &.active {
-    background-color: #1631F8;
-    border-color: #1631F8;
+    background-color: $color-primary;
+    border-color: $color-primary;
     
     .arrow-icon {
-      color: #fff;
+      color: $color-white;
     }
   }
   
   .arrow-icon {
-    width: 16px;
-    height: 16px;
-    color: #666;
+    width: $spacing-md;
+    height: $spacing-md;
+    color: $color-gray-600;
     transition: transform 0.3s ease;
     
     &.down {
@@ -54,39 +56,39 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background-color: #f8f9fa;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  padding: $spacing-sm + $spacing-xs $spacing-md;
+  background-color: $color-background-secondary;
+  border: $spacing-2xs solid $color-gray-300;
+  border-radius: $border-radius-md;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: $transition-base;
   
   &:hover {
-    background-color: #e8f0ff;
-    border-color: #1631F8;
+    background-color: $color-info;
+    border-color: $color-primary;
   }
   
   &.active {
-    background-color: #e8f0ff;
-    border-color: #1631F8;
+    background-color: $color-info;
+    border-color: $color-primary;
   }
   
   .section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-800;
   }
   
   .toggle-arrow {
-    width: 24px;
-    height: 24px;
+    width: $spacing-lg;
+    height: $spacing-lg;
     display: flex;
     align-items: center;
     justify-content: center;
     
     svg, img {
-      width: 16px;
-      height: 16px;
+      width: $spacing-md;
+      height: $spacing-md;
       transition: transform 0.3s ease;
     }
     
@@ -102,28 +104,107 @@
 .inline-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: $spacing-xs;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-sm;
   transition: background-color 0.2s ease;
   
   &:hover {
-    background-color: #f0f0f0;
+    background-color: $color-gray-200;
   }
   
   .toggle-text {
-    font-size: 14px;
-    color: #666;
+    font-size: $font-size-sm;
+    color: $color-gray-600;
   }
   
   .toggle-icon {
-    width: 12px;
-    height: 12px;
+    width: $spacing-sm + $spacing-xs;
+    height: $spacing-sm + $spacing-xs;
     transition: transform 0.3s ease;
     
     &.expanded {
       transform: rotate(180deg);
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .flex-row {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+  
+  .show-mobile {
+    display: block;
+  }
+  
+  table {
+    font-size: var(--font-size-sm);
+  }
+  
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .subtitle {
+    font-size: var(--font-size-md);
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .modal {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  input, select, textarea {
+    font-size: var(--spacing-lg); 
   }
 }

@@ -226,7 +226,7 @@ export default function ProjectCreate() {
                 {files.map((file, index) => (
                   <li key={index}>
                     {file.name}
-                    <Button onClick={() = aria-label="Click"> FileDelete(index)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> FileDelete(index)}>삭제</Button>
+                    <Button onClick={() => FileDelete(index)} onKeyDown={(e) => e.key === 'Enter' && FileDelete(index)}>삭제</Button>
                   </li>
                 ))}
               </ul>
@@ -234,10 +234,10 @@ export default function ProjectCreate() {
             </div>
 
             <div className="btn_wrap">
-              <Button onClick={CreateBtn} onKeyDown={(e) => e.key === 'Enter' && CreateBtn} disabled style={{ 
+              <Button onClick={CreateBtn} onKeyDown={(e) => e.key === 'Enter' && CreateBtn} disabled={isCreating || !ValidForm} style={{ 
                   opacity: (isCreating || !ValidForm) ? 0.6 : 1,
                   cursor: (isCreating || !ValidForm) ? 'not-allowed' : 'pointer'
-                } aria-label="Click">
+                }}>
                 {isCreating ? '등록 중...' : '등록'}
               </Button>
             </div>

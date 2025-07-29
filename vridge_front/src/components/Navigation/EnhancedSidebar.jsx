@@ -95,7 +95,7 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
     <aside className={classNames('enhanced-sidebar', { collapsed })}>
       {/* 로고 영역 */}
       <div className="sidebar-header">
-        <div className="logo-wrapper" onClick={() => navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/cmshome')}>
+        <div className="logo-wrapper" onClick={() => navigate('/cmshome')} onKeyDown={(e) => { if (e.key === 'Enter') navigate('/cmshome'); }}>
           <img src="/images/logo.svg" alt="VideoPlanet" className="logo" / loading="lazy">
           {!collapsed && <span className="logo-text">VideoPlanet</span>}
         </div>

@@ -834,8 +834,77 @@ vridge_front/
 
 ---
 
+### 세션 38: Vercel 빌드 오류 대규모 수정 (v2.1.6 ~ v2.1.10)
+
+**날짜**: 2025년 1월 29일
+**시간**: 오후 7:40 ~ 11:30
+**요청**: 지속적인 Vercel 빌드 오류 해결
+**버전**: 2.1.1 → 2.1.10 (총 9번의 수정 반복)
+
+#### 주요 문제 패턴
+1. **CSS Modules 규칙 위반**
+   - :root 선택자 사용 불가
+   - 전역 HTML 선택자 (*, table, input 등) 사용 불가
+   - 순수한 클래스 또는 ID 선택자만 허용
+
+2. **JSX 구문 오류 패턴**
+   - onClick과 onKeyDown 이벤트 핸들러가 잘못 결합됨
+   - 닫는 태그 불일치 (Card vs UnifiedCard)
+   - 잘못된 속성 구문 (aria-label이 onClick 내부에 포함)
+
+3. **SCSS 변수 및 함수 오류**
+   - 정의되지 않은 변수 사용
+   - 잘못된 함수 호출 ($transition-base-bezier())
+   - px 단위 누락
+
+#### 반복적으로 수정한 파일들
+1. **AdminDashboard.jsx** - 총 5회 수정
+   - 라인 354, 420, 439, 496, 505, 596, 611, 698, 712
+   - Card/UnifiedCard 태그 불일치
+   - onClick/onKeyDown 이벤트 핸들러 구문
+
+2. **UnifiedModal.jsx** - 3회 수정
+   - 라인 377, 390, 396
+   - img 태그 닫기 오류
+   - 이벤트 핸들러 구문
+
+3. **Header.jsx** - 4회 수정
+   - 라인 163, 347, 369, 401
+   - onKeyDown 핸들러 내부의 추가 화살표 함수
+
+4. **CmsHome.jsx** - 5회 수정
+   - 라인 218, 239, 249, 257, 268, 311, 315
+   - 잘못된 닫기 태그
+   - UnifiedButton 속성 구문
+
+5. **FeedbackButtonStyles** - 4회 수정
+   - 중괄호 불일치
+   - 변수 누락 ($shadow, $radius-full, $color-primary-hover)
+   - CSS Modules의 * 선택자 오류
+
+#### 사용된 에이전트들
+- **architect-aki**: 전체적인 오류 분석 및 해결 전략 수립
+- **frontend-designer-fronty**: SCSS 및 CSS Modules 오류 수정
+- **backend-guardian-bex**: JSX 구문 오류 수정
+- **qa-gatekeeper-q**: 전체 코드 검증 및 추가 오류 발견
+- **general-purpose**: 복잡한 오류 패턴 해결
+
+#### 최종 해결된 문제 수
+- JSX 구문 오류: 약 30개
+- SCSS 변수/함수 오류: 약 20개
+- CSS Modules 규칙 위반: 약 15개
+- 총 수정된 파일: 20개 이상
+
+#### 교훈
+1. CSS Modules 사용 시 규칙을 엄격히 준수해야 함
+2. JSX 이벤트 핸들러는 간단하고 명확하게 작성
+3. SCSS 변수는 사용 전 반드시 정의 확인
+4. 빌드 오류는 연쇄적으로 발생할 수 있으므로 체계적 접근 필요
+
+---
+
 **마지막 업데이트**: 2025-01-29
-**버전**: 2.1.5
+**버전**: 2.1.10
    - 문제: 잘못된 JSX 속성 구문
    - 해결: onClick, onKeyDown, type, aria-label 속성 올바르게 분리
 
@@ -873,3 +942,14 @@ vridge_front/
   - CSS Modules에서는 순수한 클래스 선택자만 사용 가능
   - 글로벌 선택자(table, input 등) 사용 불가
   - :root 선택자 사용 불가
+
+### 2025-01-29: Vercel 빌드 오류 수정 (v2.1.11)
+- **문제**: JSX 구문 오류 - onKeyDown 핸들러에 잘못된 화살표 함수 중첩
+- **해결**:
+  1. SideBar.jsx: 빈 console.error() 호출 제거 (라인 303, 320)
+  2. AdminDashboard.jsx: onKeyDown 핸들러에 세미콜론 추가 (라인 700, 714, 724, 734)
+  3. CmsHome.jsx: 잘못된 닫기 태그 수정 (라인 353)
+  4. Feedback.jsx: onKeyDown 이벤트 핸들러 구문 수정 (라인 1892)
+  5. VideoPlanning.jsx: 모든 onKeyDown 이벤트 핸들러에서 이중 화살표 함수 수정
+  6. EnhancedSidebar.jsx: onKeyDown 이벤트 핸들러 구문 수정
+- **패턴**: `onKeyDown={(e) => e.key === 'Enter' && (e) => {...}}` → `onKeyDown={(e) => { if (e.key === 'Enter') {...} }}`

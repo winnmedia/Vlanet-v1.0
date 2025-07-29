@@ -146,7 +146,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
               <Button 
                 variant="ghost"
                 className={`${styles.filterTab} ${selectedFilter === 'all' ? styles.active : ''}`}
-                onClick={() = aria-label="Click"> setSelectedFilter('all')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setSelectedFilter('all')}
+                onClick={() => setSelectedFilter('all')} onKeyDown={(e) => e.key === 'Enter' && setSelectedFilter('all')}
               >
                 전체
                 <span className={styles.count}>{projectsByStatus.all.length}</span>
@@ -154,7 +154,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
               <Button 
                 variant="ghost"
                 className={`${styles.filterTab} ${selectedFilter === 'active' ? styles.active : ''}`}
-                onClick={() = aria-label="Click"> setSelectedFilter('active')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setSelectedFilter('active')}
+                onClick={() => setSelectedFilter('active')} onKeyDown={(e) => e.key === 'Enter' && setSelectedFilter('active')}
               >
                 진행중
                 <span className={styles.count}>{projectsByStatus.active.length}</span>
@@ -162,7 +162,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
               <Button 
                 variant="ghost"
                 className={`${styles.filterTab} ${selectedFilter === 'delayed' ? styles.active : ''}`}
-                onClick={() = aria-label="Click"> setSelectedFilter('delayed')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setSelectedFilter('delayed')}
+                onClick={() => setSelectedFilter('delayed')} onKeyDown={(e) => e.key === 'Enter' && setSelectedFilter('delayed')}
               >
                 지연
                 <span className={`${styles.count} ${styles.delayed}`}>{projectsByStatus.delayed.length}</span>
@@ -171,7 +171,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
             <Button 
               variant="ghost"
               className={`${styles.collapseBtn} ${isCollapsed ? styles.collapsed : ''}`}
-              onClick={() = aria-label="Click"> setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)}
+              onClick={() => setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && setIsCollapsed(!isCollapsed)}
               title={isCollapsed ? '펼치기' : '접기'}
               icon={
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -197,7 +197,7 @@ export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCoun
           <div className={styles.boardHeader}>
             <UnifiedButton 
               className={`${styles.collapseBtn} ${isCollapsed ? styles.collapsed : ''}`}
-              onClick={() = aria-label="Click" type="button"> setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)}
+              onClick={() => setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && setIsCollapsed(!isCollapsed)}
               style={{ marginBottom: '20px' }}
             />
           </div>
@@ -272,7 +272,7 @@ function ProjectPhaseCard({
   return (
     <div className={`${styles.projectCard} ${hasDelayed ? styles.hasDelayed : ''}`} data-expanded={isExpanded}>
       {/* 프로젝트 헤더 */}
-      <div className={styles.projectHeader} onClick={() => toggleProject(project.id)} onKeyDown={(e) => e.key === 'Enter' && () => toggleProject(project.id)}>
+      <div className={styles.projectHeader} onClick={() => toggleProject(project.id)} onKeyDown={(e) => e.key === 'Enter' && toggleProject(project.id)}>
         <div className={styles.projectMainInfo}>
           <div className={styles.projectTitleRow}>
             <h3 className={styles.projectName}>{project.name}</h3>
@@ -361,12 +361,15 @@ function ProjectPhaseCard({
                     {hasData && status !== 'pending' && (
                       <UnifiedButton 
                         className={`${styles.completeBtn} ${phaseData.completed ? styles.completed : ''}`}
-                        onClick={(e) = aria-label="Click" type="button"> {
+                        onClick={(e) => {
                           e.stopPropagation()
                           handlePhaseComplete(phase)
-                        } onKeyDown={(e) => e.key === 'Enter' && (e) = aria-label="Click"> {
-                          e.stopPropagation()
-                          handlePhaseComplete(phase)
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.stopPropagation()
+                            handlePhaseComplete(phase)
+                          }
                         }}
                         title={phaseData.completed ? '완료 취소' : '완료 처리'}
                       >

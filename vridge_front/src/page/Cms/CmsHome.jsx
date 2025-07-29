@@ -258,18 +258,17 @@ export default function CmsHome() {
                     onKeyDown={(e) => e.key === 'Enter' && setShowInvitations(!showInvitations)} />
 
                 </div>
-                {!showInvitations &&
-                <UnifiedCard variant="default">
-
-                    {invitationLoading ?
-                  <div className="loading-state">
+                {!showInvitations && (
+                  <UnifiedCard variant="default">
+                    {invitationLoading ? (
+                      <div className="loading-state">
                         로딩 중...
-                      </div> :
-
-                  <div>
+                      </div>
+                    ) : (
+                      <div>
                         {/* 받은 초대 - 컴팩트 버전 */}
-                        {invitations.received && invitations.received.length > 0 &&
-                    <div>
+                        {invitations.received && invitations.received.length > 0 && (
+                          <div>
                             <h4 style={{
                         fontSize: '14px',
                         fontWeight: '600',
@@ -293,10 +292,10 @@ export default function CmsHome() {
                                 {invitations.received.length}
                               </span>
                             </h4>
-                            {invitations.received.slice(0, 2).map((invitation) =>
-                      <div
-                        key={invitation.id}
-                        className="invitation-item">
+                            {invitations.received.slice(0, 2).map((invitation) => (
+                              <div
+                                key={invitation.id}
+                                className="invitation-item">
 
                                 <div className="invitation-info">
                                   <div className="project-name">
@@ -322,21 +321,21 @@ export default function CmsHome() {
                                   </UnifiedButton>
                                 </div>
                               </div>
-                      )}
+                            ))}
                           </div>
-                    }
+                        )}
                         
                         {/* 받은 초대가 없을 때 */}
-                        {(!invitations.received || invitations.received.length === 0) &&
-                    <div style={{
-                      textAlign: 'center',
-                      padding: '20px',
-                      color: '#6c757d',
-                      fontSize: '14px'
-                    }}>
+                        {(!invitations.received || invitations.received.length === 0) && (
+                          <div style={{
+                            textAlign: 'center',
+                            padding: '20px',
+                            color: '#6c757d',
+                            fontSize: '14px'
+                          }}>
                             받은 초대가 없습니다
                           </div>
-                    }
+                        )}
                         
                         {/* 간단한 통계 */}
                         <div className="invitation-stats">
@@ -348,9 +347,9 @@ export default function CmsHome() {
                           </div>
                         </div>
                       </div>
-                  }
-                  </div>
-                }
+                    )}
+                  </UnifiedCard>
+                )}
               </UnifiedCard>
             </div>
 
@@ -364,11 +363,11 @@ export default function CmsHome() {
                   end_date: end_date,
                   completed: completed || false
                 };
-                UpdateDate(data, projectId).
-                then(() => {
+                UpdateDate(data, projectId)
+                .then(() => {
                   refetchProject(dispatch, navigate);
-                }).
-                catch((err) => {
+                })
+                .catch((err) => {
                   
                   alert('단계 업데이트에 실패했습니다.');
                 });

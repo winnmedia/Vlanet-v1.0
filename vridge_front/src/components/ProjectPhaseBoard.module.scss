@@ -47,7 +47,7 @@
     justify-content: space-between;
     margin-bottom: $spacing-lg;
     padding-bottom: $spacing-md;
-    border-bottom: $spacing-2xs solid $color-vp-gray-light-2;
+    border-bottom: $spacing-2xs solid #e8e8e8;
     
     .phaseBoardTitle {
       font-size: $font-size-2xl;
@@ -260,10 +260,10 @@
   
   .projectCard {
     background: $color-white;
-    border: $spacing-2xs solid $color-vp-gray-light-2;
-    border-radius: $border-radius-xl;
+    border: $spacing-2xs solid #e8e8e8;
+    border-radius: 0.75rem;
     overflow: hidden;
-    transition: $transition-base-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     
     &.hasDelayed {
@@ -384,7 +384,7 @@
           color: $color-gray-600;
           
           &:hover {
-            background: $color-vp-gray-light-2;
+            background: #e8e8e8;
             color: $color-primary;
           }
           
@@ -399,7 +399,7 @@
     .phasesTimeline {
       padding: $spacing-lg;
       background: $color-gray-100;
-      border-top: $spacing-2xs solid $color-vp-gray-light-2;
+      border-top: $spacing-2xs solid #e8e8e8;
       
       .phaseItem {
         display: flex;
@@ -414,7 +414,7 @@
           width: $spacing-lg;
           height: $spacing-lg;
           border-radius: $border-radius-full;
-          background: $color-vp-gray-light-2;
+          background: #e8e8e8;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -438,8 +438,8 @@
           top: $spacing-lg;
           width: $spacing-2xs;
           height: calc(100% + 16px);
-          background: $color-vp-gray-light-2;
-          z-index: $z-index-base;
+          background: #e8e8e8;
+          z-index: 10;
         }
         
         &.completed {
@@ -460,7 +460,7 @@
           }
           
           .phaseLine {
-            background: linear-gradient(to bottom, $color-primary 0%, $color-vp-gray-light-2 100%);
+            background: linear-gradient(to bottom, $color-primary 0%, #e8e8e8 100%);
           }
         }
         
@@ -568,7 +568,7 @@
       
       li {
         background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%) ;
-        border-radius: $border-radius-xl ;
+        border-radius: 0.75rem ;
         display: flex ;
         flex-direction: column ;
         justify-content: center ;

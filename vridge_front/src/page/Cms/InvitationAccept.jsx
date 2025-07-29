@@ -251,7 +251,9 @@ export default function InvitationAccept() {
           <div style={{ fontSize: '48px', marginBottom: '20px', color: '#dc3545' }}>!</div>
           <h2 style={{ color: '#dc3545', marginBottom: '16px' }}>초대 확인 실패</h2>
           <p style={{ color: '#666', marginBottom: '30px' }}>{error}</p>
-          <UnifiedButton onClick={() = aria-label="Click"> navigate('/')}
+          <UnifiedButton 
+            aria-label="Click"
+            onClick={() => navigate('/')}
           style={{
             background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
             color: 'white',
@@ -391,7 +393,9 @@ export default function InvitationAccept() {
           gap: '16px',
           justifyContent: 'center'
         }}>
-          <UnifiedButton onClick={() = aria-label="Click"> handleResponse('decline')}
+          <UnifiedButton 
+            aria-label="Click"
+            onClick={() => handleResponse('decline')}
           disabled={processing}
           style={{
             background: 'white',
@@ -421,7 +425,7 @@ export default function InvitationAccept() {
             {processing ? '처리 중...' : '거절하기'}
           </UnifiedButton>
           
-          <UnifiedButton onClick={() = aria-label="Click"> handleResponse('accept')}
+          <UnifiedButton onClick={() => handleResponse('accept')}
           disabled={processing}
           style={{
             background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
@@ -615,7 +619,7 @@ export default function InvitationAccept() {
                 type="text"
                 placeholder="이름을 입력해주세요"
                 value={guestName}
-                onChange={(e) = aria-label="이름을 입력해주세요"> setGuestName(e.target.value)}
+                onChange={(e) => setGuestName(e.target.value)}
                 style={{
                   width: '100%',
                   marginBottom: '12px'
@@ -646,7 +650,7 @@ export default function InvitationAccept() {
               </div>
             </div>
 
-            <UnifiedButton onClick={() = aria-label="Click"> setShowGuestOptions(false)}
+            <UnifiedButton onClick={() => setShowGuestOptions(false)}
           style={{
             width: '100%',
             padding: '12px',

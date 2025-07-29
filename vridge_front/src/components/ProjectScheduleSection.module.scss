@@ -1,4 +1,11 @@
-@import '../styles/design-tokens';
+// Design tokens import
+@import '../styles/_variables';
+
+// Additional colors
+$color-vp-yellow-bg-1: #FFF8E1;
+$color-vp-yellow-border: #FFD93D;
+$color-vp-blue-bg-3: #E3F2FD;
+$color-vp-blue-border: #1976D2;
 
 // Project Schedule Section Styles
 .project-schedule-section {
@@ -34,9 +41,9 @@
       
       .view-btn {
         padding: $spacing-sm $spacing-md;
-        border: $spacing-2xs solid $color-vp-gray-light-2;
+        border: $spacing-2xs solid #e8e8e8;
         background: $color-white;
-        border-radius: $border-radius-md;
+        border-radius: 0.375rem;
         font-size: $font-size-sm;
         color: $color-gray-600;
         cursor: pointer;
@@ -214,7 +221,7 @@
         transition: $transition-base;
         
         &:hover {
-          background: $color-vp-gray-light-2;
+          background: #e8e8e8;
           transform: translateX($spacing-xs);
         }
         
@@ -230,11 +237,11 @@
         
         .deadline-date {
           background: $color-white;
-          border-radius: $border-radius-md;
+          border-radius: 0.375rem;
           padding: $spacing-sm + $spacing-2xs;
           text-align: center;
           min-width: $spacing-4xl - $spacing-xs;
-          border: $spacing-2xs solid $color-vp-gray-light-2;
+          border: $spacing-2xs solid #e8e8e8;
           
           .date-day {
             font-size: $font-size-xl;

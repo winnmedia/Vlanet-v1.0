@@ -278,10 +278,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                 e.stopPropagation();
                 SetSubMenu(false);
               }}
-              onKeyDown={(e) => e.key === 'Enter' && (() => {
-                e.stopPropagation();
-                SetSubMenu(false);
-              })()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.stopPropagation();
+                  SetSubMenu(false);
+                }
+              }}
               className={styles.close}>
 
               x
@@ -298,15 +300,6 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
 
                 // 프로젝트 ID 유효성 검사
                 if (!item.id) {
-                  
-                  return;
-                }}
-              onKeyDown={(e) => e.key === 'Enter' && (() => {
-                e.stopPropagation();
-
-                // 프로젝트 ID 유효성 검사
-                if (!item.id) {
-                  
                   return;
                 }
 
@@ -316,8 +309,25 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                   // Navigating to feedback
                   navigate(`/feedback/${item.id}`);
                 }
-                SetSubMenu(false);
-              })()}
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.stopPropagation();
+
+                  // 프로젝트 ID 유효성 검사
+                  if (!item.id) {
+                    return;
+                  }
+
+                  if (tab_name === 'project') {
+                    navigate(`/project/${item.id}`);
+                  } else {
+                    // Navigating to feedback
+                    navigate(`/feedback/${item.id}`);
+                  }
+                  SetSubMenu(false);
+                }
+              }}
               key={index}>
 
                 {item.name}
@@ -330,13 +340,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
         <div className="empty">
             등록된 <br />
             프로젝트가 없습니다
-            <UnifiedButton
+            <Button
             onClick={() => navigate('/ProjectCreate')} 
-            onKeyDown={(e) => e.key === 'Enter' && navigate('/ProjectCreate')}
             variant="primary">
 
               프로젝트 등록
-            </UnifiedButton>
+            </Button>
           </div>
         }
       </div>

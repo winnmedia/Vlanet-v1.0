@@ -1,0 +1,83 @@
+// Global responsive styles
+// These media queries should be in a global CSS file, not in _variables.scss
+
+@media (max-width: 1024px) {
+  :global(.container) {
+    padding: var(--spacing-lg);
+  }
+  
+  :global(.grid) {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  :global(.container) {
+    padding: var(--spacing-md);
+  }
+  
+  :global(.grid) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  :global(.flex-row) {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  :global(.sidebar) {
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  :global(.sidebar.open) {
+    transform: translateX(0);
+  }
+  
+  :global(.hide-mobile) {
+    display: none;
+  }
+  
+  :global(.show-mobile) {
+    display: block;
+  }
+  
+  :global(table) {
+    font-size: var(--font-size-sm);
+  }
+  
+  :global(.button) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  :global(.container) {
+    padding: var(--spacing-sm);
+  }
+  
+  :global(.title) {
+    font-size: var(--font-size-xl);
+  }
+  
+  :global(.subtitle) {
+    font-size: var(--font-size-md);
+  }
+  
+  :global(.card) {
+    padding: var(--spacing-sm);
+  }
+  
+  :global(.modal) {
+    margin: var(--spacing-sm);
+    max-height: calc(100vh - var(--spacing-lg));
+  }
+  
+  :global(input),
+  :global(select),
+  :global(textarea) {
+    font-size: 16px;
+  }
+}

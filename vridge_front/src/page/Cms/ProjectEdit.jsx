@@ -223,32 +223,24 @@ export default function ProjectEdit() {
                   <div className="s_title">파일 등록</div>
                   <ul className="sample">
                     {current_project.files.map((item, index) =>
-                  <li key={index} onClick={() => download(item.files)} onKeyDown={(e) => e.key === 'Enter' && () => download(item.files)}>
+                      <li key={index} onClick={() => download(item.files)} onKeyDown={(e) => e.key === 'Enter' && download(item.files)}>
                         {filename(item.file_name)}
-                        <UnifiedButton onClick={(e) = aria-label="Click"> {
+                        <UnifiedButton onClick={(e) => {
                       e.stopPropagation();
                       if (window.confirm('삭제하시겠습니까?')) {
                         FileDeleteAPI(item.id).
                         then((res) => {
-                          GetProject(project_id).
-                          then((res) => {
+                          GetProject(project_id)
+                          .then((res) => {
                             set_current_project(res.data.result);
-                          } onKeyDown={(e) => e.key === 'Enter' && (e) = aria-label="Click"> {
-                      e.stopPropagation();
-                      if (window.confirm('삭제하시겠습니까?')) {
-                        FileDeleteAPI(item.id).
-                        then((res) => {
-                          GetProject(project_id).
-                          then((res) => {
-                            set_current_project(res.data.result);
-                          }).
-                          catch((err) => {
+                          })
+                          .catch((err) => {
                             if (err.response && err.response.data) {
                               window.alert(err.response.data.message);
                             }
                           });
-                        }).
-                        catch((err) => {
+                        })
+                        .catch((err) => {
                           if (err.response && err.response.data) {
                             window.alert(err.response.data.message);
                           }
@@ -263,7 +255,7 @@ export default function ProjectEdit() {
                     {files.map((file, index) =>
                   <li key={index}>
                         {file.name}
-                        <UnifiedButton onClick={() = aria-label="Click"> FileDelete(index)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> FileDelete(index)}>삭제</UnifiedButton>
+                        <UnifiedButton onClick={() => FileDelete(index)} onKeyDown={(e) => e.key === 'Enter' && FileDelete(index)}>삭제</UnifiedButton>
                       </li>
                   )}
                     <li className="upload_button">

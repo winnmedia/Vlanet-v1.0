@@ -1,3 +1,4 @@
+// Import design tokens for variables
 @import '../styles/design-tokens';
 @import '../styles/mobile-mixins';
 
@@ -210,7 +211,7 @@
         position: relative;
         overflow: hidden;
         line-height: $spacing-2xl;
-        text-align: Center;
+        text-align: center;
         font-size: $font-size-base;
         color: $color-white;
         
@@ -343,9 +344,7 @@
     display: block;
   }
   
-  table {
-    font-size: var(--font-size-sm);
-  }
+  // Table styles should be in global.scss or use class names
   
   .button {
     width: 100%;
@@ -375,7 +374,5 @@
     max-height: calc(100vh - var(--spacing-lg));
   }
   
-  input, select, textarea {
-    font-size: 16px; /* Prevent zoom on iOS */
-  }
+  // Input styles should be in global.scss or use class names
 }

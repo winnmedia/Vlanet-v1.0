@@ -130,23 +130,22 @@ export default function ProjectDashboard({ projects }) {
     }
   };
 
-  const renderCardView = () =>
-  <ProjectCard>
-
-      {filteredProjects.map((project) =>
+  const renderCardView = () => (
+    <div className="project-cards">
+      {filteredProjects.map((project) => (
     <UnifiedCard key={project.id}
       variant="interactive" hoverable clickable className={`project-card ${project.status}`}
       clickable
       hoverable
-      onClick={() => navigate(`/ProjectView/${project.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${project.id}`)}>
+      onClick={() => navigate(`/ProjectView/${project.id}`)}
+      onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${project.id}`)}>
 
           <div className="card-header">
             <h3 style={{ borderLeft: `4px solid ${project.color}`, paddingLeft: '12px' }}>
               {project.name}
             </h3>
             {getStatusTag(project.status)}
-          
-</ProjectCard>
+          </div>
           
           <div className="card-body">
             <div className="progress-section">
@@ -193,8 +192,9 @@ export default function ProjectDashboard({ projects }) {
             </div>
           </div>
         </UnifiedCard>
-    )}
-    </div>;
+      ))}
+    </div>
+  );
 
 
   const renderListView = () =>
@@ -215,7 +215,8 @@ export default function ProjectDashboard({ projects }) {
           {filteredProjects.map((project) =>
         <tr
           key={project.id}
-          onClick={() => navigate(`/ProjectView/${project.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${project.id}`)}
+          onClick={() => navigate(`/ProjectView/${project.id}`)}
+          onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${project.id}`)}
           className={project.status}>
 
               <td>
@@ -286,7 +287,8 @@ export default function ProjectDashboard({ projects }) {
             <div
               key={project.id}
               variant="interactive" hoverable clickable className={`kanban-card ${project.status}`}
-              onClick={() => navigate(`/ProjectView/${project.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${project.id}`)}
+              onClick={() => navigate(`/ProjectView/${project.id}`)}
+              onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${project.id}`)}
               style={{ borderTop: `3px solid ${project.color}` }}>
 
                   <h4>{project.name}</h4>
@@ -362,19 +364,19 @@ export default function ProjectDashboard({ projects }) {
         <div className="view-controls">
           <UnifiedButton
             variant={viewMode === 'card' ? 'primary' : 'ghost'}
-            onClick={() = aria-label="Click"> setViewMode('card')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('card')}>
+            onClick={() => setViewMode('card')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('card')}>
 
             카드
           </UnifiedButton>
           <UnifiedButton
             variant={viewMode === 'list' ? 'primary' : 'ghost'}
-            onClick={() = aria-label="Click"> setViewMode('list')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('list')}>
+            onClick={() => setViewMode('list')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('list')}>
 
             리스트
           </UnifiedButton>
           <UnifiedButton
             variant={viewMode === 'kanban' ? 'primary' : 'ghost'}
-            onClick={() = aria-label="Click"> setViewMode('kanban')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('kanban')}>
+            onClick={() => setViewMode('kanban')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('kanban')}>
 
             칸반
           </UnifiedButton>

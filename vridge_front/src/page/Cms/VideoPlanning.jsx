@@ -2784,10 +2784,12 @@ export default function VideoPlanning() {
                   e.preventDefault()
                   e.stopPropagation()
                   goToStep(1)
-                } onKeyDown={(e) => e.key === 'Enter' && (e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  goToStep(1)
+                }} onKeyDown={(e) => { 
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    goToStep(1)
+                  }
                 }}
                 style={{ cursor: 'pointer' }}
               >
@@ -2803,7 +2805,7 @@ export default function VideoPlanning() {
                     setError('먼저 스토리를 생성해주세요.')
                     setTimeout(() => setError(null), 3000)
                     return
-                  } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   e.preventDefault()
                   e.stopPropagation()
                   if (planningData.stories.length === 0) {
@@ -2826,7 +2828,7 @@ export default function VideoPlanning() {
                   if (planningData.scenes.length === 0) {
                     if (planningData.stories.length === 0) {
                       setError('먼저 기획안과 스토리를 생성해주세요.')
-                    } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+                    } onKeyDown={(e) => { if (e.key === 'Enter') {
                   e.preventDefault()
                   e.stopPropagation()
                   if (planningData.scenes.length === 0) {
@@ -2887,7 +2889,7 @@ export default function VideoPlanning() {
                           setExpandedSections(prev => ({
                             ...prev,
                             planning: !prev.planning
-                          } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+                          } onKeyDown={(e) => { if (e.key === 'Enter') {
                           e.preventDefault()
                           e.stopPropagation()
                           setExpandedSections(prev => ({
@@ -2912,7 +2914,7 @@ export default function VideoPlanning() {
                           setExpandedSections(prev => ({
                             ...prev,
                             stories: !prev.stories
-                          } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+                          } onKeyDown={(e) => { if (e.key === 'Enter') {
                           e.stopPropagation();
                           setExpandedSections(prev => ({
                             ...prev,
@@ -3014,7 +3016,7 @@ export default function VideoPlanning() {
                           setExpandedSections(prev => ({
                             ...prev,
                             scenes: !prev.scenes
-                          } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+                          } onKeyDown={(e) => { if (e.key === 'Enter') {
                           e.preventDefault()
                           e.stopPropagation()
                           setExpandedSections(prev => ({

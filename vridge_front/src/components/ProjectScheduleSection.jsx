@@ -128,7 +128,7 @@ export default function ProjectScheduleSection({ projects }) {
             variant={viewMode === 'week' ? 'primary' : 'ghost'}
             size="sm"
             className={styles['view-btn']}
-            onClick={() = aria-label="Click"> setViewMode('week')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('week')}>
+            onClick={() => setViewMode('week')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('week')}>
 
             주간
           </UnifiedButton>
@@ -136,7 +136,7 @@ export default function ProjectScheduleSection({ projects }) {
             variant={viewMode === 'month' ? 'primary' : 'ghost'}
             size="sm"
             className={styles['view-btn']}
-            onClick={() = aria-label="Click"> setViewMode('month')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('month')}>
+            onClick={() => setViewMode('month')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('month')}>
 
             월간
           </UnifiedButton>

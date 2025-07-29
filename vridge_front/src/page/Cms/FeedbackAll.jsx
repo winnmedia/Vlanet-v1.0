@@ -111,7 +111,10 @@ export default function FeedbackAll() {
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ marginBottom: '20px', color: '#dc3545', fontSize: '18px' }}>프로젝트를 찾을 수 없습니다</div>
                   <p style={{ marginBottom: '20px' }}>유효한 프로젝트 ID가 필요합니다.</p>
-                  <UnifiedButton onClick={() = aria-label="Click"> navigate('/CmsHome')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate('/CmsHome')}
+                  <UnifiedButton 
+                    aria-label="Click"
+                    onClick={() => navigate('/CmsHome')} 
+                    onKeyDown={(e) => e.key === 'Enter' && navigate('/CmsHome')}
                   style={{
                     padding: '10px 20px',
                     background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
@@ -160,8 +163,11 @@ export default function FeedbackAll() {
           <div className="content feedbackall">
             <div className="title">
               <span
-                onClick={() => navigate(`/Feedback/${projectId} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/Feedback/${projectId}`)}
-                style={{ cursor: 'pointer', marginRight: '10px' }}>
+                onClick={() => navigate(`/Feedback/${projectId}`)}
+                onKeyDown={(e) => e.key === 'Enter' && navigate(`/Feedback/${projectId}`)}
+                style={{ cursor: 'pointer', marginRight: '10px' }}
+                role="button"
+                tabIndex={0}>
 
                 ← 뒤로가기
               </span>

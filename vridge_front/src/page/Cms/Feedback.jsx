@@ -686,23 +686,21 @@ export default function Feedback() {
                       </span>
                       {invitation.status === 'pending' && (
                         <>
-                          <Button onClick={async () = aria-label="Click"> {
+                          <Button 
+                            aria-label="Click"
+                            onClick={async () => {
                               try {
                                 await InviteProjectMember(project_id, {
                                   email: invitation.invitee_email,
                                   resend: true
-                                } onKeyDown={(e) => e.key === 'Enter' && async () = aria-label="Click"> {
-                              try {
-                                await InviteProjectMember(project_id, {
-                                  email: invitation.invitee_email,
-                                  resend: true
-                                })
-                                alert('초대를 재전송했습니다.')
-                                loadProjectInvitations()
+                                });
+                                message.success('초대장을 다시 보냈습니다.');
+                                loadInvitationList();
                               } catch (error) {
-                                alert(error.response?.data?.message || '재전송 중 오류가 발생했습니다.')
+                                message.error('초대장 재발송에 실패했습니다.');
                               }
                             }}
+                            onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
                             style={{
                               background: 'none',
                               border: '1px solid #ffc107',
@@ -725,7 +723,10 @@ export default function Feedback() {
                           >
                             재전송
                           </Button>
-                          <Button onClick={() = aria-label="Click"> handleCancelInvitation(invitation.id)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleCancelInvitation(invitation.id)}
+                          <Button 
+                            aria-label="Click"
+                            onClick={() => handleCancelInvitation(invitation.id)} 
+                            onKeyDown={(e) => e.key === 'Enter' && handleCancelInvitation(invitation.id)}
                             style={{
                               background: 'none',
                               border: '1px solid #dc3545',
@@ -751,12 +752,7 @@ export default function Feedback() {
                         </>
                       )}
                       {(invitation.status === 'cancelled' || invitation.status === 'declined') && (
-                        <Button onClick={async () = aria-label="Click"> {
-                            try {
-                              await InviteProjectMember(project_id, {
-                                email: invitation.invitee_email,
-                                resend: true
-                              } onKeyDown={(e) => e.key === 'Enter' && async () = aria-label="Click"> {
+                        <Button onClick={async () => {
                             try {
                               await InviteProjectMember(project_id, {
                                 email: invitation.invitee_email,
@@ -862,7 +858,6 @@ export default function Feedback() {
       const onUploadProgress = (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
         setUploadProgress(percentCompleted)
-        .toISOString())
         
         // 진행률이 멈춘 경우 감지
         if (percentCompleted > 0 && percentCompleted < 100) {
@@ -1113,11 +1108,14 @@ export default function Feedback() {
                           // 비디오 URL 유효성 검사를 위한 테스트 요청
                           fetch(fileUrl, { method: 'HEAD' })
                             .then(response => {
-                              ,
+                              console.log('Video URL is valid', {
+                                status: response.status,
                                 contentLength: response.headers.get('content-length')
                               });
                             })
-                            .catch(error => {});
+                            .catch(error => {
+                              console.error('Video URL check failed:', error);
+                            });
                           
                           // URL이 이미 인코딩되어 있는지 확인하고 필요시 디코딩
                           try {
@@ -1193,7 +1191,7 @@ export default function Feedback() {
                             name="files"
                             id="video-center-upload"
                             className={styles.visuallyHidden}
-                           / aria-label="files">
+                           />
                           <label 
                             htmlFor="video-center-upload" 
                             className="feedback-upload-label"
@@ -1281,7 +1279,7 @@ export default function Feedback() {
                     {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <UnifiedButton
-                      onClick={() = aria-label="Click" type="button"> {
+                      onClick={() => {
                         try {
                           if (videoPlayerRef.current) {
 
@@ -1293,25 +1291,8 @@ export default function Feedback() {
 
                             // 비디오 일시정지
                             if (videoPlayerRef.current.pause && typeof videoPlayerRef.current.pause === 'function') {
-                              
                               const pauseResult = videoPlayerRef.current.pause();
-                              
-                            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
-                        try {
-                          if (videoPlayerRef.current) {
-
-                            // 플레이어 준비 상태 확인
-                            const isPlayerReady = videoPlayerRef.current.isReady && videoPlayerRef.current.isReady();
-
-                            // 현재 시간 가져오기
-                            const currentTime = videoPlayerRef.current.getCurrentTime ? videoPlayerRef.current.getCurrentTime() : 0;
-
-                            // 비디오 일시정지
-                            if (videoPlayerRef.current.pause && typeof videoPlayerRef.current.pause === 'function') {
-                              
-                              const pauseResult = videoPlayerRef.current.pause();
-                              
-                            } else {}
+                            }
                             
                             // 시간 포맷팅
                             const minutes = Math.floor(currentTime / 60);
@@ -1348,7 +1329,7 @@ export default function Feedback() {
                         name="files"
                         id="video-replace-button"
                         className={styles.visuallyHidden}
-                       / aria-label="files">
+                       />
                       <label 
                         htmlFor="video-replace-button" 
                         className={styles.feedbackButtonIconOnly}
@@ -1370,7 +1351,8 @@ export default function Feedback() {
                     {/* 영상 삭제 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <UnifiedButton
-                        onClick={DeleteFile} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && DeleteFile}
+                        onClick={DeleteFile} 
+                        onKeyDown={(e) => e.key === 'Enter' && DeleteFile()}
                         className={styles.feedbackButtonIconOnly}
                         aria-label="영상 삭제"
                         title="영상 삭제"
@@ -1384,7 +1366,8 @@ export default function Feedback() {
                     {/* 공유 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <UnifiedButton
-                        onClick={() = aria-label="Click" type="button"> CopyFileUrl(current_project.files)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> CopyFileUrl(current_project.files)}
+                        onClick={() => CopyFileUrl(current_project.files)} 
+                        onKeyDown={(e) => e.key === 'Enter' && CopyFileUrl(current_project.files)}
                         className={styles.feedbackButtonIconOnly}
                         aria-label="영상 링크 공유"
                         title="링크 복사"
@@ -1398,7 +1381,7 @@ export default function Feedback() {
                     {/* 스크린샷 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <UnifiedButton
-                        onClick={() = aria-label="Click" type="button"> {
+                        onClick={() => {
                           if (videoPlayerRef.current) {
                             // 비디오 일시정지
                             videoPlayerRef.current.pause();
@@ -1906,7 +1889,7 @@ export default function Feedback() {
             maxHeight: '80vh',
             overflowY: 'auto',
             boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)'
-          }} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}>
+          }} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation(); }}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',

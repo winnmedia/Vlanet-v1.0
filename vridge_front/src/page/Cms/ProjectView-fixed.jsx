@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import UnifiedCard from '../../components/unified/UnifiedCard';
-import UnifiedModal from '../components/unified/UnifiedModal';
+import UnifiedModal from '../../components/unified/UnifiedModal';
 import dynamic from 'next/dynamic';
 import { UnifiedButton } from '../../components/unified/UnifiedButton';
+import { Button } from '../../components/unified/Button';
 
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
@@ -22,6 +23,17 @@ import 'moment/locale/ko'
 import down from '../../images/Cms/down_icon.svg'
 import { UpdateDate } from '../../api/project'
 import InviteInput from '../../tasks/Project/InviteInput'
+
+// Dynamic imports
+const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
+
+const ProjectPhaseBoard = dynamic(() => import('../../components/ProjectPhaseBoard'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
 
 export default function ProjectView() {
   const router = useRouter()
@@ -117,15 +129,6 @@ export default function ProjectView() {
         --pre_year
         pre_month = 11
       }
-import { Button } from '../../components/unified/Button'
-const ProjectPhaseBoard = dynamic(() => import('../../components/ProjectPhaseBoard'), {
-  loading: () => <div>Loading...</UnifiedCard>,
-  ssr: false
-});
-const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced'), {
-  loading: () => <div>Loading...</UnifiedCard>,
-  ssr: false
-});
       for (let i = 0; i < PVLastDay + 1; i++) {
         PVLD.unshift(new Date(pre_year, pre_month, PVLastDate - i))
       }
@@ -195,7 +198,7 @@ const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced
           <main className="project" role="main">
             {/* 글로벌 로딩이 표시되므로 여기서는 빈 컨테이너만 */}
           </main>
-        </UnifiedCard>
+        </div>
       </PageTemplate>
     )
   }
@@ -221,7 +224,8 @@ const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced
                     개별 일정표
                     <UnifiedButton 
                       className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
-                      onClick={() = aria-label="Click" type="button"> setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)}
+                      onClick={() => setIsCollapsed(!isCollapsed)} 
+                      onKeyDown={(e) => e.key === 'Enter' && setIsCollapsed(!isCollapsed)}
                     />
                     
                     <div style={{ marginLeft: '20px', display: 'flex', gap: '6px' }}>

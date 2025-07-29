@@ -1,5 +1,73 @@
 # VideoPlanet 개발 기록 (MEMORY.md)
 
+## 프로젝트 구조
+
+```
+VideoPlanet/
+├── vridge_front/                 # 프론트엔드 (Next.js)
+│   ├── components/              # React 컴포넌트
+│   │   ├── unified/            # 통합 UI 컴포넌트
+│   │   │   ├── UnifiedButton.jsx
+│   │   │   ├── UnifiedInput.jsx
+│   │   │   ├── UnifiedCard.jsx
+│   │   │   └── UnifiedModal.jsx
+│   │   ├── minimal/            # 미니멀 디자인 컴포넌트
+│   │   └── ui/                 # 기본 UI 컴포넌트
+│   ├── pages/                   # Next.js 페이지
+│   │   ├── _app.js
+│   │   ├── index.js
+│   │   └── style-comparison.disabled/
+│   ├── src/
+│   │   ├── page/               # 페이지 컴포넌트
+│   │   │   ├── Cms/           # CMS 관련 페이지
+│   │   │   ├── User/          # 사용자 관련 페이지
+│   │   │   └── Admin/         # 관리자 페이지
+│   │   ├── components/         # 공통 컴포넌트
+│   │   ├── tasks/              # 기능별 컴포넌트
+│   │   ├── styles/             # 글로벌 스타일
+│   │   │   ├── design-system.scss
+│   │   │   ├── _design-tokens.scss
+│   │   │   ├── _variables.scss
+│   │   │   └── global.scss
+│   │   └── design-system/      # 디자인 시스템
+│   │       └── tokens/
+│   ├── scripts/                 # 자동화 스크립트
+│   │   ├── migration/          # 마이그레이션 도구
+│   │   └── analysis/           # 분석 도구
+│   ├── tests/                   # 테스트 파일
+│   ├── public/                  # 정적 파일
+│   ├── package.json
+│   ├── next.config.js
+│   ├── MEMORY.md               # 프로젝트 기록
+│   └── .vercelignore           # Vercel 배포 제외 파일
+│
+└── vridge_back/                 # 백엔드 (Django)
+    ├── config/                  # Django 설정
+    ├── projects/                # 프로젝트 앱
+    ├── users/                   # 사용자 앱
+    ├── feedbacks/               # 피드백 앱
+    ├── video_planning/          # 영상기획 앱
+    ├── manage.py
+    └── requirements.txt
+```
+
+## 기술 스택
+- **프론트엔드**: React 18.3.1, Next.js 15.4.2
+- **스타일링**: SCSS, CSS Modules
+- **상태관리**: Redux, Zustand
+- **UI 라이브러리**: Ant Design 5.26.6
+- **비디오**: Video.js 8.23.3, Vidstack
+- **테스팅**: Jest, React Testing Library, Playwright
+- **빌드/배포**: Vercel
+- **백엔드**: Django 4.x (Railway 배포)
+- **데이터베이스**: PostgreSQL
+- **캐시**: Redis
+
+## 주요 URL
+- **프로덕션**: https://vlanet-v10.vercel.app
+- **GitHub**: https://github.com/winnmedia/Vlanet-v1.0
+- **API**: Railway 배포 Django 서버
+
 ## 개발 히스토리 요약
 
 ### 2025년 1월 24일 - UI/UX 개선 작업
@@ -517,3 +585,59 @@ vridge_front/
 - 접근성 100% 달성
 - 코드 스플리팅 최적화
 - 반응형 디자인 개선
+
+---
+
+### 세션 34: Vercel 배포 오류 수정
+
+**날짜**: 2025년 1월 29일
+**문제**: Vercel 빌드 실패 - SCSS 및 JSX 문법 오류
+
+#### 주요 문제 및 해결
+
+1. **Husky 설치 오류**
+   - 문제: CI 환경에서 husky 명령어를 찾을 수 없음
+   - 해결: package.json의 prepare 스크립트를 조건부로 실행하도록 수정
+   ```json
+   "prepare": "node -e \"if (process.env.NODE_ENV !== 'production' && !process.env.CI) { require('child_process').execSync('husky install', {stdio: 'inherit'}); }\""
+   ```
+
+2. **SCSS 변수 및 문법 오류**
+   - **UnifiedButton.jsx, UnifiedCard.jsx, UnifiedInput.jsx**:
+     - 순환 참조 제거 (자기 자신을 import하는 문제)
+     - JSX 문법 오류 수정 (잘못된 속성 및 태그)
+   - **FeedbackButtonStyles**: 
+     - 누락된 SCSS 변수 추가 ($success-color, $warning-color, $line-height-base)
+   - **mobile-mixins**: 
+     - 계산식 오류 수정 (하드코딩된 값 사용)
+   - **design-system/tokens/_colors.scss**:
+     - 순환 참조 제거
+     - 모든 변수를 명확히 정의
+
+3. **CSS Modules :root 선택자 오류**
+   - 문제: CSS Modules는 순수 선택자만 허용하여 :root 사용 불가
+   - 해결:
+     - design-tokens.scss에서 :root 선택자 제거
+     - 모든 module.scss 파일에서 전역 미디어 쿼리 제거
+     - CSS 변수는 global.scss에서 정의하도록 변경
+
+4. **FeedbackButtonStyles 구조 오류**
+   - 문제: 중괄호 불일치 및 잘못된 구조
+   - 해결:
+     - 누락된 부모 선택자 추가 (.video-player-container)
+     - 중괄호 매칭 수정
+     - 정의되지 않은 변수 및 믹스인 제거
+
+#### 기술적 성과
+- 모든 Vercel 빌드 오류 해결
+- CSS Modules 규칙 준수
+- SCSS 변수 일관성 확보
+- JSX 문법 오류 제거
+
+#### 버전 업데이트
+- 2.0.0 → 2.1.0
+- 여러 차례 커밋으로 점진적 수정
+
+#### 배포 상태
+- Vercel 자동 배포 진행 중
+- 빌드 오류 해결로 성공적인 배포 예상

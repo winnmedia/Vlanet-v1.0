@@ -76,8 +76,9 @@ export default function AdminRedirect() {
             
             <UnifiedButton
               size="large"
-              onClick={handleGoToDashboard} onKeyDown={(e) => e.key === 'Enter' && handleGoToDashboard}
-              icon={<DashboardOutlined / aria-label="Click">}
+              onClick={handleGoToDashboard} 
+              onKeyDown={(e) => e.key === 'Enter' && handleGoToDashboard}
+              icon={<DashboardOutlined />}
               block>
 
               프론트엔드 대시보드로 이동

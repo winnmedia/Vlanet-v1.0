@@ -311,7 +311,11 @@ export default function AdminDashboard() {
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <a onClick={() => navigate(`/ProjectView/${record.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${record.id}`)}>
+        <a 
+          onClick={() => navigate(`/ProjectView/${record.id}`)} 
+          onKeyDown={(e) => e.key === 'Enter' && navigate(`/ProjectView/${record.id}`)}
+          role="link"
+          tabIndex={0}>
           <Tag color={record.color}>{text}</Tag>
         </a>
       )

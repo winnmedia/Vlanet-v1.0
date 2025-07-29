@@ -282,8 +282,10 @@ export const InfoModal = ({
       footer={
         <UnifiedButton
           className={classNames(styles.button, styles.okButton)}
-          onClick={onClose} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && onClose}
-         aria-label="Click">
+          onClick={onClose} 
+          onKeyDown={(e) => e.key === 'Enter' && onClose}
+          type="button" 
+          aria-label="확인">
           확인
         </UnifiedButton>
       }

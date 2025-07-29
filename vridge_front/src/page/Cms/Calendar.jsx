@@ -377,7 +377,7 @@ export default function Calendar() {
                   type="text"
                   placeholder="프로젝트 검색..."
                   value={searchTerm}
-                  onChange={(e) = aria-label="프로젝트 검색..."> setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   style={{
                     padding: '6px 12px',
                     fontSize: '13px',

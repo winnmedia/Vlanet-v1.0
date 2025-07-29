@@ -593,7 +593,7 @@ export default function AdminDashboard() {
                                   </span>
                                 }
                               />
-                            </UnifiedCard>
+                            </Card>
                           </Col>
                           <Col xs={24} sm={12} lg={6}>
                             <Card>

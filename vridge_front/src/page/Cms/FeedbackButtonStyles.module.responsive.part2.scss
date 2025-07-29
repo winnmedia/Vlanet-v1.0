@@ -726,7 +726,7 @@
     
     button {
       flex: 1 1 45%;
-      min-width: 120;
+      min-width: 120px;
       font-size: $font-size-sm;
       padding: $spacing-xs $spacing-sm;
     }
@@ -745,8 +745,7 @@
   
   .feedbackList {
     padding: $spacing-xs;
-  }
-  
+    
     .feedbackItem {
       padding: $spacing-sm;
       font-size: $font-size-sm;

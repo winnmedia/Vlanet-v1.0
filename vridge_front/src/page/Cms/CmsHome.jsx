@@ -214,8 +214,7 @@ export default function CmsHome() {
                             <div className="project-info">
                               <div className="project-name">
                                 {feedback.projectName}
-                              
-</ProjectCard>
+                              </div>
                             </div>
                             <div className="feedback-content">
                               <div className="feedback-author">

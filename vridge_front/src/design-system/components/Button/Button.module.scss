@@ -123,7 +123,7 @@
   &:hover:not(:disabled) {
     background: $color-gray-50;
     border-color: $color-primary;
-    box-shadow: $shadow-default;
+    box-shadow: $shadow-sm;
   }
   
   &:active:not(:disabled) {
@@ -327,9 +327,7 @@
     display: block;
   }
   
-  table {
-    font-size: var(--font-size-sm);
-  }
+  /* Remove global table style as it's not allowed in CSS modules */
   
   .button {
     width: 100%;
@@ -359,7 +357,5 @@
     max-height: calc(100vh - var(--spacing-lg));
   }
   
-  input, select, textarea {
-    font-size: $spacing-md; /* Prevent zoom on iOS */
-  }
+  /* Remove global selectors - not allowed in CSS modules */
 }

@@ -28,11 +28,11 @@
   flex: 1;
   font-family: inherit;
   font-size: $font-size-base;
-  line-height: $line-height-base;
+  line-height: $line-height-normal;
   color: $color-text-primary;
-  background-color: $color-bg-primary;
+  background-color: $color-white;
   border: $spacing-2xs solid $color-border;
-  border-radius: $border-radius-base;
+  border-radius: $border-radius-md;
   transition: $transition-base;
   
   &:focus {
@@ -61,7 +61,7 @@
     border-color: transparent;
     
     &:focus {
-      background-color: $color-bg-primary;
+      background-color: $color-white;
       border-color: $color-primary;
     }
   }

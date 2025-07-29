@@ -8,7 +8,22 @@ export default function LoginIntro() {
     <div className="LoginIntro">
       <div className="intro_wrap">
         <h1 className="logo">
-          <img onClick={() = alt="image" loading="lazy"> navigate('/')} onKeyDown={(e) => e.key === 'Enter' && () = alt="image"> navigate('/')} src={w_logo.src || w_logo} />
+          <button
+            onClick={() => navigate('/')}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer',
+              padding: 0
+            }}
+            aria-label="홈으로 이동"
+          >
+            <img 
+              src={w_logo.src || w_logo} 
+              alt="VideoPlanet 로고" 
+              loading="lazy" 
+            />
+          </button>
         </h1>
         <div className="slogun">
           당신의 창의력에

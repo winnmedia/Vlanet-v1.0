@@ -160,7 +160,8 @@ const Header = memo(function Header({
         <div className={styles['notification-wrapper']} ref={notificationRef}>
           <div 
             className={styles['notification-icon']} 
-            onClick={() => setShowNotifications(!showNotifications)} onKeyDown={(e) => e.key === 'Enter' && () => setShowNotifications(!showNotifications)}
+            onClick={() => setShowNotifications(!showNotifications)} 
+            onKeyDown={(e) => e.key === 'Enter' && setShowNotifications(!showNotifications)}
             style={{
               position: 'relative',
               width: '24px',
@@ -248,7 +249,8 @@ const Header = memo(function Header({
                   notifications.map((notification, index) => (
                     <div
                       key={notification.id}
-                      onClick={() => handleNotificationClick(notification)} onKeyDown={(e) => e.key === 'Enter' && () => handleNotificationClick(notification)}
+                      onClick={() => handleNotificationClick(notification)} 
+                      onKeyDown={(e) => e.key === 'Enter' && handleNotificationClick(notification)}
                       style={{
                         padding: '12px 16px',
                         borderBottom: index < notifications.length - 1 ? '1px solid #f8f9fa' : 'none',
@@ -322,7 +324,7 @@ const Header = memo(function Header({
 
         {/* 프로필 */}
         <div className={styles['profile-wrapper']} ref={dropdownRef}>
-          <div className={styles.profile} onClick={() => setShowDropdown(!showDropdown)} onKeyDown={(e) => e.key === 'Enter' && () => setShowDropdown(!showDropdown)}>
+          <div className={styles.profile} onClick={() => setShowDropdown(!showDropdown)} onKeyDown={(e) => e.key === 'Enter' && setShowDropdown(!showDropdown)}>
             {right}
           </div>
           {showDropdown && (
@@ -330,9 +332,12 @@ const Header = memo(function Header({
               <div className={styles['dropdown-item']} onClick={() => {
                 setShowDropdown(false)
                 navigate('/mypage')
-              } onKeyDown={(e) => e.key === 'Enter' && () => {
-                setShowDropdown(false)
-                navigate('/mypage')
+              }} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setShowDropdown(false)
+                  navigate('/mypage')
+                }
               }}>
                 마이페이지
               </div>

@@ -94,9 +94,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               onClick={() => {
                 SetSubMenu(false);
                 navigate('/CmsHome');
-              } onKeyDown={(e) => e.key === 'Enter' && () => {
-                SetSubMenu(false);
-                navigate('/CmsHome');
+              }} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  SetSubMenu(false);
+                  navigate('/CmsHome');
+                }
               }}>
 
               홈
@@ -106,9 +109,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               onClick={() => {
                 SetSubMenu(false);
                 navigate('/videoplanning');
-              } onKeyDown={(e) => e.key === 'Enter' && () => {
-                SetSubMenu(false);
-                navigate('/videoplanning');
+              }} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  SetSubMenu(false);
+                  navigate('/videoplanning');
+                }
               }}>
 
               영상 기획
@@ -118,9 +124,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               onClick={() => {
                 SetSubMenu(false);
                 navigate('/calendar');
-              } onKeyDown={(e) => e.key === 'Enter' && () => {
-                SetSubMenu(false);
-                navigate('/calendar');
+              }} 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  SetSubMenu(false);
+                  navigate('/calendar');
+                }
               }}>
 
               전체 일정
@@ -134,14 +143,20 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               onClick={() => {
                 if (tab_name === 'feedback') {
                   SetSubMenu(true);
-                } onKeyDown={(e) => e.key === 'Enter' && () => {
-                if (tab_name === 'feedback') {
-                  SetSubMenu(true);
                 } else {
                   SetSubMenu(!SubMenu);
                 }
                 set_tab_name('project');
-                // navigate('/ProjectView')
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (tab_name === 'feedback') {
+                    SetSubMenu(true);
+                  } else {
+                    SetSubMenu(!SubMenu);
+                  }
+                  set_tab_name('project');
+                }
               }}>
 
               프로젝트 관리 <span>{project_list ? project_list.length : 0}</span>

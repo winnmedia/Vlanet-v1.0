@@ -25,6 +25,12 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import { refetchProject, checkSession } from '../../util/util'
 import { UpdateDate, WriteMemo } from '../../api/project'
+import { Button } from '../../components/unified/Button'
+
+const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
 
 export default function Calendar() {
   const router = useRouter()
@@ -184,15 +190,6 @@ export default function Calendar() {
         --pre_year
         pre_month = 11
       }
-import { Button } from '../../components/unified/Button'
-const ProjectPhaseBoard = dynamic(() => import('../../components/ProjectPhaseBoard'), {
-  loading: () => <div>Loading...</div>,
-  ssr: false
-});
-const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced'), {
-  loading: () => <div>Loading...</div>,
-  ssr: false
-});
       for (let i = 0; i < PVLastDay + 1; i++) {
         PVLD.unshift(new Date(pre_year, pre_month, PVLastDate - i))
       }
@@ -275,7 +272,7 @@ const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced
               캘린더
               <UnifiedButton 
                 className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
-                onClick={() = aria-label="Click" type="button"> setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)}
+                onClick={() => setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && setIsCollapsed(!isCollapsed)}
               />
             </div>
             <div className="calendar-toolbar" style={{ 
@@ -291,7 +288,7 @@ const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced
               }}>
                 <li className={viewMode === 'month' ? 'active' : ''}>
                   <UnifiedButton 
-                    onClick={() = aria-label="Click" type="button"> setViewMode('month')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('month')}
+                    onClick={() => setViewMode('month')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('month')}
                     style={{
                       padding: '8px 16px',
                       fontSize: '14px',
@@ -319,7 +316,7 @@ const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced
                 </UnifiedButton>
               </li>
               <li className={viewMode === 'timeline' ? 'active' : ''}>
-                <Button onClick={() = aria-label="Click"> setViewMode('timeline')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('timeline')}
+                <Button onClick={() => setViewMode('timeline')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('timeline')}
                   style={{
                     padding: '8px 16px',
                     fontSize: '14px',
@@ -347,7 +344,7 @@ const CalendarEnhanced = dynamic(() => import('../../components/CalendarEnhanced
                 </Button>
               </li>
               <li className={viewMode === 'gantt' ? 'active' : ''}>
-                <Button onClick={() = aria-label="Click"> setViewMode('gantt')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('gantt')}
+                <Button onClick={() => setViewMode('gantt')} onKeyDown={(e) => e.key === 'Enter' && setViewMode('gantt')}
                   style={{
                     padding: '8px 16px',
                     fontSize: '14px',

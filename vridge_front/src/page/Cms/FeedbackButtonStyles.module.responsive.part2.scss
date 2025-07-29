@@ -1,12 +1,9 @@
 @import '../../styles/design-tokens';
 
-          padding: $spacing-xs $spacing-sm;
-          font-size: $font-size-sm;
-        }
-      }
-    }
-    
-    // 피드백 내용
+// Mobile responsive part 2
+@media (max-width: 768px) {
+  // 피드백 리스트 스타일
+  .feedback-list {
     .feedback-content {
       margin-bottom: $spacing-lg;
       
@@ -750,8 +747,9 @@
     padding: $spacing-xs;
   }
   
-  .feedbackItem {
-    padding: $spacing-sm;
-    font-size: $font-size-sm;
+    .feedbackItem {
+      padding: $spacing-sm;
+      font-size: $font-size-sm;
+    }
   }
 }

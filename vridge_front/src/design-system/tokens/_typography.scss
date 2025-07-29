@@ -156,46 +156,8 @@ $letter-spacing-widest: $spacing-2xs;
 }
 
 // ========== CSS 변수 정의 ==========
-:root {
-  // 폰트 패밀리
-  --font-family-base: #{$font-family-base};
-  --font-family-heading: #{$font-family-heading};
-  --font-family-mono: #{$font-family-mono};
-  --font-family-korean: #{$font-family-korean};
-  
-  // 폰트 크기
-  --font-size-xs: #{$font-size-xs};
-  --font-size-sm: #{$font-size-sm};
-  --font-size-base: #{$font-size-base};
-  --font-size-lg: #{$font-size-lg};
-  --font-size-xl: #{$font-size-xl};
-  --font-size-2xl: #{$font-size-2xl};
-  --font-size-3xl: #{$font-size-3xl};
-  --font-size-4xl: #{$font-size-4xl};
-  --font-size-5xl: #{$font-size-5xl};
-  
-  // 폰트 굵기
-  --font-weight-thin: #{$font-weight-thin};
-  --font-weight-light: #{$font-weight-light};
-  --font-weight-normal: #{$font-weight-normal};
-  --font-weight-medium: #{$font-weight-medium};
-  --font-weight-semibold: #{$font-weight-semibold};
-  --font-weight-bold: #{$font-weight-bold};
-  --font-weight-black: #{$font-weight-black};
-  
-  // 줄 높이
-  --line-height-tight: #{$line-height-tight};
-  --line-height-normal: #{$line-height-normal};
-  --line-height-relaxed: #{$line-height-relaxed};
-  --line-height-loose: #{$line-height-loose};
-  
-  // 자간
-  --letter-spacing-tight: #{$letter-spacing-tight};
-  --letter-spacing-normal: #{$letter-spacing-normal};
-  --letter-spacing-wide: #{$letter-spacing-wide};
-  --letter-spacing-wider: #{$letter-spacing-wider};
-  --letter-spacing-widest: #{$letter-spacing-widest};
-}
+// CSS 변수는 global.scss에서 정의되어야 함
+// 여기서는 SCSS 변수만 정의
 
 // ========== 반응형 타이포그래피 ==========
 // breakpoints는 사용하는 파일에서 import해야 함

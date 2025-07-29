@@ -1,4 +1,3 @@
-@use '../../tokens' as *;
 @use 'sass:color';
 @import '../../../styles/design-tokens';
 
@@ -16,7 +15,7 @@
   
   // 박스 모델
   border: none;
-  border-radius: $radius-md;
+  border-radius: $border-radius-md;
   min-height: $spacing-2xl + $spacing-xs; // 모바일 터치 타겟
   min-width: $spacing-2xl + $spacing-xs;
   
@@ -101,7 +100,7 @@
 
 // 색상 변형
 .primary {
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-hover 100%);
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
   color: $color-white;
   box-shadow: $shadow-button;
   
@@ -133,7 +132,7 @@
 }
 
 .danger {
-  background: linear-gradient(135deg, $color-danger 0%, $color-danger-hover 100%);
+  background: linear-gradient(135deg, $color-danger 0%, darken($color-danger, 10%) 100%);
   color: $color-white;
   box-shadow: $shadow-button;
   

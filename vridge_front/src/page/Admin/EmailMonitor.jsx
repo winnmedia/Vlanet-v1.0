@@ -267,12 +267,11 @@ const EmailMonitor = () => {
                   </td>
                   <td>{email.attempts || 1}</td>
                   <td>
-                    {email.status === 'failed' &&
-                  <UnifiedButton aria-label="Click"> handleResendEmail(email.id)}
-                      >
+                    {email.status === 'failed' && (
+                      <UnifiedButton onClick={() => handleResendEmail(email.id)}>
                         재발송
                       </UnifiedButton>
-                  }
+                    )}
                   </td>
                 </tr>
               )}

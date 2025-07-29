@@ -93,15 +93,8 @@ $container-max-width-2xl: 1320px;
 }
 
 // ========== CSS 변수 정의 ==========
-:root {
-  // 브레이크포인트 값을 CSS 변수로도 제공
-  --breakpoint-xs: #{$breakpoint-xs};
-  --breakpoint-sm: #{$breakpoint-sm};
-  --breakpoint-md: #{$breakpoint-md};
-  --breakpoint-lg: #{$breakpoint-lg};
-  --breakpoint-xl: #{$breakpoint-xl};
-  --breakpoint-2xl: #{$breakpoint-2xl};
-  
-  // 컨테이너 최대 너비
-  --container-max-width: 100%;
-}
+// CSS 변수는 global.scss에서 정의되어야 함
+// 여기서는 SCSS 변수만 정의
+
+// 컨테이너 최대 너비 변수
+$container-max-width: 100%;

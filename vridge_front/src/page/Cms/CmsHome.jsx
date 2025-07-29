@@ -176,7 +176,7 @@ export default function CmsHome() {
                   <h3 className="card-title">최근 활동</h3>
                   <ToggleButton
                     isExpanded={!showRecentActivity}
-                    onClick={() => setShowRecentActivity(!showRecentActivity)} onKeyDown={(e) => e.key === 'Enter' && () => setShowRecentActivity(!showRecentActivity)} />
+                    onClick={() => setShowRecentActivity(!showRecentActivity)} onKeyDown={(e) => e.key === 'Enter' && setShowRecentActivity(!showRecentActivity)} />
 
                 </div>
                 {!showRecentActivity &&
@@ -209,7 +209,7 @@ export default function CmsHome() {
                     <div
                       key={`feedback-${idx}`}
                       className="feedback-item"
-                      onClick={() => navigate(`/Feedback/${feedback.projectId} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/Feedback/${feedback.projectId}`)}>
+                      onClick={() => navigate(`/Feedback/${feedback.projectId}`)} onKeyDown={(e) => e.key === 'Enter' && navigate(`/Feedback/${feedback.projectId}`)}>
 
                             <div className="project-info">
                               <div className="project-name">

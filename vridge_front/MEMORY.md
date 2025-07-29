@@ -852,3 +852,24 @@ vridge_front/
 #### 배포 정보
 - 모든 빌드 오류 해결 완료
 - Vercel 자동 배포 대기 중
+
+## 최근 작업 기록
+
+### 2025-01-29: Vercel 빌드 오류 수정 (v2.1.1)
+- **문제**: CSS Modules에서 :root 선택자 및 글로벌 선택자 사용 불가 오류
+- **원인**: 
+  1. design-system/tokens/_breakpoints.scss, _typography.scss, _index.scss 파일에 :root 선택자 포함
+  2. accessibility/_index.scss에 글로벌 스타일 포함  
+  3. 여러 JSX 파일에 잘못된 aria-label 구문
+  4. FeedbackButtonStyles 파일 분할 시 구문 오류
+- **해결**:
+  1. :root 선택자를 모든 토큰 파일에서 제거
+  2. CSS 변수는 global.scss에서만 정의하도록 수정
+  3. AdminDashboard.jsx, Calendar.jsx, CmsHome.jsx, EmailMonitor.jsx의 aria-label 구문 오류 수정
+  4. FeedbackButtonStyles.module.responsive.part2.scss 중괄호 불일치 수정
+  5. design-tokens.scss에 누락된 $color-primary-hover, $color-text-muted 변수 추가
+  6. Button.module.scss에서 @use '../../tokens' 제거 (글로벌 스타일 import 방지)
+- **주의사항**: 
+  - CSS Modules에서는 순수한 클래스 선택자만 사용 가능
+  - 글로벌 선택자(table, input 등) 사용 불가
+  - :root 선택자 사용 불가

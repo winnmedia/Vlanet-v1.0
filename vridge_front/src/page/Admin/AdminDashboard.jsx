@@ -502,8 +502,8 @@ export default function AdminDashboard() {
             size="small"
             type="link"
             danger
-            icon={<DeleteOutlined / aria-label="Click">}
-            onClick={() => handleProjectDelete(record.id)} onKeyDown={(e) => e.key === 'Enter' && () => handleProjectDelete(record.id)}
+            icon={<DeleteOutlined />}
+            onClick={() => handleProjectDelete(record.id)} onKeyDown={(e) => e.key === 'Enter' && handleProjectDelete(record.id)}
           />
         </Space>
       )
@@ -522,7 +522,7 @@ export default function AdminDashboard() {
               type="warning"
               showIcon
               action={
-                <Button size="small" onClick={() = aria-label="Click"> navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate('/cmshome')}>
+                <Button size="small" onClick={() => navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && navigate('/cmshome')}>
                   홈으로 이동
                 </Button>
               }
@@ -544,13 +544,13 @@ export default function AdminDashboard() {
             </h1>
             <Space>
               <Button 
-                icon={<DatabaseOutlined / aria-label="Click">}
+                icon={<DatabaseOutlined />}
                 onClick={handleGoToBackendAdmin} onKeyDown={(e) => e.key === 'Enter' && handleGoToBackendAdmin}
               >
                 Django Admin
               </Button>
               <Button 
-                icon={<MailOutlined / aria-label="Click">}
+                icon={<MailOutlined />}
                 onClick={handleGoToEmailMonitor} onKeyDown={(e) => e.key === 'Enter' && handleGoToEmailMonitor}
               >
                 이메일 모니터
@@ -694,7 +694,7 @@ export default function AdminDashboard() {
                               <Button 
                                 type="primary" 
                                 block 
-                                icon={<UserOutlined / aria-label="Click">}
+                                icon={<UserOutlined />}
                                 onClick={() => setActiveTab('users')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('users')}
                                 style={{
                                   background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
@@ -707,7 +707,7 @@ export default function AdminDashboard() {
                             <Col xs={24} sm={12} md={8} lg={6}>
                               <Button 
                                 block 
-                                icon={<ProjectOutlined / aria-label="Click">}
+                                icon={<ProjectOutlined />}
                                 onClick={() => setActiveTab('projects')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('projects')}
                               >
                                 프로젝트 관리
@@ -716,7 +716,7 @@ export default function AdminDashboard() {
                             <Col xs={24} sm={12} md={8} lg={6}>
                               <Button 
                                 block 
-                                icon={<CommentOutlined / aria-label="Click">}
+                                icon={<CommentOutlined />}
                                 onClick={() => setActiveTab('feedbacks')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('feedbacks')}
                               >
                                 피드백 분석
@@ -725,7 +725,7 @@ export default function AdminDashboard() {
                             <Col xs={24} sm={12} md={8} lg={6}>
                               <Button 
                                 block 
-                                icon={<InfoCircleOutlined / aria-label="Click">}
+                                icon={<InfoCircleOutlined />}
                                 onClick={() => setActiveTab('system')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('system')}
                               >
                                 시스템 정보
@@ -788,7 +788,7 @@ export default function AdminDashboard() {
                                 <Select.Option value="naver">네이버</Select.Option>
                               </Select>
                               <Button
-                                icon={<ReloadOutlined / aria-label="Click">}
+                                icon={<ReloadOutlined />}
                                 onClick={() => loadUserList(1, userSearch, userFilter)} onKeyDown={(e) => e.key === 'Enter' && () => loadUserList(1, userSearch, userFilter)}
                               />
                             </Space>
@@ -850,12 +850,12 @@ export default function AdminDashboard() {
                                 <Select.Option value="completed">완료</Select.Option>
                               </Select>
                               <Button
-                                icon={<ReloadOutlined / aria-label="Click">}
+                                icon={<ReloadOutlined />}
                                 onClick={() => loadProjectList(1, projectSearch, projectFilter)} onKeyDown={(e) => e.key === 'Enter' && () => loadProjectList(1, projectSearch, projectFilter)}
                               />
                               <Button
                                 type="primary"
-                                icon={<PlusOutlined / aria-label="Click">}
+                                icon={<PlusOutlined />}
                                 onClick={() => navigate('/project/create')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/project/create')}
                                 style={{
                                   background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
@@ -949,7 +949,7 @@ export default function AdminDashboard() {
                                         <Button
                                           size="small"
                                           type="link"
-                                          onClick={() = aria-label="Click"> navigate(`/Feedback/${record.project__id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/Feedback/${record.project__id}`)}
+                                          onClick={() => navigate(`/Feedback/${record.project__id}`)} onKeyDown={(e) => e.key === 'Enter' && navigate(`/Feedback/${record.project__id}`)}
                                         >
                                           보기
                                         </Button>
@@ -1060,25 +1060,25 @@ export default function AdminDashboard() {
                             <UnifiedCard title="관리 도구" style={{ marginTop: 16 }}>
                               <Space wrap>
                                 <Button
-                                  icon={<DatabaseOutlined / aria-label="Click">}
+                                  icon={<DatabaseOutlined />}
                                   onClick={handleGoToBackendAdmin} onKeyDown={(e) => e.key === 'Enter' && handleGoToBackendAdmin}
                                 >
                                   Django Admin
                                 </Button>
                                 <Button
-                                  icon={<MailOutlined / aria-label="Click">}
+                                  icon={<MailOutlined />}
                                   onClick={handleGoToEmailMonitor} onKeyDown={(e) => e.key === 'Enter' && handleGoToEmailMonitor}
                                 >
                                   이메일 모니터
                                 </Button>
                                 <Button
-                                  icon={<ExportOutlined / aria-label="Click">}
+                                  icon={<ExportOutlined />}
                                   disabled
                                 >
                                   데이터 내보내기
                                 </Button>
                                 <Button
-                                  icon={<ReloadOutlined / aria-label="Click">}
+                                  icon={<ReloadOutlined />}
                                   onClick={() => loadSystemInfo()} onKeyDown={(e) => e.key === 'Enter' && () => loadSystemInfo()}
                                 >
                                   새로고침

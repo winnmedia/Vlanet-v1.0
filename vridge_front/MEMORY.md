@@ -953,3 +953,87 @@ vridge_front/
   5. VideoPlanning.jsx: 모든 onKeyDown 이벤트 핸들러에서 이중 화살표 함수 수정
   6. EnhancedSidebar.jsx: onKeyDown 이벤트 핸들러 구문 수정
 - **패턴**: `onKeyDown={(e) => e.key === 'Enter' && (e) => {...}}` → `onKeyDown={(e) => { if (e.key === 'Enter') {...} }}`
+
+### 2025-01-29: Vercel 빌드 오류 대규모 수정 (v2.1.12)
+- **총 작업 시간**: 4시간 이상 (오후 7:40 ~ 11:40)
+- **버전 히스토리**: v2.1.1 → v2.1.12 (총 11번의 반복 수정)
+- **총 수정된 오류**: 약 65개
+
+#### 주요 문제 패턴과 해결책
+
+1. **CSS Modules 규칙 위반 (15개 오류)**
+   - **문제**: :root 선택자, 전역 HTML 선택자(*, table, input 등) 사용
+   - **해결**: 
+     - 모든 :root 선택자를 제거하고 CSS 변수는 global.scss로 이동
+     - 전역 선택자를 클래스 선택자로 변경
+     - CSS Modules는 순수한 클래스/ID 선택자만 허용
+   - **영향받은 파일**: _breakpoints.scss, _typography.scss, _effects.scss, UnifiedModal.module.scss 등
+
+2. **JSX 구문 오류 패턴 (30개 오류)**
+   - **반복적 문제**: 
+     - onClick과 onKeyDown 이벤트 핸들러가 잘못 결합
+     - 이중 화살표 함수: `(e) => e.key === 'Enter' && (e) => {...}`
+     - aria-label이 다른 속성 내부에 포함
+   - **해결 패턴**:
+     ```jsx
+     // 잘못된 패턴
+     onClick={() => navigate() onKeyDown={(e) => e.key === 'Enter' && () => navigate()}
+     
+     // 올바른 패턴
+     onClick={() => navigate()}
+     onKeyDown={(e) => { if (e.key === 'Enter') navigate() }}
+     ```
+   - **주요 파일**: AdminDashboard.jsx(5회), UnifiedModal.jsx(3회), Header.jsx(4회), CmsHome.jsx(5회)
+
+3. **SCSS 변수/함수 오류 (20개 오류)**
+   - **문제**: 
+     - 정의되지 않은 변수 사용 ($radius-full, $shadow, $color-primary-hover)
+     - 잘못된 함수 호출 ($transition-base-bezier())
+     - px 단위 누락
+   - **해결**:
+     - _design-tokens.scss에 누락된 변수 정의 추가
+     - 잘못된 함수를 표준 CSS로 변경
+     - 모든 숫자값에 px 단위 추가
+
+#### 반복된 수정 작업 분석
+
+1. **AdminDashboard.jsx** - 가장 많은 오류 (10개 이상)
+   - Card/UnifiedCard 태그 불일치
+   - 복잡한 테이블 렌더링의 이벤트 핸들러 오류
+   - 해결: 모든 이벤트 핸들러를 간단하고 명확하게 재작성
+
+2. **FeedbackButtonStyles** - 파일 분할로 인한 복잡성
+   - 3개 파일로 분할되어 중괄호 매칭 어려움
+   - 변수 import 누락
+   - 해결: 각 파일에 필요한 import 추가, 구조 정리
+
+3. **CSS Modules 마이그레이션 이슈**
+   - 기존 전역 스타일을 CSS Modules로 변환 시 규칙 위반
+   - 해결: CSS Modules 규칙을 엄격히 준수하도록 수정
+
+#### 향후 개선 방안
+
+1. **예방적 조치**
+   - ESLint/Stylelint 규칙 강화로 로컬에서 오류 사전 감지
+   - Pre-commit hook으로 JSX 구문 검증
+   - CSS Modules 규칙 자동 검사 도구 도입
+
+2. **코드 품질 개선**
+   - 복잡한 이벤트 핸들러는 별도 함수로 분리
+   - SCSS 변수는 중앙 집중식 관리
+   - 컴포넌트 복잡도 감소
+
+3. **개발 프로세스 개선**
+   - 로컬 빌드 테스트 후 커밋
+   - 단계적 수정 대신 체계적 접근
+   - 오류 패턴 문서화 및 공유
+
+#### 기술적 교훈
+- CSS Modules는 엄격한 규칙을 가지며, 전역 스타일과 혼용 불가
+- JSX 이벤트 핸들러는 단순하게 유지하는 것이 중요
+- SCSS 변수 관리는 체계적으로 해야 순환 참조 방지 가능
+- 빌드 오류는 연쇄적으로 발생하므로 근본 원인부터 해결 필요
+
+---
+
+**최종 버전**: v2.1.12 (2025-01-29 오후 11:40 배포 준비 완료)

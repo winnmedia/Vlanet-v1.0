@@ -1,5 +1,6 @@
 // Design tokens import
 @import '../styles/_variables';
+@import '../styles/_design-tokens';
 
 // Additional colors
 $color-vp-yellow-bg-1: #FFF8E1;
@@ -305,7 +306,7 @@ $color-vp-blue-border: #1976D2;
             
             &.urgent {
               background: $color-warning;
-              color: $color-warning-dark;
+              color: $color-warning;
             }
           }
           
@@ -425,8 +426,8 @@ $color-vp-blue-border: #1976D2;
     display: block;
   }
   
-  table {
-    font-size: var(--font-size-sm);
+  .schedule-table {
+    font-size: $font-size-sm;
   }
   
   .button {
@@ -457,7 +458,7 @@ $color-vp-blue-border: #1976D2;
     max-height: calc(100vh - var(--spacing-lg));
   }
   
-  input, select, textarea {
+  .schedule-input, .schedule-select, .schedule-textarea {
     font-size: $spacing-md; /* Prevent zoom on iOS */
   }
 }

@@ -1,7 +1,6 @@
-import React, { useState, Fragment , Suspense } from 'react'
+import React, { useState, Fragment , Suspense } from 'react';
 import UnifiedModal from '../../components/unified/UnifiedModal';
 import dynamic from 'next/dynamic';
-;
 
 import { UnifiedInput } from '../../components/unified/UnifiedInput';
 
@@ -30,8 +29,6 @@ const filterForbiddenWords = (text) => {
     'diagram', 'layout', 'template',
     'slide', 'presentation', 'whiteboard'
   ];
-import { Button } from '../../components/unified/Button'
-import { Input } from '../../components/unified/Input'
 const axios = dynamic(() => import('../../config/axios'), {
   loading: () => <div>Loading...</div>,
   ssr: false
@@ -143,7 +140,7 @@ export default function VideoPlanning() {
         // 최근 기획 로드 성공
       }
     } catch (err) {
-      :`, err)
+      console.error('Error loading recent plannings:', err);
       
       // 401 에러인 경우 재시도
       if (err.response?.status === 401 && retryCount < 2) {
@@ -1488,16 +1485,20 @@ export default function VideoPlanning() {
                         type="text"
                         placeholder="원하시는 톤앤매너를 자유롭게 입력해주세요"
                         value={planningOptions.toneCustom}
-                        onChange={(e) = aria-label="원하시는 톤앤매너를 자유롭게 입력해주세요"> setPlanningOptions(prev => ({ ...prev, toneCustom: e.target.value, tone: 'custom' }))}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, toneCustom: e.target.value, tone: 'custom' }))}
+                        aria-label="원하시는 톤앤매너를 자유롭게 입력해주세요"
                         className="ty01"
                       />
                     </div>
                   )}
                   {showCustomTone && (
-                    <Button variant="secondary" aria-label="Click"> {
-                        setShowCustomTone(false)
-                        setPlanningOptions(prev => ({ ...prev, tone: '', toneCustom: '' }))
+                    <Button 
+                      variant="secondary" 
+                      onClick={() => {
+                        setShowCustomTone(false);
+                        setPlanningOptions(prev => ({ ...prev, tone: '', toneCustom: '' }));
                       }}
+                      aria-label="Return to selection list"
                     >
                       선택목록으로
                     </Button>
@@ -1564,16 +1565,20 @@ export default function VideoPlanning() {
                         type="text"
                         placeholder="원하시는 장르를 자유롭게 입력해주세요"
                         value={planningOptions.genreCustom}
-                        onChange={(e) = aria-label="원하시는 장르를 자유롭게 입력해주세요"> setPlanningOptions(prev => ({ ...prev, genreCustom: e.target.value, genre: 'custom' }))}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, genreCustom: e.target.value, genre: 'custom' }))}
+                        aria-label="원하시는 장르를 자유롭게 입력해주세요"
                         className="ty01"
                       />
                     </div>
                   )}
                   {showCustomGenre && (
-                    <Button variant="secondary" aria-label="Click"> {
-                        setShowCustomGenre(false)
-                        setPlanningOptions(prev => ({ ...prev, genre: '', genreCustom: '' }))
+                    <Button 
+                      variant="secondary" 
+                      onClick={() => {
+                        setShowCustomGenre(false);
+                        setPlanningOptions(prev => ({ ...prev, genre: '', genreCustom: '' }));
                       }}
+                      aria-label="Return to selection list"
                     >
                       선택목록으로
                     </Button>
@@ -1632,16 +1637,20 @@ export default function VideoPlanning() {
                         type="text"
                         placeholder="원하시는 콘셉트를 자유롭게 입력해주세요"
                         value={planningOptions.conceptCustom}
-                        onChange={(e) = aria-label="원하시는 콘셉트를 자유롭게 입력해주세요" /> setPlanningOptions(prev => ({ ...prev, conceptCustom: e.target.value, concept: 'custom' }))}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, conceptCustom: e.target.value, concept: 'custom' }))}
+                        aria-label="원하시는 콘셉트를 자유롭게 입력해주세요"
                         className="ty01"
                       />
                     </div>
                   )}
                   {showCustomConcept && (
-                    <Button variant="secondary" aria-label="Click"> {
-                        setShowCustomConcept(false)
-                        setPlanningOptions(prev => ({ ...prev, concept: '', conceptCustom: '' }))
+                    <Button 
+                      variant="secondary" 
+                      onClick={() => {
+                        setShowCustomConcept(false);
+                        setPlanningOptions(prev => ({ ...prev, concept: '', conceptCustom: '' }));
                       }}
+                      aria-label="Return to selection list"
                     >
                       선택목록으로
                     </Button>

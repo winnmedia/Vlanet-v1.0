@@ -57,7 +57,7 @@ export default function Home() {
       <section id="header">
         <div className="inner flex space_between align_center">
           <h1 className="logo">
-            <img src={logo} alt="VideoPlanet" / loading="lazy">
+            <img src={logo} alt="VideoPlanet" loading="lazy" />
           </h1>
           <div className="etc">
             <ul>
@@ -106,7 +106,7 @@ export default function Home() {
               </p>
             </div>
             <div className="img">
-              <img src={visual} alt="" / loading="lazy">
+              <img src={visual} alt="" loading="lazy" />
             </div>
           </div>
         </section>
@@ -120,7 +120,7 @@ export default function Home() {
           </div>
         </section> */}
         <section className="textbox">
-          <img src={tool02} alt="" / loading="lazy">
+          <img src={tool02} alt="" loading="lazy" />
           <div>번거로운 n가지 툴 사용은 이제 그만,</div>
           <p>
             영상 편집 피드백, 프로젝트 관리가 까다로우셨나요? <br />
@@ -152,7 +152,7 @@ export default function Home() {
                 </Button>
               </div>
               <div className="img">
-                <img src={feedback} / alt="image" loading="lazy">
+                <img src={feedback} alt="image" loading="lazy" />
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function Home() {
                 </Button>
               </div>
               <div className="img">
-                <img src={project} / alt="image" loading="lazy">
+                <img src={project} alt="image" loading="lazy" />
               </div>
             </div>
           </div>
@@ -264,13 +264,13 @@ export default function Home() {
               <div className="ex">
                 <div className="part flex space_between align_center">
                   <div className="img">
-                    <img src={emoji01} className="img01" / alt="image" loading="lazy">
+                    <img src={emoji01} className="img01" alt="image" loading="lazy" />
                   </div>
                   <div className="text">
                     <div>
                       <span>
                         <i>
-                          <img src={chat} / alt="image" loading="lazy">
+                          <img src={chat} alt="image" loading="lazy" />
                         </i>
                         영상 디자이너 L
                       </span>
@@ -287,7 +287,7 @@ export default function Home() {
                     <div>
                       <span>
                         <i>
-                          <img src={chat} / alt="image" loading="lazy">
+                          <img src={chat} alt="image" loading="lazy" />
                         </i>
                         콘텐츠 기획자 P
                       </span>
@@ -299,7 +299,7 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="img">
-                    <img src={emoji03} / alt="image" loading="lazy">
+                    <img src={emoji03} alt="image" loading="lazy" />
                   </div>
                 </div>
               </div>
@@ -319,13 +319,13 @@ export default function Home() {
               <div className="ex">
                 <div className="part flex space_between align_center">
                   <div className="img">
-                    <img src={emoji02} className="img01" / alt="image" loading="lazy">
+                    <img src={emoji02} className="img01" alt="image" loading="lazy" />
                   </div>
                   <div className="text">
                     <div>
                       <span>
                         <i>
-                          <img src={chat} / alt="image" loading="lazy">
+                          <img src={chat} alt="image" loading="lazy" />
                         </i>
                         영상 제작 꿈나무 K
                       </span>
@@ -342,7 +342,7 @@ export default function Home() {
                     <div>
                       <span>
                         <i>
-                          <img src={chat} / alt="image" loading="lazy">
+                          <img src={chat} alt="image" loading="lazy" />
                         </i>
                         영상디자인학과 학생 J
                       </span>
@@ -354,7 +354,7 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="img">
-                    <img src={emoji04} className="img02" / alt="image" loading="lazy">
+                    <img src={emoji04} className="img02" alt="image" loading="lazy" />
                   </div>
                 </div>
               </div>
@@ -439,7 +439,7 @@ import { Button } from '../components/unified/Button'
             </h2>
             <div className="content">
               <div className="img plus">
-                <img src={img09} / alt="image" loading="lazy">
+                <img src={img09} alt="image" loading="lazy" />
                 <div className="pop">
                   전체
                   <br />
@@ -490,7 +490,7 @@ import { Button } from '../components/unified/Button'
                 </Button>
               </div>
               <div className="img">
-                <img src={img08} / alt="image" loading="lazy">
+                <img src={img08} alt="image" loading="lazy" />
               </div>
             </div>
           </div>
@@ -506,7 +506,7 @@ import { Button } from '../components/unified/Button'
             </h2>
             <div className="content">
               <div className="img">
-                <img src={img10} / alt="image" loading="lazy">
+                <img src={img10} alt="image" loading="lazy" />
               </div>
               <div className="txt">
                 <div>

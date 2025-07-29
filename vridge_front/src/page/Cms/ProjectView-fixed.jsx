@@ -233,7 +233,10 @@ export default function ProjectView() {
                         <UnifiedButton 
                           key={mode}
                           className={`view-btn ${viewMode === mode ? 'active' : ''}`}
-                          onClick={() = aria-label="Click" type="button"> setViewMode(mode)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode(mode)}
+                          onClick={() => setViewMode(mode)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') setViewMode(mode); }}
+                          aria-label={`View ${mode} mode`}
+                          type="button"
                           style={{
                             padding: '5px 15px',
                             border: '1px solid #012fff',
@@ -250,9 +253,9 @@ export default function ProjectView() {
                           {mode === 'month' ? '월간보기' : mode === 'timeline' ? '타임라인' : '간트차트'}
                         </UnifiedButton>
                       ))}
-                    </UnifiedCard>
-                  </UnifiedCard>
-                </UnifiedCard>
+                    </div>
+                  </div>
+                </div>
                 
                 {!isCollapsed && (
                   <>
@@ -283,14 +286,17 @@ export default function ProjectView() {
                         />
                         {is_admin && (
                           <UnifiedButton
-                            onClick={() = aria-label="Click" type="button"> navigate(`/project/${current_project.id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/project/${current_project.id}/edit`)}
+                            onClick={() => navigate(`/project/${current_project.id}/edit`)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/project/${current_project.id}/edit`); }}
+                            aria-label="Manage project"
+                            type="button"
                             className="submit"
                           >
                             프로젝트 관리
                           </UnifiedButton>
                         )}
-                      </UnifiedCard>
-                    </UnifiedCard>
+                      </div>
+                    </div>
                     
                     {totalDate && viewMode === 'month' && (
                       <CalendarBody
@@ -327,10 +333,10 @@ export default function ProjectView() {
                         <li><span className="seven"></span>최종 컨펌</li>
                         <li><span className="eighth"></span>영상 납품</li>
                       </ul>
-                    </UnifiedCard>
+                    </div>
                   </>
                 )}
-              </UnifiedCard>
+              </div>
               
               <div className="content" style={{ marginTop: '30px' }}>
                 <ProjectPhaseBoard 
@@ -339,11 +345,11 @@ export default function ProjectView() {
                   onPhaseUpdate={handlePhaseUpdate}
                   showTitle={true}
                 />
-              </UnifiedCard>
+              </div>
             </>
           ) : null}
         </main>
-      </UnifiedCard>
+      </div>
     </PageTemplate>
   )
 }

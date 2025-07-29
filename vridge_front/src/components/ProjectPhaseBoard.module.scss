@@ -581,7 +581,7 @@
         line-height: 1.5 ;
         text-align: center ;
         box-shadow: $shadow;
-        transition: $transition-base-bezier(0.4, 0, 0.2, 1) ;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         border: $spacing-2xs solid rgba($color-white, 0.1) ;
         position: relative;
         overflow: hidden;

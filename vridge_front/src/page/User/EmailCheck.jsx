@@ -51,7 +51,7 @@ export default function EmailCheck() {
         <div className="form_wrap">
           <div className="emailcheck">
             <div className="logo">
-              <img src={logo.src || logo} / alt="image" loading="lazy">
+              <img src={logo.src || logo} alt="image" loading="lazy" />
             </div>
             {/* 인증o */}
             {result === 'success' ?

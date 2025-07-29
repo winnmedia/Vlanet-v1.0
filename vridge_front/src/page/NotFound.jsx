@@ -16,7 +16,9 @@ export default function NotFound() {
         <UnifiedButton
           type="primary"
           key="home"
-          onClick={() = aria-label="Click"> navigate('/')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate('/')}
+          onClick={() => navigate('/')}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/'); }}
+          aria-label="Go back to home"
           style={{
             background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
             border: 'none'
@@ -26,7 +28,10 @@ export default function NotFound() {
           </UnifiedButton>,
         <UnifiedButton
           key="back"
-          onClick={() = aria-label="Click"> navigate(-1)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(-1)}>
+          onClick={() => navigate(-1)}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate(-1); }}
+          aria-label="Go back to previous page">
+
 
             이전 페이지로
           </UnifiedButton>]

@@ -1419,9 +1419,11 @@ export default function Feedback() {
                                 const url = URL.createObjectURL(blob);
                                 const a = document.createElement('a');
                                 const currentTime = videoPlayerRef.current.getCurrentTime();
-                                const timeStr = `${Math.floor(currentTime / 60)}m${Math.floor(currentTime % 60)}s`;
+                                const minutes = Math.floor(currentTime / 60);
+                                const seconds = Math.floor(currentTime % 60);
+                                const timeStr = minutes + 'm' + seconds + 's';
                                 a.href = url;
-                                a.download = `screenshot_${current_project.project_name}_${timeStr}.png`;
+                                a.download = 'screenshot_' + current_project.project_name + '_' + timeStr + '.png';
                                 a.click();
                                 URL.revokeObjectURL(url);
                               });
@@ -1450,10 +1452,10 @@ export default function Feedback() {
                       {/* 피드백 전체보기 버튼 - 피드백 관리 탭에서만 표시 */}
                       {currentItem && currentItem.tab === '피드백 관리' && (
                         <UnifiedButton
-                          onClick={() = aria-label="Click" type="button">
-                            navigate(`/FeedbackAll?projectId=${project_id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click">
-                            navigate(`/FeedbackAll?projectId=${project_id}`)
-                          }
+                          onClick={() => navigate('/FeedbackAll?projectId=' + project_id)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/FeedbackAll?projectId=' + project_id); }}
+                          aria-label="View all feedbacks"
+                          type="button"
                           className={styles.feedbackButtonSecondary}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -1541,8 +1543,10 @@ export default function Feedback() {
                   <div className={styles.projectHeader}>
                     <span className={styles.projectTitle}>{current_project?.name || '프로젝트'}</span>
                     <UnifiedButton 
-                      onClick={() = aria-label="Click" type="button"> setShowProjectInfo(!showProjectInfo)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowProjectInfo(!showProjectInfo)}
-                      className={showProjectInfo ? `${styles.infoButton} ${styles.active}` : styles.infoButton}
+                      onClick={() => setShowProjectInfo(!showProjectInfo)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') setShowProjectInfo(!showProjectInfo); }}
+                      className={showProjectInfo ? styles.infoButton + ' ' + styles.active : styles.infoButton}
+                      type="button"
                       title="프로젝트 정보"
                       aria-label="프로젝트 정보"
                     >
@@ -1617,7 +1621,10 @@ export default function Feedback() {
                       {is_admin && (
                         <UnifiedButton
                           className={styles.feedbackButtonPrimaryFull}
-                          onClick={() = aria-label="Click" type="button"> navigate(`/ProjectEdit/${project_id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate(`/ProjectEdit/${project_id}`)}
+                          onClick={() => navigate('/ProjectEdit/' + project_id)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/ProjectEdit/' + project_id); }}
+                          aria-label="Manage project"
+                          type="button"}
                         >
                           프로젝트 관리
                         </UnifiedButton>
@@ -1631,8 +1638,11 @@ export default function Feedback() {
                       section && section.tab ? (
                         <UnifiedButton 
                           key={index}
-                          onClick={() = aria-label="Click" type="button"> changeItem(index)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> changeItem(index)}
-                          className={currentItem && currentItem.tab === section.tab ? `${styles.tabButton} ${styles.active}` : styles.tabButton}
+                          onClick={() => changeItem(index)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') changeItem(index); }}
+                          className={currentItem && currentItem.tab === section.tab ? styles.tabButton + ' ' + styles.active : styles.tabButton}
+                          aria-label={section.tab}
+                          type="button"
                         >
                           {section.tab}
                         </UnifiedButton>
@@ -1680,8 +1690,11 @@ export default function Feedback() {
                     {teachers.map((teacher) => (
                       <div
                         key={teacher.id}
-                        className={`teacher-card ${selectedTeacher?.id === teacher.id ? 'selected' : ''}`}
-                        onClick={() => setSelectedTeacher(teacher)} onKeyDown={(e) => e.key === 'Enter' && () => setSelectedTeacher(teacher)}
+                        className={'teacher-card' + (selectedTeacher?.id === teacher.id ? ' selected' : '')}
+                        onClick={() => setSelectedTeacher(teacher)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') setSelectedTeacher(teacher); }}
+                        role="button"
+                        tabIndex={0}
                       >
                         <span className="teacher-emoji">{teacher.emoji}</span>
                         <div className="teacher-info">

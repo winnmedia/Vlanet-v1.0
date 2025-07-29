@@ -4,6 +4,7 @@ import UnifiedModal from '../../components/unified/UnifiedModal';
 import UnifiedCard from '../../components/unified/UnifiedCard';
 
 import { UnifiedButton } from '../../components/unified/UnifiedButton';
+import { Button } from '../../components/ui/Button';
 
 import { Input } from '../../components/unified/Input'
 import { useRouter } from 'next/router'
@@ -41,6 +42,11 @@ import 'moment/locale/ko'
 import { useNavigationFlow } from '../../hooks/useNavigationFlow'
 import { SafeRoute } from '../../components/SafeRoute'
 import { useProjectData } from '../../hooks/useProjectData'
+
+const VideoJsPlayer = dynamic(() => import('../../components/VideoJsPlayer-fixed'), {
+  loading: () => <div>Loading...</div>,
+  ssr: false
+});
 
 export default function Feedback() {
   const router = useRouter()
@@ -128,12 +134,6 @@ export default function Feedback() {
   const startEncodingStatusCheck = () => {
     // GetEncodingStatus가 없으면 실행하지 않음
     if (typeof GetEncodingStatus !== 'function') {
-      
-import { Button } from '../../components/unified/Button'
-const VideoJsPlayer = dynamic(() => import('../../components/VideoJsPlayer-fixed'), {
-  loading: () => <div>Loading...</div>,
-  ssr: false
-});
       return;
     }
     
@@ -349,7 +349,6 @@ const VideoJsPlayer = dynamic(() => import('../../components/VideoJsPlayer-fixed
       return;
     }
 
-    `)
     setConnectionStatus('connecting')
     
     try {
@@ -617,9 +616,11 @@ const VideoJsPlayer = dynamic(() => import('../../components/VideoJsPlayer-fixed
           {is_admin && (
             <div className={styles.member_header}>
               <UnifiedButton
-                onClick={handleOpenInviteModal} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && handleOpenInviteModal}
+                onClick={handleOpenInviteModal} 
+                onKeyDown={(e) => e.key === 'Enter' && handleOpenInviteModal()}
                 className={styles.inviteButton}
-               aria-label="Click">
+                type="button"
+                aria-label="멤버 초대">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>

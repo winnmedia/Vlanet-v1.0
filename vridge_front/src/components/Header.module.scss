@@ -70,7 +70,7 @@
       width: $spacing-6xl * 1.5 + $spacing-sm;
       
       @include mobile {
-        width: 120;
+        width: 120px;
       }
     }
   }
@@ -118,7 +118,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba($color-black, $1);
+      background: rgba($color-black, 0.5);
     }
     
     .mobile-menu-content {
@@ -126,9 +126,9 @@
       top: 0;
       left: 0;
       bottom: 0;
-      width: 280;
+      width: 280px;
       background: $color-white;
-      box-shadow: $border-width-medium 0 calc(12px + 8px) rgba($color-black, $1);
+      box-shadow: $border-width-medium 0 calc(12px + 8px) rgba($color-black, 0.1);
       display: flex;
       flex-direction: column;
       animation: slideIn 0.3s ease-out;
@@ -232,7 +232,7 @@
       border-radius: $border-radius-md;
       box-shadow: 0 $spacing-2xs $font-size-xs rgba($color-black, 0.1);
       min-width: $spacing-6xl * 2 + $spacing-sm;
-      z-index: $z-index-base$color-black;
+      z-index: $z-index-dropdown;
       overflow: hidden;
       
       .dropdown-item {
@@ -376,6 +376,6 @@
   }
   
   input, select, textarea {
-    font-size: $spacing-md; /* Prevent zoom on iOS */
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 }

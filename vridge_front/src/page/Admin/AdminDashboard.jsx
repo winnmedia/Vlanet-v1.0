@@ -608,7 +608,7 @@ export default function AdminDashboard() {
                                   </span>
                                 }
                               />
-                            </UnifiedCard>
+                            </Card>
                           </Col>
                           <Col xs={24} sm={12} lg={6}>
                             <UnifiedCard>
@@ -695,7 +695,8 @@ export default function AdminDashboard() {
                                 type="primary" 
                                 block 
                                 icon={<UserOutlined />}
-                                onClick={() => setActiveTab('users')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('users')}
+                                onClick={() => setActiveTab('users')} 
+                                onKeyDown={(e) => e.key === 'Enter' && setActiveTab('users')}
                                 style={{
                                   background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                                   border: 'none'
@@ -708,7 +709,8 @@ export default function AdminDashboard() {
                               <Button 
                                 block 
                                 icon={<ProjectOutlined />}
-                                onClick={() => setActiveTab('projects')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('projects')}
+                                onClick={() => setActiveTab('projects')} 
+                                onKeyDown={(e) => e.key === 'Enter' && setActiveTab('projects')}
                               >
                                 프로젝트 관리
                               </Button>
@@ -717,7 +719,8 @@ export default function AdminDashboard() {
                               <Button 
                                 block 
                                 icon={<CommentOutlined />}
-                                onClick={() => setActiveTab('feedbacks')} onKeyDown={(e) => e.key === 'Enter' && () => setActiveTab('feedbacks')}
+                                onClick={() => setActiveTab('feedbacks')} 
+                                onKeyDown={(e) => e.key === 'Enter' && setActiveTab('feedbacks')}
                               >
                                 피드백 분석
                               </Button>

@@ -366,7 +366,7 @@ const Header = memo(function Header({
       {/* 모바일 메뉴 */}
       {showMobileMenu && (
         <div className={styles['mobile-menu']} ref={mobileMenuRef}>
-          <div className={styles['mobile-menu-overlay']} onClick={() => setShowMobileMenu(false)} onKeyDown={(e) => e.key === 'Enter' && () => setShowMobileMenu(false)} />
+          <div className={styles['mobile-menu-overlay']} onClick={() => setShowMobileMenu(false)} onKeyDown={(e) => e.key === 'Enter' && setShowMobileMenu(false)} />
           <div className={styles['mobile-menu-content']}>
             <div className={styles['mobile-menu-header']}>
               <h2>메뉴</h2>
@@ -378,7 +378,7 @@ const Header = memo(function Header({
             </div>
             <nav className={styles['mobile-menu-nav']} aria-label="Main navigation">
               {leftItems.map((item, index) => (
-                <a key={index} href={item.link} onClick={() = aria-label="Link"> setShowMobileMenu(false)} onKeyDown={(e) => e.key === 'Enter' && () => setShowMobileMenu(false)}>
+                <a key={index} href={item.link} onClick={() => setShowMobileMenu(false)} onKeyDown={(e) => e.key === 'Enter' && setShowMobileMenu(false)} aria-label={item.label || item.text}>
                   {item.label || item.text}
                 </a>
               ))}
@@ -398,7 +398,9 @@ function makeHtml(items = [], navigate, onProfileClick) {
         <div key={i} className={styles[item.className]}>
           <img
             style={{ cursor: 'pointer' }}
-            onClick={() = alt="image" loading="lazy"> navigate('/cmshome')} onKeyDown={(e) => e.key === 'Enter' && () = alt="image"> navigate('/cmshome')}
+            onClick={() => navigate('/cmshome')} 
+            onKeyDown={(e) => e.key === 'Enter' && navigate('/cmshome')}
+            loading="lazy"
             alt={`img_${i}`}
             src={item.src}
           />

@@ -74,10 +74,11 @@ const UserAvatar = ({
           src={imageUrl} 
           alt={name}
           className={styles['user-avatar-image']}
-          onError={(e) = loading="lazy"> {
+          onError={(e) => {
             // 이미지 로드 실패 시 숨김
             e.target.style.display = 'none'
           }}
+          loading="lazy"
           style={{ display: 'block' }}
         />
       )}

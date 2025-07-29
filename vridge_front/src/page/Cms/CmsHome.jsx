@@ -179,9 +179,8 @@ export default function CmsHome() {
                     onClick={() => setShowRecentActivity(!showRecentActivity)} onKeyDown={(e) => e.key === 'Enter' && setShowRecentActivity(!showRecentActivity)} />
 
                 </div>
-                {!showRecentActivity &&
-                <ProjectCard>
-
+                {!showRecentActivity && (
+                <div>
                   {projectListData.length > 0 ?
                   (() => {
                     // 모든 피드백 수집
@@ -236,7 +235,7 @@ export default function CmsHome() {
                     <div className="empty-state">
                           <div className="empty-title">아직 피드백이 없습니다</div>
                           <div className="empty-subtitle">프로젝트에 피드백이 등록되면 여기에 표시됩니다</div>
-                        </div>;
+                        </div>
 
                   })() :
 
@@ -246,6 +245,7 @@ export default function CmsHome() {
                     </div>
                   }
                 </div>
+                )}
               </UnifiedCard>
 
               {/* 초대 현황 섹션 */}
@@ -254,7 +254,8 @@ export default function CmsHome() {
                   <h3 className="card-title">초대 현황</h3>
                   <ToggleButton
                     isExpanded={!showInvitations}
-                    onClick={() => setShowInvitations(!showInvitations)} onKeyDown={(e) => e.key === 'Enter' && () => setShowInvitations(!showInvitations)} />
+                    onClick={() => setShowInvitations(!showInvitations)} 
+                    onKeyDown={(e) => e.key === 'Enter' && setShowInvitations(!showInvitations)} />
 
                 </div>
                 {!showInvitations &&
@@ -263,8 +264,7 @@ export default function CmsHome() {
                     {invitationLoading ?
                   <div className="loading-state">
                         로딩 중...
-                      
-</UnifiedCard> :
+                      </div> :
 
                   <div>
                         {/* 받은 초대 - 컴팩트 버전 */}
@@ -308,11 +308,15 @@ export default function CmsHome() {
                                 </div>
                                 
                                 <div className="invitation-actions">
-                                  <UnifiedButton aria-label="Click"> handleAcceptInvitation(invitation.id)}
+                                  <UnifiedButton 
+                                    onClick={() => handleAcceptInvitation(invitation.id)}
+                                    aria-label="Accept invitation"
                                   >
                                     수락
                                   </UnifiedButton>
-                                  <UnifiedButton aria-label="Click"> handleDeclineInvitation(invitation.id)}
+                                  <UnifiedButton 
+                                    onClick={() => handleDeclineInvitation(invitation.id)}
+                                    aria-label="Decline invitation"
                                   >
                                     거절
                                   </UnifiedButton>

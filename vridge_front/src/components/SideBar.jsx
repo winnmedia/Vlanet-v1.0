@@ -196,9 +196,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
           onClick={() => {
             SetSubMenu(false);
             navigate('/mypage');
-          } onKeyDown={(e) => e.key === 'Enter' && () => {
-            SetSubMenu(false);
-            navigate('/mypage');
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              SetSubMenu(false);
+              navigate('/mypage');
+            }
           }}>
 
           마이페이지
@@ -215,16 +218,20 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
 
               // 로그인 페이지로 이동 (소문자로 통일)
               window.location.href = '/login';
-            } onKeyDown={(e) => e.key === 'Enter' && () => {
-            if (typeof window !== 'undefined') {
-              // 로그아웃 처리
-              localStorage.removeItem('VGID');
-              localStorage.removeItem('token');
-              localStorage.removeItem('userInfo');
-              document.cookie = 'vridge_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              if (typeof window !== 'undefined') {
+                // 로그아웃 처리
+                localStorage.removeItem('VGID');
+                localStorage.removeItem('token');
+                localStorage.removeItem('userInfo');
+                document.cookie = 'vridge_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
-              // 로그인 페이지로 이동 (소문자로 통일)
-              window.location.href = '/login';
+                // 로그인 페이지로 이동 (소문자로 통일)
+                window.location.href = '/login';
+              }
             }
           }}>
 
@@ -237,8 +244,11 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
         className={SubMenu ? `${styles.Submenu} ${styles.active}` : styles.Submenu}
         onClick={(e) => {
           e.stopPropagation();
-        } onKeyDown={(e) => e.key === 'Enter' && (e) => {
-          e.stopPropagation();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.stopPropagation();
+          }
         }}>
 
         <div className={styles.etc}>
@@ -251,9 +261,12 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               onClick={(e) => {
                 e.stopPropagation();
                 navigate('/ProjectCreate');
-              } onKeyDown={(e) => e.key === 'Enter' && (e) => {
-                e.stopPropagation();
-                navigate('/ProjectCreate');
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.stopPropagation();
+                  navigate('/ProjectCreate');
+                }
               }}
               className={styles.plus}>
 
@@ -264,10 +277,11 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
               onClick={(e) => {
                 e.stopPropagation();
                 SetSubMenu(false);
-              } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && (() => {
                 e.stopPropagation();
                 SetSubMenu(false);
-              }}
+              })()}
               className={styles.close}>
 
               x
@@ -286,7 +300,8 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                 if (!item.id) {
                   
                   return;
-                } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+                }}
+              onKeyDown={(e) => e.key === 'Enter' && (() => {
                 e.stopPropagation();
 
                 // 프로젝트 ID 유효성 검사
@@ -302,7 +317,7 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
                   navigate(`/feedback/${item.id}`);
                 }
                 SetSubMenu(false);
-              }}
+              })()}
               key={index}>
 
                 {item.name}
@@ -316,7 +331,8 @@ const SideBar = memo(function SideBar({ tab, on_menu }) {
             등록된 <br />
             프로젝트가 없습니다
             <UnifiedButton
-            onClick={() = aria-label="Click"> navigate('/ProjectCreate')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> navigate('/ProjectCreate')}
+            onClick={() => navigate('/ProjectCreate')} 
+            onKeyDown={(e) => e.key === 'Enter' && navigate('/ProjectCreate')}
             variant="primary">
 
               프로젝트 등록

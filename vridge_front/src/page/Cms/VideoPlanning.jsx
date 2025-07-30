@@ -2361,7 +2361,11 @@ export default function VideoPlanning() {
             {/* 모든 콘티 생성 버튼 추가 */}
             <div className="batch-actions">
               <div className="batch-buttons">
-                <Button onClick={generateAllStoryboardsFast} onKeyDown={(e) => { if (e.key === 'Enter') generateAllStoryboardsFast() }} disabled style={{
+                <Button 
+                  onClick={generateAllStoryboardsFast} 
+                  onKeyDown={(e) => { if (e.key === 'Enter') generateAllStoryboardsFast() }} 
+                  disabled={loading || planningData.scenes.length === 0}
+                  style={{
                     background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                     color: 'white',
                     border: 'none',
@@ -2373,7 +2377,9 @@ export default function VideoPlanning() {
                     opacity: loading || planningData.scenes.length === 0 ? 0.6 : 1,
                     transition: 'all 0.3s ease',
                     boxShadow: '0 4px 12px rgba(22, 49, 248, 0.25)'
-                  } aria-label="Click"> {
+                  }}
+                  aria-label="모든 콘티 빠르게 생성"
+                  onMouseEnter={(e) => {
                     if (!loading && planningData.scenes.length > 0) {
                       e.target.style.transform = 'translateY(-2px)';
                       e.target.style.boxShadow = '0 6px 20px rgba(22, 49, 248, 0.4)';

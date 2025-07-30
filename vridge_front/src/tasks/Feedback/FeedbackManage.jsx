@@ -20,7 +20,7 @@ import {
   UpdateFeedbackReaction
 } from '../../api/feedback'
 
-export default function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
+function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   const [reactions, setReactions] = useState({})
   const [reactionCounts, setReactionCounts] = useState({})
   const [showReplyInput, setShowReplyInput] = useState({})

@@ -71,7 +71,7 @@ VideoPlanet/
 - **백엔드**: Django 4.x (Railway 배포)
 - **데이터베이스**: PostgreSQL
 - **캐시**: Redis
-- **프론트엔드 버전**: v2.1.17 (2025-07-30)
+- **프론트엔드 버전**: v2.1.24 (2025-07-30)
 - **백엔드 버전**: v1.0.30 (2025-07-28)
 
 ## 주요 URL
@@ -80,6 +80,33 @@ VideoPlanet/
 - **API**: Railway 배포 Django 서버
 
 ## 개발 히스토리
+
+### 2025-07-30: Vercel 빌드 JSX 구문 오류 수정 (v2.1.24)
+**날짜**: 2025년 7월 30일
+**시간**: 오후 2:55
+**요청**: Vercel 빌드 실패로 인한 JSX 구문 오류 5개 파일 수정
+**버전**: 2.1.23 → 2.1.24
+
+#### 수정된 파일 및 오류
+1. **VideoPlanning.jsx:2376**
+   - 문제: `style` 속성이 닫히지 않고 `aria-label`이 잘못 추가됨
+   - 해결: `onMouseEnter` 이벤트 핸들러 추가, `disabled` 속성 수정, `aria-label` 위치 수정
+
+2. **CalendarDate.jsx:426**
+   - 문제: `onClick` 핸들러 내부에 `onKeyDown`이 잘못 중첩됨
+   - 해결: `onClick`과 `onKeyDown`을 별도 속성으로 분리
+
+3. **FeedbackInput.jsx:183**
+   - 문제: UnifiedInput 태그가 중간에 닫히고 속성이 분리됨
+   - 해결: 모든 속성을 올바르게 배치하고 self-closing 태그로 수정
+
+4. **FeedbackManage.jsx**
+   - 문제: 중복 export default 선언 (23번, 350번 라인)
+   - 해결: 함수 선언부의 export default 제거, React.memo 래핑 유지
+
+5. **InviteInput.jsx:127**
+   - 문제: `onClick`과 `onKeyDown` 핸들러 구문 오류
+   - 해결: 화살표 함수 구문 수정, `aria-label` 추가
 
 ### 2025-07-30: JSX 구문 오류 수정 (v2.1.17)
 **문제 해결:**
@@ -288,5 +315,5 @@ VideoPlanet/
 
 **마지막 업데이트**: 2025-07-30
 **최종 버전**: 
-- 프론트엔드: v2.1.17
+- 프론트엔드: v2.1.24
 - 백엔드: v1.0.30

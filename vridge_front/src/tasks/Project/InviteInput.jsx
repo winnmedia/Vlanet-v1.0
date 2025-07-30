@@ -124,7 +124,10 @@ export default function InviteInput({
           }}>
             초대됨
           </span>
-          <Button onClick={() = aria-label="Click"> handleResend(pend.invitee_email || pend.email)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleResend(pend.invitee_email || pend.email)}
+          <Button 
+            onClick={() => handleResend(pend.invitee_email || pend.email)} 
+            onKeyDown={(e) => e.key === 'Enter' && handleResend(pend.invitee_email || pend.email)}
+            aria-label="초대 재전송"
             style={{
               background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
               color: 'white',

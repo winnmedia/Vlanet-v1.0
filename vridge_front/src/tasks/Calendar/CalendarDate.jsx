@@ -423,10 +423,14 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
         onClick={() => {
           if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
             setInputModal(true)
-          } onKeyDown={(e) => { if (e.key === 'Enter') {
-          if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
-            setInputModal(true)
-          } }}
+          }
+        }}
+        onKeyDown={(e) => { 
+          if (e.key === 'Enter') {
+            if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
+              setInputModal(true)
+            }
+          }
         }}
       >
         {is_today ? (

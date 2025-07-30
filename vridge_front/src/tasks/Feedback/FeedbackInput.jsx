@@ -175,13 +175,15 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
             {/* 닉네임 모드일 때 닉네임 입력 필드 표시 */}
             {feedbackMode === 'nickname' &&
           <div className={styles.nicknameInput}>
-                <UnifiedInput type="text"
-              name="nickname"
-              value={nickname}
-              onChange={onChange}
-              placeholder="사용할 닉네임을 입력하세요"
-              maxLength={20}  / aria-label="사용할 닉네임을 입력하세요">
-
+                <UnifiedInput 
+                  type="text"
+                  name="nickname"
+                  value={nickname}
+                  onChange={onChange}
+                  placeholder="사용할 닉네임을 입력하세요"
+                  maxLength={20}
+                  aria-label="사용할 닉네임을 입력하세요"
+                />
               </div>
           }
           </>

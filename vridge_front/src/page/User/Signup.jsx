@@ -348,7 +348,13 @@ export default function Signup() {
                 이메일 <span style={{ color: '#dc3545' }}>*</span>
               </label>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <UnifiedInput placeholder="example@email.com" value={email} onChange={onChange} name="email"  / aria-label="example@email.com"> {
+                <UnifiedInput 
+                  placeholder="example@email.com" 
+                  value={email} 
+                  onChange={onChange} 
+                  name="email" 
+                  aria-label="이메일 입력"
+                  onFocus={(e) => {
                     if (!emailChecked) {
                       e.target.style.borderColor = '#1631F8'
                     }
@@ -359,8 +365,10 @@ export default function Signup() {
                     }
                   }}
                 />
-                <Button type="button"
-                  onClick={checkEmailDuplicate} onKeyDown={(e) => e.key === 'Enter' && checkEmailDuplicate}
+                <Button 
+                  type="button"
+                  onClick={checkEmailDuplicate} 
+                  onKeyDown={(e) => { if (e.key === 'Enter') checkEmailDuplicate() }}
                   disabled={!email || !email.includes('@') || checkingEmail}
                   style={{
                     width: '110px',
@@ -412,7 +420,7 @@ export default function Signup() {
                 </span>
               </label>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <UnifiedInput placeholder="닉네임을 입력하세요" value={nickname} onChange={onChange} name="nickname"  / aria-label="닉네임을 입력하세요"> {
+                <UnifiedInput placeholder="닉네임을 입력하세요" value={nickname} onChange={onChange} name="nickname" aria-label="닉네임을 입력하세요" onFocus={(e) => {
                     if (!nicknameChecked) {
                       e.target.style.borderColor = '#1631F8'
                     }
@@ -476,11 +484,20 @@ export default function Signup() {
                 </span>
               </label>
               <div style={{ position: 'relative' }}>
-                <UnifiedInput placeholder="비밀번호를 입력하세요" value={password} onChange={onChange} name="password"  / aria-label="비밀번호를 입력하세요"> e.target.style.borderColor = '#1631F8'}
+                <UnifiedInput 
+                  placeholder="비밀번호를 입력하세요" 
+                  value={password} 
+                  onChange={onChange} 
+                  name="password"
+                  aria-label="비밀번호를 입력하세요"
+                  onFocus={(e) => e.target.style.borderColor = '#1631F8'}
                   onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
                 />
-                <Button type="button"
-                  onClick={() = aria-label="Click"> setShowPassword(!showPassword)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowPassword(!showPassword)}
+                <Button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)} 
+                  onKeyDown={(e) => { if (e.key === 'Enter') setShowPassword(!showPassword) }}
+                  aria-label="비밀번호 보기/숨기기"
                   style={{
                     position: 'absolute',
                     right: '8px',

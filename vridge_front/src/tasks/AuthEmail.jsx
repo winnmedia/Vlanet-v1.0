@@ -83,19 +83,14 @@ export default function AuthEmail({
             SetErrorMessage('올바른 이메일 주소를 입력해주세요.');
             TimeoutMessage();
             return;
-          }} onKeyDown={(e) => { if (e.key === 'Enter') {
-          if (!isEmailValid) {
-            SetErrorMessage('올바른 이메일 주소를 입력해주세요.');
-            TimeoutMessage();
-            return;
-          } }}
+          }
 
           setIsLoading(true);
           SetErrorMessage('');
           SetSuccessMessage('');
 
-          SendAuthNumber(inputs, types).
-          then((res) => {
+          SendAuthNumber(inputs, types)
+            .then((res) => {
 
             setIsLoading(false);
             setMinutes(3);
@@ -137,16 +132,29 @@ export default function AuthEmail({
             SetErrorMessage('인증번호는 6자리입니다.');
             TimeoutMessage();
             return;
-          }} onKeyDown={(e) => { if (e.key === 'Enter') {
-          if (auth_number.length !== 6) {
-            SetErrorMessage('인증번호는 6자리입니다.');
-            TimeoutMessage();
-            return;
-          } }}
-
-          setIsLoading(true);
-          EmailAuth(inputs, types).
-          then((res) => {
+          }
+          SendAuthNumber(email, auth_number, dispatch, navigate);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            if (auth_number.length !== 6) {
+              SetErrorMessage('인증번호는 6자리입니다.');
+              TimeoutMessage();
+              return;
+            }
+            SendAuthNumber(email, auth_number, dispatch, navigate);
+          }
+        }}
+        >
+          확인
+        </Button>
+      ) : (
+        <Button
+          disabled={isLoading}
+          onClick={() => {
+            setIsLoading(true);
+            EmailAuth(inputs, types)
+              .then((res) => {
             setIsLoading(false);
             SetSuccessMessage('이메일 인증이 완료되었습니다!');
             SetValidEmail(true);

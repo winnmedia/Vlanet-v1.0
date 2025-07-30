@@ -2014,7 +2014,10 @@ export default function VideoPlanning() {
                       </div>
                     </label>
                     {planningOptions.characterImage && (
-                      <Button variant="danger" aria-label="Click"> setPlanningOptions(prev => ({ ...prev, characterImage: null }))}
+                      <Button 
+                        variant="danger" 
+                        aria-label="이미지 제거" 
+                        onClick={() => setPlanningOptions(prev => ({ ...prev, characterImage: null }))}
                       >
                         이미지 제거
                       </Button>
@@ -2027,7 +2030,7 @@ export default function VideoPlanning() {
               <h4 className="section-title">기획안 내용</h4>
               <UnifiedInput variant="textarea" className="planning-input" 
                 value={planningData.planning}
-                onChange={(e) =/> setPlanningData(prev => ({ ...prev, planning: e.target.value }))}
+                onChange={(e) => setPlanningData(prev => ({ ...prev, planning: e.target.value }))}
                 placeholder="예시: 신제품 런칭을 위한 프로모션 영상을 제작하려고 합니다. 타겟은 20-30대 직장인이며, 제품의 혁신성과 실용성을 강조하고 싶습니다..."
                 rows={10}
               />
@@ -2039,7 +2042,8 @@ export default function VideoPlanning() {
                 className="planning-title-input"
                 placeholder="기획안 제목을 입력하세요"
                 value={planningTitle}
-                onChange={(e) = aria-label="기획안 제목을 입력하세요" /> setPlanningTitle(e.target.value)}
+                onChange={(e) => setPlanningTitle(e.target.value)}
+                aria-label="기획안 제목을 입력하세요"
               />
               <div className="button-group">
                 <Button onClick={generateStories} onKeyDown={(e) => { if (e.key === 'Enter') generateStories() }} disabled={isGenerating || !selectedStory} aria-label="생성">
@@ -2051,7 +2055,9 @@ export default function VideoPlanning() {
                   </Button>
                 )}
                 {currentPlanningId && (
-                  <Button variant="secondary" aria-label="Click"> {
+                  <Button 
+                    variant="secondary" 
+                    onClick={() => {
                       // 새 기획 시작
                       setCurrentPlanningId(null)
                       setPlanningTitle('')
@@ -2085,6 +2091,7 @@ export default function VideoPlanning() {
                       setSuccessMessage('새로운 기획을 시작합니다.')
                       setTimeout(() => setSuccessMessage(null), 3000)
                     }}
+                    aria-label="새 기획 시작"
                   >
                     새 기획 시작
                   </Button>

@@ -1106,7 +1106,96 @@ vridge_front/
 ---
 
 **마지막 업데이트**: 2025-01-30
-**버전**: 2.1.13
+**버전**: 2.1.16
+
+### 세션 42: JSX 구문 오류 체계적 수정 (v2.1.16)
+
+**날짜**: 2025년 1월 30일
+**시간**: 오후 1:00
+**요청**: Vercel 빌드에서 반복되는 JSX 구문 오류 5개 파일 수정
+**버전**: 2.1.15 → 2.1.16
+
+#### 수정된 오류들
+
+1. **ProjectView-fixed.jsx:481**
+   - 문제: 멤버 초대 모달 주석이 잘못된 위치에 있어 JSX 구문 오류 발생
+   - 해결: 들여쓰기를 맞춰 주석이 올바른 위치에 오도록 수정
+
+2. **VideoPlanning.jsx:2045**
+   - 문제: `onChange={(e) = aria-label="..." /> setPlanningTitle(...)}` 잘못된 구문
+   - 해결: onChange와 aria-label을 분리하여 올바른 속성으로 배치
+
+3. **MyPage.jsx (3개 오류)**
+   - 849, 876번 라인: `<Button variant="secondary" aria-label="Click"> navigate(...)` onClick 누락
+   - 950번 라인: `onChange={(e) = aria-label="..." /> setFriendSearchQuery(...)` 잘못된 구문
+   - 해결: onClick 속성 추가, onChange와 aria-label 분리
+
+4. **Signup.jsx:487**
+   - 문제: UnifiedInput 태그가 중간에 닫히고 onFocus가 외부에 있는 심각한 구문 오류
+   - 해결: 모든 속성을 올바르게 배치하고 onFocus/onBlur 이벤트 핸들러 수정
+
+5. **AuthEmail.jsx:136**
+   - 문제: onClick 핸들러가 닫히지 않고 onKeyDown이 그 내부에 포함됨
+   - 해결: onClick과 onKeyDown을 별도의 속성으로 분리하고 중복 로직 정리
+
+#### 주요 패턴 해결
+- aria-label이 다른 속성 내부에 잘못 포함된 문제 해결
+- 이벤트 핸들러(onClick, onChange, onKeyDown)가 제대로 분리되지 않은 문제 해결
+- 태그가 중간에 잘못 닫히는 문제 해결
+
+### 세션 41: JSX 구문 오류 추가 수정 (v2.1.15)
+
+**날짜**: 2025년 1월 30일
+**시간**: 오전 11:15
+**요청**: 5개 파일의 추가 JSX 구문 오류 수정
+**버전**: 2.1.14 → 2.1.15
+
+#### 수정된 오류들
+
+1. **ProjectView-fixed.jsx:478**
+   - 문제: div 태그가 제대로 닫히지 않음
+   - 해결: 누락된 </div> 태그 추가
+
+2. **VideoPlanning.jsx:2017**
+   - 문제: Button의 onClick 속성 구문 오류
+   - 해결:
+     ```jsx
+     // 잘못된 패턴
+     <Button variant="danger" aria-label="Click"> setPlanningOptions(prev => ({ ...prev, characterImage: null }))}
+     
+     // 올바른 패턴
+     <Button 
+       variant="danger" 
+       aria-label="이미지 제거" 
+       onClick={() => setPlanningOptions(prev => ({ ...prev, characterImage: null }))}
+     >
+     ```
+
+3. **MyPage.jsx:775**
+   - 문제: input 태그 self-closing 오류
+   - 해결: `/ aria-label="직책">` → `aria-label="직책" />`로 수정
+
+4. **Signup.jsx:351**
+   - 문제: UnifiedInput 태그와 이벤트 핸들러 구문 오류
+   - 해결: 
+     - self-closing 태그 수정
+     - onFocus 이벤트 핸들러 추가
+     - Button의 onKeyDown 구문 수정
+
+5. **AuthEmail.jsx:86**
+   - 문제: 중복된 이벤트 핸들러 및 닫히지 않은 onClick
+   - 해결:
+     - onClick 핸들러 올바르게 닫기
+     - 중복된 onKeyDown 제거
+     - SendAuthNumber 메소드 체이닝 문법 수정
+
+#### 기술적 성과
+- 5개 파일의 JSX 구문 오류 완전 해결
+- 이벤트 핸들러 일관성 확보
+- 접근성 속성 개선
+- 빌드 안정성 향상
+
+---
 
 ### 세션 40: JSX 구문 오류 추가 수정 (v2.1.14)
 

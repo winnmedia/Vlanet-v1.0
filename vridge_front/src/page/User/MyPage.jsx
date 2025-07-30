@@ -767,12 +767,14 @@ export default function MyPage() {
                       직책
                     </label>
                     {isEditing ? (
-                      <UnifiedInput type="text" 
+                      <UnifiedInput 
+                        type="text" 
                         name="position"
                         value={profileForm.position}
                         onChange={handleInputChange}
                         placeholder="직책"
-                       / aria-label="직책">
+                        aria-label="직책"
+                      />
                     ) : (
                       <div className="info-value">{myPageData?.profile?.position || '-'}</div>
                     )}
@@ -816,7 +818,7 @@ export default function MyPage() {
                           phone: myPageData?.profile?.phone || '',
                           company: myPageData?.profile?.company || '',
                           position: myPageData?.profile?.position || ''
-                        }})
+                        })
                       }} className="cancel-btn">
                         취소
                       </UnifiedButton>
@@ -844,7 +846,10 @@ export default function MyPage() {
                             </span>
                           </div>
                         </div>
-                        <Button variant="secondary" aria-label="Click"> navigate(`/ProjectView/${project.id}`)}
+                        <Button 
+                          variant="secondary" 
+                          onClick={() => navigate(`/ProjectView/${project.id}`)}
+                          aria-label="프로젝트 보기"
                         >
                           보기
                         </Button>
@@ -871,7 +876,10 @@ export default function MyPage() {
                             </span>
                           </div>
                         </div>
-                        <Button variant="secondary" aria-label="Click"> navigate(`/ProjectView/${project.id}`)}
+                        <Button 
+                          variant="secondary" 
+                          onClick={() => navigate(`/ProjectView/${project.id}`)}
+                          aria-label="프로젝트 보기"
                         >
                           보기
                         </Button>
@@ -945,7 +953,8 @@ export default function MyPage() {
                         type="text"
                         placeholder="이메일 또는 닉네임으로 검색"
                         value={friendSearchQuery}
-                        onChange={(e) = aria-label="이메일 또는 닉네임으로 검색" /> setFriendSearchQuery(e.target.value)}
+                        onChange={(e) => setFriendSearchQuery(e.target.value)}
+                        aria-label="이메일 또는 닉네임으로 검색"
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             handleFriendSearch()

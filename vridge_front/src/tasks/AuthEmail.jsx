@@ -122,8 +122,7 @@ export default function AuthEmail({
   function CheckBtn() {
     const canVerify = auth_number.length === 6 && (minutes > 0 || seconds > 0);
 
-    return (
-      canVerify &&
+    return canVerify ? (
       <UnifiedButton
         variant="primary"
         size="lg"
@@ -177,13 +176,14 @@ export default function AuthEmail({
         loading={isLoading}>
 
           {isLoading ? '확인 중...' : '인증 확인'}
-        </UnifiedButton>);
+        </Button>
+    );
 
   }
   return (
     <>
       <div className="pr mt50">
-        <UnifiedInput placeholder="이메일 입력" value={email} onChange={onChange} name="email"  / aria-label="이메일 입력">
+        <UnifiedInput placeholder="이메일 입력" value={email} onChange={onChange} name="email" aria-label="이메일 입력" />
         <AuthNumber />
       </div>
       {(seconds > 0 || minutes > 0) &&

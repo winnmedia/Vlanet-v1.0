@@ -600,8 +600,11 @@ export default function Signup() {
                     }
                   }}
                 />
-                <Button type="button"
-                  onClick={() = aria-label="Click"> setShowPassword1(!showPassword1)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowPassword1(!showPassword1)}
+                <Button 
+                  type="button"
+                  onClick={() => setShowPassword1(!showPassword1)} 
+                  onKeyDown={(e) => { if (e.key === 'Enter') setShowPassword1(!showPassword1) }}
+                  aria-label="비밀번호 표시/숨기기"
                   style={{
                     position: 'absolute',
                     right: '8px',

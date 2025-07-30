@@ -1093,7 +1093,10 @@ export default function MyPage() {
                           <div className="friend-actions">
                             <Button variant="secondary" disabled title="준비 중" aria-label="Click">메시지</Button>
                             <Button variant="secondary" disabled title="준비 중" aria-label="Click">프로젝트 초대</Button>
-                            <Button variant="danger" aria-label="Click"> handleDeleteFriend(friendship.friend.email)}
+                            <Button 
+                              variant="danger" 
+                              aria-label="삭제" 
+                              onClick={() => handleDeleteFriend(friendship.friend.email)}
                               style={{
                                 backgroundColor: '#dc3545',
                                 color: 'white',
@@ -1114,7 +1117,7 @@ export default function MyPage() {
                             >
                               삭제
                             </Button>
-                            <Button variant="danger" aria-label="Click"> handleBlockFriend(friendship.friend.email)}
+                            <Button variant="danger" aria-label="차단" onClick={() => handleBlockFriend(friendship.friend.email)}
                               style={{
                                 backgroundColor: '#6c757d',
                                 color: 'white',

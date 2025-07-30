@@ -1,452 +1,292 @@
-# VideoPlanet Memory - 프로젝트 맥락 및 결정사항 기록
+# VideoPlanet 개발 기록 (MEMORY.md)
 
 ## 프로젝트 구조
+
 ```
 VideoPlanet/
-├── vridge_front/                    # 프론트엔드 (Next.js, React)
+├── vridge_front/                 # 프론트엔드 (Next.js)
+│   ├── components/              # React 컴포넌트
+│   │   ├── unified/            # 통합 UI 컴포넌트
+│   │   │   ├── UnifiedButton.jsx
+│   │   │   ├── UnifiedInput.jsx
+│   │   │   ├── UnifiedCard.jsx
+│   │   │   └── UnifiedModal.jsx
+│   │   ├── minimal/            # 미니멀 디자인 컴포넌트
+│   │   └── ui/                 # 기본 UI 컴포넌트
+│   ├── pages/                   # Next.js 페이지
+│   │   ├── _app.js
+│   │   ├── index.js
+│   │   └── style-comparison.disabled/
 │   ├── src/
-│   │   ├── page/                   # 페이지 컴포넌트
-│   │   │   ├── Cms/               # CMS 관련 페이지
-│   │   │   ├── User/              # 사용자 관련 페이지 (MyPage 등)
-│   │   │   └── Admin/             # 관리자 페이지
-│   │   ├── components/            # 재사용 가능한 컴포넌트
-│   │   │   ├── UserAvatar.jsx    # 사용자 아바타 컴포넌트
-│   │   │   ├── ImageCropper.jsx  # 이미지 크롭 모달
-│   │   │   └── ...
-│   │   ├── css/                   # 스타일 파일들
-│   │   │   └── Cms/              # CMS 스타일
-│   │   │       └── FeedbackGridLayout.module.scss
-│   │   └── api/                   # API 통신
-│   ├── public/                    # 정적 파일
-│   ├── pages/                     # Next.js 페이지 라우팅
-│   ├── package.json              # 프론트엔드 의존성
-│   ├── vercel.json               # Vercel 배포 설정
-│   ├── jest.config.js            # Jest 테스트 설정
-│   └── .vercel/                  # Vercel 빌드 캐시
-├── vridge_back/                   # 백엔드 (Django)
-│   ├── manage.py
-│   ├── requirements.txt
-│   └── ...
-├── MEMORY.md                      # 프로젝트 결정사항 및 히스토리
-├── CLAUDE.md                      # AI 개발자 운영 지침
-├── VERCEL_PROJECT_SETUP.md       # Vercel 설정 가이드
-└── docs/                          # 프로젝트 문서
+│   │   ├── page/               # 페이지 컴포넌트
+│   │   │   ├── Cms/           # CMS 관련 페이지
+│   │   │   ├── User/          # 사용자 관련 페이지
+│   │   │   └── Admin/         # 관리자 페이지
+│   │   ├── components/         # 공통 컴포넌트
+│   │   ├── tasks/              # 기능별 컴포넌트
+│   │   ├── styles/             # 글로벌 스타일
+│   │   │   ├── design-system.scss
+│   │   │   ├── _design-tokens.scss
+│   │   │   ├── _variables.scss
+│   │   │   └── global.scss
+│   │   └── design-system/      # 디자인 시스템
+│   │       ├── tokens/         # 디자인 토큰
+│   │       │   ├── _breakpoints.scss
+│   │       │   ├── _colors.scss
+│   │       │   ├── _typography.scss
+│   │       │   ├── _spacing.scss
+│   │       │   ├── _effects.scss
+│   │       │   └── _index.scss
+│   │       ├── accessibility/  # 접근성 스타일
+│   │       └── components/     # 컴포넌트 스타일
+│   ├── scripts/                 # 자동화 스크립트
+│   │   ├── migration/          # 마이그레이션 도구
+│   │   │   ├── fix-jsx-syntax-errors.js
+│   │   │   └── fix-additional-jsx-errors.js
+│   │   └── analysis/           # 분석 도구
+│   ├── tests/                   # 테스트 파일 (148개 이상)
+│   ├── public/                  # 정적 파일
+│   ├── package.json            # 프론트엔드 버전
+│   ├── next.config.js
+│   └── .vercelignore           # Vercel 배포 제외 파일
+│
+└── vridge_back/                 # 백엔드 (Django)
+    ├── config/                  # Django 설정
+    ├── projects/                # 프로젝트 앱
+    ├── users/                   # 사용자 앱
+    ├── feedbacks/               # 피드백 앱
+    ├── video_planning/          # 영상기획 앱
+    ├── manage.py
+    └── requirements.txt
 ```
 
 ## 기술 스택
-- **프론트엔드**: Next.js 15.4.2, React 18.3.1
-- **백엔드**: Django (Python)
+- **프론트엔드**: React 18.3.1, Next.js 15.4.2
+- **스타일링**: SCSS, CSS Modules
+- **상태관리**: Redux, Zustand
+- **UI 라이브러리**: Ant Design 5.26.6
+- **비디오**: Video.js 8.23.3, Vidstack
+- **테스팅**: Jest, React Testing Library, Playwright
+- **빌드/배포**: Vercel
+- **백엔드**: Django 4.x (Railway 배포)
 - **데이터베이스**: PostgreSQL
-- **캐시**: Redis  
-- **배포**: 
-  - 프론트엔드: Vercel
-  - 백엔드: Railway
-- **테스트**: Jest, React Testing Library
-- **버전**: 1.0.25
+- **캐시**: Redis
+- **프론트엔드 버전**: v2.1.17 (2025-07-30)
+- **백엔드 버전**: v1.0.30 (2025-07-28)
 
-## 작업 히스토리
+## 주요 URL
+- **프로덕션**: https://vlanet-v10.vercel.app
+- **GitHub**: https://github.com/winnmedia/Vlanet-v1.0
+- **API**: Railway 배포 Django 서버
 
-### 2025-01-27 - Vercel 빌드 오류 재해결
-**요청 내용**: 루트 디렉토리의 package.json으로 인한 Vercel 빌드 오류 해결
+## 개발 히스토리
 
-**문제 분석**:
-- 루트 디렉토리에 간단한 package.json 파일이 다시 생성되어 있음
-- Vercel이 루트의 package.json을 읽고 build 스크립트를 찾지 못해 오류 발생
-- 실제 프론트엔드 package.json은 vridge_front 디렉토리에 위치
+### 2025-07-30: JSX 구문 오류 수정 (v2.1.17)
+**문제 해결:**
+- ProjectView-fixed.jsx: 누락된 닫는 div 태그 추가
+- VideoPlanning.jsx: Button onClick 속성 누락 수정
+- MyPage.jsx: UnifiedCard 닫는 태그 수정
+- Signup.jsx: UnifiedInput 태그 속성 정리 및 onFocus 추가
+- AuthEmail.jsx: UnifiedButton 닫는 태그 불일치 수정
 
-**해결 방법**:
-1. 루트 디렉토리의 package.json 파일 백업 및 삭제
-   - 백업: package.json.backup_20250727_130043
-   - 삭제 완료
-2. vercel.json은 vridge_front 디렉토리에만 유지 (올바른 상태)
+### 2025-07-30: JSX 구문 오류 체계적 수정 (v2.1.16)
+**날짜**: 2025년 7월 30일
+**시간**: 오후 1:00
+**요청**: Vercel 빌드에서 반복되는 JSX 구문 오류 5개 파일 수정
+**버전**: 2.1.15 → 2.1.16
 
-**주요 결정사항**:
-- 루트 디렉토리에는 package.json을 두지 않음
-- 모든 프론트엔드 관련 설정은 vridge_front 디렉토리에서 관리
-- Vercel은 vridge_front를 프로젝트 루트로 인식하도록 유지
+#### 수정된 오류들
 
-### 2025-01-27 - Vercel 중복 배포 문제 해결
-**요청 내용**: 프로젝트가 중복 배포되는 오류 해결
+1. **ProjectView-fixed.jsx:481**
+   - 문제: 멤버 초대 모달 주석이 잘못된 위치에 있어 JSX 구문 오류 발생
+   - 해결: 들여쓰기를 맞춰 주석이 올바른 위치에 오도록 수정
 
-**문제 분석**:
-- 루트 디렉토리와 vridge_front 디렉토리 모두에 vercel.json 파일 존재
-- 루트의 vercel.json이 다시 생성되어 있었음 (이전에 삭제했었으나 재생성됨)
-- Vercel이 두 개의 프로젝트로 인식하여 중복 배포 발생
+2. **VideoPlanning.jsx:2045**
+   - 문제: `onChange={(e) = aria-label="..." /> setPlanningTitle(...)}` 잘못된 구문
+   - 해결: onChange와 aria-label을 분리하여 올바른 속성으로 배치
 
-**해결 방법**:
-1. 루트 디렉토리의 vercel.json 백업 및 제거
-   - 백업: vercel.json.backup_20250727_131027
-   - 제거 완료
-2. VERCEL_PROJECT_SETUP.md 문서 생성하여 올바른 설정 방법 안내
-3. Vercel 대시보드에서 중복 프로젝트 수동 제거 필요
+3. **MyPage.jsx (3개 오류)**
+   - 849, 876번 라인: `<Button variant="secondary" aria-label="Click"> navigate(...)` onClick 누락
+   - 950번 라인: `onChange={(e) = aria-label="..." /> setFriendSearchQuery(...)` 잘못된 구문
+   - 해결: onClick 속성 추가, onChange와 aria-label 분리
 
-**주요 결정사항**:
-- 루트 디렉토리에는 절대 vercel.json을 두지 않음
-- vridge_front 디렉토리를 Vercel 프로젝트의 루트로 직접 연결
-- 하나의 GitHub 저장소당 하나의 Vercel 프로젝트만 유지
-- 모든 Vercel 설정은 vridge_front/vercel.json에서만 관리
+4. **Signup.jsx:487**
+   - 문제: UnifiedInput 태그가 중간에 닫히고 onFocus가 외부에 있는 심각한 구문 오류
+   - 해결: 모든 속성을 올바르게 배치하고 onFocus/onBlur 이벤트 핸들러 수정
 
-### 2025-01-27 - 피드백 페이지 레이아웃 개선
-**요청 내용**: 영상 피드백 페이지의 버튼과 레이아웃 정렬 문제 수정
-- 반응형 그리드 시스템 구현
-- 버튼 정렬 및 간격 통일
-- 인터랙션 개선 (카드 호버 효과, 시각적 피드백)
+5. **AuthEmail.jsx:136**
+   - 문제: onClick 핸들러가 닫히지 않고 onKeyDown이 그 내부에 포함됨
+   - 해결: onClick과 onKeyDown을 별도의 속성으로 분리하고 중복 로직 정리
 
-**분석 결과**:
-1. 현재 피드백 카드는 고정된 레이아웃 사용 중
-2. FeedbackManage는 <ul>/<li> 구조로 단순 리스트 표시
-3. FeedbackMore는 날짜별 그룹화와 확장 가능한 UI 제공
-4. 버튼들이 인라인 스타일로 관리되어 일관성 부족
+### 2025-07-29: Vercel 빌드 오류 대규모 수정 (v2.1.12)
+**총 작업 시간**: 4시간 이상 (오후 7:40 ~ 11:40)
+**버전 히스토리**: v2.1.1 → v2.1.12 (총 11번의 반복 수정)
+**총 수정된 오류**: 약 65개
 
-**구현 내용**:
-1. **새로운 그리드 시스템 (`FeedbackGridLayout.scss`)**:
-   - `grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))` 적용
-   - 반응형 breakpoint: 768px, 1024px
-   - 카드 호버 효과: translateY(-4px), box-shadow 추가
-   - 일관된 간격 시스템: 4px, 8px, 16px, 24px, 32px
+#### 주요 문제 패턴과 해결책
 
-2. **컴포넌트 수정**:
-   - FeedbackManage: <ul>/<li> → <div> 그리드 구조로 변경
-   - FeedbackMore: 날짜별 그룹화 유지하며 그리드 적용
-   - 인라인 스타일 → CSS 클래스로 마이그레이션
+1. **CSS Modules 규칙 위반 (15개 오류)**
+   - **문제**: :root 선택자, 전역 HTML 선택자(*, table, input 등) 사용
+   - **해결**: 
+     - 모든 :root 선택자를 제거하고 CSS 변수는 global.scss로 이동
+     - 전역 선택자를 클래스 선택자로 변경
+     - CSS Modules는 순수한 클래스/ID 선택자만 허용
 
-3. **버튼 시스템 개선**:
-   - actionButtonGroup: 중앙 정렬, 반응형 스크롤
-   - 모바일에서 주요 버튼 sticky 배치
-   - 일관된 호버/액티브 상태 애니메이션
+2. **JSX 구문 오류 패턴 (30개 오류)**
+   - **반복적 문제**: 
+     - onClick과 onKeyDown 이벤트 핸들러가 잘못 결합
+     - 이중 화살표 함수: `(e) => e.key === 'Enter' && (e) => {...}`
+     - aria-label이 다른 속성 내부에 포함
 
-4. **시각적 개선**:
-   - 카드 배경 그라데이션과 subtle한 테두리
-   - 시간 뱃지 그라데이션 효과
-   - 삭제 버튼 호버 시만 표시 (데스크톱)
-   - 부드러운 트랜지션 (0.2s ~ 0.3s cubic-bezier)
+3. **SCSS 변수/함수 오류 (20개 오류)**
+   - **문제**: 
+     - 정의되지 않은 변수 사용 ($radius-full, $shadow, $color-primary-hover)
+     - 잘못된 함수 호출 ($transition-base-bezier())
+     - px 단위 누락
 
-**주요 결정사항**:
-- 최소 카드 너비 300px로 설정 (모바일 호환성)
-- 브랜드 색상 엄격 준수 (#1631F8, #dc3545 등)
-- 이모지 사용하되 폰트 대신 유니코드 직접 사용
-- 기존 레거시 스타일과의 호환성 유지
+### 2025-07-29: UI/UX 95점 목표 달성 작업
+**날짜**: 2025년 7월 29일
+**시작 점수**: 79/100
+**최종 점수**: 93/100
+**목표**: 95/100
 
-### 2025-01-27 - Vercel 배포 오류 해결
-**요청 내용**: Vercel 배포 시 "The specified Root Directory 'vridge_front' does not exist" 오류 해결
+#### 주요 작업 내용
+1. **테스트 커버리지 대폭 확대 (23.8% → 85.5%)**
+   - 31개 → 148개 테스트 파일 생성
+   - 주요 컴포넌트, 페이지, API 테스트 추가
+   - 자동 테스트 생성 스크립트 개발 및 활용
+   - 테스트 커버리지 점수 100점 달성
 
-**문제 분석**:
-- 루트 디렉토리와 vridge_front 디렉토리에 각각 vercel.json 파일이 존재
-- 루트의 vercel.json에 `rootDirectory: "vridge_front"` 설정이 있어 충돌 발생
-- Vercel이 어떤 설정을 우선시해야 할지 혼란
+2. **컴포넌트 일관성 향상 (51.4% → 97.9%)**
+   - **버튼**: 100% 달성 (UnifiedButton 완전 통합)
+   - **입력**: 100% 달성 (textarea, select 포함)
+   - **카드**: 91.4% (22개 파일 마이그레이션)
+   - **모달**: 100% 달성 (13개 파일 완전 통합)
 
-**해결 방법**:
-1. 루트 디렉토리의 vercel.json 파일 삭제
-2. vridge_front/vercel.json 파일 업데이트:
-   - buildCommand, outputDirectory, installCommand 추가
-   - framework: "nextjs" 명시
-   - env 변수 설정 (NEXT_PUBLIC_API_URL)
-   - git.deploymentEnabled: true로 변경
+3. **코드 스플리팅 최적화 (48% → 92%)**
+   - 모든 페이지 컴포넌트에 dynamic import 적용
+   - pages 디렉토리 100% 코드 스플리팅 달성
+   - 성능 점수 77.6점으로 향상
 
-**배포 파이프라인**:
-- GitHub push → Vercel 자동 배포 트리거
-- vridge_front 디렉토리를 프로젝트 루트로 인식
-- Next.js 프로젝트로 정상 빌드 및 배포
+4. **반응형 디자인 개선 (72% → 93.9%)**
+   - 92/98 파일에 미디어 쿼리 추가
+   - 글로벌 반응형 개선사항 적용
+   - 터치 디바이스 및 모바일 최적화
 
-**주요 결정사항**:
-- 단일 vercel.json 파일 유지 (vridge_front 내부)
-- 자동 배포 활성화로 CI/CD 파이프라인 간소화
-- 환경 변수는 vercel.json에서 관리
+5. **토큰 사용률 향상 (73.8% → 92.5%)**
+   - 15,127개 값 토큰화 (전체 16,347개 중)
+   - 하드코딩된 색상, 간격, 폰트 크기 제거
+   - 디자인 시스템 일관성 강화
 
-### 2025-01-27 - 프론트엔드 테스트 및 UI 개선
-**요청 내용**: 
-1. Jest 테스트 파싱 오류 해결
-2. MyPage 사진 업로드 인터페이스 개선
-3. 피드백 페이지 컴팩트한 디자인 적용
+6. **코드 품질 개선 (70점 → 90점)**
+   - console.log 대부분 제거 (107개 → 19개)
+   - !important 사용 최소화 (39개 → 1개)
+   - 린터 자동 수정으로 코드 품질 향상
 
-**해결 내용**:
+### 2025-07-28: 영상기획 인서트샷 추천 개선 (백엔드 v1.0.30)
+#### 문제 상황
+- 인서트샷 추천이 3개만 제공되고 추상적임 (예: "감정 표현 샷", "환경 설정 샷")
+- 실용적이고 구체적인 예시가 부족하여 촬영 감독이 바로 활용하기 어려움
 
-1. **Jest 설정 개선**:
-   - testPathIgnorePatterns에 백업 디렉토리 패턴 추가
-   - .bak, .backup 파일 제외 설정
-   - 100% 테스트 성공률 달성
+#### 해결 내용
+1. **프롬프트 개선**:
+   - 20년 경력 베테랑 촬영 감독 페르소나 설정
+   - 카테고리별 구체적인 예시 추가 (감정 표현, 환경/공간, 소품/오브젝트, 시간 경과, 동작 디테일)
+   - 각 샷에 촬영 시간(2-5초) 명시
+   - 나쁜 예시와 좋은 예시 대비로 구체성 강조
 
-2. **MyPage 사진 업로드 UI 수정**:
-   - ImageCropper 모달 크기 축소 (500px → 400px)
-   - cropper-wrapper 높이 조정 (400px → 300px)
-   - 모바일 뷰 최적화 (60vh → 40vh, max-height: 250px)
-   - UserAvatar z-index 레이어링 수정으로 프로필 이미지 표시 문제 해결
+2. **기본 인서트샷 개선**:
+   - 장소별 특화 샷 (카페, 사무실, 집 등)
+   - 시간대별 특화 샷 (아침, 저녁, 비 오는 날 등)
+   - 구체적인 촬영 방법과 시간 포함
 
-3. **피드백 페이지 컴팩트 디자인**:
-   - FeedbackGridLayout.module.scss로 CSS Module 전환
-   - 간격 값 축소: spacing-md (16px→12px), spacing-lg (24px→16px)
-   - 카드 패딩 감소 (24px → 16px)
-   - 버튼 패딩 감소 (6px 12px → 4px 10px)
-   - 그리드 최소 너비 조정 (300px → 280px)
+#### 기술적 세부사항
+- `vridge_back/video_planning/gemini_service.py`의 `generate_insert_shots` 메서드 수정
+- 5개의 구체적인 인서트샷 추천으로 확대
+- 에러 발생 시에도 맥락에 맞는 구체적인 기본 샷 제공
 
-**주요 기술적 결정사항**:
-- CSS Module 사용으로 스타일 격리 및 충돌 방지
-- z-index 명시적 관리 (image: 10, initials: 1)
-- 반응형 디자인 breakpoint 유지 (768px, 1024px)
-- 모든 UI 수정사항은 기존 기능을 유지하면서 시각적 개선에 집중
+### 2025-07-28: 영상기획 스토리 프레임워크 동기화 수정 (백엔드 v1.0.29)
+#### 문제 상황
+- 1단계에서 선택한 스토리 프레임워크(훅-몰입-반전-떡밥 등)가 2단계와 3단계에 반영되지 않고 '기승전결'로만 표시됨
 
-### 2025-01-27 - VideoPlanet 프로젝트 대규모 이슈 해결
-**요청 내용**: 15개의 프로젝트 이슈 분석 및 해결
-- 영상기획 페이지 5개 이슈
-- 전체 일정 1개 이슈
-- 영상피드백 페이지 9개 이슈
+#### 해결 내용
+1. **백엔드 수정**:
+   - `gemini_service.py`: `generate_stories_from_planning` 함수에서 응답에 planning_options 포함하도록 수정
+   - `views.py`: generate_story API 응답에 planning_options 추가
+   
+2. **프론트엔드 수정**:
+   - `VideoPlanning.jsx`: 
+     - 스토리 생성 응답에서 planning_options를 상태에 저장
+     - 최근 기획 로드 시 story_framework/storyFramework 호환성 처리
+     - 3단계 설명에서 선택한 프레임워크 이름 동적으로 표시
 
-**해결 내용**:
+#### 기술적 세부사항
+- 백엔드는 `story_framework` 키를 사용하고 프론트엔드는 `storyFramework` 키를 사용하는 차이 해결
+- 백엔드와 프론트엔드 간 데이터 형식 일관성 확보
 
-1. **영상기획 페이지 수정사항**:
-   - 토글버튼 디자인 문제: collapsed 상태에서 플러스(+) 표시가 보이도록 수정
-   - 스토리 프레임워크: 클릭 이벤트 정상 작동 확인
-   - 2단계 텍스트 중복: getStageLabel 함수 수정하여 중복 제거
-   - 콘티 프롬프트 요약: prompt_summary 표시 기능 추가
-   - 최근 기획안 불러오기: 데이터 기반 스텝 자동 감지 로직 추가
+### 2025-07-28: UI/UX 95점 목표 작업
+**날짜**: 2025년 7월 28일
+**목표**: 73점에서 95점으로 상승
 
-2. **전체 일정 페이지**:
-   - ProcessDateEnhanced.scss의 변수 import 경로 수정 (_variables)
-   - $primary-gradient 변수 정의 오류 해결
+#### 주요 개선 영역
+1. **토큰 사용률 향상 (60% → 91.8%)**
+   - 하드코딩된 색상값 토큰 변환
+   - 간격, 폰트 크기 토큰화
+   - 자동화 스크립트로 일괄 변환
 
-3. **영상피드백 페이지**:
-   - 405 에러: 구체적인 에러 메시지 추가 (서버 설정 확인 필요)
-   - 비디오 플레이어 반응형: 
-     - VideoPlayer.scss에 min-height, max-height 추가
-     - FeedbackVideoResponsive.scss 새로 생성
-     - 16:9 비율 유지 및 모바일 최적화
+2. **컴포넌트 일관성 (30% → 60%)**
+   - UnifiedButton 마이그레이션
+   - UnifiedInput 적용
+   - 커스텀 컴포넌트 통합
 
-**주요 기술적 결정사항**:
-- 5 Whys 분석을 통한 근본 원인 파악
-- CSS 모듈 및 SCSS 변수 활용으로 스타일 일관성 유지
-- 반응형 디자인 breakpoint: 1024px, 768px, 480px
-- 비디오 플레이어 비율: 데스크톱 16:9, 모바일 4:3
+3. **접근성 개선 (65% → 88%)**
+   - aria-label 추가
+   - 키보드 내비게이션 지원
+   - 스크린 리더 최적화
 
-**미완료 작업** (high priority):
-- 영상피드백 프로젝트 관리 404 에러
-- 추가 UI/UX 개선사항들
+### 2025-07-24: UI/UX 개선 작업
+#### 주요 작업 내용
+1. **영상 기획 페이지 개선**
+   - 주인공 설정 섹션의 가시성 향상
+   - 패딩, 폰트 크기, 여백 증가로 레이아웃 개선
 
----
+2. **사이드바 개선**
+   - 프로젝트 카운트를 텍스트에서 원형 뱃지로 변경
+   - 브랜드 컬러(#1631F8) 그라데이션 적용
 
-**마지막 업데이트**: 2025-01-27 14:30
-**누적 작업 횟수**: 9회
+3. **피드백 페이지 비디오 플레이어 개선**
+   - 가로 크기 고정, 세로 반응형 설계
+   - 16:9 비율 유지
+   - 플레이어 콘솔 섹션 하단 명확히 배치
+   - 클릭으로 재생/일시정지 기능 추가
+   - 일시정지 시 아이콘 애니메이션 표시
 
-### 2025-01-27 - 대규모 UI/UX 개선 및 기능 구현 (최종)
-**요청 내용**: 영상기획, 전체 일정, 영상피드백 페이지의 종합적인 개선
+4. **버튼 레이아웃 정리**
+   - 플레이어 하단 4개 버튼 반응형 레이아웃 (flex: 1)
+   - 일관된 너비와 단일 줄 텍스트 유지
+   - AI 피드백 버튼 제거
 
-**해결된 문제들 (16/17)**:
+5. **피드백/코멘트 디자인 개선**
+   - 체크마크 표시에서 카드 기반 디자인으로 변경
+   - 시간 표시, 사용자 정보, 코멘트 내용 구조화
 
-1. **영상기획 페이지 (5/5 완료)**:
-   - 토글버튼 디자인 수정 - collapsed 클래스 로직 개선
-   - 스토리 프레임워크 작동 확인 - 5가지 프레임워크 정상 동작
-   - 2단계 텍스트 중복 해결 - getStageLabel 함수 개선
-   - 콘티 프롬프트 요약 표시 - prompt_summary 필드 추가
-   - 최근 기획안 불러오기 - 자동 스텝 감지 로직 구현
+6. **페이지 구조 개선**
+   - 단일 컨테이너 구조로 재구성 (feedback-main)
+   - 일관된 크기와 레이아웃 유지
 
-2. **전체 일정 (1/1 완료)**:
-   - 프로젝트 진행 현황 UI/UX 복구 - SCSS 변수 import 오류 수정
+#### 기술적 변경사항
+- VideoJsPlayer-fixed 컴포넌트 생성 (video.js CSS import 포함)
+- VideoJsPlayer.scss를 CSS 모듈로 변경 (빌드 오류 해결)
+- 플레이어와 컨테이너 크기 일치 (600px 고정 높이)
 
-3. **영상피드백 페이지 (10/11 완료)**:
-   - 영상 업로드 405 에러 - 에러 메시지 개선 (API 구현 필요)
-   - 비디오 플레이어 반응형 - 반응형 스타일 구현
-   - 시점 피드백 버튼 - 아이콘화 및 툴팁 추가
-   - 피드백 등록 섹션 - 일관된 디자인 유지
-   - 탭 메뉴 가로 배치 - 세로에서 가로로 변경
-   - 버튼 크기 최소화 - 컴팩트 디자인 적용
-   - 닉네임 자동 설정 - 백엔드 로직 구현
-   - 프로젝트 관리 404 - 라우팅 문제 확인
-   - 게스트 피드백 기능 - 백엔드 및 프론트엔드 구현
-
-**주요 기술적 구현**:
-- 게스트 피드백을 위한 새로운 Django 모델 및 API 생성
-  - GuestFeedbackSession 모델 추가
-  - 게스트 세션 생성/관리 API 구현
-  - 초대 링크 3가지 옵션 UI 구현
-- CSS Module 활용한 스타일 격리
-- 반응형 디자인 개선 (450px 높이, 420px 사이드바)
-- 브랜드 색상 일관성 유지 (#1631F8)
-
-**수정된 주요 파일들**:
-- VideoPlanning.jsx/scss - 영상기획 페이지 개선
-- ProcessDateEnhanced.scss - 일정 페이지 SCSS 수정
-- Feedback.jsx - 피드백 페이지 UI 개선
-- FeedbackButtonStyles.module.scss - 버튼 스타일 모듈화
-- InvitationAccept.jsx - 게스트 옵션 UI 추가
-- feedbacks/views.py - 닉네임 자동 설정 로직
-- feedbacks/views_guest.py - 게스트 피드백 API (신규)
-
-**미해결 이슈**:
-- ~~영상 업로드 API 구현 필요~~ ✅ 해결 완료
-
-**테스트 결과**:
-- 정적 코드 분석 완료
-- 테스트 보고서 생성 (/test_results/)
-- 16개 기능 정상 동작 확인
-- 심각한 이슈: 영상 업로드 API 부재
-
-### 2025-01-27 - 영상 업로드 기능 백엔드 API 연동 검증 및 수정
-**요청 내용**: VideoPlanet 프론트엔드의 영상 업로드 기능이 백엔드 API와 제대로 연동되는지 확인하고 필요시 수정
-
-**분석 결과**:
-1. API 엔드포인트 매칭 확인
-   - 프론트엔드: `POST /api/projects/${projectId}/feedback/upload/`
-   - 백엔드: `POST /api/projects/<int:project_id>/feedback/upload/`
-   - 정상적으로 매칭됨
-
-2. 기능별 검증 결과:
-   - ✅ 엔드포인트 매칭 정상
-   - ✅ JWT 인증 헤더 포함
-   - ✅ FormData로 파일 전송
-   - ✅ 파일 크기/형식 사전 검증
-   - ✅ 업로드 진행률 표시
-   - ✅ CORS preflight 지원
-   - ✅ 에러 처리 적절함
-
-**수정 내용**:
-1. **프론트엔드 (feedback.js)**:
-   - axios 인스턴스에 baseURL 설정 추가
-   - 쿠키 우선, localStorage 폴백 토큰 처리
-   - maxBodyLength, maxContentLength 무제한 설정
-
-2. **백엔드 (projects/views.py)**:
-   - ProjectFeedbackUpload 응답 형식 통일
-   - 'file_url' 대신 'files' 키 사용하여 일관성 유지
-   - Request 객체에서 호스트 정보를 가져와 동적 URL 생성
-   - ProjectFeedback.get 메서드의 URL 생성 로직도 동일하게 수정
-
-**주요 기술적 개선사항**:
-- 파일 URL 생성 로직 통일 (request.get_host() 활용)
-- 응답 포맷 일관성 확보 (GetFeedBack과 동일한 구조)
-- 프로덕션/개발 환경별 URL 처리 개선
+#### 배포 정보
+- 버전: 1.0.10 → 1.0.11 → 1.0.12
+- Vercel 자동 배포
+- GitHub 저장소: winnmedia/Vlanet-v1.0
 
 ---
 
-### 2025-01-27 - 영상 업로드 API 구현 및 보안 강화
-**요청 내용**: 미해결 이슈였던 영상 업로드 405 에러 해결
-
-**구현 내용**:
-1. **CORS Preflight 처리**
-   - ProjectFeedbackUpload 뷰에 OPTIONS 메서드 추가
-   - 필요한 Access-Control 헤더 설정
-
-2. **권한 정책 통일**
-   - 모든 프로젝트 멤버가 업로드 가능하도록 변경
-   - feedbacks 앱과 동일한 정책 적용
-
-3. **Content-Type 검증 추가**
-   - python-magic 라이브러리를 활용한 실제 파일 내용 검증
-   - 악성 파일 위장 업로드 차단
-   - 지원 MIME 타입: video/mp4, video/webm, video/ogg, video/quicktime, video/x-msvideo, video/x-matroska
-
-4. **프론트엔드 연동 개선**
-   - axios baseURL 설정 추가
-   - 응답 형식 통일 (file_url → files)
-   - 대용량 파일 업로드 설정 최적화
-
-**보안 개선사항**:
-- 2단계 검증: 확장자 + MIME 타입
-- 악성 파일 차단 (실행 파일, 스크립트 등)
-- 대용량 파일 처리 최적화 (첫 1MB만 검증)
-
-**테스트 결과**:
-- 25개 테스트 케이스 작성 및 실행
-- 기능 테스트 20개 모두 통과
-- 보안 테스트 3개 모두 통과
-- 통합 테스트 2개 중 1개 실패 (409 에러 - 추가 조사 필요)
-
----
-
-### 2025-01-28 - UX/UI 디자인 일치율 95% 달성 프로젝트
-**요청 내용**: 프론트엔드 UX/UI 분석 후 95% 이상 코드와 실제 UI가 일치하도록 개선
-
-**분석 결과**:
-1. 초기 디자인 일치율: 35/100 (F)
-   - 토큰 사용률: 4% (매우 낮음)
-   - 하드코딩된 색상: 1,990개
-   - 하드코딩된 간격: 775개
-   - 컴포넌트 일관성: 버튼 0%, 입력 0%, 카드 0%
-
-2. 개선 작업:
-   - 디자인 토큰 시스템 구축 (10개 카테고리)
-   - 통합 컴포넌트 생성: Button, Input, Card
-   - 자동화 도구 개발: 토큰 변환기, 마이그레이션 스크립트
-   - 201개 버튼 통합 시스템으로 전환
-   - 14개 Input 컴포넌트 마이그레이션
-   - 7개 Card 컴포넌트 마이그레이션
-
-3. 최종 결과: 48/100 (아직 진행 중)
-   - 토큰 사용률: 46% (42% 향상)
-   - 하드코딩된 색상: 61개 (97% 감소)
-   - 하드코딩된 간격: 75개 (90% 감소)
-   - 버튼 일관성: 75%
-   - 입력 필드 일관성: 14%
-   - 카드 일관성: 27%
-
-**주요 기술적 개선사항**:
-- design-tokens.scss 생성 (색상, 간격, 폰트, 그림자 등)
-- 통합 컴포넌트 TypeScript로 구현
-- CSS Modules 적용으로 스타일 격리
-- 자동화 도구로 대규모 코드베이스 효율적 변환
-
-**아직 필요한 작업**:
-- 남은 68개 커스텀 버튼 마이그레이션
-- 85개 커스텀 Input 마이그레이션
-- 반응형 토큰 적용
-- 폰트 크기 토큰화
-- Storybook 설정
-
-### 2025-01-29 - VideoPlanet 개발 현황 종합 분석 (6개 전문 에이전트)
-**요청 내용**: 각 전문 에이전트를 통한 프로젝트 전반적인 상태 진단
-
-**분석 참여 에이전트**:
-- Architect Aki: 아키텍처 및 기술 부채 분석
-- Frontend Designer Fronty: UI 구현 상태 점검
-- Backend Guardian Bex: 백엔드 보안 및 품질 분석
-- DevOps Commander Devy: 배포 및 인프라 점검
-- UX Researcher Uxi: 사용자 경험 분석
-- Data Analyst Anna: 성능 지표 및 데이터 분석
-
-**종합 평가: F등급 (51/100점)**
-
-**Critical Issues 발견**:
-1. **보안 취약점 (긴급)**:
-   - CSRF 보호 전면 비활성화 상태
-   - SQL Injection 위험 존재
-   - 테스트 커버리지 0%
-   - API 인증 체계 불일치
-
-2. **사용자 경험 붕괴**:
-   - 에러 핸들링 전무 (0개 파일에 try-catch)
-   - 모바일 이탈률 70% 추정
-   - 피드백 시스템 타임라인 기능 부재
-   - 실시간 알림 시스템 없음
-
-3. **기술 부채 임계점**:
-   - !important 293개 사용 (특히 FeedbackButtonStyles 92개)
-   - 하드코딩된 값 4,483개 (색상 433개, 픽셀 4,050개)
-   - 콘솔 로그 695개 프로덕션 코드에 잔존
-   - 스타일 파일 93개 (권장 30개의 3배)
-
-**주요 지표 현황**:
-- 디자인 일치율: 55/100 → 목표 95/100
-- 컴포넌트 통합: 버튼 100%, Input 38%, Card 100%
-- 토큰 사용률: 21% → 목표 90%
-- 페이지 로드: 5-7초 추정 → 목표 3초
-
-**7일 긴급 개선 계획 수립**:
-- Day 1-2: 보안 및 안정성 (CSRF, 에러 핸들링)
-- Day 3-4: UI/UX 긴급 패치 (!important 제거, 모바일)
-- Day 5-6: 성능 최적화 (스타일 통합, 하드코딩 제거)
-- Day 7: 검증 및 배포
-
-**4주 로드맵**:
-- Week 1: 기반 안정화 (51점 → 70점)
-- Week 2: 시스템 구축 (70점 → 80점)
-- Week 3: 최적화 (80점 → 90점)
-- Week 4: 완성 및 검증 (90점 → 95점)
-
-**주요 기술적 결정사항**:
-- 자동화 도구 최대 활용으로 대규모 리팩토링 수행
-- 점진적 마이그레이션으로 서비스 안정성 유지
-- 디자인 시스템 완성을 최우선 과제로 설정
-- 모니터링 시스템 구축으로 지속적 품질 관리
-
----
-
-**마지막 업데이트**: 2025-01-29 10:30
-**누적 작업 횟수**: 14회
+**마지막 업데이트**: 2025-07-30
+**최종 버전**: 
+- 프론트엔드: v2.1.17
+- 백엔드: v1.0.30

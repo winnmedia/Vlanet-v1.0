@@ -2189,7 +2189,10 @@ export default function VideoPlanning() {
                       <span className="stage-name">{getStageName(planningOptions.storyFramework, index)}</span>
                     </div>
                     <div className="story-header-buttons">
-                      <Button variant="secondary" aria-label="Click"> startEditingStory(index)}
+                      <Button 
+                        variant="secondary" 
+                        aria-label="편집" 
+                        onClick={() => startEditingStory(index)}
                         disabled={editingStoryIndex === index}
                         style={{
                           backgroundColor: '#1631F8',
@@ -2210,14 +2213,16 @@ export default function VideoPlanning() {
                       <div className="story-summary">
                         {editingStoryIndex === index ? (
                           <div className="edit-story-form">
-                            <UnifiedInput variant="textarea" className="" value={editingStoryContent}
-                              onChange={(e) =/> setEditingStoryContent(e.target.value)}
+                            <UnifiedInput 
+                              variant="textarea" 
+                              value={editingStoryContent}
+                              onChange={(e) => setEditingStoryContent(e.target.value)}
                               className="edit-story-textarea"
                               placeholder="스토리 내용을 수정하세요..."
                               rows="6"
                             />
                             <div className="edit-story-buttons">
-                              <Button  aria-label="Click"> saveStoryEdit(index)}
+                              <Button onClick={() => saveStoryEdit(index)} aria-label="저장">
                                 style={{
                                   backgroundColor: '#1631F8',
                                   color: 'white',

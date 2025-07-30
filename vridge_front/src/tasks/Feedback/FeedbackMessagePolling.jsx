@@ -111,7 +111,7 @@ export default function FeedbackMessagePolling({
           id=""
           placeholder="채팅을 입력해주세요"
           value={text}
-          onChange={(e) = aria-label="채팅을 입력해주세요" /> set_text(e.target.value)}
+          onChange={(e) => set_text(e.target.value)}
           onKeyUp={enterkey}
           disabled={sending} />
 

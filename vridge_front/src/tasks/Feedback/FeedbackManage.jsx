@@ -299,14 +299,17 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                         type="text"
                         placeholder="답글을 입력하세요..."
                         value={replyTexts[feedback.id] || ''}
-                        onChange={(e) = aria-label="답글을 입력하세요..."> setReplyTexts(prev => ({ ...prev, [feedback.id]: e.target.value }))}
+                        onChange={(e) => setReplyTexts(prev => ({ ...prev, [feedback.id]: e.target.value }))}
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             submitReply(feedback.id)
                           }
                         }}
                       />
-                      <Button onClick={() = aria-label="Click"> submitReply(feedback.id)}>
+                      <Button 
+                        onClick={() => submitReply(feedback.id)}
+                        aria-label="답글 전송"
+                      >
                         답글
                       </Button>
                     </div>

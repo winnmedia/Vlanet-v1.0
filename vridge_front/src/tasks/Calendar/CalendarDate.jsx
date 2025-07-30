@@ -240,7 +240,9 @@ export function Dates({
 
           <div className="btn_wrap">
             {(is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) && (
-              <Button  aria-label="Click"> {
+              <Button 
+                aria-label="메모 삭제" 
+                onClick={() => {
                   if (is_admin) {
                     DeleteMemo({ memo_id: DetailModal.id }, project_id)
                       .then((res) => {
@@ -269,7 +271,13 @@ export function Dates({
                 삭제
               </Button>
             )}
-            <UnifiedButton onClick={() => setDetailModal(null)} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setDetailModal(null)} className="cancel">
+            <UnifiedButton 
+              onClick={() => setDetailModal(null)} 
+              type="button" 
+              aria-label="닫기" 
+              onKeyDown={(e) => e.key === 'Enter' && setDetailModal(null)} 
+              className="cancel"
+            >
               닫기
             </UnifiedButton>
           </div>

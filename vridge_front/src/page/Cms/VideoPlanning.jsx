@@ -2274,7 +2274,7 @@ export default function VideoPlanning() {
                       </div>
                     </>
                   )}
-                </div>
+                </UnifiedCard>
               ))}
             </div>
             <div className="button-group">

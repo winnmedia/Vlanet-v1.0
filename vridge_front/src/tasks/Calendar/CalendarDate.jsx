@@ -171,10 +171,12 @@ export function Dates({
             cols="30"
             rows="10"
             value={memo}
-            onChange={(e) =/> set_memo(e.target.value)}
+            onChange={(e) => set_memo(e.target.value)}
           ></textarea>
           <div className="btn_wrap">
-            <Button  aria-label="Click"> {
+            <Button 
+              aria-label="메모 저장" 
+              onClick={() => {
                 if (memo.length > 0) {
                   if (is_admin) {
                     WriteMemo(
@@ -214,7 +216,10 @@ export function Dates({
             >
               등록
             </Button>
-            <Button  aria-label="Click"> setInputModal(false)}>
+            <Button 
+              aria-label="닫기" 
+              onClick={() => setInputModal(false)}
+            >
               닫기
             </Button>
           </div>

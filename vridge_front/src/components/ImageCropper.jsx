@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react'
-import UnifiedModal from '../../components/unified/UnifiedModal';;
-
-import Cropper from 'react-easy-crop';import { UnifiedInput } from "./unified/UnifiedInput";
+import UnifiedModal from './unified/UnifiedModal';
+import { UnifiedButton } from './unified/UnifiedButton';
+import { UnifiedInput } from './unified/UnifiedInput';
+import Cropper from 'react-easy-crop';
 
 const createImage = (url) =>
 new Promise((resolve, reject) => {
@@ -129,10 +130,21 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }) {
         </div>
 
         <div className="cropper-actions">
-          <UnifiedButton variant="secondary" onClick={onCancel} onKeyDown={(e) => e.key === 'Enter' && onCancel} disabled aria-label="Click">
+          <UnifiedButton 
+            variant="secondary" 
+            onClick={onCancel} 
+            onKeyDown={(e) => e.key === 'Enter' && onCancel} 
+            disabled={loading} 
+            aria-label="취소"
+          >
             취소
           </UnifiedButton>
-          <UnifiedButton onClick={handleCropComplete} onKeyDown={(e) => e.key === 'Enter' && handleCropComplete} disabled aria-label="Click">
+          <UnifiedButton 
+            onClick={handleCropComplete} 
+            onKeyDown={(e) => e.key === 'Enter' && handleCropComplete} 
+            disabled={loading} 
+            aria-label="적용"
+          >
             {loading ? '처리 중...' : '적용'}
           </UnifiedButton>
         </div>
@@ -140,4 +152,3 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }) {
     </UnifiedModal>
   );
 }
-import { Button } from 'unified/Button';

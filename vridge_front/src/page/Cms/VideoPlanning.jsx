@@ -2276,7 +2276,11 @@ export default function VideoPlanning() {
               ))}
             </div>
             <div className="button-group">
-              <Button variant="secondary" aria-label="Click"> goToStep(1)} style={{
+              <Button 
+                variant="secondary" 
+                aria-label="기획안 수정" 
+                onClick={() => goToStep(1)} 
+                style={{
                 backgroundColor: '#1631F8',
                 color: 'white',
                 border: 'none',

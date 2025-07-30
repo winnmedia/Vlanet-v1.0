@@ -2222,7 +2222,9 @@ export default function VideoPlanning() {
                               rows="6"
                             />
                             <div className="edit-story-buttons">
-                              <Button onClick={() => saveStoryEdit(index)} aria-label="저장">
+                              <Button 
+                                onClick={() => saveStoryEdit(index)} 
+                                aria-label="저장"
                                 style={{
                                   backgroundColor: '#1631F8',
                                   color: 'white',

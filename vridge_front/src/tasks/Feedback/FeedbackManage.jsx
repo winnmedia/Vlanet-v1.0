@@ -270,7 +270,9 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 
                 <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.reply} ${showReplyInput[feedback.id] ? gridStyles.active : ''}`}
-                  onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id]} type="button" aria-label="클릭"))}
+                  onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
+                  type="button" 
+                  aria-label="답글"
                 >
                   <span>💬</span> 답글
                   {feedback.replies?.length > 0 && (

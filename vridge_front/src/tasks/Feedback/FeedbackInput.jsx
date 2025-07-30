@@ -107,13 +107,14 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
                 name="feedbackMode"
                 value="anonymous"
                 checked={feedbackMode === 'anonymous'}
-                onChange={(e) = aria-label="feedbackMode"> {
+                onChange={(e) => {
                   setFeedbackMode(e.target.value);
                   set_inputs((prevInputs) => ({
                     ...prevInputs,
                     secret: 'anonymous'
                   }));
-                }} />
+                }}
+                aria-label="feedbackMode" />
 
                 <span className={styles.radioLabel}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

@@ -165,14 +165,16 @@ export function Dates({
           <div className="day">
             {year}년 {month + 1}월 {date}일
           </div>
-          <UnifiedInput variant="textarea" className="mt20" 
+          <UnifiedInput 
+            variant="textarea" 
+            className="mt20" 
             name="textarea"
             placeholder="메모를 입력해주세요."
             cols="30"
             rows="10"
             value={memo}
             onChange={(e) => set_memo(e.target.value)}
-          ></textarea>
+          />
           <div className="btn_wrap">
             <Button 
               aria-label="메모 저장" 

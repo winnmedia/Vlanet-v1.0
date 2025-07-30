@@ -505,7 +505,8 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               maxHeight: '80vh',
               overflowY: 'auto'
             }}
-            onClick={(e) => e.stopPropagation()} onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} 
+            onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation() }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0 }}>멤버 초대</h3>

@@ -352,7 +352,9 @@ export function Dates({
           </div>
 
           <div className="btn_wrap">
-            <Button  aria-label="Click"> {
+            <Button 
+              aria-label="일정 저장" 
+              onClick={() => {
                 if (
                   DateInput.start_date &&
                   DateInput.end_date &&
@@ -376,7 +378,10 @@ export function Dates({
               변경하기
             </Button>
 
-            <Button  aria-label="Click"> SetDateInput(null)}>
+            <Button 
+              aria-label="닫기" 
+              onClick={() => SetDateInput(null)}
+            >
               닫기
             </Button>
           </div>

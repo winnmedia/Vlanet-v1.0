@@ -2294,7 +2294,12 @@ export default function VideoPlanning() {
               }}>
                 기획안 수정
               </Button>
-              <Button onClick={generateScenes} onKeyDown={(e) => { if (e.key === 'Enter') generateScenes() }} disabled style={{
+              <Button 
+                onClick={generateScenes} 
+                onKeyDown={(e) => { if (e.key === 'Enter') generateScenes() }} 
+                disabled={loading}
+                aria-label="씬 생성"
+                style={{
                   backgroundColor: '#1631F8',
                   color: 'white',
                   border: 'none',
@@ -2304,7 +2309,7 @@ export default function VideoPlanning() {
                   fontSize: '16px',
                   fontWeight: '600',
                   opacity: loading ? 0.7 : 1
-                } aria-label="Click">
+                }}>
                 {loading ? '씬 생성 중...' : '씬 생성'}
               </Button>
             </div>

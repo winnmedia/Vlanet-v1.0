@@ -112,7 +112,7 @@ export default function InviteInput({
               backgroundColor: '#fff',
               color: '#666'
             }}
-           / aria-label="이메일 입력">
+            aria-label="이메일 입력" />
           <span style={{
             padding: '6px 12px',
             backgroundColor: '#e8f4f8',

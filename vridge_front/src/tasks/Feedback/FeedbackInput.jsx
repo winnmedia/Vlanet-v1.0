@@ -154,13 +154,14 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
                 name="feedbackMode"
                 value="realname"
                 checked={feedbackMode === 'realname'}
-                onChange={(e) = aria-label="feedbackMode"> {
+                onChange={(e) => {
                   setFeedbackMode(e.target.value);
                   set_inputs((prevInputs) => ({
                     ...prevInputs,
                     secret: 'realname'
                   }));
-                }} />
+                }}
+                aria-label="feedbackMode" />
 
                 <span className={styles.radioLabel}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

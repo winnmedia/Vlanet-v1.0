@@ -347,6 +347,4 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   )
 }
 
-React.memo(FeedbackManage)
-
-import { Button } from '../../components/unified/Button'
+export default React.memo(FeedbackManage)

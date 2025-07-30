@@ -456,20 +456,23 @@ const UnifiedModal = dynamic(() => import('../../components/unified/UnifiedModal
                 <ul>
                   <li
                     className={currentTab === 0 ? 'active' : ''}
-                    onClick={() => changeTab(0)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(0)}
+                    onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                   >
                     피드백
                   </li>
                   <li
                     className={currentTab === 1 ? 'active' : ''}
-                    onClick={() => changeTab(1)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(1)}
+                    onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                   >
                     폴더 관리
                   </li>
                   {is_admin && (
                     <li
                       className={currentTab === 2 ? 'active' : ''}
-                      onClick={() => changeTab(2)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(2)}
+                      onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                     >
                       게시글 관리
                     </li>
@@ -539,13 +542,13 @@ const UnifiedModal = dynamic(() => import('../../components/unified/UnifiedModal
                       
                       <div className="player-controls">
                         <div className="control-group">
-                          <Button onClick={() = aria-label="Click"> {
+                          <Button onClick={() => {
                             if (videoPlayerRef.current) {
                               videoPlayerRef.current.seekTo(Math.max(0, currentVideoTime - 3));
-                            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                            }} onKeyDown={(e) => { if (e.key === 'Enter') {
                             if (videoPlayerRef.current) {
                               videoPlayerRef.current.seekTo(Math.max(0, currentVideoTime - 3));
-                            }
+                            } }}
                           }}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <circle cx="12" cy="12" r="10" />
@@ -554,13 +557,13 @@ const UnifiedModal = dynamic(() => import('../../components/unified/UnifiedModal
                             </svg>
                             3초 뒤로
                           </Button>
-                          <Button onClick={() = aria-label="Click"> {
+                          <Button onClick={() => {
                             if (videoPlayerRef.current) {
                               videoPlayerRef.current.seekTo(currentVideoTime + 3);
-                            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                            }} onKeyDown={(e) => { if (e.key === 'Enter') {
                             if (videoPlayerRef.current) {
                               videoPlayerRef.current.seekTo(currentVideoTime + 3);
-                            }
+                            } }}
                           }}>
                             3초 앞으로
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -571,17 +574,17 @@ const UnifiedModal = dynamic(() => import('../../components/unified/UnifiedModal
                           </Button>
                         </div>
                         <div className="control-group">
-                          <Button onClick={() = aria-label="Click"> {
+                          <Button onClick={() => {
                               // 현재 페이지 URL 복사
                               const shareUrl = typeof window !== 'undefined' && window.location.href;
                               navigator.clipboard.writeText(shareUrl).then(() => {
                                 window.alert('피드백 페이지 링크가 복사되었습니다.');
-                              } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                              }} onKeyDown={(e) => { if (e.key === 'Enter') {
                               // 현재 페이지 URL 복사
                               const shareUrl = typeof window !== 'undefined' && window.location.href;
                               navigator.clipboard.writeText(shareUrl).then(() => {
                                 window.alert('피드백 페이지 링크가 복사되었습니다.');
-                              }).catch(() => {
+                              } }}).catch(() => {
                                 window.alert('링크 복사에 실패했습니다.');
                               });
                             }}
@@ -617,13 +620,13 @@ const UnifiedModal = dynamic(() => import('../../components/unified/UnifiedModal
                       <div className="form-tabs">
                         <UnifiedButton 
                           className={`tab-button ${activeFormTab === 'feedback' ? 'active' : ''}`}
-                          onClick={() = aria-label="Click" type="button"> setActiveFormTab('feedback')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setActiveFormTab('feedback')}
+                          onClick={() => setActiveFormTab('feedback')} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setActiveFormTab('feedback')}
                         >
                           피드백 등록
                         </UnifiedButton>
                         <UnifiedButton 
                           className={`tab-button ${activeFormTab === 'comment' ? 'active' : ''}`}
-                          onClick={() = aria-label="Click" type="button"> setActiveFormTab('comment')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setActiveFormTab('comment')}
+                          onClick={() => setActiveFormTab('comment')} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setActiveFormTab('comment')}
                         >
                           코멘트 작성
                         </UnifiedButton>

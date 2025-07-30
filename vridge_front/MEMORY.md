@@ -1037,3 +1037,141 @@ vridge_front/
 ---
 
 **최종 버전**: v2.1.12 (2025-01-29 오후 11:40 배포 준비 완료)
+
+---
+
+### 세션 39: JSX 구문 오류 추가 수정 (v2.1.13)
+
+**날짜**: 2025년 1월 30일
+**시간**: 오전 10:00
+**요청**: Vercel 빌드에서 발생한 JSX 구문 오류 수정
+**버전**: 2.1.12 → 2.1.13
+
+#### 주요 오류 패턴 및 해결
+
+1. **onClick/onKeyDown 이벤트 핸들러 구문 오류**
+   - 패턴: `onClick={() = aria-label="Click"> {...}`
+   - 해결: `onClick={() => {...}} aria-label="클릭"`
+   - 영향: 약 30개 파일에서 이 패턴 발견 및 수정
+
+2. **이중 화살표 함수 오류**
+   - 패턴: `onKeyDown={(e) => e.key === 'Enter' && () => {...}}`
+   - 해결: `onKeyDown={(e) => { if (e.key === 'Enter') {...} }}`
+   - 가독성과 명확성 향상
+
+3. **React 속성명 규칙**
+   - `frameborder` → `frameBorder`
+   - `allowfullscreen` → `allowFullScreen`
+   - Home.jsx의 iframe 요소 수정
+
+#### 수정된 주요 파일
+
+1. **Feedback.jsx**
+   - 4개의 이벤트 핸들러 구문 수정
+   - timeStr 변수 선언 로직 수정
+   - aria-label 한국어로 변경
+
+2. **ProjectView-fixed.jsx**
+   - 잘못된 닫기 태그 수정 (</UnifiedCard> → </div>)
+   - 모달 닫기 버튼 이벤트 핸들러 수정
+
+3. **Home.jsx**
+   - iframe 속성명 camelCase로 변경
+
+4. **EmailCheck.jsx**
+   - 복잡한 onKeyDown 핸들러 간소화
+
+5. **자동 스크립트로 수정된 파일들** (27개)
+   - AuthEmail.jsx
+   - ProcessDateEnhanced.jsx
+   - InviteInput.jsx
+   - OpinionInput.jsx
+   - FeedbackManage.jsx
+   - CalendarDate.jsx
+   - MyPage.jsx (migrated 버전 포함)
+   - 기타 컴포넌트 파일들
+
+#### 개발한 도구
+- **fix-jsx-syntax-errors.js**: JSX 구문 오류 자동 수정 스크립트
+  - 정규식 기반 패턴 매칭
+  - 7가지 오류 패턴 감지 및 수정
+  - 27개 파일 자동 수정 완료
+
+#### 기술적 개선사항
+- JSX 이벤트 핸들러 일관성 확보
+- 접근성(aria-label) 속성 올바른 위치로 이동
+- React 속성명 규칙 준수
+- 코드 가독성 향상
+
+---
+
+**마지막 업데이트**: 2025-01-30
+**버전**: 2.1.13
+
+### 세션 40: JSX 구문 오류 추가 수정 (v2.1.14)
+
+**날짜**: 2025년 1월 30일
+**시간**: 오전 10:45 - 11:00
+**요청**: 로컬 빌드에서 발견된 추가 JSX 구문 오류 수정
+**버전**: 2.1.13 → 2.1.14
+
+#### 주요 오류 패턴 및 해결
+
+1. **FeedbackMore.jsx (라인 141, 145)**
+   - 문제: onClick/onKeyDown 이벤트 핸들러 결합 오류
+   - 해결: 
+     ```jsx
+     // 잘못된 패턴
+     onClick={() => handleFeedbackClick(data)} onKeyDown={(e) => e.key === 'Enter' && () => handleFeedbackClick(data)}
+     
+     // 올바른 패턴
+     onClick={() => handleFeedbackClick(data)}
+     onKeyDown={(e) => { if (e.key === 'Enter') handleFeedbackClick(data) }}
+     ```
+   - 추가: role="button", tabIndex={0} 속성 추가로 접근성 개선
+
+2. **ProcessDateEnhanced.jsx (라인 180)**
+   - 문제: onChange 속성과 aria-label이 잘못 결합
+   - 해결:
+     ```jsx
+     // 잘못된 패턴
+     onChange={(e) = aria-label="checkbox input"> setAutocalculate(e.target.checked)}
+     
+     // 올바른 패턴
+     onChange={(e) => setAutocalculate(e.target.checked)}
+     aria-label="자동 일정 계산 토글"
+     ```
+
+3. **Login.jsx (라인 247)**
+   - 문제: Button의 onClick/onKeyDown 구문 오류
+   - 해결: onKeyDown 핸들러를 올바른 함수 호출 형태로 수정
+
+#### 자동화 스크립트 개발
+
+**fix-additional-jsx-errors.js** 스크립트 생성:
+- 5가지 주요 오류 패턴 감지 및 자동 수정
+- 정규식 기반 패턴 매칭
+- 전체 프로젝트 스캔 기능
+
+#### 추가 발견 및 수정된 파일 (12개)
+
+1. **NotificationDropdown.jsx**
+2. **MinimalCard.stories.jsx**
+3. **CmsHomeMinimal.jsx**
+4. **FeedbackPolling.jsx** (4개 오류)
+5. **FeedbackStable.jsx** (3개 오류)
+6. **ProjectView.jsx** (2개 오류)
+7. **VideoPlanning.jsx** (2개 오류)
+8. **VideoPlanningMinimal.jsx**
+9. **CalendarDate.jsx** (3개 오류)
+10. **FeedbackMore.fixed-migrated.jsx**
+11. **FeedbackMore.modules-migrated.jsx**
+12. **InviteInput.jsx**
+
+#### 기술적 성과
+- 총 12개 파일에서 JSX 구문 오류 자동 수정
+- onClick/onKeyDown 이벤트 핸들러 일관성 확보
+- 접근성 속성 개선
+- 빌드 안정성 향상
+
+**상태**: 완료

@@ -78,17 +78,17 @@ export default function AuthEmail({
       <UnifiedButton
         variant="secondary"
         size="md"
-        onClick={() = aria-label="Click"> {
+        onClick={() => {
           if (!isEmailValid) {
             SetErrorMessage('올바른 이메일 주소를 입력해주세요.');
             TimeoutMessage();
             return;
-          } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+          }} onKeyDown={(e) => { if (e.key === 'Enter') {
           if (!isEmailValid) {
             SetErrorMessage('올바른 이메일 주소를 입력해주세요.');
             TimeoutMessage();
             return;
-          }
+          } }}
 
           setIsLoading(true);
           SetErrorMessage('');
@@ -132,17 +132,17 @@ export default function AuthEmail({
       <UnifiedButton
         variant="primary"
         size="lg"
-        onClick={() = aria-label="Click"> {
+        onClick={() => {
           if (auth_number.length !== 6) {
             SetErrorMessage('인증번호는 6자리입니다.');
             TimeoutMessage();
             return;
-          } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+          }} onKeyDown={(e) => { if (e.key === 'Enter') {
           if (auth_number.length !== 6) {
             SetErrorMessage('인증번호는 6자리입니다.');
             TimeoutMessage();
             return;
-          }
+          } }}
 
           setIsLoading(true);
           EmailAuth(inputs, types).

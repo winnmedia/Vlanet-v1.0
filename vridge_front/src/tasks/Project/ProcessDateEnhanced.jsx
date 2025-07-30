@@ -177,7 +177,8 @@ export default function ProcessDateEnhanced({ process, set_process }) {
             <input
               type="checkbox"
               checked={autocalculate}
-              onChange={(e) = aria-label="checkbox input"> setAutocalculate(e.target.checked)}
+              onChange={(e) => setAutocalculate(e.target.checked)}
+              aria-label="자동 일정 계산 토글"
             />
             <div className="toggle-switch"></div>
             <span>자동 일정 계산</span>
@@ -218,12 +219,12 @@ export default function ProcessDateEnhanced({ process, set_process }) {
             <UnifiedButton
               key={key}
               className={`template-btn ${selectedTemplate === key ? 'active' : ''}`}
-              onClick={() = aria-label="Click" type="button"> applyTemplate(key)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> applyTemplate(key)}
+              onClick={() => applyTemplate(key)} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> applyTemplate(key)}
             >
               {template.name}
             </UnifiedButton>
           ))}
-          <Button onClick={clearDates} onKeyDown={(e) => e.key === 'Enter' && clearDates} aria-label="Click">
+          <Button onClick={clearDates} onKeyDown={(e) => e.key === 'Enter' && clearDates} aria-label="클릭">
             초기화
           </Button>
         </div>
@@ -298,37 +299,37 @@ export default function ProcessDateEnhanced({ process, set_process }) {
               {/* 빠른 기간 설정 버튼 */}
               {range.startDate && !range.endDate && (
                 <div className="quick-duration">
-                  <Button onClick={() = aria-label="Click"> {
+                  <Button onClick={() => {
                     const updated = [...process]
                     updated[index].endDate = setDefaultTime(new Date(range.startDate), 18, 0)
                     set_process(updated)
-                  } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                  }} onKeyDown={(e) => { if (e.key === 'Enter') {
                     const updated = [...process]
                     updated[index].endDate = setDefaultTime(new Date(range.startDate), 18, 0)
                     set_process(updated)
-                  }}>당일</Button>
-                  <Button onClick={() = aria-label="Click"> {
+                  } }}}>당일</Button>
+                  <Button onClick={() => {
                     const updated = [...process]
                     const endDate = addDays(new Date(range.startDate), 2)
                     updated[index].endDate = setDefaultTime(endDate, 18, 0)
                     set_process(updated)
-                  } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                  }} onKeyDown={(e) => { if (e.key === 'Enter') {
                     const updated = [...process]
                     const endDate = addDays(new Date(range.startDate), 2)
                     updated[index].endDate = setDefaultTime(endDate, 18, 0)
                     set_process(updated)
-                  }}>3일</Button>
-                  <Button onClick={() = aria-label="Click"> {
+                  } }}}>3일</Button>
+                  <Button onClick={() => {
                     const updated = [...process]
                     const endDate = addDays(new Date(range.startDate), 6)
                     updated[index].endDate = setDefaultTime(endDate, 18, 0)
                     set_process(updated)
-                  } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                  }} onKeyDown={(e) => { if (e.key === 'Enter') {
                     const updated = [...process]
                     const endDate = addDays(new Date(range.startDate), 6)
                     updated[index].endDate = setDefaultTime(endDate, 18, 0)
                     set_process(updated)
-                  }}>1주</Button>
+                  } }}}>1주</Button>
                 </div>
               )}
             </div>

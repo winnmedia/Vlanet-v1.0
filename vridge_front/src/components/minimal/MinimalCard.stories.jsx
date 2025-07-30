@@ -69,7 +69,8 @@ export const WithFooter = () => <UnifiedCard>
   </UnifiedCard>;
 
 // 호버 효과가 있는 카드
-export const Hoverable = () => <UnifiedCard hover onClick={() => alert('카드를 클릭했습니다!')} onKeyDown={(e) => e.key === 'Enter' && () => alert('카드를 클릭했습니다!')}>
+export const Hoverable = () => <UnifiedCard hover onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}>
     <CardHeader title="클릭 가능한 카드" subtitle="클릭하거나 호버해보세요" />
     <CardContent>
       <p>이 카드는 호버 효과와 클릭 이벤트가 있습니다.</p>

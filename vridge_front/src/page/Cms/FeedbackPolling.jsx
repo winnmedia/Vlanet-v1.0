@@ -385,27 +385,31 @@ const FeedbackInput = dynamic(() => import('../../tasks/Feedback/FeedbackInput')
                   <ul>
                     <li
                       className={currentTab === 0 ? 'active' : ''}
-                      onClick={() => changeTab(0)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(0)}
+                      onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                     >
                       피드백
                     </li>
                     <li
                       className={currentTab === 1 ? 'active' : ''}
-                      onClick={() => changeTab(1)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(1)}
+                      onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                     >
                       폴더 관리
                     </li>
                     {is_admin && (
                       <li
                         className={currentTab === 2 ? 'active' : ''}
-                        onClick={() => changeTab(2)} onKeyDown={(e) => e.key === 'Enter' && () => changeTab(2)}
+                        onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                       >
                         게시글 관리
                       </li>
                     )}
                   </ul>
                   <ul className="tab_btn">
-                    <li onClick={() => navigate(`/ProjectView/${project_id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${project_id}`)}>
+                    <li onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}`)}>
                       프로젝트 보기
                     </li>
                   </ul>

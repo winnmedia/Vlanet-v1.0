@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic';
 import { UnifiedButton } from '../../components/unified/UnifiedButton';
+import { UnifiedInput } from '../../components/unified/UnifiedInput';
 
 import Link from 'next/link'
 import { useRouter, useLocation } from '../../util/nextNavigation'
@@ -40,10 +41,8 @@ export default function Signup() {
   // 비밀번호 강도 체크
   const getPasswordStrength = () => {
     if (!password) return { level: 0, text: '' };
-import { Button } from '../../components/unified/Button'
     
     let strength = 0;
-import { Input } from '../../components/unified/Input';
     if (password.length >= 10) strength++;
     if (password.length >= 14) strength++;
     if (/[A-Z]/.test(password)) strength++;

@@ -138,13 +138,14 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
           <div className={styles['date-header']}>{item[0]}</div>
           <div className={styles['feedback-list']}>
             {item[1].map((data, i) => (
-              <div key={data.id || i} className={styles['feedback-card']} onClick={() => handleFeedbackClick(data)} onKeyDown={(e) => e.key === 'Enter' && () => handleFeedbackClick(data)}>
+              <div key={data.id || i} className={styles['feedback-card']} onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}>
                 <div className={styles['card-header']}>
                   <div 
                     className={styles['time-badge']}
                     onClick={(e) => {
                       e.stopPropagation();
-import { Button } onKeyDown={(e) => e.key === 'Enter' && (e) => {
+import { Button } onKeyDown={(e) => e.key === 'Enter' && {
                       e.stopPropagation();
 import { Button } from '../../components/unified/Button';
                       if (onTimeClick && data.section) {

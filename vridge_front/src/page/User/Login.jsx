@@ -2,6 +2,8 @@
 import PageTemplate from '../../components/PageTemplate'
 import dynamic from 'next/dynamic';
 import { UnifiedButton } from '../../components/unified/UnifiedButton';
+import { Button } from '../../components/unified/Button';
+import { Input } from '../../components/unified/Input';
 
 import queryString from 'query-string'
 import { useState, useEffect } from 'react'
@@ -74,9 +76,7 @@ export default function Login() {
         email: userData.user || userData.email,
         nickname: userData.nickname
       };
-import { Button } from '../../components/unified/Button'
       typeof window !== 'undefined' && window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
-import { Input } from '../../components/unified/Input';
     } else {
       // 사용자 정보 API 호출
       try {
@@ -180,7 +180,7 @@ import { Input } from '../../components/unified/Input';
               SetLoginMessage(
                 <div>
                   <p style={{ margin: '0 0 10px 0' }}>{err.response.data.message}</p>
-                  <Button onClick={() = aria-label="Click"> resendVerificationEmail(err.response.data.email)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> resendVerificationEmail(err.response.data.email)}
+                  <Button onClick={() => resendVerificationEmail(err.response.data.email)} onKeyDown={(e) => e.key === 'Enter' && resendVerificationEmail(err.response.data.email)}
                     style={{
                       padding: '8px 16px',
                       backgroundColor: '#1631F8',
@@ -237,19 +237,23 @@ import { Input } from '../../components/unified/Input';
               </p>
             </div>
           )}
-          <UnifiedInput placeholder="이메일" value={email} onChange={OnChange} name="email"  / aria-label="이메일">
+          <UnifiedInput placeholder="이메일" value={email} onChange={OnChange} name="email" aria-label="이메일" />
 
-          <UnifiedInput placeholder="비밀번호" value={password} onChange={OnChange} name="password"  / aria-label="비밀번호">
+          <UnifiedInput placeholder="비밀번호" value={password} onChange={OnChange} name="password" type="password" aria-label="비밀번호" />
           {login_message && <div className="error">{login_message}</div>}
-          <div className="find_link tr" onClick={() => navigate('/resetpw')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/resetpw')}>
+          <div className="find_link tr" onClick={() => navigate('/resetpw')} onKeyDown={(e) => e.key === 'Enter' && navigate('/resetpw')}>
             비밀번호 찾기
           </div>
-          <Button onClick={Login} onKeyDown={(e) => e.key === 'Enter' && Login} aria-label="Click">
+          <Button 
+            onClick={Login} 
+            onKeyDown={(e) => { if (e.key === 'Enter') Login() }}
+            aria-label="로그인"
+          >
             로그인
           </Button>
           <div className="mt20 signup_link">
             브이래닛이 처음이신가요?{' '}
-            <span onClick={() => navigate('/signup')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/signup')}>간편 가입하기</span>
+            <span onClick={() => navigate('/signup')} onKeyDown={(e) => e.key === 'Enter' && navigate('/signup')}>간편 가입하기</span>
           </div>
         </div>
       </div>

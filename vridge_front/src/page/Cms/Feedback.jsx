@@ -1400,25 +1400,6 @@ export default function Feedback() {
                                 const url = URL.createObjectURL(blob);
                                 const a = document.createElement('a');
                                 const currentTime = videoPlayerRef.current.getCurrentTime();
-                                const timeStr = `${Math.floor(currentTime / 60)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
-                          if (videoPlayerRef.current) {
-                            // 비디오 일시정지
-                            videoPlayerRef.current.pause();
-                            
-                            // 스크린샷 캡처 기능 구현
-                            const video = videoPlayerRef.current.el().querySelector('video');
-                            if (video) {
-                              const canvas = document.createElement('canvas');
-                              canvas.width = video.videoWidth;
-                              canvas.height = video.videoHeight;
-                              const ctx = canvas.getContext('2d');
-                              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                              
-                              // 이미지 다운로드
-                              canvas.toBlob((blob) => {
-                                const url = URL.createObjectURL(blob);
-                                const a = document.createElement('a');
-                                const currentTime = videoPlayerRef.current.getCurrentTime();
                                 const minutes = Math.floor(currentTime / 60);
                                 const seconds = Math.floor(currentTime % 60);
                                 const timeStr = minutes + 'm' + seconds + 's';
@@ -1489,7 +1470,10 @@ export default function Feedback() {
                           </div>
                         </div>
                         <UnifiedButton
-                          onClick={() = aria-label="Click" type="button"> setSelectedFeedback(null)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setSelectedFeedback(null)}
+                          onClick={() => setSelectedFeedback(null)} 
+                          onKeyDown={(e) => e.key === 'Enter' && setSelectedFeedback(null)}
+                          type="button"
+                          aria-label="피드백 닫기"
                           className="close-btn"
                         >
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1624,7 +1608,7 @@ export default function Feedback() {
                           onClick={() => navigate('/ProjectEdit/' + project_id)}
                           onKeyDown={(e) => { if (e.key === 'Enter') navigate('/ProjectEdit/' + project_id); }}
                           aria-label="Manage project"
-                          type="button"}
+                          type="button"
                         >
                           프로젝트 관리
                         </UnifiedButton>
@@ -1670,14 +1654,21 @@ export default function Feedback() {
       
       {/* AI 선생님 모달 */}
       {showTeacherModal && (
-        <div className="ai-teacher-modal-overlay" onClick={(e) = role="dialog" aria-modal="true"> {
-          if (e.target.classList.contains('ai-teacher-modal-overlay')) {
-            setShowTeacherModal(false)
-          } onKeyDown={(e) => e.key === 'Enter' && (e) = role="dialog" aria-modal="true"> {
-          if (e.target.classList.contains('ai-teacher-modal-overlay')) {
-            setShowTeacherModal(false)
-          }
-        }}>
+        <div 
+          className="ai-teacher-modal-overlay" 
+          onClick={(e) => {
+            if (e.target.classList.contains('ai-teacher-modal-overlay')) {
+              setShowTeacherModal(false)
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setShowTeacherModal(false)
+            }
+          }}
+          role="dialog" 
+          aria-modal="true"
+        >
           <div className="ai-teacher-modal" role="dialog" aria-modal="true">
             {analysisStatus === 'idle' && (
               <>
@@ -1721,12 +1712,21 @@ export default function Feedback() {
                     )}
                   </div>
                   <div className={styles.footerButtons}>
-                    <UnifiedButton className={styles.btnCancel} onClick={() = aria-label="Click" type="button"> setShowTeacherModal(false)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowTeacherModal(false)}>
+                    <UnifiedButton 
+                      className={styles.btnCancel} 
+                      onClick={() => setShowTeacherModal(false)} 
+                      onKeyDown={(e) => e.key === 'Enter' && setShowTeacherModal(false)}
+                      type="button"
+                      aria-label="취소"
+                    >
                       취소
                     </UnifiedButton>
                     <UnifiedButton 
                       className={styles.btnAnalyze} 
-                      onClick={startVideoAnalysis} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && startVideoAnalysis}
+                      onClick={startVideoAnalysis} 
+                      onKeyDown={(e) => e.key === 'Enter' && startVideoAnalysis}
+                      type="button"
+                      aria-label="분석 시작"
                       disabled={!selectedTeacher}
                      aria-label="Click">
                       분석 시작
@@ -1780,7 +1780,7 @@ export default function Feedback() {
                         {Object.entries(teacherFeedback.technical_analysis.category_scores || {}).map(([key, data]) => (
                           <div key={key} style={{
                             background: data.score >= 80 ? '#f0f9ff' : data.score >= 60 ? '#fffbeb' : '#fef2f2',
-                            border: `1px solid ${data.score >= 80 ? '#bfdbfe' : data.score >= 60 ? '#fed7aa' : '#fecaca'}`,
+                            border: '1px solid ' + (data.score >= 80 ? '#bfdbfe' : data.score >= 60 ? '#fed7aa' : '#fecaca'),
                             borderRadius: '8px',
                             padding: '12px',
                             textAlign: 'center'
@@ -1834,7 +1834,8 @@ export default function Feedback() {
                           <div key={index} className="comment-item">
                             <span 
                               className="timestamp"
-                              onClick={() => handleTimestampClick(comment.timestamp)} onKeyDown={(e) => e.key === 'Enter' && () => handleTimestampClick(comment.timestamp)}
+                              onClick={() => handleTimestampClick(comment.timestamp)} 
+                              onKeyDown={(e) => e.key === 'Enter' && handleTimestampClick(comment.timestamp)}
                             >
                               {Math.floor(comment.timestamp / 60)}:{Math.floor(comment.timestamp % 60).toString().padStart(2, '0')}
                             </span>
@@ -1853,7 +1854,13 @@ export default function Feedback() {
                 </div>
                 <div className="ai-teacher-footer">
                   <div></div>
-                  <UnifiedButton className={styles.btnAnalyze} onClick={() = aria-label="Click" type="button"> setShowTeacherModal(false)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowTeacherModal(false)}>
+                  <UnifiedButton 
+                    className={styles.btnAnalyze} 
+                    onClick={() => setShowTeacherModal(false)} 
+                    onKeyDown={(e) => e.key === 'Enter' && setShowTeacherModal(false)}
+                    type="button"
+                    aria-label="닫기"
+                  >
                     닫기
                   </UnifiedButton>
                 </div>
@@ -1864,13 +1871,21 @@ export default function Feedback() {
               <div className="analysis-progress">
                 <h3>분석 중 오류가 발생했습니다</h3>
                 <p>다시 시도해주세요</p>
-                <UnifiedButton className={styles.btnAnalyze} onClick={() = aria-label="Click" type="button"> {
-                  setAnalysisStatus('idle')
-                  setSelectedTeacher(null)
-                } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
-                  setAnalysisStatus('idle')
-                  setSelectedTeacher(null)
-                }}>
+                <UnifiedButton 
+                  className={styles.btnAnalyze} 
+                  onClick={() => {
+                    setAnalysisStatus('idle')
+                    setSelectedTeacher(null)
+                  }} 
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setAnalysisStatus('idle')
+                      setSelectedTeacher(null)
+                    }
+                  }}
+                  type="button"
+                  aria-label="다시 시도"
+                >
                   다시 시도
                 </UnifiedButton>
               </div>

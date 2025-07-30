@@ -460,7 +460,7 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
             <UnifiedButton
               variant="ghost"
               size="sm"
-              onClick={togglePlay} onKeyDown={(e) => e.key === 'Enter' && togglePlay} aria-label="Click">
+              onClick={togglePlay} onKeyDown={(e) => e.key === 'Enter' && togglePlay} aria-label="클릭">
 
               {isPlaying ?
               <svg viewBox="0 0 24 24" width="24" height="24">
@@ -525,17 +525,17 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
               <UnifiedButton
                 variant="ghost"
                 size="sm"
-                onClick={() = aria-label="Click"> {
+                onClick={() => {
                   const rates = [0.5, 0.75, 1, 1.25, 1.5, 2];
                   const currentIndex = rates.indexOf(playbackRate);
                   const nextIndex = (currentIndex + 1) % rates.length;
                   handlePlaybackRateChange(rates[nextIndex]);
-                } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                }} onKeyDown={(e) => { if (e.key === 'Enter') {
                   const rates = [0.5, 0.75, 1, 1.25, 1.5, 2];
                   const currentIndex = rates.indexOf(playbackRate);
                   const nextIndex = (currentIndex + 1) % rates.length;
                   handlePlaybackRateChange(rates[nextIndex]);
-                }}>
+                } }}}>
                 <span className="rate-text">{playbackRate}x</span>
                 <span className="tooltip">재생 속도</span>
               </UnifiedButton>
@@ -544,13 +544,13 @@ const FeedbackPlayer = forwardRef(({ videoUrl, onTimeClick, initialTime, onError
             <UnifiedButton
               variant="ghost"
               size="sm"
-              onClick={() = aria-label="Click"> {
+              onClick={() => {
                 if (document.fullscreenElement) {
                   document.exitFullscreen();
-                } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                }} onKeyDown={(e) => { if (e.key === 'Enter') {
                 if (document.fullscreenElement) {
                   document.exitFullscreen();
-                } else {
+                } }} else {
                   videoRef.current.requestFullscreen();
                 }
               }}

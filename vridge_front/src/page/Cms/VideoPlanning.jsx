@@ -1709,13 +1709,13 @@ export default function VideoPlanning() {
                         type="text"
                         placeholder="타겟 오디언스를 자유롭게 입력해주세요"
                         value={planningOptions.targetCustom}
-                        onChange={(e) = aria-label="타겟 오디언스를 자유롭게 입력해주세요" /> setPlanningOptions(prev => ({ ...prev, targetCustom: e.target.value, target: 'custom' }))}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, targetCustom: e.target.value, target: 'custom' }))}
                         className="ty01"
                       />
                     </div>
                   )}
                   {showCustomTarget && (
-                    <Button variant="secondary" aria-label="Click"> {
+                    <Button variant="secondary" onClick={() => {
                         setShowCustomTarget(false)
                         setPlanningOptions(prev => ({ ...prev, target: '', targetCustom: '' }))
                       }}
@@ -1777,13 +1777,13 @@ export default function VideoPlanning() {
                         type="text"
                         placeholder="영상의 목적을 자유롭게 입력해주세요"
                         value={planningOptions.purposeCustom}
-                        onChange={(e) = aria-label="영상의 목적을 자유롭게 입력해주세요"> setPlanningOptions(prev => ({ ...prev, purposeCustom: e.target.value, purpose: 'custom' }))}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, purposeCustom: e.target.value, purpose: 'custom' }))}
                         className="ty01"
                       />
                     </div>
                   )}
                   {showCustomPurpose && (
-                    <Button variant="secondary" aria-label="Click"> {
+                    <Button variant="secondary" onClick={() => {
                         setShowCustomPurpose(false)
                         setPlanningOptions(prev => ({ ...prev, purpose: '', purposeCustom: '' }))
                       }}
@@ -1835,13 +1835,13 @@ export default function VideoPlanning() {
                         type="text"
                         placeholder="원하시는 영상 길이를 입력해주세요 (예: 2분 30초)"
                         value={planningOptions.durationCustom}
-                        onChange={(e) = aria-label="원하시는 영상 길이를 입력해주세요 (예: 2분 30초)"> setPlanningOptions(prev => ({ ...prev, durationCustom: e.target.value, duration: 'custom' }))}
+                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, durationCustom: e.target.value, duration: 'custom' }))}
                         className="ty01"
                       />
                     </div>
                   )}
                   {showCustomDuration && (
-                    <Button variant="secondary" aria-label="Click"> {
+                    <Button variant="secondary" onClick={() => {
                         setShowCustomDuration(false)
                         setPlanningOptions(prev => ({ ...prev, duration: '', durationCustom: '' }))
                       }}
@@ -1859,28 +1859,40 @@ export default function VideoPlanning() {
               <div className="level-buttons">
                 <UnifiedButton
                   className={`level-btn ${planningOptions.developmentLevel === 'minimal' ? 'active' : ''}`}
-                  onClick={() = aria-label="Click" type="button"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal' } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal'}))}
+                  type="button"
+                  aria-label="그대로 선택"
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, developmentLevel: 'minimal' })) }}
                 >
                   <span className="level-name">그대로</span>
                   <span className="level-desc">원본 그대로 유지</span>
                 </UnifiedButton>
                 <UnifiedButton
                   className={`level-btn ${planningOptions.developmentLevel === 'light' ? 'active' : ''}`}
-                  onClick={() = aria-label="Click" type="button"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light' } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light'}))}
+                  type="button" 
+                  aria-label="가볍게 선택"
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, developmentLevel: 'light' })) }}
                 >
                   <span className="level-name">가벼움</span>
                   <span className="level-desc">적당한 설명</span>
                 </UnifiedButton>
                 <UnifiedButton
                   className={`level-btn ${planningOptions.developmentLevel === 'balanced' ? 'active' : ''}`}
-                  onClick={() = aria-label="Click" type="button"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced' } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced'}))}
+                  type="button"
+                  aria-label="균형 선택"
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, developmentLevel: 'balanced' })) }}
                 >
                   <span className="level-name">균형</span>
                   <span className="level-desc">균형잡힌 전개</span>
                 </UnifiedButton>
                 <UnifiedButton
                   className={`level-btn ${planningOptions.developmentLevel === 'detailed' ? 'active' : ''}`}
-                  onClick={() = aria-label="Click" type="button"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed' } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed'}))}
+                  type="button"
+                  aria-label="상세 선택"
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, developmentLevel: 'detailed' })) }}
                 >
                   <span className="level-name">상세</span>
                   <span className="level-desc">풍부한 묘사</span>
@@ -1894,7 +1906,8 @@ export default function VideoPlanning() {
               <div className="framework-options">
                 <div 
                   className={`framework-card ${planningOptions.storyFramework === 'hook_immersion' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' } onKeyDown={(e) => e.key === 'Enter' && () => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, storyFramework: 'hook_immersion' })) }}
                 >
                   <h5>훅-몰입-반전-떡밥 🎯</h5>
                   <p>시청자의 시선을 사로잡고 끝까지 유지시키는 현대적 전개</p>
@@ -1902,7 +1915,8 @@ export default function VideoPlanning() {
                 </div>
                 <div 
                   className={`framework-card ${planningOptions.storyFramework === 'classic' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' } onKeyDown={(e) => e.key === 'Enter' && () => setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, storyFramework: 'classic' })) }}
                 >
                   <h5>클래식 기승전결</h5>
                   <p>전통적인 4단계 구성으로 안정적이고 균형잡힌 전개</p>
@@ -1910,7 +1924,8 @@ export default function VideoPlanning() {
                 </div>
                 <div 
                   className={`framework-card ${planningOptions.storyFramework === 'pixar' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'pixar' } onKeyDown={(e) => e.key === 'Enter' && () => setPlanningOptions(prev => ({ ...prev, storyFramework: 'pixar' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'pixar' }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, storyFramework: 'pixar' })) }}
                 >
                   <h5>픽사 스토리텔링</h5>
                   <p>Once upon a time... 공식으로 만드는 매력적인 이야기</p>
@@ -1918,7 +1933,8 @@ export default function VideoPlanning() {
                 </div>
                 <div 
                   className={`framework-card ${planningOptions.storyFramework === 'save_the_cat' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' } onKeyDown={(e) => e.key === 'Enter' && () => setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' })) }}
                 >
                   <h5>Save the Cat</h5>
                   <p>할리우드식 3막 구조로 관객을 사로잡는 스토리</p>
@@ -1926,7 +1942,8 @@ export default function VideoPlanning() {
                 </div>
                 <div 
                   className={`framework-card ${planningOptions.storyFramework === 'star_moment' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' } onKeyDown={(e) => e.key === 'Enter' && () => setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' }))}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' }))}
+                  onKeyDown={(e) => { if (e.key === 'Enter') setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' })) }}
                 >
                   <h5>스타 모멘트</h5>
                   <p>하나의 강렬한 순간을 중심으로 전후를 구성하는 임팩트 스토리</p>
@@ -1944,12 +1961,16 @@ export default function VideoPlanning() {
                       type="text"
                       placeholder="주인공 이름 (예: 김철수, 영희)"
                       value={planningOptions.characterName}
-                      onChange={(e) = aria-label="주인공 이름 (예: 김철수, 영희)" /> setPlanningOptions(prev => ({ ...prev, characterName: e.target.value }))}
+                      onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterName: e.target.value }))}
                       className="character-name-input"
+                      aria-label="주인공 이름"
                     />
-                    <UnifiedInput variant="textarea" className="" placeholder="주인공 묘사 (예: 30대 초반의 프리랜서 디자이너, 긍정적이고 창의적인 성격)"
+                    <UnifiedInput 
+                      variant="textarea" 
+                      className="" 
+                      placeholder="주인공 묘사 (예: 30대 초반의 프리랜서 디자이너, 긍정적이고 창의적인 성격)"
                       value={planningOptions.characterDescription}
-                      onChange={(e) =/> setPlanningOptions(prev => ({ ...prev, characterDescription: e.target.value }))}
+                      onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterDescription: e.target.value }))}
                       className="character-description-input"
                       rows={3}
                     />
@@ -1959,7 +1980,7 @@ export default function VideoPlanning() {
                       <UnifiedInput
                         type="file"
                         accept="image/*"
-                        onChange={(e) = aria-label="file input" /> {
+                        onChange={(e) => {
                           const file = e.target.files[0]
                           if (file) {
                             const reader = new FileReader()
@@ -1977,7 +1998,7 @@ export default function VideoPlanning() {
                       <div className="upload-button">
                         {planningOptions.characterImage ? (
                           <div className="image-preview">
-                            <img src={planningOptions.characterImage} alt="Character" / loading="lazy">
+                            <img src={planningOptions.characterImage} alt="Character" loading="lazy" />
                             <span className="change-image">이미지 변경</span>
                           </div>
                         ) : (
@@ -2021,11 +2042,11 @@ export default function VideoPlanning() {
                 onChange={(e) = aria-label="기획안 제목을 입력하세요" /> setPlanningTitle(e.target.value)}
               />
               <div className="button-group">
-                <Button onClick={generateStories} onKeyDown={(e) => e.key === 'Enter' && generateStories} disabled aria-label="Click">
+                <Button onClick={generateStories} onKeyDown={(e) => { if (e.key === 'Enter') generateStories() }} disabled={isGenerating || !selectedStory} aria-label="생성">
                   {loading ? '생성 중...' : '스토리 생성'}
                 </Button>
                 {planningData.stories.length > 0 && (
-                  <Button onClick={savePlanning} onKeyDown={(e) => e.key === 'Enter' && savePlanning} disabled aria-label="Click">
+                  <Button onClick={savePlanning} onKeyDown={(e) => { if (e.key === 'Enter') savePlanning() }} disabled={isGenerating || !selectedStory} aria-label="생성">
                     기획안 저장
                   </Button>
                 )}
@@ -2084,7 +2105,7 @@ export default function VideoPlanning() {
                   >
                     <div 
                       className="planning-content"
-                      onClick={() => loadPlanningData(planning)} onKeyDown={(e) => e.key === 'Enter' && () => loadPlanningData(planning)}
+                      onClick={() => loadPlanningData(planning)} onKeyDown={(e) => { if (e.key === 'Enter') loadPlanningData(planning) }}
                     >
                       <div className="planning-number">{index + 1}</div>
                       <div className="planning-info">
@@ -2199,7 +2220,7 @@ export default function VideoPlanning() {
                               >
                                 저장
                               </Button>
-                              <Button variant="secondary" onClick={cancelStoryEdit} onKeyDown={(e) => e.key === 'Enter' && cancelStoryEdit} style={{
+                              <Button variant="secondary" onClick={cancelStoryEdit} onKeyDown={(e) => { if (e.key === 'Enter') cancelStoryEdit() }} style={{
                                   backgroundColor: '#dc3545',
                                   color: 'white',
                                   border: 'none',
@@ -2247,7 +2268,7 @@ export default function VideoPlanning() {
               }}>
                 기획안 수정
               </Button>
-              <Button onClick={generateScenes} onKeyDown={(e) => e.key === 'Enter' && generateScenes} disabled style={{
+              <Button onClick={generateScenes} onKeyDown={(e) => { if (e.key === 'Enter') generateScenes() }} disabled style={{
                   backgroundColor: '#1631F8',
                   color: 'white',
                   border: 'none',
@@ -2309,7 +2330,7 @@ export default function VideoPlanning() {
             {/* 모든 콘티 생성 버튼 추가 */}
             <div className="batch-actions">
               <div className="batch-buttons">
-                <Button onClick={generateAllStoryboardsFast} onKeyDown={(e) => e.key === 'Enter' && generateAllStoryboardsFast} disabled style={{
+                <Button onClick={generateAllStoryboardsFast} onKeyDown={(e) => { if (e.key === 'Enter') generateAllStoryboardsFast() }} disabled style={{
                     background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                     color: 'white',
                     border: 'none',
@@ -2523,7 +2544,7 @@ export default function VideoPlanning() {
                   {/* 오른쪽: 씬 정보 */}
                   <div 
                     className={`scene-card ${selectedSceneIndex === index ? 'selected' : ''}`}
-                    onClick={() => setSelectedSceneIndex(index)} onKeyDown={(e) => e.key === 'Enter' && () => setSelectedSceneIndex(index)}
+                    onClick={() => setSelectedSceneIndex(index)} onKeyDown={(e) => { if (e.key === 'Enter') setSelectedSceneIndex(index) }}
                   >
                     <div className="scene-header">
                       <h4>씬 {index + 1}: {scene.location}</h4>
@@ -2601,7 +2622,7 @@ export default function VideoPlanning() {
               <Button  aria-label="Click"> setShowExportModal(true)}>
                 내보내기
               </Button>
-              <Button variant="secondary" onClick={resetPlanning} onKeyDown={(e) => e.key === 'Enter' && resetPlanning} aria-label="Click">
+              <Button variant="secondary" onClick={resetPlanning} onKeyDown={(e) => { if (e.key === 'Enter') resetPlanning() }} aria-label="클릭">
                 새로운 기획 시작
               </Button>
             </div>
@@ -2658,7 +2679,7 @@ export default function VideoPlanning() {
                     >
                       🔄 영상 교체
                     </Button>
-                    <Button variant="danger" onClick={handleDeleteVideo} onKeyDown={(e) => e.key === 'Enter' && handleDeleteVideo} aria-label="Click">
+                    <Button variant="danger" onClick={handleDeleteVideo} onKeyDown={(e) => { if (e.key === 'Enter') handleDeleteVideo() }} aria-label="클릭">
                       🗑️ 영상 삭제
                     </Button>
                   </div>
@@ -2670,7 +2691,7 @@ export default function VideoPlanning() {
                 >
                   ← 이전 단계
                 </Button>
-                <Button onClick={handleCompleteProject} onKeyDown={(e) => e.key === 'Enter' && handleCompleteProject} disabled aria-label="Click">
+                <Button onClick={handleCompleteProject} onKeyDown={(e) => { if (e.key === 'Enter') handleCompleteProject() }} disabled={isGenerating || !selectedStory} aria-label="생성">
                   프로젝트 완성
                 </Button>
               </div>
@@ -2712,7 +2733,8 @@ export default function VideoPlanning() {
                         >
                           <div 
                             className="recent-content"
-                            onClick={() => loadHistoryItem(planning.id)} onKeyDown={(e) => e.key === 'Enter' && () => loadHistoryItem(planning.id)}
+                            onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                           >
                             <div className="recent-number">{index + 1}</div>
                             <div className="recent-info">
@@ -2774,7 +2796,8 @@ export default function VideoPlanning() {
                     <div 
                       key={item.id} 
                       className="history-item"
-                      onClick={() => loadHistoryItem(item.id)} onKeyDown={(e) => e.key === 'Enter' && () => loadHistoryItem(item.id)}
+                      onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                     >
                       <div className="history-title">{item.title}</div>
                       <div className="history-date">

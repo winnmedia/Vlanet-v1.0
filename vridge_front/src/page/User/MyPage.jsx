@@ -520,31 +520,31 @@ export default function MyPage() {
           <div className="mypage-tabs">
             <UnifiedButton 
               className={activeTab === 'profile' ? 'active' : ''}
-              onClick={() = aria-label="Click" type="button"> setActiveTab('profile')}
+              onClick={() => setActiveTab('profile')} type="button" aria-label="클릭"
             >
               프로필
             </UnifiedButton>
             <UnifiedButton 
               className={activeTab === 'projects' ? 'active' : ''}
-              onClick={() = aria-label="Click" type="button"> setActiveTab('projects')}
+              onClick={() => setActiveTab('projects')} type="button" aria-label="클릭"
             >
               프로젝트
             </UnifiedButton>
             <UnifiedButton 
               className={activeTab === 'activity' ? 'active' : ''}
-              onClick={() = aria-label="Click" type="button"> setActiveTab('activity')}
+              onClick={() => setActiveTab('activity')} type="button" aria-label="클릭"
             >
               활동 내역
             </UnifiedButton>
             <UnifiedButton 
               className={activeTab === 'stats' ? 'active' : ''}
-              onClick={() = aria-label="Click" type="button"> setActiveTab('stats')}
+              onClick={() => setActiveTab('stats')} type="button" aria-label="클릭"
             >
               통계
             </UnifiedButton>
             <UnifiedButton 
               className={activeTab === 'friends' ? 'active' : ''}
-              onClick={() = aria-label="Click" type="button"> setActiveTab('friends')}
+              onClick={() => setActiveTab('friends')} type="button" aria-label="클릭"
             >
               친구
               {friendRequests.length > 0 && (
@@ -559,7 +559,7 @@ export default function MyPage() {
                 <div className="profile-header">
                   <h2>프로필 정보</h2>
                   {!isEditing && (
-                    <Button variant="secondary" aria-label="Click"> setIsEditing(true)}>
+                    <Button variant="secondary" aria-label="프로필 수정" onClick={() => setIsEditing(true)}>
                       수정
                     </Button>
                   )}
@@ -618,10 +618,11 @@ export default function MyPage() {
                         accept="image/*"
                         onChange={handleImageChange}
                         style={{ display: 'none' }}
-                       / aria-label="file input">
+                        aria-label="파일 입력"
+                      />
                       {profileImage && (
                         <div className="upload-actions">
-                          <Button onClick={handleImageUpload} disabled aria-label="Click">
+                          <Button onClick={handleImageUpload} disabled={isUploading} aria-label="업로드">
                             {isUploading ? (
                               <>
                                 <svg className="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -635,13 +636,13 @@ export default function MyPage() {
                             )}
                           </Button>
                           <UnifiedButton 
-                            onClick={() = aria-label="Click" type="button"> {
+                            onClick={() => {
                               setProfileImage(null)
                               // localStorage에서 이미지 복원 또는 DB 이미지 사용
                               const savedImage = typeof window !== 'undefined' ? localStorage.getItem('profileImage') : null
                               const dbImage = myPageData?.profile?.profile_image ? 
                                 (myPageData.profile.profile_image.startsWith('/') ? 
-                                  `${process.env.NEXT_PUBLIC_API_URL || 'https://videoplanet.up.railway.app'}${myPageData.profile.profile_image}` : 
+                                  `${process.env.NEXT_PUBLIC_API_URL || 'https://videoplanet.up.railway.app'}}${myPageData.profile.profile_image}` : 
                                   myPageData.profile.profile_image
                                 ) : null
                               setImagePreview(savedImage || dbImage || null)
@@ -682,7 +683,8 @@ export default function MyPage() {
                         value={profileForm.nickname}
                         onChange={handleInputChange}
                         placeholder="닉네임"
-                       / aria-label="닉네임">
+                        aria-label="닉네임"
+                      />
                     ) : (
                       <div className="info-value">{myPageData?.profile?.nickname || nickname || '-'}</div>
                     )}
@@ -725,7 +727,8 @@ export default function MyPage() {
                         value={profileForm.phone}
                         onChange={handleInputChange}
                         placeholder="전화번호"
-                       / aria-label="전화번호">
+                        aria-label="전화번호"
+                      />
                     ) : (
                       <div className="info-value">{myPageData?.profile?.phone || '-'}</div>
                     )}
@@ -748,7 +751,8 @@ export default function MyPage() {
                         value={profileForm.company}
                         onChange={handleInputChange}
                         placeholder="회사/소속"
-                       / aria-label="회사/소속">
+                        aria-label="회사/소속"
+                      />
                     ) : (
                       <div className="info-value">{myPageData?.profile?.company || '-'}</div>
                     )}
@@ -804,7 +808,7 @@ export default function MyPage() {
                       <Button onClick={handleProfileUpdate} disabled aria-label="Click">
                         {isSaving ? '저장 중...' : '저장'}
                       </Button>
-                      <UnifiedButton onClick={() = aria-label="Click" type="button"> {
+                      <UnifiedButton onClick={() => {
                         setIsEditing(false)
                         setProfileForm({
                           nickname: myPageData?.profile?.nickname || '',
@@ -812,7 +816,7 @@ export default function MyPage() {
                           phone: myPageData?.profile?.phone || '',
                           company: myPageData?.profile?.company || '',
                           position: myPageData?.profile?.position || ''
-                        })
+                        }})
                       }} className="cancel-btn">
                         취소
                       </UnifiedButton>
@@ -980,13 +984,13 @@ export default function MyPage() {
                           </div>
                           <div className="friend-actions">
                             <UnifiedButton
-                              onClick={() = aria-label="Click" type="button"> handleFriendRequestResponse(request.id, 'accept')}
+                              onClick={() => handleFriendRequestResponse(request.id, 'accept')} type="button" aria-label="클릭"
                               className="accept-btn"
                             >
                               수락
                             </UnifiedButton>
                             <UnifiedButton
-                              onClick={() = aria-label="Click" type="button"> handleFriendRequestResponse(request.id, 'decline')}
+                              onClick={() => handleFriendRequestResponse(request.id, 'decline')} type="button" aria-label="클릭"
                               className="decline-btn"
                             >
                               거절
@@ -1027,7 +1031,7 @@ export default function MyPage() {
                             <div className="friend-actions">
                               {user.friendship_status === 'none' && (
                                 <UnifiedButton
-                                  onClick={() = aria-label="Click" type="button"> handleSendFriendRequest(user.email)}
+                                  onClick={() => handleSendFriendRequest(user.email)} type="button" aria-label="클릭"
                                   className="add-friend-btn"
                                 >
                                   친구 추가

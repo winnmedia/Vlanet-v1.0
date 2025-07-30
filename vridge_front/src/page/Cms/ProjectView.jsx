@@ -317,12 +317,12 @@ export default function ProjectView() {
                     개별 일정표
                     <UnifiedButton
                     className={`collapse-btn ${isCollapsed ? 'collapsed' : ''}`}
-                    onClick={() = aria-label="Click" type="button"> setIsCollapsed(!isCollapsed)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)} />
+                    onClick={() => setIsCollapsed(!isCollapsed)} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsCollapsed(!isCollapsed)} />
 
                     <div style={{ marginLeft: '20px', display: 'flex', gap: '6px' }}>
                       <UnifiedButton
                       className={`view-btn ${viewMode === 'month' ? 'active' : ''}`}
-                      onClick={() = aria-label="Click" type="button"> setViewMode('month')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('month')}
+                      onClick={() => setViewMode('month')} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('month')}
                       style={{
                         padding: '8px 20px',
                         border: '1px solid #dee2e6',
@@ -341,7 +341,7 @@ export default function ProjectView() {
                       </UnifiedButton>
                       <UnifiedButton
                       className={`view-btn ${viewMode === 'timeline' ? 'active' : ''}`}
-                      onClick={() = aria-label="Click" type="button"> setViewMode('timeline')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('timeline')}
+                      onClick={() => setViewMode('timeline')} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('timeline')}
                       style={{
                         padding: '8px 20px',
                         border: '1px solid #dee2e6',
@@ -360,7 +360,7 @@ export default function ProjectView() {
                       </UnifiedButton>
                       <UnifiedButton
                       className={`view-btn ${viewMode === 'gantt' ? 'active' : ''}`}
-                      onClick={() = aria-label="Click" type="button"> setViewMode('gantt')} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('gantt')}
+                      onClick={() => setViewMode('gantt')} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setViewMode('gantt')}
                       style={{
                         padding: '8px 20px',
                         border: '1px solid #dee2e6',
@@ -410,8 +410,7 @@ export default function ProjectView() {
 
                         {is_admin &&
                     <UnifiedButton
-                      onClick={() = aria-label="Click" type="button">
-                      navigate(`/ProjectEdit/${current_project.id} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click">
+                      onClick={() => navigate(`/ProjectEdit/${current_project.id} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click">
                       navigate(`/ProjectEdit/${current_project.id}`)
                       }
                       className="submit">
@@ -594,7 +593,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               프로젝트 설정
             </Button>
           }
-          <UnifiedButton className={`project-info-toggle ${isExpanded ? 'on' : ''}`} onClick={toggleBox} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && toggleBox} aria-label="Click">
+          <UnifiedButton className={`project-info-toggle ${isExpanded ? 'on' : ''}`} onClick={toggleBox} onKeyDown={(e) = type="button" aria-label="Click"> e.key === 'Enter' && toggleBox} aria-label="클릭">
             프로젝트 정보
           </UnifiedButton>
         </UnifiedCard>
@@ -703,7 +702,8 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               <dt>등록 파일</dt>
               <dd>
                 {current_project.files.map((item, index) =>
-                <div key={index} onClick={() => download(item.files)} onKeyDown={(e) => e.key === 'Enter' && () => download(item.files)}>
+                <div key={index} onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}>
                     {filename(item.file_name)}
                     <i>
                       <img src={down.src || down} / alt="image" loading="lazy">
@@ -732,7 +732,8 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
           zIndex: 1000,
           backdropFilter: 'blur(4px)'
         }}
-        onClick={() => setShowInviteModal(false)} onKeyDown={(e) => e.key === 'Enter' && () => setShowInviteModal(false)}>
+        onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}>
 
           <div
           style={{
@@ -746,7 +747,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
             boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
             border: '1px solid #e9ecef'
           }}
-          onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}>
+          onClick={(e) => e.stopPropagation()} onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation()}>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '700', color: '#212529' }}>멤버 초대</h3>

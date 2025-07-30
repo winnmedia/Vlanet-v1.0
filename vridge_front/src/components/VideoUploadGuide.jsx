@@ -1,13 +1,13 @@
 import React from 'react';
-import { Button } from 'unified/Button';
+import { UnifiedButton } from './unified/UnifiedButton';
 
 export default function VideoUploadGuide({ onClose }) {
   return (
-    <div className="video-upload-guide-overlay" onClick={onClose} onKeyDown={(e) => e.key === 'Enter' && onClose}>
-      <div className="video-upload-guide" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}>
+    <div className="video-upload-guide-overlay" onClick={onClose} onKeyDown={(e) => { if (e.key === 'Enter') onClose() }}>
+      <div className="video-upload-guide" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation() }}>
         <div className="guide-header">
           <h3>영상 업로드 가이드</h3>
-          <UnifiedButton variant="secondary" onClick={onClose} onKeyDown={(e) => e.key === 'Enter' && onClose} aria-label="Click">×</UnifiedButton>
+          <UnifiedButton variant="secondary" onClick={onClose} onKeyDown={(e) => { if (e.key === 'Enter') onClose() }} aria-label="닫기">×</UnifiedButton>
         </div>
         
         <div className="guide-content">

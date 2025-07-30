@@ -324,7 +324,7 @@ export default function CmsHomeMinimal() {
                   hoverable
                   clickable
                   onClick={(e) => {
-                    if (e.target.closest(`.${styles.expandToggle} onKeyDown={(e) => e.key === 'Enter' && (e) => {
+                    if (e.target.closest(`.${styles.expandToggle} onKeyDown={(e) => { if (e.key === 'Enter') {
                     if (e.target.closest(`.${styles.expandToggle}`)) {
                       e.stopPropagation();
                       toggleProjectExpand(project.id);
@@ -481,7 +481,8 @@ export default function CmsHomeMinimal() {
                     <div
                       key={`feedback-${idx}`}
                       className={styles.activityItem}
-                      onClick={() => navigate(`/Feedback/${feedback.projectId} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/Feedback/${feedback.projectId}`)}>
+                      onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}`)}>
 
                           <div className={styles.activityHeader}>
                             <span className={styles.projectName}>{feedback.projectName}</span>

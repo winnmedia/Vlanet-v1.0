@@ -262,7 +262,7 @@ export function Dates({
                 삭제
               </Button>
             )}
-            <UnifiedButton onClick={() = aria-label="Click" type="button"> setDetailModal(null)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setDetailModal(null)} className="cancel">
+            <UnifiedButton onClick={() => setDetailModal(null)} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setDetailModal(null)} className="cancel">
               닫기
             </UnifiedButton>
           </div>
@@ -403,10 +403,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
         onClick={() => {
           if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
             setInputModal(true)
-          } onKeyDown={(e) => e.key === 'Enter' && () => {
+          } onKeyDown={(e) => { if (e.key === 'Enter') {
           if (is_admin || typeof window !== 'undefined' && window.location.pathname.includes('/Calendar')) {
             setInputModal(true)
-          }
+          } }}
         }}
       >
         {is_today ? (
@@ -424,10 +424,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.basic_plan)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.basic_plan)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('기초기획안 작성')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -455,10 +455,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.story_board)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.story_board)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('스토리보드 작성')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -486,10 +486,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.filming)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.filming)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('촬영(계획/진행)')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -515,10 +515,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.video_edit)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.video_edit)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('비디오 편집')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -546,10 +546,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.post_work)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.post_work)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('후반 작업')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -577,10 +577,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.video_preview)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.video_preview)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('비디오 시사')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -608,10 +608,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.confirmation)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.confirmation)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('최종 컨펌')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -639,10 +639,10 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
                 onClick={() => {
                   if (is_admin) {
                     SetDateInput(current_project.video_delivery)
-                  } onKeyDown={(e) => e.key === 'Enter' && () => {
+                  } onKeyDown={(e) => { if (e.key === 'Enter') {
                   if (is_admin) {
                     SetDateInput(current_project.video_delivery)
-                  }
+                  } }}
                 }}
                 onMouseOver={(e) => set_modal('영상 납품')}
                 onMouseLeave={(e) => set_modal(null)}
@@ -668,7 +668,8 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
               return (
                 <span
                   className="memo"
-                  onClick={() => setDetailModal(memo)} onKeyDown={(e) => e.key === 'Enter' && () => setDetailModal(memo)}
+                  onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                   style={{ color: '#23262d', cursor: 'pointer' }}
                   key={index}
                 >
@@ -687,7 +688,8 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
               <span
                 onMouseOver={(e) => set_modal(index)}
                 onMouseLeave={(e) => set_modal(null)}
-                onClick={() => navigate(`/ProjectView/${project.id} onKeyDown={(e) => e.key === 'Enter' && () => navigate(`/ProjectView/${project.id}`)}
+                onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}`)}
                 className={cx({
                   start: class_valid(set_date(project.first_date)),
                   end: class_valid(set_date(project.end_date)),
@@ -707,7 +709,8 @@ import { UnifiedInput } from '../components/unified/UnifiedInput';
             return (
               <span
                 className="memo"
-                onClick={() => setDetailModal(memo)} onKeyDown={(e) => e.key === 'Enter' && () => setDetailModal(memo)}
+                onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
                 style={{ color: '#23262d', cursor: 'pointer' }}
                 key={index}
               >

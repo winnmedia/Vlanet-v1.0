@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic';
 import { UnifiedButton } from '../components/unified/UnifiedButton';
+import { Button } from '../components/unified/Button';
 
 import { useRouter } from '../util/nextNavigation'
 import { checkSession } from '../util/util'
@@ -376,10 +377,9 @@ export default function Home() {
                 height="461"
                 src="https://www.youtube.com/embed/nBH02NxZRfI"
                 title="실제 고객이 말하는 세이프홈즈, 고객의 리얼 스토리"
-                frameborder="0"
-import { Button } from '../components/unified/Button'
+                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
+                allowFullScreen
               ></iframe>
             </div>
           </div>
@@ -396,11 +396,11 @@ import { Button } from '../components/unified/Button'
               <span>만들어 갑니다.</span>
             </div>
             <div className="img">
-              <img src={end} alt="" / loading="lazy">
+              <img src={end} alt="" loading="lazy" />
             </div>
           </div>
           <div className="ment">
-            SAVE THE CREATORS <img src={end02} alt="" / loading="lazy">
+            SAVE THE CREATORS <img src={end02} alt="" loading="lazy" />
           </div>
         </section>
 
@@ -636,8 +636,8 @@ import { Button } from '../components/unified/Button'
               <li>전화번호 : 010-4156-8865</li>
             </ul>
             <div>
-              <span onClick={() => navigate('/terms')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/terms')}>이용약관</span>
-              <span onClick={() => navigate('/privacy')} onKeyDown={(e) => e.key === 'Enter' && () => navigate('/privacy')}>
+              <span onClick={() => navigate('/terms')} onKeyDown={(e) => e.key === 'Enter' && navigate('/terms')}>이용약관</span>
+              <span onClick={() => navigate('/privacy')} onKeyDown={(e) => e.key === 'Enter' && navigate('/privacy')}>
                 개인정보 취급방침
               </span>
             </div>

@@ -57,7 +57,7 @@ const CustomAlert = ({ message, type = 'info', onClose, duration = 3000, actions
 
   return ReactDOM.createPortal(
     <div className={`custom-alert-overlay ${isClosing ? 'closing' : ''}`} onClick={!actions ? handleClose : undefined} onKeyDown={(e) => e.key === 'Enter' && !actions ? handleClose : undefined}>
-      <div className={`custom-alert ${type} ${isClosing ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}>
+      <div className={`custom-alert ${type} ${isClosing ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation()}>
         <div className="alert-content">
           {getIcon()}
           <div className="alert-message">{message}</div>
@@ -78,13 +78,13 @@ const CustomAlert = ({ message, type = 'info', onClose, duration = 3000, actions
           <UnifiedButton
             key={index}
             variant={action.primary ? 'primary' : 'secondary'}
-            onClick={() = aria-label="Click"> {
+            onClick={() => {
               action.onClick();
               handleClose();
-            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+            }} onKeyDown={(e) => { if (e.key === 'Enter') {
               action.onClick();
               handleClose();
-            }}>
+            } }}}>
 
                 {action.text}
               </UnifiedButton>

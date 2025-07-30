@@ -383,7 +383,8 @@ export default function InviteInput({
           border: '1px solid #e9ecef'
         }}>
           <div 
-            onClick={() => setShowRecentInvitations(!showRecentInvitations)} onKeyDown={(e) => e.key === 'Enter' && () => setShowRecentInvitations(!showRecentInvitations)}
+            onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}
             style={{
               cursor: 'pointer',
               padding: '8px',
@@ -458,15 +459,15 @@ export default function InviteInput({
                       최근 프로젝트: {invitation.project_name} • {invitation.invitation_count}회 초대
                     </div>
                   </div>
-                  <Button onClick={() = aria-label="Click"> {
+                  <Button onClick={() => {
                       const emptyIndex = emails.findIndex(email => !email.trim())
                       if (emptyIndex !== -1) {
                         InputChange(emptyIndex, invitation.email || invitation.invitee_email)
-                      } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+                      }} onKeyDown={(e) => { if (e.key === 'Enter') {
                       const emptyIndex = emails.findIndex(email => !email.trim())
                       if (emptyIndex !== -1) {
                         InputChange(emptyIndex, invitation.email || invitation.invitee_email)
-                      } else {
+                      } }} else {
                         AddInput()
                         setTimeout(() => {
                           InputChange(emails.length, invitation.email || invitation.invitee_email)

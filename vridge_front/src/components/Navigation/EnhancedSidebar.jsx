@@ -119,7 +119,7 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
             <li key={item.id}>
               <UnifiedButton
                 className={classNames('nav-item', { active: activeTab === item.id })}
-                onClick={() = aria-label="Click" type="button"> handleNavigation(item.path)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleNavigation(item.path)}
+                onClick={() => handleNavigation(item.path)} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleNavigation(item.path)}
                 title={collapsed ? item.label : undefined}
               >
                 <span className="nav-icon">{item.icon}</span>
@@ -163,7 +163,7 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
               <li key={project.id}>
                 <UnifiedButton
                   className={classNames('project-item', { active: activeMenu === project.id })}
-                  onClick={() = aria-label="Click" type="button"> handleProjectClick(project.id)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleProjectClick(project.id)}
+                  onClick={() => handleProjectClick(project.id)} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleProjectClick(project.id)}
                 >
                   <span 
                     className="project-color" 
@@ -197,7 +197,7 @@ export default function EnhancedSidebar({ activeTab, activeMenu }) {
             <li key={item.id}>
               <UnifiedButton
                 className={classNames('nav-item', { active: activeTab === item.id })}
-                onClick={() = aria-label="Click" type="button"> handleNavigation(item.path)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleNavigation(item.path)}
+                onClick={() => handleNavigation(item.path)} type="button" aria-label="클릭" onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> handleNavigation(item.path)}
                 title={collapsed ? item.label : undefined}
               >
                 <span className="nav-icon">{item.icon}</span>

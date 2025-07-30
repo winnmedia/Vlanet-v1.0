@@ -376,29 +376,29 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
   return (
     <div className="info_wrap">
       <div className="name_box flex align_center space_between">
-        <div className="s_title">{current_project.name}</UnifiedCard>
+        <div className="s_title">{current_project.name}</div>
         <div className="flex align_center" style={{ gap: '15px' }}>
           <div>
             최종 업데이트 날짜 | {moment(current_project.updated).format('YYYY.MM.DD')}
-          </UnifiedCard>
-          <UnifiedButton className={isExpanded ? 'on' : ''} onClick={() = aria-label="Click" type="button"> setIsExpanded(!isExpanded)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setIsExpanded(!isExpanded)}>
+          </div>
+          <UnifiedButton className={isExpanded ? 'on' : ''} onClick={() => setIsExpanded(!isExpanded)} onKeyDown={(e) => e.key === 'Enter' && setIsExpanded(!isExpanded)}>
             프로젝트 정보
           </UnifiedButton>
-        </UnifiedCard>
-      </UnifiedCard>
+        </div>
+      </div>
       
       <UnifiedCard variant="default" className="box" style={{ height: isExpanded ? 'auto' : '0', overflow: 'hidden', transition: 'height 0.3s ease' }}>
         <div className="inner">
           <div className="explanation">
-            <div className="ss_title"><span>프로젝트 설명</span></UnifiedCard>
+            <div className="ss_title"><span>프로젝트 설명</span></div>
             <p>{current_project.description}</p>
-          </UnifiedCard>
+          </div>
           
           <div className="member">
             <div className="ss_title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>멤버</span>
               {is_admin && (
-                <Button onClick={() = aria-label="Click"> setShowInviteModal(true)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowInviteModal(true)}
+                <Button onClick={() => setShowInviteModal(true)} onKeyDown={(e) => e.key === 'Enter' && setShowInviteModal(true)}
                   style={{
                     background: 'linear-gradient(135deg, #1631F8 0%, #0F23C9 100%)',
                     color: 'white',
@@ -413,7 +413,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                   + 초대
                 </Button>
               )}
-            </UnifiedCard>
+            </div>
             
             <ul>
               <li className="admin">
@@ -423,11 +423,11 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                   } : {}
-                }></UnifiedCard>
+                }></div>
                 <div className="txt">
                   {current_project.owner_nickname}(관리자)
                   <span>{current_project.owner_email}</span>
-                </UnifiedCard>
+                </div>
               </li>
               
               {current_project.member_list.map((member, index) => (
@@ -438,18 +438,18 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                       backgroundSize: 'cover',
                       backgroundPosition: 'center'
                     } : {}
-                  }></UnifiedCard>
+                  }></div>
                   <div className="txt">
                     {member.nickname}({member.rating === 'manager' ? '관리자' : '일반'})
                     <span>{member.email}</span>
-                  </UnifiedCard>
+                  </div>
                 </li>
               ))}
             </ul>
-          </UnifiedCard>
+          </div>
           
           <div className="info">
-            <div className="ss_title"><span>프로젝트 정보</span></UnifiedCard>
+            <div className="ss_title"><span>프로젝트 정보</span></div>
             <dl>
               <dt>작업자</dt>
               <dd>{current_project.manager}</dd>
@@ -466,16 +466,16 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               <dt>등록 파일</dt>
               <dd>
                 {current_project.files.map((item, index) => (
-                  <div key={index} onClick={() => download(item.files)} onKeyDown={(e) => e.key === 'Enter' && () => download(item.files)}>
+                  <div key={index} onClick={() => download(item.files)} onKeyDown={(e) => { if (e.key === 'Enter') download(item.files) }}>
                     {filename(item.file_name)}
-                    <i><img src={down.src || down} alt="download" / loading="lazy"></i>
-                  </UnifiedCard>
+                    <i><img src={down.src || down} alt="download" loading="lazy" /></i>
+                  </div>
                 ))}
               </dd>
             </dl>
-          </UnifiedCard>
-        </UnifiedCard>
-      </UnifiedCard>
+          </div>
+        </div>
+      </div>
       
       {/* 멤버 초대 모달 */}
       {showInviteModal && (
@@ -492,7 +492,8 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
             justifyContent: 'center',
             zIndex: 1000
           }}
-          onClick={() => setShowInviteModal(false)} onKeyDown={(e) => e.key === 'Enter' && () => setShowInviteModal(false)}
+          onClick={() => setShowInviteModal(false)} 
+          onKeyDown={(e) => { if (e.key === 'Enter') setShowInviteModal(false) }}
         >
           <div 
             style={{
@@ -504,11 +505,14 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               maxHeight: '80vh',
               overflowY: 'auto'
             }}
-            onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.key === 'Enter' && (e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} onKeyDown={(e) => { if (e.key === 'Enter') e.stopPropagation()}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0 }}>멤버 초대</h3>
-              <Button onClick={() = aria-label="Click"> setShowInviteModal(false)} onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> setShowInviteModal(false)}
+              <Button 
+                onClick={() => setShowInviteModal(false)} 
+                onKeyDown={(e) => e.key === 'Enter' && setShowInviteModal(false)}
+                aria-label="닫기"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -518,7 +522,7 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
               >
                 ×
               </Button>
-            </UnifiedCard>
+            </div>
             
             <InviteInput
               project_id={project_id}
@@ -529,9 +533,10 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
                 setTimeout(refetch, 500)
               }}
             />
-          </UnifiedCard>
-        </UnifiedCard>
+          </div>
+        </div>
       )}
-    </UnifiedCard>
+    </div>
   )
 })
+

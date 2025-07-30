@@ -142,7 +142,13 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
           <div className={styles['date-header']}>{item[0]}</div>
           <div className={styles['feedback-list']}>
             {item[1].map((data, i) =>
-          <div key={data.id || i} className={styles['feedback-card']} onClick={() => handleFeedbackClick(data)} onKeyDown={(e) => e.key === 'Enter' && () => handleFeedbackClick(data)}>
+          <div 
+            key={data.id || i} 
+            className={styles['feedback-card']} 
+            onClick={() => handleFeedbackClick(data)} 
+            onKeyDown={(e) => { if (e.key === 'Enter') handleFeedbackClick(data) }}
+            role="button"
+            tabIndex={0}>
                 <div className={styles['card-header']}>
                   <div
                 className={styles['time-badge']}
@@ -150,12 +156,18 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
                   e.stopPropagation();
                   if (onTimeClick && data.section) {
                     onTimeClick(data.section);
-                  } onKeyDown={(e) => e.key === 'Enter' && (e) => {
-                  e.stopPropagation();
-                  if (onTimeClick && data.section) {
-                    onTimeClick(data.section);
                   }
-                }}>
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.stopPropagation();
+                    if (onTimeClick && data.section) {
+                      onTimeClick(data.section);
+                    }
+                  }
+                }}
+                role="button"
+                tabIndex={0}>
 
                     {data.section || '시간 미지정'}
                   </div>
@@ -176,26 +188,36 @@ export default function FeedbackMore({ current_project, onTimeClick, onFeedbackS
                 <div className={styles['card-actions']}>
                   <UnifiedButton
                 className={`${styles['action-btn']} ${styles.like} ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'like' ? styles.active : ''}`}
-                onClick={(e) = aria-label="Click" type="button"> {
+                onClick={(e) => {
                   e.stopPropagation();
                   handleReaction(data.id, 'like');
-                } onKeyDown={(e) => e.key === 'Enter' && (e) = aria-label="Click"> {
-                  e.stopPropagation();
-                  handleReaction(data.id, 'like');
-                }}>
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.stopPropagation();
+                    handleReaction(data.id, 'like');
+                  }
+                }}
+                aria-label="좋아요"
+                type="button">
 
                     <span>👍</span>
                     <span className={styles.count}>{feedbackReactions[`${data.id}_like`] || 0}</span>
                   </UnifiedButton>
                   <UnifiedButton
                 className={`${styles['action-btn']} ${styles.dislike} ${typeof window !== 'undefined' && localStorage.getItem(`user_feedback_reaction_${data.id}_${user}`) === 'dislike' ? styles.active : ''}`}
-                onClick={(e) = aria-label="Click" type="button"> {
+                onClick={(e) => {
                   e.stopPropagation();
                   handleReaction(data.id, 'dislike');
-                } onKeyDown={(e) => e.key === 'Enter' && (e) = aria-label="Click"> {
-                  e.stopPropagation();
-                  handleReaction(data.id, 'dislike');
-                }}>
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.stopPropagation();
+                    handleReaction(data.id, 'dislike');
+                  }
+                }}
+                aria-label="싫어요"
+                type="button">
 
                     <span>👎</span>
                     <span className={styles.count}>{feedbackReactions[`${data.id}_dislike`] || 0}</span>

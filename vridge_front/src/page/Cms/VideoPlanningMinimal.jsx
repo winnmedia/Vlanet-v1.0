@@ -159,7 +159,8 @@ export default function VideoPlanningMinimal() {
                 <UnifiedCard key={key}
                   hoverable
                   clickable
-                  onClick={() => setPlanningData((prev) => ({ ...prev, framework: key } onKeyDown={(e) => e.key === 'Enter' && () => setPlanningData((prev) => ({ ...prev, framework: key }))}
+                  onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}))}
                   className={`${styles.frameworkCard} ${planningData.framework === key ? styles.selected : ''}`}>
 
                     <CardHeader

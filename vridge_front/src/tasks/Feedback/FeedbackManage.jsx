@@ -223,7 +223,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 </div>
                 <UnifiedButton
                   className={gridStyles['delete-btn']}
-                  onClick={() = aria-label="Click" type="button"> DropFeedback(feedback.id)}
+                  onClick={() => DropFeedback(feedback.id)} type="button" aria-label="클릭"
                   title="삭제"
                 >
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -239,7 +239,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
               <div className={gridStyles['card-actions']}>
                 <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.like} ${reactions[feedback.id] === 'like' ? gridStyles.active : ''}`}
-                  onClick={() = aria-label="Click" type="button"> toggleReaction(feedback.id, 'like')}
+                  onClick={() => toggleReaction(feedback.id, 'like')} type="button" aria-label="클릭"
                 >
                   <span>👍</span> 좋아요
                   {reactionCounts[feedback.id]?.like > 0 && (
@@ -249,7 +249,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 
                 <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.dislike} ${reactions[feedback.id] === 'dislike' ? gridStyles.active : ''}`}
-                  onClick={() = aria-label="Click" type="button"> toggleReaction(feedback.id, 'dislike')}
+                  onClick={() => toggleReaction(feedback.id, 'dislike')} type="button" aria-label="클릭"
                 >
                   <span>👎</span> 싫어요
                   {reactionCounts[feedback.id]?.dislike > 0 && (
@@ -259,7 +259,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 
                 <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.needExplanation} ${reactions[feedback.id] === 'needExplanation' ? gridStyles.active : ''}`}
-                  onClick={() = aria-label="Click" type="button"> toggleReaction(feedback.id, 'needExplanation')}
+                  onClick={() => toggleReaction(feedback.id, 'needExplanation')} type="button" aria-label="클릭"
                 >
                   <span>❓</span>
                   <span>추가설명필요</span>
@@ -270,7 +270,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 
                 <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.reply} ${showReplyInput[feedback.id] ? gridStyles.active : ''}`}
-                  onClick={() = aria-label="Click" type="button"> setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id] }))}
+                  onClick={() => setShowReplyInput(prev => ({ ...prev, [feedback.id]: !prev[feedback.id]} type="button" aria-label="클릭"))}
                 >
                   <span>💬</span> 답글
                   {feedback.replies?.length > 0 && (
@@ -280,7 +280,7 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
                 
                 <UnifiedButton
                   className={`${gridStyles['action-btn']} ${gridStyles.important} ${importantFeedbacks[feedback.id] ? gridStyles.active : ''}`}
-                  onClick={() = aria-label="Click" type="button"> toggleImportant(feedback.id)}
+                  onClick={() => toggleImportant(feedback.id)} type="button" aria-label="클릭"
                   title={importantFeedbacks[feedback.id] ? '중요 해제' : '중요 표시'}
                 >
                   <span>{importantFeedbacks[feedback.id] ? '⭐' : '☆'}</span>

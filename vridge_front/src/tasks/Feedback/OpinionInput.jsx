@@ -206,7 +206,7 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
               {commentTypes.map((type) =>
               <UnifiedButton
                 key={type.value}
-                onClick={() = aria-label="Click" type="button"> setCommentType(type.value)}
+                onClick={() => setCommentType(type.value)} type="button" aria-label="클릭"
                 className={`type-button ${commentType === type.value ? 'active' : ''}`}
                 style={{
                   '--type-color': getCommentTypeColor(type.value),
@@ -306,7 +306,7 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
                     
                     <div className="comment-actions">
                       <UnifiedButton
-                      onClick={() = aria-label="Click" type="button"> handleReaction(comment.id, 'like')}
+                      onClick={() => handleReaction(comment.id, 'like')} type="button" aria-label="클릭"
                       className={`reaction-button ${currentUserReaction === 'like' ? 'active' : ''}`}>
 
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -317,7 +317,7 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
                       </UnifiedButton>
                       
                       <UnifiedButton
-                      onClick={() = aria-label="Click" type="button"> handleReaction(comment.id, 'love')}
+                      onClick={() => handleReaction(comment.id, 'love')} type="button" aria-label="클릭"
                       className={`reaction-button ${currentUserReaction === 'love' ? 'active' : ''}`}>
 
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">

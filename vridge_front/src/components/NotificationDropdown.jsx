@@ -121,13 +121,13 @@ export default function NotificationDropdown() {
           <UnifiedButton
             variant="link"
             size="sm"
-            onClick={() = aria-label="Click"> {
+            onClick={() => {
               setUnreadCount(0);
               fetchUnreadCount();
-            } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
+            }} onKeyDown={(e) => { if (e.key === 'Enter') {
               setUnreadCount(0);
               fetchUnreadCount();
-            }}>
+            } }}}>
 
                 모두 읽음
               </UnifiedButton>
@@ -150,7 +150,8 @@ export default function NotificationDropdown() {
           <div
             key={notification.id}
             className={`notification-item ${!notification.is_read ? 'unread' : ''}`}
-            onClick={() => handleNotificationClick(notification)} onKeyDown={(e) => e.key === 'Enter' && () => handleNotificationClick(notification)}>
+            onClick={undefined}
+                onKeyDown={(e) => { if (e.key === 'Enter') undefined }}>
 
                   <div className="notification-icon" style={{ color: notification.color }}>
                     {notification.icon}

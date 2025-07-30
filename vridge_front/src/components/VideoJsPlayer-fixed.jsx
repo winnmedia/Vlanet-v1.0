@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle, useState } from 'react'
-import UnifiedModal from '../../components/unified/UnifiedModal';;
+import UnifiedModal from './unified/UnifiedModal';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import styles from './VideoJsPlayer.module.scss';

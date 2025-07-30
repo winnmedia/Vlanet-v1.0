@@ -64,12 +64,15 @@ export default function EmailCheck() {
                 <UnifiedButton
                 variant="primary"
                 size="lg"
-                onClick={() = aria-label="Click"> {
+                onClick={() => {
                   refetchProject(dispatch, navigate);
                   navigate('/cmshome');
-                } onKeyDown={(e) => e.key === 'Enter' && () = aria-label="Click"> {
-                  refetchProject(dispatch, navigate);
-                  navigate('/cmshome');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    refetchProject(dispatch, navigate);
+                    navigate('/cmshome');
+                  }
                 }}
                 className="submit"
                 fullWidth>

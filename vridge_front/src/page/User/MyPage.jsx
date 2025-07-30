@@ -964,7 +964,7 @@ export default function MyPage() {
                       <Button onClick={handleFriendSearch} disabled={friendLoading} aria-label="Click">
                         {friendLoading ? '검색 중...' : '검색'}
                       </Button>
-                    </div>
+                    </UnifiedCard>
                   </div>
                 </div>
 

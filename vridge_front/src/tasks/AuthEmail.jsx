@@ -147,7 +147,7 @@ export default function AuthEmail({
         }}
         >
           확인
-        </Button>
+        </UnifiedButton>
       ) : (
         <Button
           disabled={isLoading}

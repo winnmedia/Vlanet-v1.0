@@ -2144,7 +2144,10 @@ export default function VideoPlanning() {
                         </div>
                       </div>
                     </div>
-                    <Button variant="danger" aria-label="Click"> {
+                    <Button 
+                      variant="danger" 
+                      aria-label="기획 삭제"
+                      onClick={(e) => {
                         e.stopPropagation();
                         deletePlanning(planning.id);
                       }}

@@ -579,7 +579,13 @@ export default function Signup() {
                 비밀번호 확인 <span style={{ color: '#dc3545' }}>*</span>
               </label>
               <div style={{ position: 'relative' }}>
-                <UnifiedInput placeholder="비밀번호를 다시 입력하세요" value={password1} onChange={onChange} name="password1"  / aria-label="비밀번호를 다시 입력하세요"> {
+                <UnifiedInput 
+                  placeholder="비밀번호를 다시 입력하세요" 
+                  value={password1} 
+                  onChange={onChange} 
+                  name="password1"  
+                  aria-label="비밀번호를 다시 입력하세요"
+                  onFocus={(e) => {
                     if (!password1 || password === password1) {
                       e.target.style.borderColor = '#1631F8'
                     }

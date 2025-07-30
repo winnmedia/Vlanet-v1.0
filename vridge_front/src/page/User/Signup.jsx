@@ -695,8 +695,10 @@ export default function Signup() {
             )}
 
             {/* 회원가입 버튼 */}
-            <Button type="submit"
+            <Button 
+              type="submit"
               disabled={isLoading}
+              aria-label="회원가입"
               style={{
                 width: '100%',
                 padding: '14px',
@@ -710,7 +712,7 @@ export default function Signup() {
                 transition: 'all 0.3s ease',
                 boxShadow: isLoading ? 'none' : '0 2px 4px rgba(22, 49, 248, 0.2)'
               }}
-              onMouseEnter={(e) = aria-label="Click"> {
+              onMouseEnter={(e) => {
                 if (!isLoading) {
                   e.target.style.backgroundColor = '#0F23C9'
                   e.target.style.boxShadow = '0 4px 8px rgba(22, 49, 248, 0.3)'

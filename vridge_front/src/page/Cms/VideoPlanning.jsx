@@ -2235,14 +2235,19 @@ export default function VideoPlanning() {
                               >
                                 저장
                               </Button>
-                              <Button variant="secondary" onClick={cancelStoryEdit} onKeyDown={(e) => { if (e.key === 'Enter') cancelStoryEdit() }} style={{
+                              <Button 
+                                variant="secondary" 
+                                onClick={cancelStoryEdit} 
+                                onKeyDown={(e) => { if (e.key === 'Enter') cancelStoryEdit() }} 
+                                aria-label="취소"
+                                style={{
                                   backgroundColor: '#dc3545',
                                   color: 'white',
                                   border: 'none',
                                   padding: '8px 16px',
                                   borderRadius: '4px',
                                   cursor: 'pointer'
-                                } aria-label="Click">
+                                }}>
                                 취소
                               </Button>
                             </div>

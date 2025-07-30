@@ -188,7 +188,7 @@ export default function AuthEmail({
       </div>
       {(seconds > 0 || minutes > 0) &&
       <div className="pr mt10">
-          <UnifiedInput placeholder="인증번호 입력" value={auth_number} onChange={onChange} name="auth_number"  / aria-label="인증번호 입력">
+          <UnifiedInput placeholder="인증번호 입력" value={auth_number} onChange={onChange} name="auth_number" aria-label="인증번호 입력" />
           <span className="timer">
             {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
           </span>

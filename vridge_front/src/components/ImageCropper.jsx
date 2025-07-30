@@ -137,7 +137,7 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }) {
           </UnifiedButton>
         </div>
       </div>
-    </div>);
-
+    </UnifiedModal>
+  );
 }
 import { Button } from 'unified/Button';

@@ -477,9 +477,8 @@ const Info = React.memo(function ({ current_project, user, profileImage, is_admi
         </div>
       </UnifiedCard>
     </div>
-  </div>
-      
-      {/* 멤버 초대 모달 */}
+    
+    {/* 멤버 초대 모달 */}
       {showInviteModal && (
         <div 
           style={{

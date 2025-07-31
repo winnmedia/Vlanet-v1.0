@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "=== VideoPlanet Django 서버 시작 (간소화 버전) ==="
+echo "=== VideoPlanet Django 서버 시작 (강제 배포 트리거) ==="  
 echo "시간: $(date)"
+echo "배포 트리거: 2025-07-31 15:30 KST"
 echo "Python 버전: $(python3 --version)"
 
 # 환경변수 설정

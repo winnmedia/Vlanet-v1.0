@@ -1,0 +1,4 @@
+Deploy timestamp: 2025-07-31 15:30:00 KST
+Trigger reason: Force deploy latest Django server code
+Previous: emergency_server.py
+Target: Normal Django server via start.sh

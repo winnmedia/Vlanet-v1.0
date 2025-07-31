@@ -1,5 +1,29 @@
 # VideoPlanet 프로젝트 히스토리 및 주요 결정사항
 
+## 2025-08-01 프로젝트 파일 대대적 정리 완료
+**작업 내용**: 개발 환경과 맞지 않거나 오래된 파일들 체계적 정리
+**담당 에이전트**: Claude (메인)
+**주요 변경사항**:
+- 파일 정리 계획 문서 작성 (FILE_CLEANUP_PLAN.md)
+- 자동 정리 스크립트 생성 (cleanup_files.sh)
+- 정리된 파일 아카이브 생성 (archived_cleanup_20250801_081501.tar.gz)
+
+**정리 결과**:
+- **삭제된 파일**: 
+  - 테스트/디버그 파일 85개 (test_*.py, debug_*.py, fix_*.py)
+  - 중복 설정 파일 7개 (settings_minimal.py, settings_railway*.py 등)
+  - 로그 파일 4개
+  - scripts/tests 디렉토리 전체
+- **보존된 핵심 파일**:
+  - settings_base.py, settings_fixed.py, settings_dev.py
+  - start.sh, start_improved.sh, start_emergency_fix.sh
+  - emergency_server.py, RAILWAY_ENV_GUIDE.md
+
+**효과**:
+- 프로젝트 구조 명확화
+- 코드베이스 가독성 향상
+- 혼란 요소 제거
+
 ## 2025-08-01 백업 파일 대량 정리 완료
 **작업 내용**: 1GB 이상의 백업 파일들을 체계적으로 정리
 **담당 에이전트**: Claude (메인)

@@ -1,5 +1,6 @@
 """
 Railway 배포용 최적화된 설정
+Last deploy trigger: 2025-07-31 15:30 KST
 """
 import os
 import sys

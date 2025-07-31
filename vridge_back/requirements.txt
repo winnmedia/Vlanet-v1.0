@@ -1,3 +1,4 @@
+# Railway deploy trigger: 2025-07-31 15:30
 Django==4.2.7
 djangorestframework==3.14.0
 django-cors-headers==4.3.0

@@ -1,4 +1,5 @@
 {
+  "framework": "nextjs",
   "regions": ["icn1"],
   "functions": {
     "pages/api/**.js": {

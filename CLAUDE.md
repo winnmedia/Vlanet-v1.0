@@ -1,7 +1,7 @@
 # VideoPlanet 개발지침
 
 ## 프로젝트 개요
-VideoPlanet은 영상 제작 프로젝트 관리 시스템입니다.
+VideoPlanet은 영상 제작 프로젝트 운영 시스템입니다.
 - 프론트엔드: React (포트 3000)
 - 백엔드: Django (Railway 배포)
 - 데이터베이스: PostgreSQL

@@ -25,7 +25,7 @@ from django.views.generic import TemplateView
 from .views import health_check, root_view
 from .simple_health import simple_health_check
 from api_health import csrf_token_view
-from .debug_views import debug_info, test_error
+# from .debug_views import debug_info, test_error  # 삭제된 파일
 
 # token_blacklist import를 보호
 try:
@@ -83,8 +83,8 @@ urlpatterns = [
     path("admin-dashboard/", include("admin_dashboard.urls")),  # 관리자 대시보드
     
     # 디버깅 엔드포인트 (Railway 환경에서만 활성화)
-    path("api/debug-info/", debug_info, name="debug_info"),
-    path("api/test-error/", test_error, name="test_error"),
+    # path("api/debug-info/", debug_info, name="debug_info"),  # 삭제된 뷰
+    # path("api/test-error/", test_error, name="test_error"),  # 삭제된 뷰
     
     # API 경로 (권장) - /api/ 프리픽스를 사용하는 표준 경로
     path("api/users/", include("users.urls")),

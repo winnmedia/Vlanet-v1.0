@@ -7,7 +7,7 @@ echo "Python 버전: $(python3 --version)"
 echo "현재 디렉토리: $(pwd)"
 
 # 기본값 설정 (환경변수가 없을 경우 사용)
-export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-"config.settings_railway"}
+export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-"config.settings.railway"}
 export SECRET_KEY=${SECRET_KEY:-"django-insecure-videoplanet-temp-key-$(date +%s)"}
 export DEBUG=${DEBUG:-"True"}
 export PORT=${PORT:-"8000"}

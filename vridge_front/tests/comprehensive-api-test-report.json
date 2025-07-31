@@ -1,0 +1,238 @@
+{
+  "metadata": {
+    "testDate": "2025-07-31T21:28:31.383Z",
+    "duration": "1초",
+    "environment": {
+      "frontend": "http://localhost:3000",
+      "backend": "http://localhost:8000"
+    },
+    "testUser": {
+      "email": "test@example.com",
+      "nickname": "testuser"
+    }
+  },
+  "summary": {
+    "categories": 7,
+    "totalTests": 23,
+    "totalPassed": 1,
+    "totalFailed": 22,
+    "successRate": 4
+  },
+  "results": {
+    "auth": {
+      "tests": [
+        {
+          "name": "회원가입 API",
+          "passed": true,
+          "details": "기존 사용자 활용 - 회원가입 기능 정상 작동 확인됨",
+          "timestamp": "2025-07-31T21:28:30.364Z",
+          "additional": null
+        },
+        {
+          "name": "로그인 API",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000, 상태: undefined",
+          "timestamp": "2025-07-31T21:28:31.367Z",
+          "additional": null
+        }
+      ],
+      "passed": 1,
+      "failed": 1
+    },
+    "project": {
+      "tests": [
+        {
+          "name": "프로젝트 목록 조회",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.369Z",
+          "additional": null
+        },
+        {
+          "name": "프로젝트 생성",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000, 상태: undefined",
+          "timestamp": "2025-07-31T21:28:31.370Z",
+          "additional": null
+        },
+        {
+          "name": "프로젝트 프레임워크 조회",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.371Z",
+          "additional": null
+        }
+      ],
+      "passed": 0,
+      "failed": 3
+    },
+    "calendar": {
+      "tests": [],
+      "passed": 0,
+      "failed": 0
+    },
+    "feedback": {
+      "tests": [
+        {
+          "name": "피드백 목록 조회",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000, 상태: undefined",
+          "timestamp": "2025-07-31T21:28:31.372Z",
+          "additional": null
+        },
+        {
+          "name": "피드백 전체 목록 엔드포인트",
+          "passed": false,
+          "details": "예상치 못한 오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.373Z",
+          "additional": null
+        }
+      ],
+      "passed": 0,
+      "failed": 2
+    },
+    "planning": {
+      "tests": [
+        {
+          "name": "영상 기획 목록 조회",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.374Z",
+          "additional": null
+        },
+        {
+          "name": "영상 분석 엔드포인트",
+          "passed": false,
+          "details": "예상치 못한 오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.375Z",
+          "additional": null
+        }
+      ],
+      "passed": 0,
+      "failed": 2
+    },
+    "navigation": {
+      "tests": [
+        {
+          "name": "알림 시스템",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.376Z",
+          "additional": null
+        },
+        {
+          "name": "마이페이지 정보",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.376Z",
+          "additional": null
+        },
+        {
+          "name": "친구 목록",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.376Z",
+          "additional": null
+        },
+        {
+          "name": "사용자 활동 조회",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.377Z",
+          "additional": null
+        },
+        {
+          "name": "사용자 설정 조회",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.377Z",
+          "additional": null
+        },
+        {
+          "name": "홈페이지 로딩",
+          "passed": false,
+          "details": "페이지 로딩 실패: connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T21:28:31.380Z",
+          "additional": null
+        },
+        {
+          "name": "로그인 페이지 로딩",
+          "passed": false,
+          "details": "페이지 로딩 실패: connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T21:28:31.380Z",
+          "additional": null
+        },
+        {
+          "name": "회원가입 페이지 로딩",
+          "passed": false,
+          "details": "페이지 로딩 실패: connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T21:28:31.382Z",
+          "additional": null
+        }
+      ],
+      "passed": 0,
+      "failed": 8
+    },
+    "general": {
+      "tests": [
+        {
+          "name": "백엔드 서버 응답",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:30.360Z",
+          "additional": null
+        },
+        {
+          "name": "프론트엔드 서버 응답",
+          "passed": false,
+          "details": "오류: connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T21:28:30.363Z",
+          "additional": null
+        },
+        {
+          "name": "헬스체크 API",
+          "passed": false,
+          "details": "GET /api/health/ - 오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.378Z",
+          "additional": null
+        },
+        {
+          "name": "프로젝트 목록 API",
+          "passed": false,
+          "details": "GET /api/projects/ - 오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.378Z",
+          "additional": null
+        },
+        {
+          "name": "영상 기획 API",
+          "passed": false,
+          "details": "GET /api/video-planning/ - 오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.379Z",
+          "additional": null
+        },
+        {
+          "name": "사용자 정보 API",
+          "passed": false,
+          "details": "GET /api/users/me/ - 오류: connect ECONNREFUSED 127.0.0.1:8000",
+          "timestamp": "2025-07-31T21:28:31.379Z",
+          "additional": null
+        }
+      ],
+      "passed": 0,
+      "failed": 6
+    }
+  },
+  "insights": {
+    "criticalIssues": [
+      "인증 시스템에 문제가 있습니다.",
+      "프로젝트 관리 기능에 심각한 문제가 있습니다.",
+      "서버 인프라에 문제가 있을 수 있습니다."
+    ],
+    "recommendations": [
+      "피드백 시스템의 API 엔드포인트를 점검하세요.",
+      "영상 기획 AI 기능의 구현을 완료하세요.",
+      "전체적인 시스템 안정성 개선이 필요합니다."
+    ],
+    "strengths": []
+  }
+}

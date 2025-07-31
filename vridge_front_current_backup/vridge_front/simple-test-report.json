@@ -1,0 +1,113 @@
+{
+  "pageRouting": [
+    {
+      "test": "홈페이지",
+      "status": "fail",
+      "message": "Request failed with status code 500"
+    },
+    {
+      "test": "로그인",
+      "status": "pass",
+      "message": "상태 코드: 200"
+    },
+    {
+      "test": "회원가입",
+      "status": "pass",
+      "message": "상태 코드: 200"
+    },
+    {
+      "test": "개인정보처리방침",
+      "status": "pass",
+      "message": "상태 코드: 200"
+    },
+    {
+      "test": "이용약관",
+      "status": "pass",
+      "message": "상태 코드: 200"
+    }
+  ],
+  "mainFeatures": [
+    {
+      "test": "인증 체크",
+      "status": "warning",
+      "message": "상태: 400"
+    },
+    {
+      "test": "로그인",
+      "status": "pass",
+      "message": "데이터 검증 작동"
+    },
+    {
+      "test": "회원가입",
+      "status": "pass",
+      "message": "데이터 검증 작동"
+    },
+    {
+      "test": "프로젝트 목록",
+      "status": "warning",
+      "message": "상태: 400"
+    },
+    {
+      "test": "피드백 목록",
+      "status": "warning",
+      "message": "상태: 400"
+    }
+  ],
+  "uiComponents": [
+    {
+      "test": "Next.js App 컴포넌트",
+      "status": "pass",
+      "message": "파일 존재"
+    },
+    {
+      "test": "홈페이지",
+      "status": "pass",
+      "message": "파일 존재"
+    },
+    {
+      "test": "로그인 페이지",
+      "status": "pass",
+      "message": "파일 존재"
+    },
+    {
+      "test": "유틸리티 함수",
+      "status": "pass",
+      "message": "파일 존재"
+    },
+    {
+      "test": "프로젝트 API",
+      "status": "pass",
+      "message": "파일 존재"
+    },
+    {
+      "test": "피드백 API",
+      "status": "pass",
+      "message": "파일 존재"
+    }
+  ],
+  "dataFlow": [
+    {
+      "test": "API 헬스체크",
+      "status": "fail",
+      "message": "Request failed with status code 400"
+    }
+  ],
+  "errorHandling": [
+    {
+      "test": "404 에러 처리",
+      "status": "fail",
+      "message": "Request failed with status code 400"
+    },
+    {
+      "test": "메소드 에러 처리",
+      "status": "warning",
+      "message": "상태: 400"
+    }
+  ],
+  "summary": {
+    "total": 19,
+    "passed": 12,
+    "failed": 3,
+    "warnings": 4
+  }
+}

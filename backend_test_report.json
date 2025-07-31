@@ -1,0 +1,169 @@
+{
+  "test_time": "2025-08-01T07:11:10.460954",
+  "base_url": "https://videoplanet.up.railway.app",
+  "summary": {
+    "total": 14,
+    "success": 4,
+    "error_503": 10,
+    "error_4xx": 0,
+    "timeout": 0,
+    "other_errors": 0
+  },
+  "details": {
+    "health": {
+      "/": {
+        "status": 200,
+        "data": {
+          "status": "emergency_mode",
+          "message": "Django 앱이 시작되지 않아 응급 서버로 대체",
+          "timestamp": "969b5dfc-7f82-4bcd-b0db-a7b0bab11cde",
+          "endpoints": {
+            "health": "/health/",
+            "api_health": "/api/health/",
+            "debug": "/debug/"
+          }
+        }
+      },
+      "/api/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/",
+          "method": "GET",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      },
+      "/api/health/": {
+        "status": 200,
+        "data": {
+          "status": "emergency_mode",
+          "message": "Django 앱이 시작되지 않아 응급 서버로 대체",
+          "timestamp": "969b5dfc-7f82-4bcd-b0db-a7b0bab11cde",
+          "endpoints": {
+            "health": "/health/",
+            "api_health": "/api/health/",
+            "debug": "/debug/"
+          }
+        }
+      },
+      "/health/": {
+        "status": 200,
+        "data": {
+          "status": "emergency_mode",
+          "message": "Django 앱이 시작되지 않아 응급 서버로 대체",
+          "timestamp": "969b5dfc-7f82-4bcd-b0db-a7b0bab11cde",
+          "endpoints": {
+            "health": "/health/",
+            "api_health": "/api/health/",
+            "debug": "/debug/"
+          }
+        }
+      },
+      "/api/status/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/status/",
+          "method": "GET",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      }
+    },
+    "auth": {
+      "/api/auth/signup/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/auth/signup/",
+          "method": "POST",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      },
+      "/api/auth/login/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/auth/login/",
+          "method": "POST",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      },
+      "/api/auth/user/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/auth/user/",
+          "method": "GET",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      },
+      "/api/auth/logout/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/auth/logout/",
+          "method": "POST",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      },
+      "/api/auth/refresh/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/auth/refresh/",
+          "method": "POST",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      }
+    },
+    "projects": {
+      "/api/projects/": {
+        "status": 200,
+        "data": {
+          "results": [],
+          "message": "응급 모드: 프로젝트 데이터를 로드할 수 없습니다",
+          "emergency_mode": true
+        }
+      },
+      "/api/projects/1/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/projects/1/",
+          "method": "DELETE",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      }
+    },
+    "feedbacks": {
+      "/api/feedbacks/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/feedbacks/",
+          "method": "POST",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      },
+      "/api/feedbacks/1/": {
+        "status": 503,
+        "data": {
+          "message": "응급 모드: 이 API는 현재 사용할 수 없습니다",
+          "path": "/api/feedbacks/1/",
+          "method": "DELETE",
+          "emergency_mode": true,
+          "status": "service_unavailable"
+        }
+      }
+    }
+  }
+}

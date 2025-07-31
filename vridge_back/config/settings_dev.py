@@ -42,6 +42,25 @@ CACHES = {
 # Override session engine for development
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
+# Rate Limiting 설정 (개발 환경)
+RATE_LIMITING_ENABLED = False  # 개발 환경에서는 완전히 비활성화
+
+# IP 화이트리스트 (개발 환경)
+RATE_LIMIT_WHITELIST_IPS = [
+    '127.0.0.1',      # localhost IPv4
+    '::1',            # localhost IPv6
+    '192.168.0.0/16', # 로컬 네트워크
+    '10.0.0.0/8',     # 사설 네트워크
+    '172.16.0.0/12',  # 사설 네트워크
+]
+
+# 테스트 계정 화이트리스트 (Rate Limiting 제외)
+RATE_LIMIT_TEST_ACCOUNTS = [
+    'test@example.com',
+    'dev@vlanet.net',
+    'admin@vlanet.net',
+]
+
 # Logging Configuration
 LOGGING = {
     'version': 1,

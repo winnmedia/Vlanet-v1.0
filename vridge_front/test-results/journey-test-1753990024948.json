@@ -1,0 +1,183 @@
+{
+  "timestamp": "2025-07-31T19:26:47.142Z",
+  "journeys": {
+    "home": {
+      "name": "home",
+      "steps": {
+        "homepage": {
+          "success": true,
+          "result": {
+            "status": 200,
+            "hasContent": true
+          },
+          "duration": 231
+        },
+        "/login": {
+          "success": true,
+          "result": {
+            "status": 200,
+            "url": "/login"
+          },
+          "duration": 1209
+        },
+        "/signup": {
+          "success": true,
+          "result": {
+            "status": 200,
+            "url": "/signup"
+          },
+          "duration": 623
+        },
+        "/privacy": {
+          "success": true,
+          "result": {
+            "status": 200,
+            "url": "/privacy"
+          },
+          "duration": 518
+        },
+        "/terms": {
+          "success": true,
+          "result": {
+            "status": 200,
+            "url": "/terms"
+          },
+          "duration": 562
+        }
+      }
+    },
+    "auth": {
+      "name": "auth",
+      "steps": {
+        "apiHealth": {
+          "success": true,
+          "result": {
+            "status": "emergency_mode",
+            "message": "Django 앱이 시작되지 않아 응급 서버로 대체",
+            "timestamp": "969b5dfc-7f82-4bcd-b0db-a7b0bab11cde",
+            "endpoints": {
+              "health": "/health/",
+              "api_health": "/api/health/",
+              "debug": "/debug/"
+            }
+          },
+          "duration": 643
+        },
+        "signup": {
+          "success": false,
+          "error": {
+            "step": "회원가입 API 테스트",
+            "message": "Request failed with status code 503",
+            "code": 503,
+            "timestamp": "2025-07-31T19:26:51.069Z"
+          }
+        },
+        "login": {
+          "success": false,
+          "error": {
+            "step": "로그인 API 테스트",
+            "message": "Request failed with status code 503",
+            "code": 503,
+            "timestamp": "2025-07-31T19:26:51.193Z"
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "step": "회원가입 API 테스트",
+      "message": "Request failed with status code 503",
+      "code": 503,
+      "timestamp": "2025-07-31T19:26:51.069Z"
+    },
+    {
+      "step": "로그인 API 테스트",
+      "message": "Request failed with status code 503",
+      "code": 503,
+      "timestamp": "2025-07-31T19:26:51.193Z"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 6,
+    "failed": 2
+  },
+  "meceAnalysis": {
+    "pages": {
+      "total": 9,
+      "accessible": 9,
+      "errors": []
+    },
+    "api": {
+      "total": 8,
+      "accessible": 3,
+      "errors": [
+        {
+          "api": "/api/auth/login/",
+          "category": "auth",
+          "status": 503
+        },
+        {
+          "api": "/api/auth/signup/",
+          "category": "auth",
+          "status": 503
+        },
+        {
+          "api": "/api/auth/logout/",
+          "category": "auth",
+          "status": 503
+        },
+        {
+          "api": "/api/projects/recent/",
+          "category": "projects",
+          "status": 503
+        },
+        {
+          "api": "/api/feedbacks/",
+          "category": "feedbacks",
+          "status": 503
+        }
+      ]
+    }
+  },
+  "rootCause": {
+    "primaryPattern": {
+      "type": "serverError",
+      "count": 2,
+      "errors": [
+        {
+          "step": "회원가입 API 테스트",
+          "message": "Request failed with status code 503",
+          "code": 503,
+          "timestamp": "2025-07-31T19:26:51.069Z"
+        },
+        {
+          "step": "로그인 API 테스트",
+          "message": "Request failed with status code 503",
+          "code": 503,
+          "timestamp": "2025-07-31T19:26:51.193Z"
+        }
+      ]
+    },
+    "totalErrors": 2,
+    "errorDistribution": {
+      "serverError": 2,
+      "connection": 0,
+      "authentication": 0,
+      "validation": 0,
+      "notFound": 0,
+      "clientError": 0
+    },
+    "mostFailedSteps": [
+      [
+        "회원가입 API 테스트",
+        1
+      ],
+      [
+        "로그인 API 테스트",
+        1
+      ]
+    ]
+  }
+}

@@ -6,6 +6,8 @@ import time
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.conf import settings
+import ipaddress
+import json
 
 
 class RateLimitMiddleware:
@@ -13,30 +15,110 @@ class RateLimitMiddleware:
     IP 기반 Rate Limiting 미들웨어
     - 로그인/회원가입 엔드포인트 보호
     - 브루트포스 공격 방지
+    - 개발 환경에서 완화된 설정 지원
     """
     
     def __init__(self, get_response):
         self.get_response = get_response
-        # Rate limit 설정
-        self.endpoints = {
-            '/api/users/login/': {'limit': 5, 'window': 300},  # 5분당 5회
-            '/api/users/register/': {'limit': 3, 'window': 600},  # 10분당 3회
-            '/api/users/password-reset/': {'limit': 3, 'window': 3600},  # 1시간당 3회
-            '/api/users/social-login/': {'limit': 10, 'window': 300},  # 5분당 10회
-        }
+        
+        # Rate Limiting 활성화 설정
+        self.enabled = getattr(settings, 'RATE_LIMITING_ENABLED', not settings.DEBUG)
+        
+        # IP 화이트리스트 설정
+        self.whitelist_ips = set(getattr(settings, 'RATE_LIMIT_WHITELIST_IPS', ['127.0.0.1', '::1']))
+        
+        # 테스트 계정 화이트리스트
+        self.test_accounts = set(getattr(settings, 'RATE_LIMIT_TEST_ACCOUNTS', []))
+        
+        # Rate limit 설정 (환경별 다른 값)
+        if settings.DEBUG:
+            # 개발 환경: 매우 관대한 설정
+            self.endpoints = {
+                '/api/users/login/': {'limit': 100, 'window': 60},  # 1분당 100회
+                '/api/users/register/': {'limit': 50, 'window': 60},  # 1분당 50회
+                '/api/users/password-reset/': {'limit': 20, 'window': 300},  # 5분당 20회
+                '/api/users/social-login/': {'limit': 100, 'window': 60},  # 1분당 100회
+            }
+        else:
+            # 운영 환경: 엄격한 설정
+            self.endpoints = {
+                '/api/users/login/': {'limit': 5, 'window': 300},  # 5분당 5회
+                '/api/users/register/': {'limit': 3, 'window': 600},  # 10분당 3회
+                '/api/users/password-reset/': {'limit': 3, 'window': 3600},  # 1시간당 3회
+                '/api/users/social-login/': {'limit': 10, 'window': 300},  # 5분당 10회
+            }
     
     def __call__(self, request):
+        # Rate Limiting이 비활성화된 경우 바로 통과
+        if not self.enabled:
+            return self.get_response(request)
+            
+        # 화이트리스트 IP 체크
+        client_ip = self.get_client_ip(request)
+        if self.is_whitelisted_ip(client_ip):
+            return self.get_response(request)
+            
+        # 테스트 계정 체크 (로그인 요청인 경우)
+        if self.is_test_account_request(request):
+            return self.get_response(request)
+        
         # Rate limiting 체크
         for endpoint, config in self.endpoints.items():
             if request.path.startswith(endpoint):
                 if not self.check_rate_limit(request, endpoint, config):
                     return JsonResponse({
                         'error': '너무 많은 요청입니다. 잠시 후 다시 시도해주세요.',
-                        'retry_after': config['window']
+                        'retry_after': config['window'],
+                        'debug_info': {
+                            'ip': client_ip,
+                            'endpoint': endpoint,
+                            'limit': config['limit'],
+                            'window': config['window']
+                        } if settings.DEBUG else None
                     }, status=429)
         
         response = self.get_response(request)
         return response
+    
+    def is_whitelisted_ip(self, ip):
+        """IP가 화이트리스트에 있는지 확인"""
+        if not ip:
+            return False
+            
+        # 직접 매칭
+        if ip in self.whitelist_ips:
+            return True
+            
+        # CIDR 블록 매칭 (예: 192.168.0.0/24)
+        try:
+            ip_obj = ipaddress.ip_address(ip)
+            for whitelist_entry in self.whitelist_ips:
+                try:
+                    if '/' in whitelist_entry:
+                        network = ipaddress.ip_network(whitelist_entry, strict=False)
+                        if ip_obj in network:
+                            return True
+                except (ValueError, ipaddress.AddressValueError):
+                    continue
+        except (ValueError, ipaddress.AddressValueError):
+            pass
+            
+        return False
+        
+    def is_test_account_request(self, request):
+        """테스트 계정 요청인지 확인"""
+        if not self.test_accounts or request.path != '/api/users/login/':
+            return False
+            
+        try:
+            if request.body:
+                data = json.loads(request.body)
+                email = data.get('email', '')
+                return email in self.test_accounts
+        except (json.JSONDecodeError, AttributeError):
+            pass
+            
+        return False
     
     def check_rate_limit(self, request, endpoint, config):
         """Rate limit 체크"""
@@ -62,12 +144,24 @@ class RateLimitMiddleware:
     
     def get_client_ip(self, request):
         """클라이언트 IP 주소 가져오기"""
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0].strip()
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        return ip
+        # Railway, Vercel 등의 프록시 환경을 고려한 IP 추출
+        forwarded_ips = [
+            request.META.get('HTTP_X_FORWARDED_FOR'),
+            request.META.get('HTTP_X_REAL_IP'),
+            request.META.get('HTTP_CF_CONNECTING_IP'),  # Cloudflare
+            request.META.get('HTTP_X_FORWARDED'),
+            request.META.get('HTTP_FORWARDED_FOR'),
+            request.META.get('HTTP_FORWARDED')
+        ]
+        
+        for forwarded in forwarded_ips:
+            if forwarded:
+                # 첫 번째 IP가 실제 클라이언트 IP
+                ip = forwarded.split(',')[0].strip()
+                if ip and ip != 'unknown':
+                    return ip
+                    
+        return request.META.get('REMOTE_ADDR', 'unknown')
 
 
 class SecurityAuditMiddleware:

@@ -1,0 +1,352 @@
+{
+  "timestamp": "2025-07-22T09:37:18.991Z",
+  "totalTests": 16,
+  "passed": 15,
+  "failed": 1,
+  "pages": [
+    {
+      "name": "홈페이지",
+      "path": "/",
+      "status": 200,
+      "loadTime": 52,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 4,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "로그인",
+      "path": "/login",
+      "status": 200,
+      "loadTime": 52,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 1,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "회원가입",
+      "path": "/signup",
+      "status": 200,
+      "loadTime": 49,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 5,
+        "hasForm": true,
+        "formCount": 1,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": true,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "CMS 홈",
+      "path": "/cmshome",
+      "status": 200,
+      "loadTime": 668,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": false,
+        "buttonCount": 0,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "프로젝트 생성",
+      "path": "/project/create",
+      "status": 200,
+      "loadTime": 980,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": true,
+        "hasButtons": true,
+        "buttonCount": 6,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "영상 기획",
+      "path": "/videoplanning",
+      "status": 200,
+      "loadTime": 363,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": true,
+        "hasButtons": true,
+        "buttonCount": 6,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "마이페이지",
+      "path": "/mypage",
+      "status": 200,
+      "loadTime": 383,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": false,
+        "buttonCount": 0,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "관리자 대시보드",
+      "path": "/admin",
+      "status": 200,
+      "loadTime": 38,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": false,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 2,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": true,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "관리자 대시보드2",
+      "path": "/admindashboard",
+      "status": 200,
+      "loadTime": 4743,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": true,
+        "hasButtons": true,
+        "buttonCount": 2,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "캘린더",
+      "path": "/calendar",
+      "status": 500,
+      "loadTime": 1466,
+      "passed": false,
+      "analysis": null
+    },
+    {
+      "name": "피드백 전체",
+      "path": "/feedbackall",
+      "status": 200,
+      "loadTime": 288,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": true,
+        "hasButtons": true,
+        "buttonCount": 1,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "이메일 확인",
+      "path": "/emailcheck",
+      "status": 200,
+      "loadTime": 241,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": false,
+        "buttonCount": 0,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "이메일 모니터",
+      "path": "/emailmonitor",
+      "status": 200,
+      "loadTime": 230,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": false,
+        "hasNavigation": false,
+        "hasButtons": false,
+        "buttonCount": 0,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "개인정보처리방침",
+      "path": "/privacy",
+      "status": 200,
+      "loadTime": 232,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": false,
+        "buttonCount": 0,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "이용약관",
+      "path": "/terms",
+      "status": 200,
+      "loadTime": 245,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": false,
+        "buttonCount": 0,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    },
+    {
+      "name": "비밀번호 재설정",
+      "path": "/resetpw",
+      "status": 200,
+      "loadTime": 267,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 1,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": [],
+        "hasPrimaryButton": false,
+        "logoSize": null,
+        "headerHeight": null
+      }
+    }
+  ],
+  "uiConsistency": {
+    "logoFound": 13,
+    "primaryButtonFound": 2,
+    "navigationFound": 4
+  },
+  "summary": "1 tests failed"
+}

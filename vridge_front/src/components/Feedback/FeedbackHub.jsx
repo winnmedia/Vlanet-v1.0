@@ -1,0 +1,333 @@
+import React, { useState, useRef, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import VideoPlayerZone from './VideoPlayerZone'
+import FeedbackStream from './FeedbackStream'
+import FloatingActionPanel from './FloatingActionPanel'
+import AIFeedbackAssistant from './AIFeedbackAssistant'
+
+export default function FeedbackHub({ project, user, onProjectUpdate }) {
+  const [focusMode, setFocusMode] = useState('balanced') // 'video', 'feedback', 'balanced'
+  const [selectedTimestamp, setSelectedTimestamp] = useState(null)
+  const [aiPanelOpen, setAiPanelOpen] = useState(false)
+  const videoPlayerRef = useRef(null)
+
+  // 1000% 효율화: 원클릭 타임스탬프 피드백
+  const handleQuickFeedback = useCallback((timestamp, feedbackType = 'general') => {
+    if (videoPlayerRef.current) {
+      videoPlayerRef.current.pause()
+    }
+    
+    setSelectedTimestamp({
+      time: timestamp,
+      type: feedbackType,
+      screenshot: null // 자동 스크린샷 캡처
+    })
+  }, [])
+
+  // 레이아웃 자동 최적화 - 사용자 행동 패턴 학습
+  const getLayoutConfig = () => {
+    switch (focusMode) {
+      case 'video':
+        return {
+          videoWidth: '75%',
+          feedbackWidth: '25%',
+          showMiniControls: true
+        }
+      case 'feedback':
+        return {
+          videoWidth: '35%',
+          feedbackWidth: '65%',
+          showExpandedFeedback: true
+        }
+      default:
+        return {
+          videoWidth: '55%',
+          feedbackWidth: '45%',
+          showBalanced: true
+        }
+    }
+  }
+
+  const layout = getLayoutConfig()
+
+  return (
+    <div className="feedback-hub">
+      {/* 스마트 헤더 - 컨텍스트 인식 */}
+      <FeedbackHeader 
+        project={project}
+        focusMode={focusMode}
+        onFocusModeChange={setFocusMode}
+        onAIToggle={() => setAiPanelOpen(!aiPanelOpen)}
+      />
+
+      {/* 메인 작업 영역 - 동적 레이아웃 */}
+      <div className="hub-workspace">
+        <motion.div 
+          className="video-section"
+          animate={{ width: layout.videoWidth }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+        >
+          <VideoPlayerZone
+            ref={videoPlayerRef}
+            project={project}
+            selectedTimestamp={selectedTimestamp}
+            onTimestampSelect={handleQuickFeedback}
+            compactMode={focusMode === 'feedback'}
+          />
+          
+          {/* 부유 액션 패널 - 컨텍스트 메뉴 */}
+          <FloatingActionPanel
+            onQuickFeedback={handleQuickFeedback}
+            onScreenshot={() => {/* 스크린샷 캡처 */}}
+            onAIAnalyze={() => setAiPanelOpen(true)}
+            visible={!!project.files}
+          />
+        </motion.div>
+
+        <motion.div 
+          className="feedback-section"
+          animate={{ width: layout.feedbackWidth }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+        >
+          <FeedbackStream
+            project={project}
+            user={user}
+            selectedTimestamp={selectedTimestamp}
+            onTimestampClick={(timestamp) => {
+              if (videoPlayerRef.current) {
+                videoPlayerRef.current.seekTo(timestamp)
+              }
+            }}
+            expandedMode={focusMode === 'feedback'}
+            onFeedbackSubmit={onProjectUpdate}
+          />
+        </motion.div>
+      </div>
+
+      {/* AI 피드백 어시스턴트 - 슬라이드 패널 */}
+      <AnimatePresence>
+        {aiPanelOpen && (
+          <AIFeedbackAssistant
+            project={project}
+            onClose={() => setAiPanelOpen(false)}
+            onFeedbackGenerated={(feedback) => {
+              // AI 생성 피드백을 스트림에 추가
+              onProjectUpdate({
+                type: 'ai_feedback',
+                feedback,
+                timestamp: selectedTimestamp
+              })
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <style jsx>{`
+        .feedback-hub {
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          overflow: hidden;
+        }
+
+        .hub-workspace {
+          flex: 1;
+          display: flex;
+          gap: 16px;
+          padding: 16px;
+          min-height: 0;
+        }
+
+        .video-section {
+          position: relative;
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+          overflow: hidden;
+        }
+
+        .feedback-section {
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+          display: flex;
+          flex-direction: column;
+        }
+
+        @media (max-width: 1200px) {
+          .hub-workspace {
+            flex-direction: column;
+          }
+
+          .video-section,
+          .feedback-section {
+            width: 100% !important;
+            height: 50%;
+          }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+// 스마트 헤더 - 컨텍스트 인식 UI
+function FeedbackHeader({ project, focusMode, onFocusModeChange, onAIToggle }) {
+  return (
+    <header className="feedback-header">
+      <div className="project-context">
+        <div className="project-info">
+          <h1>{project.name}</h1>
+          <div className="meta-info">
+            <span className="duration">
+              {project.files ? '영상 업로드 완료' : '영상 대기 중'}
+            </span>
+            <span className="feedback-count">
+              피드백 {project.feedback?.length || 0}개
+            </span>
+            <span className="members">
+              멤버 {(project.member_list?.length || 0) + 1}명
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="header-controls">
+        {/* 포커스 모드 토글 */}
+        <div className="focus-mode-selector">
+          {[
+            { mode: 'video', icon: '🎬', label: '영상 중심' },
+            { mode: 'balanced', icon: '⚖️', label: '균형' },
+            { mode: 'feedback', icon: '💬', label: '피드백 중심' }
+          ].map(({ mode, icon, label }) => (
+            <button
+              key={mode}
+              className={`focus-btn ${focusMode === mode ? 'active' : ''}`}
+              onClick={() => onFocusModeChange(mode)}
+              title={label}
+            >
+              <span className="icon">{icon}</span>
+              <span className="label">{label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* AI 어시스턴트 토글 */}
+        <button className="ai-toggle" onClick={onAIToggle}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          AI 어시스턴트
+        </button>
+      </div>
+
+      <style jsx>{`
+        .feedback-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 20px;
+          background: white;
+          border-bottom: 1px solid #e9ecef;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .project-context h1 {
+          font-size: 20px;
+          font-weight: 700;
+          color: #1631F8;
+          margin: 0 0 4px 0;
+        }
+
+        .meta-info {
+          display: flex;
+          gap: 16px;
+          font-size: 13px;
+          color: #6c757d;
+        }
+
+        .meta-info span {
+          padding: 4px 8px;
+          background: #f8f9fa;
+          border-radius: 12px;
+          font-weight: 500;
+        }
+
+        .header-controls {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .focus-mode-selector {
+          display: flex;
+          background: #f8f9fa;
+          border-radius: 12px;
+          padding: 4px;
+          gap: 2px;
+        }
+
+        .focus-btn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 12px;
+          border: none;
+          background: transparent;
+          border-radius: 8px;
+          font-size: 13px;
+          font-weight: 500;
+          color: #6c757d;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .focus-btn.active {
+          background: #1631F8;
+          color: white;
+          box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
+        }
+
+        .focus-btn .icon {
+          font-size: 14px;
+        }
+
+        .ai-toggle {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 16px;
+          background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+          color: white;
+          border: none;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .ai-toggle:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+        }
+
+        @media (max-width: 768px) {
+          .feedback-header {
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
+          }
+
+          .header-controls {
+            justify-content: space-between;
+          }
+
+          .focus-btn .label {
+            display: none;
+          }
+        }
+      `}</style>
+    </header>
+  )
+}

@@ -1,0 +1,262 @@
+{
+  "timestamp": "2025-07-31T19:26:06.954Z",
+  "journeys": {
+    "home": {
+      "name": "home",
+      "steps": {
+        "homepage": {
+          "success": false,
+          "error": {
+            "step": "홈페이지 접근",
+            "message": "connect ECONNREFUSED 127.0.0.1:3000",
+            "timestamp": "2025-07-31T19:26:06.980Z"
+          }
+        },
+        "/login": {
+          "success": false,
+          "error": {
+            "step": "/login 페이지 접근",
+            "message": "connect ECONNREFUSED 127.0.0.1:3000",
+            "timestamp": "2025-07-31T19:26:06.981Z"
+          }
+        },
+        "/signup": {
+          "success": false,
+          "error": {
+            "step": "/signup 페이지 접근",
+            "message": "connect ECONNREFUSED 127.0.0.1:3000",
+            "timestamp": "2025-07-31T19:26:06.983Z"
+          }
+        },
+        "/privacy": {
+          "success": false,
+          "error": {
+            "step": "/privacy 페이지 접근",
+            "message": "connect ECONNREFUSED 127.0.0.1:3000",
+            "timestamp": "2025-07-31T19:26:06.983Z"
+          }
+        },
+        "/terms": {
+          "success": false,
+          "error": {
+            "step": "/terms 페이지 접근",
+            "message": "connect ECONNREFUSED 127.0.0.1:3000",
+            "timestamp": "2025-07-31T19:26:06.985Z"
+          }
+        }
+      }
+    },
+    "auth": {
+      "name": "auth",
+      "steps": {
+        "apiHealth": {
+          "success": true,
+          "result": {
+            "status": "emergency_mode",
+            "message": "Django 앱이 시작되지 않아 응급 서버로 대체",
+            "timestamp": "969b5dfc-7f82-4bcd-b0db-a7b0bab11cde",
+            "endpoints": {
+              "health": "/health/",
+              "api_health": "/api/health/",
+              "debug": "/debug/"
+            }
+          },
+          "duration": 780
+        },
+        "signup": {
+          "success": false,
+          "error": {
+            "step": "회원가입 API 테스트",
+            "message": "Request failed with status code 503",
+            "code": 503,
+            "timestamp": "2025-07-31T19:26:07.941Z"
+          }
+        },
+        "login": {
+          "success": false,
+          "error": {
+            "step": "로그인 API 테스트",
+            "message": "Request failed with status code 503",
+            "code": 503,
+            "timestamp": "2025-07-31T19:26:08.088Z"
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "step": "홈페이지 접근",
+      "message": "connect ECONNREFUSED 127.0.0.1:3000",
+      "timestamp": "2025-07-31T19:26:06.980Z"
+    },
+    {
+      "step": "/login 페이지 접근",
+      "message": "connect ECONNREFUSED 127.0.0.1:3000",
+      "timestamp": "2025-07-31T19:26:06.981Z"
+    },
+    {
+      "step": "/signup 페이지 접근",
+      "message": "connect ECONNREFUSED 127.0.0.1:3000",
+      "timestamp": "2025-07-31T19:26:06.983Z"
+    },
+    {
+      "step": "/privacy 페이지 접근",
+      "message": "connect ECONNREFUSED 127.0.0.1:3000",
+      "timestamp": "2025-07-31T19:26:06.983Z"
+    },
+    {
+      "step": "/terms 페이지 접근",
+      "message": "connect ECONNREFUSED 127.0.0.1:3000",
+      "timestamp": "2025-07-31T19:26:06.985Z"
+    },
+    {
+      "step": "회원가입 API 테스트",
+      "message": "Request failed with status code 503",
+      "code": 503,
+      "timestamp": "2025-07-31T19:26:07.941Z"
+    },
+    {
+      "step": "로그인 API 테스트",
+      "message": "Request failed with status code 503",
+      "code": 503,
+      "timestamp": "2025-07-31T19:26:08.088Z"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 1,
+    "failed": 7
+  },
+  "meceAnalysis": {
+    "pages": {
+      "total": 9,
+      "accessible": 0,
+      "errors": [
+        {
+          "page": "/",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/login",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/signup",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/cmshome",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/mypage",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/calendar",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/videoplanning",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/admin",
+          "status": "CONNECTION_ERROR"
+        },
+        {
+          "page": "/feedbackall",
+          "status": "CONNECTION_ERROR"
+        }
+      ]
+    },
+    "api": {
+      "total": 8,
+      "accessible": 3,
+      "errors": [
+        {
+          "api": "/api/auth/login/",
+          "category": "auth",
+          "status": 503
+        },
+        {
+          "api": "/api/auth/signup/",
+          "category": "auth",
+          "status": 503
+        },
+        {
+          "api": "/api/auth/logout/",
+          "category": "auth",
+          "status": 503
+        },
+        {
+          "api": "/api/projects/recent/",
+          "category": "projects",
+          "status": 503
+        },
+        {
+          "api": "/api/feedbacks/",
+          "category": "feedbacks",
+          "status": 503
+        }
+      ]
+    }
+  },
+  "rootCause": {
+    "primaryPattern": {
+      "type": "connection",
+      "count": 5,
+      "errors": [
+        {
+          "step": "홈페이지 접근",
+          "message": "connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T19:26:06.980Z"
+        },
+        {
+          "step": "/login 페이지 접근",
+          "message": "connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T19:26:06.981Z"
+        },
+        {
+          "step": "/signup 페이지 접근",
+          "message": "connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T19:26:06.983Z"
+        },
+        {
+          "step": "/privacy 페이지 접근",
+          "message": "connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T19:26:06.983Z"
+        },
+        {
+          "step": "/terms 페이지 접근",
+          "message": "connect ECONNREFUSED 127.0.0.1:3000",
+          "timestamp": "2025-07-31T19:26:06.985Z"
+        }
+      ]
+    },
+    "totalErrors": 7,
+    "errorDistribution": {
+      "connection": 5,
+      "serverError": 2,
+      "authentication": 0,
+      "validation": 0,
+      "notFound": 0,
+      "clientError": 0
+    },
+    "mostFailedSteps": [
+      [
+        "홈페이지 접근",
+        1
+      ],
+      [
+        "/login 페이지 접근",
+        1
+      ],
+      [
+        "/signup 페이지 접근",
+        1
+      ]
+    ]
+  }
+}

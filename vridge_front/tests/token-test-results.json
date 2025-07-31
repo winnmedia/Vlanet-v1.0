@@ -1,0 +1,270 @@
+{
+  "timestamp": "2025-07-31T19:57:01.018Z",
+  "summary": {
+    "total": 14,
+    "success": 12,
+    "failed": 2,
+    "successRate": 86
+  },
+  "tests": [
+    {
+      "name": "사용자 정보",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "id": 1,
+        "username": "testuser",
+        "email": "testuser",
+        "nickname": "testuser",
+        "login_method": "email",
+        "date_joined": "2025-07-28T07:08:47.907729+00:00",
+        "profile_image": null
+      }
+    },
+    {
+      "name": "프로젝트 목록",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "result": [],
+        "user": "testuser",
+        "nickname": "testuser",
+        "profile_image": null,
+        "sample_files": [],
+        "user_memos": []
+      }
+    },
+    {
+      "name": "프로젝트 생성",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "message": "success",
+        "project_id": 2,
+        "project_name": "테스트 프로젝트 1753991820398"
+      }
+    },
+    {
+      "name": "피드백 목록",
+      "status": "failed",
+      "statusCode": 404,
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "알림 목록",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "unread_count": 0,
+        "notifications": []
+      }
+    },
+    {
+      "name": "마이페이지",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "status": "success",
+        "data": {
+          "user": {
+            "id": 1,
+            "username": "testuser",
+            "email": "test@example.com",
+            "nickname": "testuser",
+            "login_method": "email",
+            "date_joined": "2025-07-28"
+          },
+          "profile": {
+            "email": "test@example.com",
+            "nickname": "testuser",
+            "login_method": "email",
+            "date_joined": "2025-07-28",
+            "profile_image": null,
+            "bio": "",
+            "phone": "",
+            "company": "",
+            "position": ""
+          },
+          "stats": {
+            "total_projects": 2,
+            "completed_projects": 2,
+            "ongoing_projects": 2,
+            "recent_feedbacks": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "비디오 기획",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "status": "success",
+        "data": {
+          "plannings": []
+        },
+        "count": 0
+      }
+    },
+    {
+      "name": "친구 목록",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "message": "친구 목록 조회 중 오류가 발생했습니다.",
+        "friends": [],
+        "count": 0
+      }
+    },
+    {
+      "name": "기획안 프레임워크",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "frameworks": [
+          {
+            "id": 1,
+            "name": "기본 영상 프레임워크",
+            "intro_hook": "첫 5초가 승부다! 시청자의 호기심을 자극하는 강렬한 오프닝으로 시작하세요. 충격적인 질문, 놀라운 사실, 또는 예상치 못한 장면으로 시청자를 사로잡으세요.",
+            "immersion": "빠른 템포와 다이나믹한 편집으로 몰입도를 높이세요. 2-3초마다 컷을 전환하고, 시각적 변화를 주어 지루함을 방지하세요. 중요한 포인트는 자막과 효과음으로 강조하세요.",
+            "twist": "중반부에 예상치 못한 전개로 긴장감을 유지하세요. 반전 요소, 새로운 정보 공개, 또는 관점의 변화를 통해 시청자의 관심을 끝까지 유지하세요.",
+            "hook_next": "영상 마지막에 다음 콘텐츠에 대한 예고나 질문을 남기세요. \"다음 영상에서는...\" 또는 \"이것의 진짜 비밀은...\"과 같은 떡밥으로 재방문을 유도하세요.",
+            "is_default": true,
+            "created": "2025-07-28T07:08:48.011Z",
+            "updated": "2025-07-28T07:08:48.011Z"
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "name": "비디오 분석",
+      "status": "failed",
+      "statusCode": 404,
+      "error": "Request failed with status code 404"
+    },
+    {
+      "name": "프로젝트별 피드백",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "result": {
+          "id": 1,
+          "project": 1,
+          "files": null,
+          "created": "2025-07-31T19:54:05.816Z",
+          "updated": "2025-07-31T19:54:05.816Z",
+          "comments": []
+        }
+      }
+    },
+    {
+      "name": "활동 내역",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "status": "success",
+        "data": {
+          "period_days": 30,
+          "recent_projects": [
+            {
+              "id": 2,
+              "name": "테스트 프로젝트 1753991820398",
+              "manager": "홍길동",
+              "consumer": "테스트 고객사",
+              "updated_at": "2025-07-31 19:57:00"
+            },
+            {
+              "id": 1,
+              "name": "테스트 프로젝트 1753991645805",
+              "manager": "홍길동",
+              "consumer": "테스트 고객사",
+              "updated_at": "2025-07-31 19:54:05"
+            }
+          ],
+          "recent_feedbacks": []
+        }
+      }
+    },
+    {
+      "name": "사용자 설정",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "status": "success",
+        "data": {
+          "email_notifications": true,
+          "project_updates": true,
+          "feedback_alerts": true,
+          "weekly_summary": false,
+          "language": "ko",
+          "timezone": "Asia/Seoul"
+        }
+      }
+    },
+    {
+      "name": "프로젝트 상세",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "result": {
+          "id": 1,
+          "name": "테스트 프로젝트 1753991645805",
+          "manager": "홍길동",
+          "consumer": "테스트 고객사",
+          "description": "통합 테스트용 프로젝트",
+          "color": "#96AADD",
+          "basic_plan": {
+            "key": "basic_plan",
+            "start_date": null,
+            "end_date": null
+          },
+          "story_board": {
+            "key": "story_board",
+            "start_date": null,
+            "end_date": null
+          },
+          "filming": {
+            "key": "filming",
+            "start_date": null,
+            "end_date": null
+          },
+          "video_edit": {
+            "key": "video_edit",
+            "start_date": null,
+            "end_date": null
+          },
+          "post_work": {
+            "key": "post_work",
+            "start_date": null,
+            "end_date": null
+          },
+          "video_preview": {
+            "key": "video_preview",
+            "start_date": null,
+            "end_date": null
+          },
+          "confirmation": {
+            "key": "confirmation",
+            "start_date": null,
+            "end_date": null
+          },
+          "video_delivery": {
+            "key": "video_delivery",
+            "start_date": null,
+            "end_date": null
+          },
+          "owner_nickname": "",
+          "owner_email": "testuser",
+          "created": "2025-07-31T19:54:05.810Z",
+          "updated": "2025-07-31T19:54:05.817Z",
+          "pending_list": [],
+          "member_list": [],
+          "files": [],
+          "memo": []
+        }
+      }
+    }
+  ],
+  "note": "Rate Limiting 우회를 위해 기존 토큰 사용"
+}

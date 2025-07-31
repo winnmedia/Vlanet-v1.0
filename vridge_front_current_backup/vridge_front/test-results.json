@@ -1,0 +1,125 @@
+{
+  "timestamp": "2025-07-22T09:35:43.749Z",
+  "totalTests": 11,
+  "passed": 4,
+  "failed": 7,
+  "pages": [
+    {
+      "name": "홈페이지",
+      "path": "/",
+      "status": 200,
+      "loadTime": 52,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 4,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": []
+      }
+    },
+    {
+      "name": "로그인",
+      "path": "/login",
+      "status": 200,
+      "loadTime": 39,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 1,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": []
+      }
+    },
+    {
+      "name": "회원가입",
+      "path": "/signup",
+      "status": 200,
+      "loadTime": 321,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": true,
+        "hasNavigation": false,
+        "hasButtons": true,
+        "buttonCount": 5,
+        "hasForm": true,
+        "formCount": 1,
+        "hasErrors": false,
+        "errors": []
+      }
+    },
+    {
+      "name": "프로젝트 목록",
+      "path": "/cms/projects",
+      "status": 404,
+      "loadTime": 687,
+      "passed": false,
+      "analysis": null
+    },
+    {
+      "name": "프로젝트 생성",
+      "path": "/cms/project-create",
+      "status": 404,
+      "loadTime": 25,
+      "passed": false,
+      "analysis": null
+    },
+    {
+      "name": "영상 기획",
+      "path": "/video-planning",
+      "status": 404,
+      "loadTime": 39,
+      "passed": false,
+      "analysis": null
+    },
+    {
+      "name": "마이페이지",
+      "path": "/my-page/profile",
+      "status": 404,
+      "loadTime": 17,
+      "passed": false,
+      "analysis": null
+    },
+    {
+      "name": "관리자 대시보드",
+      "path": "/admin",
+      "status": 200,
+      "loadTime": 1364,
+      "passed": true,
+      "analysis": {
+        "hasTitle": false,
+        "title": "",
+        "hasLogo": false,
+        "hasNavigation": true,
+        "hasButtons": true,
+        "buttonCount": 2,
+        "hasForm": false,
+        "formCount": 0,
+        "hasErrors": false,
+        "errors": []
+      }
+    },
+    {
+      "name": "영상 분석",
+      "path": "/video-analysis",
+      "status": 404,
+      "loadTime": 28,
+      "passed": false,
+      "analysis": null
+    }
+  ],
+  "summary": "7 tests failed"
+}

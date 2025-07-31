@@ -1,0 +1,233 @@
+{
+  "timestamp": "2025-07-31T19:42:43.215Z",
+  "summary": {
+    "totalFeatures": 25,
+    "testedFeatures": 25,
+    "passedFeatures": 20,
+    "failedFeatures": 5,
+    "coverage": 0
+  },
+  "categories": {
+    "authentication": {
+      "features": [
+        {
+          "name": "이메일 회원가입",
+          "status": "failed",
+          "duration": 717,
+          "error": "Request failed with status code 503"
+        },
+        {
+          "name": "이메일 로그인",
+          "status": "failed",
+          "duration": 142,
+          "error": "Request failed with status code 503"
+        },
+        {
+          "name": "로그아웃",
+          "status": "failed",
+          "duration": 0,
+          "error": "토큰 없음"
+        },
+        {
+          "name": "비밀번호 재설정 요청",
+          "status": "passed",
+          "duration": 2459,
+          "error": null
+        },
+        {
+          "name": "구글 로그인 버튼 확인",
+          "status": "passed",
+          "duration": 617,
+          "error": null
+        }
+      ],
+      "coverage": 0
+    },
+    "projectManagement": {
+      "features": [],
+      "coverage": 0
+    },
+    "feedbackSystem": {
+      "features": [
+        {
+          "name": "피드백 페이지 접근",
+          "status": "failed",
+          "duration": 0,
+          "error": "프로젝트 ID 없음"
+        },
+        {
+          "name": "피드백 작성",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "피드백 수정",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "피드백 삭제",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "실시간 업데이트 (WebSocket)",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        }
+      ],
+      "coverage": 0
+    },
+    "videoPlanning": {
+      "features": [
+        {
+          "name": "비디오 기획 페이지 접근",
+          "status": "passed",
+          "duration": 513,
+          "error": null
+        },
+        {
+          "name": "AI 기획안 생성",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "콘티/스토리보드 생성",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "기획안 저장",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "기획안 PDF 내보내기",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        }
+      ],
+      "coverage": 0
+    },
+    "userProfile": {
+      "features": [
+        {
+          "name": "마이페이지 접근",
+          "status": "passed",
+          "duration": 531,
+          "error": null
+        },
+        {
+          "name": "프로필 정보 조회",
+          "status": "failed",
+          "duration": 0,
+          "error": "토큰 없음"
+        },
+        {
+          "name": "프로필 정보 수정",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "프로필 이미지 업로드",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "계정 설정",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        }
+      ],
+      "coverage": 0
+    },
+    "admin": {
+      "features": [
+        {
+          "name": "관리자 대시보드 접근",
+          "status": "passed",
+          "duration": 6462,
+          "error": null
+        },
+        {
+          "name": "사용자 목록 조회",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "시스템 상태 모니터링",
+          "status": "passed",
+          "duration": 818,
+          "error": null
+        },
+        {
+          "name": "사용 통계 분석",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        },
+        {
+          "name": "시스템 설정 관리",
+          "status": "passed",
+          "duration": 0,
+          "error": null
+        }
+      ],
+      "coverage": 0
+    }
+  },
+  "userJourneys": {},
+  "buttons": {
+    "total": 0,
+    "tested": 0,
+    "working": 0,
+    "broken": 0,
+    "details": []
+  },
+  "errors": [
+    {
+      "category": "authentication",
+      "feature": "이메일 회원가입",
+      "error": "Request failed with status code 503",
+      "timestamp": "2025-07-31T19:42:43.933Z"
+    },
+    {
+      "category": "authentication",
+      "feature": "이메일 로그인",
+      "error": "Request failed with status code 503",
+      "timestamp": "2025-07-31T19:42:44.075Z"
+    },
+    {
+      "category": "authentication",
+      "feature": "로그아웃",
+      "error": "토큰 없음",
+      "timestamp": "2025-07-31T19:42:44.075Z"
+    },
+    {
+      "category": "feedbackSystem",
+      "feature": "피드백 페이지 접근",
+      "error": "프로젝트 ID 없음",
+      "timestamp": "2025-07-31T19:42:47.151Z"
+    },
+    {
+      "category": "userProfile",
+      "feature": "프로필 정보 조회",
+      "error": "토큰 없음",
+      "timestamp": "2025-07-31T19:42:48.195Z"
+    }
+  ],
+  "recommendations": [],
+  "fatalError": "browserType.launch: \n╔══════════════════════════════════════════════════════╗\n║ Host system is missing dependencies to run browsers. ║\n║ Please install them with the following command:      ║\n║                                                      ║\n║     sudo npx playwright install-deps                 ║\n║                                                      ║\n║ Alternatively, use apt:                              ║\n║     sudo apt-get install libnspr4\\                   ║\n║         libnss3\\                                     ║\n║         libasound2t64                                ║\n║                                                      ║\n║ <3 Playwright Team                                   ║\n╚══════════════════════════════════════════════════════╝"
+}

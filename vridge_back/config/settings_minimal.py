@@ -22,8 +22,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'core',  # 먼저 core 앱 추가
     'users',
     'projects',
+    'feedbacks',  # feedbacks 앱 추가
+    'video_planning',
+    'video_analysis',
+    'admin_dashboard',
+    'onlines',  # onlines 앱도 추가
 ]
 
 # 미들웨어

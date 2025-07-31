@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-07-31T19:55:06.498Z",
+  "summary": {
+    "total": 3,
+    "success": 2,
+    "failed": 1,
+    "successRate": 67
+  },
+  "tests": [
+    {
+      "name": "헬스체크",
+      "status": "success",
+      "statusCode": 200,
+      "data": {
+        "status": "ok",
+        "service": "vridge-backend"
+      }
+    },
+    {
+      "name": "회원가입",
+      "status": "success",
+      "statusCode": 201,
+      "data": {
+        "message": "회원가입이 완료되었습니다. 이메일 인증을 완료해 주세요.",
+        "email_sent": true,
+        "user": "test_1753991706276@example.com",
+        "nickname": "테스터_1753991706276"
+      }
+    },
+    {
+      "name": "로그인",
+      "status": "failed",
+      "statusCode": 429,
+      "error": "Request failed with status code 429"
+    }
+  ]
+}

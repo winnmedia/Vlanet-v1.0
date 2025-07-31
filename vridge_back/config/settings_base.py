@@ -423,6 +423,18 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 86400  # 24시간
 SESSION_SAVE_EVERY_REQUEST = True  # 활동 시 세션 갱신
 
+# Rate Limiting 설정 (기본값 - 운영 환경)
+RATE_LIMITING_ENABLED = env('RATE_LIMITING_ENABLED', default=not DEBUG)
+
+# IP 화이트리스트 (환경변수로 오버라이드 가능)
+RATE_LIMIT_WHITELIST_IPS = env.list('RATE_LIMIT_WHITELIST_IPS', default=[
+    '127.0.0.1',
+    '::1',
+])
+
+# 테스트 계정 화이트리스트
+RATE_LIMIT_TEST_ACCOUNTS = env.list('RATE_LIMIT_TEST_ACCOUNTS', default=[])
+
 # Logging Configuration
 LOGGING = {
     'version': 1,

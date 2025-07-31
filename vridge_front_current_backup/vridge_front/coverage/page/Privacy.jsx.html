@@ -1,0 +1,625 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for page/Privacy.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">page</a> Privacy.jsx</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/6</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/0</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/3</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/6</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useState, useEffect } from 'react'
+import { useRouter } from '../util/nextNavigation'
+&nbsp;
+export default function <span class="fstat-no" title="function not covered" >Privacy(</span>) {
+  const { navigate } = <span class="cstat-no" title="statement not covered" >useRouter()</span>
+&nbsp;
+  const handleGoBack = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    navigate(-1)</span>
+  }
+<span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    window.scrollTo({ top: 0 })</span>
+  }, [])
+<span class="cstat-no" title="statement not covered" >  return (</span>
+    &lt;div id="service"&gt;
+      &lt;div className="inner"&gt;
+        &lt;div className="back" onClick={handleGoBack}&gt;
+          뒤로가기
+        &lt;/div&gt;
+&nbsp;
+        &lt;div className="title mt50"&gt;개인정보 취급방침&lt;/div&gt;
+&nbsp;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;1. 개인정보 취급방침&lt;/span&gt;
+          &lt;p&gt;
+            본 개인정보 취급방침은 주식회사 윈앤미디어(이하 '주식회사 윈앤미디어')이 제공하는
+            프로덕트인 ‘브이래닛’를 방문하고 이용하시는 이용자들에게 적용됩니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            '주식회사 윈앤미디어'는 정보통신망 이용촉진 및 정보보호 등에 관한 법률(이하
+            ‘정보통신망법’), 개인정보보호법 등 대한민국의 개인정보 보호 관련
+            법령을 준수하여 이용자의 개인정보를 안전하게 관리합니다.
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;2. 개인정보 수집&lt;/span&gt;
+          &lt;p&gt;
+            ‘계정’신청시 또는 ‘프로덕트' 이용과정에서 웹사이트 또는 모바일
+            애플리케이션 등의 프로그램 등을 통해서 다음과같이 ‘프로덕트’ 제공에
+            필요한 최소한의 개인정보를 수집하고있습니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            &lt;b&gt;계정신청시 수집하는 정보&lt;/b&gt; 이메일주소, 이름, 비밀번호를
+            필수적으로 수집합니다. 그리고 제품 이용시 이용자의 선택에 따라
+            프로필 사진이 수집될 수도있습니다. 또한 법정대리인의 동의시에는
+            법정대리인 정보(이름, 성별, 생년월일, 휴대폰번호)를 수집할
+            수있습니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            &lt;b&gt;제품 이용시 수집하는 정보&lt;/b&gt; 웹사이트, 모바일 애플리케이션
+            이용과정에서 단말기정보(OS, 화면사이즈, 디바이스 아이디, 기종,
+            단말기 모델명), IP주소, 쿠키, 방문일시, 부정이용기록, 제품 이용 기록
+            등의 정보가 자동으로 생성되어 수집될 수 있습니다. 또한 이용자가
+            제품을 이용하는데 사용하는 파일, 문서, 사진, 텍스트, 메시지 정보를
+            저장, 처리, 전송합니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            &lt;b&gt;유료요금제 결제시 수집하는 정보&lt;/b&gt; 개인의 경우 생년월일,
+            신용카드 정보 (신용카드 번호, 유효기간, 비밀번호 앞 두자리), 국가,
+            주소 를 수집할 수 있습니다.
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;3. 개인정보 이용&lt;/span&gt;
+          &lt;p&gt;
+            이용자의 개인정보는 ‘프로덕트’의 계정 관리, 프로덕트 제공/개선,
+            새로운 프로덕트 개발 등을 위해서 이용합니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            계정 신청, 가입의사 확인, 법정대리인 동의 진행, 이용자 식별,
+            회원탈퇴 의사 확인을 위해서 개인정보를 이용합니다. 법령 및
+            이용약관을 위반하는이용자에 대한 이용 제한 조치, 부정 이용 행위를
+            포함하여 프로덕트의 원활한 운영에 지장을 주는 행위에 대한 방지 및
+            제재, 계정도용 및 부정거래 방지, 약관 개정 등의 고지사항 전달,
+            분쟁조정을 위한 기록 보존, 민원처리 등 이용자 보호 및 프로덕트
+            운영을 위하여 개인정보를 이용합니다. 프로덕트 이용기록과 접속 빈도
+            분석, 프로덕트 이용에 대한 통계, 프로덕트 분석 및 통계에 따른 맞춤
+            프로덕트 제공 및 광고 게재 등에 개인정보를 이용합니다. 보안,
+            프라이버시, 안전 측면에서 이용자가 안심하고 이용할 수 있는
+            프로덕트이용환경 구축을 위해 개인정보를 이용합니다.
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;4. 개인정보 제공&lt;/span&gt;
+          &lt;p&gt;
+            주식회사 윈앤미디어는 이용자의 사전 동의 없이 개인정보를 외부에 제공하지
+            않습니다. 단, 관련 법령에 의거해 주식회사 윈앤미디어에게 개인정보 제출 의무가
+            발생한 경우에 한하여 개인정보를 제공하고 있습니다.
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;5. 개인정보 파기&lt;/span&gt;
+          &lt;p&gt;
+            이용자의 개인정보는 원칙적으로 탈퇴시 지체없이 파기하고 있습니다.
+            다만, 관련법령 및 규제에 따라 아래와 같은 정보는 일정기간 동안
+            별도의 데이터베이스로 옮겨져서 보관한 다음 복원 불가능한 기술적
+            방법을 사용하여 파기합니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            표시 및 광고에 대한 기록: 6개월(전자상거래 등에서의 소비자보호에
+            관한 법률) 소비자 불만 및 분쟁 해결에 관한 기록 : 3년(전자상거래
+            등에서의 소비자보호에 관한 법률) 로그인 기록 및 위치 기록: 3개월
+            (통신비밀보호법)
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;6. 이용자 및 법정대리인의 권리와 행사 방법&lt;/span&gt;
+          &lt;p&gt;
+            이용자는 언제든지 계 정 화면에서 자신의 개인정보를 조회하거나 수정할
+            수 있습니다. 이용자는 언제든지 ‘프로덕트' 내의 메뉴, 이메일,
+            고객센터 등을 통해 개인정보의 수집 및 이용 동의를 철회할 수
+            있습니다. 만 14세 미만 아동의 경우, 법정대리인이 아동의 개인정보를
+            조회하거나 수정할 권리, 수집 및 이용 동의를 철회할 권리를 가집니다.
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;7. 개인정보보호 책임자&lt;/span&gt;
+          &lt;p&gt;
+            이용자의 정보를 보호하고 관련된 사항을 처리하기 위해서 개인정보
+            보호책임자를 지정하여 운영하고 있습니다. 제품을 이용하며 발생하는
+            모든 개인정보 관련불만, 문의, 의견 등은 아래의 연락처로 연락해주시기
+            바랍니다. 주식회사 윈앤미디어는 신속하고 충분한 답변을 드리도록
+            노력하겠습니다.
+          &lt;/p&gt;
+          &lt;ul className="mt20"&gt;
+            &lt;li&gt;
+              개인정보보호 책임자 : &lt;b&gt;유석근&lt;/b&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+              개인정보보호 담당부서 : &lt;b&gt;고객상담센터&lt;/b&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+              연락처 : &lt;b&gt;winnmedia@daum.net&lt;/b&gt;
+            &lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;8. 개인정보보호를 위한 노력&lt;/span&gt;
+          &lt;p&gt;
+            주식회사 윈앤미디어는 이용자의 개인정보를 안전하게 관리하기 위해서 최선을
+            다하며, 대한민국의 개인정보보호 관련 법령인 정보통신망법 및
+            개인정보호법을 준수하고 있습니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            개인정보를 암호화된 통신구간(SSL기법)을 통하여 전송하고, 중요한
+            정보를 암호화하여 보관하고 있습니다. 개인정보를 위조, 변조, 권한없는
+            접근 및 컴퓨터 바이러스로부터 보호하기 위한 시스템적 조치를 취하고
+            있습니다. 개인정보 보호를 위한 내부관리계획을 수립하여 시행하고
+            있습니다. 개인정보에 접근할 수 있는 사람을 최소화하고 있습니다.
+          &lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div className="part mt50"&gt;
+          &lt;span&gt;9. 개인정보 취급방침의 변경&lt;/span&gt;
+          &lt;p&gt;
+            주식회사 윈앤미디어는 ‘프로덕트' 또는 관련 법령의 변경 등을 반영하기 위하여
+            본 개인정보 취급방침을 변경할 수 있습니다. 본 개인정보 취급방침이
+            변경되는 경우 주식회사 윈앤미디어는 변경사항을 ‘프로덕트' 내의 화면에 게시할
+            것이며, 변경된 개인정보 취급방침은 변경사항이 게시된 날로부터 7일
+            이후에 효력이 발생합니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            다만, 이용자의 권리에 중요한 변경이 있을 경우, 변경된 개인정보
+            취급방침은 공지가 게시된 날로부터 14일 이후에 효력이 발생합니다.
+            이용자는 변경된 개인정보 취급방침에 동의하지 않는 경우, ‘프로덕트'
+            이용을 중단할 수 있습니다. 이용자가 변경된 개인정보 취급방침의
+            효력발생일 이후에도 ‘프로덕트' 의 이용을 계속하는 경우, 변경된
+            개인정보 취급방침에 동의한 것으로 간주됩니다.
+            &lt;br /&gt;
+            &lt;br /&gt;
+            주식회사 윈앤미디어는 이용자 여러분의 정보를 소중히 생각하며, 더욱 안심하고
+            제품을 이용할 수 있도록 최선의 노력을 다하겠습니다.
+          &lt;/p&gt;
+          &lt;ul className="mt20"&gt;
+            &lt;li&gt;공지일자 : 2023년 월 일&lt;/li&gt;
+            &lt;li&gt;시행일자 : 2023년 월 일 &lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-07-27T01:18:39.312Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    

@@ -1,0 +1,129 @@
+[
+  {
+    "name": "헬스체크",
+    "status": "success",
+    "statusCode": 200,
+    "data": {
+      "status": "ok",
+      "service": "vridge-backend"
+    }
+  },
+  {
+    "name": "회원가입",
+    "status": "success",
+    "statusCode": 201,
+    "data": {
+      "message": "회원가입이 완료되었습니다. 이메일 인증을 완료해 주세요.",
+      "email_sent": true,
+      "user": "test_1753991583791@example.com",
+      "nickname": "테스터_1753991583791"
+    }
+  },
+  {
+    "name": "로그인",
+    "status": "success",
+    "statusCode": 200,
+    "data": {
+      "message": "success",
+      "vridge_session": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU0NTk2Mzg0LCJpYXQiOjE3NTM5OTE1ODQsImp0aSI6IjgwYjM0NDE5Njc0NTQxN2ZiNTZhNjk3YmNlNGZmYTM4IiwidXNlcl9pZCI6MX0.uYffz_iouq44j4cffL7OxxAfLUNJqCviLf21EmE3lSk",
+      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NjQxMDc4NCwiaWF0IjoxNzUzOTkxNTg0LCJqdGkiOiI1MzRmODY3MTAzZjM0YTRlYWFlZWI1NGZiYzdkZWYyZiIsInVzZXJfaWQiOjF9.b1XbmB25CgQToB0tMrqvluDBopCQzb4LcN9ghtDKswQ",
+      "user": "testuser",
+      "nickname": "testuser"
+    }
+  },
+  {
+    "name": "사용자 정보",
+    "status": "success",
+    "statusCode": 200,
+    "data": {
+      "id": 1,
+      "username": "testuser",
+      "email": "testuser",
+      "nickname": "testuser",
+      "login_method": "email",
+      "date_joined": "2025-07-28T07:08:47.907729+00:00",
+      "profile_image": null
+    }
+  },
+  {
+    "name": "프로젝트 목록",
+    "status": "success",
+    "statusCode": 200,
+    "data": {
+      "result": [],
+      "user": "testuser",
+      "nickname": "testuser",
+      "profile_image": null,
+      "sample_files": [],
+      "user_memos": []
+    }
+  },
+  {
+    "name": "프로젝트 생성 (create)",
+    "status": "failed",
+    "statusCode": 400,
+    "error": "프로젝트 생성 중 오류가 발생했습니다: 필수 데이터가 누락되었습니다."
+  },
+  {
+    "name": "피드백 목록",
+    "status": "failed",
+    "statusCode": 404,
+    "error": "Request failed with status code 404"
+  },
+  {
+    "name": "알림 목록",
+    "status": "success",
+    "statusCode": 200,
+    "data": {
+      "unread_count": 0,
+      "notifications": []
+    }
+  },
+  {
+    "name": "마이페이지",
+    "status": "success",
+    "statusCode": 200,
+    "data": {
+      "status": "success",
+      "data": {
+        "user": {
+          "id": 1,
+          "username": "testuser",
+          "email": "test@example.com",
+          "nickname": "testuser",
+          "login_method": "email",
+          "date_joined": "2025-07-28"
+        },
+        "profile": {
+          "email": "test@example.com",
+          "nickname": "testuser",
+          "login_method": "email",
+          "date_joined": "2025-07-28",
+          "profile_image": null,
+          "bio": "",
+          "phone": "",
+          "company": "",
+          "position": ""
+        },
+        "stats": {
+          "total_projects": 0,
+          "completed_projects": 0,
+          "ongoing_projects": 0,
+          "recent_feedbacks": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "비디오 기획 목록",
+    "status": "success",
+    "statusCode": 200,
+    "data": {
+      "status": "success",
+      "data": {
+        "plannings": []
+      },
+      "count": 0
+    }
+  }
+]

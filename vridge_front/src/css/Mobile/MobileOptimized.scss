@@ -1,0 +1,440 @@
+// 모바일 우선 반응형 디자인
+// 터치 인터페이스 최적화 및 접근성 보장
+
+// 터치 타겟 최소 크기 (44px - iOS HIG, 48px - Material Design)
+$touch-target-min: 44px;
+$touch-target-recommended: 48px;
+
+// 모바일 브레이크포인트
+$mobile-xs: 320px;
+$mobile-sm: 375px;
+$mobile-md: 414px;
+$mobile-lg: 768px;
+
+// 모바일 전용 믹스인
+@mixin mobile-touch-target {
+  min-height: $touch-target-min;
+  min-width: $touch-target-min;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin mobile-safe-area {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@mixin mobile-scroll-snap {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 모바일 버튼 최적화
+.mobile-button {
+  @include mobile-touch-target;
+  padding: 12px 20px;
+  font-size: 16px; // iOS zoom 방지
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  // 터치 피드백 강화
+  &:active {
+    transform: scale(0.96);
+  }
+  
+  // 포커스 개선 (키보드 네비게이션)
+  &:focus-visible {
+    outline: 3px solid rgba(22, 49, 248, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.mobile-primary-button {
+  @extend .mobile-button;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.25);
+  
+  &:hover,
+  &:focus {
+    box-shadow: 0 6px 16px rgba(22, 49, 248, 0.35);
+  }
+  
+  &:disabled {
+    background: #adb5bd;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+.mobile-secondary-button {
+  @extend .mobile-button;
+  background: white;
+  color: #495057;
+  border: 2px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  
+  &:hover,
+  &:focus {
+    border-color: #1631F8;
+    color: #1631F8;
+    background: rgba(22, 49, 248, 0.05);
+  }
+}
+
+// 모바일 폼 최적화
+.mobile-form-field {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+  }
+  
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px; // iOS zoom 방지
+    line-height: 1.5;
+    color: #495057;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+    
+    &:focus {
+      outline: none;
+      border-color: #1631F8;
+      box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+    }
+    
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+  
+  // 모바일 select 스타일링
+  select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236c757d' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: 40px;
+  }
+  
+  // textarea 자동 크기 조정
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+}
+
+// 모바일 네비게이션
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e9ecef;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  @include mobile-safe-area;
+  
+  .nav-items {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 12px 0;
+  }
+  
+  .nav-item {
+    @include mobile-touch-target;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    
+    &.active {
+      color: #1631F8;
+    }
+    
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// 모바일 헤더
+.mobile-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  z-index: 100;
+  @include mobile-safe-area;
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    min-height: 56px;
+  }
+  
+  .header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1631F8;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+  }
+  
+  .header-action {
+    @include mobile-touch-target;
+    background: none;
+    border: none;
+    color: #6c757d;
+    padding: 8px;
+    border-radius: 8px;
+    
+    &:hover,
+    &:focus {
+      background: rgba(22, 49, 248, 0.1);
+      color: #1631F8;
+    }
+  }
+}
+
+// 모바일 카드 레이아웃
+.mobile-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-bottom: 16px;
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #495057;
+      margin: 0;
+    }
+  }
+  
+  .card-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #6c757d;
+  }
+}
+
+// 모바일 모달
+.mobile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  
+  .modal-content {
+    width: 100%;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 24px;
+    @include mobile-safe-area;
+    max-height: 90vh;
+    overflow-y: auto;
+    
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #495057;
+        margin: 0;
+      }
+      
+      .close-btn {
+        @include mobile-touch-target;
+        background: none;
+        border: none;
+        color: #6c757d;
+        padding: 8px;
+        border-radius: 8px;
+        
+        &:hover,
+        &:focus {
+          background: rgba(108, 117, 125, 0.1);
+        }
+      }
+    }
+  }
+}
+
+// 모바일 스크롤 영역
+.mobile-scroll-area {
+  overflow-x: auto;
+  @include mobile-scroll-snap;
+  padding: 16px 0;
+  
+  .scroll-content {
+    display: flex;
+    gap: 16px;
+    padding: 0 16px;
+    
+    .scroll-item {
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      width: 280px;
+    }
+  }
+}
+
+// 다크모드 지원
+@media (prefers-color-scheme: dark) {
+  .mobile-card,
+  .mobile-header,
+  .mobile-nav,
+  .mobile-modal .modal-content {
+    background: #1a1a1a;
+    color: #e9ecef;
+    border-color: #495057;
+  }
+  
+  .mobile-form-field input,
+  .mobile-form-field textarea,
+  .mobile-form-field select {
+    background: #2d3748;
+    color: #e9ecef;
+    border-color: #495057;
+  }
+  
+  .mobile-primary-button {
+    // 다크모드에서도 브랜드 색상 유지
+  }
+  
+  .mobile-secondary-button {
+    background: #2d3748;
+    color: #e9ecef;
+    border-color: #495057;
+  }
+}
+
+// 접근성 개선
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// 고대비 모드 지원
+@media (prefers-contrast: high) {
+  .mobile-button,
+  .mobile-form-field input,
+  .mobile-form-field textarea,
+  .mobile-form-field select {
+    border-width: 3px;
+  }
+  
+  .mobile-primary-button {
+    border: 3px solid #0F23C9;
+  }
+}
+
+// 모바일 브레이크포인트별 최적화
+@media (max-width: #{$mobile-xs}) {
+  .mobile-card {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .mobile-form-field {
+    margin-bottom: 16px;
+  }
+  
+  .mobile-header .header-title {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: #{$mobile-sm}) {
+  .mobile-modal .modal-content {
+    padding: 20px;
+  }
+  
+  .mobile-scroll-area .scroll-content .scroll-item {
+    width: 260px;
+  }
+}
+
+@media (max-width: #{$mobile-md}) {
+  .mobile-nav {
+    .nav-items {
+      padding: 6px 0 10px 0;
+    }
+    
+    .nav-item {
+      font-size: 11px;
+      
+      .nav-icon {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  }
+}
+
+// 가로 모드 최적화
+@media (orientation: landscape) and (max-height: 500px) {
+  .mobile-modal .modal-content {
+    max-height: 85vh;
+  }
+  
+  .mobile-header .header-content {
+    min-height: 48px;
+  }
+  
+  .mobile-nav .nav-items {
+    padding: 6px 0 8px 0;
+  }
+}

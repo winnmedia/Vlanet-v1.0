@@ -1,0 +1,116 @@
+{
+  "date": "2025-07-31T18:48:33.298Z",
+  "summary": {
+    "total": 17,
+    "success": 4,
+    "failed": 13,
+    "warning": 0
+  },
+  "details": [
+    {
+      "name": "홈페이지",
+      "url": "http://localhost:3000",
+      "status": 200,
+      "success": true,
+      "error": null
+    },
+    {
+      "name": "로그인 페이지",
+      "url": "http://localhost:3000/login",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "회원가입 페이지",
+      "url": "http://localhost:3000/signup",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "비밀번호 재설정",
+      "url": "http://localhost:3000/resetpw",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "이용약관",
+      "url": "http://localhost:3000/terms",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "개인정보처리방침",
+      "url": "http://localhost:3000/privacy",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "CMS 홈",
+      "url": "http://localhost:3000/cmshome",
+      "status": "ERROR",
+      "success": false,
+      "error": "timeout of 5000ms exceeded"
+    },
+    {
+      "name": "캘린더",
+      "url": "http://localhost:3000/calendar",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "마이페이지",
+      "url": "http://localhost:3000/mypage",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "프로젝트 생성",
+      "url": "http://localhost:3000/project/create",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "비디오 플래닝",
+      "url": "http://localhost:3000/videoplanning",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "관리자 대시보드",
+      "url": "http://localhost:3000/admindashboard",
+      "status": 500,
+      "success": false,
+      "error": null
+    },
+    {
+      "name": "API Hello",
+      "url": "http://localhost:3000/api/hello",
+      "status": 200,
+      "success": true,
+      "error": null
+    },
+    {
+      "name": "파비콘",
+      "url": "http://localhost:3000/favicon.ico",
+      "status": 200,
+      "success": true,
+      "error": null
+    },
+    {
+      "name": "로고 이미지",
+      "url": "http://localhost:3000/images/Common/w_logo02.svg",
+      "status": 200,
+      "success": true,
+      "error": null
+    }
+  ]
+}

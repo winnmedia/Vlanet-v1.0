@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd vridge_front && npm run build",
+  "outputDirectory": "vridge_front/.next",
+  "installCommand": "cd vridge_front && npm install --legacy-peer-deps",
+  "framework": "nextjs"
+}

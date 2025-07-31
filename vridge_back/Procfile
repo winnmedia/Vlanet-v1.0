@@ -1,1 +1,1 @@
-web: bash start_emergency_fix.sh
+web: bash start.sh

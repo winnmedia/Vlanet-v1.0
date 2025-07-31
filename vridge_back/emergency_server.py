@@ -6,12 +6,28 @@ import os
 import json
 from wsgiref.simple_server import make_server
 
-def cors_headers():
+def cors_headers(environ=None):
     """CORS 헤더 반환"""
+    # 허용된 origin 목록
+    allowed_origins = [
+        'https://vlanet.net',
+        'https://www.vlanet.net',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+    ]
+    
+    # Request에서 Origin 헤더 가져오기
+    origin = None
+    if environ:
+        origin = environ.get('HTTP_ORIGIN', '')
+    
+    # Origin이 허용된 목록에 있으면 해당 origin 반환, 아니면 첫 번째 허용된 origin 반환
+    allowed_origin = origin if origin in allowed_origins else allowed_origins[0]
+    
     return [
-        ('Access-Control-Allow-Origin', '*'),
+        ('Access-Control-Allow-Origin', allowed_origin),
         ('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'),
-        ('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With'),
+        ('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-CSRFToken'),
         ('Access-Control-Allow-Credentials', 'true'),
     ]
 
@@ -24,7 +40,7 @@ def application(environ, start_response):
     if method == 'OPTIONS':
         start_response('200 OK', [
             ('Content-Type', 'application/json'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [b'{}']
     
     # 헬스체크 엔드포인트들
@@ -43,7 +59,7 @@ def application(environ, start_response):
         response_body = json.dumps(response_data, ensure_ascii=False, indent=2).encode('utf-8')
         start_response('200 OK', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
     
     # 프론트엔드 API 요청들에 대한 모형 응답
@@ -56,7 +72,7 @@ def application(environ, start_response):
         response_body = json.dumps(mock_projects, ensure_ascii=False).encode('utf-8')
         start_response('200 OK', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
     
     elif path.startswith('/api/users/notifications'):
@@ -69,7 +85,7 @@ def application(environ, start_response):
         response_body = json.dumps(mock_notifications, ensure_ascii=False).encode('utf-8')
         start_response('200 OK', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
     
     elif path == '/api/projects/invitations/' or path.startswith('/api/projects/') and 'invitations' in path:
@@ -81,7 +97,7 @@ def application(environ, start_response):
         response_body = json.dumps(mock_invitations, ensure_ascii=False).encode('utf-8')
         start_response('200 OK', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
     
     elif path.startswith('/api/users/') and method == 'GET':
@@ -96,7 +112,7 @@ def application(environ, start_response):
         response_body = json.dumps(mock_user, ensure_ascii=False).encode('utf-8')
         start_response('200 OK', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
     
     elif path.startswith('/api/'):
@@ -111,7 +127,7 @@ def application(environ, start_response):
         response_body = json.dumps(mock_response, ensure_ascii=False).encode('utf-8')
         start_response('503 Service Unavailable', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
     
     # 디버그 정보
@@ -135,7 +151,7 @@ def application(environ, start_response):
         response_body = json.dumps(debug_info, ensure_ascii=False, indent=2).encode('utf-8')
         start_response('200 OK', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
     
     # 404 - Not Found
@@ -149,7 +165,7 @@ def application(environ, start_response):
         response_body = json.dumps(error_response, ensure_ascii=False, indent=2).encode('utf-8')
         start_response('404 Not Found', [
             ('Content-Type', 'application/json; charset=utf-8'),
-        ] + cors_headers())
+        ] + cors_headers(environ))
         return [response_body]
 
 if __name__ == '__main__':

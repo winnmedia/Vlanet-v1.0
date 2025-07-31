@@ -1,4 +1,13 @@
 {
+  "name": "videoplanet-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd vridge_front && npm run dev",
+    "build": "cd vridge_front && npm run build",
+    "start": "cd vridge_front && npm run start",
+    "postinstall": "cd vridge_front && npm install --legacy-peer-deps"
+  },
   "dependencies": {
     "axios": "^1.10.0"
   }

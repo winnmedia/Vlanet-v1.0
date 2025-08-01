@@ -175,3 +175,42 @@ class FeedBackComment(core_model.TimeStampedModel):
         if self.feedback and hasattr(self.feedback, 'projects') and self.feedback.projects:
             return f"프로젝트 명 : {self.feedback.projects.name}"
         return f"피드백 댓글 #{self.id}"
+
+
+class FeedbackReaction(core_model.TimeStampedModel):
+    """피드백 메시지에 대한 반응"""
+    REACTION_CHOICES = [
+        ('like', '도움됨'),
+        ('dislike', '아쉬움'),
+        ('needExplanation', '설명필요'),
+    ]
+    
+    message = models.ForeignKey(
+        FeedBackMessage,
+        related_name='reactions',
+        on_delete=models.CASCADE,
+        verbose_name="피드백 메시지"
+    )
+    user = models.ForeignKey(
+        "users.User",
+        related_name='feedback_reactions',
+        on_delete=models.CASCADE,
+        verbose_name="사용자"
+    )
+    reaction_type = models.CharField(
+        verbose_name="반응 타입",
+        max_length=20,
+        choices=REACTION_CHOICES
+    )
+    
+    class Meta:
+        verbose_name = "피드백 반응"
+        verbose_name_plural = "피드백 반응"
+        unique_together = ['message', 'user']  # 한 사용자는 하나의 메시지에 하나의 반응만
+        indexes = [
+            models.Index(fields=['message', 'user']),
+            models.Index(fields=['reaction_type']),
+        ]
+    
+    def __str__(self):
+        return f"{self.user} - {self.message} - {self.reaction_type}"

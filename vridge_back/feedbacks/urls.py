@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import views_reaction
 # from . import views_redirect
 
 urlpatterns = [
@@ -11,6 +12,7 @@ urlpatterns = [
     # 새로운 메시지 관리 API
     path("messages/<int:message_id>/", views.FeedbackMessageUpdate.as_view()),
     path("messages/<int:message_id>/status/", views.FeedbackMessageStatusUpdate.as_view()),
+    path("messages/<int:message_id>/reaction/", views_reaction.FeedbackMessageReaction.as_view()),
     
     # 리다이렉트 경로 (프론트엔드가 점진적으로 이동할 수 있도록)
     # path("<int:id>/redirect", views_redirect.FeedbackRedirect.as_view()),

@@ -19,7 +19,7 @@ import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 
 import FeedbackInput from 'tasks/Feedback/FeedbackInput'
-import FeedbackManage from 'tasks/Feedback/FeedbackManage'
+import FeedbackManage from 'tasks/Feedback/FeedbackManageTemp'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from 'tasks/Feedback/OpinionInput'

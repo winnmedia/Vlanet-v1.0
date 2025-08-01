@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from './FeedbackManage.module.scss'
-import { DeleteFeedback, UpdateFeedback } from 'api/feedback'
+import { DeleteFeedback, UpdateFeedback, UpdateFeedbackReaction } from 'api/feedback'
 
 function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   const [reactions, setReactions] = useState({})
@@ -138,11 +138,13 @@ function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   })
 
   // 반응 토글 함수
-  const toggleReaction = (feedbackId, reactionType) => {
+  const toggleReaction = async (feedbackId, reactionType) => {
+    console.log('[FeedbackManage] Toggle reaction:', feedbackId, reactionType)
+    
     const currentReaction = reactions[feedbackId]
     const newReaction = currentReaction === reactionType ? null : reactionType
 
-    // 로컬 상태 즉시 업데이트
+    // 로컬 상태 즉시 업데이트 (옵티미스틱 UI)
     setReactions(prev => ({
       ...prev,
       [feedbackId]: newReaction
@@ -167,6 +169,46 @@ function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
         [feedbackId]: counts
       }
     })
+
+    // API 호출
+    try {
+      const response = await UpdateFeedbackReaction(feedbackId, newReaction)
+      console.log('[FeedbackManage] Reaction update response:', response)
+      
+      // 서버에서 받은 카운트로 업데이트
+      if (response.data?.result?.reaction_counts) {
+        setReactionCounts(prev => ({
+          ...prev,
+          [feedbackId]: response.data.result.reaction_counts
+        }))
+      }
+    } catch (error) {
+      console.error('[FeedbackManage] Reaction update failed:', error)
+      
+      // 실패 시 원래 상태로 되돌리기
+      setReactions(prev => ({
+        ...prev,
+        [feedbackId]: currentReaction
+      }))
+      
+      // 카운트도 원래대로 되돌리기
+      setReactionCounts(prev => {
+        const counts = { ...prev[feedbackId] } || { like: 0, dislike: 0, needExplanation: 0 }
+        
+        if (newReaction) {
+          counts[newReaction] = Math.max(0, (counts[newReaction] || 0) - 1)
+        }
+        
+        if (currentReaction) {
+          counts[currentReaction] = (counts[currentReaction] || 0) + 1
+        }
+        
+        return {
+          ...prev,
+          [feedbackId]: counts
+        }
+      })
+    }
   }
 
   return (

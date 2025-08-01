@@ -113,3 +113,32 @@ export function GetEncodingStatus(projectId) {
     `/api/projects/${projectId}/feedback/encoding-status/`,
   )
 }
+
+// 피드백 반응 추가/변경/제거
+export function UpdateFeedbackReaction(messageId, reaction) {
+  console.log('UpdateFeedbackReaction API called with:', {
+    method: 'PATCH',
+    url: `/api/feedbacks/messages/${messageId}/reaction/`,
+    data: { reaction }
+  });
+  
+  return axiosCredentials(
+    'patch',
+    `/api/feedbacks/messages/${messageId}/reaction/`,
+    { reaction },
+  ).then(response => {
+    console.log('UpdateFeedbackReaction API success:', response);
+    return response;
+  }).catch(error => {
+    console.error('UpdateFeedbackReaction API error:', error);
+    throw error;
+  });
+}
+
+// 피드백 반응 조회
+export function GetFeedbackReactions(messageId) {
+  return axiosCredentials(
+    'get',
+    `/api/feedbacks/messages/${messageId}/reaction/`,
+  )
+}

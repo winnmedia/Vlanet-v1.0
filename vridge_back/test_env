@@ -1,0 +1,3 @@
+DATABASE_URL=postgresql://postgres:LCvPXaLzROgZDyUcWPHoigjGkSxyYFVB@postgres.railway.internal:5432/railway
+DJANGO_SETTINGS_MODULE=config.settings_railway
+SECRET_KEY=test-secret-key-for-debugging

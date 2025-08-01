@@ -233,3 +233,301 @@
     }
   }
 }
+
+// 검색 및 필터
+.searchFilterContainer {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.2s ease;
+  outline: none;
+  
+  &:focus {
+    border-color: #1631F8;
+    box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+  }
+  
+  &::placeholder {
+    color: #adb5bd;
+  }
+}
+
+.filterSelect {
+  padding: 10px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  min-width: 120px;
+  outline: none;
+  
+  &:focus {
+    border-color: #1631F8;
+  }
+}
+
+// 피드백 상태 뱃지
+.statusBadge {
+  padding: 4px 10px;
+  border-radius: 16px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &.pending {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  }
+  
+  &.completed {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// 수정 모드
+.editMode {
+  .editTextarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 2px solid #1631F8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+    
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+  
+  .editActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: flex-end;
+    
+    button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &.cancel {
+        border: 1px solid #6c757d;
+        background: white;
+        color: #6c757d;
+        
+        &:hover {
+          background: #f8f9fa;
+        }
+      }
+      
+      &.save {
+        border: none;
+        background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+        color: white;
+        
+        &:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+        }
+        
+        &:disabled {
+          background: #6c757d;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+}
+
+// 액션 버튼들
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  
+  button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+    
+    &.edit {
+      border: 1px solid #1631F8;
+      background: white;
+      color: #1631F8;
+      
+      &:hover {
+        background: #1631F8;
+        color: white;
+      }
+    }
+    
+    &.delete {
+      border: 1px solid #dc3545;
+      background: white;
+      color: #dc3545;
+      
+      &:hover {
+        background: #dc3545;
+        color: white;
+      }
+    }
+  }
+}
+
+// 로딩 애니메이션
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1631F8;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  
+  .loadingText {
+    margin-top: 20px;
+    color: #6c757d;
+    fontSize: 14px;
+  }
+}
+
+// 에러 상태
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: rgba(220, 53, 69, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  
+  svg {
+    width: 48px;
+    height: 48px;
+    color: #dc3545;
+    margin-bottom: 20px;
+  }
+  
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #dc3545;
+  }
+  
+  p {
+    margin: 0 0 20px 0;
+    color: #6c757d;
+    font-size: 14px;
+  }
+  
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #dc3545;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #c82333;
+    }
+  }
+}
+
+// 애니메이션 적용
+.feedbackItem {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .feedbackItem {
+    padding: 16px;
+  }
+  
+  .authorInfo {
+    .avatar {
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+    }
+  }
+  
+  .feedbackActions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .actionButtons {
+    justify-content: center;
+  }
+}

@@ -14,7 +14,9 @@ function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
 
   // 기존 반응 상태 초기화 및 카운트 계산
   useEffect(() => {
+    console.log('[FeedbackManage] Current project:', current_project)
     const feedbackList = current_project?.feedback || []
+    console.log('[FeedbackManage] Feedback list:', feedbackList)
     
     if (Array.isArray(feedbackList)) {
       const initialReactions = {}
@@ -50,25 +52,30 @@ function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
 
   // 피드백 삭제 함수
   function DropFeedback(feedback_id) {
+    console.log('[FeedbackManage] Deleting feedback ID:', feedback_id)
+    
     if (!window.confirm('정말 이 피드백을 삭제하시겠습니까?')) {
       return
     }
 
     DeleteFeedback(feedback_id)
-      .then(() => {
+      .then((response) => {
+        console.log('[FeedbackManage] Delete response:', response)
         alert('피드백이 삭제되었습니다.')
         refetch()
       })
       .catch(err => {
         console.error('피드백 삭제 실패:', err)
+        console.error('Error details:', err.response)
         alert('피드백 삭제에 실패했습니다.')
       })
   }
 
   // 편집 시작
   const startEdit = (feedback) => {
+    console.log('[FeedbackManage] Starting edit for feedback:', feedback)
     setEditingFeedback(feedback.id)
-    setEditText(feedback.message || '')
+    setEditText(feedback.message || feedback.text || '')
   }
 
   // 편집 취소
@@ -79,6 +86,9 @@ function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
 
   // 편집 저장
   const saveEdit = async (feedbackId) => {
+    console.log('[FeedbackManage] Saving edit for feedback ID:', feedbackId)
+    console.log('[FeedbackManage] Edit text:', editText)
+    
     if (!editText.trim()) {
       alert('피드백 내용을 입력해주세요.')
       return
@@ -86,7 +96,8 @@ function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
 
     setIsUpdating(true)
     try {
-      await UpdateFeedback(feedbackId, { message: editText })
+      const response = await UpdateFeedback(feedbackId, { text: editText })
+      console.log('[FeedbackManage] Update response:', response)
       alert('피드백이 수정되었습니다.')
       setEditingFeedback(null)
       setEditText('')
@@ -425,7 +436,7 @@ function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
                         color: '#495057',
                         whiteSpace: 'pre-wrap'
                       }}>
-                        {feedback.message}
+                        {feedback.message || feedback.text}
                       </p>
                     )}
                   </div>

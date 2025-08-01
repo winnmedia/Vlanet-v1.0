@@ -30,21 +30,44 @@ export function CreateFeedback(data, projectId) {
   });
 }
 
-// 피드백 update
+// 피드백 update - 메시지 수정 엔드포인트 사용
 export function UpdateFeedback(id, data) {
+  console.log('UpdateFeedback API called with:', {
+    method: 'PATCH',
+    url: `/api/feedbacks/messages/${id}/`,
+    data: data
+  });
+  
   return axiosCredentials(
     'patch',
-    `/api/feedbacks/${id}`,
+    `/api/feedbacks/messages/${id}/`,
     data,
-  )
+  ).then(response => {
+    console.log('UpdateFeedback API success:', response);
+    return response;
+  }).catch(error => {
+    console.error('UpdateFeedback API error:', error);
+    throw error;
+  });
 }
 
-// 피드백 delete
+// 피드백 delete - 메시지 삭제 엔드포인트 사용
 export function DeleteFeedback(id) {
+  console.log('DeleteFeedback API called with:', {
+    method: 'DELETE',
+    url: `/api/feedbacks/messages/${id}/`
+  });
+  
   return axiosCredentials(
     'delete',
-    `/api/feedbacks/${id}`,
-  )
+    `/api/feedbacks/messages/${id}/`,
+  ).then(response => {
+    console.log('DeleteFeedback API success:', response);
+    return response;
+  }).catch(error => {
+    console.error('DeleteFeedback API error:', error);
+    throw error;
+  });
 }
 
 // 피드백 file uploads

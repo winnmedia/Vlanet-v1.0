@@ -653,6 +653,33 @@ class FeedbackMessageUpdate(View):
         except Exception as e:
             logger.error(f"Error updating feedback message: {str(e)}", exc_info=True)
             return JsonResponse({"message": "메시지 수정 중 오류가 발생했습니다."}, status=500)
+    
+    @user_validator
+    def delete(self, request, message_id):
+        """피드백 메시지 삭제 API - 작성자만 삭제 가능"""
+        try:
+            user = request.user
+            
+            # 메시지 조회
+            try:
+                message = models.FeedBackMessage.objects.get(id=message_id)
+            except models.FeedBackMessage.DoesNotExist:
+                return JsonResponse({"message": "존재하지 않는 메시지입니다."}, status=404)
+            
+            # 작성자 권한 확인
+            if message.user != user:
+                return JsonResponse({"message": "메시지 삭제 권한이 없습니다."}, status=403)
+            
+            # 메시지 삭제
+            message.delete()
+            
+            return JsonResponse({
+                "message": "메시지가 삭제되었습니다."
+            }, status=200)
+            
+        except Exception as e:
+            logger.error(f"Error deleting feedback message: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "메시지 삭제 중 오류가 발생했습니다."}, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

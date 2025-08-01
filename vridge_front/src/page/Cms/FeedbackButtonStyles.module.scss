@@ -449,18 +449,32 @@ label.feedbackButtonPrimary {
 
 // 움직임 선호도 감소 설정 지원 (접근성)
 @media (prefers-reduced-motion: reduce) {
-  * {
+  .feedbackButtonPrimary,
+  .feedbackButtonSecondary,
+  .feedbackButtonDanger,
+  .feedbackButtonOutline,
+  .feedbackButtonIconOnly,
+  .feedbackButtonLoading {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  
-  .feedbackButtonPrimary,
-  .feedbackButtonSecondary,
-  .feedbackButtonDanger {
+    
     &:hover {
       transform: none !important;
     }
+    
+    &::before {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    
+    svg {
+      animation-duration: 0.01ms !important;
+    }
+  }
+  
+  .loading {
+    animation-duration: 0.01ms !important;
   }
 }
 

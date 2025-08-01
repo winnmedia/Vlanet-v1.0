@@ -5,7 +5,7 @@ import styles from './FeedbackManage.module.scss'
 import { DeleteFeedback } from 'api/feedback'
 import { UpdateFeedback } from 'api/feedback'
 
-export default function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
+function FeedbackManage({ refetch, current_project, user, onTimeClick }) {
   const [reactions, setReactions] = useState({})
   const [reactionCounts, setReactionCounts] = useState({})
   const [editingFeedback, setEditingFeedback] = useState(null)
@@ -778,4 +778,4 @@ export default function FeedbackManage({ refetch, current_project, user, onTimeC
   )
 }
 
-React.memo(FeedbackManage)
+export default React.memo(FeedbackManage)

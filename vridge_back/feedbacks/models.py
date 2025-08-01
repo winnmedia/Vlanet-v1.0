@@ -83,6 +83,11 @@ class FeedBack(core_model.TimeStampedModel):
 
 
 class FeedBackMessage(core_model.TimeStampedModel):
+    STATUS_CHOICES = [
+        ('pending', '대기중'),
+        ('completed', '완료'),
+    ]
+    
     feedback = models.ForeignKey(
         "FeedBack",
         related_name="messages",
@@ -98,10 +103,23 @@ class FeedBackMessage(core_model.TimeStampedModel):
         verbose_name="사용자",
     )
     text = models.TextField(verbose_name="내용", blank=False)
+    status = models.CharField(
+        verbose_name="상태",
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+        help_text="피드백 메시지 처리 상태"
+    )
 
     class Meta:
         verbose_name = "피드백 대화방"
         verbose_name_plural = "피드백 대화방"
+        ordering = ("-created",)
+        indexes = [
+            models.Index(fields=['feedback', '-created']),
+            models.Index(fields=['user']),
+            models.Index(fields=['status']),
+        ]
 
 
 class FeedBackComment(core_model.TimeStampedModel):

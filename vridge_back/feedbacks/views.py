@@ -609,3 +609,100 @@ class VideoEncodingStatus(View):
             logger.error(f"Error in feedback operation: {str(e)}", exc_info=True)
             logging.info(str(e))
             return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FeedbackMessageUpdate(View):
+    """피드백 메시지 수정 API - 작성자만 수정 가능"""
+    @user_validator
+    def patch(self, request, message_id):
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            
+            # 메시지 조회
+            try:
+                message = models.FeedBackMessage.objects.get(id=message_id)
+            except models.FeedBackMessage.DoesNotExist:
+                return JsonResponse({"message": "존재하지 않는 메시지입니다."}, status=404)
+            
+            # 작성자 권한 확인
+            if message.user != user:
+                return JsonResponse({"message": "메시지 수정 권한이 없습니다."}, status=403)
+            
+            # 텍스트 수정
+            new_text = data.get("text")
+            if not new_text or not new_text.strip():
+                return JsonResponse({"message": "메시지 내용을 입력해주세요."}, status=400)
+            
+            message.text = new_text.strip()
+            message.save(update_fields=['text', 'updated'])
+            
+            return JsonResponse({
+                "message": "메시지가 수정되었습니다.",
+                "result": {
+                    "id": message.id,
+                    "text": message.text,
+                    "updated": message.updated,
+                    "status": message.status
+                }
+            }, status=200)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "잘못된 JSON 형식입니다."}, status=400)
+        except Exception as e:
+            logger.error(f"Error updating feedback message: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "메시지 수정 중 오류가 발생했습니다."}, status=500)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FeedbackMessageStatusUpdate(View):
+    """피드백 메시지 상태 관리 API - 프로젝트 소유자/관리자만 변경 가능"""
+    @user_validator
+    def patch(self, request, message_id):
+        try:
+            user = request.user
+            data = json.loads(request.body)
+            
+            # 메시지 조회
+            try:
+                message = models.FeedBackMessage.objects.select_related('feedback').get(id=message_id)
+            except models.FeedBackMessage.DoesNotExist:
+                return JsonResponse({"message": "존재하지 않는 메시지입니다."}, status=404)
+            
+            # 프로젝트 권한 확인
+            try:
+                project = project_model.Project.objects.get(feedback=message.feedback)
+            except project_model.Project.DoesNotExist:
+                return JsonResponse({"message": "연결된 프로젝트를 찾을 수 없습니다."}, status=404)
+            
+            # 프로젝트 소유자이거나 관리자 권한 확인
+            is_owner = project.user == user
+            is_member = project.members.filter(user=user).exists()
+            
+            if not (is_owner or is_member):
+                return JsonResponse({"message": "메시지 상태 변경 권한이 없습니다."}, status=403)
+            
+            # 상태 변경
+            new_status = data.get("status")
+            if new_status not in ['pending', 'completed']:
+                return JsonResponse({"message": "유효하지 않은 상태값입니다. (pending, completed만 가능)"}, status=400)
+            
+            message.status = new_status
+            message.save(update_fields=['status', 'updated'])
+            
+            return JsonResponse({
+                "message": "메시지 상태가 변경되었습니다.",
+                "result": {
+                    "id": message.id,
+                    "status": message.status,
+                    "status_display": message.get_status_display(),
+                    "updated": message.updated
+                }
+            }, status=200)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "잘못된 JSON 형식입니다."}, status=400)
+        except Exception as e:
+            logger.error(f"Error updating feedback message status: {str(e)}", exc_info=True)
+            return JsonResponse({"message": "메시지 상태 변경 중 오류가 발생했습니다."}, status=500)

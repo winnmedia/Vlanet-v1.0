@@ -628,6 +628,8 @@ export default function Feedback() {
               <button
                 onClick={handleOpenInviteModal}
                 className={styles.inviteButton}
+                title="프로젝트에 새로운 멤버를 초대합니다"
+                aria-label="멤버 초대 모달 열기"
               >
                 멤버 초대
               </button>
@@ -1334,19 +1336,18 @@ export default function Feedback() {
                   )}
                 </div>
                 
-                {/* 피드백 관련 버튼들 - 플레이어 영역 밖 하단에 위치 */}
+                {/* 피드백 관련 버튼들 - 사용성 최적화된 레이아웃 */}
                 <div style={{
-                  display: 'flex',
-                  gap: '10px',
                   marginTop: '20px',
-                  padding: '16px',
+                  padding: '20px',
                   background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
                   borderRadius: '16px',
                   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
-                  justifyContent: 'space-between',
                   width: '100%'
                 }}>
-                    {/* 현재 시점에 피드백 버튼 - 영상이 있을 때만 표시 */}
+                  {/* 주요 능동 버튼 그룹 - 자주 사용되는 기능 우선 배치 */}
+                  <div className={styles.primaryActionGroup}>
+                    {/* 현재 시점에 피드백 버튼 - 가장 중요한 기능으로 첫 번째 배치 */}
                     {current_project.files && (
                       <button
                       onClick={() => {
@@ -1391,6 +1392,16 @@ export default function Feedback() {
                         }
                       }}
                       className={styles.feedbackButtonPrimary}
+                      title="현재 영상 시점에 피드백 작성"
+                      aria-label="현재 영상 시점에 피드백 작성"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          e.currentTarget.click();
+                        }
+                      }}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -1399,9 +1410,8 @@ export default function Feedback() {
                       <span>시점 피드백</span>
                       </button>
                     )}
-
-
-                    {/* 영상 업로드/교체 버튼 */}
+                    
+                    {/* 영상 업로드/교체 버튼 - 두 번째 중요 기능 */}
                     <div className="file-upload-wrapper">
                       <input
                         type="file"
@@ -1414,6 +1424,16 @@ export default function Feedback() {
                       <label 
                         htmlFor="video-replace-button" 
                         className={styles.feedbackButtonPrimary}
+                        title={current_project.files ? "영상 파일 교체" : "영상 파일 업로드"}
+                        aria-label={current_project.files ? "영상 파일 교체" : "영상 파일 업로드"}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            document.getElementById('video-replace-button').click();
+                          }
+                        }}
                       >
                         {current_project.files ? (
                           <>
@@ -1433,27 +1453,19 @@ export default function Feedback() {
                         )}
                       </label>
                     </div>
-
-                    {/* 영상 삭제 버튼 - 영상이 있을 때만 표시 */}
-                    {current_project.files && (
-                      <button
-                        onClick={DeleteFile}
-                        className={styles.feedbackButtonDanger}
-                        title="영상 삭제"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <span>삭제</span>
-                      </button>
-                    )}
-                    
+                  </div>
+                  
+                  {/* 보조 능동 버튼 그룹 - 덜 자주 사용되는 기능들 */}
+                  <div className={styles.secondaryActionGroup}>
                     {/* 공유 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <button
                         onClick={() => CopyFileUrl(current_project.files)}
                         className={styles.feedbackButtonSecondary}
-                        title="공유"
+                        title="영상 링크 복사"
+                        aria-label="영상 링크 복사하기"
+                        role="button"
+                        tabIndex={0}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1461,6 +1473,24 @@ export default function Feedback() {
                         <span>공유</span>
                       </button>
                     )}
+                    
+                    {/* 영상 삭제 버튼 - 위험한 액션으로 분리 배치 */}
+                    {current_project.files && (
+                      <button
+                        onClick={DeleteFile}
+                        className={styles.dangerousActionButton}
+                        title="영상 완전 삭제 - 되돌릴 수 없습니다"
+                        aria-label="영상 완전 삭제 - 되돌릴 수 없습니다"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>삭제</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="etc_box">
@@ -1473,8 +1503,10 @@ export default function Feedback() {
                       {currentItem && currentItem.tab === '피드백 등록' && current_project.files && (
                         <button
                           onClick={handleVideoAnalysis}
-                          className="submit"
+                          className={analysisLoading ? styles.feedbackButtonLoading : styles.feedbackButtonPrimary}
                           disabled={analysisLoading}
+                          title="AI가 영상을 분석하여 전문적인 피드백을 제공합니다"
+                          aria-label={analysisLoading ? 'AI 분석 진행 중' : 'AI 피드백 시작'}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1490,7 +1522,8 @@ export default function Feedback() {
                               state: { ...current_project, user: user },
                             })
                           }
-                          className="submit"
+                          className={styles.feedbackButtonSecondary}
+                          title="모든 피드백을 한 눈에 볼 수 있는 전체보기 페이지로 이동"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
@@ -1534,15 +1567,31 @@ export default function Feedback() {
                       <div className="feedback-content">
                         <p>{selectedFeedback.text}</p>
                       </div>
-                      <div className="feedback-actions">
-                        <button>
+                      <div className={styles.feedbackActions}>
+                        <button
+                          className={styles.feedbackButtonSmall}
+                          title="이 피드백에 답글 작성"
+                          aria-label="피드백에 답글 작성하기"
+                          onClick={() => {
+                            // TODO: 답글 기능 구현
+                            window.alert('답글 기능은 곷 추가될 예정입니다.');
+                          }}
+                        >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                             <path d="M7 7H17C19 7 21 9 21 11V18C21 20 19 22 17 22H7C5 22 3 20 3 18V11C3 9 5 7 7 7Z" stroke="currentColor" strokeWidth="2"/>
                             <path d="M8 7V5C8 3 10 1 12 1C14 1 16 3 16 5V7" stroke="currentColor" strokeWidth="2"/>
                           </svg>
                           답글
                         </button>
-                        <button>
+                        <button
+                          className={styles.feedbackButtonSmall}
+                          title="중요한 피드백으로 표시"
+                          aria-label="중요한 피드백으로 표시하기"
+                          onClick={() => {
+                            // TODO: 중요 표시 기능 구현
+                            window.alert('중요 표시 기능은 곷 추가될 예정입니다.');
+                          }}
+                        >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                             <path d="M12 2L15 9L22 10L17 15L18 22L12 18L6 22L7 15L2 10L9 9L12 2Z" stroke="currentColor" strokeWidth="2" fill="none"/>
                           </svg>

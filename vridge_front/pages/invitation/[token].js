@@ -1,4 +1,4 @@
-import InvitationAccept from '../../src/page/Cms/InvitationAccept'
+import InvitationAccept from '../../src/page/Cms/InvitationAccept.jsx'
 
 export default InvitationAccept
 

@@ -1,4 +1,4 @@
-import FeedbackAll from '../src/page/Cms/FeedbackAll'
+import FeedbackAll from '../src/page/Cms/FeedbackAll.jsx'
 
 export default FeedbackAll
 

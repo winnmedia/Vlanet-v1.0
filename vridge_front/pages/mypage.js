@@ -1,4 +1,4 @@
-import MyPage from '../src/page/User/MyPage'
+import MyPage from '../src/page/User/MyPage.jsx'
 
 export default MyPage
 

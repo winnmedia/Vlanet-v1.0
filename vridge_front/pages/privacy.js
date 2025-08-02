@@ -1,4 +1,4 @@
-import PrivacyPolicy from '../src/page/Policy/PrivacyPolicy'
+import PrivacyPolicy from '../src/page/Policy/PrivacyPolicy.jsx'
 
 export default PrivacyPolicy
 

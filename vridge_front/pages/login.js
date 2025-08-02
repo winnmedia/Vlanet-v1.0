@@ -1,4 +1,4 @@
-import Login from '../src/page/User/Login'
+import Login from '../src/page/User/Login.jsx'
 
 export default Login
 

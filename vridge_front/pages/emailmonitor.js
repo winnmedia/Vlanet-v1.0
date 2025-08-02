@@ -1,4 +1,4 @@
-import EmailMonitor from '../src/page/Admin/EmailMonitor'
+import EmailMonitor from '../src/page/Admin/EmailMonitor.jsx'
 
 export default EmailMonitor
 

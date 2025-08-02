@@ -1,4 +1,4 @@
-import ProjectCreate from '../../src/page/Cms/ProjectCreate'
+import ProjectCreate from '../../src/page/Cms/ProjectCreate.jsx'
 
 export default ProjectCreate
 

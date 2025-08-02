@@ -1,4 +1,4 @@
-import Calendar from '../src/page/Cms/Calendar'
+import Calendar from '../src/page/Cms/Calendar.jsx'
 
 export default Calendar
 

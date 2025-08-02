@@ -1,4 +1,4 @@
-import EmailCheck from '../src/page/User/EmailCheck'
+import EmailCheck from '../src/page/User/EmailCheck.jsx'
 
 export default EmailCheck
 

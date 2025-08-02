@@ -1,4 +1,4 @@
-import Feedback from '../../src/page/Cms/Feedback'
+import Feedback from '../../src/page/Cms/Feedback.jsx'
 
 export default Feedback
 

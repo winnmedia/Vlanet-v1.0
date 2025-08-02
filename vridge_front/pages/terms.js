@@ -1,4 +1,4 @@
-import TermsOfService from '../src/page/Policy/TermsOfService'
+import TermsOfService from '../src/page/Policy/TermsOfService.jsx'
 
 export default TermsOfService
 

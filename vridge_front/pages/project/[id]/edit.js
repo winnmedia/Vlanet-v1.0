@@ -1,4 +1,4 @@
-import ProjectEdit from '../../../src/page/Cms/ProjectEdit'
+import ProjectEdit from '../../../src/page/Cms/ProjectEdit.jsx'
 
 export default ProjectEdit
 

@@ -1,4 +1,4 @@
-import Signup from '../src/page/User/Signup'
+import Signup from '../src/page/User/Signup.jsx'
 
 export default Signup
 

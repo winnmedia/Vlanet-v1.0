@@ -52,6 +52,7 @@ import '../src/css/Cms/VideoPlayerFix.scss'
 // 로딩 애니메이션 스타일
 import '../src/css/Cms/LoadingAnimationFix.scss'
 import { checkSession } from '../src/util/util'
+import { ToastContainer } from '../src/components/Toast'
 
 // 한국 시간대 설정
 moment.locale('ko')
@@ -99,6 +100,7 @@ function MyApp({ Component, pageProps }) {
           {loading && <div className="route-loading" />}
           <Component {...pageProps} />
           <GlobalLoading />
+          <ToastContainer />
         </AppInitializer>
       </ConfigProvider>
     </Provider>

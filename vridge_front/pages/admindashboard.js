@@ -1,4 +1,4 @@
-import AdminDashboard from '../src/page/Admin/AdminDashboard'
+import AdminDashboard from '../src/page/Admin/AdminDashboard.jsx'
 
 export default AdminDashboard
 

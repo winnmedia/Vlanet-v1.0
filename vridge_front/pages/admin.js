@@ -1,4 +1,4 @@
-import AdminRedirect from '../src/page/Admin/AdminRedirect'
+import AdminRedirect from '../src/page/Admin/AdminRedirect.jsx'
 
 export default AdminRedirect
 

@@ -1,4 +1,4 @@
-import CmsHome from '../src/page/Cms/CmsHome'
+import CmsHome from '../src/page/Cms/CmsHome.jsx'
 
 export default CmsHome
 

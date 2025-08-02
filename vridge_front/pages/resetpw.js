@@ -1,4 +1,4 @@
-import ResetPw from '../src/page/User/ResetPw'
+import ResetPw from '../src/page/User/ResetPw.jsx'
 
 export default ResetPw
 

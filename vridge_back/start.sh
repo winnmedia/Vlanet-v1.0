@@ -47,6 +47,11 @@ mkdir -p media/feedback_file
 mkdir -p media/profile_images
 chmod -R 755 media
 
+# 테스트 사용자 생성 (임시)
+echo ""
+echo "👤 테스트 사용자 생성..."
+python3 manage.py create_test_user || echo "테스트 사용자 생성 실패 (이미 존재할 수 있음)"
+
 # 서버 시작
 echo ""
 echo "🚀 Gunicorn 서버 시작..."

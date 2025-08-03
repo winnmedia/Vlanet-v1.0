@@ -246,7 +246,7 @@ class SignIn(View):
                 )
                 return res
             else:
-                return JsonResponse({"message": "존재하지 않는 사용자입니다."}, status=404)
+                return JsonResponse({"message": "이메일 또는 비밀번호가 올바르지 않습니다."}, status=401)
         except Exception as e:
             logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": str(e)}, status=500)

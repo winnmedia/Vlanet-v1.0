@@ -180,30 +180,33 @@ class SignIn(View):
             password = data.get("password")
 
             # Debug
-            logger.debug(f"Login attempt - email: {email}, password: {'*' * len(password) if password else 'None'}")
+            logger.info(f"Login attempt - email: {email}")
             
-            # Simple user authentication
-            try:
-                # Find user by email or username
-                user = models.User.objects.filter(username=email).first()
-                if not user:
-                    user = models.User.objects.filter(email=email).first()
-                
-                if user:
-                    logger.debug(f"User found: {user.username}")
-                    # Check password
-                    from django.contrib.auth.hashers import check_password
-                    if check_password(password, user.password):
-                        logger.debug("Password check passed")
-                    else:
-                        user = None
-                        logger.debug("Password check failed")
-                else:
-                    logger.debug("User not found in database")
+            # Django의 authenticate 사용
+            user = None
+            
+            # 먼저 username으로 시도
+            user = authenticate(request, username=email, password=password)
+            
+            if not user:
+                # email로 사용자 찾기
+                user_obj = models.User.objects.filter(email=email).first()
+                if user_obj:
+                    logger.info(f"Found user by email: {user_obj.username}")
+                    # username으로 다시 authenticate
+                    user = authenticate(request, username=user_obj.username, password=password)
+            
+            if not user:
+                logger.error(f"Authentication failed for: {email}")
+                # 디버깅을 위한 추가 정보
+                test_user = models.User.objects.filter(username=email).first()
+                if not test_user:
+                    test_user = models.User.objects.filter(email=email).first()
                     
-            except Exception as e:
-                logger.error(f"Login error: {e}")
-                user = None
+                if test_user:
+                    logger.error(f"User exists but auth failed: username={test_user.username}, active={test_user.is_active}")
+                else:
+                    logger.error(f"User not found: {email}")
             
             if user is not None:
                 # 이메일 인증 확인 - 기존 사용자들을 위한 임시 처리

@@ -47,6 +47,11 @@ mkdir -p media/feedback_file
 mkdir -p media/profile_images
 chmod -R 755 media
 
+# 기존 사용자 수정
+echo ""
+echo "🔧 기존 사용자 이메일 인증 상태 수정..."
+python3 manage.py fix_existing_users || echo "기존 사용자 수정 실패"
+
 # 테스트 사용자 생성 (임시)
 echo ""
 echo "👤 테스트 사용자 생성..."

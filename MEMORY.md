@@ -1,5 +1,28 @@
 # VideoPlanet 프로젝트 히스토리 및 주요 결정사항
 
+## 2025-08-03 피드백 페이지 JSX 구문 오류 및 빌드 문제 해결
+**작업 내용**: 피드백 페이지의 복잡한 JSX 구조로 인한 빌드 오류 수정
+**담당 에이전트**: Claude Code + frontend-designer-fronty
+**주요 변경사항**:
+1. **JSX 구문 오류 수정**
+   - Feedback.jsx의 중복된 </main> 태그 제거
+   - 삼항 연산자 내의 잘못된 태그 중첩 구조 수정
+   - EnhancedVideoPlayer와 videoControls 구조 재정리
+   - 조건부 렌더링 블록의 올바른 마감 처리
+
+2. **CSS 모듈 오류 해결**
+   - FeedbackPageLayout.module.scss의 전역 선택자(*) 제거
+   - CSS 모듈 규칙 준수하여 빌드 호환성 확보
+
+3. **파일 구조 정리**
+   - 1306-2471번 줄의 복잡한 조건부 렌더링 구조 개선
+   - Fragment 사용으로 불필요한 wrapper div 제거
+
+**결과**: 
+- 프로덕션 빌드 성공
+- 버전 1.0.14 → 1.0.15 업데이트
+- Vercel 배포 준비 완료
+
 ## 2025-01-31 피드백 페이지 UI/UX 전면 개선
 **작업 내용**: 영상 피드백 페이지의 사용자 경험 대폭 개선
 **담당 에이전트**: Claude Code + frontend-designer-fronty

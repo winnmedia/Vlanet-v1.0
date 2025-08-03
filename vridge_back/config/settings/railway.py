@@ -51,6 +51,7 @@ PROJECT_APPS = [
     'video_planning',
     'video_analysis',
     'admin_dashboard',
+    'documents',  # 문서 관리 앱
 ]
 
 THIRD_PARTY_APPS = [

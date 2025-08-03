@@ -1,0 +1,104 @@
+import React, { useState, useRef, useEffect } from 'react';
+import layoutStyles from '../page/Cms/FeedbackPageLayout.module.scss';
+
+const FeedbackDropdown = ({ 
+  options = [], 
+  value = '', 
+  onChange, 
+  placeholder = '선택하세요',
+  disabled = false,
+  className = ''
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // 외부 클릭 시 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // ESC 키로 닫기
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen]);
+
+  const handleToggle = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  const handleSelect = (option) => {
+    onChange(option.value);
+    setIsOpen(false);
+  };
+
+  const selectedOption = options.find(opt => opt.value === value);
+  const displayText = selectedOption ? selectedOption.label : placeholder;
+
+  return (
+    <div 
+      ref={dropdownRef} 
+      className={`${layoutStyles.dropdown} ${className}`}
+    >
+      <button
+        type="button"
+        className={`${layoutStyles.dropdownToggle} ${isOpen ? layoutStyles.open : ''}`}
+        onClick={handleToggle}
+        disabled={disabled}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <span>{displayText}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      
+      <div className={`${layoutStyles.dropdownMenu} ${isOpen ? layoutStyles.open : ''}`}>
+        {options.map((option, index) => (
+          <div
+            key={option.value || index}
+            className={`${layoutStyles.dropdownItem} ${value === option.value ? layoutStyles.selected : ''}`}
+            onClick={() => handleSelect(option)}
+          >
+            {option.icon && (
+              <span className="option-icon" style={{ marginRight: '8px' }}>
+                {option.icon}
+              </span>
+            )}
+            <span>{option.label}</span>
+            {option.description && (
+              <span style={{ 
+                fontSize: '12px', 
+                color: '#666', 
+                marginLeft: '8px',
+                fontWeight: 'normal'
+              }}>
+                {option.description}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default FeedbackDropdown;

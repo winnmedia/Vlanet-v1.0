@@ -1,0 +1,863 @@
+// 피드백 페이지 전용 통합 레이아웃 스타일시트
+// 브랜드 색상 정의
+$brand-blue: #1631F8;
+$brand-blue-hover: #0F23C9;
+$brand-red: #dc3545;
+$brand-red-hover: #c82333;
+$brand-success: #28a745;
+$brand-warning: #ffc107;
+$brand-info: #17a2b8;
+$brand-gray: #6c757d;
+
+// 컨테이너 레이아웃
+.feedbackContainer {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  overflow: hidden;
+}
+
+// 메인 콘텐츠 영역 (왼쪽 - 플레이어)
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  min-height: 100vh;
+  overflow-y: auto;
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+// 사이드바 영역 (오른쪽)
+.sidebar {
+  width: 420px;
+  background: white;
+  border-left: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100vh;
+  position: relative;
+  
+  @media (max-width: 1200px) {
+    width: 380px;
+  }
+  
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// 비디오 플레이어 섹션
+.videoSection {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  position: relative;
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+  }
+}
+
+.videoPlayerWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  
+  // 16:9 비율 유지 (기본)
+  &.aspectRatio16_9 {
+    aspect-ratio: 16/9;
+  }
+  
+  // 9:16 비율 (세로 영상)
+  &.aspectRatio9_16 {
+    aspect-ratio: 9/16;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  // 4:3 비율
+  &.aspectRatio4_3 {
+    aspect-ratio: 4/3;
+  }
+  
+  // 1:1 비율 (정사각형)
+  &.aspectRatio1_1 {
+    aspect-ratio: 1/1;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+.videoPlayer {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+  
+  &:hover {
+    filter: brightness(1.05);
+  }
+}
+
+// 플레이 버튼 오버레이
+.playOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: rgba(22, 49, 248, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  
+  &:hover {
+    background: rgba(22, 49, 248, 1);
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 8px 24px rgba(22, 49, 248, 0.4);
+  }
+  
+  svg {
+    width: 32px;
+    height: 32px;
+    color: white;
+    margin-left: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    width: 60px;
+    height: 60px;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// 비디오 컨트롤 영역
+.videoControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 16px;
+  border: 1px solid #e9ecef;
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+}
+
+.playbackControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.controlButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba($brand-blue, 0.1);
+  border: 1px solid rgba($brand-blue, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    color: $brand-blue;
+  }
+  
+  &:hover {
+    background: rgba($brand-blue, 0.2);
+    border-color: rgba($brand-blue, 0.4);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &.active {
+    background: $brand-blue;
+    border-color: $brand-blue;
+    
+    svg {
+      color: white;
+    }
+  }
+}
+
+.timeDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $brand-gray;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.progressBar {
+  flex: 1;
+  height: 6px;
+  background: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  min-width: 200px;
+  
+  @media (max-width: 768px) {
+    min-width: 100%;
+    order: 4;
+    flex-basis: 100%;
+  }
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $brand-blue 0%, $brand-blue-hover 100%);
+  transition: width 0.1s ease;
+  border-radius: 10px;
+}
+
+.progressHandle {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: $brand-blue;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.4);
+  }
+}
+
+// 피드백 등록 섹션
+.feedbackRegistration {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  
+  h3 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(180deg, $brand-blue 0%, $brand-blue-hover 100%);
+      border-radius: 2px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+    border-radius: 16px;
+    
+    h3 {
+      font-size: 18px;
+    }
+  }
+}
+
+// 사이드바 헤더
+.sidebarHeader {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(180deg, $brand-blue 0%, $brand-blue-hover 100%);
+      border-radius: 2px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+// 탭 내비게이션
+.tabNavigation {
+  display: flex;
+  border-bottom: 1px solid #e9ecef;
+  background: white;
+  overflow-x: auto;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tabButton {
+  flex: 1;
+  min-width: 100px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  color: $brand-gray;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+  
+  &:hover {
+    color: $brand-blue;
+    background: rgba($brand-blue, 0.05);
+  }
+  
+  &.active {
+    color: $brand-blue;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, $brand-blue 0%, $brand-blue-hover 100%);
+      border-radius: 2px 2px 0 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+}
+
+// 탭 콘텐츠 영역
+.tabContent {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 140px);
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+    height: calc(100vh - 120px);
+  }
+}
+
+// 피드백 리스트
+.feedbackList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feedbackItem {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 16px;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    background: #ffffff;
+    border-left-color: $brand-blue;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transform: translateX(2px);
+  }
+  
+  &.important {
+    border-left-color: $brand-warning;
+    background: rgba($brand-warning, 0.05);
+  }
+  
+  &.resolved {
+    border-left-color: $brand-success;
+    background: rgba($brand-success, 0.05);
+    opacity: 0.8;
+  }
+}
+
+.feedbackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.feedbackMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feedbackTime {
+  font-size: 14px;
+  font-weight: 700;
+  color: $brand-blue;
+  background: rgba($brand-blue, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.feedbackAuthor {
+  font-size: 13px;
+  color: $brand-gray;
+  font-weight: 500;
+}
+
+.feedbackActions {
+  display: flex;
+  gap: 8px;
+}
+
+.feedbackContent {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #495057;
+  margin-bottom: 12px;
+}
+
+.feedbackReplies {
+  margin-top: 12px;
+  padding-left: 16px;
+  border-left: 2px solid #e9ecef;
+}
+
+.feedbackReply {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #e9ecef;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// 드롭다운 메뉴
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: $brand-blue;
+    color: $brand-blue;
+    background: rgba($brand-blue, 0.05);
+  }
+  
+  svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+  
+  &.open svg {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 4px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  
+  &.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+.dropdownItem {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f8f9fa;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: rgba($brand-blue, 0.05);
+    color: $brand-blue;
+  }
+  
+  &.selected {
+    background: rgba($brand-blue, 0.1);
+    color: $brand-blue;
+    font-weight: 600;
+  }
+}
+
+// 초대 관련 스타일
+.invitationList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.invitationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  
+  &.pending {
+    border-left: 4px solid $brand-warning;
+  }
+  
+  &.accepted {
+    border-left: 4px solid $brand-success;
+  }
+  
+  &.declined {
+    border-left: 4px solid $brand-red;
+  }
+}
+
+.invitationInfo {
+  flex: 1;
+}
+
+.invitationEmail {
+  font-size: 15px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 4px;
+}
+
+.invitationStatus {
+  font-size: 13px;
+  color: $brand-gray;
+}
+
+.invitationActions {
+  display: flex;
+  gap: 8px;
+}
+
+// 입력 폼 스타일
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $brand-blue;
+    box-shadow: 0 0 0 3px rgba($brand-blue, 0.1);
+  }
+  
+  &::placeholder {
+    color: #adb5bd;
+  }
+}
+
+.formTextarea {
+  @extend .formInput;
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+// 로딩 상태
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  
+  div {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e9ecef;
+    border-top-color: $brand-blue;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 에러 상태
+.errorMessage {
+  background: rgba($brand-red, 0.1);
+  border: 1px solid rgba($brand-red, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  color: $brand-red;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  
+  &::before {
+    content: '⚠️ ';
+    margin-right: 8px;
+  }
+}
+
+// 성공 메시지
+.successMessage {
+  background: rgba($brand-success, 0.1);
+  border: 1px solid rgba($brand-success, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  color: $brand-success;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  
+  &::before {
+    content: '✅ ';
+    margin-right: 8px;
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .feedbackContainer {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+  }
+  
+  .mainContent {
+    min-height: auto;
+  }
+  
+  .videoPlayerWrapper {
+    &.aspectRatio9_16 {
+      max-width: 300px;
+    }
+    
+    &.aspectRatio1_1 {
+      max-width: 320px;
+    }
+  }
+  
+  .timeDisplay {
+    min-width: 100px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .videoControls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .playbackControls {
+    justify-content: center;
+  }
+  
+  .progressBar {
+    order: 1;
+    margin-bottom: 12px;
+  }
+  
+  .timeDisplay {
+    order: 2;
+    text-align: center;
+  }
+  
+  .tabNavigation {
+    flex-wrap: wrap;
+  }
+  
+  .tabButton {
+    flex: 1;
+    min-width: 80px;
+  }
+}
+
+// 다크모드 지원 (선택사항)
+@media (prefers-color-scheme: dark) {
+  .feedbackContainer {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  }
+  
+  .videoSection,
+  .feedbackRegistration,
+  .sidebar {
+    background: #2d2d2d;
+    color: #ffffff;
+  }
+  
+  .sidebarHeader {
+    background: linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%);
+  }
+  
+  .feedbackItem {
+    background: #3a3a3a;
+    
+    &:hover {
+      background: #404040;
+    }
+  }
+  
+  .formInput,
+  .formTextarea {
+    background: #3a3a3a;
+    border-color: #555;
+    color: #ffffff;
+    
+    &::placeholder {
+      color: #888;
+    }
+    
+    &:focus {
+      border-color: $brand-blue;
+    }
+  }
+}
+
+// 고대비 모드 지원
+@media (prefers-contrast: high) {
+  .feedbackItem {
+    border: 2px solid #333;
+  }
+  
+  .tabButton.active::after {
+    height: 4px;
+  }
+  
+  .progressFill {
+    background: $brand-blue;
+  }
+}
+
+// 움직임 감소 설정 지원
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 
 
 import styles from './FeedbackButtonStyles.module.scss'
+import layoutStyles from './FeedbackPageLayout.module.scss'
 
 /* 상단 이미지 - 샘플, 기본 */
 import PageTemplate from 'components/PageTemplate'
@@ -25,10 +26,11 @@ import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from 'tasks/Feedback/OpinionInput'
-import ReactVideoPlayer from 'components/ReactVideoPlayer'
+import EnhancedVideoPlayer from 'components/EnhancedVideoPlayer/EnhancedVideoPlayer'
 import VideoUploadGuide from 'components/VideoUploadGuide'
 import InviteInput from 'tasks/Project/InviteInput'
 import DrawingCanvas from 'components/DrawingCanvas'
+import FeedbackDropdown from 'components/FeedbackDropdown'
 
 import useTab from 'hooks/UseTab'
 
@@ -108,6 +110,77 @@ export default function Feedback() {
   const [friends, setFriends] = useState([])
   const [recentInvitations, setRecentInvitations] = useState([])
   const [quickListLoading, setQuickListLoading] = useState(false)
+  
+  // 피드백 관련 상태
+  const [feedbackType, setFeedbackType] = useState('general')
+  const [selectedImportance, setSelectedImportance] = useState('medium')
+
+  // 드롭다운 옵션들
+  const feedbackTypeOptions = [
+    { 
+      value: 'general', 
+      label: '일반 피드백',
+      icon: '💬',
+      description: '일반적인 의견이나 제안'
+    },
+    { 
+      value: 'technical', 
+      label: '기술적 피드백',
+      icon: '⚙️',
+      description: '촬영, 편집, 음향 등 기술적 개선사항'
+    },
+    { 
+      value: 'creative', 
+      label: '창작 피드백',
+      icon: '🎨',
+      description: '스토리, 연출, 아이디어 관련'
+    },
+    { 
+      value: 'positive', 
+      label: '칭찬',
+      icon: '👍',
+      description: '잘된 부분에 대한 긍정적 피드백'
+    },
+    { 
+      value: 'question', 
+      label: '질문',
+      icon: '❓',
+      description: '궁금한 점이나 확인이 필요한 사항'
+    },
+    { 
+      value: 'urgent', 
+      label: '긴급',
+      icon: '🚨',
+      description: '즉시 수정이 필요한 중요한 사항'
+    }
+  ];
+
+  const importanceOptions = [
+    { 
+      value: 'low', 
+      label: '낮음',
+      icon: '🟢',
+      description: '참고사항'
+    },
+    { 
+      value: 'medium', 
+      label: '보통',
+      icon: '🟡',
+      description: '일반적인 중요도'
+    },
+    { 
+      value: 'high', 
+      label: '높음',
+      icon: '🟠',
+      description: '중요한 사항'
+    },
+    { 
+      value: 'critical', 
+      label: '매우 높음',
+      icon: '🔴',
+      description: '즉시 처리 필요'
+    }
+  ];
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -476,12 +549,12 @@ export default function Feedback() {
   // 멤버 초대 관련 함수들
   const handleInviteMember = async (resend = false) => {
     if (!inviteEmail.trim()) {
-      alert('이메일을 입력해주세요.')
+      showWarning('이메일을 입력해주세요.')
       return
     }
 
     if (!inviteEmail.includes('@')) {
-      alert('올바른 이메일 형식을 입력해주세요.')
+      showError('올바른 이메일 형식을 입력해주세요.')
       return
     }
 
@@ -498,7 +571,7 @@ export default function Feedback() {
       
       await InviteProjectMember(project_id, requestData)
       
-      alert(resend ? '초대를 재전송했습니다.' : '초대를 보냈습니다.')
+      showSuccess(resend ? '초대를 재전송했습니다.' : '초대를 보냈습니다.')
       handleCloseInviteModal()
       
       // 초대 목록 새로고침
@@ -510,9 +583,11 @@ export default function Feedback() {
       if (error.response?.status === 409) {
         if (window.confirm('이미 초대를 보낸 이메일입니다.\n초대를 다시 보내시겠습니까?')) {
           handleInviteMember(true) // 재전송
+        } else {
+          showInfo('초대를 취소했습니다.')
         }
       } else {
-        alert(error.response?.data?.message || '초대 중 오류가 발생했습니다.')
+        showError(error.response?.data?.message || '초대 중 오류가 발생했습니다.')
       }
     } finally {
       setInviteLoading(false)
@@ -692,46 +767,26 @@ export default function Feedback() {
               <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '15px', color: '#333' }}>
                 초대 현황
               </h4>
-              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px' }}>
+              <div className={layoutStyles.invitationList}>
                 {projectInvitations.map((invitation, index) => (
                   <div 
                     key={index}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '8px 0',
-                      borderBottom: index < projectInvitations.length - 1 ? '1px solid #e9ecef' : 'none'
-                    }}
+                    className={`${layoutStyles.invitationItem} ${layoutStyles[invitation.status] || ''}`}
                   >
-                    <div>
-                      <div style={{ fontSize: '14px', fontWeight: '500' }}>
+                    <div className={layoutStyles.invitationInfo}>
+                      <div className={layoutStyles.invitationEmail}>
                         {invitation.invitee_email}
                       </div>
-                      <div style={{ fontSize: '12px', color: '#6c757d' }}>
-                        {moment(invitation.created).format('YYYY.MM.DD HH:mm')}
+                      <div className={layoutStyles.invitationStatus}>
+                        {moment(invitation.created).format('YYYY.MM.DD HH:mm')} • {
+                          invitation.status === 'pending' ? '대기중' :
+                          invitation.status === 'accepted' ? '수락됨' :
+                          invitation.status === 'declined' ? '거절됨' :
+                          invitation.status === 'cancelled' ? '취소됨' : invitation.status
+                        }
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{
-                        padding: '4px 8px',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        backgroundColor: invitation.status === 'pending' ? '#fff3cd' : 
-                                      invitation.status === 'accepted' ? '#d4edda' : 
-                                      invitation.status === 'cancelled' ? '#f8d7da' :
-                                      invitation.status === 'declined' ? '#f8d7da' : '#e9ecef',
-                        color: invitation.status === 'pending' ? '#856404' : 
-                               invitation.status === 'accepted' ? '#155724' : 
-                               invitation.status === 'cancelled' ? '#721c24' :
-                               invitation.status === 'declined' ? '#721c24' : '#6c757d'
-                      }}>
-                        {invitation.status === 'pending' ? '대기중' :
-                         invitation.status === 'accepted' ? '수락됨' :
-                         invitation.status === 'declined' ? '거절됨' :
-                         invitation.status === 'cancelled' ? '취소됨' : invitation.status}
-                      </span>
+                    <div className={layoutStyles.invitationActions}>
                       {invitation.status === 'pending' && (
                         <>
                           <button
@@ -741,54 +796,20 @@ export default function Feedback() {
                                   email: invitation.invitee_email,
                                   resend: true
                                 })
-                                alert('초대를 재전송했습니다.')
+                                showSuccess('초대를 재전송했습니다.')
                                 loadProjectInvitations()
                               } catch (error) {
-                                alert(error.response?.data?.message || '재전송 중 오류가 발생했습니다.')
+                                showError(error.response?.data?.message || '재전송 중 오류가 발생했습니다.')
                               }
                             }}
-                            style={{
-                              background: 'none',
-                              border: '1px solid #ffc107',
-                              color: '#ffc107',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontSize: '10px',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.background = '#ffc107'
-                              e.target.style.color = 'white'
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.background = 'none'
-                              e.target.style.color = '#ffc107'
-                            }}
+                            className={styles.feedbackButtonSmall}
                             title="초대 재전송"
                           >
                             재전송
                           </button>
                           <button
                             onClick={() => handleCancelInvitation(invitation.id)}
-                            style={{
-                              background: 'none',
-                              border: '1px solid #dc3545',
-                              color: '#dc3545',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontSize: '10px',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.target.style.background = '#dc3545'
-                              e.target.style.color = 'white'
-                            }}
-                            onMouseLeave={(e) => {
-                              e.target.style.background = 'none'
-                              e.target.style.color = '#dc3545'
-                            }}
+                            className={styles.minimalButtonDanger}
                             title="초대 취소"
                           >
                             취소
@@ -1280,23 +1301,13 @@ export default function Feedback() {
 
   return (
     <PageTemplate>
-      <div className="cms_wrap">
-        <SideBar tab="feedback" />
-        <main>
-          {/* WebSocket 연결 상태 표시기 - 사용자 요청으로 삭제됨 */}
-          
+      <div className={layoutStyles.feedbackContainer}>
+        <main className={layoutStyles.mainContent}>
           {current_project && (
-            <div className="content feedback feedback_page flex space_between">
-              <div className="videobox video_section" style={{ minHeight: '500px' }}>
-                <div
-                  className={
-                    current_project.files ? 'video_inner active' : 'video_inner'
-                  }
-                  style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                >
+              <div className={layoutStyles.videoSection}>
+                <div className={layoutStyles.videoPlayerWrapper}>
                   {current_project.files ? (
-                    <div className="video-player-section" style={{ position: 'relative' }}>
-                      <ReactVideoPlayer
+                    <EnhancedVideoPlayer
                         ref={videoPlayerRef}
                         videoUrl={(() => {
                           const fileUrl = current_project.files;
@@ -1381,14 +1392,80 @@ export default function Feedback() {
                       }}
                       onError={(error) => {
                         console.error('Video playback error:', error)
-                        // 비디오 로드 실패 시에도 페이지는 정상 작동하도록
                         SetVideoLoad(false)
                       }}
+                      aspectRatio="auto"
+                      autoplay={false}
+                      muted={false}
+                      onReady={() => SetVideoLoad(false)}
+                      onProgress={(state) => setCurrentVideoTime(state.playedSeconds)}
+                      feedbacks={[]}
                       />
                       
-                      {/* 플레이어 컨트롤 버튼들 - 플레이어 바로 아래 */}
-                      <div className="player-controls">
-                        {/* 여기에 플레이어 전용 컨트롤 추가 가능 */}
+                      {/* 비디오 컨트롤 영역 */}
+                      <div className={layoutStyles.videoControls}>
+                        <div className={layoutStyles.playbackControls}>
+                          {/* 그리기 도구 버튼 */}
+                          {current_project.files && (
+                            <button
+                              onClick={() => setIsDrawingMode(!isDrawingMode)}
+                              className={`${layoutStyles.controlButton} ${isDrawingMode ? layoutStyles.active : ''}`}
+                              title="화면에 그리기"
+                            >
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </button>
+                          )}
+                          
+                          {/* 스크린샷 버튼 */}
+                          {current_project.files && (
+                            <button
+                              onClick={captureScreenshot}
+                              className={layoutStyles.controlButton}
+                              title="현재 화면 캡처"
+                            >
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                        
+                        {/* 현재 시간 표시 */}
+                        <div className={layoutStyles.timeDisplay}>
+                          {feedbackTime || '00:00'}
+                        </div>
+                        
+                        {/* 업로드/교체 버튼 */}
+                        <div className={layoutStyles.playbackControls}>
+                          <input
+                            type="file"
+                            accept="video/*"
+                            onChange={FileChange}
+                            name="files"
+                            id="video-replace-button"
+                            className={styles.visuallyHidden}
+                          />
+                          <label 
+                            htmlFor="video-replace-button" 
+                            className={layoutStyles.controlButton}
+                            title={current_project.files ? "영상 파일 교체" : "영상 파일 업로드"}
+                          >
+                            {current_project.files ? (
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M4.05 9A7.002 7.002 0 0111 3a7 7 0 018.95 6M19.95 15A7.002 7.002 0 0113 21a7 7 0 01-8.95-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            ) : (
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 16V4M12 4L8 8M12 4L16 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M3 16v3a1 1 0 001 1h16a1 1 0 001-1v-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                              </svg>
+                            )}
+                          </label>
+                        </div>
                       </div>
                       
                       {/* 그리기 도구 오버레이 */}
@@ -1814,7 +1891,29 @@ export default function Feedback() {
                     </div>
                   )}
                 </div>
-                
+              </div>
+            )}
+          </main>
+          
+          {current_project && (
+            <aside className={layoutStyles.sidebar}>
+              <div className={layoutStyles.sidebarHeader}>
+                <h2>피드백 관리</h2>
+              </div>
+              
+              <nav className={layoutStyles.tabNavigation}>
+                {tabList.map(({ tab, content }, index) => (
+                  <button
+                    key={index}
+                    className={`${layoutStyles.tabButton} ${currentItem?.tab === tab ? layoutStyles.active : ''}`}
+                    onClick={() => changeItem(index)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </nav>
+              
+              <div className={layoutStyles.tabContent}>
                 <div className="etc_box">
                   <div className="flex space_between">
                     <div className="s_title">
@@ -1857,17 +1956,16 @@ export default function Feedback() {
                       )}
                     </div>
                   </div>
-                  {/* 선택된 피드백 내용 표시 - 피드백 전체 보기 버튼 바로 아래 */}
+                  {/* 선택된 피드백 내용 표시 */}
                   {selectedFeedback && (
-                    <div className="feedback-detail-display">
-                      <div className="feedback-header">
-                        <div className="user-info">
-                          <div className="avatar">
-                            {selectedFeedback.security ? '?' : (selectedFeedback.nickname || '').charAt(0).toUpperCase()}
+                    <div className={layoutStyles.feedbackItem}>
+                      <div className={layoutStyles.feedbackHeader}>
+                        <div className={layoutStyles.feedbackMeta}>
+                          <div className={layoutStyles.feedbackTime}>
+                            {selectedFeedback.time || '00:00'}
                           </div>
-                          <div className="info">
-                            <div className="name">
-                              {selectedFeedback.security ? '익명' : selectedFeedback.nickname}
+                          <div className={layoutStyles.feedbackAuthor}>
+                            {selectedFeedback.security ? '익명' : selectedFeedback.nickname}
                             </div>
                             <div className="meta">
                               <span>{moment(selectedFeedback.created).format('YYYY.MM.DD HH:mm')}</span>
@@ -1877,19 +1975,22 @@ export default function Feedback() {
                             </div>
                           </div>
                         </div>
-                        <button
-                          onClick={() => setSelectedFeedback(null)}
-                          className="close-btn"
-                        >
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                        </button>
+                        <div className={layoutStyles.feedbackActions}>
+                          <button
+                            onClick={() => setSelectedFeedback(null)}
+                            className={styles.minimalButton}
+                            title="닫기"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                      <div className="feedback-content">
+                      <div className={layoutStyles.feedbackContent}>
                         <p>{selectedFeedback.text}</p>
                       </div>
-                      <div className={styles.feedbackActions}>
+                      <div className={layoutStyles.feedbackActions}>
                         <button
                           className={styles.feedbackButtonSmall}
                           title="이 피드백에 답글 작성"
@@ -2365,6 +2466,10 @@ export default function Feedback() {
           </div>
         </div>
       )}
+              </div>
+            </aside>
+          )}
+        </div>
     </PageTemplate>
   )
 }

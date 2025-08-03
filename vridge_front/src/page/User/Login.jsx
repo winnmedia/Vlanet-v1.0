@@ -25,6 +25,7 @@ export default function Login() {
   const { uid, token } = queryString.parse(param.toString())
   const [loginController, setLoginController] = useState(null)
   const [resendingEmail, setResendingEmail] = useState(false)
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
   
   // Cleanup effect for any pending API requests
   useEffect(() => {
@@ -150,8 +151,14 @@ export default function Login() {
     }
   }
 
-  function Login() {
+  const handleLogin = () => {
     if (email.length > 0 && password.length > 0) {
+      // 이미 로그인 중이면 중복 실행 방지
+      if (isLoggingIn) {
+        console.log('로그인이 이미 진행 중입니다.')
+        return
+      }
+      
       // Cancel any previous login request
       if (loginController && loginController.abort) {
         loginController.abort()
@@ -159,17 +166,20 @@ export default function Login() {
       
       const controller = new AbortController()
       setLoginController(controller)
+      setIsLoggingIn(true)
       
       console.log('로그인 시도:', inputs)
       SignIn(inputs, { signal: controller.signal })
         .then((res) => {
           console.log('로그인 성공:', res)
           setLoginController(null)
+          setIsLoggingIn(false)
           showSuccess('로그인에 성공했습니다!')
           CommonLoginSuccess(res.data.vridge_session, res.data)
         })
         .catch((err) => {
           setLoginController(null)
+          setIsLoggingIn(false)
           if (err.name === 'AbortError') {
             // Request was aborted, do nothing
             return
@@ -248,6 +258,11 @@ export default function Login() {
             className="ty01 mt50"
             value={email}
             onChange={OnChange}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleLogin()
+              }
+            }}
           />
 
           <input
@@ -257,13 +272,27 @@ export default function Login() {
             className="ty01 mt10"
             value={password}
             onChange={OnChange}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleLogin()
+              }
+            }}
           />
           {login_message && <div className="error">{login_message}</div>}
           <div className="find_link tr" onClick={() => navigate('/resetpw')}>
             비밀번호 찾기
           </div>
-          <button className="submit mt20" onClick={Login}>
-            로그인
+          <button 
+            className="submit mt20" 
+            onClick={handleLogin} 
+            type="button"
+            disabled={isLoggingIn || !email || !password}
+            style={{
+              opacity: isLoggingIn || !email || !password ? 0.7 : 1,
+              cursor: isLoggingIn || !email || !password ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {isLoggingIn ? '로그인 중...' : '로그인'}
           </button>
           <div className="mt20 signup_link">
             브이래닛이 처음이신가요?{' '}

@@ -182,25 +182,27 @@ class SignIn(View):
             # Debug
             logger.debug(f"Login attempt - email: {email}, password: {'*' * len(password) if password else 'None'}")
             
-            # Try direct user lookup first with migration compatibility
+            # Simple user authentication
             try:
-                from .migration_compatibility import get_user_safely
-                user_obj = get_user_safely(email)
-                logger.debug(f"User found: {user_obj.username}, has_password: {bool(user_obj.password)}")
+                # Find user by email or username
+                user = models.User.objects.filter(username=email).first()
+                if not user:
+                    user = models.User.objects.filter(email=email).first()
                 
-                # Check password manually
-                from django.contrib.auth.hashers import check_password
-                if check_password(password, user_obj.password):
-                    user = user_obj
-                    logger.debug("Password check passed")
+                if user:
+                    logger.debug(f"User found: {user.username}")
+                    # Check password
+                    from django.contrib.auth.hashers import check_password
+                    if check_password(password, user.password):
+                        logger.debug("Password check passed")
+                    else:
+                        user = None
+                        logger.debug("Password check failed")
                 else:
-                    user = None
-                    logger.debug("Password check failed")
-            except models.User.DoesNotExist:
-                user = None
-                logger.debug("User not found in database")
+                    logger.debug("User not found in database")
+                    
             except Exception as e:
-                logger.error(f"User lookup error: {e}")
+                logger.error(f"Login error: {e}")
                 user = None
             
             if user is not None:

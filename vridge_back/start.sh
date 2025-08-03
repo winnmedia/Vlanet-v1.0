@@ -50,6 +50,8 @@ chmod -R 755 media
 # 서버 시작
 echo ""
 echo "🚀 Gunicorn 서버 시작..."
+echo "헬스체크 URL: http://0.0.0.0:$PORT/"
+echo "API 헬스체크 URL: http://0.0.0.0:$PORT/api/health/"
 exec gunicorn config.wsgi:application \
     --bind 0.0.0.0:$PORT \
     --workers 2 \
@@ -61,4 +63,5 @@ exec gunicorn config.wsgi:application \
     --preload \
     --access-logfile - \
     --error-logfile - \
-    --log-level info
+    --log-level info \
+    --worker-tmp-dir /dev/shm

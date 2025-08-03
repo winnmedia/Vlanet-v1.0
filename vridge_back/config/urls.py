@@ -73,6 +73,8 @@ class SPAView(TemplateView):
             return JsonResponse({"message": "React app should be served here"})
 
 urlpatterns = [
+    # 루트 경로 헬스체크 (Railway 기본 헬스체크용)
+    path("", simple_health_check, name="root_health"),
     # API 헬스체크
     path("api/health/", simple_health_check, name="api_health"),  # 간단한 헬스체크
     path("api/health-full/", health_check, name="api_health_full"),  # 상세 헬스체크

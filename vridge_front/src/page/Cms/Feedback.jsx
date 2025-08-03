@@ -1307,102 +1307,103 @@ export default function Feedback() {
               <div className={layoutStyles.videoSection}>
                 <div className={layoutStyles.videoPlayerWrapper}>
                   {current_project.files ? (
-                    <EnhancedVideoPlayer
-                        ref={videoPlayerRef}
-                        videoUrl={(() => {
-                          const fileUrl = current_project.files;
-                          console.log('[VideoPlayer] === VIDEO URL DEBUG ===');
-                          console.log('[VideoPlayer] Current project:', current_project);
-                          console.log('[VideoPlayer] Original file URL:', fileUrl);
-                          console.log('[VideoPlayer] File URL type:', typeof fileUrl);
-                          
-                          // 파일 URL이 없는 경우
-                          if (!fileUrl) {
-                            console.warn('[VideoPlayer] No file URL provided');
-                            return '';
-                          }
-                        
-                        // 이미 전체 URL인 경우 (백엔드에서 완전한 URL 반환)
-                        if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
-                          console.log('[VideoPlayer] Using complete URL from backend:', fileUrl);
-                          
-                          // 비디오 URL 유효성 검사를 위한 테스트 요청
-                          fetch(fileUrl, { method: 'HEAD' })
-                            .then(response => {
-                              console.log('[VideoPlayer] URL test response:', {
-                                status: response.status,
-                                ok: response.ok,
-                                contentType: response.headers.get('content-type'),
-                                contentLength: response.headers.get('content-length')
-                              });
-                            })
-                            .catch(error => {
-                              console.error('[VideoPlayer] URL test failed:', error);
-                            });
-                          
-                          // URL이 이미 인코딩되어 있는지 확인하고 필요시 디코딩
-                          try {
-                            const decodedUrl = decodeURI(fileUrl);
-                            if (decodedUrl !== fileUrl) {
-                              console.log('[VideoPlayer] URL was already encoded, using as is');
-                              return fileUrl;
+                    <>
+                      <EnhancedVideoPlayer
+                          ref={videoPlayerRef}
+                          videoUrl={(() => {
+                            const fileUrl = current_project.files;
+                            console.log('[VideoPlayer] === VIDEO URL DEBUG ===');
+                            console.log('[VideoPlayer] Current project:', current_project);
+                            console.log('[VideoPlayer] Original file URL:', fileUrl);
+                            console.log('[VideoPlayer] File URL type:', typeof fileUrl);
+                            
+                            // 파일 URL이 없는 경우
+                            if (!fileUrl) {
+                              console.warn('[VideoPlayer] No file URL provided');
+                              return '';
                             }
-                          } catch (e) {
-                            console.log('[VideoPlayer] URL decode failed, using as is');
+                          
+                          // 이미 전체 URL인 경우 (백엔드에서 완전한 URL 반환)
+                          if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+                            console.log('[VideoPlayer] Using complete URL from backend:', fileUrl);
+                            
+                            // 비디오 URL 유효성 검사를 위한 테스트 요청
+                            fetch(fileUrl, { method: 'HEAD' })
+                              .then(response => {
+                                console.log('[VideoPlayer] URL test response:', {
+                                  status: response.status,
+                                  ok: response.ok,
+                                  contentType: response.headers.get('content-type'),
+                                  contentLength: response.headers.get('content-length')
+                                });
+                              })
+                              .catch(error => {
+                                console.error('[VideoPlayer] URL test failed:', error);
+                              });
+                            
+                            // URL이 이미 인코딩되어 있는지 확인하고 필요시 디코딩
+                            try {
+                              const decodedUrl = decodeURI(fileUrl);
+                              if (decodedUrl !== fileUrl) {
+                                console.log('[VideoPlayer] URL was already encoded, using as is');
+                                return fileUrl;
+                              }
+                            } catch (e) {
+                              console.log('[VideoPlayer] URL decode failed, using as is');
+                            }
+                            return fileUrl;
                           }
-                          return fileUrl;
-                        }
+                          
+                          // 상대 경로인 경우 백엔드 URL과 결합
+                          const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net';
+                          
+                          // 개발 환경에서 localhost와 127.0.0.1 통일
+                          let adjustedBackendUrl = backendUrl;
+                          if (typeof window !== 'undefined' && window.location.hostname === 'localhost' && backendUrl.includes('127.0.0.1')) {
+                            adjustedBackendUrl = backendUrl.replace('127.0.0.1', 'localhost');
+                          } else if (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1' && backendUrl.includes('localhost')) {
+                            adjustedBackendUrl = backendUrl.replace('localhost', '127.0.0.1');
+                          }
+                          
+                          let fullUrl;
+                          if (fileUrl.startsWith('/')) {
+                            // /media/로 시작하는 절대 경로
+                            fullUrl = `${adjustedBackendUrl}${fileUrl}`;
+                          } else {
+                            // 상대 경로
+                            fullUrl = `${adjustedBackendUrl}/${fileUrl}`;
+                          }
+                          
+                          console.log('[VideoPlayer] Constructed URL:', fullUrl);
+                          console.log('[VideoPlayer] Current hostname:', typeof window !== 'undefined' && window.location.hostname);
+                          return fullUrl;
+                        })()}
+                        initialTime={currentVideoTime}
+                        onTimeClick={(time, screenshotUrl) => {
+                          // 시간 클릭 시 해당 시간으로 피드백 추가
+                          const minutes = Math.floor(time / 60)
+                          const seconds = Math.floor(time % 60)
+                          const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                          
+                          // 시간을 상태로 설정
+                          setFeedbackTime(timeStr)
+                          
+                          // 피드백 등록 탭으로 전환
+                          changeItem(0)
+                        }}
+                        onError={(error) => {
+                          console.error('Video playback error:', error)
+                          SetVideoLoad(false)
+                        }}
+                        aspectRatio="auto"
+                        autoplay={false}
+                        muted={false}
+                        onReady={() => SetVideoLoad(false)}
+                        onProgress={(state) => setCurrentVideoTime(state.playedSeconds)}
+                        feedbacks={[]}
+                        />
                         
-                        // 상대 경로인 경우 백엔드 URL과 결합
-                        const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.vlanet.net';
-                        
-                        // 개발 환경에서 localhost와 127.0.0.1 통일
-                        let adjustedBackendUrl = backendUrl;
-                        if (typeof window !== 'undefined' && window.location.hostname === 'localhost' && backendUrl.includes('127.0.0.1')) {
-                          adjustedBackendUrl = backendUrl.replace('127.0.0.1', 'localhost');
-                        } else if (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1' && backendUrl.includes('localhost')) {
-                          adjustedBackendUrl = backendUrl.replace('localhost', '127.0.0.1');
-                        }
-                        
-                        let fullUrl;
-                        if (fileUrl.startsWith('/')) {
-                          // /media/로 시작하는 절대 경로
-                          fullUrl = `${adjustedBackendUrl}${fileUrl}`;
-                        } else {
-                          // 상대 경로
-                          fullUrl = `${adjustedBackendUrl}/${fileUrl}`;
-                        }
-                        
-                        console.log('[VideoPlayer] Constructed URL:', fullUrl);
-                        console.log('[VideoPlayer] Current hostname:', typeof window !== 'undefined' && window.location.hostname);
-                        return fullUrl;
-                      })()}
-                      initialTime={currentVideoTime}
-                      onTimeClick={(time, screenshotUrl) => {
-                        // 시간 클릭 시 해당 시간으로 피드백 추가
-                        const minutes = Math.floor(time / 60)
-                        const seconds = Math.floor(time % 60)
-                        const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                        
-                        // 시간을 상태로 설정
-                        setFeedbackTime(timeStr)
-                        
-                        // 피드백 등록 탭으로 전환
-                        changeItem(0)
-                      }}
-                      onError={(error) => {
-                        console.error('Video playback error:', error)
-                        SetVideoLoad(false)
-                      }}
-                      aspectRatio="auto"
-                      autoplay={false}
-                      muted={false}
-                      onReady={() => SetVideoLoad(false)}
-                      onProgress={(state) => setCurrentVideoTime(state.playedSeconds)}
-                      feedbacks={[]}
-                      />
-                      
-                      {/* 비디오 컨트롤 영역 */}
+                        {/* 비디오 컨트롤 영역 */}
                       <div className={layoutStyles.videoControls}>
                         <div className={layoutStyles.playbackControls}>
                           {/* 그리기 도구 버튼 */}
@@ -1476,7 +1477,7 @@ export default function Feedback() {
                         currentTime={videoPlayerRef.current?.getCurrentTime() || 0}
                         onSaveDrawing={handleSaveDrawing}
                       />
-                    </div>
+                    </>
                   ) : (
                     // 영상이 없을 때 업로드 UI - 플레이어 중앙에 위치
                     IsAdmin(current_project) && (
@@ -1966,13 +1967,12 @@ export default function Feedback() {
                           </div>
                           <div className={layoutStyles.feedbackAuthor}>
                             {selectedFeedback.security ? '익명' : selectedFeedback.nickname}
-                            </div>
-                            <div className="meta">
-                              <span>{moment(selectedFeedback.created).format('YYYY.MM.DD HH:mm')}</span>
-                              {selectedFeedback.section && (
-                                <span className="time-badge">{selectedFeedback.section}</span>
-                              )}
-                            </div>
+                          </div>
+                          <div className="meta">
+                            <span>{moment(selectedFeedback.created).format('YYYY.MM.DD HH:mm')}</span>
+                            {selectedFeedback.section && (
+                              <span className="time-badge">{selectedFeedback.section}</span>
+                            )}
                           </div>
                         </div>
                         <div className={layoutStyles.feedbackActions}>
@@ -2188,10 +2188,9 @@ export default function Feedback() {
                   </div>
                 </div>
               </div>
-            </div>
+            </aside>
           )}
-        </main>
-      </div>
+        </div>
       {showUploadGuide && (
         <VideoUploadGuide onClose={() => setShowUploadGuide(false)} />
       )}
@@ -2466,10 +2465,6 @@ export default function Feedback() {
           </div>
         </div>
       )}
-              </div>
-            </aside>
-          )}
-        </div>
     </PageTemplate>
   )
 }

@@ -188,8 +188,12 @@ export default function Login() {
           console.error('Error response:', err.response)
           
           if (err.response && err.response.data) {
+            // 401 에러 처리 (인증 실패)
+            if (err.response.status === 401) {
+              SetLoginMessage(err.response.data.message || '이메일 또는 비밀번호가 올바르지 않습니다.')
+            }
             // 이메일 미인증 에러 처리
-            if (err.response.status === 403 && err.response.data.error_code === 'EMAIL_NOT_VERIFIED') {
+            else if (err.response.status === 403 && err.response.data.error_code === 'EMAIL_NOT_VERIFIED') {
               SetLoginMessage(
                 <div>
                   <p style={{ margin: '0 0 10px 0' }}>{err.response.data.message}</p>
@@ -212,10 +216,10 @@ export default function Login() {
             } else if (err.response.data.message) {
               SetLoginMessage(err.response.data.message)
             } else {
-              SetLoginMessage('이메일 또는 비밀번호가 일치하지 않습니다.')
+              SetLoginMessage('로그인 중 오류가 발생했습니다.')
             }
           } else {
-            SetLoginMessage('이메일 또는 비밀번호가 일치하지 않습니다.')
+            SetLoginMessage('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.')
           }
         })
     } else {

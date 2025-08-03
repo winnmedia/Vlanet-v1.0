@@ -7,6 +7,7 @@ import SideBar from 'components/SideBar'
 import ProjectDashboard from 'components/ProjectDashboard'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
 import ProjectScheduleSection from 'components/ProjectScheduleSection'
+import WorkflowProgress from 'components/WorkflowEngine/WorkflowProgress'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from '../../util/nextNavigation'
@@ -15,9 +16,9 @@ import { refetchProject, checkSession } from 'util/util'
 
 import moment from 'moment'
 import 'moment/locale/ko'
-import { UpdateDate } from 'api/project'
 import { GetMyInvitations, AcceptInvitation, DeclineInvitation } from 'api/invitation'
 import { updateProjectStore } from '../../redux/project'
+import { useProjectSchedule } from '../../hooks/useProjectSchedule'
 
 export default function CmsHome() {
   const { navigate } = useRouter()
@@ -25,6 +26,7 @@ export default function CmsHome() {
   const { project_list, this_month_project, next_month_project, user } = useSelector(
     (s) => s.ProjectStore,
   )
+  const { isUpdating, updateProgress, updatePhase, completePhase } = useProjectSchedule()
   let intervalId = useRef()
   const date = new Date()
   const [time, setTime] = useState('')
@@ -345,20 +347,39 @@ export default function CmsHome() {
             {/* 프로젝트 단계별 진행 현황 - Calendar 페이지와 동일한 디자인 */}
             <ProjectPhaseBoard 
                   projects={[...projectListData]} 
-                  onPhaseUpdate={(projectId, phase, startDate, endDate, completed) => {
-                    const data = {
-                      type: phase,
-                      start_date: startDate,
-                      end_date: endDate,
-                      completed: completed !== undefined ? completed : false
+                  onPhaseUpdate={async (projectId, phase, startDate, endDate, completed) => {
+                    console.log('[CmsHome] onPhaseUpdate called:', {
+                      projectId,
+                      phase,
+                      startDate,
+                      endDate,
+                      completed
+                    })
+                    
+                    // 현재 프로젝트 찾기
+                    const currentProject = projectListData.find(p => p.id === projectId)
+                    if (!currentProject) {
+                      console.error('[CmsHome] Project not found:', projectId)
+                      return
                     }
-                    UpdateDate(data, projectId)
-                      .then(() => {
-                        refetchProject(dispatch, navigate)
-                      })
-                      .catch(err => {
-                        console.error('Failed to update phase:', err)
-                      })
+
+                    console.log('[CmsHome] Current project phase data:', currentProject[phase])
+
+                    // 단계가 완료로 변경되는 경우
+                    if (completed && !currentProject[phase]?.completed) {
+                      console.log('[CmsHome] Calling completePhase...')
+                      // 완료 처리 및 후속 일정 자동 조정
+                      await completePhase(projectId, currentProject, phase, navigate)
+                    } else {
+                      console.log('[CmsHome] Calling updatePhase...')
+                      // 일반적인 날짜/상태 업데이트
+                      await updatePhase(projectId, {
+                        phase,
+                        startDate,
+                        endDate,
+                        completed: completed || false
+                      }, navigate)
+                    }
                   }}
                   projectCounts={{
                     total: projectListData.length,

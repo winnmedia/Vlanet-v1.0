@@ -7,9 +7,12 @@ from rest_framework.response import Response
 from django.http import HttpResponse
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
-from .models import VideoPlanning, VideoPlanningImage
+from django.utils import timezone
+from .models import VideoPlanning, VideoPlanningImage, VideoPlanningAIPrompt
 from .serializers import VideoPlanningSerializer, VideoPlanningListSerializer
 from .gemini_service import GeminiService
+from .ai_prompt_engine import PromptOptimizationService, PromptGenerationContext, PromptGenerationResult
+from .ai_prompt_generator import VideoPlanningPromptGenerator, VEO3PromptGenerator
 import logging
 
 # 이미지 생성 서비스 import
@@ -25,9 +28,10 @@ import os
 import json
 from django.http import FileResponse, HttpResponse
 from .pdf_export_service import PDFExportService
+from .compressed_pdf_export_service import CompressedPDFExportService
+from .pdf_export_service_enhanced import EnhancedPDFExportService
 from .google_slides_service import GoogleSlidesService
 from .services.advanced_pdf_export_service import AdvancedPDFExportService
-from .enhanced_pdf_export_service import EnhancedPDFExportService
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -171,9 +175,16 @@ def generate_story(request):
         gemini_service = GeminiService()
         stories_data = gemini_service.generate_stories_from_planning(planning_text, context)
         
+        logger.info(f"[generate_story] Stories data response: {stories_data}")
+        
         if 'error' in stories_data:
             logger.error(f"Gemini API error: {stories_data['error']}")
-            stories_data = stories_data.get('fallback', {})
+            # fallback이 있으면 사용, 없으면 stories 배열을 사용
+            if 'stories' in stories_data:
+                # 에러가 있어도 stories가 있으면 사용 (fallback stories)
+                stories_data = {'stories': stories_data['stories']}
+            else:
+                stories_data = stories_data.get('fallback', {'stories': []})
         
         # 로그인한 사용자인 경우 VideoPanning 로그 저장
         if request.user.is_authenticated:
@@ -214,9 +225,20 @@ def generate_story(request):
             except Exception as e:
                 logger.error(f"Failed to create VideoPanning log: {e}")
         
+        # stories가 실제로 있는지 확인
+        if not stories_data.get('stories'):
+            logger.warning("No stories in response, returning empty array")
+            stories_data = {'stories': []}
+        
+        logger.info(f"[generate_story] Final response stories count: {len(stories_data.get('stories', []))}")
+        
+        # 토큰 사용량 정보 추가
+        token_usage = gemini_service.get_token_usage()
+        
         return Response({
             'status': 'success',
-            'data': stories_data
+            'data': stories_data,
+            'token_usage': token_usage
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -250,9 +272,13 @@ def generate_scenes(request):
             logger.error(f"Gemini API error: {scenes_data['error']}")
             scenes_data = scenes_data.get('fallback', {})
         
+        # 토큰 사용량 정보 추가
+        token_usage = gemini_service.get_token_usage()
+        
         return Response({
             'status': 'success',
-            'data': scenes_data
+            'data': scenes_data,
+            'token_usage': token_usage
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -282,9 +308,13 @@ def generate_shots(request):
             logger.error(f"Gemini API error: {shots_data['error']}")
             shots_data = shots_data.get('fallback', {})
         
+        # 토큰 사용량 정보 추가
+        token_usage = gemini_service.get_token_usage()
+        
         return Response({
             'status': 'success',
-            'data': shots_data
+            'data': shots_data,
+            'token_usage': token_usage
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -376,9 +406,13 @@ def generate_storyboards(request):
                 except Exception as e:
                     logger.error(f"Image generation for fallback failed: {e}")
         
+        # 토큰 사용량 정보 추가
+        token_usage = gemini_service.get_token_usage()
+        
         return Response({
             'status': 'success',
-            'data': storyboard_data
+            'data': storyboard_data,
+            'token_usage': token_usage
         }, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -645,7 +679,10 @@ def save_planning(request):
             
             return Response({
                 'status': 'success',
-                'data': VideoPlanningSerializer(planning).data,
+                'data': {
+                    'planning_id': planning.id,
+                    'planning': VideoPlanningSerializer(planning).data
+                },
                 'message': '기획이 저장되었습니다.'
             }, status=status.HTTP_201_CREATED)
         else:
@@ -824,13 +861,42 @@ def delete_planning(request, planning_id):
 def planning_library_view(request):
     """라이브러리 뷰 - GET과 POST 모두 처리"""
     if request.method == 'GET':
-        # 임시 응답 - 빈 목록 반환
-        return Response({
-            'status': 'success',
-            'data': {
-                'plannings': []
-            }
-        }, status=status.HTTP_200_OK)
+        # 사용자의 저장된 기획안 목록 반환
+        try:
+            plannings = VideoPlanning.objects.filter(
+                user=request.user
+            ).order_by('-created_at')
+            
+            planning_list = []
+            for planning in plannings:
+                planning_list.append({
+                    'id': planning.id,
+                    'title': planning.title or '제목 없음',
+                    'created_at': planning.created_at.strftime('%Y-%m-%d %H:%M') if planning.created_at else '',
+                    'updated_at': planning.updated_at.strftime('%Y-%m-%d %H:%M') if planning.updated_at else '',
+                    'is_completed': planning.is_completed,
+                    'current_step': planning.current_step,
+                    'thumbnail': planning.thumbnail_url if hasattr(planning, 'thumbnail_url') else None,
+                    'planning_options': planning.planning_options if hasattr(planning, 'planning_options') else {},
+                    'scene_count': len(planning.scenes) if planning.scenes else 0,
+                    'has_storyboards': bool(planning.storyboards) if planning.storyboards else False
+                })
+            
+            return Response({
+                'status': 'success',
+                'data': {
+                    'plannings': planning_list,
+                    'total_count': len(planning_list)
+                }
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"Error in planning_library_view GET: {str(e)}", exc_info=True)
+            return Response({
+                'status': 'error',
+                'message': f'기획 목록을 가져오는 중 오류가 발생했습니다: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
     elif request.method == 'POST':
         return save_planning(request)
 
@@ -842,6 +908,7 @@ def export_to_pdf(request):
     try:
         planning_data = request.data.get('planning_data', {})
         export_type = request.data.get('export_type', 'full')  # 'full' or 'storyboard_only'
+        use_enhanced_layout = request.data.get('use_enhanced_layout', True)  # 가로형 레이아웃 사용 여부
         
         if not planning_data:
             return Response({
@@ -849,19 +916,46 @@ def export_to_pdf(request):
                 'message': '기획 데이터가 필요합니다.'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # PDF 생성 서비스
-        pdf_service = PDFExportService()
+        # 사용자가 입력한 모든 데이터를 JSON 형태로 로깅
+        logger.info("PDF 내보내기 요청 데이터 (JSON):")
+        logger.info(json.dumps(planning_data, ensure_ascii=False, indent=2))
         
-        # PDF 생성
-        if export_type == 'storyboard_only':
-            pdf_buffer = pdf_service.generate_storyboard_only_pdf(planning_data)
-        else:
+        # planning_options가 없으면 빈 딕셔너리로 설정
+        if 'planning_options' not in planning_data:
+            planning_data['planning_options'] = {}
+        
+        # PDF 생성 서비스 선택
+        use_compressed = request.data.get('use_compressed', True)  # 기본값을 압축 버전으로
+        
+        if use_compressed:
+            # 압축된 레이아웃 사용 (LLM 요약 포함)
+            pdf_service = CompressedPDFExportService()
             pdf_buffer = pdf_service.generate_pdf(planning_data)
+        elif use_enhanced_layout:
+            # 가로형 보고서 레이아웃 사용
+            pdf_service = EnhancedPDFExportService()
+            pdf_buffer = pdf_service.generate_pdf(planning_data)
+        else:
+            # 기존 세로형 레이아웃 사용
+            pdf_service = PDFExportService()
+            if export_type == 'storyboard_only':
+                pdf_buffer = pdf_service.generate_storyboard_only_pdf(planning_data)
+            else:
+                pdf_buffer = pdf_service.generate_pdf(planning_data)
         
         # 파일명 생성
         title = planning_data.get('title', '영상기획안')
         safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
-        filename = f"{safe_title}_{'스토리보드' if export_type == 'storyboard_only' else '기획안'}.pdf"
+        
+        # 레이아웃 접미사 설정
+        if use_compressed:
+            layout_suffix = '_압축판'
+        elif use_enhanced_layout:
+            layout_suffix = '_가로형'
+        else:
+            layout_suffix = ''
+        
+        filename = f"{safe_title}_{'스토리보드' if export_type == 'storyboard_only' else '기획안'}{layout_suffix}.pdf"
         
         # 파일 응답 반환
         response = FileResponse(
@@ -1074,4 +1168,586 @@ def get_export_formats(request):
         return Response({
             'status': 'error',
             'message': '내보내기 형식 조회 중 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# ================================
+# AI 프롬프트 생성 API 엔드포인트들
+# ================================
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generate_ai_prompt(request):
+    """
+    AI 프롬프트 생성 - 1000% 효율화를 위한 지능형 프롬프트 시스템
+    """
+    try:
+        data = request.data
+        planning_id = data.get('planning_id')
+        prompt_type = data.get('prompt_type')  # story, scene, shot, image
+        user_input = data.get('user_input', '')
+        optimization_level = data.get('optimization_level', 'high')  # low, medium, high, extreme
+        
+        # 입력값 검증
+        if not planning_id:
+            return Response({
+                'status': 'error',
+                'message': '기획 ID가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not prompt_type:
+            return Response({
+                'status': 'error',
+                'message': '프롬프트 타입이 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if prompt_type not in ['story', 'scene', 'shot', 'image', 'storyboard']:
+            return Response({
+                'status': 'error',
+                'message': '지원하지 않는 프롬프트 타입입니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 기획 조회 및 권한 확인
+        try:
+            planning = VideoPlanning.objects.get(id=planning_id, user=request.user)
+        except VideoPlanning.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '기획을 찾을 수 없거나 접근 권한이 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # AI 프롬프트 생성 서비스 호출
+        prompt_service = PromptOptimizationService()
+        
+        if prompt_type == 'story':
+            result = prompt_service.generate_story_prompt(planning, user_input, optimization_level)
+        elif prompt_type == 'scene':
+            result = prompt_service.generate_scene_prompt(planning, user_input, optimization_level)
+        elif prompt_type == 'shot':
+            result = prompt_service.generate_shot_prompt(planning, user_input, optimization_level)
+        elif prompt_type in ['image', 'storyboard']:
+            result = prompt_service.generate_image_prompt(planning, user_input, optimization_level)
+        
+        if result.is_successful:
+            response_data = {
+                'status': 'success',
+                'data': {
+                    'original_prompt': result.original_prompt,
+                    'enhanced_prompt': result.enhanced_prompt,
+                    'generation_time': result.generation_time,
+                    'tokens_estimate': result.tokens_estimate,
+                    'cost_estimate': result.cost_estimate,
+                    'confidence_score': result.confidence_score,
+                    'optimization_suggestions': result.optimization_suggestions
+                },
+                'message': 'AI 프롬프트가 성공적으로 생성되었습니다.'
+            }
+            
+            # 분석 데이터 업데이트
+            try:
+                analytics, created = planning.analytics.get_or_create(planning=planning)
+                analytics.update_metrics()
+            except Exception as e:
+                logger.warning(f"분석 데이터 업데이트 실패: {str(e)}")
+            
+            return Response(response_data, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'status': 'error',
+                'message': f'프롬프트 생성 실패: {result.error_message}',
+                'data': {
+                    'generation_time': result.generation_time
+                }
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    except Exception as e:
+        logger.error(f"AI 프롬프트 생성 오류: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'프롬프트 생성 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_prompt_analytics(request, planning_id):
+    """
+    AI 프롬프트 분석 데이터 조회
+    """
+    try:
+        # 기획 조회 및 권한 확인
+        try:
+            planning = VideoPlanning.objects.get(id=planning_id, user=request.user)
+        except VideoPlanning.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '기획을 찾을 수 없거나 접근 권한이 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 분석 데이터 생성
+        prompt_service = PromptOptimizationService()
+        analytics_data = prompt_service.get_optimization_analytics(planning)
+        
+        return Response({
+            'status': 'success',
+            'data': analytics_data,
+            'message': '분석 데이터를 성공적으로 조회했습니다.'
+        }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        logger.error(f"프롬프트 분석 조회 오류: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'분석 데이터 조회 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_prompt_history(request, planning_id):
+    """
+    AI 프롬프트 생성 히스토리 조회
+    """
+    try:
+        # 기획 조회 및 권한 확인
+        try:
+            planning = VideoPlanning.objects.get(id=planning_id, user=request.user)
+        except VideoPlanning.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '기획을 찾을 수 없거나 접근 권한이 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 프롬프트 히스토리 조회
+        prompts = VideoPlanningAIPrompt.objects.filter(planning=planning).order_by('-created_at')
+        
+        # 페이지네이션
+        page = int(request.GET.get('page', 1))
+        page_size = int(request.GET.get('page_size', 20))
+        start_idx = (page - 1) * page_size
+        end_idx = start_idx + page_size
+        
+        total_count = prompts.count()
+        prompts_page = prompts[start_idx:end_idx]
+        
+        # 데이터 직렬화
+        prompt_data = []
+        for prompt in prompts_page:
+            prompt_data.append({
+                'id': prompt.id,
+                'prompt_type': prompt.prompt_type,
+                'prompt_type_display': prompt.get_prompt_type_display(),
+                'original_prompt': prompt.original_prompt[:200] + "..." if len(prompt.original_prompt) > 200 else prompt.original_prompt,
+                'enhanced_prompt': prompt.enhanced_prompt[:200] + "..." if len(prompt.enhanced_prompt) > 200 else prompt.enhanced_prompt,
+                'is_successful': prompt.is_successful,
+                'generation_time': prompt.generation_time,
+                'tokens_used': prompt.tokens_used,
+                'cost_estimate': float(prompt.cost_estimate) if prompt.cost_estimate else 0,
+                'created_at': prompt.created_at.isoformat(),
+                'error_message': prompt.error_message
+            })
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'prompts': prompt_data,
+                'pagination': {
+                    'page': page,
+                    'page_size': page_size,
+                    'total_count': total_count,
+                    'total_pages': (total_count + page_size - 1) // page_size,
+                    'has_next': end_idx < total_count,
+                    'has_prev': page > 1
+                }
+            },
+            'message': '프롬프트 히스토리를 성공적으로 조회했습니다.'
+        }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        logger.error(f"프롬프트 히스토리 조회 오류: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'히스토리 조회 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_pro_settings(request, planning_id):
+    """
+    영상 기획 프로 설정 업데이트
+    """
+    try:
+        # 기획 조회 및 권한 확인
+        try:
+            planning = VideoPlanning.objects.get(id=planning_id, user=request.user)
+        except VideoPlanning.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '기획을 찾을 수 없거나 접근 권한이 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        data = request.data
+        updated_fields = []
+        
+        # 컬러톤 설정 업데이트
+        if 'color_tone' in data:
+            planning.color_tone = data['color_tone']
+            updated_fields.append('color_tone')
+        
+        # 카메라 설정 업데이트
+        if 'camera_settings' in data:
+            planning.camera_settings = data['camera_settings']
+            updated_fields.append('camera_settings')
+        
+        # 조명 설정 업데이트
+        if 'lighting_setup' in data:
+            planning.lighting_setup = data['lighting_setup']
+            updated_fields.append('lighting_setup')
+        
+        # 오디오 설정 업데이트
+        if 'audio_config' in data:
+            planning.audio_config = data['audio_config']
+            updated_fields.append('audio_config')
+        
+        # AI 생성 설정 업데이트
+        if 'ai_generation_config' in data:
+            planning.ai_generation_config = data['ai_generation_config']
+            updated_fields.append('ai_generation_config')
+        
+        # 협업 설정 업데이트
+        if 'collaboration_settings' in data:
+            planning.collaboration_settings = data['collaboration_settings']
+            updated_fields.append('collaboration_settings')
+        
+        # 워크플로우 설정 업데이트
+        if 'workflow_config' in data:
+            planning.workflow_config = data['workflow_config']
+            updated_fields.append('workflow_config')
+        
+        if updated_fields:
+            planning.save(update_fields=updated_fields + ['updated_at'])
+            
+            return Response({
+                'status': 'success',
+                'data': {
+                    'updated_fields': updated_fields,
+                    'pro_mode_enabled': planning.is_pro_mode_enabled()
+                },
+                'message': '프로 설정이 성공적으로 업데이트되었습니다.'
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'status': 'error',
+                'message': '업데이트할 설정이 없습니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    except Exception as e:
+        logger.error(f"프로 설정 업데이트 오류: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'설정 업데이트 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_pro_templates(request):
+    """
+    영상 기획 프로 템플릿 목록 조회
+    """
+    try:
+        from .models import VideoPlanningProTemplate
+        
+        # 활성화된 템플릿만 조회
+        templates = VideoPlanningProTemplate.objects.filter(is_active=True).order_by('-usage_count', 'name')
+        
+        # 카테고리 필터링
+        category = request.GET.get('category')
+        if category:
+            templates = templates.filter(category=category)
+        
+        template_data = []
+        for template in templates:
+            template_data.append({
+                'id': template.id,
+                'name': template.name,
+                'category': template.category,
+                'description': template.description,
+                'default_color_tone': template.default_color_tone,
+                'default_camera_settings': template.default_camera_settings,
+                'default_lighting_setup': template.default_lighting_setup,
+                'default_audio_config': template.default_audio_config,
+                'usage_count': template.usage_count,
+                'created_at': template.created_at.isoformat()
+            })
+        
+        # 사용 가능한 카테고리 목록
+        categories = VideoPlanningProTemplate.objects.filter(is_active=True).values_list('category', flat=True).distinct()
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'templates': template_data,
+                'categories': list(categories)
+            },
+            'message': '프로 템플릿을 성공적으로 조회했습니다.'
+        }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        logger.error(f"프로 템플릿 조회 오류: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'템플릿 조회 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def apply_pro_template(request, planning_id, template_id):
+    """
+    프로 템플릿을 기획에 적용
+    """
+    try:
+        from .models import VideoPlanningProTemplate
+        
+        # 기획 조회 및 권한 확인
+        try:
+            planning = VideoPlanning.objects.get(id=planning_id, user=request.user)
+        except VideoPlanning.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '기획을 찾을 수 없거나 접근 권한이 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 템플릿 조회
+        try:
+            template = VideoPlanningProTemplate.objects.get(id=template_id, is_active=True)
+        except VideoPlanningProTemplate.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': '템플릿을 찾을 수 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 템플릿 적용
+        planning.color_tone = template.default_color_tone
+        planning.camera_settings = template.default_camera_settings
+        planning.lighting_setup = template.default_lighting_setup
+        planning.audio_config = template.default_audio_config
+        
+        planning.save(update_fields=['color_tone', 'camera_settings', 'lighting_setup', 'audio_config', 'updated_at'])
+        
+        # 템플릿 사용 횟수 증가
+        template.increment_usage()
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'template_name': template.name,
+                'applied_settings': {
+                    'color_tone': planning.color_tone,
+                    'camera_settings': planning.camera_settings,
+                    'lighting_setup': planning.lighting_setup,
+                    'audio_config': planning.audio_config
+                }
+            },
+            'message': f'"{template.name}" 템플릿이 성공적으로 적용되었습니다.'
+        }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        logger.error(f"프로 템플릿 적용 오류: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'템플릿 적용 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# ================================
+# AI 기반 기획 생성 엔드포인트 (30초 기획)
+# ================================
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def ai_quick_suggestions(request):
+    """AI 빠른 제안 생성 - 프로젝트 타입별 즉시 가이드"""
+    try:
+        from .ai_prompt_generator import VideoPlanningPromptGenerator
+        
+        generator = VideoPlanningPromptGenerator()
+        suggestions = generator.generate_quick_suggestions(request.data)
+        
+        return Response({
+            'status': 'success',
+            'suggestions': suggestions,
+            'message': 'AI 제안이 생성되었습니다.'
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"AI 제안 생성 오류: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': f'AI 제안 생성 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def ai_generate_full_planning(request):
+    """완전한 AI 기획안 생성 - 30초만에 전체 기획"""
+    try:
+        from .ai_prompt_generator import VideoPlanningPromptGenerator
+        
+        generator = VideoPlanningPromptGenerator()
+        planning = generator.generate_full_planning(request.data)
+        
+        # 사용자의 기획으로 저장 옵션
+        if request.data.get('save_to_library', False):
+            video_planning = VideoPlanning.objects.create(
+                user=request.user,
+                title=planning['title'],
+                planning=planning['planning'],
+                color_tone=planning.get('pro_options', {}).get('colorTone'),
+                camera_settings={
+                    'type': planning.get('pro_options', {}).get('cameraType'),
+                    'lens': planning.get('pro_options', {}).get('lensType'),
+                    'movement': planning.get('pro_options', {}).get('cameraMovement')
+                } if planning.get('pro_options') else None
+            )
+            
+            # 스토리 저장
+            for story_data in planning.get('stories', []):
+                VideoPlanningStory.objects.create(
+                    planning=video_planning,
+                    stage=story_data['stage'],
+                    stage_name=story_data['stage_name'],
+                    content=story_data['content'],
+                    order=story_data['order']
+                )
+            
+            # 씬 저장
+            for scene_data in planning.get('scenes', []):
+                VideoPlanningScene.objects.create(
+                    planning=video_planning,
+                    story_index=scene_data['story_index'],
+                    scene_number=scene_data['scene_number'],
+                    title=scene_data['title'],
+                    description=scene_data['description'],
+                    duration=scene_data['duration']
+                )
+            
+            planning['id'] = video_planning.id
+        
+        return Response({
+            'status': 'success',
+            'planning': planning,
+            'message': 'AI 기획안이 성공적으로 생성되었습니다!'
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"AI 기획 생성 오류: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': f'AI 기획 생성 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generate_veo3_prompt(request):
+    """VEO3 비디오 생성 프롬프트 생성"""
+    try:
+        from .ai_prompt_generator import VEO3PromptGenerator
+        
+        generator = VEO3PromptGenerator()
+        scene_data = request.data.get('scene_data', {})
+        pro_options = request.data.get('pro_options', {})
+        
+        video_prompt = generator.generate_video_prompt(scene_data, pro_options)
+        image_prompt = generator.generate_image_prompt(scene_data, pro_options)
+        
+        return Response({
+            'status': 'success',
+            'data': {
+                'video_prompt': video_prompt,
+                'image_prompt': image_prompt,
+                'scene_title': scene_data.get('title', ''),
+                'technical_specs': pro_options
+            },
+            'message': 'VEO3 프롬프트가 생성되었습니다.'
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"VEO3 프롬프트 생성 오류: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': f'VEO3 프롬프트 생성 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def complete_project(request):
+    """프로젝트 완성 처리 - 최종 영상 업로드 및 상태 업데이트"""
+    try:
+        planning_id = request.data.get('planning_id')
+        final_video_url = request.data.get('final_video_url')
+        completion_notes = request.data.get('completion_notes', '')
+        
+        # 파일 업로드 처리
+        video_file = request.FILES.get('video_file')
+        
+        if not planning_id:
+            return Response({
+                'status': 'error',
+                'message': '기획 ID가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 기획 조회
+        planning = VideoPlanning.objects.filter(
+            id=planning_id,
+            user=request.user
+        ).first()
+        
+        if not planning:
+            return Response({
+                'status': 'error',
+                'message': '기획을 찾을 수 없습니다.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # 비디오 파일이 업로드된 경우 처리
+        if video_file:
+            from django.core.files.storage import default_storage
+            from django.core.files.base import ContentFile
+            import os
+            
+            # 파일 저장
+            file_name = f"completed_videos/{planning_id}_{video_file.name}"
+            path = default_storage.save(file_name, ContentFile(video_file.read()))
+            final_video_url = request.build_absolute_uri(default_storage.url(path))
+        
+        # 기획 상태 업데이트
+        planning_data = planning.planning_data or {}
+        planning_data['completed'] = True
+        planning_data['completed_at'] = timezone.now().isoformat()
+        planning_data['final_video_url'] = final_video_url
+        planning_data['completion_notes'] = completion_notes
+        
+        planning.planning_data = planning_data
+        planning.save()
+        
+        return Response({
+            'status': 'success',
+            'message': '프로젝트가 성공적으로 완성되었습니다!',
+            'data': {
+                'planning_id': planning.id,
+                'completed_at': planning_data['completed_at'],
+                'final_video_url': final_video_url
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"프로젝트 완성 처리 오류: {str(e)}")
+        return Response({
+            'status': 'error',
+            'message': f'프로젝트 완성 처리 중 오류가 발생했습니다: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

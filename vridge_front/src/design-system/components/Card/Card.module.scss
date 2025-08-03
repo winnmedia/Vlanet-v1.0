@@ -1,0 +1,500 @@
+// VideoPlanet 디자인 시스템 - Card 스타일
+// 영상 제작 프로젝트와 콘텐츠 표시에 특화된 카드 스타일
+
+@import '../../../styles/variables';
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid $gray-200;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+// ========================================
+// 크기 변형 (Size Variants)
+// ========================================
+
+.card--small {
+  .cardContent {
+    padding: 12px;
+  }
+  
+  .cardHeader {
+    padding: 12px 12px 0;
+  }
+  
+  .cardFooter {
+    padding: 0 12px 12px;
+  }
+}
+
+.card--medium {
+  .cardContent {
+    padding: 20px;
+  }
+  
+  .cardHeader {
+    padding: 20px 20px 0;
+  }
+  
+  .cardFooter {
+    padding: 0 20px 20px;
+  }
+}
+
+.card--large {
+  .cardContent {
+    padding: 28px;
+  }
+  
+  .cardHeader {
+    padding: 28px 28px 0;
+  }
+  
+  .cardFooter {
+    padding: 0 28px 28px;
+  }
+}
+
+// ========================================
+// 스타일 변형 (Style Variants)
+// ========================================
+
+.card--elevated {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: none;
+}
+
+.card--outlined {
+  box-shadow: none;
+  border: 2px solid $gray-200;
+}
+
+.card--project {
+  border-left: 4px solid $primary-color;
+  
+  &.card--selected {
+    border-left-color: $primary-color;
+    background: rgba(22, 49, 248, 0.02);
+  }
+}
+
+.card--feedback {
+  border-left: 3px solid #06B6D4;
+  background: rgba(6, 182, 212, 0.01);
+}
+
+.card--ai-result {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #8B5CF6, #06B6D4) border-box;
+  
+  &::before {
+    content: '✨';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 16px;
+    opacity: 0.6;
+  }
+}
+
+.card--timeline-item {
+  position: relative;
+  margin-left: 24px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 20px;
+    width: 8px;
+    height: 8px;
+    background: $primary-color;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px $primary-color;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 32px;
+    bottom: -20px;
+    width: 2px;
+    background: $gray-200;
+  }
+  
+  &:last-child::after {
+    display: none;
+  }
+}
+
+// ========================================
+// 상태 변형 (State Variants)
+// ========================================
+
+.card--interactive {
+  cursor: pointer;
+  
+  &:hover:not(.card--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  &:active:not(.card--disabled) {
+    transform: translateY(0);
+  }
+  
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.card--hoverable {
+  &:hover:not(.card--disabled) {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.card--selected {
+  border-color: $primary-color;
+  box-shadow: 0 0 0 2px rgba(22, 49, 248, 0.2);
+}
+
+.card--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  
+  .cardContent {
+    color: $gray-500;
+  }
+}
+
+// ========================================
+// 카드 내부 구조
+// ========================================
+
+.cardHeader {
+  border-bottom: 1px solid $gray-100;
+}
+
+.cardContent {
+  // 기본 컨텐츠 영역
+}
+
+.cardFooter {
+  border-top: 1px solid $gray-100;
+  background: rgba(248, 249, 250, 0.5);
+}
+
+// ========================================
+// 프로젝트 카드 전용 스타일
+// ========================================
+
+.projectCardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.projectThumbnail {
+  width: 60px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: $gray-100;
+  flex-shrink: 0;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.projectMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.projectBadges {
+  display: flex;
+  gap: 8px;
+}
+
+.phaseBadge,
+.priorityBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.projectDeadline {
+  font-size: 12px;
+  color: $gray-600;
+  font-weight: 500;
+}
+
+.projectCardContent {
+  .projectTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: $gray-900;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+  }
+  
+  .projectDescription {
+    font-size: 14px;
+    color: $gray-600;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.progressSection {
+  margin: 16px 0;
+}
+
+.progressLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: $gray-700;
+  margin-bottom: 6px;
+}
+
+.progressBar {
+  height: 6px;
+  background: $gray-200;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $primary-color, $primary-hover);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.projectTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.projectTag {
+  padding: 2px 8px;
+  background: $gray-100;
+  color: $gray-700;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 12px;
+  border: 1px solid $gray-200;
+}
+
+.projectCardFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+// ========================================
+// 피드백 카드 전용 스타일
+// ========================================
+
+.feedbackCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.feedbackAuthor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.authorAvatar {
+  width: 32px;
+  height: 32px;
+  background: $primary-color;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.authorInfo {
+  .authorName {
+    font-weight: 600;
+    color: $gray-900;
+    font-size: 14px;
+  }
+  
+  .feedbackTimestamp {
+    color: $gray-500;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+}
+
+.feedbackMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+.videoTimestamp {
+  padding: 3px 6px;
+  background: $gray-100;
+  color: $gray-700;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.feedbackCardContent {
+  .feedbackText {
+    font-size: 14px;
+    line-height: 1.6;
+    color: $gray-800;
+    margin-bottom: 16px;
+  }
+}
+
+.feedbackReplies {
+  border-top: 1px solid $gray-100;
+  padding-top: 12px;
+}
+
+.repliesLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: $gray-600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.feedbackReply {
+  padding: 8px 12px;
+  background: $gray-50;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .replyAuthor {
+    font-size: 12px;
+    font-weight: 600;
+    color: $gray-700;
+    margin-bottom: 4px;
+  }
+  
+  .replyContent {
+    font-size: 13px;
+    color: $gray-800;
+    line-height: 1.5;
+  }
+}
+
+.feedbackCardFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+// ========================================
+// 반응형 디자인
+// ========================================
+
+@media (max-width: 768px) {
+  .card--large {
+    .cardContent {
+      padding: 20px;
+    }
+    
+    .cardHeader {
+      padding: 20px 20px 0;
+    }
+    
+    .cardFooter {
+      padding: 0 20px 20px;
+    }
+  }
+  
+  .projectCardHeader {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .projectThumbnail {
+    width: 100%;
+    height: 120px;
+  }
+  
+  .feedbackCardHeader {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .feedbackMeta {
+    align-self: flex-end;
+  }
+}
+
+// ========================================
+// 접근성 개선
+// ========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}
+
+// 고대비 모드 지원
+@media (prefers-contrast: high) {
+  .card {
+    border-width: 2px;
+  }
+  
+  .card--outlined {
+    border-width: 3px;
+  }
+}

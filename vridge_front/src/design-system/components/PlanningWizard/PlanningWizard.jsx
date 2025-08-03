@@ -1,0 +1,260 @@
+import React, { useState } from 'react'
+import styles from './PlanningWizard.module.scss'
+import { colors } from '../../tokens/colors'
+import { typography } from '../../tokens/typography'
+
+const PlanningWizard = ({ 
+  onComplete, 
+  initialData = {},
+  mode = 'simple' // 'simple', 'professional'
+}) => {
+  const [currentStep, setCurrentStep] = useState(1)
+  const [planningData, setPlanningData] = useState({
+    title: initialData.title || '',
+    description: initialData.description || '',
+    style: initialData.style || 'modern',
+    duration: initialData.duration || '60',
+    audience: initialData.audience || 'general',
+    ...initialData
+  })
+
+  const steps = mode === 'professional' ? [
+    { id: 1, title: '기본 정보', icon: '📝', description: '프로젝트 기본 설정' },
+    { id: 2, title: '콘텐츠 전략', icon: '🎯', description: 'AI 기반 전략 수립' },
+    { id: 3, title: '시각적 스타일', icon: '🎨', description: '브랜드 맞춤 디자인' },
+    { id: 4, title: '고급 옵션', icon: '⚙️', description: '세부 커스터마이징' }
+  ] : [
+    { id: 1, title: '기본 정보', icon: '📝', description: '간단한 영상 정보 입력' },
+    { id: 2, title: 'AI 생성', icon: '🤖', description: 'AI가 자동으로 기획안 작성' }
+  ]
+
+  const progressPercentage = (currentStep / steps.length) * 100
+
+  return (
+    <div className={styles.wizardContainer}>
+      {/* Progress Header */}
+      <div className={styles.progressHeader}>
+        <div className={styles.progressBar}>
+          <div 
+            className={styles.progressFill}
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
+        <div className={styles.stepIndicators}>
+          {steps.map((step, index) => (
+            <div 
+              key={step.id}
+              className={`${styles.stepIndicator} ${
+                currentStep >= step.id ? styles.active : ''
+              } ${currentStep === step.id ? styles.current : ''}`}
+            >
+              <div className={styles.stepIcon}>{step.icon}</div>
+              <div className={styles.stepInfo}>
+                <div className={styles.stepTitle}>{step.title}</div>
+                <div className={styles.stepDescription}>{step.description}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className={styles.contentArea}>
+        {currentStep === 1 && (
+          <BasicInfoStep 
+            data={planningData}
+            onChange={setPlanningData}
+            mode={mode}
+          />
+        )}
+        {currentStep === 2 && mode === 'simple' && (
+          <AIGenerationStep 
+            data={planningData}
+            onChange={setPlanningData}
+            onComplete={onComplete}
+          />
+        )}
+        {/* Professional mode steps */}
+        {mode === 'professional' && currentStep === 2 && (
+          <ContentStrategyStep 
+            data={planningData}
+            onChange={setPlanningData}
+          />
+        )}
+        {/* Additional professional steps... */}
+      </div>
+
+      {/* Navigation */}
+      <div className={styles.navigationArea}>
+        <div className={styles.navigationButtons}>
+          {currentStep > 1 && (
+            <button 
+              className={styles.backButton}
+              onClick={() => setCurrentStep(currentStep - 1)}
+            >
+              이전 단계
+            </button>
+          )}
+          <div className={styles.spacer} />
+          <button 
+            className={styles.nextButton}
+            onClick={() => {
+              if (currentStep < steps.length) {
+                setCurrentStep(currentStep + 1)
+              } else {
+                onComplete(planningData)
+              }
+            }}
+          >
+            {currentStep === steps.length ? '완료' : '다음 단계'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// 기본 정보 입력 단계
+const BasicInfoStep = ({ data, onChange, mode }) => (
+  <div className={styles.stepContent}>
+    <div className={styles.stepHeader}>
+      <h2>영상 기획 시작하기</h2>
+      <p>기본 정보를 입력하면 AI가 완벽한 기획안을 생성해드립니다</p>
+    </div>
+    
+    <div className={styles.formFields}>
+      <div className={styles.fieldGroup}>
+        <label className={styles.fieldLabel}>영상 제목 *</label>
+        <input
+          type="text"
+          className={styles.textInput}
+          placeholder="예: 브랜드 소개 영상"
+          value={data.title}
+          onChange={(e) => onChange({ ...data, title: e.target.value })}
+        />
+      </div>
+
+      <div className={styles.fieldGroup}>
+        <label className={styles.fieldLabel}>영상 설명</label>
+        <textarea
+          className={styles.textArea}
+          placeholder="어떤 영상을 만들고 싶으신가요? 목적과 메시지를 간단히 적어주세요."
+          rows={3}
+          value={data.description}
+          onChange={(e) => onChange({ ...data, description: e.target.value })}
+        />
+      </div>
+
+      <div className={styles.quickOptions}>
+        <div className={styles.optionGroup}>
+          <label className={styles.fieldLabel}>예상 길이</label>
+          <div className={styles.buttonGroup}>
+            {['30초', '60초', '90초', '2분+'].map(duration => (
+              <button
+                key={duration}
+                className={`${styles.optionButton} ${
+                  data.duration === duration ? styles.selected : ''
+                }`}
+                onClick={() => onChange({ ...data, duration })}
+              >
+                {duration}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.optionGroup}>
+          <label className={styles.fieldLabel}>대상 고객</label>
+          <div className={styles.buttonGroup}>
+            {['일반인', '전문가', '젊은층', '중장년층'].map(audience => (
+              <button
+                key={audience}
+                className={`${styles.optionButton} ${
+                  data.audience === audience ? styles.selected : ''
+                }`}
+                onClick={() => onChange({ ...data, audience })}
+              >
+                {audience}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
+// AI 생성 단계
+const AIGenerationStep = ({ data, onChange, onComplete }) => {
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [progress, setProgress] = useState(0)
+
+  const startGeneration = async () => {
+    setIsGenerating(true)
+    // AI 생성 로직 시뮬레이션
+    for (let i = 0; i <= 100; i += 10) {
+      setProgress(i)
+      await new Promise(resolve => setTimeout(resolve, 200))
+    }
+    setIsGenerating(false)
+    onComplete(data)
+  }
+
+  return (
+    <div className={styles.stepContent}>
+      <div className={styles.aiGenerationArea}>
+        {!isGenerating ? (
+          <div className={styles.readyToGenerate}>
+            <div className={styles.aiIcon}>🤖</div>
+            <h2>AI 기획안 생성 준비 완료</h2>
+            <div className={styles.dataPreview}>
+              <div className={styles.previewItem}>
+                <span>제목:</span> {data.title}
+              </div>
+              <div className={styles.previewItem}>
+                <span>길이:</span> {data.duration}
+              </div>
+              <div className={styles.previewItem}>
+                <span>대상:</span> {data.audience}
+              </div>
+            </div>
+            <button 
+              className={styles.generateButton}
+              onClick={startGeneration}
+            >
+              ✨ AI 기획안 생성하기
+            </button>
+          </div>
+        ) : (
+          <div className={styles.generatingContent}>
+            <div className={styles.aiWorkingIcon}>🤖</div>
+            <h2>AI가 기획안을 작성하고 있습니다</h2>
+            <div className={styles.progressBar}>
+              <div 
+                className={styles.progressFill}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <p className={styles.progressText}>{progress}% 완료</p>
+            <div className={styles.workingSteps}>
+              <div className={`${styles.workingStep} ${progress >= 25 ? styles.completed : ''}`}>
+                📝 콘텐츠 구조 분석 중...
+              </div>
+              <div className={`${styles.workingStep} ${progress >= 50 ? styles.completed : ''}`}>
+                🎬 시나리오 생성 중...
+              </div>
+              <div className={`${styles.workingStep} ${progress >= 75 ? styles.completed : ''}`}>
+                🎨 비주얼 콘셉트 구성 중...
+              </div>
+              <div className={`${styles.workingStep} ${progress >= 100 ? styles.completed : ''}`}>
+                ✅ 최종 검토 및 완성
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default PlanningWizard

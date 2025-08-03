@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from 'util/util'
+import { toast } from 'react-toastify'
 
 
 
@@ -478,17 +479,24 @@ export default function FeedbackPolling() {
                             onChange={(e) => {
                               const file = e.target.files[0];
                               if (file) {
+                                const maxSize = 600 * 1024 * 1024; // 600MB
+                                if (file.size > maxSize) {
+                                  toast.error('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.');
+                                  e.target.value = '';
+                                  return;
+                                }
+                                
                                 const formData = new FormData();
                                 formData.append('files', file);
                                 
                                 FeedbackFile(formData, project_id, onUploadProgress)
                                   .then((res) => {
-                                    window.alert('파일 업로드가 완료되었습니다.');
+                                    toast.success('파일 업로드가 완료되었습니다.');
                                     onUploadComplete();
                                   })
                                   .catch((err) => {
                                     console.error('Upload error:', err);
-                                    window.alert('파일 업로드에 실패했습니다.');
+                                    toast.error('파일 업로드에 실패했습니다.');
                                   })
                                   .finally(() => {
                                     setUploadProgress(0);

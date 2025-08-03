@@ -61,4 +61,22 @@ urlpatterns = [
     # path('proposals/create-slides/', views_proposal.create_slides_from_structure, name='create_slides_from_structure'),
     # path('proposals/templates/', views_proposal.get_available_templates, name='get_available_templates'),
     # path('proposals/status/', views_proposal.get_service_status, name='get_service_status'),
+    
+    # AI 프롬프트 생성 API (새로운 1000% 효율화 시스템)
+    path('ai/generate-prompt/', views.generate_ai_prompt, name='generate_ai_prompt'),
+    path('ai/prompt-analytics/<int:planning_id>/', views.get_prompt_analytics, name='get_prompt_analytics'),
+    path('ai/prompt-history/<int:planning_id>/', views.get_prompt_history, name='get_prompt_history'),
+    
+    # 프로 설정 API
+    path('pro/settings/<int:planning_id>/', views.update_pro_settings, name='update_pro_settings'),
+    path('pro/templates/', views.get_pro_templates, name='get_pro_templates'),
+    path('pro/templates/<int:planning_id>/<int:template_id>/apply/', views.apply_pro_template, name='apply_pro_template'),
+    
+    # AI 기반 30초 기획 생성 API
+    path('ai/quick-suggestions/', views.ai_quick_suggestions, name='ai_quick_suggestions'),
+    path('ai/generate-full-planning/', views.ai_generate_full_planning, name='ai_generate_full_planning'),
+    path('ai/generate-veo3-prompt/', views.generate_veo3_prompt, name='generate_veo3_prompt'),
+    
+    # 프로젝트 완성 API
+    path('complete/', views.complete_project, name='complete_project'),
 ]

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from 'util/util'
+import { toast } from 'react-toastify'
 
 
 
@@ -110,10 +111,10 @@ function FeedbackStable() {
             setEncodingCheckInterval(null)
             
             if (res.data.encoding_status === 'completed') {
-              window.alert('영상 인코딩이 완료되었습니다.')
+              toast.success('영상 인코딩이 완료되었습니다.')
               refetch()
             } else if (res.data.encoding_status === 'failed') {
-              window.alert('영상 인코딩에 실패했습니다. 다시 시도해주세요.')
+              toast.error('영상 인코딩에 실패했습니다. 다시 시도해주세요.')
             }
           }
         })
@@ -267,6 +268,12 @@ function FeedbackStable() {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const maxSize = 600 * 1024 * 1024; // 600MB
+      if (file.size > maxSize) {
+        toast.error('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.');
+        e.target.value = '';
+        return;
+      }
       uploadFile(file);
     }
   }
@@ -277,7 +284,7 @@ function FeedbackStable() {
     
     FeedbackFile(formData, project_id, onUploadProgress)
       .then((res) => {
-        window.alert('파일 업로드가 완료되었습니다.');
+        toast.success('파일 업로드가 완료되었습니다.');
         onUploadComplete();
         // input 초기화
         const input = (typeof window !== 'undefined' && document.getElementById('video-upload');
@@ -286,12 +293,12 @@ function FeedbackStable() {
       .catch((err) => {
         console.error('Upload error:', err);
         if (err.response?.status === 413) {
-          window.alert('파일 크기가 너무 큽니다. 더 작은 파일을 선택해주세요.');
+          toast.error('파일 크기가 너무 큽니다. 더 작은 파일을 선택해주세요.');
         } else if (err.response?.status === 401) {
-          window.alert('인증이 필요합니다. 다시 로그인해주세요.');
+          toast.error('인증이 필요합니다. 다시 로그인해주세요.');
           navigate('/login', { replace: true });
         } else {
-          window.alert('파일 업로드에 실패했습니다.');
+          toast.error('파일 업로드에 실패했습니다.');
         }
       })
       .finally(() => {
@@ -328,7 +335,7 @@ function FeedbackStable() {
       if (file.type.startsWith('video/')) {
         uploadFile(file);
       } else {
-        window.alert('동영상 파일만 업로드 가능합니다.');
+        toast.error('동영상 파일만 업로드 가능합니다.');
       }
     }
   }
@@ -563,9 +570,9 @@ function FeedbackStable() {
                               // 현재 페이지 URL 복사
                               const shareUrl = typeof window !== 'undefined' && window.location.href;
                               navigator.clipboard.writeText(shareUrl).then(() => {
-                                window.alert('피드백 페이지 링크가 복사되었습니다.');
+                                toast.success('피드백 페이지 링크가 복사되었습니다.');
                               }).catch(() => {
-                                window.alert('링크 복사에 실패했습니다.');
+                                toast.error('링크 복사에 실패했습니다.');
                               });
                             }}
                             style={{
@@ -759,7 +766,12 @@ function FeedbackStable() {
                               </div>
                             </div>
                             <div className="file-actions">
-                              <button title="다운로드">
+                              <button title="다운로드" onClick={() => {
+                                const link = document.createElement('a')
+                                link.href = current_project.files
+                                link.download = current_project.files.split('/').pop()
+                                link.click()
+                              }}>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                   <polyline points="7 10 12 15 17 10" />
@@ -771,11 +783,11 @@ function FeedbackStable() {
                                   if (window.confirm('파일을 삭제하시겠습니까?')) {
                                     DeleteFeedbackFile(project_id)
                                       .then(() => {
-                                        window.alert('파일이 삭제되었습니다.')
+                                        toast.success('파일이 삭제되었습니다.')
                                         refetch()
                                       })
                                       .catch(() => {
-                                        window.alert('파일 삭제에 실패했습니다.')
+                                        toast.error('파일 삭제에 실패했습니다.')
                                       })
                                   }
                                 }}>
@@ -827,13 +839,21 @@ function FeedbackStable() {
                                   </div>
                                 </div>
                                 <div className="feedback-actions">
-                                  <button title="수정">
+                                  <button title="수정" onClick={() => {
+                                    // TODO: 피드백 수정 기능 구현
+                                    toast.info('피드백 수정 기능은 준비 중입니다.')
+                                  }}>
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                     </svg>
                                   </button>
-                                  <button className="delete-btn" title="삭제">
+                                  <button className="delete-btn" title="삭제" onClick={() => {
+                                    if (window.confirm('피드백을 삭제하시겠습니까?')) {
+                                      // TODO: 피드백 삭제 API 연동
+                                      toast.error('피드백 삭제 기능은 준비 중입니다.')
+                                    }
+                                  }}>
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                       <polyline points="3 6 5 6 21 6" />
                                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -889,7 +909,9 @@ function FeedbackStable() {
                       <div className="notice-section">
                         <div className="notice-header">
                           <h4>공지사항</h4>
-                          <button className="add-notice-btn" title="공지 추가">
+                          <button className="add-notice-btn" title="공지 추가" onClick={() => {
+                            toast.info('공지사항 추가 기능은 준비 중입니다.')
+                          }}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <line x1="12" y1="5" x2="12" y2="19" />
                               <line x1="5" y1="12" x2="19" y2="12" />

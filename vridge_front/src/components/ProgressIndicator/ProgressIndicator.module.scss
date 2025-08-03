@@ -1,0 +1,254 @@
+// 디자인 시스템 변수 정의
+$primary-blue: #1631F8;
+$primary-blue-dark: #0F23C9;
+$text-primary: #333333;
+$text-secondary: #666666;
+
+.progress-indicator {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .progress-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: $text-primary;
+      margin: 0;
+    }
+
+    .progress-percentage {
+      font-size: 16px;
+      font-weight: 500;
+      color: $primary-blue;
+    }
+  }
+
+  .progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, $primary-blue 0%, $primary-blue-dark 100%);
+      transition: width 0.3s ease;
+      border-radius: 4px;
+    }
+  }
+
+  .progress-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 24px;
+
+    .progress-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      
+      &.clickable {
+        cursor: pointer;
+        
+        &:hover {
+          .step-circle {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px rgba($primary-blue, 0.1);
+          }
+        }
+      }
+
+      .step-connector {
+        position: absolute;
+        top: 20px;
+        left: -50%;
+        right: 50%;
+        height: 2px;
+        z-index: 0;
+
+        .connector-line {
+          width: 100%;
+          height: 100%;
+          background-color: #e0e0e0;
+          transition: background-color 0.3s ease;
+
+          &.completed {
+            background-color: $primary-blue;
+          }
+        }
+      }
+
+      &:first-child .step-connector {
+        display: none;
+      }
+
+      .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: white;
+        border: 2px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+
+        .step-number {
+          font-size: 16px;
+          font-weight: 600;
+          color: #999;
+        }
+
+        .checkmark {
+          width: 20px;
+          height: 20px;
+          fill: white;
+        }
+      }
+
+      .step-info {
+        margin-top: 12px;
+        text-align: center;
+
+        .step-label {
+          display: block;
+          font-size: 14px;
+          color: $text-secondary;
+          margin-bottom: 4px;
+        }
+
+        .step-status {
+          display: block;
+          font-size: 12px;
+          color: $primary-blue;
+          font-weight: 500;
+        }
+      }
+
+      // 상태별 스타일
+      &.completed {
+        .step-circle {
+          background-color: $primary-blue;
+          border-color: $primary-blue;
+        }
+
+        .step-info .step-label {
+          color: $text-primary;
+          font-weight: 500;
+        }
+      }
+
+      &.current {
+        .step-circle {
+          background-color: $primary-blue;
+          border-color: $primary-blue;
+          box-shadow: 0 0 0 4px rgba($primary-blue, 0.2);
+
+          .step-number {
+            color: white;
+          }
+        }
+
+        .step-info .step-label {
+          color: $primary-blue;
+          font-weight: 600;
+        }
+      }
+
+      &.visited {
+        .step-circle {
+          border-color: $primary-blue;
+          
+          .step-number {
+            color: $primary-blue;
+          }
+        }
+
+        .step-info .step-label {
+          color: $text-primary;
+        }
+      }
+    }
+  }
+
+  .progress-summary {
+    display: flex;
+    gap: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .summary-label {
+        font-size: 14px;
+        color: $text-secondary;
+      }
+
+      .summary-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-primary;
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .progress-indicator {
+    padding: 16px;
+
+    .progress-steps {
+      flex-direction: column;
+      gap: 24px;
+
+      .progress-step {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+
+        .step-connector {
+          position: absolute;
+          top: -12px;
+          left: 20px;
+          right: auto;
+          width: 2px;
+          height: 24px;
+
+          .connector-line {
+            width: 2px;
+            height: 100%;
+          }
+        }
+
+        .step-info {
+          text-align: left;
+          margin-top: 0;
+        }
+      }
+    }
+
+    .progress-summary {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+}

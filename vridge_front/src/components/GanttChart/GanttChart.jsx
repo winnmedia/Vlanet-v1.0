@@ -1,0 +1,233 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import axios from 'axios';
+import './GanttChart.css';
+import { toast } from 'react-toastify';
+
+// 프로젝트 단계 정의
+const PROJECT_PHASES = [
+  { key: 'basic_plan', name: '기본기획', color: '#3498db' },
+  { key: 'story_board', name: '스토리보드', color: '#9b59b6' },
+  { key: 'filming', name: '촬영', color: '#e74c3c' },
+  { key: 'video_edit', name: '영상편집', color: '#f39c12' },
+  { key: 'post_work', name: '후반작업', color: '#1abc9c' },
+  { key: 'video_preview', name: '시사', color: '#34495e' },
+  { key: 'confirmation', name: '컨펌', color: '#16a085' },
+  { key: 'video_delivery', name: '납품', color: '#27ae60' }
+];
+
+// 드래그 가능한 간트 바
+const GanttBar = ({ phase, startDate, endDate, onUpdate, projectId }) => {
+  const [{ isDragging }, drag] = useDrag({
+    type: 'gantt-bar',
+    item: { phase, startDate, endDate },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const handleResize = (e, direction) => {
+    e.stopPropagation();
+    const startX = e.clientX;
+    const originalWidth = e.currentTarget.parentElement.offsetWidth;
+    
+    const handleMouseMove = (e) => {
+      const deltaX = e.clientX - startX;
+      const dayWidth = 30; // 1일당 픽셀
+      const daysDelta = Math.round(deltaX / dayWidth);
+      
+      if (direction === 'start') {
+        const newStartDate = new Date(startDate);
+        newStartDate.setDate(newStartDate.getDate() + daysDelta);
+        onUpdate(phase.key, newStartDate, new Date(endDate));
+      } else {
+        const newEndDate = new Date(endDate);
+        newEndDate.setDate(newEndDate.getDate() + daysDelta);
+        onUpdate(phase.key, new Date(startDate), newEndDate);
+      }
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const duration = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1;
+  const startOffset = Math.ceil((new Date(startDate) - new Date()) / (1000 * 60 * 60 * 24));
+
+  return (
+    <div
+      ref={drag}
+      className={`gantt-bar ${isDragging ? 'dragging' : ''}`}
+      style={{
+        backgroundColor: phase.color,
+        width: `${duration * 30}px`,
+        left: `${startOffset * 30 + 200}px`,
+        opacity: isDragging ? 0.5 : 1,
+      }}
+    >
+      <div 
+        className="gantt-bar-resize gantt-bar-resize-start" 
+        onMouseDown={(e) => handleResize(e, 'start')}
+      />
+      <span className="gantt-bar-label">{phase.name}</span>
+      <div 
+        className="gantt-bar-resize gantt-bar-resize-end" 
+        onMouseDown={(e) => handleResize(e, 'end')}
+      />
+    </div>
+  );
+};
+
+// 간트 차트 행
+const GanttRow = ({ phase, data, onUpdate, projectId }) => {
+  const [, drop] = useDrop({
+    accept: 'gantt-bar',
+    drop: (item, monitor) => {
+      const delta = monitor.getDifferenceFromInitialOffset();
+      const daysDelta = Math.round(delta.x / 30);
+      
+      const newStartDate = new Date(item.startDate);
+      newStartDate.setDate(newStartDate.getDate() + daysDelta);
+      
+      const newEndDate = new Date(item.endDate);
+      newEndDate.setDate(newEndDate.getDate() + daysDelta);
+      
+      onUpdate(item.phase.key, newStartDate, newEndDate);
+    },
+  });
+
+  return (
+    <div ref={drop} className="gantt-row">
+      <div className="gantt-row-label">{phase.name}</div>
+      <div className="gantt-row-timeline">
+        {data && data.start_date && data.end_date && (
+          <GanttBar
+            phase={phase}
+            startDate={data.start_date}
+            endDate={data.end_date}
+            onUpdate={onUpdate}
+            projectId={projectId}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+// 메인 간트차트 컴포넌트
+const GanttChart = ({ projectId }) => {
+  const [projectData, setProjectData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchProjectData();
+  }, [projectId]);
+
+  const fetchProjectData = async () => {
+    try {
+      const response = await axios.get(`/api/projects/detail/${projectId}/`);
+      setProjectData(response.data.result);
+      setLoading(false);
+    } catch (error) {
+      toast.error('프로젝트 데이터를 불러올 수 없습니다.');
+      setLoading(false);
+    }
+  };
+
+  const updatePhaseDate = async (phaseKey, startDate, endDate) => {
+    setSaving(true);
+    try {
+      const response = await axios.post(`/api/projects/date_update/${projectId}`, {
+        phase: phaseKey,
+        start_date: startDate.toISOString().split('T')[0],
+        end_date: endDate.toISOString().split('T')[0]
+      });
+
+      if (response.data.message === 'success') {
+        toast.success('일정이 업데이트되었습니다.');
+        fetchProjectData();
+      }
+    } catch (error) {
+      toast.error('일정 업데이트에 실패했습니다.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // 타임라인 헤더 생성
+  const generateTimelineHeader = () => {
+    const days = [];
+    const today = new Date();
+    
+    for (let i = -7; i < 60; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() + i);
+      days.push(date);
+    }
+
+    return (
+      <div className="gantt-timeline-header">
+        <div className="gantt-corner">단계</div>
+        <div className="gantt-dates">
+          {days.map((date, index) => (
+            <div key={index} className="gantt-date">
+              <div className="gantt-date-day">{date.getDate()}</div>
+              {date.getDate() === 1 && (
+                <div className="gantt-date-month">
+                  {date.toLocaleDateString('ko-KR', { month: 'short' })}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  if (loading) {
+    return <div className="gantt-loading">간트차트 로딩 중...</div>;
+  }
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <div className="gantt-chart-container">
+        <h3>프로젝트 일정 관리</h3>
+        {saving && <div className="gantt-saving">저장 중...</div>}
+        
+        <div className="gantt-chart">
+          {generateTimelineHeader()}
+          
+          <div className="gantt-body">
+            {PROJECT_PHASES.map((phase) => (
+              <GanttRow
+                key={phase.key}
+                phase={phase}
+                data={projectData?.[phase.key]}
+                onUpdate={updatePhaseDate}
+                projectId={projectId}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="gantt-legend">
+          <h4>사용 방법</h4>
+          <ul>
+            <li>막대를 드래그하여 일정 이동</li>
+            <li>막대 끝을 드래그하여 기간 조정</li>
+            <li>변경사항은 자동 저장됩니다</li>
+          </ul>
+        </div>
+      </div>
+    </DndProvider>
+  );
+};
+
+export default GanttChart;

@@ -1,0 +1,223 @@
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { 
+  updateStageStatus, 
+  updateStageProgress, 
+  addStageTask,
+  calculateOverallProgress,
+  addNotification 
+} from '../redux/workflow'
+import { GetProject } from '../api/project'
+import { GetVideoPlanning } from '../api/videoPlanning'
+import { GetFeedbacks } from '../api/feedback'
+
+// 워크플로우와 프로젝트 데이터를 실시간으로 동기화하는 훅
+export const useWorkflowSync = (projectId) => {
+  const dispatch = useDispatch()
+  const workflow = useSelector(state => state.workflow)
+  const project = useSelector(state => 
+    state.ProjectStore.project_list?.find(p => p.id === parseInt(projectId))
+  )
+
+  // 프로젝트 데이터 변경 감지 및 워크플로우 업데이트
+  useEffect(() => {
+    if (!projectId || !project) return
+
+    const syncWorkflowWithProject = async () => {
+      try {
+        // 1. 기획 단계 동기화
+        const planningTasks = []
+        
+        // 비디오 기획 데이터 확인
+        try {
+          const planningResponse = await GetVideoPlanning(projectId)
+          if (planningResponse.data && planningResponse.data.result) {
+            const planning = planningResponse.data.result
+            
+            // 기획 관련 작업 추가
+            if (planning.title && planning.title.trim()) {
+              planningTasks.push({
+                id: 'planning-title',
+                name: '프로젝트 제목 설정',
+                status: 'completed'
+              })
+            }
+            
+            if (planning.planning_text) {
+              planningTasks.push({
+                id: 'planning-text',
+                name: '기획안 작성',
+                status: 'completed'
+              })
+            }
+            
+            if (planning.scenes && planning.scenes.length > 0) {
+              planningTasks.push({
+                id: 'planning-scenes',
+                name: `씬 구성 (${planning.scenes.length}개)`,
+                status: 'completed'
+              })
+            }
+            
+            if (planning.storyboards && planning.storyboards.length > 0) {
+              planningTasks.push({
+                id: 'planning-storyboards',
+                name: `스토리보드 생성 (${planning.storyboards.length}개)`,
+                status: 'completed'
+              })
+            }
+          }
+        } catch (error) {
+          console.log('기획 데이터 없음')
+        }
+        
+        // 기획 단계 진행률 계산
+        const planningProgress = planningTasks.length > 0 ? 
+          (planningTasks.filter(t => t.status === 'completed').length / planningTasks.length) * 100 : 0
+        
+        dispatch(updateStageProgress('planning', Math.round(planningProgress)))
+        
+        if (planningProgress === 100) {
+          dispatch(updateStageStatus('planning', 'completed'))
+        } else if (planningProgress > 0) {
+          dispatch(updateStageStatus('planning', 'in_progress'))
+        }
+        
+        // 기획 작업 추가
+        planningTasks.forEach(task => {
+          dispatch(addStageTask('planning', task))
+        })
+        
+        // 2. 일정 단계 동기화
+        const scheduleTasks = []
+        
+        if (project.start_date) {
+          scheduleTasks.push({
+            id: 'schedule-start',
+            name: '프로젝트 시작일 설정',
+            status: 'completed'
+          })
+        }
+        
+        if (project.end_date) {
+          scheduleTasks.push({
+            id: 'schedule-end',
+            name: '프로젝트 종료일 설정',
+            status: 'completed'
+          })
+        }
+        
+        // 프로젝트 단계별 일정 확인
+        const phases = [
+          { key: 'planning_start', name: '기획 시작일' },
+          { key: 'planning_end', name: '기획 종료일' },
+          { key: 'storyboard_start', name: '스토리보드 시작일' },
+          { key: 'storyboard_end', name: '스토리보드 종료일' },
+          { key: 'filming_start', name: '촬영 시작일' },
+          { key: 'filming_end', name: '촬영 종료일' },
+          { key: 'editing_start', name: '편집 시작일' },
+          { key: 'editing_end', name: '편집 종료일' }
+        ]
+        
+        phases.forEach(phase => {
+          if (project[phase.key]) {
+            scheduleTasks.push({
+              id: `schedule-${phase.key}`,
+              name: `${phase.name} 설정`,
+              status: 'completed'
+            })
+          }
+        })
+        
+        // 일정 단계 진행률 계산
+        const scheduleProgress = scheduleTasks.length > 0 ? 
+          (scheduleTasks.filter(t => t.status === 'completed').length / 10) * 100 : 0 // 10개 기준
+        
+        dispatch(updateStageProgress('schedule', Math.round(scheduleProgress)))
+        
+        if (scheduleProgress >= 80) {
+          dispatch(updateStageStatus('schedule', 'completed'))
+        } else if (scheduleProgress > 0) {
+          dispatch(updateStageStatus('schedule', 'in_progress'))
+        }
+        
+        // 일정 작업 추가
+        scheduleTasks.forEach(task => {
+          dispatch(addStageTask('schedule', task))
+        })
+        
+        // 3. 피드백 단계 동기화
+        const feedbackTasks = []
+        
+        try {
+          const feedbackResponse = await GetFeedbacks(projectId)
+          if (feedbackResponse.data && feedbackResponse.data.result) {
+            const feedbacks = feedbackResponse.data.result
+            
+            feedbacks.forEach((feedback, index) => {
+              feedbackTasks.push({
+                id: `feedback-${feedback.id}`,
+                name: `피드백 #${index + 1} - ${feedback.user_nickname}`,
+                status: feedback.is_resolved ? 'completed' : 'in_progress'
+              })
+            })
+          }
+        } catch (error) {
+          console.log('피드백 데이터 없음')
+        }
+        
+        // 피드백 단계 진행률 계산
+        const feedbackProgress = feedbackTasks.length > 0 ? 
+          (feedbackTasks.filter(t => t.status === 'completed').length / feedbackTasks.length) * 100 : 0
+        
+        dispatch(updateStageProgress('feedback', Math.round(feedbackProgress)))
+        
+        if (feedbackProgress === 100 && feedbackTasks.length > 0) {
+          dispatch(updateStageStatus('feedback', 'completed'))
+        } else if (feedbackTasks.length > 0) {
+          dispatch(updateStageStatus('feedback', 'in_progress'))
+        }
+        
+        // 피드백 작업 추가
+        feedbackTasks.forEach(task => {
+          dispatch(addStageTask('feedback', task))
+        })
+        
+        // 전체 진행률 계산
+        dispatch(calculateOverallProgress())
+        
+        // 자동 알림 생성
+        if (planningProgress === 100 && workflow.stages.planning.status !== 'completed') {
+          dispatch(addNotification({
+            type: 'milestone',
+            title: '기획 단계 완료!',
+            message: '기획안 작성이 완료되었습니다. 일정 설정을 진행해주세요.',
+            level: 'success'
+          }))
+        }
+        
+        if (scheduleProgress >= 80 && workflow.stages.schedule.status !== 'completed') {
+          dispatch(addNotification({
+            type: 'milestone',
+            title: '일정 설정 완료!',
+            message: '프로젝트 일정이 설정되었습니다. 작업을 시작하세요.',
+            level: 'success'
+          }))
+        }
+        
+      } catch (error) {
+        console.error('워크플로우 동기화 오류:', error)
+      }
+    }
+
+    // 초기 동기화
+    syncWorkflowWithProject()
+
+    // 5초마다 동기화 (실시간 업데이트)
+    const interval = setInterval(syncWorkflowWithProject, 5000)
+
+    return () => clearInterval(interval)
+  }, [projectId, project, dispatch])
+
+  return workflow
+}

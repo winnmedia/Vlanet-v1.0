@@ -1,0 +1,268 @@
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { 
+  addStageTask, 
+  updateTaskStatus, 
+  updateStageProgress,
+  calculateOverallProgress
+} from '../../redux/workflow'
+import styles from './WorkflowTaskManager.module.scss'
+import { Checkbox, Input, Button, Tag, Progress, Dropdown, Menu } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined } from '@ant-design/icons'
+import { toast } from 'react-toastify'
+
+const WorkflowTaskManager = ({ stageId, projectId }) => {
+  const dispatch = useDispatch()
+  const stage = useSelector(state => state.workflow.stages[stageId])
+  const [isAddingTask, setIsAddingTask] = useState(false)
+  const [newTaskName, setNewTaskName] = useState('')
+  const [editingTaskId, setEditingTaskId] = useState(null)
+  const [editingTaskName, setEditingTaskName] = useState('')
+
+  // 작업 추가
+  const handleAddTask = () => {
+    if (!newTaskName.trim()) {
+      toast.warning('작업 이름을 입력해주세요.')
+      return
+    }
+
+    const newTask = {
+      id: `task-${Date.now()}`,
+      name: newTaskName,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      assignee: null,
+      priority: 'medium',
+      dueDate: null
+    }
+
+    dispatch(addStageTask(stageId, newTask))
+    setNewTaskName('')
+    setIsAddingTask(false)
+    toast.success('작업이 추가되었습니다.')
+    
+    // 진행률 업데이트
+    updateProgress()
+  }
+
+  // 작업 상태 변경
+  const handleTaskStatusChange = (taskId, checked) => {
+    const newStatus = checked ? 'completed' : 'pending'
+    dispatch(updateTaskStatus(stageId, taskId, newStatus))
+    
+    if (checked) {
+      toast.success('작업이 완료되었습니다.')
+    }
+    
+    // 진행률 업데이트
+    updateProgress()
+  }
+
+  // 진행률 계산 및 업데이트
+  const updateProgress = () => {
+    setTimeout(() => {
+      const tasks = stage.tasks
+      if (tasks.length > 0) {
+        const completedTasks = tasks.filter(t => t.status === 'completed').length
+        const progress = Math.round((completedTasks / tasks.length) * 100)
+        dispatch(updateStageProgress(stageId, progress))
+        dispatch(calculateOverallProgress())
+      }
+    }, 100)
+  }
+
+  // 작업 우선순위 색상
+  const getPriorityColor = (priority) => {
+    const colors = {
+      high: '#ff4d4f',
+      medium: '#faad14',
+      low: '#52c41a'
+    }
+    return colors[priority] || '#1890ff'
+  }
+
+  // 작업 메뉴
+  const getTaskMenu = (task) => (
+    <Menu>
+      <Menu.Item 
+        key="edit" 
+        icon={<EditOutlined />}
+        onClick={() => {
+          setEditingTaskId(task.id)
+          setEditingTaskName(task.name)
+        }}
+      >
+        수정
+      </Menu.Item>
+      <Menu.Item 
+        key="delete" 
+        icon={<DeleteOutlined />}
+        onClick={() => handleDeleteTask(task.id)}
+      >
+        삭제
+      </Menu.Item>
+    </Menu>
+  )
+
+  // 작업 삭제
+  const handleDeleteTask = (taskId) => {
+    // 실제 구현에서는 Redux action 추가 필요
+    toast.info('작업 삭제 기능은 준비 중입니다.')
+  }
+
+  // 작업 이름 수정
+  const handleEditTask = (taskId) => {
+    if (!editingTaskName.trim()) {
+      toast.warning('작업 이름을 입력해주세요.')
+      return
+    }
+    
+    // 실제 구현에서는 Redux action 추가 필요
+    setEditingTaskId(null)
+    setEditingTaskName('')
+    toast.success('작업이 수정되었습니다.')
+  }
+
+  const stageTitles = {
+    planning: '기획 단계',
+    schedule: '일정 관리',
+    feedback: '피드백 처리'
+  }
+
+  const stageDescriptions = {
+    planning: '기획안 작성, 씬 구성, 스토리보드 생성 등',
+    schedule: '프로젝트 일정 설정, 단계별 기간 관리',
+    feedback: '피드백 수집, 수정사항 반영, 검토 완료'
+  }
+
+  return (
+    <div className={styles.taskManager}>
+      <div className={styles.header}>
+        <div className={styles.titleSection}>
+          <h3>{stageTitles[stageId]}</h3>
+          <p className={styles.description}>{stageDescriptions[stageId]}</p>
+        </div>
+        <div className={styles.progressSection}>
+          <Progress 
+            percent={stage.progress} 
+            status={stage.progress === 100 ? 'success' : 'active'}
+            strokeColor={{
+              '0%': '#1631F8',
+              '100%': '#0F23C9',
+            }}
+          />
+        </div>
+      </div>
+
+      <div className={styles.taskList}>
+        {stage.tasks.length === 0 && !isAddingTask && (
+          <div className={styles.emptyState}>
+            <p>아직 등록된 작업이 없습니다.</p>
+            <Button 
+              type="primary" 
+              icon={<PlusOutlined />}
+              onClick={() => setIsAddingTask(true)}
+            >
+              첫 작업 추가하기
+            </Button>
+          </div>
+        )}
+
+        {stage.tasks.map(task => (
+          <div key={task.id} className={styles.taskItem}>
+            {editingTaskId === task.id ? (
+              <div className={styles.editForm}>
+                <Input
+                  value={editingTaskName}
+                  onChange={(e) => setEditingTaskName(e.target.value)}
+                  onPressEnter={() => handleEditTask(task.id)}
+                  placeholder="작업 이름"
+                  autoFocus
+                />
+                <Button onClick={() => handleEditTask(task.id)} type="primary" size="small">
+                  저장
+                </Button>
+                <Button onClick={() => setEditingTaskId(null)} size="small">
+                  취소
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Checkbox
+                  checked={task.status === 'completed'}
+                  onChange={(e) => handleTaskStatusChange(task.id, e.target.checked)}
+                />
+                <span className={`${styles.taskName} ${task.status === 'completed' ? styles.completed : ''}`}>
+                  {task.name}
+                </span>
+                <div className={styles.taskMeta}>
+                  {task.priority && (
+                    <Tag color={getPriorityColor(task.priority)}>
+                      {task.priority === 'high' ? '높음' : task.priority === 'medium' ? '보통' : '낮음'}
+                    </Tag>
+                  )}
+                  {task.status === 'completed' && (
+                    <CheckCircleOutlined style={{ color: '#52c41a', fontSize: '16px' }} />
+                  )}
+                </div>
+                <Dropdown overlay={getTaskMenu(task)} trigger={['click']}>
+                  <Button type="text" size="small">•••</Button>
+                </Dropdown>
+              </>
+            )}
+          </div>
+        ))}
+
+        {isAddingTask && (
+          <div className={styles.addTaskForm}>
+            <Input
+              value={newTaskName}
+              onChange={(e) => setNewTaskName(e.target.value)}
+              onPressEnter={handleAddTask}
+              placeholder="새 작업 이름을 입력하세요"
+              autoFocus
+            />
+            <Button onClick={handleAddTask} type="primary" size="small">
+              추가
+            </Button>
+            <Button onClick={() => {
+              setIsAddingTask(false)
+              setNewTaskName('')
+            }} size="small">
+              취소
+            </Button>
+          </div>
+        )}
+
+        {!isAddingTask && stage.tasks.length > 0 && (
+          <Button 
+            type="dashed" 
+            icon={<PlusOutlined />}
+            onClick={() => setIsAddingTask(true)}
+            className={styles.addButton}
+            block
+          >
+            작업 추가
+          </Button>
+        )}
+      </div>
+
+      <div className={styles.statistics}>
+        <div className={styles.stat}>
+          <span className={styles.label}>전체:</span>
+          <span className={styles.value}>{stage.tasks.length}</span>
+        </div>
+        <div className={styles.stat}>
+          <span className={styles.label}>완료:</span>
+          <span className={styles.value}>{stage.tasks.filter(t => t.status === 'completed').length}</span>
+        </div>
+        <div className={styles.stat}>
+          <span className={styles.label}>진행률:</span>
+          <span className={styles.value}>{stage.progress}%</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default WorkflowTaskManager

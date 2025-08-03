@@ -1,0 +1,453 @@
+// VideoPlanet UI Enhancement Module
+// 통합 UI 개선사항 적용
+
+@import './DesignSystem.scss';
+
+// ===== 로그인 페이지 개선 =====
+.Auth_Form {
+  .form_wrap {
+    .title {
+      background: linear-gradient(135deg, $primary-blue 0%, $primary-dark 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    input {
+      @include input-base;
+      transition: all $transition-base;
+      
+      &:focus {
+        border-color: $primary-blue;
+        box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+        transform: translateY(-1px);
+      }
+    }
+    
+    .submit {
+      @include button-primary;
+      margin-top: $spacing-lg;
+      font-size: 16px;
+      min-height: 52px;
+      
+      &:disabled {
+        background: $gray-400;
+        cursor: not-allowed;
+        
+        &:hover {
+          transform: none;
+          box-shadow: none;
+        }
+      }
+    }
+    
+    .error {
+      @extend .toast-error;
+      position: relative;
+      border-radius: $radius-md;
+      padding: $spacing-sm $spacing-md;
+      margin-top: $spacing-md;
+      background: rgba($danger-red, 0.1);
+      border: 1px solid rgba($danger-red, 0.3);
+      
+      &::before {
+        content: '⚠️';
+        margin-right: $spacing-sm;
+      }
+    }
+  }
+}
+
+// ===== CMS 홈 페이지 개선 =====
+.cms_wrap {
+  .loading-spinner {
+    @extend .loading-spinner;
+  }
+  
+  .activity-card,
+  .invitation-card {
+    @include card-elevated;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-lg;
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-md;
+      
+      .card-title {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $gray-900;
+      }
+      
+      .collapse-btn {
+        background: none;
+        border: none;
+        padding: $spacing-sm;
+        cursor: pointer;
+        border-radius: $radius-circle;
+        transition: all $transition-fast;
+        
+        &:hover {
+          background: $gray-200;
+          transform: scale(1.1);
+        }
+        
+        &.collapsed {
+          transform: rotate(180deg);
+        }
+      }
+    }
+    
+    .feedback-item,
+    .invitation-item {
+      @include card-flat;
+      padding: $spacing-md;
+      margin-bottom: $spacing-sm;
+      cursor: pointer;
+      
+      &:hover {
+        border-color: $primary-blue;
+        background: rgba($primary-blue, 0.02);
+      }
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: $spacing-xxl;
+      color: $gray-600;
+      
+      .empty-title {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        margin-bottom: $spacing-sm;
+      }
+      
+      .empty-subtitle {
+        font-size: $font-size-sm;
+      }
+    }
+  }
+}
+
+// ===== 프로젝트 생성 페이지 개선 =====
+.project-create {
+  .page-header {
+    background: linear-gradient(135deg, $primary-pale 0%, rgba($primary-blue, 0.1) 100%);
+    padding: $spacing-xl;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-xl;
+    
+    h1 {
+      color: $primary-blue;
+      margin-bottom: $spacing-sm;
+    }
+    
+    p {
+      color: $gray-700;
+      margin: 0;
+    }
+  }
+  
+  .group {
+    @include card-elevated;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-lg;
+    
+    .s_title {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $gray-900;
+      margin-bottom: $spacing-md;
+      padding-bottom: $spacing-sm;
+      border-bottom: 2px solid $primary-blue;
+      display: inline-block;
+    }
+  }
+  
+  .creating-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: $z-modal;
+    
+    .spinner {
+      @extend .loading-spinner;
+      margin-bottom: $spacing-lg;
+    }
+    
+    .loading-text {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $primary-blue;
+      text-align: center;
+    }
+  }
+}
+
+// ===== 피드백 페이지 개선 =====
+.feedback_page {
+  .videobox {
+    @include card-elevated;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    margin-bottom: $spacing-lg;
+    
+    .video_inner {
+      position: relative;
+      
+      &:not(.active) {
+        background: linear-gradient(135deg, $gray-100 0%, $gray-200 100%);
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      
+      .progress-container {
+        text-align: center;
+        
+        .upload-icon {
+          color: $primary-blue;
+          margin-bottom: $spacing-md;
+        }
+        
+        .progress-bar {
+          width: 200px;
+          height: 8px;
+          background: $gray-200;
+          border-radius: $radius-pill;
+          overflow: hidden;
+          margin: $spacing-md 0;
+          
+          .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, $primary-blue 0%, $primary-dark 100%);
+            border-radius: $radius-pill;
+            transition: width 0.3s ease;
+          }
+        }
+        
+        .progress-text {
+          font-weight: 600;
+          color: $primary-blue;
+        }
+      }
+    }
+  }
+  
+  .etc_box {
+    .s_title {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $gray-900;
+      margin-bottom: $spacing-md;
+    }
+    
+    .feedback-detail-display {
+      @include card-flat;
+      padding: $spacing-lg;
+      margin-bottom: $spacing-lg;
+      
+      .feedback-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: $spacing-md;
+        
+        .user-info {
+          display: flex;
+          gap: $spacing-md;
+          
+          .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: $radius-circle;
+            background: $primary-blue;
+            color: $white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+          }
+          
+          .info {
+            .name {
+              font-weight: 600;
+              color: $gray-900;
+              margin-bottom: 2px;
+            }
+            
+            .meta {
+              font-size: $font-size-sm;
+              color: $gray-600;
+              
+              .time-badge {
+                background: $primary-pale;
+                color: $primary-blue;
+                padding: 2px 8px;
+                border-radius: $radius-pill;
+                margin-left: $spacing-sm;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+        
+        .close-btn {
+          background: none;
+          border: none;
+          padding: $spacing-sm;
+          cursor: pointer;
+          border-radius: $radius-circle;
+          color: $gray-600;
+          
+          &:hover {
+            background: $gray-200;
+            color: $gray-900;
+          }
+        }
+      }
+      
+      .feedback-content {
+        color: $gray-800;
+        line-height: 1.6;
+        margin-bottom: $spacing-md;
+      }
+    }
+  }
+  
+  .sidebox {
+    .b_title {
+      margin-bottom: $spacing-lg;
+      
+      .s_title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: $gray-900;
+      }
+    }
+    
+    .tab_container {
+      @include card-elevated;
+      border-radius: $radius-lg;
+      overflow: hidden;
+      
+      .tab_menu {
+        background: $gray-100;
+        padding: $spacing-md;
+        border-bottom: 1px solid $gray-300;
+        
+        .tabContent {
+          padding: $spacing-lg;
+        }
+      }
+    }
+  }
+}
+
+// ===== 반응형 개선사항 =====
+@media (max-width: 768px) {
+  .cms_wrap {
+    flex-direction: column;
+    height: auto;
+    
+    main {
+      width: 100%;
+      padding: $spacing-md;
+    }
+  }
+  
+  .feedback_page {
+    .content.flex.space_between {
+      flex-direction: column;
+      gap: $spacing-lg;
+    }
+    
+    .videobox,
+    .sidebox {
+      width: 100%;
+    }
+  }
+  
+  .Auth_Form .form_wrap {
+    width: 90%;
+    max-width: 400px;
+    
+    input,
+    .submit {
+      font-size: 16px; // iOS 줌 방지
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .activity-card,
+  .invitation-card {
+    margin: 0 -#{$spacing-md};
+    border-radius: 0;
+  }
+  
+  .project-create .page-header {
+    margin: 0 -#{$spacing-md} $spacing-lg;
+    border-radius: 0;
+  }
+}
+
+// ===== 접근성 개선 =====
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .Auth_Form input:focus,
+  .cms_wrap input:focus {
+    border-width: 3px;
+    box-shadow: 0 0 0 2px $primary-blue;
+  }
+}
+
+// ===== 다크 모드 지원 준비 =====
+@media (prefers-color-scheme: dark) {
+  // 향후 다크 모드 구현을 위한 준비
+  :root {
+    --bg-primary: #{$gray-900};
+    --text-primary: #{$white};
+    --border-color: #{$gray-700};
+  }
+}

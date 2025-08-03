@@ -1,0 +1,52 @@
+// VideoPlanet 디자인 시스템 - Icon 스타일
+// 영상 제작 워크플로우에 특화된 아이콘 스타일
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+// ========================================
+// 크기 변형 (Size Variants)
+// ========================================
+
+.icon--small {
+  width: 16px;
+  height: 16px;
+}
+
+.icon--medium {
+  width: 20px;
+  height: 20px;
+}
+
+.icon--large {
+  width: 24px;
+  height: 24px;
+}
+
+.icon--xlarge {
+  width: 32px;
+  height: 32px;
+}
+
+// ========================================
+// 접근성 개선
+// ========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .icon {
+    svg {
+      animation: none;
+    }
+  }
+}

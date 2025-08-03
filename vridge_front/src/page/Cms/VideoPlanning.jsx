@@ -2,14 +2,19 @@ import React, { useState, Fragment } from 'react'
 import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 import LoadingAnimation from 'components/LoadingAnimation'
-import ExportModal from 'components/ExportModal'
-import VideoUploadGuide from 'components/VideoUploadGuide'
+import ExportModal from '../../components/ExportModal'
+import VideoUploadGuide from '../../components/VideoUploadGuide'
+import VideoOptionsDropdown from '../../components/VideoOptionsDropdown'
+import ProgressIndicator from '../../components/ProgressIndicator/ProgressIndicator'
 // CSS imports are handled in _app.js
 import axios from '../../config/axios'
-import { checkSession } from 'util/util'
+import { checkSession, axiosCredentials } from 'util/util'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { getProxyImageUrl, handleImageError } from 'utils/imageProxy'
+import { showSuccess, showError, showInfo } from 'components/Toast'
+import { getUserFriendlyError, getErrorSolution } from 'utils/userFriendlyErrors'
 
 // 이미지 생성 시 텍스트 중심 결과를 유발하는 금지 단어 필터링
 const filterForbiddenWords = (text) => {
@@ -34,6 +39,16 @@ const filterForbiddenWords = (text) => {
 
 export default function VideoPlanning() {
   const router = useRouter()
+  const navigate = router.push
+  
+  // 인증 체크
+  useEffect(() => {
+    const token = checkSession()
+    if (!token) {
+      toast.error('로그인이 필요한 서비스입니다.')
+      navigate('/login')
+    }
+  }, [])
   const [currentStep, setCurrentStep] = useState(1)
   const [planningData, setPlanningData] = useState({
     planning: '',
@@ -63,6 +78,18 @@ export default function VideoPlanning() {
   const [planningTitle, setPlanningTitle] = useState('')
   const [recentPlannings, setRecentPlannings] = useState([])
   const [currentPlanningId, setCurrentPlanningId] = useState(null)
+  const [completedSteps, setCompletedSteps] = useState([]) // 완료된 단계 추적
+  const [tokenUsage, setTokenUsage] = useState({
+    total: 0,
+    prompt: 0,
+    response: 0,
+    by_feature: {
+      story: { prompt: 0, response: 0, total: 0 },
+      scene: { prompt: 0, response: 0, total: 0 },
+      shot: { prompt: 0, response: 0, total: 0 },
+      storyboard: { prompt: 0, response: 0, total: 0 }
+    }
+  })
   
   // 최근 기획 불러오기
   const fetchRecentPlannings = async (retryCount = 0) => {
@@ -71,9 +98,10 @@ export default function VideoPlanning() {
       const token = checkSession()
       if (!token) return
       
-      const response = await axios.get('/api/video-planning/recent/', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
+      const response = await axiosCredentials(
+        'get',
+        '/api/video-planning/recent/'
+      )
       console.log('최근 기획 응답:', response.data)
       
       if (response.data && response.data.data && response.data.data.planning_logs) {
@@ -100,27 +128,32 @@ export default function VideoPlanning() {
     fetchRecentPlannings()
   }, [])
   
-  // 기획 삭제
-  const deletePlanning = async (planningId) => {
-    if (!window.confirm('이 기획을 삭제하시겠습니까?')) {
+  
+  // 최근 기획 데이터 로드
+  const deletePlanning = async (planningId, event) => {
+    // 이벤트 버블링 방지
+    if (event) {
+      event.stopPropagation()
+    }
+    
+    if (!window.confirm('이 기획안을 삭제하시겠습니까?')) {
       return
     }
     
     try {
-      const token = checkSession()
-      if (!token) return
-      
-      const response = await axios.delete(`/api/video-planning/delete/${planningId}/`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
+      const response = await axiosCredentials(
+        'delete',
+        `/api/video-planning/delete/${planningId}/`
+      )
       
       if (response.data.status === 'success') {
-        setSuccessMessage('기획이 삭제되었습니다.')
-        fetchRecentPlannings() // 목록 새로고침
-        fetchPlanningHistory() // 기획 보관함도 새로고침
+        showSuccess('기획안이 삭제되었습니다.')
+        // 삭제 후 최근 기획 목록 다시 불러오기
+        fetchRecentPlannings()
         
-        // 현재 표시 중인 기획이 삭제된 경우 초기화
+        // 현재 로드된 기획안이 삭제된 기획안이면 초기화
         if (currentPlanningId === planningId) {
+          setCurrentPlanningId(null)
           setPlanningData({
             planning: '',
             stories: [],
@@ -128,41 +161,16 @@ export default function VideoPlanning() {
             shots: [],
             storyboards: []
           })
-          setPlanningOptions({
-            tone: '',
-            genre: '',
-            concept: '',
-            target: '',
-            purpose: '',
-            duration: '',
-            toneCustom: '',
-            genreCustom: '',
-            conceptCustom: '',
-            targetCustom: '',
-            purposeCustom: '',
-            durationCustom: '',
-            storyFramework: 'hook_immersion',
-            developmentLevel: 'balanced',
-            characterName: '',
-            characterDescription: '',
-            characterImage: null
-          })
-          setCurrentStep(1)
-          setCurrentPlanningId(null)
           setPlanningTitle('')
+          setCurrentStep(1)
         }
-        
-        setTimeout(() => setSuccessMessage(null), 3000)
-      } else {
-        setError(response.data.message || '기획 삭제에 실패했습니다.')
       }
     } catch (err) {
-      console.error('기획 삭제 실패:', err)
-      setError(err.response?.data?.message || '기획 삭제에 실패했습니다.')
+      console.error('기획안 삭제 실패:', err)
+      showError('기획안 삭제에 실패했습니다.')
     }
   }
-  
-  // 최근 기획 데이터 로드
+
   const loadPlanningData = (planning) => {
     if (planning.planning_data) {
       setPlanningData({
@@ -183,7 +191,7 @@ export default function VideoPlanning() {
       }
       
       // 제목 설정
-      if (planning.title) {
+      if (planning.title && planning.title.trim()) {
         setPlanningTitle(planning.title)
       }
       
@@ -228,11 +236,18 @@ export default function VideoPlanning() {
   const [editingStoryboardText, setEditingStoryboardText] = useState('')
   const [showPlanningDetail, setShowPlanningDetail] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
+  
+  // Debug export modal
+  useEffect(() => {
+    console.log('showExportModal state:', showExportModal)
+  }, [showExportModal])
   const [collapsedStories, setCollapsedStories] = useState(new Set())
   const [storyboardGenerationProgress, setStoryboardGenerationProgress] = useState({})
   const [uploadedVideo, setUploadedVideo] = useState(null)
   const [showVideoGuide, setShowVideoGuide] = useState(false)
   const [sceneLoadingStates, setSceneLoadingStates] = useState({}) // 개별 씬 로딩 상태
+  const [isGeneratingStoryboards, setIsGeneratingStoryboards] = useState(false) // 스토리보드 생성 중 상태
+  const [abortController, setAbortController] = useState(null) // 중지 기능을 위한 AbortController
 
   useEffect(() => {
     const session = checkSession()
@@ -247,11 +262,16 @@ export default function VideoPlanning() {
     }
   }, [router])
 
+  // planningData가 변경될 때마다 completedSteps 업데이트
+  useEffect(() => {
+    updateCompletedSteps()
+  }, [planningData])
+
   // API_BASE_URL 제거 - axios 기본 설정 사용
 
   const fetchPlanningHistory = async () => {
     try {
-      const response = await axios.get(`/api/video-planning/library/`)
+      const response = await axiosCredentials('get', '/api/video-planning/library/')
       if (response.data.status === 'success') {
         setPlanningHistory(response.data.data.plannings || [])
       }
@@ -264,7 +284,7 @@ export default function VideoPlanning() {
 
   const loadHistoryItem = async (planningId) => {
     try {
-      const response = await axios.get(`/api/video-planning/library/${planningId}/`)
+      const response = await axiosCredentials('get', `/api/video-planning/library/${planningId}/`)
       if (response.data.status === 'success') {
         const planning = response.data.data.planning
         setPlanningData({
@@ -286,10 +306,7 @@ export default function VideoPlanning() {
   // PDF 다운로드 함수
   const downloadPlanningAsPDF = async (planningId, planningTitle) => {
     try {
-      const response = await axios.get(
-        `/api/video-planning/export/pdf/${planningId}/`,
-        { responseType: 'blob' }
-      )
+      const response = await axiosCredentials('get', `/api/video-planning/export/pdf/${planningId}/`, null, { responseType: 'blob' })
       
       // Blob으로부터 다운로드 URL 생성
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -315,9 +332,7 @@ export default function VideoPlanning() {
     }
 
     try {
-      const response = await axios.post(
-        `/api/video-planning/library/`,
-        {
+      const response = await axiosCredentials('post', '/api/video-planning/library/', {
           title: planningTitle,
           planning_text: planningData.planning,
           stories: planningData.stories,
@@ -357,15 +372,11 @@ export default function VideoPlanning() {
 
       if (currentPlanningId) {
         // 기존 기획 업데이트
-        await axios.put(
-          `/api/video-planning/update/${currentPlanningId}/`,
-          planningDataToSave
+        await axiosCredentials('put', `/api/video-planning/update/${currentPlanningId}/`, planningDataToSave
         )
       } else {
         // 새 기획 생성
-        const response = await axios.post(
-          `/api/video-planning/save/`,
-          planningDataToSave
+        const response = await axiosCredentials('post', '/api/video-planning/save/', planningDataToSave
         )
         if (response.data.status === 'success' && response.data.data.id) {
           setCurrentPlanningId(response.data.data.id)
@@ -396,9 +407,14 @@ export default function VideoPlanning() {
     setError(null)
 
     try {
-      const response = await axios.post(
-        `/api/video-planning/generate/story/`,
-        { 
+      console.log('스토리 생성 요청 데이터:', {
+        planning_text: planningData.planning,
+        story_framework: planningOptions.storyFramework,
+        tone: planningOptions.tone,
+        genre: planningOptions.genre
+      })
+      
+      const response = await axiosCredentials('post', '/api/video-planning/generate/story/', { 
           planning_text: planningData.planning,
           tone: planningOptions.tone === 'custom' ? planningOptions.toneCustom : planningOptions.tone,
           genre: planningOptions.genre === 'custom' ? planningOptions.genreCustom : planningOptions.genre,
@@ -413,15 +429,34 @@ export default function VideoPlanning() {
           character_image: planningOptions.characterImage
         }
       )
+      
+      console.log('스토리 생성 응답:', response.data)
 
       if (response.data.status === 'success') {
         setLoadingProgress(80)
         setLoadingMessage('기승전결 스토리 생성 완료!')
         
+        const stories = response.data.data?.stories || []
+        console.log('받은 스토리 개수:', stories.length)
+        console.log('스토리 데이터:', stories)
+        
+        // 토큰 사용량 업데이트
+        if (response.data.token_usage) {
+          setTokenUsage(response.data.token_usage)
+          console.log('토큰 사용량:', response.data.token_usage)
+        }
+        
+        if (stories.length === 0) {
+          console.warn('스토리가 생성되지 않았습니다.')
+          setError('AI API 할당량 초과로 인해 기본 스토리가 제공됩니다. 내일 다시 시도해주세요.')
+          // 에러가 있어도 계속 진행하도록 수정
+          // return
+        }
+        
         setTimeout(async () => {
           setPlanningData(prev => ({
             ...prev,
-            stories: response.data.data.stories || []
+            stories: stories
           }))
           setCurrentStep(2)
           setLoadingProgress(100)
@@ -433,9 +468,12 @@ export default function VideoPlanning() {
           fetchRecentPlannings()
         }, 500)
       } else {
+        console.error('스토리 생성 실패:', response.data)
         setError(response.data.message || '스토리 생성에 실패했습니다.')
       }
     } catch (err) {
+      console.error('스토리 생성 오류:', err)
+      console.error('에러 응답:', err.response?.data)
       setError(err.response?.data?.message || '서버 오류가 발생했습니다.')
     } finally {
       setTimeout(() => {
@@ -461,9 +499,7 @@ export default function VideoPlanning() {
       let allScenes = []
       
       for (let i = 0; i < planningData.stories.length; i++) {
-        const response = await axios.post(
-          `/api/video-planning/generate/scenes/`,
-          { 
+        const response = await axiosCredentials('post', '/api/video-planning/generate/scenes/', { 
             story_data: planningData.stories[i],
             planning_options: planningOptions
           }
@@ -507,9 +543,7 @@ export default function VideoPlanning() {
 
     try {
       const selectedScene = planningData.scenes[selectedSceneIndex]
-      const response = await axios.post(
-        `/api/video-planning/generate/shots/`,
-        { 
+      const response = await axiosCredentials('post', '/api/video-planning/generate/shots/', { 
           scene_data: selectedScene,
           planning_options: planningOptions
         }
@@ -540,9 +574,7 @@ export default function VideoPlanning() {
 
     try {
       const selectedShot = planningData.shots[selectedShotIndex]
-      const response = await axios.post(
-        `/api/video-planning/generate/storyboards/`,
-        { 
+      const response = await axiosCredentials('post', '/api/video-planning/generate/storyboards/', { 
           shot_data: selectedShot,
           planning_options: planningOptions
         }
@@ -643,9 +675,7 @@ export default function VideoPlanning() {
         })
       }, 30000)
       
-      const response = await axios.post(
-        `/api/video-planning/generate/storyboards/`,
-        { 
+      const response = await axiosCredentials('post', '/api/video-planning/generate/storyboards/', { 
           shot_data: shotData,
           style: storyboardStyle,
           speed_optimized: storyboardStyle === 'quick_draft' // 빠른 드래프트일 때만 속도 최적화
@@ -757,9 +787,7 @@ export default function VideoPlanning() {
         lighting: "자연광"
       }
 
-      const response = await axios.post(
-        `/api/video-planning/regenerate/storyboard-image/`,
-        { 
+      const response = await axiosCredentials('post', '/api/video-planning/regenerate/storyboard-image/', { 
           frame_data: frameData,
           style: storyboardStyle
         }
@@ -820,9 +848,7 @@ export default function VideoPlanning() {
         document.body.removeChild(link)
       } else {
         // URL 이미지인 경우 서버를 통해 다운로드
-        const response = await axios.post(
-          `/api/video-planning/download/storyboard-image/`,
-          { 
+        const response = await axiosCredentials('post', '/api/video-planning/download/storyboard-image/', { 
             image_url: imageUrl,
             frame_title: fileName
           },
@@ -860,9 +886,7 @@ export default function VideoPlanning() {
         planning_options: planningOptions
       }))
 
-      const response = await axios.post(
-        `/api/video-planning/generate/all-storyboards/`,
-        { 
+      const response = await axiosCredentials('post', '/api/video-planning/generate/all-storyboards/', { 
           scenes: scenesWithOptions,
           style: storyboardStyle,
           speed_optimized: storyboardStyle === 'quick_draft' // 빠른 드래프트일 때만 속도 최적화
@@ -925,9 +949,14 @@ export default function VideoPlanning() {
   // 새로운 고속 병렬 콘티 생성 함수
   const generateAllStoryboardsFast = async () => {
     setLoading(true)
+    setIsGeneratingStoryboards(true)
     setLoadingMessage(`⚡ 고속 병렬 콘티 생성 중... (총 ${planningData.scenes.length}개)`)
     setLoadingProgress(10)
     setError(null)
+    
+    // AbortController 생성
+    const controller = new AbortController()
+    setAbortController(controller)
     
     // 각 씬별 진행상태 초기화
     const initialProgress = {}
@@ -966,9 +995,7 @@ export default function VideoPlanning() {
               planning_options: planningOptions
             }
 
-            const response = await axios.post(
-              `/api/video-planning/generate/storyboards/`,
-              { 
+            const response = await axiosCredentials('post', '/api/video-planning/generate/storyboards/', { 
                 scene: sceneWithOptions,
                 scene_index: originalIndex,
                 style: storyboardStyle,
@@ -977,10 +1004,13 @@ export default function VideoPlanning() {
               },
               {
                 timeout: 60000, // 1분으로 단축
+                signal: controller.signal // AbortController signal 추가
               }
             )
 
             if (response.data.status === 'success') {
+              console.log(`Scene ${originalIndex} storyboard response:`, response.data.data.storyboard)
+              
               // 진행상태 업데이트: 완료
               setStoryboardGenerationProgress(prev => ({
                 ...prev,
@@ -994,6 +1024,7 @@ export default function VideoPlanning() {
                   ...updatedScenes[originalIndex],
                   storyboard: response.data.data.storyboard
                 }
+                console.log(`Updated scene ${originalIndex}:`, updatedScenes[originalIndex])
                 return {
                   ...prev,
                   scenes: updatedScenes
@@ -1044,11 +1075,26 @@ export default function VideoPlanning() {
       }, 5000)
 
     } catch (err) {
-      setError('고속 콘티 생성 중 오류가 발생했습니다.')
+      if (err.name === 'AbortError') {
+        setError('콘티 생성이 중지되었습니다.')
+      } else {
+        setError('고속 콘티 생성 중 오류가 발생했습니다.')
+      }
     } finally {
       setLoading(false)
+      setIsGeneratingStoryboards(false)
       setLoadingMessage('')
       setLoadingProgress(0)
+      setAbortController(null)
+    }
+  }
+
+  // 콘티 생성 중지 함수
+  const stopStoryboardGeneration = () => {
+    if (abortController) {
+      abortController.abort()
+      setIsGeneratingStoryboards(false)
+      setLoadingMessage('콘티 생성을 중지하는 중...')
     }
   }
 
@@ -1151,48 +1197,39 @@ export default function VideoPlanning() {
       shots: [],
       storyboards: []
     })
+    setCurrentPlanningId(null)
+    setPlanningTitle('')
     setError(null)
     setSelectedStoryIndex(0)
     setSelectedSceneIndex(0)
     setSelectedShotIndex(0)
   }
 
+
   const goToStep = (step) => {
-    // 스텝 1은 항상 접근 가능
-    if (step === 1) {
-      setCurrentStep(1)
-      return
-    }
-    
-    // 스텝 2는 스토리가 있을 때만 접근 가능
-    if (step === 2) {
-      if (planningData.stories.length > 0) {
-        setCurrentStep(2)
-      } else {
-        // 스토리가 없으면 스텝 1로 이동하고 사용자에게 알림
-        setCurrentStep(1)
-        setError('먼저 스토리를 생성해주세요.')
+    if (canNavigateToStep(step)) {
+      setCurrentStep(step)
+    } else {
+      // 사용자 친화적인 오류 메시지
+      let errorMessage = ''
+      if (step === 2 && !planningData.planning) {
+        errorMessage = '먼저 기획안을 작성해주세요.'
+      } else if (step === 3 && planningData.stories.length === 0) {
+        errorMessage = '먼저 스토리를 생성해주세요.'
+      } else if (step === 4 && planningData.scenes.length === 0) {
+        errorMessage = '먼저 씬을 생성해주세요.'
+      } else if (step === 5 && planningData.shots.length === 0) {
+        errorMessage = '먼저 샷을 구성해주세요.'
+      }
+      
+      if (errorMessage) {
+        setError({
+          message: errorMessage,
+          solution: `${step - 1}단계를 먼저 완료해주세요.`,
+          icon: '⚠️'
+        })
         setTimeout(() => setError(null), 3000)
       }
-      return
-    }
-    
-    // 스텝 3은 씬이 있을 때만 접근 가능
-    if (step === 3) {
-      if (planningData.scenes.length > 0) {
-        setCurrentStep(3)
-      } else if (planningData.stories.length > 0) {
-        // 씬이 없지만 스토리가 있으면 스텝 2로 이동
-        setCurrentStep(2)
-        setError('먼저 씬을 생성해주세요.')
-        setTimeout(() => setError(null), 3000)
-      } else {
-        // 스토리와 씬이 모두 없으면 스텝 1로 이동
-        setCurrentStep(1)
-        setError('먼저 기획안과 스토리를 생성해주세요.')
-        setTimeout(() => setError(null), 3000)
-      }
-      return
     }
   }
 
@@ -1259,7 +1296,7 @@ export default function VideoPlanning() {
         options: planningOptions
       }))
 
-      const response = await axios.post('/api/video-planning/complete/', formData, {
+      const response = await axiosCredentials('post', '/api/video-planning/complete/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -1659,67 +1696,13 @@ export default function VideoPlanning() {
                 </div>
               </div>
               
-              <div className="option-group">
-                <label>영상 길이</label>
-                <div className="custom-select-wrapper">
-                  {!showCustomDuration ? (
-                    <select 
-                      value={planningOptions.duration} 
-                      onChange={(e) => {
-                        if (e.target.value === '직접입력') {
-                          setShowCustomDuration(true)
-                          setPlanningOptions(prev => ({ ...prev, duration: '' }))
-                        } else {
-                          setPlanningOptions(prev => ({ ...prev, duration: e.target.value }))
-                        }
-                      }}
-                    >
-                      <option value="">선택하세요</option>
-                      <optgroup label="숏폼 콘텐츠">
-                        <option value="15초 이하">15초 이하</option>
-                        <option value="30초">30초</option>
-                        <option value="1분">1분</option>
-                        <option value="1-3분">1-3분</option>
-                      </optgroup>
-                      <optgroup label="일반 콘텐츠">
-                        <option value="3-5분">3-5분</option>
-                        <option value="5-10분">5-10분</option>
-                        <option value="10-15분">10-15분</option>
-                        <option value="15-20분">15-20분</option>
-                      </optgroup>
-                      <optgroup label="롱폼 콘텐츠">
-                        <option value="20-30분">20-30분</option>
-                        <option value="30-45분">30-45분</option>
-                        <option value="45-60분">45-60분</option>
-                        <option value="60분 이상">60분 이상</option>
-                      </optgroup>
-                      <option value="직접입력" style={{fontWeight: 'bold'}}>직접입력</option>
-                    </select>
-                  ) : (
-                    <div className="custom-input-wrapper">
-                      <input
-                        type="text"
-                        placeholder="원하시는 영상 길이를 입력해주세요 (예: 2분 30초)"
-                        value={planningOptions.durationCustom}
-                        onChange={(e) => setPlanningOptions(prev => ({ ...prev, durationCustom: e.target.value, duration: 'custom' }))}
-                        className="ty01"
-                      />
-                    </div>
-                  )}
-                  {showCustomDuration && (
-                    <button 
-                      className="cancel-custom-btn"
-                      onClick={() => {
-                        setShowCustomDuration(false)
-                        setPlanningOptions(prev => ({ ...prev, duration: '', durationCustom: '' }))
-                      }}
-                    >
-                      선택목록으로
-                    </button>
-                  )}
-                </div>
-              </div>
             </div>
+            
+            {/* 새로운 드롭다운 옵션 메뉴 */}
+            <VideoOptionsDropdown 
+              planningOptions={planningOptions} 
+              setPlanningOptions={setPlanningOptions} 
+            />
             
             {/* 스토리 전개 강도 - 전개 방식 위로 이동 */}
             <div className="development-level">
@@ -1785,88 +1768,102 @@ export default function VideoPlanning() {
                   <span className="framework-stages">옛날에 → 매일 → 어느날 → 그래서 → 결국</span>
                 </div>
                 <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'save_the_cat' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'save_the_cat' }))}
+                  className={`framework-card ${planningOptions.storyFramework === 'deductive' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'deductive' }))}
                 >
-                  <h5>Save the Cat</h5>
-                  <p>할리우드식 3막 구조로 관객을 사로잡는 스토리</p>
-                  <span className="framework-stages">오프닝 이미지 → 테마 제시 → 촉매제 → 논쟁 → 2막 전환</span>
+                  <h5>연역식 스토리텔링</h5>
+                  <p>핵심 메시지를 먼저 제시하고 근거로 뒷받침하는 논리적 구조</p>
+                  <span className="framework-stages">주장/결론 → 근거 1 → 근거 2 → 근거 3 → 재확인</span>
                 </div>
                 <div 
-                  className={`framework-card ${planningOptions.storyFramework === 'star_moment' ? 'active' : ''}`}
-                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'star_moment' }))}
+                  className={`framework-card ${planningOptions.storyFramework === 'inductive' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'inductive' }))}
                 >
-                  <h5>스타 모멘트</h5>
-                  <p>하나의 강렬한 순간을 중심으로 전후를 구성하는 임팩트 스토리</p>
-                  <span className="framework-stages">빌드업 → 결정적 순간 → 반전/깨달음 → 새로운 시작</span>
+                  <h5>귀납식 스토리텔링</h5>
+                  <p>사례와 증거를 쌓아 결론을 도출하는 설득력 있는 구조</p>
+                  <span className="framework-stages">사례 1 → 사례 2 → 사례 3 → 패턴 발견 → 결론</span>
+                </div>
+                <div 
+                  className={`framework-card ${planningOptions.storyFramework === 'documentary' ? 'active' : ''}`}
+                  onClick={() => setPlanningOptions(prev => ({ ...prev, storyFramework: 'documentary' }))}
+                >
+                  <h5>다큐멘터리 형식</h5>
+                  <p>사실과 인터뷰를 기반으로 진실을 탐구하는 객관적 구조</p>
+                  <span className="framework-stages">문제 제기 → 탐사/인터뷰 → 갈등/대립 → 통찰 → 메시지</span>
                 </div>
               </div>
             </div>
             
             {/* 주인공 설정 섹션 */}
-            <div className="character-settings">
-              <label>주인공 설정</label>
-              <div className="character-settings-content">
-                <div className="character-input-group">
+            <div className="planning-options character-options">
+              <div className="option-group character-image-group">
+                <label>캐릭터 이미지</label>
+                <div className="character-image-upload">
+                  <label className="image-upload-label">
                     <input
-                      type="text"
-                      placeholder="주인공 이름 (예: 김철수, 영희)"
-                      value={planningOptions.characterName}
-                      onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterName: e.target.value }))}
-                      className="character-name-input"
-                    />
-                    <textarea
-                      placeholder="주인공 묘사 (예: 30대 초반의 프리랜서 디자이너, 긍정적이고 창의적인 성격)"
-                      value={planningOptions.characterDescription}
-                      onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterDescription: e.target.value }))}
-                      className="character-description-input"
-                      rows={3}
-                    />
-                  </div>
-                  <div className="character-image-upload">
-                    <label className="image-upload-label">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files[0]
-                          if (file) {
-                            const reader = new FileReader()
-                            reader.onloadend = () => {
-                              setPlanningOptions(prev => ({ 
-                                ...prev, 
-                                characterImage: reader.result 
-                              }))
-                            }
-                            reader.readAsDataURL(file)
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files[0]
+                        if (file) {
+                          const reader = new FileReader()
+                          reader.onloadend = () => {
+                            setPlanningOptions(prev => ({ 
+                              ...prev, 
+                              characterImage: reader.result 
+                            }))
                           }
-                        }}
-                        style={{ display: 'none' }}
-                      />
-                      <div className="upload-button">
-                        {planningOptions.characterImage ? (
-                          <div className="image-preview">
-                            <img src={planningOptions.characterImage} alt="Character" />
-                            <span className="change-image">이미지 변경</span>
-                          </div>
-                        ) : (
-                          <>
-                            <span className="upload-text">캐릭터 이미지 업로드</span>
-                          </>
-                        )}
+                          reader.readAsDataURL(file)
+                        }
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                    {planningOptions.characterImage ? (
+                      <div className="image-preview">
+                        <img src={planningOptions.characterImage} alt="Character" />
+                        <span className="change-image">이미지 변경</span>
                       </div>
-                    </label>
-                    {planningOptions.characterImage && (
-                      <button
-                        className="remove-image-btn"
-                        onClick={() => setPlanningOptions(prev => ({ ...prev, characterImage: null }))}
-                      >
-                        이미지 제거
-                      </button>
+                    ) : (
+                      <div className="upload-placeholder">
+                        <span className="upload-icon">📷</span>
+                        <span>이미지 업로드</span>
+                      </div>
                     )}
-                  </div>
+                  </label>
+                  {planningOptions.characterImage && (
+                    <button 
+                      className="remove-image-btn"
+                      onClick={() => setPlanningOptions(prev => ({ ...prev, characterImage: null }))}
+                    >
+                      이미지 제거
+                    </button>
+                  )}
                 </div>
               </div>
+
+              <div className="option-group">
+                <label>주인공 이름</label>
+                <input
+                  type="text"
+                  placeholder="예: 김철수, 영희, 팀장님"
+                  value={planningOptions.characterName}
+                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterName: e.target.value }))}
+                  className="character-name-input"
+                />
+              </div>
+
+              <div className="option-group character-desc-group">
+                <label>주인공 묘사</label>
+                <textarea
+                  placeholder="주인공의 나이, 직업, 성격, 특징 등을 자세히 설명해주세요.&#10;예: 30대 초반의 프리랜서 디자이너. 긍정적이고 창의적인 성격으로 새로운 도전을 두려워하지 않음."
+                  value={planningOptions.characterDescription}
+                  onChange={(e) => setPlanningOptions(prev => ({ ...prev, characterDescription: e.target.value }))}
+                  className="character-description-input"
+                  rows={3}
+                />
+                <span className="char-count">{planningOptions.characterDescription.length}/500자</span>
+              </div>
+            </div>
             
             <textarea
               className="planning-input"
@@ -2015,6 +2012,33 @@ export default function VideoPlanning() {
               기획안을 기승전결 4개의 스토리로 나누었습니다. 각 스토리마다 3개의 씬이 생성됩니다.
             </p>
             
+            {/* 선택된 스토리 전개 방식 표시 */}
+            {planningOptions.storyFramework && (
+              <div className="selected-framework-display" style={{
+                backgroundColor: '#f8f9fa',
+                border: '2px solid #1631F8',
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <span style={{ fontWeight: '600', color: '#333' }}>선택된 스토리 전개:</span>
+                <span style={{ 
+                  color: '#1631F8', 
+                  fontWeight: '700',
+                  fontSize: '16px'
+                }}>
+                  {planningOptions.storyFramework === 'hook_immersion' && '훅-몰입-반전-떡밥'}
+                  {planningOptions.storyFramework === 'classic' && '클래식 기승전결'}
+                  {planningOptions.storyFramework === 'pixar' && '픽사 스토리텔링'}
+                  {planningOptions.storyFramework === 'deductive' && '연역식 스토리텔링'}
+                  {planningOptions.storyFramework === 'inductive' && '귀납식 스토리텔링'}
+                  {planningOptions.storyFramework === 'documentary' && '다큐멘터리 형식'}
+                </span>
+              </div>
+            )}
             
             <div className="stories-container">
               {planningData.stories.map((story, index) => (
@@ -2213,6 +2237,38 @@ export default function VideoPlanning() {
                 >
                   {loading && Object.keys(storyboardGenerationProgress).length ? '⚡ 콘티 생성 중...' : '⚡ 모든 콘티 빠르게 생성'}
                 </button>
+                
+                {/* 중지 버튼 추가 */}
+                {isGeneratingStoryboards && (
+                  <button
+                    className="stop-generation-btn"
+                    onClick={stopStoryboardGeneration}
+                    style={{
+                      background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 12px rgba(220, 53, 69, 0.25)',
+                      marginLeft: '12px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 6px 20px rgba(220, 53, 69, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(220, 53, 69, 0.25)';
+                    }}
+                  >
+                    <span style={{ marginRight: '8px' }}>🛑</span>
+                    콘티 생성 중지
+                  </button>
+                )}
               </div>
               
               <div className="batch-info">
@@ -2250,12 +2306,18 @@ export default function VideoPlanning() {
                             src={getProxyImageUrl(scene.storyboard.image_url)} 
                             alt={`씬 ${index + 1} 콘티`}
                             className="storyboard-image"
-                            onError={(e) => handleImageError(e, scene.storyboard.image_url, (newUrl) => {
-                              // 이미지 URL 업데이트
-                              const updatedScenes = [...planningData.scenes]
-                              updatedScenes[index].storyboard.image_url = newUrl
-                              setPlanningData(prev => ({ ...prev, scenes: updatedScenes }))
-                            })}
+                            onError={(e) => {
+                              console.error(`Failed to load storyboard image for scene ${index}:`, scene.storyboard.image_url)
+                              handleImageError(e, scene.storyboard.image_url, (newUrl) => {
+                                // 이미지 URL 업데이트
+                                const updatedScenes = [...planningData.scenes]
+                                updatedScenes[index].storyboard.image_url = newUrl
+                                setPlanningData(prev => ({ ...prev, scenes: updatedScenes }))
+                              })
+                            }}
+                            onLoad={() => {
+                              console.log(`Successfully loaded storyboard image for scene ${index}`)
+                            }}
                           />
                         ) : null}
                         <div className="storyboard-placeholder" style={{display: scene.storyboard.image_url && scene.storyboard.image_url !== 'generated_image_placeholder' ? 'none' : 'flex'}}>
@@ -2428,7 +2490,11 @@ export default function VideoPlanning() {
               <button className="back-btn" onClick={() => goToStep(2)}>
                 스토리 다시 선택
               </button>
-              <button className="export-btn" onClick={() => setShowExportModal(true)}>
+              <button className="export-btn" onClick={() => {
+                console.log('Export button clicked')
+                console.log('Current planningData:', planningData)
+                setShowExportModal(true)
+              }}>
                 내보내기
               </button>
               <button className="new-btn" onClick={resetPlanning}>
@@ -2635,58 +2701,15 @@ export default function VideoPlanning() {
                   </div>
                 )}
 
-                <div className="planning-navigation">
-              <div 
-                className={`nav-step ${currentStep >= 1 ? 'active' : ''} ${currentStep === 1 ? 'current' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  goToStep(1)
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                <span className="step-number">1</span>
-                <span className="step-name">기획안</span>
-              </div>
-              <div 
-                className={`nav-step ${currentStep >= 2 ? 'active' : ''} ${currentStep === 2 ? 'current' : ''} ${planningData.stories.length === 0 ? 'disabled' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  if (planningData.stories.length === 0) {
-                    setError('먼저 스토리를 생성해주세요.')
-                    setTimeout(() => setError(null), 3000)
-                    return
-                  }
-                  goToStep(2)
-                }}
-                style={{ cursor: planningData.stories.length === 0 ? 'not-allowed' : 'pointer' }}
-              >
-                <span className="step-number">2</span>
-                <span className="step-name">스토리</span>
-              </div>
-              <div 
-                className={`nav-step ${currentStep >= 3 ? 'active' : ''} ${currentStep === 3 ? 'current' : ''} ${planningData.scenes.length === 0 ? 'disabled' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  if (planningData.scenes.length === 0) {
-                    if (planningData.stories.length === 0) {
-                      setError('먼저 기획안과 스토리를 생성해주세요.')
-                    } else {
-                      setError('먼저 씬을 생성해주세요.')
-                    }
-                    setTimeout(() => setError(null), 3000)
-                    return
-                  }
-                  goToStep(3)
-                }}
-                style={{ cursor: planningData.scenes.length === 0 ? 'not-allowed' : 'pointer' }}
-              >
-                <span className="step-number">3</span>
-                <span className="step-name">씬 & 콘티</span>
-              </div>
-            </div>
+                {/* Progress Indicator */}
+                <ProgressIndicator
+                  currentStep={currentStep}
+                  totalSteps={5}
+                  completedSteps={completedSteps}
+                  canNavigateToStep={canNavigateToStep}
+                  onStepClick={goToStep}
+                  stepLabels={stepLabels}
+                />
 
             {/* 단계별 내용 미리보기 */}
             {(planningData.planning || planningData.stories.length > 0 || planningData.scenes.length > 0) && (
@@ -2742,7 +2765,9 @@ export default function VideoPlanning() {
                           display: 'flex',
                           alignItems: 'center',
                           gap: '6px',
-                          transition: 'all 0.3s ease'
+                          transition: 'all 0.3s ease',
+                          width: 'auto',
+                          minWidth: 'fit-content'
                         }}
                       >
                         {expandedSections.planning ? '접기' : '펼치기'}
@@ -2915,7 +2940,9 @@ export default function VideoPlanning() {
                           display: 'flex',
                           alignItems: 'center',
                           gap: '6px',
-                          transition: 'all 0.3s ease'
+                          transition: 'all 0.3s ease',
+                          width: 'auto',
+                          minWidth: 'fit-content'
                         }}
                       >
                         {expandedSections.scenes ? '접기' : '펼치기'}
@@ -2940,8 +2967,14 @@ export default function VideoPlanning() {
             )}
 
             {error && (
-              <div className="error-message">
-                <p>{error}</p>
+              <div className="error-message enhanced-error">
+                <div className="error-icon">{error.icon || '⚠️'}</div>
+                <div className="error-content">
+                  <p className="error-text">{error.message || error}</p>
+                  {error.solution && (
+                    <p className="error-solution">{error.solution}</p>
+                  )}
+                </div>
                 <button 
                   className="close-error" 
                   onClick={() => setError(null)}
@@ -2962,6 +2995,57 @@ export default function VideoPlanning() {
                 >
                   ×
                 </button>
+              </div>
+            )}
+            
+            {/* 토큰 사용량 표시 */}
+            {tokenUsage.total > 0 && (
+              <div className="token-usage-info" style={{
+                backgroundColor: '#f0f4f8',
+                border: '1px solid #d1d9e0',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                margin: '16px 0',
+                fontSize: '14px',
+                color: '#495057'
+              }}>
+                <div style={{ fontWeight: '600', marginBottom: '8px', color: '#212529' }}>
+                  AI 토큰 사용량
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
+                  <div>
+                    <span style={{ color: '#6c757d' }}>전체: </span>
+                    <span style={{ fontWeight: '500' }}>{tokenUsage.total.toLocaleString()}</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#6c757d' }}>프롬프트: </span>
+                    <span style={{ fontWeight: '500' }}>{tokenUsage.prompt.toLocaleString()}</span>
+                  </div>
+                  <div>
+                    <span style={{ color: '#6c757d' }}>응답: </span>
+                    <span style={{ fontWeight: '500' }}>{tokenUsage.response.toLocaleString()}</span>
+                  </div>
+                </div>
+                {tokenUsage.by_feature && (
+                  <details style={{ marginTop: '12px' }}>
+                    <summary style={{ cursor: 'pointer', color: '#1631F8', fontWeight: '500' }}>
+                      기능별 상세 사용량
+                    </summary>
+                    <div style={{ marginTop: '8px', paddingLeft: '12px' }}>
+                      {Object.entries(tokenUsage.by_feature).map(([feature, usage]) => (
+                        usage.total > 0 && (
+                          <div key={feature} style={{ marginBottom: '4px' }}>
+                            <span style={{ color: '#6c757d', textTransform: 'capitalize' }}>{feature}: </span>
+                            <span style={{ fontWeight: '500' }}>{usage.total.toLocaleString()}</span>
+                            <span style={{ fontSize: '12px', color: '#868e96' }}>
+                              {' '}(프롬프트: {usage.prompt.toLocaleString()}, 응답: {usage.response.toLocaleString()})
+                            </span>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  </details>
+                )}
               </div>
             )}
               </>
@@ -2994,6 +3078,7 @@ export default function VideoPlanning() {
       {showVideoGuide && (
         <VideoUploadGuide onClose={() => setShowVideoGuide(false)} />
       )}
+      
     </PageTemplate>
   )
 }

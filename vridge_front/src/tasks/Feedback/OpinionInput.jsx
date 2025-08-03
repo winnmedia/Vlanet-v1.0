@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { CreateFeedback } from 'api/feedback'
+import { checkSession } from 'util/util'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 
 export default function OpinionInput({ project_id, current_project, refetch }) {
+  const router = useRouter()
+  const navigate = router.push
   const { user } = useSelector((s) => s.ProjectStore)
+  
+  // 인증 체크
+  useEffect(() => {
+    const token = checkSession()
+    if (!token) {
+      toast.error('로그인이 필요한 서비스입니다.')
+      navigate('/login')
+    }
+  }, [])
   const [opinion, setOpinion] = useState('')
   const [commentType, setCommentType] = useState('general') // 기본값: 일반
   const [submitting, setSubmitting] = useState(false)
@@ -25,12 +39,12 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
   const handleSubmit = async () => {
     const trimmedOpinion = opinion.trim()
     if (!trimmedOpinion) {
-      window.alert('코멘트를 입력해주세요.')
+      toast.warning('코멘트를 입력해주세요.');
       return
     }
 
     if (trimmedOpinion.length > 500) {
-      window.alert('코멘트는 500자 이내로 입력해주세요.')
+      toast.warning('코멘트는 500자 이내로 입력해주세요.');
       return
     }
 
@@ -55,31 +69,23 @@ export default function OpinionInput({ project_id, current_project, refetch }) {
         refetch()
       }
       
-      window.alert('코멘트가 등록되었습니다.')
+      toast.success('코멘트가 등록되었습니다.');
     } catch (error) {
       console.error('코멘트 등록 실패:', error)
       let errorMessage = '코멘트 등록에 실패했습니다. 다시 시도해주세요.'
       
-      if (error.response && error.response.data && error.response.data.message) {
-        errorMessage = error.response.data.message
-      } else if (error.response && error.response.status) {
-        switch (error.response.status) {
-          case 401:
-            errorMessage = '로그인이 필요합니다.'
-            break
-          case 403:
-            errorMessage = '권한이 없습니다.'
-            break
-          case 404:
-            errorMessage = '프로젝트를 찾을 수 없습니다.'
-            break
-          case 500:
-            errorMessage = '서버 오류가 발생했습니다.'
-            break
-        }
+      if (error.response?.status === 401) {
+        toast.error('로그인이 필요합니다.');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('권한이 없습니다.');
+      } else if (error.response?.status === 404) {
+        toast.error('프로젝트를 찾을 수 없습니다.');
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('코멘트 등록에 실패했습니다. 다시 시도해주세요.');
       }
-      
-      window.alert(errorMessage)
     } finally {
       setSubmitting(false)
     }

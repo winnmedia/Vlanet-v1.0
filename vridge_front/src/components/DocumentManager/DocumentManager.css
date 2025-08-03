@@ -1,0 +1,217 @@
+/* 문서 관리자 스타일 */
+.document-manager {
+  padding: 20px 0;
+}
+
+.document-manager-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.document-manager-card .ant-card-head {
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.document-manager-card .ant-card-head-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* 헤더 */
+.document-manager-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* 문서 리스트 */
+.document-list {
+  min-height: 400px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+/* 문서 카드 */
+.document-card {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.document-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.document-card .ant-card-body {
+  padding: 16px;
+}
+
+.document-card .ant-card-actions {
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+}
+
+.document-card .ant-card-actions > li {
+  margin: 8px 0;
+}
+
+.document-card .ant-card-actions > li > span {
+  font-size: 16px;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.document-card .ant-card-actions > li > span:hover {
+  color: #1631F8;
+}
+
+/* 문서 아이콘 */
+.document-icon {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* 문서 제목 */
+.document-title {
+  font-weight: 500;
+  color: #2c3e50;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 8px;
+}
+
+/* 문서 메타 정보 */
+.document-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.document-info {
+  font-size: 12px;
+  color: #999;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.document-description {
+  color: #666;
+  font-size: 12px;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* 업로드 폼 */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-item label {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* 미리보기 */
+.document-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-info {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.preview-info span {
+  font-size: 14px;
+  color: #666;
+}
+
+.preview-description {
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  color: #666;
+}
+
+.preview-image {
+  text-align: center;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .document-manager-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .document-manager-header .ant-space {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .document-manager-header .ant-input-search,
+  .document-manager-header .ant-select,
+  .document-manager-header .ant-btn {
+    width: 100% !important;
+  }
+}
+
+/* 태그 스타일 */
+.ant-tag {
+  margin: 0;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* 버튼 호버 효과 */
+.ant-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+}
+
+/* 모달 스타일 */
+.ant-modal-header {
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.ant-modal-title {
+  font-weight: 600;
+  color: #2c3e50;
+}

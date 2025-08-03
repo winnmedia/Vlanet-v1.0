@@ -1,0 +1,75 @@
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import Toast from './Toast';
+import styles from './ToastContainer.module.scss';
+
+let toastContainerInstance = null;
+
+const ToastContainer = () => {
+  const [toasts, setToasts] = useState([]);
+
+  useEffect(() => {
+    toastContainerInstance = {
+      show: (message, type = 'info', duration = 3000) => {
+        const id = Date.now();
+        const newToast = { id, message, type, duration };
+        setToasts(prev => [...prev, newToast]);
+      }
+    };
+
+    return () => {
+      toastContainerInstance = null;
+    };
+  }, []);
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  if (toasts.length === 0) return null;
+
+  return ReactDOM.createPortal(
+    <div className={styles.container}>
+      {toasts.map((toast, index) => (
+        <div
+          key={toast.id}
+          className={styles.toastWrapper}
+          style={{ top: `${20 + index * 80}px` }}
+        >
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            duration={toast.duration}
+            onClose={() => removeToast(toast.id)}
+          />
+        </div>
+      ))}
+    </div>,
+    document.body
+  );
+};
+
+// 전역 함수들
+export const showToast = (message, type = 'info', duration = 3000) => {
+  if (toastContainerInstance) {
+    toastContainerInstance.show(message, type, duration);
+  }
+};
+
+export const showSuccess = (message, duration = 3000) => {
+  showToast(message, 'success', duration);
+};
+
+export const showError = (message, duration = 4000) => {
+  showToast(message, 'error', duration);
+};
+
+export const showWarning = (message, duration = 3500) => {
+  showToast(message, 'warning', duration);
+};
+
+export const showInfo = (message, duration = 3000) => {
+  showToast(message, 'info', duration);
+};
+
+export default ToastContainer;

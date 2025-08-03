@@ -1,0 +1,394 @@
+// VideoPlanet 디자인 시스템 - Button 스타일
+// 영상 제작 워크플로우에 특화된 버튼 스타일
+
+@import '../../tokens/colors';
+@import '../../tokens/spacing';
+@import '../../tokens/typography';
+@import '../../../styles/variables';
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 8px;
+  font-family: $font-primary;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  outline: none;
+  
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// ========================================
+// 크기 변형 (Size Variants)
+// ========================================
+
+.button--small {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 6px;
+  
+  .buttonIcon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.button--medium {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 1;
+  
+  .buttonIcon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.button--large {
+  height: 48px;
+  padding: 0 24px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 10px;
+  
+  .buttonIcon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// ========================================
+// 색상 변형 (Color Variants)
+// ========================================
+
+// Primary - 메인 액션 버튼 (파란색)
+.button--primary {
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
+  
+  &:hover:not(.button--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 49, 248, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(22, 49, 248, 0.2);
+  }
+}
+
+// Secondary - 보조 액션 버튼
+.button--secondary {
+  background: $gray-100;
+  color: $gray-800;
+  border: 1px solid $gray-300;
+  
+  &:hover:not(.button--disabled) {
+    background: $gray-200;
+    border-color: $gray-400;
+  }
+}
+
+// Danger - 위험한 액션 (빨간색)
+.button--danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+  
+  &:hover:not(.button--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+  }
+}
+
+// Success - 성공/완료 액션
+.button--success {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  
+  &:hover:not(.button--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+}
+
+// Warning - 주의/경고 액션
+.button--warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+  
+  &:hover:not(.button--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+}
+
+// Info - 정보 제공 액션
+.button--info {
+  background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  
+  &:hover:not(.button--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+}
+
+// Outline - 아웃라인 버튼
+.button--outline {
+  background: transparent;
+  color: $primary-color;
+  border: 2px solid $primary-color;
+  
+  &:hover:not(.button--disabled) {
+    background: $primary-color;
+    color: white;
+  }
+}
+
+// Ghost - 고스트 버튼
+.button--ghost {
+  background: transparent;
+  color: $gray-700;
+  
+  &:hover:not(.button--disabled) {
+    background: $gray-100;
+  }
+}
+
+// Link - 링크 스타일 버튼
+.button--link {
+  background: transparent;
+  color: $primary-color;
+  height: auto;
+  padding: 4px 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  
+  &:hover:not(.button--disabled) {
+    color: $primary-hover;
+    text-decoration-thickness: 2px;
+  }
+  
+  &:active {
+    transform: none;
+  }
+}
+
+// ========================================
+// 영상 제작 특화 버튼 변형
+// ========================================
+
+// AI 생성 버튼
+.button--ai-generate {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
+  
+  &:hover:not(.button--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  }
+  
+  &::before {
+    content: '✨';
+    margin-right: 4px;
+  }
+}
+
+// AI 분석 버튼
+.button--ai-analyze {
+  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2);
+  
+  &:hover:not(.button--disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  }
+  
+  &::before {
+    content: '🔍';
+    margin-right: 4px;
+  }
+}
+
+// 프로젝트 단계별 버튼
+.button--phase-planning {
+  background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+  color: white;
+  border-left: 4px solid #1E40AF;
+}
+
+.button--phase-production {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
+  border-left: 4px solid #D97706;
+}
+
+.button--phase-review {
+  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+  color: white;
+  border-left: 4px solid #0891B2;
+}
+
+// ========================================
+// 상태 변형 (State Variants)
+// ========================================
+
+.button--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  
+  &:hover {
+    transform: none !important;
+  }
+}
+
+.button--loading {
+  cursor: wait;
+  
+  .buttonText {
+    opacity: 0.7;
+  }
+}
+
+.button--fullWidth {
+  width: 100%;
+}
+
+.button--withIcon {
+  .buttonText {
+    margin: 0 4px;
+  }
+}
+
+// ========================================
+// 버튼 내부 요소
+// ========================================
+
+.buttonText {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.buttonIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  &--left {
+    margin-right: 8px;
+  }
+  
+  &--right {
+    margin-left: 8px;
+  }
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.loadingSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// ========================================
+// 반응형 디자인
+// ========================================
+
+@media (max-width: 768px) {
+  .button--large {
+    height: 44px;
+    padding: 0 20px;
+    font-size: 15px;
+  }
+  
+  .button--medium {
+    height: 38px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+  
+  .button--small {
+    height: 30px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+}
+
+// ========================================
+// 접근성 개선
+// ========================================
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+  
+  .loadingSpinner {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+// 고대비 모드 지원
+@media (prefers-contrast: high) {
+  .button--outline,
+  .button--ghost {
+    border-width: 2px;
+  }
+  
+  .button--link {
+    text-decoration-thickness: 2px;
+  }
+}

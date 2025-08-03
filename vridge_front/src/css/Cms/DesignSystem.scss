@@ -2,17 +2,17 @@
 // 브랜드 색상과 일관된 디자인 시스템
 
 // ===== Color Palette =====
-// Primary Colors
-$primary-blue: #1E88E5;      // 메인 블루
-$primary-dark: #1565C0;      // 다크 블루
-$primary-light: #42A5F5;     // 라이트 블루
-$primary-pale: #E3F2FD;      // 페일 블루
+// Primary Colors (브랜드 색상 통일)
+$primary-blue: #1631F8;      // 메인 블루 (브랜드 색상)
+$primary-dark: #0F23C9;      // 다크 블루 (그라데이션)
+$primary-light: #4A5BF9;     // 라이트 블루
+$primary-pale: #E8EBFF;      // 페일 블루
 
-// Secondary Colors  
-$success-green: #43A047;     // 성공/완료
-$warning-yellow: #FFA726;    // 경고
-$danger-red: #E53935;        // 삭제/위험
-$info-cyan: #00ACC1;         // 정보
+// Secondary Colors (CLAUDE.md 가이드 준수)
+$success-green: #28a745;     // 성공/완료
+$warning-yellow: #ffc107;    // 경고
+$danger-red: #dc3545;        // 삭제/위험 (브랜드 빨간색)
+$info-cyan: #17a2b8;         // 정보
 
 // Neutral Colors
 $gray-900: #212529;          // 제목
@@ -65,6 +65,62 @@ $transition-fast: 150ms ease-in-out;
 $transition-base: 250ms ease-in-out;
 $transition-slow: 350ms ease-in-out;
 
+// ===== Loading States =====
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    $gray-200 25%, 
+    rgba($gray-200, 0.5) 50%, 
+    $gray-200 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: $radius-md;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid $gray-200;
+  border-top: 4px solid $primary-blue;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+.loading-dots {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  
+  &::before,
+  &::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: $primary-blue;
+    border-radius: 50%;
+    animation: pulse 1.4s infinite;
+  }
+  
+  &::before { animation-delay: 0s; }
+  &::after { animation-delay: 0.7s; }
+}
+
 // ===== Z-index =====
 $z-dropdown: 1000;
 $z-sticky: 1020;
@@ -104,18 +160,39 @@ $z-tooltip: 1070;
 
 @mixin button-primary {
   @include button-base;
-  background-color: $primary-blue;
+  background: linear-gradient(135deg, $primary-blue 0%, $primary-dark 100%);
   color: $white;
+  position: relative;
+  overflow: hidden;
+  
+  // 리플 효과
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
   
   &:hover:not(:disabled) {
-    background-color: $primary-dark;
-    transform: translateY(-1px);
-    box-shadow: $shadow-md;
+    background: linear-gradient(135deg, lighten($primary-blue, 5%) 0%, $primary-dark 100%);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba($primary-blue, 0.4);
   }
   
   &:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: $shadow-sm;
+    transform: translateY(-1px) scale(1);
+    box-shadow: $shadow-md;
   }
 }
 
@@ -169,16 +246,66 @@ $z-tooltip: 1070;
   }
 }
 
-// ===== Card Mixin =====
-@mixin card {
+// ===== Card System =====
+@mixin card-base {
   background-color: $white;
   border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
-  transition: box-shadow $transition-base;
+  transition: all $transition-base;
+  position: relative;
+  overflow: hidden;
+}
+
+@mixin card-elevated {
+  @include card-base;
+  box-shadow: $shadow-md;
   
   &:hover {
+    box-shadow: $shadow-lg;
+    transform: translateY(-2px);
+  }
+}
+
+@mixin card-interactive {
+  @include card-elevated;
+  cursor: pointer;
+  
+  &:active {
+    transform: translateY(-1px);
     box-shadow: $shadow-md;
   }
+}
+
+@mixin card-flat {
+  @include card-base;
+  border: 1px solid $gray-300;
+  
+  &:hover {
+    border-color: $primary-blue;
+    box-shadow: 0 0 0 1px rgba($primary-blue, 0.2);
+  }
+}
+
+// 카드 내부 패딩 표준화
+.card-padding-sm { padding: $spacing-md; }
+.card-padding-md { padding: $spacing-lg; }
+.card-padding-lg { padding: $spacing-xl; }
+
+// 카드 헤더/푸터 스타일
+.card-header {
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $gray-200;
+  background: $gray-100;
+  font-weight: 600;
+  color: $gray-800;
+}
+
+.card-footer {
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid $gray-200;
+  background: $gray-100;
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
 }
 
 // ===== Input Mixin =====
@@ -206,6 +333,100 @@ $z-tooltip: 1070;
   &:disabled {
     background-color: $gray-100;
     cursor: not-allowed;
+  }
+}
+
+// ===== Toast Notification System =====
+@keyframes slideInRight {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: $z-tooltip;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  pointer-events: none;
+}
+
+.toast {
+  background: $white;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  box-shadow: $shadow-xl;
+  border-left: 4px solid;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  min-width: 300px;
+  max-width: 400px;
+  animation: slideInRight 0.3s ease-out;
+  pointer-events: auto;
+  
+  &.toast-success {
+    border-color: $success-green;
+    .toast-icon { color: $success-green; }
+  }
+  
+  &.toast-error {
+    border-color: $danger-red;
+    .toast-icon { color: $danger-red; }
+  }
+  
+  &.toast-warning {
+    border-color: $warning-yellow;
+    .toast-icon { color: $warning-yellow; }
+  }
+  
+  &.toast-info {
+    border-color: $info-cyan;
+    .toast-icon { color: $info-cyan; }
+  }
+  
+  &.toast-removing {
+    animation: slideOutRight 0.3s ease-in forwards;
+  }
+  
+  .toast-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  
+  .toast-content {
+    flex: 1;
+    
+    .toast-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: $gray-900;
+    }
+    
+    .toast-message {
+      color: $gray-700;
+      font-size: $font-size-sm;
+    }
+  }
+  
+  .toast-close {
+    background: none;
+    border: none;
+    color: $gray-600;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    
+    &:hover {
+      color: $gray-800;
+    }
   }
 }
 

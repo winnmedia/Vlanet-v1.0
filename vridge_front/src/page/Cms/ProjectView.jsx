@@ -9,6 +9,10 @@ import CalendarBody from 'tasks/Calendar/CalendarBody'
 import ProjectList from 'tasks/Calendar/ProjectList'
 import CalendarEnhanced from 'components/CalendarEnhanced'
 import ProjectPhaseBoard from 'components/ProjectPhaseBoard'
+import WorkflowProgress from 'components/WorkflowEngine/WorkflowProgress'
+import WorkflowTaskManager from 'components/WorkflowEngine/WorkflowTaskManager'
+import GanttChart from 'components/GanttChart/GanttChart'
+import DocumentManager from 'components/DocumentManager/DocumentManager'
 
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
@@ -16,6 +20,8 @@ import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
 import { SafeRoute } from 'components/SafeRoute'
+import { toast } from 'react-toastify'
+import { useWorkflowSync } from 'hooks/useWorkflowSync'
 
 import { Select, Space } from 'antd'
 import moment from 'moment'
@@ -55,10 +61,13 @@ export default function ProjectView() {
 
   const DateList = ['월', '주', '일']
   const [DateType, SetDateType] = useState('월')
-  const [viewMode, setViewMode] = useState('month') // month, timeline, gantt
+  const [viewMode, setViewMode] = useState('month') // month, timeline, gantt, workflow
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showEnhancedView, setShowEnhancedView] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  
+  // 워크플로우 동기화 훅 사용
+  const workflowData = useWorkflowSync(project_id)
 
   const is_admin = useMemo(() => {
     if (current_project) {
@@ -102,10 +111,10 @@ export default function ProjectView() {
         console.error('Error fetching project:', err)
         if (err.response && err.response.status === 404) {
           console.error('Project not found')
-          window.alert('프로젝트를 찾을 수 없습니다.')
+          toast.error('프로젝트를 찾을 수 없습니다.')
           navigate('/cmshome')
         } else if (err.response && err.response.data) {
-          window.alert(err.response.data.message)
+          toast.error(err.response.data.message || '프로젝트를 불러오는 중 오류가 발생했습니다.')
           navigate('/cmshome')
         }
       })
@@ -127,7 +136,7 @@ export default function ProjectView() {
       })
       .catch(err => {
         console.error('Failed to update phase:', err)
-        window.alert('프로젝트 단계 업데이트에 실패했습니다.')
+        toast.error('프로젝트 단계 업데이트에 실패했습니다.')
       })
   }
 
@@ -173,11 +182,11 @@ export default function ProjectView() {
         console.error('Error fetching project:', err)
         if (err.response && err.response.status === 404) {
           console.error('Project not found')
-          window.alert('프로젝트를 찾을 수 없습니다.')
+          toast.error('프로젝트를 찾을 수 없습니다.')
           // 404 에러 처리
           handleNotFound(err)
         } else if (err.response && err.response.data) {
-          window.alert(err.response.data.message)
+          toast.error(err.response.data.message || '프로젝트를 불러오는 중 오류가 발생했습니다.')
           navigate('/cmshome')
         }
       })
@@ -293,6 +302,12 @@ export default function ProjectView() {
             refetch={refetch}
             project_id={project_id}
           />
+              
+              {/* 워크플로우 진행 상황 - 실시간 동기화 적용 */}
+              <div style={{ margin: '20px 0' }}>
+                <WorkflowProgress projectId={project_id} />
+              </div>
+              
               <div className="content calendar">
                 <div style={{ marginBottom: '20px' }}>
                   <div className="title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -357,6 +372,42 @@ export default function ProjectView() {
                       >
                         간트차트
                       </button>
+                      <button 
+                        className={`view-btn ${viewMode === 'documents' ? 'active' : ''}`}
+                        onClick={() => setViewMode('documents')}
+                        style={{
+                          padding: '5px 15px',
+                          border: '1px solid #012fff',
+                          background: viewMode === 'documents' ? '#012fff' : 'white',
+                          color: viewMode === 'documents' ? 'white' : '#012fff',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          transition: 'all 0.3s ease',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        문서관리
+                      </button>
+                      <button 
+                        className={`view-btn ${viewMode === 'workflow' ? 'active' : ''}`}
+                        onClick={() => setViewMode('workflow')}
+                        style={{
+                          padding: '5px 15px',
+                          border: '1px solid #012fff',
+                          background: viewMode === 'workflow' ? '#012fff' : 'white',
+                          color: viewMode === 'workflow' ? 'white' : '#012fff',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          transition: 'all 0.3s ease',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        워크플로우
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -414,7 +465,7 @@ export default function ProjectView() {
                       />
                     )}
                     
-                    {viewMode !== 'month' && (
+                    {viewMode === 'timeline' && (
                       <CalendarEnhanced
                         projects={[current_project]}
                         viewMode={viewMode}
@@ -422,6 +473,26 @@ export default function ProjectView() {
                         onPhaseUpdate={handlePhaseUpdate}
                         isAdmin={is_admin}
                       />
+                    )}
+                    
+                    {viewMode === 'gantt' && (
+                      <GanttChart
+                        projectId={project_id}
+                      />
+                    )}
+                    
+                    {viewMode === 'documents' && (
+                      <DocumentManager
+                        projectId={project_id}
+                      />
+                    )}
+                    
+                    {viewMode === 'workflow' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        <WorkflowTaskManager stageId="planning" projectId={project_id} />
+                        <WorkflowTaskManager stageId="schedule" projectId={project_id} />
+                        <WorkflowTaskManager stageId="feedback" projectId={project_id} />
+                      </div>
                     )}
                     
                     <div className="list_mark">

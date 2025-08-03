@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { setPhaseCompleted, selectProjectPhases } from '../redux/projectPhases'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -272,20 +274,111 @@ function ProjectCard({
   statusColors,
   onPhaseUpdate 
 }) {
-  const progress = getProjectProgress(project)
+  const dispatch = useDispatch()
+  const reduxCompletedStates = useSelector(state => selectProjectPhases(state, project.id))
+  
+  // Redux 상태와 프로젝트 데이터를 병합하여 완료 상태 결정
+  const completedStates = useMemo(() => {
+    console.log('[ProjectCard] Computing completedStates:', {
+      projectId: project.id,
+      reduxCompletedStates
+    })
+    
+    const states = {}
+    phases.forEach(phase => {
+      const phaseData = project[phase.key]
+      if (phaseData) {
+        // Redux 상태가 있으면 우선 사용, 없으면 백엔드 데이터 또는 날짜 기반 추측
+        if (reduxCompletedStates[phase.key] !== undefined) {
+          states[phase.key] = reduxCompletedStates[phase.key]
+        } else {
+          const status = getPhaseStatus(phaseData, project.end_date)
+          states[phase.key] = phaseData.completed || status === 'completed'
+        }
+      } else {
+        // phase 데이터가 없어도 Redux 상태 확인
+        states[phase.key] = reduxCompletedStates[phase.key] || false
+      }
+    })
+    
+    console.log('[ProjectCard] Computed completedStates:', states)
+    return states
+  }, [phases, project, reduxCompletedStates, getPhaseStatus])
+  
+  // 현재 진행 중인 단계 찾기 (첫 번째로 완료되지 않은 단계)
+  const currentPhaseIndex = useMemo(() => {
+    return phases.findIndex(phase => {
+      const phaseData = project[phase.key]
+      return phaseData && phaseData.start_date && !completedStates[phase.key]
+    })
+  }, [phases, project, completedStates])
+  
+  // 로컬 완료 상태를 고려한 진행률 계산
+  const progress = useMemo(() => {
+    let completedPhases = 0
+    let totalPhases = 0
+    
+    phases.forEach(phase => {
+      if (project[phase.key] && project[phase.key].start_date) {
+        totalPhases++
+        if (completedStates[phase.key]) {
+          completedPhases++
+        }
+      }
+    })
+    
+    return totalPhases > 0 ? Math.round((completedPhases / totalPhases) * 100) : 0
+  }, [project, phases, completedStates])
   
   // 단계 완료 처리 함수
   const handlePhaseComplete = (phase) => {
+    console.log('[ProjectPhaseBoard] handlePhaseComplete called:', {
+      phase,
+      projectId: project.id,
+      phaseData: project[phase.key],
+      onPhaseUpdate: !!onPhaseUpdate
+    })
+    
     if (onPhaseUpdate) {
       const phaseData = project[phase.key]
       if (phaseData && phaseData.start_date) {
         // 완료 상태를 토글
-        const updatedPhase = {
-          ...phaseData,
-          completed: !phaseData.completed
+        const currentCompleted = completedStates[phase.key] || false
+        const newCompleted = !currentCompleted
+        
+        // Redux 상태 업데이트
+        dispatch(setPhaseCompleted({
+          projectId: project.id,
+          phaseKey: phase.key,
+          completed: newCompleted
+        }))
+        
+        console.log('[ProjectPhaseBoard] Redux state updated:', {
+          phase: phase.key,
+          currentCompleted,
+          newCompleted,
+          startDate: phaseData.start_date,
+          endDate: phaseData.end_date,
+          allCompletedStates: { ...completedStates, [phase.key]: newCompleted }
+        })
+        
+        // 다음 단계 활성화 확인을 위한 로그
+        const phaseIndex = phases.findIndex(p => p.key === phase.key)
+        if (phaseIndex < phases.length - 1) {
+          const nextPhase = phases[phaseIndex + 1]
+          console.log('[ProjectPhaseBoard] Next phase activation check:', {
+            currentPhase: phase.key,
+            nextPhase: nextPhase.key,
+            willBeActivated: newCompleted
+          })
         }
-        onPhaseUpdate(project.id, phase.key, updatedPhase.start_date, updatedPhase.end_date, updatedPhase.completed)
+        
+        onPhaseUpdate(project.id, phase.key, phaseData.start_date, phaseData.end_date, newCompleted)
+      } else {
+        console.warn('[ProjectPhaseBoard] Phase data not found or missing dates:', phase.key)
       }
+    } else {
+      console.warn('[ProjectPhaseBoard] onPhaseUpdate callback not provided')
     }
   }
   
@@ -317,16 +410,63 @@ function ProjectCard({
       </div>
       
       <div className="project-phases">
-          {phases.map(phase => {
+          {phases.map((phase, index) => {
             const phaseData = project[phase.key]
-            const status = getPhaseStatus(phaseData, project.end_date)
+            const isCompleted = completedStates[phase.key]
+            let status = getPhaseStatus(phaseData, project.end_date)
+            
+            // 로컬 완료 상태가 true면 completed로 오버라이드
+            if (isCompleted) {
+              status = 'completed'
+            }
+            
+            // 이전 단계들이 모두 완료되었는지 확인
+            const isPreviousPhasesCompleted = phases.slice(0, index).every(prevPhase => {
+              return completedStates[prevPhase.key] || false
+            })
+            
+            // 현재 진행 중인 단계인지 확인
+            const isCurrentPhase = index === currentPhaseIndex
+            
+            // 버튼 표시 여부 결정: 첫 번째 단계이거나 이전 단계가 모두 완료된 경우
+            const canShowButton = index === 0 || isPreviousPhasesCompleted
+            
+            // 단계 상태 클래스 결정
+            let phaseClass = `phase-item ${status}`
+            
+            // 현재 진행 중인 단계는 in_progress 클래스 추가
+            if (isCurrentPhase) {
+              phaseClass = `phase-item in_progress`
+            } else if (!canShowButton && !isCompleted) {
+              phaseClass += ' phase-locked'
+            } else if (canShowButton && !isCompleted) {
+              phaseClass += ' phase-ready'
+            }
+            if (isCompleted) {
+              phaseClass += ' phase-completed'
+            }
+            
+            // 디버깅을 위한 로그 (첫 3개 단계만)
+            if (index < 3) {
+              console.log(`[Phase ${index}] ${phase.name}:`, {
+                status,
+                isCompleted,
+                isCurrentPhase,
+                currentPhaseIndex,
+                isPreviousPhasesCompleted,
+                canShowButton,
+                completedStates,
+                phaseKey: phase.key,
+                phaseClass
+              })
+            }
             
             return (
-              <div key={phase.key} className={`phase-item ${status}`}>
+              <div key={phase.key} className={phaseClass}>
                 <div className="phase-header">
                   <span className="phase-name">{phase.name}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {phaseData && phaseData.start_date && status !== 'pending' && (
+                    {phaseData && phaseData.start_date && canShowButton && (
                       <button
                         onClick={() => handlePhaseComplete(phase)}
                         style={{
@@ -337,21 +477,21 @@ function ProjectCard({
                           border: 'none',
                           cursor: 'pointer',
                           transition: 'all 0.2s ease',
-                          backgroundColor: phaseData.completed ? '#43A047' : '#e0e0e0',
-                          color: phaseData.completed ? 'white' : '#666'
+                          backgroundColor: completedStates[phase.key] ? '#1631F8' : '#e0e0e0',
+                          color: completedStates[phase.key] ? 'white' : '#666'
                         }}
                         onMouseEnter={(e) => {
-                          if (!phaseData.completed) {
+                          if (!completedStates[phase.key]) {
                             e.target.style.backgroundColor = '#bdbdbd';
                           }
                         }}
                         onMouseLeave={(e) => {
-                          if (!phaseData.completed) {
+                          if (!completedStates[phase.key]) {
                             e.target.style.backgroundColor = '#e0e0e0';
                           }
                         }}
                       >
-                        {phaseData.completed ? '완료됨' : '완료'}
+                        {completedStates[phase.key] ? '완료됨' : '완료'}
                       </button>
                     )}
                     <span 

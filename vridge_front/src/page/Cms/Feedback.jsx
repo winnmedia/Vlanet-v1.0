@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { checkSession } from 'util/util'
+import { showSuccess, showError, showWarning, showInfo } from '../../components/Toast'
+import { toast } from 'react-toastify'
 
 
 
@@ -23,9 +25,10 @@ import FeedbackManage from 'tasks/Feedback/FeedbackManage'
 import FeedbackMore from 'tasks/Feedback/FeedbackMore'
 import FeedbackMessagePolling from 'tasks/Feedback/FeedbackMessagePolling'
 import OpinionInput from 'tasks/Feedback/OpinionInput'
-import VideoJsPlayer from 'components/VideoJsPlayer-fixed'
+import ReactVideoPlayer from 'components/ReactVideoPlayer'
 import VideoUploadGuide from 'components/VideoUploadGuide'
 import InviteInput from 'tasks/Project/InviteInput'
+import DrawingCanvas from 'components/DrawingCanvas'
 
 import useTab from 'hooks/UseTab'
 
@@ -33,11 +36,12 @@ import down from 'images/Cms/down_icon.svg'
 
 import { useSelector } from 'react-redux'
 
-import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from 'api/feedback'
+import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus, SaveDrawingData, GetDrawingsList } from 'api/feedback'
 import { GetChatMessages, SendChatMessage } from 'api/chat'
 import { InviteProjectMember, GetProjectInvitations, CancelInvitation } from 'api/invitation'
 import { GetFriends, GetRecentInvitations } from 'api/friends'
 import axios from '../../config/axios'
+import { axiosCredentials } from 'util/util'
 
 import moment from 'moment'
 import 'moment/locale/ko'
@@ -89,6 +93,11 @@ export default function Feedback() {
   const [teacherFeedback, setTeacherFeedback] = useState(null)
   const [teachers, setTeachers] = useState([])
   const [analysisLoading, setAnalysisLoading] = useState(false) // 분석 로딩 상태 추가
+  
+  // 그리기 도구 관련 상태
+  const [isDrawingMode, setIsDrawingMode] = useState(false)
+  const [savedDrawings, setSavedDrawings] = useState([])
+  const [showDrawingsList, setShowDrawingsList] = useState(false)
 
   // 멤버 초대 관련 상태
   const [showInviteModal, setShowInviteModal] = useState(false)
@@ -230,13 +239,13 @@ export default function Feedback() {
       .catch((err) => {
         console.error('[Feedback] Failed to load project:', err)
         if (err.response?.status === 401) {
-          window.alert('로그인이 필요합니다.')
+          toast.error('로그인이 필요합니다.');
           navigate('/Login')
         } else if (err.response?.status === 404) {
-          window.alert('프로젝트를 찾을 수 없습니다.')
+          toast.error('프로젝트를 찾을 수 없습니다.');
           handleNotFound(err)
         } else if (err.response && err.response.data) {
-          window.alert(err.response.data.message)
+          toast.error(err.response.data.message);
         }
         setIsLoading(false)
       })
@@ -574,6 +583,13 @@ export default function Feedback() {
     }
   }, [project_id, is_admin])
 
+  // 페이지 로드 시 저장된 그리기 목록 불러오기
+  useEffect(() => {
+    if (current_project && current_project.feedback && current_project.feedback.length > 0) {
+      loadSavedDrawings();
+    }
+  }, [current_project])
+
   const content = [
     {
       tab: '피드백 등록',
@@ -855,7 +871,7 @@ export default function Feedback() {
     // 파일 크기 검사 (600MB)
     const maxSize = 600 * 1024 * 1024; // 600MB
     if (files.size > maxSize) {
-      window.alert('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.');
+      toast.error('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.');
       e.target.value = '';
       return;
     }
@@ -866,7 +882,7 @@ export default function Feedback() {
     const allowedExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
     
     if (!allowedTypes.includes(files.type) && !allowedExtensions.includes(fileExtension)) {
-      window.alert('지원하지 않는 파일 형식입니다. MP4, WebM, OGG, MOV, AVI, MKV 형식만 가능합니다.');
+      toast.error('지원하지 않는 파일 형식입니다. MP4, WebM, OGG, MOV, AVI, MKV 형식만 가능합니다.');
       e.target.value = '';
       return;
     }
@@ -956,14 +972,23 @@ export default function Feedback() {
           SetVideoLoad(false)
           setUploadProgress(0)
           
-          if (err.response && err.response.data && err.response.data.message) {
-            window.alert(err.response.data.message)
-          } else if (err.response && err.response.status === 401) {
-            window.alert('인증이 필요합니다. 다시 로그인해주세요.')
-          } else if (err.response && err.response.status === 413) {
-            window.alert('파일 크기가 너무 큽니다.')
+          // 인증 에러를 우선적으로 처리
+          if (err.response?.status === 401) {
+            toast.error('로그인이 필요합니다. 다시 로그인해주세요.');
+            // 1초 후 로그인 페이지로 이동
+            setTimeout(() => {
+              navigate('/login');
+            }, 1000);
+          } else if (err.response?.status === 403) {
+            toast.error('이 작업을 수행할 권한이 없습니다.');
+          } else if (err.response?.status === 413) {
+            toast.error('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.');
+          } else if (err.response?.status === 404) {
+            toast.error('업로드 경로를 찾을 수 없습니다. 관리자에게 문의해주세요.');
+          } else if (err.response?.data?.message) {
+            toast.error(err.response.data.message);
           } else {
-            window.alert('파일 업로드 중 오류가 발생했습니다.')
+            toast.error('파일 업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
           }
         })
     } else {
@@ -978,8 +1003,15 @@ export default function Feedback() {
           refetch()
         })
         .catch((err) => {
-          if (err.response && err.response.data) {
-            window.alert(err.response.data.message)
+          if (err.response?.status === 401) {
+            toast.error('로그인이 필요합니다.');
+            navigate('/login');
+          } else if (err.response?.status === 403) {
+            toast.error('파일을 삭제할 권한이 없습니다.');
+          } else if (err.response && err.response.data) {
+            toast.error(err.response.data.message);
+          } else {
+            toast.error('파일 삭제 중 오류가 발생했습니다.');
           }
         })
     }
@@ -992,13 +1024,136 @@ export default function Feedback() {
     textarea.select()
     document.execCommand('copy')
     document.body.removeChild(textarea)
-    window.alert('링크가 복사되었습니다.')
+    toast.success('링크가 복사되었습니다.')
   }
+
+  // 시간 포맷 함수
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // 저장된 그리기 목록 불러오기
+  const loadSavedDrawings = async () => {
+    try {
+      const feedbacks = current_project.feedback || [];
+      if (feedbacks.length === 0) return;
+      
+      const latestFeedback = feedbacks[feedbacks.length - 1];
+      const response = await GetDrawingsList(current_project.id, latestFeedback.id);
+      
+      if (response.data && response.data.drawings) {
+        setSavedDrawings(response.data.drawings);
+      }
+    } catch (error) {
+      console.error('그리기 목록 불러오기 오류:', error);
+    }
+  };
+
+  // 그리기 저장 핸들러
+  const handleSaveDrawing = async (drawingData) => {
+    try {
+      // 로컬 상태에 즉시 저장
+      setSavedDrawings([...savedDrawings, drawingData]);
+      
+      // 현재 피드백 ID 확인
+      const feedbacks = current_project.feedback || [];
+      if (feedbacks.length === 0) {
+        toast.warning('피드백이 없습니다. 먼저 피드백을 생성해주세요.');
+        return;
+      }
+      
+      const latestFeedback = feedbacks[feedbacks.length - 1];
+      const feedbackId = latestFeedback.id;
+      
+      // 서버에 저장
+      const response = await SaveDrawingData(current_project.id, feedbackId, drawingData);
+      
+      if (response.data) {
+        toast.success('그리기가 저장되었습니다.');
+        
+        // 저장된 그리기 목록 다시 불러오기
+        loadSavedDrawings();
+      }
+    } catch (error) {
+      console.error('그리기 저장 오류:', error);
+      toast.error('그리기 저장에 실패했습니다.');
+    }
+  };
+
+  // 스크린샷 캡처 기능
+  const captureScreenshot = () => {
+    try {
+      // ReactPlayer에서 비디오 엘리먼트 가져오기
+      const player = videoPlayerRef.current;
+      if (!player) {
+        toast.error('비디오 플레이어를 찾을 수 없습니다.');
+        return;
+      }
+
+      // ReactPlayer의 내부 플레이어 가져오기
+      const internalPlayer = player.getInternalPlayer();
+      let video = null;
+      
+      // 내부 플레이어가 비디오 엘리먼트인 경우 (일반 파일)
+      if (internalPlayer && internalPlayer.tagName === 'VIDEO') {
+        video = internalPlayer;
+      } else if (player.el()) {
+        // 컨테이너에서 비디오 엘리먼트 찾기
+        video = player.el().querySelector('video');
+      }
+      
+      if (!video) {
+        toast.error('비디오 엘리먼트를 찾을 수 없습니다.');
+        return;
+      }
+
+      // Canvas 생성
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // 타임스탬프 추가
+      const currentTime = player.getCurrentTime();
+      const minutes = Math.floor(currentTime / 60);
+      const seconds = Math.floor(currentTime % 60);
+      const timestamp = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      // 타임스탬프 배경
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(10, canvas.height - 40, 100, 30);
+      
+      // 타임스탬프 텍스트
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 16px Arial';
+      ctx.fillText(timestamp, 20, canvas.height - 18);
+      
+      // 이미지로 변환 및 다운로드
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `screenshot_${current_project.project_name}_${timestamp.replace(':', '-')}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        toast.success('스크린샷이 저장되었습니다.');
+      }, 'image/png');
+      
+    } catch (error) {
+      console.error('스크린샷 캡처 오류:', error);
+      toast.error('스크린샷 캡처 중 오류가 발생했습니다.');
+    }
+  };
 
   // 비디오 분석 실행
   const startVideoAnalysis = async () => {
     if (!selectedTeacher) {
-      window.alert('선생님을 선택해주세요.')
+      toast.warning('선생님을 선택해주세요.');
       return
     }
     
@@ -1009,7 +1164,7 @@ export default function Feedback() {
       // 가장 최근 피드백 ID 찾기
       const feedbacks = current_project.feedback || []
       if (feedbacks.length === 0) {
-        window.alert('피드백이 없습니다. 먼저 피드백을 생성해주세요.')
+        toast.warning('피드백이 없습니다. 먼저 피드백을 생성해주세요.');
         setAnalysisStatus('error')
         return
       }
@@ -1018,7 +1173,8 @@ export default function Feedback() {
       const feedbackId = latestFeedback.id
       
       // 1. 비디오 분석 시작
-      const analysisResponse = await axios.post(
+      const analysisResponse = await axiosCredentials(
+        'post',
         `/api/video-analysis/analyze/${feedbackId}/`
       )
       
@@ -1034,7 +1190,8 @@ export default function Feedback() {
         setAnalysisResult(analysisData.data)
         
         // 2. 선생님 피드백 받기
-        const teacherResponse = await axios.post(
+        const teacherResponse = await axiosCredentials(
+          'post',
           `/api/video-analysis/teacher/${feedbackId}/`,
           {
             teacher_type: selectedTeacher.id
@@ -1130,15 +1287,16 @@ export default function Feedback() {
           
           {current_project && (
             <div className="content feedback feedback_page flex space_between">
-              <div className="videobox video_section">
+              <div className="videobox video_section" style={{ minHeight: '500px' }}>
                 <div
                   className={
                     current_project.files ? 'video_inner active' : 'video_inner'
                   }
+                  style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                 >
                   {current_project.files ? (
-                    <div className="video-player-section">
-                      <VideoJsPlayer
+                    <div className="video-player-section" style={{ position: 'relative' }}>
+                      <ReactVideoPlayer
                         ref={videoPlayerRef}
                         videoUrl={(() => {
                           const fileUrl = current_project.files;
@@ -1232,6 +1390,15 @@ export default function Feedback() {
                       <div className="player-controls">
                         {/* 여기에 플레이어 전용 컨트롤 추가 가능 */}
                       </div>
+                      
+                      {/* 그리기 도구 오버레이 */}
+                      <DrawingCanvas
+                        isActive={isDrawingMode}
+                        onClose={() => setIsDrawingMode(false)}
+                        videoPlayerRef={videoPlayerRef}
+                        currentTime={videoPlayerRef.current?.getCurrentTime() || 0}
+                        onSaveDrawing={handleSaveDrawing}
+                      />
                     </div>
                   ) : (
                     // 영상이 없을 때 업로드 UI - 플레이어 중앙에 위치
@@ -1241,7 +1408,9 @@ export default function Feedback() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         height: '100%',
-                        padding: '40px'
+                        minHeight: '400px',
+                        background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
+                        borderRadius: '16px'
                       }}>
                         <div style={{
                           textAlign: 'center'
@@ -1256,23 +1425,38 @@ export default function Feedback() {
                           />
                           <label 
                             htmlFor="video-center-upload" 
-                            className="feedback-upload-label"
+                            className={styles.uploadCenterButton}
                             style={{
-                              display: 'inline-block',
-                              padding: '60px 80px',
+                              display: 'inline-flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '60px 100px',
                               cursor: 'pointer',
-                              borderRadius: '16px',
-                              border: '2px dashed #c8d4ff',
-                              background: 'rgba(248, 249, 250, 0.8)',
-                              transition: 'all 0.3s ease'
+                              borderRadius: '20px',
+                              border: '3px dashed #1631F8',
+                              background: 'rgba(22, 49, 248, 0.03)',
+                              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                              boxShadow: '0 4px 20px rgba(22, 49, 248, 0.1)'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'rgba(22, 49, 248, 0.08)';
+                              e.currentTarget.style.transform = 'translateY(-4px)';
+                              e.currentTarget.style.boxShadow = '0 8px 30px rgba(22, 49, 248, 0.2)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'rgba(22, 49, 248, 0.03)';
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 4px 20px rgba(22, 49, 248, 0.1)';
                             }}
                           >
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="#1631F8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="#1631F8" strokeWidth="2.5" strokeLinecap="round"/>
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="#1631F8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="#1631F8" strokeWidth="2" strokeLinecap="round"/>
                             </svg>
-                            <div style={{ marginTop: '16px', fontSize: '18px', fontWeight: '600', color: '#212529' }}>영상 업로드</div>
-                            <div style={{ marginTop: '8px', fontSize: '14px', color: '#6c757d' }}>또는 파일을 여기로 드래그하세요</div>
+                            <div style={{ marginTop: '24px', fontSize: '22px', fontWeight: '700', color: '#1631F8' }}>영상 업로드</div>
+                            <div style={{ marginTop: '12px', fontSize: '16px', color: '#6c757d', fontWeight: '500' }}>클릭하거나 파일을 여기로 드래그하세요</div>
+                            <div style={{ marginTop: '8px', fontSize: '14px', color: '#adb5bd' }}>MP4, MOV, AVI 등 모든 영상 형식 지원</div>
                           </label>
                         </div>
                       </div>
@@ -1280,23 +1464,23 @@ export default function Feedback() {
                   )}
                   
                   {VideoLoad && (
-                    <div className="loading">
+                    <div className={`${styles.uploadBox} ${styles.uploading}`}>
                       <div className="loading-content">
                         <div className="progress-container">
-                          <div className="upload-icon">
+                          <div className={styles.uploadIcon}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M3 16.5V18.75C3 19.9926 4.00736 21 5.25 21H18.75C19.9926 21 21 19.9926 21 18.75V16.5M16.5 12L12 7.5M12 7.5L7.5 12M12 7.5V16.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                           </div>
-                          <div className="progress-bar">
+                          <div className={styles.progressBar}>
                             <div 
-                              className="progress-fill" 
+                              className={styles.progressFill} 
                               style={{ width: `${uploadProgress}%` }}
                             ></div>
                           </div>
-                          <div className="progress-text">{uploadProgress}%</div>
+                          <div className={styles.progressText}>{uploadProgress}%</div>
                         </div>
-                        <div className="loading-message">영상 업로드 중...</div>
+                        <div className={styles.loadingMessage}>영상 업로드 중...</div>
                         <div className="loading-subtitle">잠시만 기다려 주세요</div>
                       </div>
                     </div>
@@ -1339,14 +1523,20 @@ export default function Feedback() {
                 {/* 피드백 관련 버튼들 - 사용성 최적화된 레이아웃 */}
                 <div style={{
                   marginTop: '20px',
-                  padding: '20px',
+                  padding: '16px',
                   background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
                   borderRadius: '16px',
                   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
                   width: '100%'
                 }}>
-                  {/* 주요 능동 버튼 그룹 - 자주 사용되는 기능 우선 배치 */}
-                  <div className={styles.primaryActionGroup}>
+                  {/* 모든 버튼을 한 줄로 배치 */}
+                  <div style={{
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap'
+                  }}>
                     {/* 현재 시점에 피드백 버튼 - 가장 중요한 기능으로 첫 번째 배치 */}
                     {current_project.files && (
                       <button
@@ -1391,7 +1581,7 @@ export default function Feedback() {
                           window.alert('피드백 버튼 클릭 중 오류가 발생했습니다: ' + error.message);
                         }
                       }}
-                      className={styles.feedbackButtonPrimary}
+                      className={styles.minimalButton}
                       title="현재 영상 시점에 피드백 작성"
                       aria-label="현재 영상 시점에 피드백 작성"
                       role="button"
@@ -1403,11 +1593,10 @@ export default function Feedback() {
                         }
                       }}
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                        <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M12 7v5l3 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
-                      <span>시점 피드백</span>
                       </button>
                     )}
                     
@@ -1423,7 +1612,7 @@ export default function Feedback() {
                       />
                       <label 
                         htmlFor="video-replace-button" 
-                        className={styles.feedbackButtonPrimary}
+                        className={styles.minimalButton}
                         title={current_project.files ? "영상 파일 교체" : "영상 파일 업로드"}
                         aria-label={current_project.files ? "영상 파일 교체" : "영상 파일 업로드"}
                         role="button"
@@ -1436,41 +1625,103 @@ export default function Feedback() {
                         }}
                       >
                         {current_project.files ? (
-                          <>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            <span>영상 교체</span>
-                          </>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M4.05 9A7.002 7.002 0 0111 3a7 7 0 018.95 6M19.95 15A7.002 7.002 0 0113 21a7 7 0 01-8.95-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
                         ) : (
-                          <>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            </svg>
-                            <span>영상 업로드</span>
-                          </>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 16V4M12 4L8 8M12 4L16 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M3 16v3a1 1 0 001 1h16a1 1 0 001-1v-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
                         )}
                       </label>
                     </div>
-                  </div>
-                  
-                  {/* 보조 능동 버튼 그룹 - 덜 자주 사용되는 기능들 */}
-                  <div className={styles.secondaryActionGroup}>
+                    
+                    {/* 스크린샷 버튼 - 영상이 있을 때만 표시 */}
+                    {current_project.files && (
+                      <button
+                        onClick={captureScreenshot}
+                        className={styles.minimalButton}
+                        title="현재 화면 캡처"
+                        aria-label="현재 화면을 이미지로 저장"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                          <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+                          <path d="M3 9h2M19 9h2M12 3v2M12 19v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                      </button>
+                    )}
+                    
+                    {/* 그리기 도구 버튼 - 영상이 있을 때만 표시 */}
+                    {current_project.files && (
+                      <button
+                        onClick={() => setIsDrawingMode(true)}
+                        className={styles.minimalButton}
+                        title="그리기 도구"
+                        aria-label="영상 위에 그리기"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M13.5 6.5L17.5 10.5M4 20L5.5 15.5L17.5 3.5C18.3284 2.67157 19.6716 2.67157 20.5 3.5C21.3284 4.32843 21.3284 5.67157 20.5 6.5L8.5 18.5L4 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    )}
+                    
+                    {/* 저장된 그리기 목록 버튼 - 저장된 그리기가 있을 때만 표시 */}
+                    {savedDrawings.length > 0 && (
+                      <button
+                        onClick={() => setShowDrawingsList(!showDrawingsList)}
+                        className={styles.minimalButton}
+                        title={`저장된 그리기 (${savedDrawings.length}개)`}
+                        aria-label="저장된 그리기 목록 보기"
+                        role="button"
+                        tabIndex={0}
+                        style={{ position: 'relative' }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="3" y="3" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
+                          <path d="M7 21H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          <path d="M12 17V20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          <path d="M8 10L12 13L16 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span style={{
+                          position: 'absolute',
+                          top: '-5px',
+                          right: '-5px',
+                          background: '#1631F8',
+                          color: 'white',
+                          borderRadius: '50%',
+                          width: '18px',
+                          height: '18px',
+                          fontSize: '11px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 'bold'
+                        }}>
+                          {savedDrawings.length}
+                        </span>
+                      </button>
+                    )}
+                    
                     {/* 공유 버튼 - 영상이 있을 때만 표시 */}
                     {current_project.files && (
                       <button
                         onClick={() => CopyFileUrl(current_project.files)}
-                        className={styles.feedbackButtonSecondary}
+                        className={styles.minimalButton}
                         title="영상 링크 복사"
                         aria-label="영상 링크 복사하기"
                         role="button"
                         tabIndex={0}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>공유</span>
                       </button>
                     )}
                     
@@ -1478,19 +1729,90 @@ export default function Feedback() {
                     {current_project.files && (
                       <button
                         onClick={DeleteFile}
-                        className={styles.dangerousActionButton}
+                        className={styles.minimalButtonDanger}
+                        style={{ 
+                          marginLeft: '16px'
+                        }}
                         title="영상 완전 삭제 - 되돌릴 수 없습니다"
                         aria-label="영상 완전 삭제 - 되돌릴 수 없습니다"
                         role="button"
                         tabIndex={0}
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5 7h14M10 11v6M14 11v6M6 7V5a1 1 0 011-1h10a1 1 0 011 1v2M18 7v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>삭제</span>
                       </button>
                     )}
                   </div>
+                  
+                  {/* 저장된 그리기 목록 */}
+                  {showDrawingsList && savedDrawings.length > 0 && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '60px',
+                      right: '20px',
+                      background: 'white',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      zIndex: 1000,
+                      maxHeight: '300px',
+                      overflowY: 'auto',
+                      minWidth: '250px'
+                    }}>
+                      <h4 style={{ 
+                        margin: '0 0 12px 0', 
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#333'
+                      }}>
+                        저장된 그리기 ({savedDrawings.length})
+                      </h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {savedDrawings.map((drawing, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              padding: '8px 12px',
+                              background: '#f8f9fa',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s',
+                              fontSize: '13px',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
+                            }}
+                            onClick={() => {
+                              // 특정 시간으로 이동
+                              if (videoPlayerRef.current && drawing.timestamp) {
+                                videoPlayerRef.current.seekTo(drawing.timestamp);
+                              }
+                              setShowDrawingsList(false);
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = '#e8eaed';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = '#f8f9fa';
+                            }}
+                          >
+                            <span>
+                              <strong>{drawing.tool}</strong> - {formatTime(drawing.timestamp || 0)}
+                            </span>
+                            <span style={{ 
+                              color: drawing.color, 
+                              fontSize: '10px',
+                              fontWeight: 'bold'
+                            }}>
+                              ●
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="etc_box">

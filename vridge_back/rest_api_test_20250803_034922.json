@@ -1,0 +1,64 @@
+{
+  "test_summary": {
+    "total_tests": 13,
+    "success_count": 0,
+    "success_rate": 0.0
+  },
+  "results": {
+    "tone_따뜻한": {
+      "success": false
+    },
+    "tone_유머러스한": {
+      "success": false
+    },
+    "tone_진지한": {
+      "success": false
+    },
+    "tone_긴장감 있는": {
+      "success": false
+    },
+    "tone_감동적인": {
+      "success": false
+    },
+    "framework_classic": {
+      "success": false
+    },
+    "framework_hook_immersion": {
+      "success": false
+    },
+    "framework_pixar": {
+      "success": false
+    },
+    "framework_deductive": {
+      "success": false
+    },
+    "framework_inductive": {
+      "success": false
+    },
+    "framework_documentary": {
+      "success": false
+    }
+  },
+  "token_usage": {
+    "total": 15397,
+    "prompt": 4421,
+    "response": 10976,
+    "by_feature": {
+      "story": {
+        "prompt": 0,
+        "response": 0,
+        "total": 0
+      },
+      "scene": {
+        "prompt": 0,
+        "response": 0,
+        "total": 0
+      },
+      "shot": {
+        "prompt": 0,
+        "response": 0,
+        "total": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,637 @@
+/* VideoPlanet - Integrated Dashboard Component Styles */
+
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, #FAFAFA 0%, #F8FAFC 100%);
+  overflow: hidden;
+}
+
+/* ========================================
+   Dashboard Header
+   ======================================== */
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: white;
+  border-bottom: 1px solid #E5E7EB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 10;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.dashboardTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.viewToggle {
+  display: flex;
+  background: #F3F4F6;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 2px;
+}
+
+.viewButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    color: #374151;
+    background: rgba(255, 255, 255, 0.5);
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(22, 49, 248, 0.25);
+  }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.filterDropdown {
+  position: relative;
+}
+
+.filterSelect {
+  padding: 10px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #1631F8;
+    box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+  }
+}
+
+.monthNavigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 8px 16px;
+}
+
+.navButton {
+  border: none;
+  background: transparent;
+  color: #6B7280;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #F3F4F6;
+    color: #374151;
+  }
+}
+
+.currentMonth {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* ========================================
+   Dashboard Content
+   ======================================== */
+.dashboardContent {
+  flex: 1;
+  overflow: hidden;
+  padding: 24px 32px;
+}
+
+.hybridView {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 24px;
+  height: 100%;
+}
+
+.calendarSection, .ganttSection {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #F3F4F6;
+  background: linear-gradient(135deg, #FAFBFF 0%, #F8FAFC 100%);
+  
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+  }
+}
+
+.todayIndicator {
+  font-size: 12px;
+  color: #6B7280;
+  background: #F3F4F6;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* ========================================
+   Calendar Grid
+   ======================================== */
+.calendarGrid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.weekHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 8px;
+}
+
+.weekDay {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+  padding: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.calendarDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  flex: 1;
+}
+
+.calendarDay {
+  background: #FAFBFF;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 60px;
+  position: relative;
+  
+  &:hover {
+    background: #EEF2FF;
+    transform: scale(1.02);
+  }
+  
+  &.otherMonth {
+    opacity: 0.3;
+  }
+  
+  &.today {
+    background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+    color: white;
+    
+    .dayNumber {
+      color: white;
+    }
+  }
+  
+  &.selected {
+    background: #DBEAFE;
+    border: 2px solid #3B82F6;
+  }
+}
+
+.dayNumber {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.dayProjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: auto;
+}
+
+.projectDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.moreProjects {
+  font-size: 10px;
+  color: #6B7280;
+  background: #F3F4F6;
+  border-radius: 4px;
+  padding: 1px 3px;
+  margin-left: 2px;
+}
+
+/* ========================================
+   Gantt Chart Section
+   ======================================== */
+.legendContainer {
+  display: flex;
+  align-items: center;
+}
+
+.legend {
+  display: flex;
+  gap: 12px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.ganttContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 16px;
+}
+
+.projectList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.projectRow {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #FAFBFF;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &:hover {
+    background: #EEF2FF;
+    transform: translateX(4px);
+    border-color: #E0E7FF;
+  }
+  
+  &.hovered {
+    background: #DBEAFE;
+    border-color: #3B82F6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  }
+}
+
+.projectInfo {
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.projectName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.projectMeta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.projectPhase {
+  font-size: 12px;
+  color: #6B7280;
+  background: #F3F4F6;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.projectProgress {
+  font-size: 12px;
+  font-weight: 600;
+  color: #059669;
+}
+
+.timelineBar {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.timelineTrack {
+  height: 24px;
+  background: #F3F4F6;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.timelineBarFill {
+  height: 100%;
+  border-radius: 12px;
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  
+  &.hovered {
+    transform: scaleY(1.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.progressIndicator {
+  height: 100%;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+.timelineTooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111827;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  margin-bottom: 8px;
+  z-index: 100;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #111827;
+  }
+}
+
+.tooltipTitle {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.tooltipDates, .tooltipProgress {
+  color: #D1D5DB;
+  font-size: 11px;
+}
+
+/* ========================================
+   Stats Panel
+   ======================================== */
+.statsPanel {
+  display: flex;
+  gap: 16px;
+  padding: 24px 32px;
+  background: white;
+  border-top: 1px solid #E5E7EB;
+}
+
+.statCard {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #FAFBFF 0%, #F8FAFC 100%);
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #D1D5DB;
+  }
+}
+
+.statIcon {
+  font-size: 24px;
+  opacity: 0.8;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+/* ========================================
+   Animations
+   ======================================== */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+@media (max-width: 1200px) {
+  .hybridView {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+  }
+  
+  .calendarSection {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardHeader {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .headerLeft {
+    justify-content: space-between;
+    gap: 16px;
+  }
+  
+  .dashboardTitle {
+    font-size: 24px;
+  }
+  
+  .viewToggle {
+    flex-shrink: 0;
+  }
+  
+  .headerRight {
+    justify-content: space-between;
+  }
+  
+  .dashboardContent {
+    padding: 16px 20px;
+  }
+  
+  .hybridView {
+    gap: 12px;
+  }
+  
+  .sectionTitle {
+    padding: 16px 20px;
+    
+    h2 {
+      font-size: 16px;
+    }
+  }
+  
+  .calendarGrid {
+    padding: 12px;
+  }
+  
+  .calendarDay {
+    min-height: 40px;
+    padding: 6px;
+  }
+  
+  .dayNumber {
+    font-size: 12px;
+  }
+  
+  .projectInfo {
+    min-width: 150px;
+  }
+  
+  .projectName {
+    font-size: 13px;
+  }
+  
+  .statsPanel {
+    padding: 16px 20px;
+    gap: 12px;
+  }
+  
+  .statCard {
+    padding: 12px 16px;
+  }
+  
+  .statValue {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendarDays {
+    gap: 0;
+  }
+  
+  .calendarDay {
+    border-radius: 4px;
+    min-height: 32px;
+    padding: 4px;
+  }
+  
+  .projectRow {
+    padding: 8px 12px;
+  }
+  
+  .timelineBar {
+    margin-left: 12px;
+  }
+  
+  .statsPanel {
+    flex-wrap: wrap;
+  }
+  
+  .statCard {
+    min-width: calc(50% - 6px);
+  }
+}

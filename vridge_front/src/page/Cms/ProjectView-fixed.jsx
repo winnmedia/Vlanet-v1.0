@@ -83,7 +83,7 @@ export default function ProjectView() {
   
   const handlePhaseUpdate = (projectId, phase, startDate, endDate) => {
     const data = {
-      type: phase,
+      key: phase,  // 'type'을 'key'로 변경
       start_date: startDate,
       end_date: endDate
     }

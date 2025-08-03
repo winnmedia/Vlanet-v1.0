@@ -103,6 +103,10 @@ class PDFExportService:
         if output_buffer is None:
             output_buffer = io.BytesIO()
         
+        # 사용자 입력 데이터를 JSON 형태로 정규화
+        normalized_data = self._normalize_planning_data(planning_data)
+        logger.info(f"정규화된 기획 데이터: {normalized_data}")
+        
         # PDF 문서 생성 (A4 가로)
         doc = SimpleDocTemplate(
             output_buffer,
@@ -113,11 +117,28 @@ class PDFExportService:
             bottomMargin=1.5*cm
         )
         
-        # 컨텐츠 구성 (압축된 형태)
+        # 컨텐츠 구성 (가로형 보고서 레이아웃)
         story = []
         
-        # 1. 모든 내용을 한 페이지에 압축
-        story.extend(self._create_compressed_layout(planning_data))
+        # 1. 타이틀 페이지
+        story.extend(self._create_title_page(normalized_data))
+        story.append(PageBreak())
+        
+        # 2. 기획 개요 페이지
+        story.extend(self._create_overview_page(normalized_data))
+        story.append(PageBreak())
+        
+        # 3. 스토리 구성 페이지
+        story.extend(self._create_story_flow_page(normalized_data))
+        story.append(PageBreak())
+        
+        # 4. 씬별 상세 페이지 (가로형 레이아웃)
+        story.extend(self._create_scenes_grid_layout(normalized_data))
+        
+        # 5. 프로 옵션 페이지 (있는 경우)
+        if normalized_data.get('pro_options'):
+            story.append(PageBreak())
+            story.extend(self._create_pro_options_page(normalized_data))
         
         # PDF 생성
         doc.build(story)
@@ -125,40 +146,82 @@ class PDFExportService:
         
         return output_buffer
     
-    def _create_title_page(self, planning_data):
-        """타이틀 페이지 생성"""
+    def _normalize_planning_data(self, planning_data):
+        """사용자 입력 데이터를 표준화된 JSON 형태로 변환"""
+        return {
+            'title': planning_data.get('title', '제목 없음'),
+            'planning_text': planning_data.get('planning', '') or planning_data.get('planning_text', ''),
+            'project_info': {
+                'type': planning_data.get('project_type', ''),
+                'duration': planning_data.get('duration', ''),
+                'target_audience': planning_data.get('target_audience', ''),
+                'genre': planning_data.get('genre', ''),
+                'concept': planning_data.get('concept', ''),
+                'tone_manner': planning_data.get('tone_manner', ''),
+                'key_message': planning_data.get('key_message', ''),
+                'mood': planning_data.get('desired_mood', ''),
+            },
+            'stories': planning_data.get('stories', []),
+            'scenes': planning_data.get('scenes', []),
+            'shots': planning_data.get('shots', []),
+            'storyboards': planning_data.get('storyboards', []),
+            'pro_options': planning_data.get('planning_options', {})
+        }
+    
+    def _create_title_page(self, normalized_data):
+        """타이틀 페이지 생성 (가로형)"""
         elements = []
         
         # 제목
-        title = planning_data.get('title', '영상 기획안')
+        title = normalized_data.get('title', '영상 기획안')
         elements.append(Paragraph(title, self.styles['CustomTitle']))
-        elements.append(Spacer(1, 1*cm))
+        elements.append(Spacer(1, 2*cm))
         
-        # 기본 정보 테이블
-        info_data = [
-            ['장르', planning_data.get('genre', 'N/A')],
-            ['타겟', planning_data.get('target', 'N/A')],
-            ['러닝타임', planning_data.get('duration', 'N/A')],
-            ['제작 목적', planning_data.get('purpose', 'N/A')]
+        # 프로젝트 정보를 2열로 구성
+        project_info = normalized_data.get('project_info', {})
+        
+        left_column_data = [
+            ['프로젝트 유형', project_info.get('type', 'N/A')],
+            ['타겟 오디언스', project_info.get('target_audience', 'N/A')],
+            ['러닝타임', project_info.get('duration', 'N/A')],
+            ['장르', project_info.get('genre', 'N/A')]
         ]
         
-        info_table = Table(info_data, colWidths=[4*cm, 10*cm])
-        info_table.setStyle(TableStyle([
+        right_column_data = [
+            ['컨셉', project_info.get('concept', 'N/A')],
+            ['톤앤매너', project_info.get('tone_manner', 'N/A')],
+            ['핵심 메시지', project_info.get('key_message', 'N/A')],
+            ['분위기', project_info.get('mood', 'N/A')]
+        ]
+        
+        # 2열 테이블 생성
+        main_table_data = []
+        for i in range(4):
+            row = left_column_data[i] + right_column_data[i]
+            main_table_data.append(row)
+        
+        main_table = Table(main_table_data, colWidths=[4*cm, 8*cm, 4*cm, 8*cm])
+        main_table.setStyle(TableStyle([
             ('FONT', (0, 0), (-1, -1), 'HYGothic-Medium'),
-            ('FONTSIZE', (0, 0), (-1, -1), 12),
-            ('TEXTCOLOR', (0, 0), (0, -1), HexColor('#2c3e50')),
+            ('FONTSIZE', (0, 0), (-1, -1), 11),
+            ('TEXTCOLOR', (0, 0), (-1, -1), HexColor('#2c3e50')),
+            ('TEXTCOLOR', (1, 0), (1, -1), HexColor('#4a4a4a')),
+            ('TEXTCOLOR', (3, 0), (3, -1), HexColor('#4a4a4a')),
             ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+            ('ALIGN', (2, 0), (2, -1), 'RIGHT'),
             ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            ('ALIGN', (3, 0), (3, -1), 'LEFT'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('LINEBELOW', (0, 0), (-1, -1), 1, HexColor('#ecf0f1')),
-            ('ROWBACKGROUNDS', (0, 0), (-1, -1), [HexColor('#ffffff'), HexColor('#f8f9fa')]),
+            ('GRID', (0, 0), (-1, -1), 0.5, HexColor('#ecf0f1')),
+            ('BACKGROUND', (0, 0), (0, -1), HexColor('#f8f9fa')),
+            ('BACKGROUND', (2, 0), (2, -1), HexColor('#f8f9fa')),
             ('LEFTPADDING', (0, 0), (-1, -1), 12),
             ('RIGHTPADDING', (0, 0), (-1, -1), 12),
-            ('TOPPADDING', (0, 0), (-1, -1), 8),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
         ]))
         
-        elements.append(info_table)
+        elements.append(main_table)
         
         return elements
     
@@ -326,8 +389,10 @@ class PDFExportService:
         info_table.setStyle(TableStyle([
             ('FONT', (0, 0), (-1, -1), 'HYGothic-Medium'),
             ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('TEXTCOLOR', (0, 0), (-1, -1, 2), HexColor('#2c3e50')),
-            ('TEXTCOLOR', (1, 0), (-1, -1, 2), HexColor('#4a4a4a')),
+            ('TEXTCOLOR', (0, 0), (0, -1), HexColor('#2c3e50')),
+            ('TEXTCOLOR', (1, 0), (1, -1), HexColor('#4a4a4a')),
+            ('TEXTCOLOR', (2, 0), (2, -1), HexColor('#2c3e50')),
+            ('TEXTCOLOR', (3, 0), (3, -1), HexColor('#4a4a4a')),
             ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 6),

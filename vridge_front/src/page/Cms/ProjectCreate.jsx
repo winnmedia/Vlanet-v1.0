@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { formatProcessDatesForBackend } from 'utils/dateUtils'
 import { checkDomain, detectDuplicateTabs } from 'utils/domainCheck'
+import { showSuccess, showError, showWarning } from '../../components/Toast'
+import { toast } from 'react-toastify'
 
 export default function ProjectCreate() {
   const dispatch = useDispatch()
@@ -32,9 +34,12 @@ export default function ProjectCreate() {
   
   // 인증 체크 - 한 번만 실행
   useEffect(() => {
+    // 컴포넌트 마운트 확인
+    isMountedRef.current = true
+    
     const session = checkSession()
     if (!session) {
-      window.alert('로그인이 필요합니다.')
+      showError('로그인이 필요합니다.')
       navigate('/Login', { replace: true })
     }
     
@@ -60,31 +65,171 @@ export default function ProjectCreate() {
 
   const initialDateRanges = project_dateRange()
 
-  const noAt = (value) => value.length < 50
+  const noAt = (value) => {
+    // description은 100자, 나머지는 50자 제한
+    const isValid = value.length <= 50
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ProjectCreate] noAt validation:', { value: value.substring(0, 20) + '...', length: value.length, isValid })
+    }
+    return isValid
+  }
   const { inputs, onChange } = useInput(initial, noAt)
   const { name, description, manager, consumer } = inputs
-  const [process, set_process] = useState(initialDateRanges)
+
+  // onChange 함수를 래핑하여 디버깅 정보 추가
+  const enhancedOnChange = React.useCallback((event) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ProjectCreate] Input changed:', {
+        name: event.target.name,
+        value: event.target.value,
+        length: event.target.value.length
+      })
+    }
+    onChange(event)
+  }, [onChange])
+  
+  // 프로젝트 일정 초기화 - 기본값으로 빠른 프로젝트(2주) 템플릿 적용
+  const initializeProcessWithTemplate = () => {
+    const updatedProcess = [...initialDateRanges]
+    const currentDate = new Date()
+    currentDate.setHours(9, 0, 0, 0) // 오전 9시부터 시작
+    
+    // 빠른 프로젝트 템플릿 기본 일정
+    const quickTemplate = {
+      basic_plan: 2,
+      story_board: 2,
+      filming: 3,
+      video_edit: 3,
+      post_work: 2,
+      video_preview: 1,
+      confirmation: 1,
+      video_delivery: 0
+    }
+    
+    let workingDate = new Date(currentDate)
+    
+    updatedProcess.forEach((processItem, index) => {
+      const duration = quickTemplate[processItem.key] || 1
+      processItem.startDate = new Date(workingDate)
+      
+      if (duration > 0) {
+        const endDate = new Date(workingDate)
+        endDate.setDate(endDate.getDate() + duration - 1)
+        endDate.setHours(18, 0, 0, 0) // 오후 6시 종료
+        processItem.endDate = endDate
+        
+        // 다음 작업은 다음날부터 시작
+        workingDate.setDate(endDate.getDate() + 1)
+        workingDate.setHours(9, 0, 0, 0)
+      } else {
+        const endDate = new Date(workingDate)
+        endDate.setHours(18, 0, 0, 0)
+        processItem.endDate = endDate
+      }
+    })
+    
+    return updatedProcess
+  }
+  
+  const [process, set_process] = useState(initializeProcessWithTemplate())
   const null_date = process.filter(
     (i, index) => i.startDate == null || i.endDate == null,
   )
   const { files, FileChange, FileDelete } = useFile([])
 
-  // const ValidForm =
-  //   name && description && manager && consumer && null_date.length === 0
-  //     ? true
-  //     : false
-  const ValidForm = name && description && manager && consumer ? true : false
+  // 필수 입력 필드 검증 로직
+  const ValidForm = Boolean(
+    name?.trim() && 
+    description?.trim() && 
+    manager?.trim() && 
+    consumer?.trim()
+  )
+
+  // 날짜 검증 로직 - 모든 프로세스 단계에 대해 시작일과 종료일이 설정되어야 함
+  const ValidDate = React.useMemo(() => {
+    // 모든 프로세스에 startDate와 endDate가 있는지 확인
+    const allDatesSet = process.every(p => 
+      p.startDate && p.endDate && 
+      new Date(p.startDate).getTime() && 
+      new Date(p.endDate).getTime()
+    )
+    
+    // 시간 순서가 올바른지 확인 (시작일 <= 종료일)
+    const validTimeOrder = process.every(p => {
+      if (!p.startDate || !p.endDate) return true // 날짜가 없으면 검증 생략
+      return new Date(p.startDate) <= new Date(p.endDate)
+    })
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ProjectCreate] Date validation:', {
+        allDatesSet,
+        validTimeOrder,
+        processStates: process.map(p => ({
+          text: p.text,
+          hasStart: !!p.startDate,
+          hasEnd: !!p.endDate,
+          startDate: p.startDate,
+          endDate: p.endDate
+        }))
+      })
+    }
+    
+    return allDatesSet && validTimeOrder
+  }, [process])
+
+  // 전체 폼 검증 로직 (텍스트 + 날짜)
+  const ValidAll = ValidForm && ValidDate
+
+  // 개발 환경에서 디버깅 정보 출력
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ProjectCreate] Validation Debug:', {
+        name: { value: name, trimmed: name?.trim(), length: name?.length, valid: Boolean(name?.trim()) },
+        description: { value: description, trimmed: description?.trim(), length: description?.length, valid: Boolean(description?.trim()) },
+        manager: { value: manager, trimmed: manager?.trim(), length: manager?.length, valid: Boolean(manager?.trim()) },
+        consumer: { value: consumer, trimmed: consumer?.trim(), length: consumer?.length, valid: Boolean(consumer?.trim()) },
+        ValidForm,
+        ValidDate,
+        ValidAll,
+        buttonState: {
+          willBeEnabled: ValidAll,
+          reason: !ValidForm ? '필수 정보 미입력' : !ValidDate ? '날짜 미설정' : '모든 조건 충족'
+        },
+        processDateCheck: process.map(p => ({
+          name: p.text,
+          hasStartDate: !!p.startDate,
+          hasEndDate: !!p.endDate
+        }))
+      })
+    }
+  }, [name, description, manager, consumer, ValidForm, ValidDate, ValidAll, inputs, process])
 
   // 디바운스된 생성 함수
   const createProjectWithDebounce = React.useCallback(() => {
+    console.log('[ProjectCreate] createProjectWithDebounce called!')
+    console.log('[ProjectCreate] Pre-checks:', {
+      isCreating,
+      isMounted: isMountedRef.current,
+      ValidAll,
+      ValidForm,
+      ValidDate
+    })
+    
     // 이미 생성 중이거나 컴포넌트가 언마운트된 경우 중단
     if (isCreating || !isMountedRef.current) {
+      console.log('[ProjectCreate] Aborted: isCreating or unmounted')
       return
     }
     
     // 입력값 검증
-    if (!ValidForm) {
-      alert('입력란을 채워주세요.')
+    if (!ValidAll) {
+      console.log('[ProjectCreate] Validation failed:', { ValidForm, ValidDate })
+      if (!ValidForm) {
+        toast.warning('필수 항목을 모두 입력해주세요.')
+      } else if (!ValidDate) {
+        toast.warning('모든 프로젝트 단계의 일정을 설정해주세요.')
+      }
+      setIsCreating(false)
       return
     }
     
@@ -108,11 +253,13 @@ export default function ProjectCreate() {
     console.log('[ProjectCreate] Atomic creation data:', projectData)
     
     // 원자적 API 호출 (FormData 대신 JSON)
+    console.log('[ProjectCreate] Calling CreateProjectAPI...')
     const request = CreateProjectAPI(projectData)
     createRequestRef.current = request
     
     request
         .then((res) => {
+          console.log('[ProjectCreate] API Response received:', res)
           if (!isMountedRef.current) {
             console.log('[ProjectCreate] Component unmounted, ignoring response')
             return
@@ -124,6 +271,7 @@ export default function ProjectCreate() {
           refetchProject(dispatch, navigate)
             .then(() => {
               console.log('[ProjectCreate] Project list refreshed successfully')
+              showSuccess('프로젝트가 성공적으로 생성되었습니다!')
               
               // 갱신 완료 후 페이지 이동
               navigate('/Calendar', { 
@@ -157,6 +305,14 @@ export default function ProjectCreate() {
             })
         })
         .catch((err) => {
+          console.error('[ProjectCreate] API Error caught:', err)
+          console.error('[ProjectCreate] Error details:', {
+            message: err.message,
+            response: err.response,
+            request: err.request,
+            config: err.config
+          })
+          
           if (!isMountedRef.current) return
           
           console.error('[ProjectCreate] Error:', err)
@@ -170,25 +326,39 @@ export default function ProjectCreate() {
           // 에러 타입별 처리
           if (err.response?.status === 409) {
             // 중복 프로젝트 에러
-            alert(err.response.data.error || '같은 이름의 프로젝트가 이미 존재합니다.')
+            showError(err.response.data.error || '같은 이름의 프로젝트가 이미 존재합니다.')
           } else if (err.response?.status === 401) {
-            alert('인증이 만료되었습니다. 다시 로그인해주세요.')
+            showError('인증이 만료되었습니다. 다시 로그인해주세요.')
             navigate('/Login', { replace: true })
           } else if (err.response?.data?.error) {
-            alert(err.response.data.error)
+            showError(err.response.data.error)
           } else {
-            alert('프로젝트 생성 중 오류가 발생했습니다.')
+            showError('프로젝트 생성 중 오류가 발생했습니다.')
           }
         })
         .finally(() => {
           createRequestRef.current = null
         })
-  }, [isCreating, ValidForm, inputs, process, files, navigate, dispatch])
+  }, [isCreating, ValidAll, ValidForm, ValidDate, inputs, process, files, navigate, dispatch])
   
   // 디바운스된 버튼 클릭 핸들러
   const CreateBtn = React.useCallback((e) => {
+    console.log('[ProjectCreate] CreateBtn clicked!')
     e.preventDefault()
     e.stopPropagation()
+    
+    console.log('[ProjectCreate] Current state:', {
+      isCreating,
+      ValidAll,
+      ValidForm,
+      ValidDate,
+      inputs: {
+        name: inputs.name,
+        description: inputs.description,
+        manager: inputs.manager,
+        consumer: inputs.consumer
+      }
+    })
     
     // 디바운스 적용 (500ms)
     if (submitButtonRef.current) {
@@ -201,7 +371,7 @@ export default function ProjectCreate() {
     }
     
     createProjectWithDebounce()
-  }, [createProjectWithDebounce, isCreating])
+  }, [createProjectWithDebounce, isCreating, ValidAll, ValidForm, ValidDate, inputs])
   return (
     <PageTemplate>
       <div className="cms_wrap project-create">
@@ -213,11 +383,21 @@ export default function ProjectCreate() {
               <p>새로운 프로젝트의 기본 정보와 일정을 설정해주세요</p>
             </div>
             <div className="group grid">
-              <ProjectInput inputs={inputs} onChange={onChange} />
+              <ProjectInput inputs={inputs} onChange={enhancedOnChange} />
             </div>
             <div className="group schedule-section mt50">
               <div className="part day">
-                <div className="s_title">프로젝트 일정</div>
+                <div className="s_title">
+                  프로젝트 일정 
+                  <span style={{ 
+                    color: '#28a745', 
+                    fontSize: '14px', 
+                    marginLeft: '10px',
+                    fontWeight: 'normal'
+                  }}>
+                    ✓ 기본 일정이 자동으로 설정되었습니다
+                  </span>
+                </div>
                 <ProcessDateEnhanced process={process} set_process={set_process} />
               </div>
             </div>
@@ -233,7 +413,18 @@ export default function ProjectCreate() {
                       type="file"
                       name="file"
                       id="file"
-                      onChange={FileChange}
+                      onChange={(e) => {
+                        const file = e.target.files[0]
+                        if (file) {
+                          const maxSize = 600 * 1024 * 1024 // 600MB
+                          if (file.size > maxSize) {
+                            toast.error('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.')
+                            e.target.value = ''
+                            return
+                          }
+                        }
+                        FileChange(e)
+                      }}
                     ></input>
                   </li>
                 </ul>
@@ -252,26 +443,24 @@ export default function ProjectCreate() {
               <button 
                 ref={submitButtonRef}
                 onClick={CreateBtn} 
-                className="submit" 
-                disabled={isCreating || !ValidForm}
+                className={`submit ${ValidAll ? 'enabled' : 'disabled'}`}
+                disabled={isCreating || !ValidAll}
                 style={{ 
-                  opacity: (isCreating || !ValidForm) ? 0.6 : 1,
-                  cursor: (isCreating || !ValidForm) ? 'not-allowed' : 'pointer'
+                  opacity: (isCreating || !ValidAll) ? 0.6 : 1,
+                  cursor: (isCreating || !ValidAll) ? 'not-allowed' : 'pointer',
+                  backgroundColor: ValidAll ? '#1631F8' : '#ccc',
+                  transition: 'all 0.3s ease'
                 }}
               >
-                {isCreating ? '등록 중...' : '등록'}
+                {isCreating ? '등록 중...' : 
+                 !ValidForm ? '필수 정보를 입력하세요' :
+                 !ValidDate ? '프로젝트 일정을 설정하세요' :
+                 '등록'}
               </button>
             </div>
           </div>
         </main>
         
-        {/* 로딩 오버레이 */}
-        {isCreating && (
-          <div className="creating-overlay">
-            <div className="spinner"></div>
-            <div className="loading-text">프로젝트를 생성하고 있습니다...</div>
-          </div>
-        )}
       </div>
     </PageTemplate>
   )

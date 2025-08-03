@@ -75,6 +75,8 @@ HUGGINGFACE_API_KEY = os.environ.get('HUGGINGFACE_API_KEY', '')
 # Twelve Labs API Key (for video understanding)
 TWELVE_LABS_API_KEY = os.environ.get('TWELVE_LABS_API_KEY', '')
 
+# EXAONE API Key 제거 - Gemini만 사용
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
@@ -108,6 +110,7 @@ PROJECT_APPS = [
     "video_planning",
     "video_analysis",
     "admin_dashboard",
+    "documents",
 ]
 
 THIRD_PARTY_APPS = [

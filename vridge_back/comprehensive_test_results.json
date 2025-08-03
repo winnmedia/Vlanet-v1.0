@@ -1,0 +1,47 @@
+{
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "details": [
+    {
+      "test": "로그인",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "test": "프로젝트 생성",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "test": "AI 빠른 제안",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "test": "AI 전체 기획 생성",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "test": "기획 저장",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "test": "PDF 내보내기",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "test": "피드백 작성",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "test": "프로필 업데이트",
+      "status": "PASS",
+      "error": null
+    }
+  ]
+}

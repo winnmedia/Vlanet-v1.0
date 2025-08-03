@@ -1,0 +1,283 @@
+.workflowProgress {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #222;
+  }
+}
+
+.overallProgress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .percentage {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1631F8;
+    min-width: 45px;
+    text-align: right;
+  }
+}
+
+.progressBar {
+  width: 200px;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #1631F8 0%, #0F23C9 100%);
+  transition: width 0.3s ease;
+}
+
+.stages {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.stage {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &.pending {
+    opacity: 0.6;
+    
+    .stageIcon {
+      background: #e9ecef;
+      color: #6c757d;
+    }
+  }
+  
+  &.inProgress {
+    border-color: #1631F8;
+    background: #f0f3ff;
+    
+    .stageIcon {
+      background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  &.completed {
+    background: #e8f5e9;
+    
+    .stageIcon {
+      background: #28a745;
+      color: white;
+    }
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 49, 248, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(22, 49, 248, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 49, 248, 0);
+  }
+}
+
+.stageIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.stageContent {
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+  }
+}
+
+.stageProgress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.stageProgressBar {
+  flex: 1;
+  height: 4px;
+  background: #e9ecef;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stageProgressFill {
+  height: 100%;
+  background: #1631F8;
+  transition: width 0.3s ease;
+}
+
+.stagePercentage {
+  font-size: 12px;
+  color: #6c757d;
+  min-width: 35px;
+}
+
+.stageActions {
+  margin-top: 12px;
+}
+
+.completeBtn {
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(22, 49, 248, 0.3);
+  }
+}
+
+.stageTasks {
+  margin-top: 8px;
+  
+  .taskCount {
+    font-size: 12px;
+    color: #6c757d;
+  }
+}
+
+.connector {
+  display: flex;
+  align-items: center;
+  margin: 0 16px;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  
+  &.completed {
+    opacity: 1;
+    
+    .line {
+      background: #28a745;
+    }
+    
+    .arrow {
+      color: #28a745;
+    }
+  }
+}
+
+.line {
+  width: 40px;
+  height: 2px;
+  background: #dee2e6;
+  transition: background 0.3s ease;
+}
+
+.arrow {
+  font-size: 20px;
+  color: #dee2e6;
+  margin-left: -8px;
+  transition: color 0.3s ease;
+}
+
+.legend {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  span {
+    font-size: 14px;
+    color: #6c757d;
+  }
+}
+
+.legendDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  
+  &.pending {
+    background: #e9ecef;
+  }
+  
+  &.inProgress {
+    background: #1631F8;
+  }
+  
+  &.completed {
+    background: #28a745;
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .stages {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .connector {
+    display: none;
+  }
+  
+  .stage {
+    width: 100%;
+  }
+  
+  .overallProgress {
+    .progressBar {
+      width: 120px;
+    }
+  }
+}

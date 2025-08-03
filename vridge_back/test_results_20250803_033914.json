@@ -1,0 +1,295 @@
+{
+  "classic": {
+    "success": true,
+    "stories": [
+      {
+        "title": "새로운 시작",
+        "stage": "기",
+        "stage_name": "도입부",
+        "characters": [
+          "주인공",
+          "조력자"
+        ],
+        "key_content": "평범한 일상에서 특별한 기회를 발견하는 순간",
+        "summary": "주인공이 일상적인 삶을 살다가 새로운 가능성을 발견하게 되는 이야기의 시작."
+      },
+      {
+        "title": "도전의 길",
+        "stage": "승",
+        "stage_name": "전개부",
+        "characters": [
+          "주인공",
+          "조력자",
+          "경쟁자"
+        ],
+        "key_content": "목표를 향해 나아가며 겪는 시행착오와 성장",
+        "summary": "주인공이 목표를 설정하고 본격적으로 도전하는 과정."
+      },
+      {
+        "title": "위기의 순간",
+        "stage": "전",
+        "stage_name": "전환부",
+        "characters": [
+          "주인공",
+          "조력자",
+          "대립자"
+        ],
+        "key_content": "예상치 못한 위기와 갈등이 최고조에 달하는 순간",
+        "summary": "주인공이 가장 큰 위기에 직면하고 극적인 반전이 일어남."
+      },
+      {
+        "title": "새로운 미래",
+        "stage": "결",
+        "stage_name": "결말부",
+        "characters": [
+          "주인공",
+          "조력자",
+          "새로운 동료들"
+        ],
+        "key_content": "위기를 극복하고 얻은 성장과 새로운 시작",
+        "summary": "주인공이 모든 시련을 극복하고 목표를 달성함."
+      }
+    ],
+    "count": 4
+  },
+  "hook_immersion": {
+    "success": true,
+    "stories": [
+      {
+        "title": "강렬한 시작",
+        "stage": "훅",
+        "stage_name": "시선 강탈",
+        "characters": [
+          "주인공"
+        ],
+        "key_content": "시청자의 시선을 사로잡는 충격적인 장면",
+        "summary": "평범한 일상이 한순간에 뒤집히는 충격적인 사건으로 시작."
+      },
+      {
+        "title": "깊이 있는 전개",
+        "stage": "몰입",
+        "stage_name": "깊이 있는 전개",
+        "characters": [
+          "주인공",
+          "핵심 인물들"
+        ],
+        "key_content": "이야기의 본격적인 전개와 캐릭터 탐구",
+        "summary": "시청자를 이야기 속으로 끌어들이는 매력적인 전개."
+      },
+      {
+        "title": "예상을 뒤엎다",
+        "stage": "반전",
+        "stage_name": "예상을 뒤엎다",
+        "characters": [
+          "주인공",
+          "숨겨진 인물"
+        ],
+        "key_content": "모든 것을 뒤바꾸는 충격적인 진실",
+        "summary": "기존의 이해를 완전히 뒤집는 놀라운 반전."
+      },
+      {
+        "title": "다음이 궁금한",
+        "stage": "떡밥",
+        "stage_name": "열린 결말",
+        "characters": [
+          "주인공"
+        ],
+        "key_content": "풀리지 않은 미스터리와 새로운 시작",
+        "summary": "다음 이야기가 궁금하게 만드는 여운 있는 마무리."
+      }
+    ],
+    "count": 4
+  },
+  "pixar": {
+    "success": true,
+    "stories": [
+      {
+        "title": "평범한 일상",
+        "stage": "일상",
+        "stage_name": "옛날 옛적에",
+        "characters": [
+          "주인공",
+          "주변 인물"
+        ],
+        "key_content": "안정적이지만 뭔가 부족한 일상",
+        "summary": "주인공의 평범하지만 불완전한 삶의 모습."
+      },
+      {
+        "title": "예상치 못한 변화",
+        "stage": "균열",
+        "stage_name": "그런데 어느 날",
+        "characters": [
+          "주인공",
+          "새로운 인물"
+        ],
+        "key_content": "일상을 깨뜨리는 특별한 사건",
+        "summary": "평온한 일상에 찾아온 예상치 못한 변화."
+      },
+      {
+        "title": "성장의 여정",
+        "stage": "시련",
+        "stage_name": "그래서",
+        "characters": [
+          "주인공",
+          "동료들"
+        ],
+        "key_content": "연속되는 도전과 실패, 그리고 성장",
+        "summary": "시련을 통해 성장하는 주인공의 여정."
+      },
+      {
+        "title": "새로운 자신",
+        "stage": "변화",
+        "stage_name": "마침내",
+        "characters": [
+          "성장한 주인공"
+        ],
+        "key_content": "근본적으로 변화한 주인공의 모습",
+        "summary": "성장을 통해 새로운 관점을 얻은 주인공."
+      }
+    ],
+    "count": 4
+  },
+  "deductive": {
+    "success": true,
+    "stories": [
+      {
+        "title": "핵심 메시지",
+        "stage": "주장",
+        "stage_name": "결론 제시",
+        "characters": [
+          "화자/내레이터"
+        ],
+        "key_content": "영상의 핵심 메시지와 주장",
+        "summary": "시청자에게 전달할 핵심 결론을 명확히 제시."
+      },
+      {
+        "title": "강력한 증거",
+        "stage": "근거1",
+        "stage_name": "핵심 증거",
+        "characters": [
+          "전문가",
+          "사례 주인공"
+        ],
+        "key_content": "가장 강력한 증거나 사례",
+        "summary": "주장을 뒷받침하는 구체적인 데이터나 사례."
+      },
+      {
+        "title": "추가적인 근거",
+        "stage": "근거2",
+        "stage_name": "심화 분석",
+        "characters": [
+          "다양한 증언자"
+        ],
+        "key_content": "다각도의 추가 증거와 분석",
+        "summary": "더 깊은 분석과 다양한 관점의 증거."
+      },
+      {
+        "title": "행동 촉구",
+        "stage": "종합",
+        "stage_name": "행동 촉구",
+        "characters": [
+          "화자"
+        ],
+        "key_content": "모든 증거의 종합과 행동 제안",
+        "summary": "시청자가 취할 수 있는 구체적 행동 제시."
+      }
+    ],
+    "count": 4
+  },
+  "inductive": {
+    "success": true,
+    "stories": [
+      {
+        "title": "첫 번째 관찰",
+        "stage": "사례1",
+        "stage_name": "첫 번째 관찰",
+        "characters": [
+          "관찰자",
+          "사례 주인공"
+        ],
+        "key_content": "흥미로운 개별 현상의 발견",
+        "summary": "특정 상황에서 발견한 흥미로운 첫 번째 사례"
+      },
+      {
+        "title": "패턴의 반복",
+        "stage": "사례2",
+        "stage_name": "패턴 축적",
+        "characters": [
+          "다양한 사례 주인공들"
+        ],
+        "key_content": "유사한 현상들의 반복적 관찰",
+        "summary": "여러 상황에서 비슷한 패턴이 반복되는 것을 발견"
+      },
+      {
+        "title": "공통점 발견",
+        "stage": "분석",
+        "stage_name": "패턴 발견",
+        "characters": [
+          "분석가",
+          "내레이터"
+        ],
+        "key_content": "사례들 간의 공통 패턴 도출",
+        "summary": "개별 사례들에서 공통적인 패턴과 원인을 분석"
+      },
+      {
+        "title": "보편적 원리",
+        "stage": "결론",
+        "stage_name": "원리 도출",
+        "characters": [
+          "화자"
+        ],
+        "key_content": "개별 사례에서 보편적 진리로",
+        "summary": "발견한 패턴을 통해 보편적으로 적용 가능한 원리 도출"
+      }
+    ],
+    "count": 4
+  },
+  "documentary": {
+    "success": true,
+    "stories": [
+      {
+        "title": "문제의 발견",
+        "stage": "문제",
+        "stage_name": "탐사 시작",
+        "characters": [
+          "탐사자",
+          "제보자"
+        ],
+        "key_content": "해결해야 할 문제나 미스터리",
+        "summary": "탐사가 필요한 중요한 문제의 발견."
+      },
+      {
+        "title": "깊이 있는 조사",
+        "stage": "탐사",
+        "stage_name": "현장 탐사",
+        "characters": [
+          "전문가",
+          "당사자"
+        ],
+        "key_content": "현장 취재와 전문가 인터뷰",
+        "summary": "문제를 깊이 있게 조사하고 분석."
+      },
+      {
+        "title": "복잡한 진실",
+        "stage": "갈등",
+        "stage_name": "대립과 복잡성",
+        "characters": [
+          "대립하는 입장들"
+        ],
+        "key_content": "서로 다른 의견과 복잡한 현실",
+        "summary": "문제의 복잡성과 다양한 관점 제시."
+      },
+      {
+        "title": "새로운 이해",
+        "stage": "통찰",
+        "stage_name": "메시지",
+        "characters": [
+          "화자"
+        ],
+        "key_content": "조사 결과와 새로운 통찰",
+        "summary": "탐사를 통해 얻은 새로운 이해와 메시지."
+      }
+    ],
+    "count": 4
+  }
+}

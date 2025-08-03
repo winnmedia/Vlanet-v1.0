@@ -22,6 +22,7 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import { refetchProject, checkSession } from 'util/util'
 import { UpdateDate, WriteMemo } from 'api/project'
+import { adjustScheduleOnPhaseComplete } from '../../utils/scheduleAdjustment'
 
 export default function Calendar() {
   const router = useRouter()
@@ -80,26 +81,80 @@ export default function Calendar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   
   // Enhanced calendar handlers
-  const handlePhaseUpdate = (projectId, phase, startDate, endDate, completed) => {
-    const data = {
-      type: phase,
-      start_date: startDate,
-      end_date: endDate,
-      completed: completed !== undefined ? completed : false
-    }
-    const controller = new AbortController()
-    
-    UpdateDate(data, projectId, { signal: controller.signal })
-      .then(() => {
-        refetch()
-      })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
-          console.error('Failed to update phase:', err)
+  const handlePhaseUpdate = async (projectId, phase, startDate, endDate, completed) => {
+    try {
+      // 현재 프로젝트 찾기
+      const currentProject = project_list?.find(p => p.id === projectId)
+      if (!currentProject) {
+        console.error('[Calendar] Project not found:', projectId)
+        return
+      }
+
+      // 단계가 완료로 변경되는 경우
+      if (completed && !currentProject[phase]?.completed) {
+        console.log('[Calendar] Phase completed, adjusting schedule...')
+        
+        // 후속 단계들의 일정 자동 조정 계산
+        const adjustedSchedule = adjustScheduleOnPhaseComplete(
+          currentProject, 
+          phase, 
+          new Date() // 현재 시간을 완료 시간으로 사용
+        )
+        
+        console.log('[Calendar] Adjusted schedule:', adjustedSchedule)
+        
+        // 먼저 현재 단계 업데이트
+        const data = {
+          key: phase,
+          start_date: startDate,
+          end_date: endDate,
+          completed: true
         }
-      })
-    
-    return controller
+        
+        const controller = new AbortController()
+        await UpdateDate(data, projectId, { signal: controller.signal })
+        console.log('[Calendar] Current phase updated')
+        
+        // 후속 단계들 일정 업데이트
+        for (const [phaseKey, schedule] of Object.entries(adjustedSchedule)) {
+          const updateData = {
+            key: phaseKey,
+            start_date: schedule.start_date,
+            end_date: schedule.end_date,
+            completed: false // 후속 단계는 미완료 상태 유지
+          }
+          
+          try {
+            await UpdateDate(updateData, projectId, { signal: controller.signal })
+            console.log(`[Calendar] Updated ${phaseKey} schedule`)
+          } catch (err) {
+            console.error(`[Calendar] Failed to update ${phaseKey}:`, err)
+          }
+        }
+        
+        // 모든 업데이트 완료 후 프로젝트 목록 새로고침
+        refetch()
+        console.log('[Calendar] All updates completed')
+        
+      } else {
+        // 일반적인 날짜/상태 업데이트
+        const data = {
+          key: phase,
+          start_date: startDate,
+          end_date: endDate,
+          completed: completed !== undefined ? completed : false
+        }
+        
+        const controller = new AbortController()
+        await UpdateDate(data, projectId, { signal: controller.signal })
+        refetch()
+      }
+      
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('[Calendar] Failed to update phase:', err)
+      }
+    }
   }
   
   const handleMemoAdd = (date, memo) => {

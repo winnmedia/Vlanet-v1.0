@@ -8,6 +8,7 @@ import { SignIn, GoogleLoginAPI, GetUserInfo } from 'api/auth'
 import { checkSession, refetchProject } from 'util/util'
 import { safeStorage } from 'utils/mobile-utils'
 import axios from 'axios'
+import { showSuccess, showError, showInfo } from '../../components/Toast'
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -119,7 +120,7 @@ export default function Login() {
 
   const CommonErrorMessage = (err) => {
     if (err.response && err.response.data && err.response.data.message) {
-      window.alert(err.response.data.message)
+      showError(err.response.data.message)
     }
   }
 
@@ -135,8 +136,8 @@ export default function Login() {
       )
       
       if (response.data.success) {
-        SetLoginMessage('인증 메일이 재발송되었습니다. 이메일을 확인해주세요.')
-        setTimeout(() => SetLoginMessage(''), 5000)
+        showSuccess('인증 메일이 재발송되었습니다. 이메일을 확인해주세요.')
+        SetLoginMessage('')
       }
     } catch (err) {
       if (err.response?.data?.message) {
@@ -164,6 +165,7 @@ export default function Login() {
         .then((res) => {
           console.log('로그인 성공:', res)
           setLoginController(null)
+          showSuccess('로그인에 성공했습니다!')
           CommonLoginSuccess(res.data.vridge_session, res.data)
         })
         .catch((err) => {

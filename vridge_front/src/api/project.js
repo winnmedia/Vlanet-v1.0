@@ -1,4 +1,5 @@
 import { axiosOpts, axiosCredentials } from 'util/util'
+import { handleApiError } from '../utils/errorHandler'
 
 // 프로젝트 리스트
 export function ProjectList() {
@@ -93,7 +94,7 @@ export function InviteCancel(data, id) {
 export function FileDeleteAPI(id) {
   return axiosCredentials(
     'delete',
-    `/projects/file/delete/${id}`,
+    `/api/projects/file/delete/${id}/`,
   )
 }
 
@@ -118,6 +119,10 @@ export function AcceptInvite(uid, token) {
         response: err.response?.data
       })
     }
+    handleApiError(err, {
+      404: '초대 링크가 유효하지 않거나 만료되었습니다.',
+      400: '잘못된 초대 링크입니다.'
+    })
     throw err
   })
 }
@@ -126,7 +131,7 @@ export function AcceptInvite(uid, token) {
 export function WriteMemo(data, id) {
   return axiosCredentials(
     'post',
-    `/projects/memo/${id}`,
+    `/api/projects/memo/${id}/`,
     data,
   )
 }
@@ -135,16 +140,32 @@ export function WriteMemo(data, id) {
 export function DeleteMemo(data, id) {
   return axiosCredentials(
     'delete',
-    `/projects/memo/${id}`,
+    `/api/projects/memo/${id}/`,
     data,
   )
 }
 
 // 프로젝트 기간 변경
 export function UpdateDate(data, id) {
+  console.log('[API] UpdateDate called with:', {
+    projectId: id,
+    data: data,
+    url: `/api/projects/date_update/${id}`
+  })
+  
   return axiosCredentials(
     'post',
-    `/projects/date_update/${id}`,
+    `/api/projects/date_update/${id}`,
     data,
-  )
+  ).then(response => {
+    console.log('[API] UpdateDate success:', response)
+    return response
+  }).catch(error => {
+    console.error('[API] UpdateDate error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    })
+    throw error
+  })
 }

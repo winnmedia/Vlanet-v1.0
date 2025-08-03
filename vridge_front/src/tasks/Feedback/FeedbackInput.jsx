@@ -1,10 +1,24 @@
 import useInput from 'hooks/UseInput'
 import React, { useState, useEffect } from 'react'
 import styles from './FeedbackInput.module.scss'
-
 import { CreateFeedback } from 'api/feedback'
+import { checkSession } from 'util/util'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 
 export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onAIFeedbackClick, onFeedbackSuccess }) {
+  const router = useRouter()
+  const navigate = router.push
+  
+  // 인증 체크
+  useEffect(() => {
+    const token = checkSession()
+    if (!token) {
+      toast.error('로그인이 필요한 서비스입니다.')
+      navigate('/login')
+    }
+  }, [])
+  
   const initial = {
     secret: 'anonymous', // 'anonymous', 'nickname', 'realname'
     title: '',
@@ -34,7 +48,7 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
     
     // 닉네임 모드일 때 닉네임 검증
     if (feedbackMode === 'nickname' && !nickname.trim()) {
-      window.alert('닉네임을 입력해주세요.')
+      toast.warning('닉네임을 입력해주세요.');
       return
     }
     
@@ -50,7 +64,7 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
       CreateFeedback(feedbackData, project_id)
         .then((res) => {
           console.log('Feedback creation success:', res)
-          window.alert('피드백 등록이 되었습니다.')
+          toast.success('피드백 등록이 되었습니다.');
           set_inputs({
             secret: 'anonymous',
             title: '',
@@ -75,17 +89,20 @@ export default function FeedbackInput({ project_id, refetch, initialTime, onTime
           console.error('Error status:', err.response?.status)
           console.error('Error data:', err.response?.data)
           
-          if (err.response && err.response.data && err.response.data.message) {
-            window.alert(`오류: ${err.response.data.message}`)
-          } else if (err.message) {
-            window.alert(`오류: ${err.message}`)
+          if (err.response?.status === 401) {
+            toast.error('로그인이 필요합니다.');
+            navigate('/login');
+          } else if (err.response?.status === 403) {
+            toast.error('피드백을 등록할 권한이 없습니다.');
+          } else if (err.response?.data?.message) {
+            toast.error(err.response.data.message);
           } else {
-            window.alert('피드백 등록 중 오류가 발생했습니다.')
+            toast.error('피드백 등록 중 오류가 발생했습니다.');
           }
         })
     } else {
       console.log('Validation failed:', { section, contents })
-      window.alert('입력란을 채워주세요.')
+      toast.warning('입력란을 채워주세요.');
     }
   }
 

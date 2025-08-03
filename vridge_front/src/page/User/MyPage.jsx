@@ -12,6 +12,7 @@ import { GetFriends, GetFriendRequests, RespondToFriendRequest, SearchFriends, S
 import moment from 'moment'
 import 'moment/locale/ko'
 import UserAvatar from 'components/UserAvatar'
+import { toast } from 'react-toastify'
 
 export default function MyPage() {
   const router = useRouter()
@@ -95,10 +96,10 @@ export default function MyPage() {
     try {
       await AcceptInvitation(invitationId)
       loadInvitations() // 목록 새로고침
-      alert('초대를 수락했습니다.')
+      toast.success('초대를 수락했습니다.')
     } catch (error) {
       console.error('초대 수락 실패:', error)
-      alert('초대 수락에 실패했습니다.')
+      toast.error('초대 수락에 실패했습니다.')
     }
   }
 
@@ -107,10 +108,10 @@ export default function MyPage() {
     try {
       await DeclineInvitation(invitationId)
       loadInvitations() // 목록 새로고침
-      alert('초대를 거절했습니다.')
+      toast.info('초대를 거절했습니다.')
     } catch (error) {
       console.error('초대 거절 실패:', error)
-      alert('초대 거절에 실패했습니다.')
+      toast.error('초대 거절에 실패했습니다.')
     }
   }
 
@@ -146,7 +147,7 @@ export default function MyPage() {
       setShowFriendSearch(true)
     } catch (error) {
       console.error('친구 검색 실패:', error)
-      alert('친구 검색 중 오류가 발생했습니다.')
+      toast.error('친구 검색 중 오류가 발생했습니다.')
     } finally {
       setFriendLoading(false)
     }
@@ -155,25 +156,25 @@ export default function MyPage() {
   const handleSendFriendRequest = async (friendEmail) => {
     try {
       await SendFriendRequest(friendEmail)
-      alert('친구 요청을 보냈습니다.')
+      toast.success('친구 요청을 보냈습니다.')
       handleFriendSearch() // 검색 결과 새로고침
     } catch (error) {
       console.error('친구 요청 실패:', error)
-      alert(error.response?.data?.message || '친구 요청 중 오류가 발생했습니다.')
+      toast.error(error.response?.data?.message || '친구 요청 중 오류가 발생했습니다.')
     }
   }
 
   const handleFriendRequestResponse = async (friendshipId, action) => {
     try {
       await RespondToFriendRequest(friendshipId, action)
-      alert(action === 'accept' ? '친구 요청을 수락했습니다.' : '친구 요청을 거절했습니다.')
+      toast.success(action === 'accept' ? '친구 요청을 수락했습니다.' : '친구 요청을 거절했습니다.')
       loadFriendRequests()
       if (action === 'accept') {
         loadFriends()
       }
     } catch (error) {
       console.error('친구 요청 응답 실패:', error)
-      alert('친구 요청 처리 중 오류가 발생했습니다.')
+      toast.error('친구 요청 처리 중 오류가 발생했습니다.')
     }
   }
 
@@ -185,11 +186,11 @@ export default function MyPage() {
     
     try {
       await DeleteFriend(friendEmail)
-      alert('친구가 삭제되었습니다.')
+      toast.success('친구가 삭제되었습니다.')
       loadFriends() // 목록 새로고침
     } catch (error) {
       console.error('친구 삭제 실패:', error)
-      alert(error.response?.data?.message || '친구 삭제 중 오류가 발생했습니다.')
+      toast.error(error.response?.data?.message || '친구 삭제 중 오류가 발생했습니다.')
     }
   }
   
@@ -201,11 +202,11 @@ export default function MyPage() {
     
     try {
       await BlockFriend(friendEmail)
-      alert('사용자를 차단했습니다.')
+      toast.success('사용자를 차단했습니다.')
       loadFriends() // 목록 새로고침
     } catch (error) {
       console.error('친구 차단 실패:', error)
-      alert(error.response?.data?.message || '사용자 차단 중 오류가 발생했습니다.')
+      toast.error(error.response?.data?.message || '사용자 차단 중 오류가 발생했습니다.')
     }
   }
 
@@ -290,12 +291,12 @@ export default function MyPage() {
   
   const processImageFile = (file) => {
     if (!file.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드 가능합니다.')
+      toast.warning('이미지 파일만 업로드 가능합니다.')
       return
     }
     
     if (file.size > 5 * 1024 * 1024) {
-      alert('이미지 크기는 5MB를 초과할 수 없습니다.')
+      toast.warning('이미지 크기는 5MB를 초과할 수 없습니다.')
       return
     }
     
@@ -356,12 +357,12 @@ export default function MyPage() {
 
   const handleImageUpload = async () => {
     if (!profileImage) {
-      alert('업로드할 이미지를 선택해주세요.')
+      toast.warning('업로드할 이미지를 선택해주세요.')
       return
     }
     
     if (isUploading) {
-      alert('이미지 업로드 중입니다. 잠시 기다려주세요.')
+      toast.info('이미지 업로드 중입니다. 잠시 기다려주세요.')
       return
     }
 
@@ -376,7 +377,7 @@ export default function MyPage() {
       console.log('Upload response:', response)
       
       if (response.data && response.data.status === 'success') {
-        alert('프로필 이미지가 업로드되었습니다.')
+        toast.success('프로필 이미지가 업로드되었습니다.')
         setProfileImage(null)
         
         // 업로드된 이미지 URL 즉시 반영
@@ -410,7 +411,7 @@ export default function MyPage() {
         // 응답은 받았지만 성공이 아닌 경우
         const errorMsg = response.data?.message || '이미지 업로드에 실패했습니다.'
         console.error('Upload failed with response:', response.data)
-        alert(errorMsg)
+        toast.error(errorMsg)
       }
     } catch (error) {
       console.error('Image upload error:', error)
@@ -432,7 +433,7 @@ export default function MyPage() {
         errorMessage += '알 수 없는 오류가 발생했습니다.'
       }
       
-      alert(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsUploading(false)
     }
@@ -445,13 +446,13 @@ export default function MyPage() {
     try {
       const response = await updateProfile(profileForm)
       if (response.data && response.data.status === 'success') {
-        alert('프로필이 업데이트되었습니다.')
+        toast.success('프로필이 업데이트되었습니다.')
         setIsEditing(false)
         fetchMyPageData()
       }
     } catch (error) {
       console.error('Profile update error:', error)
-      alert('프로필 업데이트 실패: ' + (error.response?.data?.message || error.message || '알 수 없는 오류'))
+      toast.error('프로필 업데이트 실패: ' + (error.response?.data?.message || error.message || '알 수 없는 오류'))
     } finally {
       setIsSaving(false)
     }

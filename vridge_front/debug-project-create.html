@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>프로젝트 생성 디버깅</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>프로젝트 생성 페이지 디버깅</h1>
+    <p>브라우저 콘솔(F12)을 열고 다음 단계를 수행하세요:</p>
+    
+    <ol>
+        <li>http://localhost:3000/ProjectCreate 페이지 열기</li>
+        <li>필수 정보 입력 (프로젝트명, 설명, 담당자, 의뢰처)</li>
+        <li>등록 버튼 클릭</li>
+        <li>콘솔에 나타나는 로그 확인</li>
+    </ol>
+    
+    <h2>예상되는 콘솔 로그:</h2>
+    <pre>
+[ProjectCreate] CreateBtn clicked!
+[ProjectCreate] Current state: {...}
+[ProjectCreate] createProjectWithDebounce called!
+[ProjectCreate] Pre-checks: {...}
+[ProjectCreate] Starting atomic project creation...
+[ProjectCreate] Atomic creation data: {...}
+[ProjectCreate] Calling CreateProjectAPI...
+    </pre>
+    
+    <h2>문제가 될 수 있는 부분:</h2>
+    <ul>
+        <li>토큰이 없거나 만료됨 → 401 에러</li>
+        <li>백엔드 서버 연결 실패 → 네트워크 에러</li>
+        <li>날짜 형식 문제 → 400 에러</li>
+        <li>프로젝트명 중복 → 409 에러</li>
+    </ul>
+    
+    <h2>직접 테스트:</h2>
+    <button onclick="testProjectCreation()">프로젝트 생성 API 테스트</button>
+    
+    <script>
+    async function testProjectCreation() {
+        // 현재 날짜 기준으로 프로세스 데이터 생성
+        const today = new Date();
+        const process = [
+            { key: 'basic_plan', text: '기본 기획', startDate: formatDate(today), endDate: formatDate(addDays(today, 1)) },
+            { key: 'story_board', text: '스토리보드', startDate: formatDate(addDays(today, 2)), endDate: formatDate(addDays(today, 3)) },
+            { key: 'filming', text: '촬영', startDate: formatDate(addDays(today, 4)), endDate: formatDate(addDays(today, 6)) },
+            { key: 'video_edit', text: '영상 편집', startDate: formatDate(addDays(today, 7)), endDate: formatDate(addDays(today, 9)) },
+            { key: 'post_work', text: '후반 작업', startDate: formatDate(addDays(today, 10)), endDate: formatDate(addDays(today, 11)) },
+            { key: 'video_preview', text: '프리뷰', startDate: formatDate(addDays(today, 12)), endDate: formatDate(addDays(today, 12)) },
+            { key: 'confirmation', text: '검수/확인', startDate: formatDate(addDays(today, 13)), endDate: formatDate(addDays(today, 13)) },
+            { key: 'video_delivery', text: '최종 납품', startDate: formatDate(addDays(today, 13)), endDate: formatDate(addDays(today, 13)) }
+        ];
+        
+        const projectData = {
+            name: '테스트 프로젝트 ' + Date.now(),
+            manager: '테스트 담당자',
+            consumer: '테스트 의뢰처',
+            description: '디버깅용 테스트 프로젝트',
+            color: '#1631F8',
+            process: process
+        };
+        
+        console.log('프로젝트 생성 데이터:', projectData);
+        
+        // localStorage에서 토큰 가져오기
+        const token = localStorage.getItem('VGID');
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        try {
+            const response = await fetch('http://localhost:8000/api/projects/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token.replace(/"/g, '')}`
+                },
+                credentials: 'include',
+                body: JSON.stringify(projectData)
+            });
+            
+            const data = await response.json();
+            console.log('응답:', response.status, data);
+            
+            if (response.ok) {
+                alert('프로젝트 생성 성공!');
+            } else {
+                alert('프로젝트 생성 실패: ' + (data.message || data.error));
+            }
+        } catch (error) {
+            console.error('에러:', error);
+            alert('네트워크 에러: ' + error.message);
+        }
+    }
+    
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = date.getHours() === 0 ? '09' : String(date.getHours()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:00`;
+    }
+    
+    function addDays(date, days) {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+    </script>
+</body>
+</html>

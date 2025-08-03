@@ -40,6 +40,18 @@ const nextConfig = {
     NEXT_PUBLIC_VERSION: process.env.NEXT_PUBLIC_VERSION,
     NEXT_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_SITE_NAME,
   },
+  
+  // API 프록시 설정 (개발 환경)
+  async rewrites() {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${API_URL}/api/:path*`,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

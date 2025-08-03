@@ -14,6 +14,7 @@ import { useRouter, useParams } from '../../util/nextNavigation'
 import { produce } from 'immer'
 import { useSelector, useDispatch } from 'react-redux'
 import { project_initial, project_dateRange, refetchProject, checkSession } from 'util/util'
+import { toast } from 'react-toastify'
 import {
   GetProject,
   UpdateProjectAPI,
@@ -54,7 +55,7 @@ export default function ProjectEdit() {
       })
       .catch((err) => {
         if (err.response && err.response.data) {
-          window.alert(err.response.data.message)
+          toast.error(err.response.data.message)
         }
       })
   }, [])
@@ -83,16 +84,16 @@ export default function ProjectEdit() {
       UpdateProjectAPI(formData, project_id)
         .then((res) => {
           refetchProject(dispatch, navigate)
-          window.alert('업데이트 완료')
+          toast.success('업데이트 완료')
           navigate('/Calendar')
         })
         .catch((err) => {
           if (err.response && err.response.data) {
-            window.alert(err.response.data.message)
+            toast.error(err.response.data.message)
           }
         })
     } else {
-      window.alert('입력란을 채워주세요.')
+      toast.warning('입력란을 채워주세요.')
     }
   }
 
@@ -108,7 +109,7 @@ export default function ProjectEdit() {
     
     if (!project_id) {
       console.error('[ProjectEdit] No project ID found!')
-      window.alert('프로젝트 ID를 찾을 수 없습니다.')
+      toast.error('프로젝트 ID를 찾을 수 없습니다.')
       return
     }
     
@@ -118,7 +119,7 @@ export default function ProjectEdit() {
       DeleteProjectAPI(project_id)
         .then((res) => {
           console.log('[ProjectEdit] Delete API success:', res.data)
-          window.alert('프로젝트가 삭제되었습니다.')
+          toast.success('프로젝트가 삭제되었습니다.')
           navigate('/Calendar')
           
           // navigate 후에 refetchProject 실행
@@ -132,10 +133,10 @@ export default function ProjectEdit() {
           console.error('[ProjectEdit] Delete API error:', err)
           if (err.response) {
             if (err.response.status === 401) {
-              window.alert('인증이 만료되었습니다. 다시 로그인해주세요.')
+              toast.error('인증이 만료되었습니다. 다시 로그인해주세요.')
               navigate('/Login', { replace: true })
             } else if (err.response.data && err.response.data.message) {
-              window.alert(err.response.data.message)
+              toast.error(err.response.data.message)
             } else {
               window.alert('프로젝트 삭제 중 오류가 발생했습니다.')
             }
@@ -248,13 +249,13 @@ export default function ProjectEdit() {
                                     })
                                     .catch((err) => {
                                       if (err.response && err.response.data) {
-                                        window.alert(err.response.data.message)
+                                        toast.error(err.response.data.message)
                                       }
                                     })
                                 })
                                 .catch((err) => {
                                   if (err.response && err.response.data) {
-                                    window.alert(err.response.data.message)
+                                    toast.error(err.response.data.message)
                                   }
                                 })
                             }
@@ -278,7 +279,18 @@ export default function ProjectEdit() {
                         type="file"
                         name="file"
                         id="file"
-                        onChange={FileChange}
+                        onChange={(e) => {
+                          const file = e.target.files[0]
+                          if (file) {
+                            const maxSize = 600 * 1024 * 1024 // 600MB
+                            if (file.size > maxSize) {
+                              toast.error('파일 크기가 너무 큽니다. 600MB 이하의 파일만 업로드 가능합니다.')
+                              e.target.value = ''
+                              return
+                            }
+                          }
+                          FileChange(e)
+                        }}
                       ></input>
                     </li>
                   </ul>

@@ -1,0 +1,707 @@
+/* VideoPlanet - Mobile-First Design System Styles */
+
+/* ========================================
+   Base Responsive Utilities
+   ======================================== */
+.adaptiveLayout {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  
+  &.mobile {
+    padding: 16px;
+    font-size: 14px;
+  }
+  
+  &.tablet {
+    padding: 24px;
+    font-size: 15px;
+  }
+  
+  &.laptop, &.desktop {
+    padding: 32px;
+    font-size: 16px;
+  }
+}
+
+/* ========================================
+   Mobile Navigation
+   ======================================== */
+.mobileNavigation {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &.top {
+    top: 0;
+    border-bottom: 1px solid #E5E7EB;
+    border-radius: 0 0 16px 16px;
+  }
+  
+  &.bottom {
+    bottom: 0;
+    border-top: 1px solid #E5E7EB;
+    border-radius: 16px 16px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  &.floating {
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  &.hidden {
+    &.bottom {
+      transform: translateY(100%);
+    }
+    &.top {
+      transform: translateY(-100%);
+    }
+    opacity: 0;
+  }
+}
+
+.navContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.navItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 60px;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, #1631F8 0%, #0F23C9 100%);
+    color: white;
+    
+    .navIcon {
+      filter: brightness(0) invert(1);
+    }
+    
+    .navLabel {
+      color: white;
+    }
+  }
+  
+  &:not(.active):hover {
+    background: rgba(22, 49, 248, 0.1);
+  }
+}
+
+.navIcon {
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+
+.navLabel {
+  font-size: 10px;
+  font-weight: 500;
+  color: #6B7280;
+  transition: all 0.3s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.navBadge {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  background: #EF4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 2px 6px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   Touch-Optimized Card
+   ======================================== */
+.touchCard {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  
+  /* Minimum touch target size for accessibility */
+  min-height: 44px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  &.pressed {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Add visual feedback for touch interactions */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle, rgba(22, 49, 248, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  &:active::before {
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   Mobile Form Field
+   ======================================== */
+.mobileFormField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.required {
+  color: #EF4444;
+  margin-left: 2px;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #6B7280;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.inputField {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 12px;
+  font-size: 16px; /* Prevents zoom on iOS */
+  background: white;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  
+  /* Adjust padding when there's an icon */
+  .inputIcon + & {
+    padding-left: 48px;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: #1631F8;
+    box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+  }
+  
+  &::placeholder {
+    color: #9CA3AF;
+  }
+  
+  /* Textarea specific styles */
+  &[rows] {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+}
+
+.mobileFormField.focused {
+  .inputField {
+    border-color: #1631F8;
+    box-shadow: 0 0 0 3px rgba(22, 49, 248, 0.1);
+  }
+}
+
+.mobileFormField.error {
+  .inputField {
+    border-color: #EF4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+}
+
+.errorMessage {
+  font-size: 12px;
+  color: #EF4444;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ========================================
+   Mobile Modal
+   ======================================== */
+.mobileModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+  
+  &.bottom {
+    align-items: flex-end;
+  }
+  
+  &.fullscreen {
+    background: white;
+  }
+}
+
+.mobileModalContent {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &.center {
+    margin: 20px;
+    border-radius: 16px;
+  }
+  
+  &.bottom {
+    margin: 0;
+    border-radius: 16px 16px 0 0;
+    margin-bottom: 0;
+  }
+  
+  &.fullscreen {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
+}
+
+.modalHandle {
+  width: 36px;
+  height: 4px;
+  background: #D1D5DB;
+  border-radius: 2px;
+  margin: 12px auto 8px;
+  cursor: grab;
+  
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.modalClose {
+  background: #F3F4F6;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #6B7280;
+  
+  &:hover {
+    background: #E5E7EB;
+    color: #374151;
+  }
+}
+
+.modalBody {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(90vh - 80px);
+}
+
+/* ========================================
+   Responsive Grid
+   ======================================== */
+.responsiveGrid {
+  display: grid;
+  width: 100%;
+  
+  /* Auto-fit columns for better responsiveness */
+  &.autoFit {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  
+  /* Auto-fill columns */
+  &.autoFill {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+/* ========================================
+   Mobile Video Controls
+   ======================================== */
+.mobileVideoControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 20px;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+  
+  &.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  
+  &.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.progressContainer {
+  margin-bottom: 16px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #1631F8;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  &::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #1631F8;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.timeDisplay {
+  font-size: 12px;
+  font-family: 'SF Mono', Monaco, monospace;
+  margin-top: 8px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.controlsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.controlButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 18px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.volumeControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 120px;
+}
+
+.volumeSlider {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+}
+
+/* ========================================
+   Responsive Breakpoints
+   ======================================== */
+@media (max-width: 480px) {
+  .adaptiveLayout.mobile {
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .navContainer {
+    padding: 8px 16px;
+  }
+  
+  .navItem {
+    min-width: 50px;
+    padding: 6px 8px;
+  }
+  
+  .navIcon {
+    font-size: 18px;
+  }
+  
+  .navLabel {
+    font-size: 9px;
+  }
+  
+  .modalBody {
+    padding: 16px;
+  }
+  
+  .inputField {
+    padding: 14px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .adaptiveLayout.tablet {
+    padding: 20px;
+  }
+  
+  .navContainer {
+    padding: 12px 24px;
+  }
+  
+  .mobileModalContent.center {
+    margin: 40px;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileNavigation {
+    display: none; /* Hide mobile navigation on desktop */
+  }
+  
+  .adaptiveLayout.laptop,
+  .adaptiveLayout.desktop {
+    padding: 32px;
+  }
+}
+
+/* ========================================
+   Touch and Gesture Optimizations
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch device specific styles */
+  .touchCard {
+    /* Larger touch targets */
+    min-height: 48px;
+  }
+  
+  .controlButton {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  .navItem {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ========================================
+   Accessibility Enhancements
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .mobileNavigation {
+    background: rgba(0, 0, 0, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .touchCard {
+    background: #1F2937;
+    color: white;
+  }
+  
+  .inputField {
+    background: #1F2937;
+    border-color: #374151;
+    color: white;
+    
+    &::placeholder {
+      color: #6B7280;
+    }
+  }
+  
+  .mobileModalContent {
+    background: #1F2937;
+    color: white;
+  }
+}
+
+/* ========================================
+   Animations
+   ======================================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   iOS Safe Area Support
+   ======================================== */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobileNavigation.bottom {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  
+  .mobileModalContent.fullscreen {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

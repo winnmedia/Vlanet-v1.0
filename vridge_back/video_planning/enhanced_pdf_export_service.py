@@ -240,8 +240,9 @@ class EnhancedPDFExportService:
                 'hook_immersion': '훅-몰입-반전-떡밥',
                 'classic': '클래식 기승전결',
                 'pixar': '픽사 스토리텔링',
-                'save_the_cat': 'Save the Cat',
-                'star_moment': '스타 모멘트'
+                'deductive': '연역식 스토리텔링',
+                'inductive': '귀납식 스토리텔링',
+                'documentary': '다큐멘터리 형식'
             }
             framework_name = framework_map.get(planning_data['story_framework'], planning_data['story_framework'])
             overview_data.append(['스토리 프레임워크', framework_name])

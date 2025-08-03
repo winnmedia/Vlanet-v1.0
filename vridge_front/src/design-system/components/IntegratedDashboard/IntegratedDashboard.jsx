@@ -1,0 +1,362 @@
+import React, { useState, useMemo } from 'react'
+import styles from './IntegratedDashboard.module.scss'
+import { colors, getPhaseColor } from '../../tokens/colors'
+import moment from 'moment'
+
+const IntegratedDashboard = ({ 
+  projects = [], 
+  view = 'hybrid', // 'calendar', 'gantt', 'hybrid'
+  onProjectClick,
+  onDateSelect,
+  selectedDate 
+}) => {
+  const [currentMonth, setCurrentMonth] = useState(moment())
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [hoveredProject, setHoveredProject] = useState(null)
+
+  // Calculate timeline bounds
+  const timelineBounds = useMemo(() => {
+    if (!projects.length) return { start: moment(), end: moment().add(30, 'days') }
+    
+    const allDates = projects.flatMap(project => [
+      moment(project.start_date),
+      moment(project.end_date)
+    ])
+    
+    return {
+      start: moment.min(allDates).subtract(7, 'days'),
+      end: moment.max(allDates).add(7, 'days')
+    }
+  }, [projects])
+
+  // Generate calendar days for current month
+  const calendarDays = useMemo(() => {
+    const startOfMonth = currentMonth.clone().startOf('month')
+    const endOfMonth = currentMonth.clone().endOf('month')
+    const startOfCalendar = startOfMonth.clone().startOf('week')
+    const endOfCalendar = endOfMonth.clone().endOf('week')
+    
+    const days = []
+    const current = startOfCalendar.clone()
+    
+    while (current.isBefore(endOfCalendar) || current.isSame(endOfCalendar, 'day')) {
+      days.push({
+        date: current.clone(),
+        isCurrentMonth: current.isSame(currentMonth, 'month'),
+        isToday: current.isSame(moment(), 'day'),
+        projects: projects.filter(project => 
+          current.isBetween(moment(project.start_date), moment(project.end_date), 'day', '[]')
+        )
+      })
+      current.add(1, 'day')
+    }
+    
+    return days
+  }, [currentMonth, projects])
+
+  const filteredProjects = useMemo(() => {
+    if (filterStatus === 'all') return projects
+    return projects.filter(project => project.status === filterStatus)
+  }, [projects, filterStatus])
+
+  return (
+    <div className={styles.dashboardContainer}>
+      {/* Header Controls */}
+      <div className={styles.dashboardHeader}>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.dashboardTitle}>프로젝트 대시보드</h1>
+          <div className={styles.viewToggle}>
+            {['hybrid', 'calendar', 'gantt'].map(viewType => (
+              <button
+                key={viewType}
+                className={`${styles.viewButton} ${view === viewType ? styles.active : ''}`}
+                onClick={() => {}}
+              >
+                {viewType === 'hybrid' && '🎯 통합뷰'}
+                {viewType === 'calendar' && '📅 캘린더'}
+                {viewType === 'gantt' && '📊 간트차트'}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className={styles.headerRight}>
+          <div className={styles.filterDropdown}>
+            <select 
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className={styles.filterSelect}
+            >
+              <option value="all">전체 프로젝트</option>
+              <option value="active">진행 중</option>
+              <option value="delayed">지연</option>
+              <option value="completed">완료</option>
+            </select>
+          </div>
+          
+          <div className={styles.monthNavigation}>
+            <button 
+              className={styles.navButton}
+              onClick={() => setCurrentMonth(currentMonth.clone().subtract(1, 'month'))}
+            >
+              ←
+            </button>
+            <span className={styles.currentMonth}>
+              {currentMonth.format('YYYY년 MM월')}
+            </span>
+            <button 
+              className={styles.navButton}
+              onClick={() => setCurrentMonth(currentMonth.clone().add(1, 'month'))}
+            >
+              →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Dashboard Content */}
+      <div className={styles.dashboardContent}>
+        {view === 'hybrid' && (
+          <div className={styles.hybridView}>
+            {/* Calendar Section */}
+            <div className={styles.calendarSection}>
+              <div className={styles.sectionTitle}>
+                <h2>📅 월간 일정</h2>
+                <div className={styles.todayIndicator}>
+                  오늘: {moment().format('MM월 DD일 (ddd)')}
+                </div>
+              </div>
+              
+              <div className={styles.calendarGrid}>
+                <div className={styles.weekHeader}>
+                  {['일', '월', '화', '수', '목', '금', '토'].map(day => (
+                    <div key={day} className={styles.weekDay}>{day}</div>
+                  ))}
+                </div>
+                
+                <div className={styles.calendarDays}>
+                  {calendarDays.map((day, index) => (
+                    <div
+                      key={index}
+                      className={`${styles.calendarDay} ${
+                        !day.isCurrentMonth ? styles.otherMonth : ''
+                      } ${day.isToday ? styles.today : ''} ${
+                        selectedDate?.isSame(day.date, 'day') ? styles.selected : ''
+                      }`}
+                      onClick={() => onDateSelect?.(day.date)}
+                    >
+                      <div className={styles.dayNumber}>
+                        {day.date.format('D')}
+                      </div>
+                      
+                      {day.projects.length > 0 && (
+                        <div className={styles.dayProjects}>
+                          {day.projects.slice(0, 2).map((project, pIndex) => (
+                            <div
+                              key={pIndex}
+                              className={styles.projectDot}
+                              style={{ 
+                                backgroundColor: getPhaseColor(project.current_phase)?.main || colors.brand.primary 
+                              }}
+                              title={project.name}
+                            />
+                          ))}
+                          {day.projects.length > 2 && (
+                            <div className={styles.moreProjects}>
+                              +{day.projects.length - 2}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Gantt Section */}
+            <div className={styles.ganttSection}>
+              <div className={styles.sectionTitle}>
+                <h2>📊 프로젝트 타임라인</h2>
+                <div className={styles.legendContainer}>
+                  <div className={styles.legend}>
+                    <div className={styles.legendItem}>
+                      <div className={styles.legendColor} style={{ backgroundColor: colors.phase.planning.main }} />
+                      <span>기획</span>
+                    </div>
+                    <div className={styles.legendItem}>
+                      <div className={styles.legendColor} style={{ backgroundColor: colors.phase.production.main }} />
+                      <span>제작</span>
+                    </div>
+                    <div className={styles.legendItem}>
+                      <div className={styles.legendColor} style={{ backgroundColor: colors.phase.postproduction.main }} />
+                      <span>후반작업</span>
+                    </div>
+                    <div className={styles.legendItem}>
+                      <div className={styles.legendColor} style={{ backgroundColor: colors.phase.completed.main }} />
+                      <span>완료</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={styles.ganttContainer}>
+                <div className={styles.projectList}>
+                  {filteredProjects.map((project, index) => (
+                    <div 
+                      key={project.id}
+                      className={`${styles.projectRow} ${
+                        hoveredProject === project.id ? styles.hovered : ''
+                      }`}
+                      onMouseEnter={() => setHoveredProject(project.id)}
+                      onMouseLeave={() => setHoveredProject(null)}
+                      onClick={() => onProjectClick?.(project)}
+                    >
+                      <div className={styles.projectInfo}>
+                        <div className={styles.projectName}>
+                          {project.name}
+                        </div>
+                        <div className={styles.projectMeta}>
+                          <span className={styles.projectPhase}>
+                            {getPhaseDisplayName(project.current_phase)}
+                          </span>
+                          <span className={styles.projectProgress}>
+                            {Math.round(project.progress || 0)}%
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className={styles.timelineBar}>
+                        <ProjectTimeline 
+                          project={project}
+                          timelineBounds={timelineBounds}
+                          isHovered={hoveredProject === project.id}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pure Calendar View */}
+        {view === 'calendar' && (
+          <div className={styles.pureCalendarView}>
+            {/* Enhanced calendar view */}
+          </div>
+        )}
+
+        {/* Pure Gantt View */}
+        {view === 'gantt' && (
+          <div className={styles.pureGanttView}>
+            {/* Enhanced gantt view */}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Stats Panel */}
+      <div className={styles.statsPanel}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>📈</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>{projects.length}</div>
+            <div className={styles.statLabel}>총 프로젝트</div>
+          </div>
+        </div>
+        
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>⚡</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>
+              {projects.filter(p => p.status === 'active').length}
+            </div>
+            <div className={styles.statLabel}>진행 중</div>
+          </div>
+        </div>
+        
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>⚠️</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>
+              {projects.filter(p => p.status === 'delayed').length}
+            </div>
+            <div className={styles.statLabel}>지연</div>
+          </div>
+        </div>
+        
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>✅</div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>
+              {projects.filter(p => p.status === 'completed').length}
+            </div>
+            <div className={styles.statLabel}>완료</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Project Timeline Component for Gantt bars
+const ProjectTimeline = ({ project, timelineBounds, isHovered }) => {
+  const startDate = moment(project.start_date)
+  const endDate = moment(project.end_date)
+  const totalDays = timelineBounds.end.diff(timelineBounds.start, 'days')
+  
+  const startOffset = startDate.diff(timelineBounds.start, 'days') / totalDays * 100
+  const duration = endDate.diff(startDate, 'days') / totalDays * 100
+  
+  const phaseColor = getPhaseColor(project.current_phase)
+  
+  return (
+    <div className={styles.timelineTrack}>
+      <div 
+        className={`${styles.timelineBarFill} ${isHovered ? styles.hovered : ''}`}
+        style={{
+          left: `${startOffset}%`,
+          width: `${duration}%`,
+          backgroundColor: phaseColor?.main || colors.brand.primary,
+          opacity: project.status === 'completed' ? 0.7 : 1
+        }}
+      >
+        <div 
+          className={styles.progressIndicator}
+          style={{ 
+            width: `${project.progress || 0}%`,
+            backgroundColor: phaseColor?.dark || colors.brand.primaryDark
+          }}
+        />
+        
+        {isHovered && (
+          <div className={styles.timelineTooltip}>
+            <div className={styles.tooltipTitle}>{project.name}</div>
+            <div className={styles.tooltipDates}>
+              {startDate.format('MM/DD')} - {endDate.format('MM/DD')}
+            </div>
+            <div className={styles.tooltipProgress}>
+              진행률: {Math.round(project.progress || 0)}%
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Helper function to get phase display name
+const getPhaseDisplayName = (phase) => {
+  const phaseNames = {
+    'planning': '기획',
+    'production': '제작',
+    'post-production': '후반작업',
+    'review': '검토',
+    'completed': '완료',
+    'on-hold': '보류'
+  }
+  return phaseNames[phase] || '진행중'
+}
+
+export default IntegratedDashboard

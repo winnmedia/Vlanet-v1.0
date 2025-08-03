@@ -372,9 +372,9 @@ export default function Home() {
                 height="461"
                 src="https://www.youtube.com/embed/nBH02NxZRfI"
                 title="실제 고객이 말하는 세이프홈즈, 고객의 리얼 스토리"
-                frameborder="0"
+                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
+                allowFullScreen
               ></iframe>
             </div>
           </div>

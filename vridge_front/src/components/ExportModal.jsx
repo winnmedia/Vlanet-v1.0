@@ -31,7 +31,17 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
         shots: planningData.shots || [],
         storyboards: planningData.storyboards || [],
         character_name: planningData.planningOptions?.characterName,
-        character_description: planningData.planningOptions?.characterDescription
+        character_description: planningData.planningOptions?.characterDescription,
+        // 모든 planning_options 포함
+        planning_options: {
+          ...planningData.planningOptions,
+          aspectRatio: planningData.planningOptions?.aspectRatio || '16:9',
+          platform: planningData.planningOptions?.platform || '',
+          colorTone: planningData.planningOptions?.colorTone || '',
+          editingStyle: planningData.planningOptions?.editingStyle || '',
+          musicStyle: planningData.planningOptions?.musicStyle || '',
+          storyFramework: planningData.planningOptions?.storyFramework || ''
+        }
       }
 
       // PDF 내보내기
@@ -39,7 +49,9 @@ export default function ExportModal({ isOpen, onClose, planningData }) {
         '/api/video-planning/export/pdf/',
         {
           planning_data: exportData,
-          export_type: 'full'
+          export_type: 'full',
+          use_compressed: true,  // 압축 버전 사용
+          use_enhanced_layout: false  // 가로형 레이아웃 사용 안함
         },
         {
           responseType: 'blob'

@@ -34,6 +34,7 @@ export const formatDateForBackend = (date) => {
 export const formatProcessDatesForBackend = (processArray) => {
   return processArray.map(item => ({
     key: item.key,
+    text: item.text, // 프로세스 단계 이름 추가
     startDate: formatDateForBackend(item.startDate),
     endDate: formatDateForBackend(item.endDate)
   }))

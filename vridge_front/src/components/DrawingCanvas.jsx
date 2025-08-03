@@ -1,0 +1,336 @@
+import React, { useRef, useState, useEffect } from 'react';
+import styles from './DrawingCanvas.module.scss';
+
+const DrawingCanvas = ({ 
+  isActive, 
+  onClose, 
+  videoPlayerRef,
+  currentTime,
+  onSaveDrawing 
+}) => {
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [currentTool, setCurrentTool] = useState('pen'); // pen, arrow, rect, circle
+  const [currentColor, setCurrentColor] = useState('#FF0000');
+  const [lineWidth, setLineWidth] = useState(3);
+  const [startPoint, setStartPoint] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [historyStep, setHistoryStep] = useState(-1);
+
+  // Canvas 초기화
+  useEffect(() => {
+    if (!canvasRef.current || !isActive) return;
+    
+    const canvas = canvasRef.current;
+    let video = null;
+    
+    // ReactPlayer에서 video 엘리먼트 가져오기
+    if (videoPlayerRef.current) {
+      const internalPlayer = videoPlayerRef.current.getInternalPlayer?.();
+      if (internalPlayer && internalPlayer.tagName === 'VIDEO') {
+        video = internalPlayer;
+      } else if (videoPlayerRef.current.el?.()) {
+        video = videoPlayerRef.current.el().querySelector('video');
+      }
+    }
+    
+    if (video) {
+      canvas.width = video.offsetWidth;
+      canvas.height = video.offsetHeight;
+    }
+  }, [isActive, videoPlayerRef]);
+
+  // 그리기 시작
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    setIsDrawing(true);
+    setStartPoint({ x, y });
+    
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    if (currentTool === 'pen') {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+  };
+
+  // 그리기 진행
+  const draw = (e) => {
+    if (!isDrawing) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    if (currentTool === 'pen') {
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    } else if (currentTool === 'arrow' || currentTool === 'rect' || currentTool === 'circle') {
+      // 도형 그리기를 위해 임시 캔버스 사용
+      redrawCanvas();
+      drawShape(ctx, startPoint.x, startPoint.y, x, y);
+    }
+  };
+
+  // 그리기 종료
+  const endDrawing = () => {
+    if (!isDrawing) return;
+    
+    setIsDrawing(false);
+    saveCanvasState();
+  };
+
+  // 도형 그리기
+  const drawShape = (ctx, x1, y1, x2, y2) => {
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = lineWidth;
+    
+    switch (currentTool) {
+      case 'arrow':
+        drawArrow(ctx, x1, y1, x2, y2);
+        break;
+      case 'rect':
+        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+        break;
+      case 'circle':
+        const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        ctx.beginPath();
+        ctx.arc(x1, y1, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        break;
+      default:
+        break;
+    }
+  };
+
+  // 화살표 그리기
+  const drawArrow = (ctx, x1, y1, x2, y2) => {
+    const headLength = 15;
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    
+    // 선 그리기
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    
+    // 화살표 머리 그리기
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLength * Math.cos(angle - Math.PI / 6), y2 - headLength * Math.sin(angle - Math.PI / 6));
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLength * Math.cos(angle + Math.PI / 6), y2 - headLength * Math.sin(angle + Math.PI / 6));
+    ctx.stroke();
+  };
+
+  // 캔버스 상태 저장
+  const saveCanvasState = () => {
+    const canvas = canvasRef.current;
+    const canvasData = canvas.toDataURL();
+    const newHistory = history.slice(0, historyStep + 1);
+    newHistory.push(canvasData);
+    setHistory(newHistory);
+    setHistoryStep(newHistory.length - 1);
+  };
+
+  // 캔버스 다시 그리기
+  const redrawCanvas = () => {
+    if (historyStep < 0) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+    
+    img.src = history[historyStep];
+  };
+
+  // 실행 취소
+  const undo = () => {
+    if (historyStep > 0) {
+      setHistoryStep(historyStep - 1);
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      
+      img.src = history[historyStep - 1];
+    }
+  };
+
+  // 다시 실행
+  const redo = () => {
+    if (historyStep < history.length - 1) {
+      setHistoryStep(historyStep + 1);
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      
+      img.src = history[historyStep + 1];
+    }
+  };
+
+  // 캔버스 클리어
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    saveCanvasState();
+  };
+
+  // 그리기 저장
+  const saveDrawing = () => {
+    const canvas = canvasRef.current;
+    const drawingData = {
+      timestamp: currentTime,
+      imageData: canvas.toDataURL(),
+      tool: currentTool,
+      color: currentColor,
+      lineWidth: lineWidth
+    };
+    
+    if (onSaveDrawing) {
+      onSaveDrawing(drawingData);
+    }
+    
+    onClose();
+  };
+
+  if (!isActive) return null;
+
+  return (
+    <div className={styles.drawingOverlay}>
+      {/* 툴바 */}
+      <div className={styles.toolbar}>
+        <div className={styles.toolGroup}>
+          <button
+            className={`${styles.toolButton} ${currentTool === 'pen' ? styles.active : ''}`}
+            onClick={() => setCurrentTool('pen')}
+            title="펜"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M13.5 6.5L17.5 10.5M4 20L5.5 15.5L17.5 3.5C18.3284 2.67157 19.6716 2.67157 20.5 3.5C21.3284 4.32843 21.3284 5.67157 20.5 6.5L8.5 18.5L4 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          
+          <button
+            className={`${styles.toolButton} ${currentTool === 'arrow' ? styles.active : ''}`}
+            onClick={() => setCurrentTool('arrow')}
+            title="화살표"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          
+          <button
+            className={`${styles.toolButton} ${currentTool === 'rect' ? styles.active : ''}`}
+            onClick={() => setCurrentTool('rect')}
+            title="사각형"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </button>
+          
+          <button
+            className={`${styles.toolButton} ${currentTool === 'circle' ? styles.active : ''}`}
+            onClick={() => setCurrentTool('circle')}
+            title="원"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </button>
+        </div>
+
+        <div className={styles.toolGroup}>
+          <input
+            type="color"
+            value={currentColor}
+            onChange={(e) => setCurrentColor(e.target.value)}
+            className={styles.colorPicker}
+            title="색상 선택"
+          />
+          
+          <select
+            value={lineWidth}
+            onChange={(e) => setLineWidth(Number(e.target.value))}
+            className={styles.lineWidthSelect}
+            title="선 굵기"
+          >
+            <option value="1">얇게</option>
+            <option value="3">보통</option>
+            <option value="5">굵게</option>
+            <option value="8">매우 굵게</option>
+          </select>
+        </div>
+
+        <div className={styles.toolGroup}>
+          <button onClick={undo} className={styles.toolButton} title="실행 취소">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M3 10H13C17.4183 10 21 13.5817 21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18C19 14.6863 16.3137 12 13 12H3M3 10L7 6M3 10L7 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          
+          <button onClick={redo} className={styles.toolButton} title="다시 실행">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M21 10H11C6.58172 10 3 13.5817 3 18C3 18.5523 3.44772 19 4 19C4.55228 19 5 18.5523 5 18C5 14.6863 7.68629 12 11 12H21M21 10L17 6M21 10L17 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          
+          <button onClick={clearCanvas} className={styles.toolButton} title="모두 지우기">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div className={styles.toolGroup}>
+          <button onClick={saveDrawing} className={styles.saveButton}>
+            저장
+          </button>
+          
+          <button onClick={onClose} className={styles.cancelButton}>
+            취소
+          </button>
+        </div>
+      </div>
+
+      {/* 캔버스 */}
+      <canvas
+        ref={canvasRef}
+        className={styles.drawingCanvas}
+        onMouseDown={startDrawing}
+        onMouseMove={draw}
+        onMouseUp={endDrawing}
+        onMouseLeave={endDrawing}
+      />
+    </div>
+  );
+};
+
+export default DrawingCanvas;

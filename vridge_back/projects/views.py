@@ -748,7 +748,7 @@ class CreateProject(View):
                     }, status=400)
             
             # inputs와 process 검증
-            if not inputs or not process:
+            if not inputs or process is None:
                 return JsonResponse({
                     "message": "프로젝트 생성 중 오류가 발생했습니다: 필수 데이터가 누락되었습니다.",
                     "code": "MISSING_DATA"

@@ -31,6 +31,8 @@ urlpatterns = [
     # 이미지 관련 API
     path('regenerate/storyboard-image/', views.regenerate_storyboard_image, name='regenerate_storyboard_image'),
     path('download/storyboard-image/', views.download_storyboard_image, name='download_storyboard_image'),
+    path('generate/storyboard-images-async/', views.generate_storyboard_images_async, name='generate_storyboard_images_async'),
+    path('check-image-generation-status/<str:task_id>/', views.check_image_generation_status, name='check_image_generation_status'),
     # path('proxy/image/', views_proxy.proxy_image, name='proxy_image'),
     # path('convert/base64/', views_proxy.convert_to_base64, name='convert_to_base64'),
     

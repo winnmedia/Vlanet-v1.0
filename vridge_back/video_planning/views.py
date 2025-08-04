@@ -32,6 +32,10 @@ from .compressed_pdf_export_service import CompressedPDFExportService
 from .pdf_export_service_enhanced import EnhancedPDFExportService
 from .google_slides_service import GoogleSlidesService
 from .services.advanced_pdf_export_service import AdvancedPDFExportService
+from .async_image_generator import AsyncImageGenerator
+import uuid
+from django.core.cache import cache
+import threading
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -1758,4 +1762,81 @@ def complete_project(request):
         return Response({
             'status': 'error',
             'message': f'프로젝트 완성 처리 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generate_storyboard_images_async(request):
+    """
+    스토리보드 이미지를 비동기로 생성합니다.
+    즉시 태스크 ID를 반환하고, 백그라운드에서 이미지를 생성합니다.
+    """
+    try:
+        storyboard_data = request.data.get('storyboard_data', {})
+        
+        if not storyboard_data or not storyboard_data.get('storyboards'):
+            return Response({
+                'status': 'error',
+                'message': '스토리보드 데이터가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 태스크 ID 생성
+        task_id = str(uuid.uuid4())
+        
+        # 비동기 이미지 생성기 초기화
+        async_generator = AsyncImageGenerator()
+        
+        # 백그라운드 스레드에서 이미지 생성 시작
+        def generate_images():
+            async_generator.generate_storyboard_images_async(storyboard_data, task_id)
+        
+        thread = threading.Thread(target=generate_images)
+        thread.daemon = True
+        thread.start()
+        
+        return Response({
+            'status': 'success',
+            'task_id': task_id,
+            'message': '이미지 생성이 시작되었습니다. task_id로 진행 상황을 확인하세요.'
+        }, status=status.HTTP_202_ACCEPTED)
+        
+    except Exception as e:
+        logger.error(f"Error in generate_storyboard_images_async: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'비동기 이미지 생성 시작 중 오류가 발생했습니다: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_image_generation_status(request, task_id):
+    """
+    비동기 이미지 생성 작업의 상태를 확인합니다.
+    """
+    try:
+        async_generator = AsyncImageGenerator()
+        status_data = async_generator.get_generation_status(task_id)
+        
+        if status_data.get('status') == 'completed':
+            # 완료된 경우 결과도 함께 반환
+            result = async_generator.get_generation_result(task_id)
+            return Response({
+                'status': 'success',
+                'task_status': status_data,
+                'result': result
+            }, status=status.HTTP_200_OK)
+        else:
+            # 진행 중이거나 실패한 경우 상태만 반환
+            return Response({
+                'status': 'success',
+                'task_status': status_data
+            }, status=status.HTTP_200_OK)
+            
+    except Exception as e:
+        logger.error(f"Error in check_image_generation_status: {str(e)}", exc_info=True)
+        return Response({
+            'status': 'error',
+            'message': f'상태 확인 중 오류가 발생했습니다: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

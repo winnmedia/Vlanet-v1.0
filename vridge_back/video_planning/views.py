@@ -1398,10 +1398,10 @@ def update_pro_settings(request, planning_id):
         data = request.data
         updated_fields = []
         
-        # 컬러톤 설정 업데이트
-        if 'color_tone' in data:
-            planning.color_tone = data['color_tone']
-            updated_fields.append('color_tone')
+        # 컬러톤 설정 업데이트 (color_tone 필드 제거됨)
+        # if 'color_tone' in data:
+        #     planning.color_tone = data['color_tone']
+        #     updated_fields.append('color_tone')
         
         # 카메라 설정 업데이트
         if 'camera_settings' in data:
@@ -1537,13 +1537,13 @@ def apply_pro_template(request, planning_id, template_id):
                 'message': '템플릿을 찾을 수 없습니다.'
             }, status=status.HTTP_404_NOT_FOUND)
         
-        # 템플릿 적용
-        planning.color_tone = template.default_color_tone
+        # 템플릿 적용 (color_tone 필드 제거됨)
+        # planning.color_tone = template.default_color_tone
         planning.camera_settings = template.default_camera_settings
         planning.lighting_setup = template.default_lighting_setup
         planning.audio_config = template.default_audio_config
         
-        planning.save(update_fields=['color_tone', 'camera_settings', 'lighting_setup', 'audio_config', 'updated_at'])
+        planning.save(update_fields=['camera_settings', 'lighting_setup', 'audio_config', 'updated_at'])
         
         # 템플릿 사용 횟수 증가
         template.increment_usage()
@@ -1553,7 +1553,7 @@ def apply_pro_template(request, planning_id, template_id):
             'data': {
                 'template_name': template.name,
                 'applied_settings': {
-                    'color_tone': planning.color_tone,
+                    # 'color_tone': planning.color_tone,  # 필드 제거됨
                     'camera_settings': planning.camera_settings,
                     'lighting_setup': planning.lighting_setup,
                     'audio_config': planning.audio_config
@@ -1614,7 +1614,7 @@ def ai_generate_full_planning(request):
                 user=request.user,
                 title=planning['title'],
                 planning=planning['planning'],
-                color_tone=planning.get('pro_options', {}).get('colorTone'),
+                # color_tone=planning.get('pro_options', {}).get('colorTone'),  # 필드 제거됨
                 camera_settings={
                     'type': planning.get('pro_options', {}).get('cameraType'),
                     'lens': planning.get('pro_options', {}).get('lensType'),

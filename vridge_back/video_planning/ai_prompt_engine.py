@@ -253,11 +253,11 @@ class AIPromptEngine:
             'planning_options': planning.planning_options,
         })
         
-        # 프로 옵션 추가
-        if planning.color_tone:
-            enhanced['color_palette'] = planning.color_tone
-            enhanced['primary_color'] = planning.color_tone.get('primary', '#1631F8')
-            enhanced['mood'] = planning.color_tone.get('mood', 'professional')
+        # 프로 옵션 추가 (color_tone 필드 제거됨)
+        # if planning.color_tone:
+        #     enhanced['color_palette'] = planning.color_tone
+        #     enhanced['primary_color'] = planning.color_tone.get('primary', '#1631F8')
+        #     enhanced['mood'] = planning.color_tone.get('mood', 'professional')
         
         if planning.camera_settings:
             enhanced['camera_settings'] = planning.camera_settings
@@ -525,7 +525,7 @@ class PromptOptimizationService:
     def _extract_pro_options(self, planning: VideoPlanning) -> Dict[str, Any]:
         """프로 옵션 추출"""
         return {
-            'color_tone': planning.color_tone,
+            # 'color_tone': planning.color_tone,  # 필드 제거됨
             'camera_settings': planning.camera_settings,
             'lighting_setup': planning.lighting_setup,
             'audio_config': planning.audio_config,

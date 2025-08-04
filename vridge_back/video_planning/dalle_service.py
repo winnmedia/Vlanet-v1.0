@@ -153,8 +153,8 @@ class DalleService:
             )
             image_url = response.data[0].url
             
-            # URL에서 이미지 다운로드하여 base64로 변환
-            image_response = requests.get(image_url, timeout=30)
+            # URL에서 이미지 다운로드하여 base64로 변환 (타임아웃 증가)
+            image_response = requests.get(image_url, timeout=60)
             if image_response.status_code == 200:
                 image_base64 = base64.b64encode(image_response.content).decode('utf-8')
                 final_image_url = f"data:image/png;base64,{image_base64}"

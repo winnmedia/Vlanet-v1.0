@@ -49,36 +49,42 @@ def get_recent_plannings(request):
     
     try:
         # 인증된 사용자의 최근 5개 기획 로그 가져오기
+        # 명시적으로 필드를 선택하여 존재하지 않는 필드 오류 방지
         recent_plannings = VideoPlanning.objects.filter(
             user=request.user
+        ).values(
+            'id', 'title', 'planning_text', 'stories', 'selected_story',
+            'scenes', 'selected_scene', 'shots', 'selected_shot',
+            'storyboards', 'planning_options', 'is_completed', 
+            'current_step', 'created_at', 'updated_at'
         ).order_by('-created_at')[:5]
         
         # 응답 데이터 구성
         planning_logs = []
         for planning in recent_plannings:
             try:
-                # planning_options 가져오기
+                # planning_options 가져오기 (이제 planning은 딕셔너리)
                 planning_options = {}
-                if planning.selected_story and isinstance(planning.selected_story, dict):
-                    planning_options = planning.selected_story.get('planning_options', {})
+                if planning.get('selected_story') and isinstance(planning['selected_story'], dict):
+                    planning_options = planning['selected_story'].get('planning_options', {})
                 
                 planning_logs.append({
-                    'id': planning.id,
-                    'title': planning.title or '제목 없음',
-                    'created_at': planning.created_at.strftime('%Y-%m-%d %H:%M') if planning.created_at else '',
-                    'planning_options': planning.planning_options if hasattr(planning, 'planning_options') else planning_options,
-                    'current_step': planning.current_step or 1,
-                    'is_completed': planning.is_completed or False,
+                    'id': planning['id'],
+                    'title': planning.get('title') or '제목 없음',
+                    'created_at': planning['created_at'].strftime('%Y-%m-%d %H:%M') if planning.get('created_at') else '',
+                    'planning_options': planning.get('planning_options') or planning_options,
+                    'current_step': planning.get('current_step') or 1,
+                    'is_completed': planning.get('is_completed') or False,
                     'planning_data': {
-                        'planning': planning.planning_text,
-                        'stories': planning.stories,
-                        'scenes': planning.scenes,
-                        'shots': planning.shots,
-                        'storyboards': planning.storyboards
+                        'planning': planning.get('planning_text', ''),
+                        'stories': planning.get('stories', []),
+                        'scenes': planning.get('scenes', []),
+                        'shots': planning.get('shots', []),
+                        'storyboards': planning.get('storyboards', [])
                     }
                 })
             except Exception as item_error:
-                logger.warning(f"Error processing planning item {planning.id}: {str(item_error)}")
+                logger.warning(f"Error processing planning item {planning.get('id', 'unknown')}: {str(item_error)}")
                 continue
         
         return Response({

@@ -376,7 +376,9 @@ CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
     "https://vlanet-v1-0.vercel.app",
     "https://videoplanet.up.railway.app",
     "https://vlanet.net",

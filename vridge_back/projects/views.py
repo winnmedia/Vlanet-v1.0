@@ -50,13 +50,13 @@ class ProjectList(View):
             logger.info(f"ProjectList GET request from user: {request.user.email}")
             user = request.user
             
-            # 캐시 확인
-            cache_key = f"project_list_{user.id}"
-            cached_result = cache.get(cache_key)
-            
-            if cached_result is not None:
-                logger.info(f"Returning cached project list for user: {user.email}")
-                return JsonResponse(cached_result, safe=False)
+            # 캐시 확인 (임시 비활성화 - django_cache_table 오류)
+            # cache_key = f"project_list_{user.id}"
+            # cached_result = cache.get(cache_key)
+            # 
+            # if cached_result is not None:
+            #     logger.info(f"Returning cached project list for user: {user.email}")
+            #     return JsonResponse(cached_result, safe=False)
             
             # nickname 초기화
             if user.nickname:
@@ -343,9 +343,9 @@ class ProjectList(View):
                 "user_memos": user_memos,
             }
             
-            # 캐시에 저장 (5분간 유효)
-            cache.set(cache_key, response_data, 300)
-            logger.info(f"Cached project list for user: {user.email}")
+            # 캐시에 저장 (5분간 유효) - 임시 비활성화
+            # cache.set(cache_key, response_data, 300)
+            # logger.info(f"Cached project list for user: {user.email}")
             
             return JsonResponse(response_data, status=200)
         except Exception as e:
@@ -910,7 +910,7 @@ class CreateProject(View):
                 from django.core.cache import cache
                 cache_key = f"create_project_{user.id}_{idempotency_key}"
                 # 5분간 캐시 저장
-                cache.set(cache_key, result, 300)
+                # cache.set(cache_key, result, 300)  # 임시 비활성화
             
             logging.info(f"[CreateProject] Successfully created project '{project_name}' with ID: {project.id}")
             return JsonResponse(result, status=200)
@@ -937,13 +937,13 @@ class ProjectDetail(View):
         try:
             user = request.user
             
-            # 캐시 확인
-            cache_key = f"project_detail_{project_id}_{user.id}"
-            cached_result = cache.get(cache_key)
-            
-            if cached_result is not None:
-                logger.info(f"Returning cached project detail for project: {project_id}, user: {user.email}")
-                return JsonResponse({"result": cached_result}, status=200)
+            # 캐시 확인 (임시 비활성화)
+            # cache_key = f"project_detail_{project_id}_{user.id}"
+            # cached_result = cache.get(cache_key)
+            # 
+            # if cached_result is not None:
+            #     logger.info(f"Returning cached project detail for project: {project_id}, user: {user.email}")
+            #     return JsonResponse({"result": cached_result}, status=200)
             
             try:
                 # 최적화된 쿼리: 모든 관련 데이터를 한 번에 로드
@@ -1040,8 +1040,8 @@ class ProjectDetail(View):
                 "memo": list(project.memos.all().values("id", "date", "memo")),
             }
             
-            # 캐시에 저장 (3분간 유효)
-            cache.set(cache_key, result, 180)
+            # 캐시에 저장 (3분간 유효) - 임시 비활성화
+            # cache.set(cache_key, result, 180)
             logger.info(f"Cached project detail for project: {project_id}, user: {user.email}")
             
             return JsonResponse({"result": result}, status=200)

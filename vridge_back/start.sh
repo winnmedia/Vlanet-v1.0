@@ -35,6 +35,11 @@ echo ""
 echo "🔄 마이그레이션 실행..."
 python3 manage.py migrate --noinput
 
+# video_planning 마이그레이션 강제 적용
+echo ""
+echo "🔧 video_planning 마이그레이션 강제 적용..."
+python3 manage.py migrate video_planning --noinput || echo "video_planning 마이그레이션 실패"
+
 # 정적 파일 수집
 echo ""
 echo "📦 정적 파일 수집..."

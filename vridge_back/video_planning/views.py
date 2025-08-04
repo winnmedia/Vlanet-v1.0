@@ -355,6 +355,7 @@ def generate_storyboards(request):
         style = request.data.get('style', 'minimal')
         draft_mode = request.data.get('draft_mode', True)  # 기본값을 True로 설정하여 비용 절감
         speed_optimized = request.data.get('speed_optimized', False)
+        no_image = request.data.get('no_image', False)  # 이미지 생성 스킵 옵션
         
         # 빠른 드래프트 모드 처리
         if speed_optimized or style == 'quick_draft':
@@ -379,6 +380,7 @@ def generate_storyboards(request):
         gemini_service = GeminiService()
         gemini_service.style = style  # 스타일 설정
         gemini_service.draft_mode = draft_mode  # draft 모드 설정
+        gemini_service.no_image = no_image  # 이미지 생성 스킵 옵션
         storyboard_data = gemini_service.generate_storyboards_from_shot(shot_data)
         
         if 'error' in storyboard_data:

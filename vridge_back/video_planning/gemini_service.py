@@ -64,6 +64,7 @@ class GeminiService:
         self.placeholder_service = None
         self.style = 'minimal'  # 기본 스타일
         self.draft_mode = True  # 기본적으로 draft 모드 사용
+        self.no_image = False  # 이미지 생성 스킵 옵션
         
         logger.info(f"IMAGE_SERVICE_AVAILABLE: {IMAGE_SERVICE_AVAILABLE}")
         logger.info(f"PLACEHOLDER_SERVICE_AVAILABLE: {PLACEHOLDER_SERVICE_AVAILABLE}")
@@ -888,6 +889,15 @@ class GeminiService:
             
             # 이미지 생성 시도 - Gemini 실패 시 DALL-E 우선 사용
             storyboards = storyboard_data.get('storyboards', [])
+            
+            # no_image 옵션이 설정되면 이미지 생성 스킵
+            if getattr(self, 'no_image', False):
+                logger.info("Skipping image generation (no_image option is set)")
+                for i, frame in enumerate(storyboards):
+                    storyboard_data['storyboards'][i]['image_url'] = None
+                    storyboard_data['storyboards'][i]['image_note'] = "이미지 생성 스킵됨"
+                return storyboard_data
+            
             for i, frame in enumerate(storyboards):
                 logger.info(f"Generating image for frame {i+1}")
                 image_generated = False

@@ -37,6 +37,8 @@ import uuid
 from django.core.cache import cache
 import threading
 from datetime import datetime
+import base64
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -550,9 +552,11 @@ def generate_all_storyboards(request):
 def regenerate_storyboard_image(request):
     """
     스토리보드 이미지를 재생성합니다.
+    비동기 처리로 타임아웃 문제 해결
     """
     try:
         frame_data = request.data.get('frame_data', {})
+        use_async = request.data.get('use_async', True)  # 기본값: 비동기 처리
         style = request.data.get('style', 'minimal')
         draft_mode = request.data.get('draft_mode', True)  # 기본값을 True로 설정하여 비용 절감
         
@@ -587,22 +591,50 @@ def regenerate_storyboard_image(request):
                 'message': '이미지 생성 서비스 초기화 실패'
             }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         
-        # 이미지 재생성
-        image_result = image_service.generate_storyboard_image(frame_data, style=style, draft_mode=draft_mode)
-        
-        if image_result['success']:
+        # 비동기 처리
+        if use_async:
+            # 태스크 ID 생성
+            task_id = str(uuid.uuid4())
+            
+            # 비동기 이미지 생성기 초기화
+            async_generator = AsyncImageGenerator()
+            
+            # 단일 프레임을 위한 스토리보드 데이터 구성
+            storyboard_data = {
+                'storyboards': [frame_data]
+            }
+            
+            # 백그라운드 스레드에서 이미지 생성 시작
+            def generate_single_image():
+                async_generator.generate_storyboard_images_async(storyboard_data, task_id)
+            
+            thread = threading.Thread(target=generate_single_image)
+            thread.daemon = True
+            thread.start()
+            
             return Response({
                 'status': 'success',
-                'data': {
-                    'image_url': image_result['image_url'],
-                    'frame_number': frame_data.get('frame_number', 0)
-                }
-            }, status=status.HTTP_200_OK)
+                'task_id': task_id,
+                'message': '이미지 재생성이 시작되었습니다. task_id로 진행 상황을 확인하세요.',
+                'check_status_url': f'/api/video-planning/check-image-generation-status/{task_id}/'
+            }, status=status.HTTP_202_ACCEPTED)
         else:
-            return Response({
-                'status': 'error',
-                'message': image_result.get('error', '이미지 생성에 실패했습니다.')
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # 동기 처리 (기존 방식)
+            image_result = image_service.generate_storyboard_image(frame_data, style=style, draft_mode=draft_mode)
+            
+            if image_result['success']:
+                return Response({
+                    'status': 'success',
+                    'data': {
+                        'image_url': image_result['image_url'],
+                        'frame_number': frame_data.get('frame_number', 0)
+                    }
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    'status': 'error',
+                    'message': image_result.get('error', '이미지 생성에 실패했습니다.')
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     except Exception as e:
         logger.error(f"Error in regenerate_storyboard_image: {str(e)}", exc_info=True)
@@ -625,14 +657,51 @@ def download_storyboard_image(request):
                 'message': '이미지 URL이 필요합니다.'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # 이미지 다운로드
-        response = requests.get(image_url)
+        # base64 이미지 처리
+        if image_url.startswith('data:image'):
+            try:
+                # data:image/png;base64,iVBORw0... 형식 파싱
+                header, base64_data = image_url.split(',', 1)
+                mime_type = header.split(':')[1].split(';')[0]
+                file_extension = '.' + mime_type.split('/')[1]
+                
+                # base64 디코드
+                image_data = base64.b64decode(base64_data)
+                
+                safe_title = "".join(c for c in frame_title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                filename = f"{safe_title}{file_extension}"
+                
+                # HTTP 응답 생성
+                http_response = HttpResponse(
+                    image_data,
+                    content_type=mime_type
+                )
+                http_response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                
+                return http_response
+                
+            except Exception as e:
+                logger.error(f"Base64 image processing error: {e}")
+                return Response({
+                    'status': 'error',
+                    'message': 'base64 이미지 처리 중 오류가 발생했습니다.'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        if response.status_code != 200:
+        # URL 이미지 다운로드
+        try:
+            response = requests.get(image_url, timeout=30)
+            
+            if response.status_code != 200:
+                return Response({
+                    'status': 'error',
+                    'message': '이미지를 다운로드할 수 없습니다.'
+                }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(f"Image download error: {e}")
             return Response({
                 'status': 'error',
-                'message': '이미지를 다운로드할 수 없습니다.'
-            }, status=status.HTTP_404_NOT_FOUND)
+                'message': '이미지 다운로드 중 오류가 발생했습니다.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         # 파일 이름 생성
         file_extension = '.png'

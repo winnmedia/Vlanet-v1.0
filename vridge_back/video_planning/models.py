@@ -28,19 +28,19 @@ class VideoPlanning(models.Model):
     # 기획 옵션 (톤앤매너, 장르 등) - 확장된 구조
     planning_options = models.JSONField(default=dict, help_text="기획 옵션 (톤, 장르, 컨셉 등)")
     
-    # 프로 옵션 - 영상 제작 전문 설정
-    color_tone = models.JSONField(default=dict, help_text="컬러톤 설정 (primary, secondary, mood 등)")
-    camera_settings = models.JSONField(default=dict, help_text="카메라 설정 (해상도, 프레임레이트, 촬영기법 등)")
-    lighting_setup = models.JSONField(default=dict, help_text="조명 설정 (키라이트, 필라이트, 백라이트 등)")
-    audio_config = models.JSONField(default=dict, help_text="오디오 설정 (BGM, 효과음, 내레이션 등)")
+    # 프로 옵션 - 영상 제작 전문 설정 (마이그레이션 0005에서 제거됨)
+    # color_tone = models.JSONField(default=dict, help_text="컬러톤 설정 (primary, secondary, mood 등)")
+    # camera_settings = models.JSONField(default=dict, help_text="카메라 설정 (해상도, 프레임레이트, 촬영기법 등)")
+    # lighting_setup = models.JSONField(default=dict, help_text="조명 설정 (키라이트, 필라이트, 백라이트 등)")
+    # audio_config = models.JSONField(default=dict, help_text="오디오 설정 (BGM, 효과음, 내레이션 등)")
     
-    # AI 생성 옵션
-    ai_generation_config = models.JSONField(default=dict, help_text="AI 생성 설정 (스타일, 품질, 모델 등)")
-    prompt_templates = models.JSONField(default=list, help_text="사용된 프롬프트 템플릿 목록")
+    # AI 생성 옵션 (마이그레이션 0005에서 제거됨)
+    # ai_generation_config = models.JSONField(default=dict, help_text="AI 생성 설정 (스타일, 품질, 모델 등)")
+    # prompt_templates = models.JSONField(default=list, help_text="사용된 프롬프트 템플릿 목록")
     
-    # 협업 관련
-    collaboration_settings = models.JSONField(default=dict, help_text="협업 설정 (권한, 피드백 옵션 등)")
-    workflow_config = models.JSONField(default=dict, help_text="워크플로우 설정 (단계별 승인, 자동화 등)")
+    # 협업 관련 (마이그레이션 0005에서 제거됨)
+    # collaboration_settings = models.JSONField(default=dict, help_text="협업 설정 (권한, 피드백 옵션 등)")
+    # workflow_config = models.JSONField(default=dict, help_text="워크플로우 설정 (단계별 승인, 자동화 등)")
     
     # 상태 관리
     is_completed = models.BooleanField(default=False, help_text="기획 완료 여부")

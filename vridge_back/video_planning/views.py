@@ -1407,35 +1407,35 @@ def update_pro_settings(request, planning_id):
         #     planning.color_tone = data['color_tone']
         #     updated_fields.append('color_tone')
         
-        # 카메라 설정 업데이트
-        if 'camera_settings' in data:
-            planning.camera_settings = data['camera_settings']
-            updated_fields.append('camera_settings')
+        # 카메라 설정 업데이트 (필드 제거됨)
+        # if 'camera_settings' in data:
+        #     planning.camera_settings = data['camera_settings']
+        #     updated_fields.append('camera_settings')
         
-        # 조명 설정 업데이트
-        if 'lighting_setup' in data:
-            planning.lighting_setup = data['lighting_setup']
-            updated_fields.append('lighting_setup')
+        # 조명 설정 업데이트 (필드 제거됨)
+        # if 'lighting_setup' in data:
+        #     planning.lighting_setup = data['lighting_setup']
+        #     updated_fields.append('lighting_setup')
         
-        # 오디오 설정 업데이트
-        if 'audio_config' in data:
-            planning.audio_config = data['audio_config']
-            updated_fields.append('audio_config')
+        # 오디오 설정 업데이트 (필드 제거됨)
+        # if 'audio_config' in data:
+        #     planning.audio_config = data['audio_config']
+        #     updated_fields.append('audio_config')
         
-        # AI 생성 설정 업데이트
-        if 'ai_generation_config' in data:
-            planning.ai_generation_config = data['ai_generation_config']
-            updated_fields.append('ai_generation_config')
+        # AI 생성 설정 업데이트 (필드 제거됨)
+        # if 'ai_generation_config' in data:
+        #     planning.ai_generation_config = data['ai_generation_config']
+        #     updated_fields.append('ai_generation_config')
         
-        # 협업 설정 업데이트
-        if 'collaboration_settings' in data:
-            planning.collaboration_settings = data['collaboration_settings']
-            updated_fields.append('collaboration_settings')
+        # 협업 설정 업데이트 (필드 제거됨)
+        # if 'collaboration_settings' in data:
+        #     planning.collaboration_settings = data['collaboration_settings']
+        #     updated_fields.append('collaboration_settings')
         
-        # 워크플로우 설정 업데이트
-        if 'workflow_config' in data:
-            planning.workflow_config = data['workflow_config']
-            updated_fields.append('workflow_config')
+        # 워크플로우 설정 업데이트 (필드 제거됨)
+        # if 'workflow_config' in data:
+        #     planning.workflow_config = data['workflow_config']
+        #     updated_fields.append('workflow_config')
         
         if updated_fields:
             planning.save(update_fields=updated_fields + ['updated_at'])
@@ -1541,13 +1541,13 @@ def apply_pro_template(request, planning_id, template_id):
                 'message': '템플릿을 찾을 수 없습니다.'
             }, status=status.HTTP_404_NOT_FOUND)
         
-        # 템플릿 적용 (color_tone 필드 제거됨)
+        # 템플릿 적용 (필드들이 제거됨)
         # planning.color_tone = template.default_color_tone
-        planning.camera_settings = template.default_camera_settings
-        planning.lighting_setup = template.default_lighting_setup
-        planning.audio_config = template.default_audio_config
+        # planning.camera_settings = template.default_camera_settings
+        # planning.lighting_setup = template.default_lighting_setup
+        # planning.audio_config = template.default_audio_config
         
-        planning.save(update_fields=['camera_settings', 'lighting_setup', 'audio_config', 'updated_at'])
+        planning.save(update_fields=['updated_at'])
         
         # 템플릿 사용 횟수 증가
         template.increment_usage()
@@ -1557,10 +1557,11 @@ def apply_pro_template(request, planning_id, template_id):
             'data': {
                 'template_name': template.name,
                 'applied_settings': {
-                    # 'color_tone': planning.color_tone,  # 필드 제거됨
-                    'camera_settings': planning.camera_settings,
-                    'lighting_setup': planning.lighting_setup,
-                    'audio_config': planning.audio_config
+                    # 필드들이 제거됨
+                    # 'color_tone': planning.color_tone,
+                    # 'camera_settings': planning.camera_settings,
+                    # 'lighting_setup': planning.lighting_setup,
+                    # 'audio_config': planning.audio_config
                 }
             },
             'message': f'"{template.name}" 템플릿이 성공적으로 적용되었습니다.'

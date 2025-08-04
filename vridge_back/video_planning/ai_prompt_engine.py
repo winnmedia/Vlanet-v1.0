@@ -259,18 +259,19 @@ class AIPromptEngine:
         #     enhanced['primary_color'] = planning.color_tone.get('primary', '#1631F8')
         #     enhanced['mood'] = planning.color_tone.get('mood', 'professional')
         
-        if planning.camera_settings:
-            enhanced['camera_settings'] = planning.camera_settings
-            enhanced['camera_specs'] = planning.get_camera_specs()
-            enhanced['camera_angle'] = planning.camera_settings.get('shot_type', 'medium')
+        # 필드들이 제거됨
+        # if planning.camera_settings:
+        #     enhanced['camera_settings'] = planning.camera_settings
+        #     enhanced['camera_specs'] = planning.get_camera_specs()
+        #     enhanced['camera_angle'] = planning.camera_settings.get('shot_type', 'medium')
         
-        if planning.lighting_setup:
-            enhanced['lighting_setup'] = planning.lighting_setup
-            enhanced['lighting_mood'] = planning.lighting_setup.get('mood', 'professional')
+        # if planning.lighting_setup:
+        #     enhanced['lighting_setup'] = planning.lighting_setup
+        #     enhanced['lighting_mood'] = planning.lighting_setup.get('mood', 'professional')
         
-        if planning.audio_config:
-            enhanced['audio_config'] = planning.audio_config
-            enhanced['bgm_style'] = planning.audio_config.get('bgm_style', 'corporate')
+        # if planning.audio_config:
+        #     enhanced['audio_config'] = planning.audio_config
+        #     enhanced['bgm_style'] = planning.audio_config.get('bgm_style', 'corporate')
         
         # 선택된 콘텐츠 정보
         if planning.selected_story:
@@ -525,11 +526,12 @@ class PromptOptimizationService:
     def _extract_pro_options(self, planning: VideoPlanning) -> Dict[str, Any]:
         """프로 옵션 추출"""
         return {
-            # 'color_tone': planning.color_tone,  # 필드 제거됨
-            'camera_settings': planning.camera_settings,
-            'lighting_setup': planning.lighting_setup,
-            'audio_config': planning.audio_config,
-            'ai_generation_config': planning.ai_generation_config
+            # 필드들이 제거됨
+            # 'color_tone': planning.color_tone,
+            # 'camera_settings': planning.camera_settings,
+            # 'lighting_setup': planning.lighting_setup,
+            # 'audio_config': planning.audio_config,
+            # 'ai_generation_config': planning.ai_generation_config
         }
     
     def get_optimization_analytics(self, planning: VideoPlanning) -> Dict[str, Any]:

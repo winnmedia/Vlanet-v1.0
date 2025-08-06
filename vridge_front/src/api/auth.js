@@ -4,7 +4,7 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 export function SignUp(data) {
   return axiosOpts(
     'post',
-    `/api/auth/signup/`,
+    `/users/signup/`,
     data,
   )
 }
@@ -13,7 +13,7 @@ export function SignUp(data) {
 export function CheckNickname(nickname) {
   return axiosOpts(
     'post',
-    `/api/auth/check-nickname/`,
+    `/users/check-nickname/`,
     { nickname },
   )
 }
@@ -22,7 +22,7 @@ export function CheckNickname(nickname) {
 export function CheckEmail(email) {
   return axiosOpts(
     'post',
-    `/api/auth/check-email/`,
+    `/users/check-email/`,
     { email },
   )
 }
@@ -31,7 +31,7 @@ export function CheckEmail(email) {
 export function SignIn(data) {
   return axiosOpts(
     'post',
-    `/api/auth/login/`,
+    `/users/login/`,
     data,
   )
 }
@@ -111,7 +111,7 @@ export function DeleteUserMemo(id) {
 export function GetUserInfo() {
   return axiosCredentials(
     'get',
-    `/api/auth/me/`,
+    `/users/me/`,
   )
 }
 
@@ -148,7 +148,7 @@ export function SignUpComplete(data) {
 export function RefreshToken(refreshToken) {
   return axiosOpts(
     'post',
-    `/api/auth/refresh/`,
+    `/users/refresh/`,
     { refresh: refreshToken },
   )
 }
@@ -157,7 +157,7 @@ export function RefreshToken(refreshToken) {
 export function VerifyToken(token) {
   return axiosOpts(
     'post',
-    `/api/auth/verify/`,
+    `/users/verify/`,
     { token },
   )
 }

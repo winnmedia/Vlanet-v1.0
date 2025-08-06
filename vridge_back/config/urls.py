@@ -90,6 +90,13 @@ class SPAView(TemplateView):
         except:
             return JsonResponse({"message": "React app should be served here"})
 
+# 개선된 인증 뷰 임포트
+try:
+    from users.views_auth_improved import ImprovedSignUp, ImprovedSignIn, TestUserCreate
+    HAS_IMPROVED_AUTH_V2 = True
+except ImportError:
+    HAS_IMPROVED_AUTH_V2 = False
+
 # 통합 인증 엔드포인트 (최우선)
 auth_patterns = [
     # API 표준 경로 (/api/auth/)
@@ -101,6 +108,12 @@ auth_patterns = [
     path('api/auth/me/', user_views.UserMe.as_view(), name='auth_me'),
 ]
 
+# 개선된 인증 뷰 V2가 있으면 사용
+if HAS_IMPROVED_AUTH_V2:
+    auth_patterns[0] = path('api/auth/login/', ImprovedSignIn.as_view(), name='auth_login')
+    auth_patterns[1] = path('api/auth/signup/', ImprovedSignUp.as_view(), name='auth_signup')
+    auth_patterns.append(path('api/auth/test-users/', TestUserCreate.as_view(), name='test_users'))
+
 # 개선된 인증 뷰가 있으면 덮어쓰기
 if HAS_IMPROVED_AUTH:
     auth_patterns[0] = path('api/auth/login/', ImprovedSignIn.as_view(), name='auth_login')
@@ -110,7 +123,11 @@ if HAS_IMPROVED_AUTH:
 urlpatterns = auth_patterns + [
     # 루트 경로 헬스체크 (Railway 기본 헬스체크용)
     path("", simple_health_check, name="root_health"),
-    # API 헬스체크
+    
+    # System API (헬스체크, 마이그레이션 상태 등)
+    path("api/", include("system.urls")),  # 시스템 API 추가
+    
+    # API 헬스체크 (기존 유지)
     path("api/health/", simple_health_check, name="api_health"),  # 간단한 헬스체크
     path("api/health-full/", health_check, name="api_health_full"),  # 상세 헬스체크
     path("api/version/", api_version, name="api_version"),  # API 버전 정보

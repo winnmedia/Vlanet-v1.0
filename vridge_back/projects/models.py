@@ -374,14 +374,7 @@ class Project(core_model.TimeStampedModel):
     #     help_text="프로젝트에 적용할 기획안 디벨롭 프레임워크"
     # )
 
-    feedback = models.OneToOneField(
-        "feedbacks.Feedback",
-        related_name="projects",
-        on_delete=models.CASCADE,
-        blank=False,
-        null=True,
-        verbose_name="피드백",
-    )
+    # OneToOneField 제거 - FeedBack 모델에서 ForeignKey로 관계 설정됨
 
     class Meta:
         verbose_name = "1.프로젝트"

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useRouter } from '../util/nextNavigation'
 import { checkSession } from 'util/util'
+import OptimizedImage from '../components/OptimizedImage'
 
 // Next.js에서는 public 폴더의 이미지를 직접 경로로 참조
 const logo = '/images/Common/w_logo02.svg'
@@ -53,7 +54,14 @@ export default function Home() {
       <section id="header">
         <div className="inner flex space_between align_center">
           <h1 className="logo">
-            <img src={logo} alt="VideoPlanet" />
+            <OptimizedImage 
+              src={logo} 
+              alt="VideoPlanet" 
+              width={120}
+              height={40}
+              priority
+              quality={90}
+            />
           </h1>
           <div className="etc">
             <ul>
@@ -102,7 +110,13 @@ export default function Home() {
               </p>
             </div>
             <div className="img">
-              <img src={visual} alt="" />
+              <OptimizedImage.Hero 
+                src={visual} 
+                alt="VideoPlanet 영상 협업 플랫폼" 
+                width={600}
+                height={400}
+                priority
+              />
             </div>
           </div>
         </section>
@@ -116,7 +130,13 @@ export default function Home() {
           </div>
         </section> */}
         <section className="textbox">
-          <img src={tool02} alt="" />
+          <OptimizedImage 
+            src={tool02} 
+            alt="브이래닛 협업 도구" 
+            width={200}
+            height={150}
+            quality={75}
+          />
           <div>번거로운 n가지 툴 사용은 이제 그만,</div>
           <p>
             영상 편집 피드백, 프로젝트 관리가 까다로우셨나요? <br />
@@ -148,7 +168,13 @@ export default function Home() {
                 </button>
               </div>
               <div className="img">
-                <img src={feedback} />
+                <OptimizedImage.Card 
+                  src={feedback}
+                  alt="영상 피드백 기능 소개"
+                  width={500}
+                  height={350}
+                  lazy
+                />
               </div>
             </div>
           </div>
@@ -174,7 +200,13 @@ export default function Home() {
                 </button>
               </div>
               <div className="img">
-                <img src={project} />
+                <OptimizedImage.Card 
+                  src={project}
+                  alt="프로젝트 관리 기능 소개"
+                  width={500}
+                  height={350}
+                  lazy
+                />
               </div>
             </div>
           </div>
@@ -200,7 +232,13 @@ export default function Home() {
                 </button>
               </div>
               <div className="img">
-                <img src={comment} />
+                <OptimizedImage.Card 
+                  src={comment}
+                  alt="라이브 코멘트 기능 소개"
+                  width={500}
+                  height={350}
+                  lazy
+                />
               </div>
             </div>
           </div>
@@ -215,25 +253,49 @@ export default function Home() {
             <ul>
               <li>
                 <div className="img">
-                  <img src={identity} alt="" />
+                  <OptimizedImage.Thumbnail 
+                    src={identity}
+                    alt="Easy Management - 쉬운 관리"
+                    width={150}
+                    height={100}
+                    lazy
+                  />
                 </div>
                 <div className="txt">Easy Management</div>
               </li>
               <li>
                 <div className="img">
-                  <img src={identity02} alt="" />
+                  <OptimizedImage.Thumbnail 
+                    src={identity02}
+                    alt="Fast and Accurate Feedback - 빠르고 정확한 피드백"
+                    width={150}
+                    height={100}
+                    lazy
+                  />
                 </div>
                 <div className="txt">Fast and Accurate Feedback</div>
               </li>
               <li>
                 <div className="img">
-                  <img src={identity03} alt="" />
+                  <OptimizedImage.Thumbnail 
+                    src={identity03}
+                    alt="Study Together - 함께 공부하기"
+                    width={150}
+                    height={100}
+                    lazy
+                  />
                 </div>
                 <div className="txt">Study Together</div>
               </li>
               <li>
                 <div className="img">
-                  <img src={identity04} alt="" />
+                  <OptimizedImage.Thumbnail 
+                    src={identity04}
+                    alt="Convenient Meeting - 편리한 미팅"
+                    width={150}
+                    height={100}
+                    lazy
+                  />
                 </div>
                 <div className="txt">Convenient Meeting</div>
               </li>
@@ -260,13 +322,26 @@ export default function Home() {
               <div className="ex">
                 <div className="part flex space_between align_center">
                   <div className="img">
-                    <img src={emoji01} className="img01" />
+                    <OptimizedImage 
+                      src={emoji01}
+                      alt="영상 디자이너 캐릭터"
+                      className="img01"
+                      width={80}
+                      height={80}
+                      lazy
+                    />
                   </div>
                   <div className="text">
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <OptimizedImage 
+                            src={chat}
+                            alt="채팅 아이콘"
+                            width={20}
+                            height={20}
+                            lazy
+                          />
                         </i>
                         영상 디자이너 L
                       </span>
@@ -283,7 +358,13 @@ export default function Home() {
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <OptimizedImage 
+                            src={chat}
+                            alt="채팅 아이콘"
+                            width={20}
+                            height={20}
+                            lazy
+                          />
                         </i>
                         콘텐츠 기획자 P
                       </span>
@@ -295,7 +376,13 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="img">
-                    <img src={emoji03} />
+                    <OptimizedImage 
+                      src={emoji03}
+                      alt="콘텐츠 기획자 캐릭터"
+                      width={80}
+                      height={80}
+                      lazy
+                    />
                   </div>
                 </div>
               </div>
@@ -315,13 +402,26 @@ export default function Home() {
               <div className="ex">
                 <div className="part flex space_between align_center">
                   <div className="img">
-                    <img src={emoji02} className="img01" />
+                    <OptimizedImage 
+                      src={emoji02}
+                      alt="영상 제작 꿈나무 캐릭터"
+                      className="img01"
+                      width={80}
+                      height={80}
+                      lazy
+                    />
                   </div>
                   <div className="text">
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <OptimizedImage 
+                            src={chat}
+                            alt="채팅 아이콘"
+                            width={20}
+                            height={20}
+                            lazy
+                          />
                         </i>
                         영상 제작 꿈나무 K
                       </span>
@@ -338,7 +438,13 @@ export default function Home() {
                     <div>
                       <span>
                         <i>
-                          <img src={chat} />
+                          <OptimizedImage 
+                            src={chat}
+                            alt="채팅 아이콘"
+                            width={20}
+                            height={20}
+                            lazy
+                          />
                         </i>
                         영상디자인학과 학생 J
                       </span>
@@ -350,7 +456,14 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="img">
-                    <img src={emoji04} className="img02" />
+                    <OptimizedImage 
+                      src={emoji04}
+                      alt="영상디자인학과 학생 캐릭터"
+                      className="img02"
+                      width={80}
+                      height={80}
+                      lazy
+                    />
                   </div>
                 </div>
               </div>
@@ -391,11 +504,23 @@ export default function Home() {
               <span>만들어 갑니다.</span>
             </div>
             <div className="img">
-              <img src={end} alt="" />
+              <OptimizedImage 
+                src={end}
+                alt="크리에이터들의 행복한 행성"
+                width={400}
+                height={300}
+                lazy
+              />
             </div>
           </div>
           <div className="ment">
-            SAVE THE CREATORS <img src={end02} alt="" />
+            SAVE THE CREATORS <OptimizedImage 
+              src={end02}
+              alt="Save the Creators"
+              width={100}
+              height={50}
+              lazy
+            />
           </div>
         </section>
 

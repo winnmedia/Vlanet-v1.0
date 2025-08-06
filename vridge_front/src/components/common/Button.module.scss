@@ -1,0 +1,194 @@
+// 브랜드 색상 변수
+@use "sass:color";
+$primary-color: #1631F8;
+$primary-dark: #0F23C9;
+$danger-color: #dc3545;
+$danger-dark: #c82333;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+$gray-light: #f8f9fa;
+$gray-medium: #6c757d;
+$gray-dark: #495057;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  outline: none;
+  font-family: inherit;
+  
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .text {
+    white-space: nowrap;
+  }
+  
+  // 크기 변형
+  &.small {
+    padding: 6px 12px;
+    font-size: 13px;
+    
+    .icon svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  
+  &.medium {
+    padding: 10px 20px;
+    font-size: 14px;
+    
+    .icon svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  &.large {
+    padding: 14px 28px;
+    font-size: 16px;
+    
+    .icon svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  // 전체 너비
+  &.fullWidth {
+    width: 100%;
+  }
+  
+  // Primary 스타일 (파란색 그라데이션)
+  &.primary {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba($primary-color, 0.2);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, color.adjust($primary-color, $lightness: -5%) 0%, color.adjust($primary-dark, $lightness: -5%) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba($primary-color, 0.3);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba($primary-color, 0.2);
+    }
+  }
+  
+  // Secondary 스타일
+  &.secondary {
+    background: white;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+    
+    &:hover:not(:disabled) {
+      background: rgba($primary-color, 0.05);
+      transform: translateY(-1px);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+  
+  // Danger 스타일 (빨간색 그라데이션)
+  &.danger {
+    background: linear-gradient(135deg, $danger-color 0%, $danger-dark 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba($danger-color, 0.2);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, color.adjust($danger-color, $lightness: -5%) 0%, color.adjust($danger-dark, $lightness: -5%) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba($danger-color, 0.3);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba($danger-color, 0.2);
+    }
+  }
+  
+  // Minimal 스타일
+  &.minimal {
+    background: transparent;
+    color: $gray-medium;
+    border: 1px solid #e9ecef;
+    
+    &:hover:not(:disabled) {
+      background: $gray-light;
+      color: $gray-dark;
+      transform: translateY(-1px);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+  
+  // Text 스타일
+  &.text {
+    background: transparent;
+    color: $primary-color;
+    padding: 4px 8px;
+    
+    &:hover:not(:disabled) {
+      background: rgba($primary-color, 0.1);
+    }
+    
+    &:active:not(:disabled) {
+      background: rgba($primary-color, 0.15);
+    }
+  }
+  
+  // 로딩 상태
+  &.loading {
+    cursor: wait;
+    
+    .loadingSpinner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+    
+    .spinnerCircle {
+      stroke-dasharray: 62.83;
+      stroke-dashoffset: 47.12;
+      stroke-linecap: round;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

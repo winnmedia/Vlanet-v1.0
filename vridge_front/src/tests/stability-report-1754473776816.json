@@ -1,0 +1,110 @@
+{
+  "timestamp": "2025-08-06T09:49:33.819Z",
+  "categories": {
+    "frontend": {
+      "routing": {
+        "score": 90,
+        "issues": [
+          {
+            "route": "/feedback/test",
+            "issue": "라우트 파일 없음",
+            "severity": "medium"
+          }
+        ],
+        "details": {}
+      },
+      "components": {
+        "score": 70,
+        "issues": [
+          {
+            "issue": "npm 의존성 검사 실패",
+            "severity": "medium"
+          }
+        ],
+        "details": {}
+      },
+      "errorHandling": {
+        "score": 100,
+        "issues": [],
+        "details": {}
+      },
+      "apiConnection": {
+        "score": 0,
+        "issues": [],
+        "details": {}
+      }
+    },
+    "backend": {
+      "endpoints": {
+        "score": 85,
+        "issues": [
+          {
+            "endpoint": "/api/version/",
+            "issue": "Request failed with status code 404",
+            "severity": "high"
+          }
+        ],
+        "details": {}
+      },
+      "database": {
+        "score": 0,
+        "issues": [
+          {
+            "issue": "데이터베이스 연결 실패",
+            "severity": "critical",
+            "details": "Command failed: cd ../../../vridge_back && python3 manage.py dbshell --command=\"SELECT 1;\" 2>&1\n"
+          }
+        ],
+        "details": {}
+      },
+      "authentication": {
+        "score": 50,
+        "issues": [
+          {
+            "issue": "인증 시스템 오류",
+            "severity": "high",
+            "details": "Request failed with status code 404"
+          }
+        ],
+        "details": {}
+      },
+      "migrations": {
+        "score": 100,
+        "issues": [],
+        "details": {}
+      }
+    },
+    "integration": {
+      "userJourney": {
+        "score": 100,
+        "issues": [],
+        "details": {}
+      },
+      "dataFlow": {
+        "score": 85,
+        "issues": [],
+        "details": {}
+      },
+      "errorRecovery": {
+        "score": 75,
+        "issues": [],
+        "details": {}
+      },
+      "performance": {
+        "score": 100,
+        "issues": [],
+        "details": {}
+      }
+    }
+  },
+  "overallScore": 68,
+  "criticalIssues": [
+    {
+      "category": "backend.database",
+      "issue": "데이터베이스 연결 실패",
+      "severity": "critical",
+      "details": "Command failed: cd ../../../vridge_back && python3 manage.py dbshell --command=\"SELECT 1;\" 2>&1\n"
+    }
+  ],
+  "recommendations": []
+}

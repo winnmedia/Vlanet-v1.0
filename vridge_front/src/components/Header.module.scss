@@ -68,7 +68,7 @@
     .profile {
       display: flex;
       align-items: center;
-      justify-content: start;
+      justify-content: flex-start;
       gap: 12px; // 아이템 간 간격 추가
       cursor: pointer;
       padding: 8px 12px;

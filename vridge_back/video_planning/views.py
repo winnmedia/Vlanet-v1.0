@@ -736,6 +736,13 @@ def download_storyboard_image(request):
 def save_planning(request):
     """기획을 저장합니다."""
     try:
+        # 필수 필드 검증
+        if not request.data.get('title'):
+            return Response({
+                'status': 'error',
+                'message': '제목은 필수 입력 항목입니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
         # DRF Request 타입을 처리하기 위해 이미 api_view 데코레이터가 적용되어 있음
         serializer = VideoPlanningSerializer(
             data=request.data,

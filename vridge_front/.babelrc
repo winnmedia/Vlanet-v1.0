@@ -1,0 +1,31 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    [
+      "babel-plugin-styled-components",
+      {
+        "ssr": true,
+        "displayName": true,
+        "preprocess": false
+      }
+    ],
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "es",
+        "style": "css"
+      },
+      "antd"
+    ],
+    [
+      "import",
+      {
+        "libraryName": "@ant-design/plots",
+        "libraryDirectory": "es",
+        "style": false
+      },
+      "ant-design-plots"
+    ]
+  ]
+}

@@ -1,0 +1,148 @@
+// 색상 변수
+$primary-color: #1631F8;
+$white-color: #ffffff;
+$gray-color: #6c757d;
+$overlay-bg: rgba(0, 0, 0, 0.5);
+
+.spinnerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.spinner {
+  display: inline-block;
+  position: relative;
+  
+  // 크기 변형
+  &.small {
+    width: 24px;
+    height: 24px;
+  }
+  
+  &.medium {
+    width: 40px;
+    height: 40px;
+  }
+  
+  &.large {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .circular {
+    animation: rotate 2s linear infinite;
+    height: 100%;
+    transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  
+  .path {
+    stroke-dasharray: 125;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    animation: dash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+  }
+  
+  // 색상 변형
+  &.primary .path {
+    stroke: $primary-color;
+  }
+  
+  &.white .path {
+    stroke: $white-color;
+  }
+  
+  &.gray .path {
+    stroke: $gray-color;
+  }
+}
+
+.message {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  
+  &.primary {
+    color: $primary-color;
+  }
+  
+  &.white {
+    color: $white-color;
+  }
+  
+  &.gray {
+    color: $gray-color;
+  }
+}
+
+// 전체화면 로딩
+.fullScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+// 오버레이 로딩
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $overlay-bg;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+  
+  .message {
+    color: $white-color;
+  }
+  
+  .spinner .path {
+    stroke: $white-color;
+  }
+}
+
+// 애니메이션
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}

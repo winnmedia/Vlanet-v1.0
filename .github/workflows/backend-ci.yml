@@ -1,0 +1,327 @@
+name: 🔧 VideoPlanet Backend CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, recovery-* ]
+    paths:
+      - 'vridge_back/**'
+      - 'requirements.txt'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'vridge_back/**'
+      - 'requirements.txt'
+
+# 환경 변수
+env:
+  PYTHON_VERSION: '3.11'
+  WORKING_DIRECTORY: 'vridge_back'
+
+jobs:
+  # 1단계: 코드 품질 검증
+  code-quality:
+    name: 📋 Python Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+        
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 black isort bandit safety
+        
+    - name: 🔍 Linting with flake8
+      run: |
+        # E203과 W503을 제외하고 실행 (black과 호환성을 위해)
+        flake8 vridge_back --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 vridge_back --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics --extend-ignore=E203,W503
+        
+    - name: 💅 Code formatting check (Black)
+      run: |
+        black --check --diff vridge_back/
+        
+    - name: 📦 Import sorting check (isort)
+      run: |
+        isort --check-only --diff vridge_back/
+
+  # 2단계: 보안 검사
+  security-check:
+    name: 🔒 Security Analysis
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+        
+    - name: 📦 Install security tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit safety
+        
+    - name: 🛡️ Security linting with Bandit
+      run: |
+        bandit -r vridge_back/ -f json -o bandit-report.json
+        bandit -r vridge_back/ || true
+        
+    - name: 🔍 Dependency vulnerability check
+      run: |
+        pip install -r requirements.txt
+        safety check --json --output safety-report.json || true
+        safety check
+        
+    - name: 📊 Upload security reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+
+  # 3단계: 데이터베이스 테스트
+  database-test:
+    name: 🗄️ Database Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_USER: test_user
+          POSTGRES_DB: test_videoplanet
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+        
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install coverage pytest pytest-django
+        
+    - name: 🔧 Setup test environment
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      env:
+        DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_videoplanet
+        REDIS_URL: redis://localhost:6379/0
+        SECRET_KEY: test_secret_key_for_ci
+        DEBUG: True
+      run: |
+        python manage.py migrate --settings=config.settings_test
+        
+    - name: 🧪 Run Django tests
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      env:
+        DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_videoplanet
+        REDIS_URL: redis://localhost:6379/0
+        SECRET_KEY: test_secret_key_for_ci
+        DEBUG: True
+      run: |
+        coverage run --source='.' manage.py test --settings=config.settings_test
+        coverage report
+        coverage xml
+        
+    - name: 📊 Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./vridge_back/coverage.xml
+        flags: backend
+        name: backend-coverage
+        fail_ci_if_error: false
+
+  # 4단계: API 테스트
+  api-test:
+    name: 🌐 API Integration Tests
+    runs-on: ubuntu-latest
+    needs: database-test
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_USER: test_user
+          POSTGRES_DB: test_videoplanet
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+        
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install requests pytest
+        
+    - name: 🚀 Start Django server
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      env:
+        DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_videoplanet
+        REDIS_URL: redis://localhost:6379/0
+        SECRET_KEY: test_secret_key_for_ci
+        DEBUG: True
+      run: |
+        python manage.py migrate --settings=config.settings_test
+        python manage.py runserver --settings=config.settings_test &
+        sleep 10
+        
+    - name: 🧪 API Health Check
+      run: |
+        curl -f http://localhost:8000/api/health/ || exit 1
+        echo "✅ API 서버가 정상적으로 작동합니다."
+        
+    - name: 🌐 Run API Tests
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        if [ -f "test_api_endpoints.py" ]; then
+          python test_api_endpoints.py
+        else
+          echo "API 통합 테스트 파일이 없습니다. 기본 헬스체크만 실행됩니다."
+        fi
+
+  # 5단계: 배포 준비
+  deploy-staging:
+    name: 🚢 Deploy to Staging (Railway)
+    runs-on: ubuntu-latest
+    needs: [code-quality, security-check, database-test, api-test]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: staging
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🚂 Deploy to Railway (Staging)
+      uses: bervProject/railway-deploy@v1.3.0
+      with:
+        railway_token: ${{ secrets.RAILWAY_TOKEN_STAGING }}
+        service: ${{ secrets.RAILWAY_SERVICE_ID_STAGING }}
+        
+    - name: ✅ Verify staging deployment
+      run: |
+        sleep 30
+        curl -f ${{ secrets.STAGING_URL }}/api/health/ || exit 1
+        echo "✅ 스테이징 환경 배포 완료"
+
+  # 6단계: 프로덕션 배포
+  deploy-production:
+    name: 🌟 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [code-quality, security-check, database-test, api-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🚂 Deploy to Railway (Production)
+      uses: bervProject/railway-deploy@v1.3.0
+      with:
+        railway_token: ${{ secrets.RAILWAY_TOKEN }}
+        service: ${{ secrets.RAILWAY_SERVICE_ID }}
+        
+    - name: ✅ Verify production deployment
+      run: |
+        sleep 60
+        curl -f https://videoplanet.up.railway.app/api/health/ || exit 1
+        echo "✅ 프로덕션 환경 배포 완료"
+        
+    - name: 📊 Deployment notification
+      run: |
+        echo "## 🌟 프로덕션 배포 완료!" >> $GITHUB_STEP_SUMMARY
+        echo "- 환경: Production" >> $GITHUB_STEP_SUMMARY
+        echo "- URL: [https://videoplanet.up.railway.app](https://videoplanet.up.railway.app)" >> $GITHUB_STEP_SUMMARY
+        echo "- 배포 시간: $(date)" >> $GITHUB_STEP_SUMMARY
+
+  # 7단계: 알림
+  notification:
+    name: 📢 Build Notifications
+    runs-on: ubuntu-latest
+    needs: [code-quality, security-check, database-test, api-test]
+    if: always()
+    
+    steps:
+    - name: 📊 Generate Summary
+      run: |
+        echo "# 🔧 VideoPlanet Backend CI/CD 결과" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 📋 작업 상태" >> $GITHUB_STEP_SUMMARY
+        echo "- 코드 품질 검사: ${{ needs.code-quality.result == 'success' && '✅ 통과' || '❌ 실패' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- 보안 검사: ${{ needs.security-check.result == 'success' && '✅ 통과' || '❌ 실패' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- 데이터베이스 테스트: ${{ needs.database-test.result == 'success' && '✅ 통과' || '❌ 실패' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- API 테스트: ${{ needs.api-test.result == 'success' && '✅ 통과' || '❌ 실패' }}" >> $GITHUB_STEP_SUMMARY
+        
+    - name: 📧 Failure Notification
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: '🚨 VideoPlanet Backend CI/CD가 실패했습니다!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

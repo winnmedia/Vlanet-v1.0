@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, forwardRef } from 'react'
 import DatePicker from 'react-datepicker'
 
 import { ko } from 'date-fns/locale'
+import { DatePicker } from 'antd'
 
 export default function ProcessDate({ process, set_process }) {
   const DateChange = (index, key, value) => {

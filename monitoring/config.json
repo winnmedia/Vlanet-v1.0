@@ -1,0 +1,228 @@
+{
+  "monitoring": {
+    "enabled": true,
+    "interval": 30000,
+    "retention": "30d",
+    "dashboardUrl": "https://monitoring.vlanet.net"
+  },
+  
+  "metrics": {
+    "system": {
+      "cpu": {
+        "enabled": true,
+        "threshold": {
+          "warning": 70,
+          "critical": 90
+        }
+      },
+      "memory": {
+        "enabled": true,
+        "threshold": {
+          "warning": 80,
+          "critical": 95
+        }
+      },
+      "disk": {
+        "enabled": true,
+        "threshold": {
+          "warning": 80,
+          "critical": 90
+        }
+      }
+    },
+    
+    "application": {
+      "responseTime": {
+        "enabled": true,
+        "threshold": {
+          "warning": 1000,
+          "critical": 3000
+        }
+      },
+      "errorRate": {
+        "enabled": true,
+        "threshold": {
+          "warning": 5,
+          "critical": 10
+        }
+      },
+      "activeUsers": {
+        "enabled": true,
+        "threshold": {
+          "info": 100,
+          "warning": 500
+        }
+      }
+    },
+    
+    "database": {
+      "connections": {
+        "enabled": true,
+        "threshold": {
+          "warning": 80,
+          "critical": 95
+        }
+      },
+      "slowQueries": {
+        "enabled": true,
+        "threshold": {
+          "warning": 10,
+          "critical": 50
+        }
+      }
+    }
+  },
+  
+  "alerting": {
+    "enabled": true,
+    "cooldownPeriod": 300000,
+    "escalationPolicy": {
+      "enabled": true,
+      "levels": [
+        {
+          "level": 1,
+          "delay": 0,
+          "channels": ["slack"]
+        },
+        {
+          "level": 2,
+          "delay": 900000,
+          "channels": ["slack", "discord", "email"]
+        },
+        {
+          "level": 3,
+          "delay": 1800000,
+          "channels": ["slack", "discord", "email", "sms"]
+        }
+      ]
+    },
+    
+    "channels": {
+      "slack": {
+        "enabled": true,
+        "webhookUrl": "env:SLACK_WEBHOOK_URL"
+      },
+      "discord": {
+        "enabled": true,
+        "webhookUrl": "env:DISCORD_WEBHOOK_URL"
+      },
+      "email": {
+        "enabled": true,
+        "smtp": {
+          "host": "env:SMTP_HOST",
+          "port": 587,
+          "secure": false,
+          "user": "env:SMTP_USER",
+          "pass": "env:SMTP_PASS"
+        },
+        "from": "env:EMAIL_FROM",
+        "recipients": {
+          "info": ["dev@vlanet.net"],
+          "warning": ["dev@vlanet.net", "ops@vlanet.net"],
+          "error": ["dev@vlanet.net", "ops@vlanet.net", "cto@vlanet.net"],
+          "critical": ["dev@vlanet.net", "ops@vlanet.net", "cto@vlanet.net", "ceo@vlanet.net"]
+        }
+      },
+      "sms": {
+        "enabled": false,
+        "twilioAccountSid": "env:TWILIO_ACCOUNT_SID",
+        "twilioAuthToken": "env:TWILIO_AUTH_TOKEN",
+        "from": "env:TWILIO_FROM_NUMBER",
+        "recipients": ["+821012345678"]
+      }
+    }
+  },
+  
+  "featureFlags": {
+    "enabled": true,
+    "provider": "custom",
+    "updateInterval": 60000,
+    "flags": {
+      "darkMode": {
+        "type": "boolean",
+        "enabled": true,
+        "description": "Enable dark mode UI"
+      },
+      "aiSuggestions": {
+        "type": "percentage",
+        "enabled": true,
+        "percentage": 50,
+        "description": "AI-powered content suggestions"
+      },
+      "videoAnalytics": {
+        "type": "segment",
+        "enabled": true,
+        "segments": ["premium", "enterprise"],
+        "description": "Advanced video analytics"
+      },
+      "exportPDF": {
+        "type": "schedule",
+        "enabled": true,
+        "startDate": "2025-01-01",
+        "endDate": "2025-12-31",
+        "description": "PDF export feature"
+      },
+      "uiRedesign": {
+        "type": "variant",
+        "enabled": true,
+        "variants": ["A", "B"],
+        "weights": [50, 50],
+        "description": "A/B test for new UI design"
+      }
+    }
+  },
+  
+  "deployment": {
+    "strategy": "blue-green",
+    "autoRollback": true,
+    "healthCheckInterval": 30000,
+    "rollbackThreshold": {
+      "errorRate": 10,
+      "responseTime": 5000
+    },
+    "canary": {
+      "enabled": false,
+      "initialPercentage": 10,
+      "incrementPercentage": 20,
+      "incrementInterval": 300000,
+      "metricThresholds": {
+        "errorRate": 5,
+        "responseTime": 2000
+      }
+    }
+  },
+  
+  "performance": {
+    "targets": {
+      "LCP": 2500,
+      "FID": 100,
+      "CLS": 0.1,
+      "TTFB": 600
+    },
+    "budgets": {
+      "javascript": 300000,
+      "css": 100000,
+      "images": 500000,
+      "total": 1000000
+    }
+  },
+  
+  "security": {
+    "csp": {
+      "enabled": true,
+      "reportUri": "https://videoplanet.up.railway.app/api/csp-report"
+    },
+    "rateLimit": {
+      "enabled": true,
+      "windowMs": 900000,
+      "max": 100
+    },
+    "cors": {
+      "origins": [
+        "https://vlanet.net",
+        "https://www.vlanet.net",
+        "https://staging.vlanet.net"
+      ]
+    }
+  }
+}

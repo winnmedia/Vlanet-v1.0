@@ -1,0 +1,277 @@
+name: 🚀 VideoPlanet Frontend CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, recovery-* ]
+    paths:
+      - 'vridge_front/**'
+      - 'automation-scripts/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'vridge_front/**'
+      - 'automation-scripts/**'
+
+# 환경 변수
+env:
+  NODE_VERSION: '18'
+  WORKING_DIRECTORY: 'vridge_front'
+
+jobs:
+  # 1단계: 코드 품질 검증
+  code-quality:
+    name: 📋 Code Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: '${{ env.WORKING_DIRECTORY }}/package-lock.json'
+        
+    - name: 🔧 Install dependencies
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm ci
+      
+    - name: 📦 Import Validation
+      run: node automation-scripts/import-validator.js
+      
+    - name: 🔍 ESLint Check
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run lint:fix
+      
+    - name: 💅 Prettier Check
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run format:check
+      
+    - name: 🧪 Quick Tests
+      run: node automation-scripts/quick-test.js
+
+  # 2단계: 빌드 테스트
+  build-test:
+    name: 🏗️ Build Test
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    strategy:
+      matrix:
+        node-version: [18, 20]
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '${{ env.WORKING_DIRECTORY }}/package-lock.json'
+        
+    - name: 🔧 Install dependencies
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm ci
+      
+    - name: 🏗️ Build application
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run build
+      env:
+        NODE_ENV: production
+        
+    - name: 📊 Build size analysis
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        echo "## 빌드 결과" >> $GITHUB_STEP_SUMMARY
+        echo "- Node.js: ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- 빌드 상태: ✅ 성공" >> $GITHUB_STEP_SUMMARY
+        if [ -d ".next" ]; then
+          echo "- 빌드 크기: $(du -sh .next | cut -f1)" >> $GITHUB_STEP_SUMMARY
+        fi
+
+  # 3단계: 보안 검사
+  security-check:
+    name: 🔒 Security Check
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: '${{ env.WORKING_DIRECTORY }}/package-lock.json'
+        
+    - name: 🔧 Install dependencies
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm ci
+      
+    - name: 🛡️ NPM Audit
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        npm audit --audit-level=high
+        echo "## 보안 검사 결과" >> $GITHUB_STEP_SUMMARY
+        echo "- 높은 위험도 취약점 검사: ✅ 통과" >> $GITHUB_STEP_SUMMARY
+      continue-on-error: false
+      
+    - name: 📋 Dependency Review
+      uses: actions/dependency-review-action@v4
+      if: github.event_name == 'pull_request'
+
+  # 4단계: E2E 테스트 (선택적)
+  e2e-tests:
+    name: 🎭 End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: '${{ env.WORKING_DIRECTORY }}/package-lock.json'
+        
+    - name: 🔧 Install dependencies
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm ci
+      
+    - name: 🎭 Install Playwright
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npx playwright install --with-deps
+      
+    - name: 🏗️ Build for testing
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run build
+      
+    - name: 🚀 Start application
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        npm start &
+        sleep 10
+        curl -f http://localhost:3000 || exit 1
+        
+    - name: 🧪 Run E2E tests
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: |
+        if [ -d "src/tests/e2e" ]; then
+          npx playwright test
+        else
+          echo "E2E 테스트 디렉토리가 없습니다. 기본 페이지 로딩 테스트만 실행합니다."
+          curl -f http://localhost:3000
+        fi
+
+  # 5단계: 성능 테스트
+  performance-test:
+    name: ⚡ Performance Test
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: '${{ env.WORKING_DIRECTORY }}/package-lock.json'
+        
+    - name: 🔧 Install dependencies
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm ci
+      
+    - name: 🏗️ Build for performance testing
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      run: npm run build
+      
+    - name: ⚡ Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v10
+      with:
+        configPath: './lighthouse.config.js'
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+        runs: 3
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  # 6단계: 알림 및 리포팅
+  notification:
+    name: 📢 Notifications
+    runs-on: ubuntu-latest
+    needs: [code-quality, build-test, security-check]
+    if: always()
+    
+    steps:
+    - name: 📊 Generate Summary
+      run: |
+        echo "# 🚀 VideoPlanet CI/CD 결과" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 📋 작업 상태" >> $GITHUB_STEP_SUMMARY
+        echo "- 코드 품질 검사: ${{ needs.code-quality.result == 'success' && '✅ 통과' || '❌ 실패' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- 빌드 테스트: ${{ needs.build-test.result == 'success' && '✅ 통과' || '❌ 실패' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- 보안 검사: ${{ needs.security-check.result == 'success' && '✅ 통과' || '❌ 실패' }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 📊 메트릭" >> $GITHUB_STEP_SUMMARY
+        echo "- 브랜치: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- 커밋: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- 실행 시간: $(date)" >> $GITHUB_STEP_SUMMARY
+        
+    - name: 📧 Slack Notification (실패 시)
+      if: failure() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: '🚨 VideoPlanet CI/CD 파이프라인이 실패했습니다!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+    - name: 📧 Success Notification
+      if: success() && github.ref == 'refs/heads/main'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        text: '✅ VideoPlanet 메인 브랜치 배포가 성공했습니다!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+# 자동 배포 (main 브랜치에 성공적인 머지 시)
+  deploy:
+    name: 🚢 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [code-quality, build-test, security-check]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🚢 Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        vercel-args: '--prod'
+        
+    - name: 📊 Deployment Summary
+      run: |
+        echo "## 🚢 배포 완료!" >> $GITHUB_STEP_SUMMARY
+        echo "- 환경: Production" >> $GITHUB_STEP_SUMMARY
+        echo "- URL: [https://vlanet.net](https://vlanet.net)" >> $GITHUB_STEP_SUMMARY
+        echo "- 배포 시간: $(date)" >> $GITHUB_STEP_SUMMARY

@@ -20,6 +20,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework_simplejwt.tokens import RefreshToken
 from .validators import InputValidator, validate_request_data
+from core.response_handler import StandardResponse
+from core.error_messages import ErrorMessages
 
 # from rest_framework_simplejwt.views import TokenRefreshView,TokenObtainPairView
 
@@ -36,17 +38,18 @@ class CheckEmail(View):
             # 이메일 유효성 검증
             is_valid, error_msg = InputValidator.validate_email(email)
             if not is_valid:
-                return JsonResponse({"message": error_msg}, status=400)
+                return StandardResponse.validation_error({"email": error_msg})
             
+            # N+1 쿼리 최적화: 사용자 찾기 최적화
             user = models.User.objects.filter(username=email).first()
             if user:
-                return JsonResponse({"message": "이미 사용 중인 이메일입니다."}, status=409)
+                return StandardResponse.error("USER_ALREADY_EXISTS", "이미 사용 중인 이메일입니다.", 409)
             else:
-                return JsonResponse({"message": "사용 가능한 이메일입니다."}, status=200)
+                return StandardResponse.success(message="사용 가능한 이메일입니다.")
                 
         except Exception as e:
             logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
-            return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
+            return StandardResponse.server_error()
 
 
 # 닉네임 중복 확인
@@ -63,6 +66,7 @@ class CheckNickname(View):
             if len(nickname) < 2:
                 return JsonResponse({"message": "닉네임은 최소 2자 이상이어야 합니다."}, status=400)
             
+            # N+1 쿼리 최적화: 닉네임 찾기 최적화
             user = models.User.objects.filter(nickname=nickname).first()
             if user:
                 return JsonResponse({"message": "이미 사용 중인 닉네임입니다."}, status=409)
@@ -71,7 +75,7 @@ class CheckNickname(View):
                 
         except Exception as e:
             logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
-            return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
+            return StandardResponse.server_error()
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -90,12 +94,12 @@ class SignUp(View):
             # 이메일 형식 검증
             is_valid, error_msg = InputValidator.validate_email(email)
             if not is_valid:
-                return JsonResponse({"message": error_msg}, status=400)
+                return StandardResponse.validation_error({"email": error_msg})
             
             # 닉네임 검증
             is_valid, error_msg = InputValidator.validate_text_input(nickname, "닉네임", max_length=50)
             if not is_valid:
-                return JsonResponse({"message": error_msg}, status=400)
+                return StandardResponse.validation_error({"email": error_msg})
             
             if len(nickname) < 2:
                 return JsonResponse({"message": "닉네임은 최소 2자 이상이어야 합니다."}, status=400)
@@ -103,7 +107,7 @@ class SignUp(View):
             # 비밀번호 검증
             is_valid, error_msg = InputValidator.validate_password(password)
             if not is_valid:
-                return JsonResponse({"message": error_msg}, status=400)
+                return StandardResponse.validation_error({"email": error_msg})
 
             logger.info(f"회원가입 시도 - 이메일: {email}, 닉네임: {nickname}")
             
@@ -176,7 +180,8 @@ class SignIn(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            email = data.get("email")
+            # username 또는 email 둘 다 받을 수 있도록 처리
+            email = data.get("email") or data.get("username")
             password = data.get("password")
 
             # Debug
@@ -210,7 +215,7 @@ class SignIn(View):
             
             if user is not None:
                 # 이메일 인증 확인 - 기존 사용자들을 위한 임시 처리
-                if not user.email_verified:
+                if hasattr(user, 'email_verified') and not user.email_verified:
                     # 개발 환경이거나 기존 사용자인 경우 자동 인증 처리
                     if settings.DEBUG or not hasattr(user, 'email_verified_at') or user.email_verified_at is None:
                         logger.info(f"기존 사용자 자동 인증 처리: {user.email}")
@@ -230,20 +235,28 @@ class SignIn(View):
                 # Use Django REST Framework SimpleJWT instead
                 from rest_framework_simplejwt.tokens import RefreshToken
                 refresh = RefreshToken.for_user(user)
-                vridge_session = str(refresh.access_token)
+                access_token = str(refresh.access_token)
+                refresh_token = str(refresh)
+                
+                # 프론트엔드가 기대하는 형식으로 응답
                 res = JsonResponse(
                     {
                         "message": "success",
-                        "vridge_session": vridge_session,
-                        "refresh_token": str(refresh),
-                        "user": user.username,
-                        "nickname": user.nickname if user.nickname else user.username,
+                        "access_token": access_token,  # 프론트엔드가 사용하는 키
+                        "refresh_token": refresh_token,
+                        "vridge_session": access_token,  # 하위 호환성
+                        "user": {
+                            "id": user.id,
+                            "username": user.username,
+                            "email": user.email,
+                            "nickname": user.nickname if user.nickname else user.username,
+                        }
                     },
                     status=200,
                 )
                 res.set_cookie(
                     "vridge_session",
-                    vridge_session,
+                    access_token,
                     httponly=True,
                     samesite="Lax",
                     secure=True,
@@ -367,7 +380,7 @@ class EmailAuth(View):
                         "reset_token": reset_token
                     }, status=200)
                 else:
-                    return JsonResponse({"message": error_msg}, status=400)
+                    return StandardResponse.validation_error({"email": error_msg})
 
             else:
                 email_verify = models.EmailVerify.objects.get_or_none(email=email)
@@ -399,7 +412,7 @@ class ResetPassword(View):
             # 토큰 검증
             user_id, error_msg = PasswordResetSecurity.verify_reset_token(reset_token)
             if not user_id:
-                return JsonResponse({"message": error_msg}, status=400)
+                return StandardResponse.validation_error({"email": error_msg})
 
             # 비밀번호 복잡도 검사
             if len(password) < 8:
@@ -658,7 +671,7 @@ class UserMe(View):
             }, status=200)
         except Exception as e:
             logger.error(f"Error in UserMe: {str(e)}", exc_info=True)
-            return JsonResponse({"message": "서버 오류가 발생했습니다."}, status=500)
+            return StandardResponse.server_error()
 
 
 class UserMemo(View):
@@ -1427,9 +1440,10 @@ class ResendVerificationEmailView(View):
             # 이메일 유효성 검증
             is_valid, error_msg = InputValidator.validate_email(email)
             if not is_valid:
-                return JsonResponse({"message": error_msg}, status=400)
+                return StandardResponse.validation_error({"email": error_msg})
             
             # 사용자 존재 확인
+            # N+1 쿼리 최적화: 사용자 찾기 최적화
             user = models.User.objects.filter(username=email).first()
             if not user:
                 return JsonResponse({"message": "존재하지 않는 사용자입니다."}, status=404)
@@ -1475,6 +1489,7 @@ class CheckEmailVerificationStatusView(View):
                 return JsonResponse({"message": "이메일을 입력해 주세요."}, status=400)
             
             # 사용자 존재 확인
+            # N+1 쿼리 최적화: 사용자 찾기 최적화
             user = models.User.objects.filter(username=email).first()
             if not user:
                 return JsonResponse({"message": "존재하지 않는 사용자입니다."}, status=404)

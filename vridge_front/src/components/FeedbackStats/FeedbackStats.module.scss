@@ -1,0 +1,132 @@
+$primary-color: #1631F8;
+$success-color: #28a745;
+$gray-light: #f8f9fa;
+$gray-border: #e9ecef;
+$gray-text: #6c757d;
+$text-dark: #212529;
+
+.statsContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 20px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: $gray-light;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .statIcon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    flex-shrink: 0;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+      color: $primary-color;
+    }
+  }
+  
+  .statContent {
+    flex: 1;
+    
+    .statValue {
+      font-size: 24px;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .statLabel {
+      font-size: 12px;
+      color: $gray-text;
+      font-weight: 500;
+    }
+  }
+}
+
+.progressRing {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  
+  .progressBg {
+    fill: none;
+    stroke: $gray-border;
+    stroke-width: 3;
+  }
+  
+  .progressFill {
+    fill: none;
+    stroke: $success-color;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.3s ease;
+  }
+  
+  .progressText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+}
+
+.reactionDetails {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding-top: 16px;
+  border-top: 1px solid $gray-border;
+  
+  .reactionItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .reactionIcon {
+      font-size: 20px;
+    }
+    
+    .reactionCount {
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-dark;
+    }
+  }
+}

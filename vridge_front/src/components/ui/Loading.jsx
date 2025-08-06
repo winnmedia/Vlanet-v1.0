@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
+import { Skeleton } from 'antd'
 
 export function Spinner({ 
   size = 'md',

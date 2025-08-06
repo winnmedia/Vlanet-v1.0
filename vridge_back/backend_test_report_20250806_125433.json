@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-08-06T12:54:33.108680",
+  "server_status": {
+    "status": "running",
+    "response_time": 0.028788,
+    "details": {
+      "status": "ok",
+      "service": "vridge-backend"
+    }
+  },
+  "database": {
+    "status": "error",
+    "error": "connection to server at \"localhost\" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n"
+  },
+  "api_endpoints": {
+    "/api/auth/login/": {
+      "status_code": 404,
+      "response_time": 0.048,
+      "success": false
+    },
+    "/api/auth/check/": {
+      "status_code": 404,
+      "response_time": 0.006185,
+      "success": false
+    },
+    "/api/projects/": {
+      "status_code": 401,
+      "response_time": 0.019712,
+      "success": true
+    },
+    "/api/feedbacks/": {
+      "status_code": 404,
+      "response_time": 0.007865,
+      "success": false
+    },
+    "/api/video-planning/": {
+      "status_code": 401,
+      "response_time": 0.034292,
+      "success": true
+    },
+    "/api/users/mypage/": {
+      "status_code": 401,
+      "response_time": 0.005723,
+      "success": true
+    }
+  },
+  "security": {
+    "cors_configured": true,
+    "csrf_protection": true,
+    "secure_cookies": false,
+    "xss_protection": true,
+    "rate_limiting": true,
+    "jwt_configured": true
+  },
+  "performance": {
+    "redis": {
+      "connected": false,
+      "error": "redis module not installed"
+    }
+  },
+  "improvements": [
+    {
+      "priority": "high",
+      "category": "security",
+      "issue": "Secure Cookie 미설정",
+      "solution": "HTTPS 환경에서 쿠키 보안 강화",
+      "code": "SESSION_COOKIE_SECURE = True\nCSRF_COOKIE_SECURE = True"
+    }
+  ],
+  "logging": {
+    "log_files_exist": true,
+    "error_tracking": true,
+    "log_rotation": false
+  }
+}

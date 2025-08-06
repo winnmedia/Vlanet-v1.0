@@ -1,4 +1,6 @@
 // 피드백 페이지 버튼 스타일 - CSS Modules로 격리
+@use "sass:color";
+
 // 브랜드 색상 정의
 $brand-blue: #1631F8;
 $brand-blue-hover: #0F23C9;
@@ -77,15 +79,17 @@ $brand-gray-hover: #5a6268;
 
 .feedbackButtonPrimary,
 label.feedbackButtonPrimary {
-  @include button-base;
+  // 속성들을 mixin 위로 이동
   background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%) !important;
   color: white !important;
   box-shadow: 0 4px 15px rgba(22, 49, 248, 0.3) !important;
   
+  @include button-base;
+  
   &:hover {
     transform: translateY(-3px) scale(1.02) !important;
     box-shadow: 0 8px 25px rgba(22, 49, 248, 0.4) !important;
-    background: linear-gradient(135deg, lighten($brand-blue, 5%) 0%, $brand-blue-hover 100%) !important;
+    background: linear-gradient(135deg, color.adjust($brand-blue, $lightness: 5%) 0%, $brand-blue-hover 100%) !important;
   }
   
   &:active {
@@ -95,15 +99,17 @@ label.feedbackButtonPrimary {
 }
 
 .feedbackButtonDanger {
-  @include button-base;
+  // 속성들을 mixin 위로 이동
   background: linear-gradient(135deg, $brand-red 0%, $brand-red-hover 100%) !important;
   color: white !important;
   box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
   
+  @include button-base;
+  
   &:hover {
     transform: translateY(-3px) scale(1.02) !important;
     box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4) !important;
-    background: linear-gradient(135deg, lighten($brand-red, 5%) 0%, $brand-red-hover 100%) !important;
+    background: linear-gradient(135deg, color.adjust($brand-red, $lightness: 5%) 0%, $brand-red-hover 100%) !important;
   }
   
   &:active {
@@ -113,11 +119,13 @@ label.feedbackButtonPrimary {
 }
 
 .feedbackButtonSecondary {
-  @include button-base;
+  // 속성들을 mixin 위로 이동
   background: white !important;
   color: #495057 !important;
   border: 2px solid #e9ecef !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  
+  @include button-base;
   
   &:hover {
     transform: translateY(-3px) scale(1.02) !important;

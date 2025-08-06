@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
+import { Card } from 'antd'
 
 export default function Card({
   children,

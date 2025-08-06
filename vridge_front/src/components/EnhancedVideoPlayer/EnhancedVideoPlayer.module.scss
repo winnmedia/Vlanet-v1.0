@@ -1,4 +1,6 @@
 // Enhanced Video Player 전용 스타일시트
+@use "sass:color";
+
 // 브랜드 색상 정의
 $brand-blue: #1631F8;
 $brand-blue-hover: #0F23C9;
@@ -69,7 +71,10 @@ $brand-warning: #ffc107;
     min-height: 300px;
   }
   
-  cursor: pointer;
+  // cursor 속성을 모든 nested rules 아래로 이동
+  & {
+    cursor: pointer;
+  }
 }
 
 // 비디오 영역
@@ -85,6 +90,14 @@ $brand-warning: #ffc107;
     height: 100% !important;
   }
   
+  // 네이티브 비디오 스타일
+  .nativeVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+  }
+  
   video {
     width: 100% !important;
     height: 100% !important;
@@ -93,7 +106,19 @@ $brand-warning: #ffc107;
   }
 }
 
-// 중앙 재생 버튼 오버레이
+// 클릭 가능한 투명 오버레이
+.clickableOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 60px); // 컨트롤바 영역 제외
+  z-index: 10; // 비디오 위, 컨트롤과 다른 오버레이 아래
+  cursor: pointer;
+  background: transparent;
+}
+
+// 중앙 재생 버튼 오버레이 - 미니멀
 .playOverlay {
   position: absolute;
   top: 50%;
@@ -104,49 +129,42 @@ $brand-warning: #ffc107;
 }
 
 .playButton {
-  width: 80px;
-  height: 80px;
-  background: rgba(22, 49, 248, 0.9);
+  width: 64px;
+  height: 64px;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   backdrop-filter: blur(10px);
-  border: 3px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   
   svg {
-    width: 32px;
-    height: 32px;
-    color: white;
-    margin-left: 4px; // 플레이 아이콘 시각적 중앙 정렬
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    width: 24px;
+    height: 24px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: 2px; // 플레이 아이콘 시각적 중앙 정렬
   }
   
   &:hover {
-    background: rgba(22, 49, 248, 1);
-    transform: scale(1.1);
-    box-shadow: 
-      0 8px 32px rgba(22, 49, 248, 0.4),
-      0 0 0 8px rgba(22, 49, 248, 0.1);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
   }
   
   &:active {
-    transform: scale(1.05);
-    box-shadow: 
-      0 4px 16px rgba(22, 49, 248, 0.3),
-      0 0 0 4px rgba(22, 49, 248, 0.2);
+    transform: scale(0.95);
   }
   
   @media (max-width: 768px) {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     
     svg {
-      width: 24px;
-      height: 24px;
+      width: 36px;
+      height: 36px;
     }
   }
 }
@@ -172,6 +190,58 @@ $brand-warning: #ffc107;
     to {
       transform: rotate(360deg);
     }
+  }
+}
+
+// 에러 인디케이터
+.errorIndicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 25;
+  text-align: center;
+  color: white;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 24px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  max-width: 300px;
+}
+
+.errorIcon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  color: $brand-red;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.errorMessage {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.errorRetryButton {
+  background: $brand-blue;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: $brand-blue-hover;
+    transform: translateY(-1px);
   }
 }
 
@@ -201,7 +271,7 @@ $brand-warning: #ffc107;
   
   &:hover {
     transform: translateX(-50%) scale(1.5);
-    background: lighten($brand-warning, 10%);
+    background: color.adjust($brand-warning, $lightness: 10%);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
   }
   
@@ -219,55 +289,50 @@ $brand-warning: #ffc107;
   }
 }
 
-// 컨트롤 바
+// 컨트롤 바 - 미니멀 디자인
 .controlsBar {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.8) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    transparent 100%
-  );
-  backdrop-filter: blur(8px);
-  padding: 16px 20px;
-  transition: all 0.3s ease;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4) 80%, transparent);
+  padding: 16px 20px 12px;
+  transition: opacity 0.3s ease;
+  z-index: 20;
   
+  // 항상 표시
+  opacity: 1;
+  
+  // 모바일에서는 패딩 조정
   @media (max-width: 768px) {
-    padding: 12px 16px;
+    padding: 12px 16px 10px;
   }
 }
 
 .controlsContainer {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   
   @media (max-width: 768px) {
-    gap: 12px;
-  }
-  
-  @media (max-width: 480px) {
-    flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
   }
 }
 
-// 재생/일시정지 버튼
+// 재생/일시정지 버튼 - 미니멀
 .playPauseBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
   color: white;
+  padding: 0;
   
   svg {
     width: 20px;
@@ -277,67 +342,54 @@ $brand-warning: #ffc107;
   &:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.4);
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
   
   &:active {
-    transform: scale(1.05);
+    transform: scale(0.95);
   }
 }
 
-// 시간 표시
+// 시간 표시 - 미니멀
 .timeDisplay {
   color: white;
   font-size: 14px;
-  font-weight: 600;
-  min-width: 120px;
+  font-weight: 500;
+  min-width: auto;
   text-align: center;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 8px 12px;
-  border-radius: 8px;
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 12px;
+  border-radius: 4px;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
   
   @media (max-width: 768px) {
-    font-size: 13px;
-    min-width: 100px;
-    padding: 6px 10px;
-  }
-  
-  @media (max-width: 480px) {
-    order: 3;
-    flex-basis: 100%;
-    margin-top: 8px;
+    font-size: 12px;
+    padding: 3px 8px;
   }
 }
 
-// 프로그레스 바
+// 프로그레스 바 - 미니멀
 .progressBar {
   flex: 1;
   height: 6px;
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+  border-radius: 3px;
   cursor: pointer;
   position: relative;
   min-width: 100px;
+  margin: 0 12px;
+  overflow: hidden;
   
   &:hover {
-    height: 8px;
-    margin-top: -1px;
-    margin-bottom: -1px;
-  }
-  
-  @media (max-width: 480px) {
-    order: 1;
-    flex-basis: 100%;
-    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.4);
   }
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, $brand-blue 0%, $brand-blue-hover 100%);
-  border-radius: 10px;
+  background: $brand-blue;
+  border-radius: 3px;
   position: relative;
   transition: width 0.1s ease;
   
@@ -345,76 +397,72 @@ $brand-warning: #ffc107;
     content: '';
     position: absolute;
     top: 50%;
-    right: 0;
+    right: -6px;
     width: 12px;
     height: 12px;
-    background: $brand-blue;
-    border: 2px solid white;
+    background: white;
     border-radius: 50%;
-    transform: translate(50%, -50%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    opacity: 0;
+    transform: translateY(-50%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: opacity 0.2s ease;
-  }
-  
-  .progressBar:hover & {
-    &::after {
-      opacity: 1;
-    }
   }
 }
 
-// 볼륨 컨트롤
+// 볼륨 컨트롤 - 미니멀
 .volumeControl {
   display: flex;
   align-items: center;
-  gap: 8px;
-  
-  @media (max-width: 480px) {
-    order: 2;
-  }
+  gap: 4px;
+  margin-left: auto;
 }
 
 .muteBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 24px;
+  height: 24px;
   background: transparent;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: white;
+  transition: transform 0.2s ease;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0;
   
   svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
   
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
   }
 }
 
 .volumeSlider {
-  width: 80px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
+  width: 60px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1px;
   outline: none;
   cursor: pointer;
   -webkit-appearance: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, width 0.2s ease;
+  
+  .volumeControl:hover & {
+    opacity: 1;
+    width: 80px;
+  }
   
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    background: $brand-blue;
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease;
     
     &:hover {
@@ -438,15 +486,12 @@ $brand-warning: #ffc107;
   }
 }
 
-// 추가 컨트롤
+// 추가 컨트롤 - 미니멀
 .additionalControls {
   display: flex;
   align-items: center;
-  gap: 8px;
-  
-  @media (max-width: 480px) {
-    order: 4;
-  }
+  gap: 4px;
+  margin-left: 8px;
 }
 
 // 재생 속도 컨트롤
@@ -455,20 +500,19 @@ $brand-warning: #ffc107;
 }
 
 .rateBtn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  color: white;
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 600;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 45px;
+  min-width: auto;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
   }
 }
 
@@ -477,64 +521,66 @@ $brand-warning: #ffc107;
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.9);
-  border-radius: 8px;
-  padding: 8px;
-  margin-bottom: 8px;
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  padding: 4px;
+  margin-bottom: 4px;
+  backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 60px;
+  gap: 0;
+  min-width: 40px;
   z-index: 100;
 }
 
 .rateOption {
   background: transparent;
   border: none;
-  color: white;
-  padding: 6px 8px;
-  font-size: 12px;
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 400;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 2px;
   transition: all 0.2s ease;
   text-align: center;
   
   &:hover {
     background: rgba(255, 255, 255, 0.1);
+    color: white;
   }
   
   &.active {
-    background: $brand-blue;
+    background: rgba(255, 255, 255, 0.2);
     color: white;
-    font-weight: 600;
   }
 }
 
-// 전체화면 버튼
+// 전체화면 버튼 - 미니멀
 .fullscreenBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   color: white;
+  padding: 0;
   
   svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
   
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
   }
 }
 
@@ -636,12 +682,12 @@ $brand-warning: #ffc107;
 // 터치 디바이스 최적화
 @media (hover: none) and (pointer: coarse) {
   .playButton {
-    width: 70px;
-    height: 70px;
+    width: 90px;
+    height: 90px;
     
     svg {
-      width: 28px;
-      height: 28px;
+      width: 40px;
+      height: 40px;
     }
   }
   

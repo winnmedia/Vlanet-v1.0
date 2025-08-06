@@ -6,11 +6,14 @@ import { createSlice } from '@reduxjs/toolkit'
 // localStorage에서 저장된 상태 불러오기
 const loadState = () => {
   try {
-    const serializedState = localStorage.getItem('projectPhasesState')
-    if (serializedState === null) {
-      return undefined
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const serializedState = localStorage.getItem('projectPhasesState')
+      if (serializedState === null) {
+        return undefined
+      }
+      return JSON.parse(serializedState)
     }
-    return JSON.parse(serializedState)
+    return undefined
   } catch (err) {
     console.error('Failed to load projectPhases state from localStorage:', err)
     return undefined
@@ -20,8 +23,10 @@ const loadState = () => {
 // localStorage에 상태 저장하기
 const saveState = (state) => {
   try {
-    const serializedState = JSON.stringify(state)
-    localStorage.setItem('projectPhasesState', serializedState)
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const serializedState = JSON.stringify(state)
+      localStorage.setItem('projectPhasesState', serializedState)
+    }
   } catch (err) {
     console.error('Failed to save projectPhases state to localStorage:', err)
   }

@@ -1,0 +1,530 @@
+// 색상 변수
+$primary-color: #1631F8;
+$primary-dark: #0F23C9;
+$danger-color: #dc3545;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+$gray-light: #f8f9fa;
+$gray-border: #e9ecef;
+$gray-text: #6c757d;
+$text-dark: #212529;
+$text-secondary: #495057;
+
+.projectDashboard {
+  padding: 20px 0;
+}
+
+// 빈 상태
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 8px;
+  }
+  
+  p {
+    font-size: 14px;
+    color: $gray-text;
+    margin: 0;
+  }
+}
+
+// 통계 헤더
+.dashboardHeader {
+  margin-bottom: 30px;
+  
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    
+    .statCard {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border: 1px solid $gray-border;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      
+      .statValue {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        line-height: 1;
+      }
+      
+      .statLabel {
+        font-size: 14px;
+        color: $gray-text;
+        font-weight: 500;
+      }
+      
+      &.total {
+        .statValue { color: $primary-color; }
+        border-color: rgba($primary-color, 0.2);
+        background: rgba($primary-color, 0.02);
+      }
+      
+      &.active {
+        .statValue { color: $info-color; }
+        border-color: rgba($info-color, 0.2);
+        background: rgba($info-color, 0.02);
+      }
+      
+      &.delayed {
+        .statValue { color: $danger-color; }
+        border-color: rgba($danger-color, 0.2);
+        background: rgba($danger-color, 0.02);
+      }
+      
+      &.completed {
+        .statValue { color: $success-color; }
+        border-color: rgba($success-color, 0.2);
+        background: rgba($success-color, 0.02);
+      }
+      
+      &.average {
+        .statValue { color: $warning-color; }
+        border-color: rgba($warning-color, 0.2);
+        background: rgba($warning-color, 0.02);
+      }
+    }
+  }
+}
+
+// 컨트롤 영역
+.dashboardControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+  
+  .filterControls {
+    display: flex;
+    gap: 12px;
+    
+    select {
+      padding: 8px 16px;
+      border: 1px solid $gray-border;
+      border-radius: 8px;
+      background: white;
+      font-size: 14px;
+      color: $text-dark;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        border-color: $primary-color;
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      }
+    }
+  }
+  
+  .viewControls {
+    display: flex;
+    border: 1px solid $gray-border;
+    border-radius: 8px;
+    overflow: hidden;
+    
+    button {
+      padding: 8px 16px;
+      background: white;
+      border: none;
+      font-size: 14px;
+      color: $gray-text;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:not(:last-child) {
+        border-right: 1px solid $gray-border;
+      }
+      
+      &:hover {
+        background: $gray-light;
+      }
+      
+      &.active {
+        background: $primary-color;
+        color: white;
+      }
+    }
+  }
+}
+
+// 카드 뷰
+.projectCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  
+  .projectCard {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid $gray-border;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    &.delayed {
+      border-color: rgba($danger-color, 0.3);
+    }
+    
+    &.completed {
+      opacity: 0.8;
+    }
+    
+    .cardHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px;
+      border-bottom: 1px solid $gray-border;
+      
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+        line-height: 1.4;
+      }
+    }
+    
+    .cardBody {
+      padding: 20px;
+      
+      .progressSection {
+        margin-bottom: 16px;
+        
+        .progressHeader {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+          font-size: 13px;
+          color: $gray-text;
+        }
+        
+        .currentPhase {
+          margin-top: 8px;
+          font-size: 12px;
+          color: $text-secondary;
+        }
+      }
+      
+      .infoGrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+        
+        .infoItem {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 13px;
+          color: $text-secondary;
+          
+          svg {
+            width: 16px;
+            height: 16px;
+            color: $gray-text;
+          }
+        }
+      }
+      
+      .cardFooter {
+        padding-top: 16px;
+        border-top: 1px solid $gray-border;
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: $text-secondary;
+      }
+    }
+  }
+}
+
+// 리스트 뷰
+.projectList {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    thead {
+      background: $gray-light;
+      
+      th {
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 13px;
+        color: $text-dark;
+        border-bottom: 1px solid $gray-border;
+      }
+    }
+    
+    tbody {
+      tr {
+        cursor: pointer;
+        transition: background 0.2s ease;
+        
+        &:hover {
+          background: rgba($primary-color, 0.02);
+        }
+        
+        &.delayed {
+          background: rgba($danger-color, 0.02);
+        }
+        
+        &.completed {
+          opacity: 0.7;
+        }
+        
+        td {
+          padding: 12px 16px;
+          border-bottom: 1px solid $gray-border;
+          font-size: 14px;
+          
+          .projectName {
+            padding-left: 12px;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 칸반 뷰
+.kanbanView {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  
+  .kanbanColumn {
+    background: $gray-light;
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 400px;
+    
+    .columnHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+      }
+      
+      .count {
+        background: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: $gray-text;
+      }
+    }
+    
+    .columnBody {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      
+      .kanbanCard {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        &.delayed {
+          border-left: 3px solid $danger-color;
+        }
+        
+        h4 {
+          font-size: 14px;
+          font-weight: 600;
+          margin: 0 0 12px 0;
+        }
+        
+        .kanbanInfo {
+          .meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: $gray-text;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 1200px) {
+  .kanbanView {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  // 통계 헤더 반응형
+  .dashboardHeader {
+    .statsGrid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      
+      .statCard {
+        padding: 16px;
+        
+        .statValue {
+          font-size: 24px;
+        }
+        
+        .statLabel {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+  
+  // 컨트롤 반응형
+  .dashboardControls {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .filterControls {
+      margin-bottom: 12px;
+      
+      select {
+        width: 100%;
+      }
+    }
+    
+    .viewControls {
+      align-self: center;
+    }
+  }
+  
+  // 카드 뷰 반응형
+  .projectCards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    
+    .projectCard {
+      .cardHeader {
+        padding: 16px;
+        
+        h3 {
+          font-size: 15px;
+        }
+      }
+      
+      .cardBody {
+        padding: 16px;
+        
+        .infoGrid {
+          gap: 8px;
+          
+          .infoItem {
+            font-size: 12px;
+          }
+        }
+        
+        .cardFooter {
+          flex-direction: column;
+          gap: 4px;
+          align-items: flex-start;
+        }
+      }
+    }
+  }
+  
+  // 리스트 뷰 반응형
+  .projectList {
+    overflow-x: auto;
+    
+    table {
+      min-width: 600px;
+      
+      th, td {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+  }
+  
+  // 칸반 뷰 반응형
+  .kanbanView {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    
+    .kanbanColumn {
+      min-height: 300px;
+      padding: 12px;
+      
+      .columnHeader {
+        h3 {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardHeader {
+    .statsGrid {
+      grid-template-columns: 1fr;
+      
+      .statCard {
+        padding: 12px;
+        
+        .statValue {
+          font-size: 20px;
+        }
+        
+        .statLabel {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}

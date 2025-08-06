@@ -22,6 +22,8 @@ from . import models
 from feedbacks import models as feedback_model
 from .utils_date import parse_date_flexible
 from common.exceptions import APIException
+from core.response_handler import StandardResponse
+from core.error_messages import ErrorMessages
 # from .views_feedback import ProjectFeedback, ProjectFeedbackComments, ProjectFeedbackUpload
 
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -65,7 +67,7 @@ class ProjectList(View):
                 nickname = user.username
 
             # development_framework는 아직 데이터베이스에 없으므로 제외
-            # 최적화: feedback__comments__user를 추가하여 N+1 문제 해결
+            # 최적화: feedbacks__comments__user를 추가하여 N+1 문제 해결
             project_list = user.projects.all().select_related(
                 "basic_plan",
                 "story_board",
@@ -74,10 +76,10 @@ class ProjectList(View):
                 "post_work",
                 "video_preview",
                 "confirmation",
-                "video_delivery",
-                "feedback",
+                "video_delivery"
             ).prefetch_related(
-                'feedback__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
+                'feedbacks',  # 피드백 정보 미리 로드
+                'feedbacks__comments__user',  # 피드백 코멘트 작성자 정보 미리 로드
                 'members__user',  # 프로젝트 멤버 정보 미리 로드
                 'invitations'  # 초대 정보 미리 로드
             )
@@ -200,9 +202,11 @@ class ProjectList(View):
                 "project__video_preview",
                 "project__confirmation",
                 "project__video_delivery",
-                "project__user",
-                "project__feedback"
-            ).prefetch_related('project__feedback__comments')
+                "project__user"
+            ).prefetch_related(
+                'project__feedbacks',
+                'project__feedbacks__comments'
+            )
             for i in members:
                 if i.project.video_delivery and i.project.video_delivery.end_date:
                     end_date = i.project.video_delivery.end_date
@@ -625,16 +629,16 @@ VideoPlanet 팀
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
 
             invite = models.ProjectInvite.objects.get_or_none(pk=pk)
             if invite:
                 invite.delete()
-            return JsonResponse({"message": "success"}, status=200)
+            return StandardResponse.success(message="성공")
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            return StandardResponse.server_error()
 
 
 # 초대 받았을때 이미 멤버에 있거나 초대유효가 없으면 안됨, 나 자신도 안됨
@@ -694,11 +698,11 @@ class AcceptInvite(View):
             models.Members.objects.create(project=project, user=user)
             invite_obj.delete()
 
-            return JsonResponse({"message": "success"}, status=200)
+            return StandardResponse.success(message="성공")
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            return StandardResponse.server_error()
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -788,19 +792,20 @@ class CreateProject(View):
                     logging.info(f"[CreateProject] Returning cached result for idempotency key: {idempotency_key}")
                     return JsonResponse(cached_result, status=200)
             
-            # 프로젝트 이름 중복 체크 (10초 이내 동일한 이름의 프로젝트 생성 방지)
+            # 프로젝트 이름 중복 체크 (사용자별 프로젝트명 유일성 보장)
             project_name = inputs.get('name')
             if project_name:
-                recent_projects = models.Project.objects.filter(
+                # 동일한 이름의 프로젝트가 이미 존재하는지 확인
+                existing_project = models.Project.objects.filter(
                     user=user,
-                    name=project_name,
-                    created__gte=django_timezone.now() - django_timezone.timedelta(seconds=10)
+                    name=project_name
                 ).exists()
                 
-                if recent_projects:
+                if existing_project:
                     logging.warning(f"[CreateProject] Duplicate project creation attempt: {project_name}")
                     return JsonResponse({
-                        "message": "동일한 프로젝트가 방금 생성되었습니다. 잠시 후 다시 시도해주세요."
+                        "message": "이미 같은 이름의 프로젝트가 존재합니다.",
+                        "code": "DUPLICATE_PROJECT_NAME"
                     }, status=400)
 
             with transaction.atomic():
@@ -956,20 +961,20 @@ class ProjectDetail(View):
                     'post_work',
                     'video_preview',
                     'confirmation',
-                    'video_delivery',
-                    'feedback'
+                    'video_delivery'
                 ).prefetch_related(
+                    'feedbacks',
                     'members__user',
                     'files',
                     'memos',
                     'invitations'
                 ).get(id=project_id)
             except models.Project.DoesNotExist:
-                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                return StandardResponse.not_found("프로젝트")
 
             is_member = project.members.filter(user=user).exists()
             if project.user != user and not is_member:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
 
             result = {
                 "id": project.id,
@@ -1078,7 +1083,7 @@ class ProjectDetail(View):
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
 
             with transaction.atomic():
                 for k, v in inputs.items():
@@ -1112,7 +1117,7 @@ class ProjectDetail(View):
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            return StandardResponse.server_error()
 
     @user_validator
     def delete(self, request, project_id):
@@ -1216,18 +1221,18 @@ class ProjectFile(View):
             project = file_obj.project
 
             if project is None or file_obj is None:
-                return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+                return StandardResponse.server_error()
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
 
             file_obj.delete()
-            return JsonResponse({"message": "success"}, status=200)
+            return StandardResponse.success(message="성공")
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            return StandardResponse.server_error()
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -1237,13 +1242,29 @@ class ProjectMemo(View):
         try:
             user = request.user
 
-            project = models.Project.objects.get_or_none(id=id)
+            # N+1 쿼리 최적화: 관련 객체 미리 로드
+            project = models.Project.objects.select_related(
+                "user",
+                "basic_plan",
+                "story_board",
+                "filming",
+                "video_edit",
+                "post_work",
+                "video_preview",
+                "confirmation",
+                "video_delivery"
+            ).prefetch_related(
+                "members__user",
+                "feedbacks__user",
+                "files",
+                "memos"
+            ).filter(id=id).first()
             if project is None:
                 return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
 
             data = json.loads(request.body)
 
@@ -1253,18 +1274,34 @@ class ProjectMemo(View):
             if date and memo:
                 models.Memo.objects.create(project=project, date=date, memo=memo)
 
-            return JsonResponse({"message": "success"}, status=200)
+            return StandardResponse.success(message="성공")
 
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            return StandardResponse.server_error()
 
     @user_validator
     def delete(self, request, id):
         try:
             user = request.user
-            project = models.Project.objects.get_or_none(id=id)
+            # N+1 쿼리 최적화: 관련 객체 미리 로드
+            project = models.Project.objects.select_related(
+                "user",
+                "basic_plan",
+                "story_board",
+                "filming",
+                "video_edit",
+                "post_work",
+                "video_preview",
+                "confirmation",
+                "video_delivery"
+            ).prefetch_related(
+                "members__user",
+                "feedbacks__user",
+                "files",
+                "memos"
+            ).filter(id=id).first()
 
             data = json.loads(request.body)
             memo_id = data.get("memo_id")
@@ -1276,15 +1313,15 @@ class ProjectMemo(View):
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
 
             memo.delete()
 
-            return JsonResponse({"message": "success"}, status=200)
+            return StandardResponse.success(message="성공")
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            return StandardResponse.server_error()
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -1294,13 +1331,29 @@ class ProjectDate(View):
         try:
             user = request.user
 
-            project = models.Project.objects.get_or_none(id=id)
+            # N+1 쿼리 최적화: 관련 객체 미리 로드
+            project = models.Project.objects.select_related(
+                "user",
+                "basic_plan",
+                "story_board",
+                "filming",
+                "video_edit",
+                "post_work",
+                "video_preview",
+                "confirmation",
+                "video_delivery"
+            ).prefetch_related(
+                "members__user",
+                "feedbacks__user",
+                "files",
+                "memos"
+            ).filter(id=id).first()
             if project is None:
                 return JsonResponse({"message": "프로젝트를 찾을 수  없습니다."}, status=404)
 
             is_member = models.Members.objects.get_or_none(project=project, user=user, rating="manager")
             if project.user != user and is_member is None:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
 
             data = json.loads(request.body)
             key = data.get("key")
@@ -1312,12 +1365,12 @@ class ProjectDate(View):
             setattr(get_process, "end_date", end_date)
             get_process.save()
 
-            return JsonResponse({"message": "success"}, status=200)
+            return StandardResponse.success(message="성공")
 
         except Exception as e:
             logger.error(f"Error in project operation: {str(e)}", exc_info=True)
             logging.info(str(e))
-            return JsonResponse({"message": "알 수 없는 에러입니다 고객센터에 문의해주세요."}, status=500)
+            return StandardResponse.server_error()
 
 
 
@@ -1330,15 +1383,22 @@ class ProjectFeedback(View):
     def get(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
+            # N+1 쿼리 최적화: 피드백과 관련 객체 미리 로드
+            project = models.Project.objects.select_related(
+                "user"
+            ).prefetch_related(
+                "feedbacks__user",
+                "feedbacks__comments__user",
+                "members__user"
+            ).filter(id=project_id).first()
             
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                return StandardResponse.not_found("프로젝트")
             
             # 권한 확인 - 프로젝트 소유자나 멤버인지 확인
             is_member = models.Members.objects.filter(project=project, user=user).exists()
             if project.user != user and not is_member:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
             
             # 피드백이 없으면 빈 객체 반환
             if not project.feedback:
@@ -1419,15 +1479,22 @@ class ProjectFeedbackComments(View):
     def post(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
+            # N+1 쿼리 최적화: 피드백과 관련 객체 미리 로드
+            project = models.Project.objects.select_related(
+                "user"
+            ).prefetch_related(
+                "feedbacks__user",
+                "feedbacks__comments__user",
+                "members__user"
+            ).filter(id=project_id).first()
             
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                return StandardResponse.not_found("프로젝트")
             
             # 권한 확인
             is_member = models.Members.objects.filter(project=project, user=user).exists()
             if project.user != user and not is_member:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
             
             # 피드백이 없으면 에러
             if not project.feedback:
@@ -1470,10 +1537,17 @@ class ProjectFeedbackUpload(View):
     def post(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
+            # N+1 쿼리 최적화: 피드백과 관련 객체 미리 로드
+            project = models.Project.objects.select_related(
+                "user"
+            ).prefetch_related(
+                "feedbacks__user",
+                "feedbacks__comments__user",
+                "members__user"
+            ).filter(id=project_id).first()
             
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                return StandardResponse.not_found("프로젝트")
             
             # 권한 확인 - 매니저 이상만 업로드 가능
             is_manager = models.Members.objects.filter(
@@ -1483,7 +1557,7 @@ class ProjectFeedbackUpload(View):
             ).exists()
             
             if project.user != user and not is_manager:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
             
             # 파일 처리
             file = request.FILES.get("files") or request.FILES.get("file")
@@ -1539,15 +1613,22 @@ class ProjectFeedbackEncodingStatus(View):
     def get(self, request, project_id):
         try:
             user = request.user
-            project = models.Project.objects.select_related("feedback").filter(id=project_id).first()
+            # N+1 쿼리 최적화: 피드백과 관련 객체 미리 로드
+            project = models.Project.objects.select_related(
+                "user"
+            ).prefetch_related(
+                "feedbacks__user",
+                "feedbacks__comments__user",
+                "members__user"
+            ).filter(id=project_id).first()
             
             if project is None:
-                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                return StandardResponse.not_found("프로젝트")
             
             # 권한 확인
             is_member = models.Members.objects.filter(project=project, user=user).exists()
             if project.user != user and not is_member:
-                return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                return StandardResponse.forbidden()
             
             # 피드백이 없으면 인코딩 상태도 없음
             if not project.feedback or not project.feedback.files:
@@ -1583,7 +1664,7 @@ class ProjectInvitation(View):
             if project_id:
                 project = models.Project.objects.filter(id=project_id).first()
                 if not project:
-                    return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                    return StandardResponse.not_found("프로젝트")
                 
                 # 권한 확인
                 is_owner = project.user == user
@@ -1743,7 +1824,7 @@ class ProjectInvitation(View):
             # 프로젝트 확인
             project = models.Project.objects.filter(id=project_id).first()
             if not project:
-                return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                return StandardResponse.not_found("프로젝트")
             
             # 권한 확인 (프로젝트 소유자 또는 매니저만 초대 가능)
             is_owner = project.user == user
@@ -1931,7 +2012,7 @@ class ProjectInvitation(View):
                 # 특정 프로젝트의 초대 목록
                 project = models.Project.objects.filter(id=project_id).first()
                 if not project:
-                    return JsonResponse({"message": "프로젝트를 찾을 수 없습니다."}, status=404)
+                    return StandardResponse.not_found("프로젝트")
                 
                 # 권한 확인
                 is_owner = project.user == user
@@ -2098,7 +2179,7 @@ class InvitationResponse(View):
             # 비회원의 경우 이메일로 확인
             if user:
                 if invitation.invitee != user and invitation.invitee_email != user.email:
-                    return JsonResponse({"message": "권한이 없습니다."}, status=403)
+                    return StandardResponse.forbidden()
             else:
                 # 비회원의 경우 초대 토큰으로 접근했으므로 추가 검증 불필요
                 pass

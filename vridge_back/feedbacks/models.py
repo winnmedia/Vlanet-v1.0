@@ -3,6 +3,51 @@ from core import models as core_model
 
 
 class FeedBack(core_model.TimeStampedModel):
+    # Project relationship
+    project = models.ForeignKey(
+        "projects.Project",
+        related_name="feedbacks",
+        on_delete=models.CASCADE,
+        verbose_name="프로젝트",
+        null=True,  # 임시로 null 허용 (기존 데이터 보존)
+        blank=True
+    )
+    
+    # User who created the feedback
+    user = models.ForeignKey(
+        "users.User",
+        related_name="feedbacks",
+        on_delete=models.CASCADE,
+        verbose_name="작성자",
+        null=True,  # 임시로 null 허용 (기존 데이터 보존)
+        blank=True
+    )
+    
+    # Feedback metadata
+    title = models.CharField(
+        verbose_name="제목",
+        max_length=200,
+        null=True,
+        blank=True
+    )
+    description = models.TextField(
+        verbose_name="설명",
+        null=True,
+        blank=True
+    )
+    
+    # Status
+    STATUS_CHOICES = [
+        ('open', '진행중'),
+        ('resolved', '해결됨'),
+        ('closed', '종료됨'),
+    ]
+    status = models.CharField(
+        verbose_name="상태",
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='open'
+    )
     # Original file
     files = models.FileField(
         verbose_name="피드백 파일", upload_to="feedback_file", null=True, blank=True
@@ -123,6 +168,34 @@ class FeedBackMessage(core_model.TimeStampedModel):
 
 
 class FeedBackComment(core_model.TimeStampedModel):
+    # Timestamp for video position
+    timestamp = models.FloatField(
+        verbose_name="타임스탬프",
+        null=True,
+        blank=True,
+        help_text="영상의 특정 시점 (초 단위)"
+    )
+    
+    # Comment type
+    TYPE_CHOICES = [
+        ('general', '일반'),
+        ('technical', '기술적'),
+        ('creative', '창의적'),
+        ('urgent', '긴급'),
+    ]
+    type = models.CharField(
+        verbose_name="유형",
+        max_length=20,
+        choices=TYPE_CHOICES,
+        default='general'
+    )
+    
+    # Comment content
+    content = models.TextField(
+        verbose_name="내용",
+        null=True,
+        blank=True
+    )
     DISPLAY_MODE_CHOICES = [
         ('anonymous', '익명'),
         ('nickname', '닉네임'),
@@ -161,6 +234,15 @@ class FeedBackComment(core_model.TimeStampedModel):
     title = models.TextField(verbose_name="제목", null=True, blank=False)
     section = models.TextField(verbose_name="구간", null=True, blank=False)
     text = models.TextField(verbose_name="내용", null=True, blank=False)
+    
+    # Add content field as an alias for compatibility
+    @property
+    def content(self):
+        return self.text
+    
+    @content.setter
+    def content(self, value):
+        self.text = value
 
     class Meta:
         verbose_name = "피드백 등록"
@@ -214,3 +296,51 @@ class FeedbackReaction(core_model.TimeStampedModel):
     
     def __str__(self):
         return f"{self.user} - {self.message} - {self.reaction_type}"
+
+
+class FeedbackFile(core_model.TimeStampedModel):
+    """피드백에 첨부된 파일"""
+    feedback = models.ForeignKey(
+        FeedBack,
+        related_name='attached_files',
+        on_delete=models.CASCADE,
+        verbose_name="피드백"
+    )
+    file = models.FileField(
+        verbose_name="파일",
+        upload_to="feedback_files/%Y/%m/%d/"
+    )
+    filename = models.CharField(
+        verbose_name="파일명",
+        max_length=255
+    )
+    file_type = models.CharField(
+        verbose_name="파일 타입",
+        max_length=50,
+        null=True,
+        blank=True
+    )
+    file_size = models.BigIntegerField(
+        verbose_name="파일 크기(bytes)",
+        null=True,
+        blank=True
+    )
+    uploaded_by = models.ForeignKey(
+        "users.User",
+        related_name='uploaded_feedback_files',
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="업로드한 사용자"
+    )
+    
+    class Meta:
+        verbose_name = "피드백 파일"
+        verbose_name_plural = "피드백 파일"
+        ordering = ("-created",)
+        indexes = [
+            models.Index(fields=['feedback', '-created']),
+            models.Index(fields=['uploaded_by']),
+        ]
+    
+    def __str__(self):
+        return f"{self.feedback} - {self.filename}"

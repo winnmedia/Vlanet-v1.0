@@ -25,6 +25,15 @@ from django.views.generic import TemplateView
 from .views import health_check, root_view
 from .simple_health import simple_health_check
 from api_health import csrf_token_view
+from users import views as user_views
+from rest_framework_simplejwt.views import TokenRefreshView
+
+# 개선된 인증 뷰 임포트
+try:
+    from users.views_auth_fixed import ImprovedSignIn, TokenRefreshView, TokenVerifyView
+    HAS_IMPROVED_AUTH = True
+except ImportError:
+    HAS_IMPROVED_AUTH = False
 # from .debug_views import debug_info, test_error  # 삭제된 파일
 
 # token_blacklist import를 보호
@@ -38,6 +47,15 @@ except ImportError:
 # 간단한 헬스체크 뷰
 def simple_health(request):
     return JsonResponse({"status": "ok"})
+
+# API 버전 정보
+def api_version(request):
+    return JsonResponse({
+        "version": "1.0.0",
+        "name": "VideoPlanet API",
+        "status": "stable",
+        "updated": "2025-08-06"
+    })
 
 # CORS 테스트 뷰
 def cors_test_view(request):
@@ -72,12 +90,30 @@ class SPAView(TemplateView):
         except:
             return JsonResponse({"message": "React app should be served here"})
 
-urlpatterns = [
+# 통합 인증 엔드포인트 (최우선)
+auth_patterns = [
+    # API 표준 경로 (/api/auth/)
+    path('api/auth/login/', user_views.SignIn.as_view(), name='auth_login'),
+    path('api/auth/signup/', user_views.SignUp.as_view(), name='auth_signup'),
+    path('api/auth/refresh/', TokenRefreshView.as_view(), name='auth_refresh'),
+    path('api/auth/check-email/', user_views.CheckEmail.as_view(), name='auth_check_email'),
+    path('api/auth/check-nickname/', user_views.CheckNickname.as_view(), name='auth_check_nickname'),
+    path('api/auth/me/', user_views.UserMe.as_view(), name='auth_me'),
+]
+
+# 개선된 인증 뷰가 있으면 덮어쓰기
+if HAS_IMPROVED_AUTH:
+    auth_patterns[0] = path('api/auth/login/', ImprovedSignIn.as_view(), name='auth_login')
+    auth_patterns.append(path('api/auth/verify/', TokenVerifyView.as_view(), name='auth_verify'))
+
+# 메인 URL 패턴
+urlpatterns = auth_patterns + [
     # 루트 경로 헬스체크 (Railway 기본 헬스체크용)
     path("", simple_health_check, name="root_health"),
     # API 헬스체크
     path("api/health/", simple_health_check, name="api_health"),  # 간단한 헬스체크
     path("api/health-full/", health_check, name="api_health_full"),  # 상세 헬스체크
+    path("api/version/", api_version, name="api_version"),  # API 버전 정보
     path("health/", simple_health_check, name="health"),  # 레거시 헬스체크
     path("cors-test/", cors_test_view, name="cors_test"),  # CORS 테스트
     path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
@@ -87,6 +123,7 @@ urlpatterns = [
     # 디버깅 엔드포인트 (Railway 환경에서만 활성화)
     # path("api/debug-info/", debug_info, name="debug_info"),  # 삭제된 뷰
     # path("api/test-error/", test_error, name="test_error"),  # 삭제된 뷰
+    
     
     # API 경로 (권장) - /api/ 프리픽스를 사용하는 표준 경로
     path("api/users/", include("users.urls")),

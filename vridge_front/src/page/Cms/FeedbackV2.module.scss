@@ -1,0 +1,337 @@
+// Design System Colors
+$primary-color: #1631F8;
+$primary-dark: #0F23C9;
+$danger-color: #dc3545;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+$text-color: #333;
+$text-secondary: #666;
+$text-muted: #999;
+$border-color: #e8e8e8;
+$background-light: #fafafa;
+$background-lighter: #f5f5f5;
+
+.projectHeader {
+  background: linear-gradient(135deg, rgba(22, 49, 248, 0.05), rgba(22, 49, 248, 0.02));
+  border: 1px solid rgba(22, 49, 248, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.projectInfo {
+  flex: 1;
+}
+
+.projectTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+}
+
+.projectMeta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.projectClient,
+.projectStatus,
+.projectDate {
+  font-size: 14px;
+  color: #666;
+  position: relative;
+  
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #1631F8;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+}
+
+.projectActions {
+  display: flex;
+  gap: 12px;
+}
+
+.videoSection {
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  min-height: 480px;
+  
+  @media (min-width: 1200px) {
+    min-height: 540px;
+  }
+  
+  @media (min-width: 1600px) {
+    min-height: 600px;
+  }
+}
+
+.videoPlayer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #000;
+  
+  // 비디오 플레이어가 전체 섹션을 채우도록 설정
+  > div {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.uploadSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+  background: linear-gradient(135deg, #f5f7fa, #e9ecef);
+}
+
+.uploadBox {
+  text-align: center;
+  padding: 48px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 480px;
+  width: 100%;
+}
+
+.uploadIcon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.uploadTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.uploadDescription {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #1631F8, #0F23C9);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  box-shadow: 0 2px 4px rgba(22, 49, 248, 0.3);
+}
+
+.feedbackSection {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  min-height: 400px;
+}
+
+.feedbackDetail {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(to bottom, #fff, #fafafa);
+  border-bottom: 1px solid #e8e8e8;
+  
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background: #f5f5f5;
+    color: #333;
+  }
+}
+
+.detailContent {
+  padding: 24px;
+  max-height: 400px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #999;
+    }
+  }
+  
+  > p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+  }
+}
+
+.message {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.messageAuthor {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.messageTime {
+  font-size: 12px;
+  color: #999;
+}
+
+.messageContent {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 1200px) {
+  .videoSection {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .projectHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .projectMeta {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .projectActions {
+    width: 100%;
+    
+    button {
+      flex: 1;
+    }
+  }
+  
+  .videoSection {
+    min-height: 300px;
+    border-radius: 12px;
+  }
+  
+  .uploadBox {
+    padding: 32px 24px;
+  }
+  
+  .uploadIcon {
+    font-size: 48px;
+  }
+  
+  .feedbackSection {
+    border-radius: 12px;
+  }
+  
+  .feedbackDetail {
+    border-radius: 12px;
+  }
+  
+  .detailContent {
+    max-height: 300px;
+  }
+}

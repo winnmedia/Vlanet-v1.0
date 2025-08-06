@@ -1,4 +1,6 @@
 // 피드백 페이지 전용 통합 레이아웃 스타일시트
+@use "sass:color";
+
 // 브랜드 색상 정의
 $brand-blue: #1631F8;
 $brand-blue-hover: #0F23C9;
@@ -28,6 +30,130 @@ $brand-gray: #6c757d;
   
   @media (max-width: 768px) {
     padding: 16px;
+  }
+}
+
+// 프로젝트 헤더
+.projectHeader {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  border: 1px solid rgba(22, 49, 248, 0.08);
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.projectInfo {
+  flex: 1;
+}
+
+.projectTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+}
+
+.projectMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  
+  @media (max-width: 768px) {
+    gap: 12px;
+  }
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: $brand-gray;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metaValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.statusBadge {
+  background: linear-gradient(135deg, $brand-success 0%, color.adjust($brand-success, $lightness: -10%) 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.projectActions {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.inviteButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, $brand-blue 0%, $brand-blue-hover 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba($brand-blue, 0.25);
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($brand-blue, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+    font-size: 13px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
@@ -160,22 +286,31 @@ $brand-gray: #6c757d;
 }
 
 // 비디오 컨트롤 영역
-.videoControls {
+// 기존 videoControls는 제거하고 additionalControls로 대체
+.additionalControls {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 20px;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-radius: 16px;
-  border: 1px solid #e9ecef;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(22, 49, 248, 0.1);
+  backdrop-filter: blur(8px);
   
   @media (max-width: 768px) {
     flex-wrap: wrap;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 10px 14px;
   }
+}
+
+.leftControls,
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .playbackControls {
@@ -188,8 +323,8 @@ $brand-gray: #6c757d;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   background: rgba($brand-blue, 0.1);
   border: 1px solid rgba($brand-blue, 0.2);
   border-radius: 12px;
@@ -197,24 +332,26 @@ $brand-gray: #6c757d;
   transition: all 0.2s ease;
   
   svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     color: $brand-blue;
   }
   
   &:hover {
     background: rgba($brand-blue, 0.2);
     border-color: rgba($brand-blue, 0.4);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($brand-blue, 0.2);
   }
   
   &:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
   }
   
   &.active {
     background: $brand-blue;
     border-color: $brand-blue;
+    box-shadow: 0 4px 12px rgba($brand-blue, 0.3);
     
     svg {
       color: white;

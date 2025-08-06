@@ -247,6 +247,9 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  // IE 스크롤바 숨김 속성을 모든 nested rules 위로 이동
+  -ms-overflow-style: none;
+  
   &.active {
     transform: translateX(300px); // 사이드바 너비(300px)만큼 이동
     pointer-events: auto;
@@ -265,10 +268,10 @@
       opacity: 1;
     }
   }
+  
   &::-webkit-scrollbar {
     display: none;
   }
-  -ms-overflow-style: none;
   .etc {
     padding: 50px 40px 20px 40px; // 사이드바 홈버튼 위치와 맞춤
     text-align: right;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Card } from 'antd'
 
 /**
  * SEO 최적화를 위한 메타 태그 컴포넌트

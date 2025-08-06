@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify'
+import { message } from 'antd'
 
 // API 에러 메시지 매핑
 const ERROR_MESSAGES = {

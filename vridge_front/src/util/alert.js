@@ -1,4 +1,5 @@
 import { showAlert, customConfirm } from '../components/CustomAlert'
+import { message } from 'antd'
 
 // window.alert를 커스텀 알림으로 대체
 export const alert = (message, type = 'info') => {

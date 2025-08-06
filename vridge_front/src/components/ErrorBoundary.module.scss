@@ -1,0 +1,210 @@
+// 색상 변수
+$primary-color: #1631F8;
+$primary-dark: #0F23C9;
+$danger-color: #dc3545;
+$gray-text: #6c757d;
+$gray-light: #f8f9fa;
+$gray-border: #e9ecef;
+
+// 메인 에러 컨테이너
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.errorContent {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 48px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+  
+  @media (max-width: 768px) {
+    padding: 32px 24px;
+  }
+}
+
+// 에러 아이콘
+.errorIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba($danger-color, 0.1);
+  border-radius: 50%;
+  margin-bottom: 24px;
+  
+  svg {
+    color: $danger-color;
+  }
+}
+
+// 에러 타이틀
+.errorTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+  
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+// 에러 메시지
+.errorMessage {
+  font-size: 16px;
+  color: $gray-text;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+}
+
+// 에러 상세 정보 (개발 환경)
+.errorDetails {
+  background: $gray-light;
+  border: 1px solid $gray-border;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 24px 0;
+  text-align: left;
+  
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 12px;
+    user-select: none;
+    
+    &:hover {
+      color: $primary-color;
+    }
+  }
+  
+  pre {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #212529;
+    margin: 8px 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
+// 액션 버튼들
+.errorActions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+// 재시도 버튼
+.retryButton {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba($primary-color, 0.2);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba($primary-color, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+// 홈 버튼
+.homeButton {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #495057;
+  background: white;
+  border: 2px solid $gray-border;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: $gray-light;
+    border-color: #adb5bd;
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+// 페이지별 에러 컨테이너
+.pageErrorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 40px 20px;
+}
+
+.pageErrorContent {
+  text-align: center;
+  max-width: 400px;
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 12px 0;
+  }
+  
+  p {
+    font-size: 14px;
+    color: $gray-text;
+    margin: 0 0 24px 0;
+    line-height: 1.6;
+  }
+}
+
+// 애니메이션
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

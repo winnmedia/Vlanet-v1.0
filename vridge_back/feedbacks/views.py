@@ -22,6 +22,9 @@ from . import serializers
 from projects import models as project_model
 from users.utils import user_validator
 
+# FeedbackListView 임포트
+from .views_list import FeedbackListView
+
 logger = logging.getLogger(__name__)
 
 

@@ -238,10 +238,12 @@ class SignIn(View):
                 access_token = str(refresh.access_token)
                 refresh_token = str(refresh)
                 
-                # 프론트엔드가 기대하는 형식으로 응답
+                # 프론트엔드가 기대하는 형식으로 응답 (테스트와 호환되도록)
                 res = JsonResponse(
                     {
                         "message": "success",
+                        "access": access_token,  # 표준 JWT 키
+                        "refresh": refresh_token,  # 표준 JWT 키
                         "access_token": access_token,  # 프론트엔드가 사용하는 키
                         "refresh_token": refresh_token,
                         "vridge_session": access_token,  # 하위 호환성

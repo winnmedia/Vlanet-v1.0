@@ -13,8 +13,14 @@ import time
 import sys
 import os
 import platform
-import psutil
 import django
+
+# psutil은 선택적 의존성
+try:
+    import psutil
+    HAS_PSUTIL = True
+except ImportError:
+    HAS_PSUTIL = False
 
 def health_check(request):
     """
@@ -70,17 +76,18 @@ def health_check(request):
         health_status['status'] = 'degraded'
     
     # 4. 메모리 사용량 (psutil 있는 경우만)
-    try:
-        memory = psutil.virtual_memory()
-        health_status['memory'] = {
-            'total': memory.total,
-            'available': memory.available,
-            'percent': memory.percent,
-            'used': memory.used
-        }
-    except:
-        # psutil이 없어도 에러 없이 진행
-        pass
+    if HAS_PSUTIL:
+        try:
+            memory = psutil.virtual_memory()
+            health_status['memory'] = {
+                'total': memory.total,
+                'available': memory.available,
+                'percent': memory.percent,
+                'used': memory.used
+            }
+        except:
+            # psutil이 없어도 에러 없이 진행
+            pass
     
     # HTTP 상태 코드 결정
     if health_status['status'] == 'unhealthy':
@@ -189,12 +196,19 @@ def version_info(request):
     })
 
 @csrf_exempt
+@require_http_methods(["OPTIONS", "GET", "POST"])
 def options_handler(request):
     """
     OPTIONS 요청 처리 (CORS preflight)
     """
     response = JsonResponse({'status': 'ok'})
-    response['Access-Control-Allow-Origin'] = '*'
+    
+    # CORS 헤더 설정
+    origin = request.headers.get('Origin', '*')
+    response['Access-Control-Allow-Origin'] = origin
     response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-    response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    response['Access-Control-Allow-Credentials'] = 'true'
+    response['Access-Control-Max-Age'] = '86400'  # 24시간 캐시
+    
     return response

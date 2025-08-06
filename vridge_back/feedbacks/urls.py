@@ -4,6 +4,9 @@ from . import views
 app_name = 'feedbacks'
 
 urlpatterns = [
+    # 전체 피드백 목록 (테스트용)
+    path('', views.FeedbackListView.as_view(), name='feedback-list'),
+    
     # 프로젝트별 피드백 목록 및 생성
     path('projects/<int:project_id>/feedbacks/', 
          views.ProjectFeedbackListView.as_view(), 

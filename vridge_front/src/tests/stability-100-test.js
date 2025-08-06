@@ -162,7 +162,8 @@ async function testAuthentication() {
     
     if (response.status !== 201 && response.status !== 200) {
       // 이미 존재하는 경우도 성공으로 처리
-      if (response.data.error?.includes('already exists')) {
+      const errorMessage = response.data.error || response.data.message || '';
+      if (errorMessage.includes('already exists') || errorMessage.includes('이미 존재')) {
         return;
       }
       throw new Error(`Signup failed: ${response.status}`);

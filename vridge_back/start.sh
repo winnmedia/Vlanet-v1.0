@@ -40,6 +40,11 @@ echo ""
 echo "🔧 video_planning 마이그레이션 강제 적용..."
 python3 manage.py migrate video_planning --noinput || echo "video_planning 마이그레이션 실패"
 
+# 캐시 테이블 생성
+echo ""
+echo "🗄️ 캐시 테이블 생성..."
+python3 manage.py createcachetable || echo "캐시 테이블 생성 실패 (이미 존재할 수 있음)"
+
 # 정적 파일 수집
 echo ""
 echo "📦 정적 파일 수집..."

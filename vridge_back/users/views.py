@@ -179,6 +179,14 @@ class SignUp(View):
             new_user.set_password(password)
             new_user.save()
             
+            # 기본 DevelopmentFramework 생성 (실패해도 회원가입은 계속 진행)
+            try:
+                self._create_default_framework(new_user)
+                logger.info(f"기본 프레임워크 생성 완료 - 사용자: {new_user.username}")
+            except Exception as framework_error:
+                logger.warning(f"기본 프레임워크 생성 실패 (회원가입은 계속 진행): {str(framework_error)}")
+                # 프레임워크 생성 실패는 회원가입을 막지 않음
+            
             logger.info(f"회원가입 성공 - ID: {new_user.id}, 이메일: {new_user.username}")
 
             # 이메일 인증 발송 (실패해도 회원가입은 완료)
@@ -226,6 +234,34 @@ class SignUp(View):
             import traceback
             traceback.print_exc()
             return JsonResponse({"message": "회원가입 처리 중 오류가 발생했습니다."}, status=500)
+    
+    def _create_default_framework(self, user):
+        """사용자의 기본 DevelopmentFramework 생성"""
+        try:
+            from projects.models import DevelopmentFramework
+            
+            # 이미 기본 프레임워크가 있는지 확인
+            if DevelopmentFramework.objects.filter(user=user, is_default=True).exists():
+                return
+            
+            # 기본 프레임워크 생성
+            default_framework = DevelopmentFramework.objects.create(
+                user=user,
+                name="기본 영상 프레임워크",
+                intro_hook="초반 5초 안에 시청자의 시선을 사로잡을 강력한 오프닝을 만들어보세요. 질문으로 시작하거나, 충격적인 사실을 제시하거나, 시각적 임팩트가 강한 장면으로 시작하는 것이 효과적입니다.",
+                immersion="빠른 컷 전환과 흥미로운 전개로 시청자의 몰입을 유도하세요. 스토리텔링의 기승전결을 명확히 하고, 각 섹션마다 새로운 정보나 감정을 제공하여 지루함을 방지합니다.",
+                twist="예상치 못한 이벤트나 반전을 통해 지루함을 방지하고 긴장감을 유지하세요. 시청자가 예측할 수 없는 요소를 중간중간 배치하여 끝까지 시청하도록 유도합니다.",
+                hook_next="다음 콘텐츠에 대한 궁금증을 유발하여 재방문을 유도하세요. '다음 영상에서는...', '곧 공개될...' 등의 문구로 연속성을 만들고 구독과 알림 설정을 유도합니다.",
+                is_default=True
+            )
+            logger.info(f"기본 프레임워크 생성 성공: {user.username}")
+            
+        except ImportError:
+            logger.warning("DevelopmentFramework 모델을 찾을 수 없음 - 프로젝트 앱이 설치되지 않았을 가능성")
+        except Exception as e:
+            logger.error(f"기본 프레임워크 생성 중 오류: {str(e)}")
+            # 데이터베이스 트랜잭션 롤백을 방지하기 위해 예외를 다시 발생시킴
+            raise
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -294,41 +330,71 @@ class SignIn(View):
                             status=403
                         )
                 
-                # Use Django REST Framework SimpleJWT instead
-                from rest_framework_simplejwt.tokens import RefreshToken
-                refresh = RefreshToken.for_user(user)
-                access_token = str(refresh.access_token)
-                refresh_token = str(refresh)
+                # 사용자 활성 상태 확인
+                if not user.is_active:
+                    logger.warning(f"비활성 사용자 로그인 시도: {user.email}")
+                    return JsonResponse({
+                        "message": "비활성된 계정입니다. 관리자에게 문의해주세요."
+                    }, status=403)
                 
-                # 프론트엔드가 기대하는 형식으로 응답 (테스트와 호환되도록)
-                res = JsonResponse(
-                    {
+                # JWT 토큰 생성 및 유저 정보 처리
+                try:
+                    from rest_framework_simplejwt.tokens import RefreshToken
+                    refresh = RefreshToken.for_user(user)
+                    access_token = str(refresh.access_token)
+                    refresh_token = str(refresh)
+                    
+                    # 로그인 성공 로그 및 통계
+                    logger.info(f"로그인 성공 - 사용자: {user.username}, ID: {user.id}")
+                    
+                    # 프론트엔드가 기대하는 형식으로 응답 (테스트와 호환되도록)
+                    user_data = {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email if user.email else user.username,
+                        "nickname": user.nickname if user.nickname else user.username,
+                        "login_method": getattr(user, 'login_method', 'email'),
+                        "email_verified": getattr(user, 'email_verified', True)
+                    }
+                    
+                    response_data = {
                         "message": "success",
+                        "status": "success",
                         "access": access_token,  # 표준 JWT 키
                         "refresh": refresh_token,  # 표준 JWT 키
                         "access_token": access_token,  # 프론트엔드가 사용하는 키
                         "refresh_token": refresh_token,
                         "vridge_session": access_token,  # 하위 호환성
-                        "user": {
-                            "id": user.id,
-                            "username": user.username,
-                            "email": user.email,
-                            "nickname": user.nickname if user.nickname else user.username,
-                        }
-                    },
-                    status=200,
-                )
-                res.set_cookie(
-                    "vridge_session",
-                    access_token,
-                    httponly=True,
-                    samesite="Lax",
-                    secure=True,
-                    max_age=2419200,
-                )
-                return res
+                        "user": user_data
+                    }
+                    
+                    res = JsonResponse(response_data, status=200)
+                    
+                    # HttpOnly 쿠키 설정 (보안 강화)
+                    secure_cookie = not settings.DEBUG  # HTTPS 환경에서만 Secure 쿠키
+                    res.set_cookie(
+                        "vridge_session",
+                        access_token,
+                        httponly=True,
+                        samesite="Lax",
+                        secure=secure_cookie,
+                        max_age=3600,  # 1시간 (액세스 토큰과 동일)
+                    )
+                    
+                    return res
+                    
+                except Exception as token_error:
+                    logger.error(f"JWT 토큰 생성 오류: {str(token_error)}")
+                    return JsonResponse({
+                        "message": "로그인 처리 중 오류가 발생했습니다."
+                    }, status=500)
             else:
-                return JsonResponse({"message": "이메일 또는 비밀번호가 올바르지 않습니다."}, status=401)
+                logger.warning(f"로그인 실패 - 이메일: {email}")
+                return JsonResponse({
+                    "message": "이메일 또는 비밀번호가 올바르지 않습니다.",
+                    "status": "error",
+                    "error_code": "INVALID_CREDENTIALS"
+                }, status=401)
         except Exception as e:
             logger.error(f"Error in CheckEmail: {str(e)}", exc_info=True)
             return JsonResponse({"message": str(e)}, status=500)

@@ -31,7 +31,9 @@ class DevelopmentFramework(core_model.TimeStampedModel):
         "users.User",
         related_name="frameworks",
         on_delete=models.CASCADE,
-        verbose_name="소유자"
+        verbose_name="소유자",
+        null=True,
+        blank=True
     )
     
     class Meta:

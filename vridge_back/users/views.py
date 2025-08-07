@@ -260,8 +260,8 @@ class SignUp(View):
             logger.warning("DevelopmentFramework 모델을 찾을 수 없음 - 프로젝트 앱이 설치되지 않았을 가능성")
         except Exception as e:
             logger.error(f"기본 프레임워크 생성 중 오류: {str(e)}")
-            # 데이터베이스 트랜잭션 롤백을 방지하기 위해 예외를 다시 발생시킴
-            raise
+            # 프레임워크 생성 실패해도 회원가입은 계속 진행
+            pass
 
 
 @method_decorator(csrf_exempt, name='dispatch')

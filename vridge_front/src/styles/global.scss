@@ -1,6 +1,8 @@
 @import './design-tokens.scss';
 @import './common-buttons.scss';
 @import './mobile-accessibility.scss';
+// Antd CSS import (해결 방법: global CSS에서 import)
+@import '~antd/dist/antd.css';
 
 * {
   box-sizing: border-box;

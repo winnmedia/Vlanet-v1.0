@@ -17,6 +17,9 @@ const nextConfig = {
     optimizePackageImports: ['antd', '@ant-design/plots'],
     webpackBuildWorker: true,
   },
+
+  // CSS 처리 설정
+  transpilePackages: ['antd', '@ant-design/plots', 'rc-util', 'rc-pagination', 'rc-picker', 'rc-tree', 'rc-table'],
   
   // 컴파일러 최적화
   compiler: {

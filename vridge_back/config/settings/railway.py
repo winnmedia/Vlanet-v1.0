@@ -1,270 +1,109 @@
 """
-Railway 배포용 최적화된 설정
-Last deploy trigger: 2025-07-31 15:30 KST
+Railway 배포용 Django 설정 파일
+Production 환경 설정
 """
 import os
-import sys
 import dj_database_url
-from pathlib import Path
-
-# Build paths
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-# Add the project root to Python path
-sys.path.insert(0, str(BASE_DIR))
-
-# Railway 환경 확인
-IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
+from ..settings_base import *
 
 # 보안 설정
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-railway-temp-key')
-
-# 기본 Django 설정
-LANGUAGE_CODE = 'ko-kr'
-TIME_ZONE = 'Asia/Seoul'
-USE_I18N = True
-USE_TZ = True
-
-# 사용자 정의 User 모델
-AUTH_USER_MODEL = 'users.User'
-
-# Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# 앱 목록
-DJANGO_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-]
-
-PROJECT_APPS = [
-    'core',  # 다른 앱들이 의존하는 핵심 앱 - 가장 먼저 와야 함
-    'users',
-    'projects',
-    'feedbacks',
-    'onlines',
-    'video_planning',
-    'video_analysis',
-    'admin_dashboard',
-    'documents',  # 문서 관리 앱
-]
-
-THIRD_PARTY_APPS = [
-    'corsheaders',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
-]
-
-INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + PROJECT_APPS
-
-# 미들웨어
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'config.middleware.CORSOptionsMiddleware',  # OPTIONS 요청 처리 (CORS 미들웨어 전에!)
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'config.middleware.SecurityHeadersMiddleware',  # 보안 헤더 추가
-    'config.rate_limit_middleware.RateLimitMiddleware',  # Rate Limiting 추가
-    'feedbacks.middleware.MediaHeadersMiddleware',
-]
-
-ROOT_URLCONF = 'config.urls'
-
-# 템플릿
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = 'config.wsgi.application'
-
-# 비밀번호 검증
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-# REST Framework 설정
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
-
-# JWT 설정
-from datetime import timedelta
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=28),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': False,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-}
-
-# 허용된 호스트 - Railway 도메인 추가
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-production-key-change-me')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
+    'videoplanet.up.railway.app',
     '.railway.app',
-    'vlanet.net',
-    'www.vlanet.net',
     'localhost',
     '127.0.0.1',
-    'videoplanet.up.railway.app'
 ]
 
-# 데이터베이스 설정
-DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('RAILWAY_DATABASE_URL')
+# 데이터베이스 설정 (Railway PostgreSQL)
+DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-    pass  # Using PostgreSQL database
 else:
-    import logging
-    logging.warning("No database URL found, using SQLite")
+    # Fallback to SQLite for local testing
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db_railway.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+# CORS 설정
+CORS_ALLOWED_ORIGINS = [
+    "https://vlanet.net",
+    "https://www.vlanet.net", 
+    "https://videoplanet-seven.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+# 정적 파일 설정
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Redis 캐시 설정
 REDIS_URL = os.environ.get('REDIS_URL')
 if REDIS_URL:
-    try:
-        import django_redis
-        CACHES = {
-            'default': {
-                'BACKEND': 'django_redis.cache.RedisCache',
-                'LOCATION': REDIS_URL,
-                'OPTIONS': {
-                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-                }
-            }
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
         }
-        pass  # Redis cache configured
-    except ImportError:
-        CACHES = {
-            'default': {
-                'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-                'LOCATION': 'django_cache_table',
-            }
-        }
-        pass  # Using database cache (django_redis not installed)
+    }
 else:
+    # Fallback to database cache
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'django_cache_table',
+            'LOCATION': 'cache_table',
         }
     }
-    pass  # Using database cache (no Redis URL)
-
-# 정적 파일 설정 (WhiteNoise)
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# WhiteNoise는 이미 미들웨어에 포함되어 있음
-
-# 미디어 파일 설정
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.environ.get('RAILWAY_VOLUME_MOUNT_PATH', BASE_DIR / 'media')
-
-# CORS 설정
-CORS_ALLOWED_ORIGINS = [
-    'https://vlanet.net',
-    'https://www.vlanet.net',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'https://vridge-front-production.up.railway.app',
-    'https://videoplanetready.vercel.app',
-    'https://vlanet-v1-0.vercel.app',
-]
-
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET', 
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
-
-# CSRF 신뢰할 수 있는 도메인
-CSRF_TRUSTED_ORIGINS = [
-    'https://vlanet.net',
-    'https://www.vlanet.net',
-    'https://*.railway.app',
-]
 
 # 이메일 설정
-if os.environ.get('SENDGRID_API_KEY'):
-    EMAIL_HOST = 'smtp.sendgrid.net'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'apikey'
-    EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
-    pass  # Email configured with SendGrid
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@videoplanet.com')
+
+# 보안 설정
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 # 로깅 설정
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO' if DEBUG else 'WARNING',
+        'level': 'INFO',
     },
     'loggers': {
         'django': {
@@ -272,7 +111,68 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
     },
 }
 
-# Railway settings loaded
+# Sentry 설정 (선택사항)
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0.1,
+        send_default_pii=False,
+        environment='production',
+    )
+
+# 파일 업로드 크기 제한
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+
+# REST Framework 설정
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+}
+
+# JWT 설정
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}
+
+print(f"✅ Railway 설정 로드 완료 - DEBUG: {DEBUG}, DB: {'PostgreSQL' if DATABASE_URL else 'SQLite'}")

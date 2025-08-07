@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run optimize:images && next build",
+    "build": "npm run optimize:images || true && next build",
+    "build:vercel": "next build",
     "build:analyze": "ANALYZE=true next build",
     "build:fast": "next build",
     "start": "next start",

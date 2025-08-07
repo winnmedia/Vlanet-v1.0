@@ -11,9 +11,17 @@
 
 const fs = require('fs').promises;
 const path = require('path');
-const sharp = require('sharp');
-const { glob } = require('glob');
-const chalk = require('chalk');
+
+// Vercel 환경에서 선택적 모듈 로드
+let sharp, glob, chalk;
+try {
+  sharp = require('sharp');
+  glob = require('glob').glob;
+  chalk = require('chalk');
+} catch (e) {
+  console.log('[IMAGE-OPTIMIZER] Sharp 또는 필수 모듈이 없습니다. 이미지 최적화를 건너뜁니다.');
+  process.exit(0);
+}
 
 // 설정
 const CONFIG = {

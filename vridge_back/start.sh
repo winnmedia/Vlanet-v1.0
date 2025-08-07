@@ -30,15 +30,21 @@ from django.apps import apps
 print(f'   등록된 앱: {len(apps.get_app_configs())}개')
 "
 
-# 마이그레이션 실행
+# 마이그레이션 실행 (순차적으로)
 echo ""
 echo "🔄 마이그레이션 실행..."
-python3 manage.py migrate --noinput
-
-# video_planning 마이그레이션 강제 적용
-echo ""
-echo "🔧 video_planning 마이그레이션 강제 적용..."
+# 각 앱을 순차적으로 마이그레이션
+python3 manage.py migrate contenttypes --noinput || echo "contenttypes 마이그레이션 실패"
+python3 manage.py migrate auth --noinput || echo "auth 마이그레이션 실패"
+python3 manage.py migrate users --noinput || echo "users 마이그레이션 실패"
+python3 manage.py migrate projects --noinput || echo "projects 마이그레이션 실패"
+python3 manage.py migrate feedbacks --noinput || echo "feedbacks 마이그레이션 실패"
 python3 manage.py migrate video_planning --noinput || echo "video_planning 마이그레이션 실패"
+python3 manage.py migrate video_analysis --noinput || echo "video_analysis 마이그레이션 실패"
+python3 manage.py migrate admin_dashboard --noinput || echo "admin_dashboard 마이그레이션 실패"
+python3 manage.py migrate documents --noinput || echo "documents 마이그레이션 실패"
+# 나머지 모든 앱
+python3 manage.py migrate --noinput || echo "전체 마이그레이션 실패"
 
 # 캐시 테이블 생성
 echo ""

@@ -1,6 +1,13 @@
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+// Bundle analyzer - 선택적 로드
+let withBundleAnalyzer = (config) => config;
+try {
+  withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === 'true',
+  });
+} catch (e) {
+  // Bundle analyzer가 없으면 무시
+  console.log('[Next.js] Bundle analyzer not found, skipping...');
+}
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

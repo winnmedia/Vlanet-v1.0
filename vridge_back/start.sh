@@ -51,6 +51,11 @@ echo ""
 echo "🗄️ 캐시 테이블 생성..."
 python3 manage.py createcachetable || echo "캐시 테이블 생성 실패 (이미 존재할 수 있음)"
 
+# DevelopmentFramework 테이블 생성
+echo ""
+echo "🏗️ DevelopmentFramework 테이블 생성..."
+python3 manage.py create_framework_table || echo "DevelopmentFramework 테이블 생성 실패"
+
 # 정적 파일 수집
 echo ""
 echo "📦 정적 파일 수집..."

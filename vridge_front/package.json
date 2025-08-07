@@ -14,7 +14,7 @@
     "format:check": "prettier --check 'src/**/*.{js,jsx,css,scss,json,md}' 'pages/**/*.{js,jsx}'",
     "type-check": "echo 'TypeScript checking disabled for now'",
     "test:quick": "node ../automation-scripts/quick-test.js",
-    "prepare": "husky",
+    "prepare": "husky 2>/dev/null || true",
     "analyze": "ANALYZE=true npm run build",
     "optimize:images": "node scripts/optimize-images.js",
     "optimize:images:dry": "node scripts/optimize-images.js --dry-run",

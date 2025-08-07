@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import PageTemplate from 'components/PageTemplate'
@@ -15,7 +15,6 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import UserAvatar from 'components/UserAvatar'
 import { toast } from 'react-toastify'
-import { useEffect, useRef, useState } from 'react'
 import { Upload, message } from 'antd'
 
 export default function MyPage() {

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Modal, ModalProps } from 'antd'
-import { useState } from 'react'
 
 export default function CalendarModal({ ModalTitle, ModalText, visible }) {
   return (

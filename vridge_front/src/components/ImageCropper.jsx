@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import Cropper from 'react-easy-crop'
-import { useCallback, useState } from 'react'
 
 const createImage = (url) =>
   new Promise((resolve, reject) => {

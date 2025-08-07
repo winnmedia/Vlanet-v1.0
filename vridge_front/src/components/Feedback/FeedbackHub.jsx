@@ -1,10 +1,9 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useCallback, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import VideoPlayerZone from './VideoPlayerZone'
 import FeedbackStream from './FeedbackStream'
 import FloatingActionPanel from './FloatingActionPanel'
 import AIFeedbackAssistant from './AIFeedbackAssistant'
-import { useCallback, useRef, useState } from 'react'
 
 export default function FeedbackHub({ project, user, onProjectUpdate }) {
   const [focusMode, setFocusMode] = useState('balanced') // 'video', 'feedback', 'balanced'

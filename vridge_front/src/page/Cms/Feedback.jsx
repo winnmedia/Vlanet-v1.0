@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { checkSession } from 'util/util'
 import { showSuccess, showError, showWarning, showInfo } from '../../components/Toast'
@@ -53,7 +53,6 @@ import 'moment/locale/ko'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
 import { SafeRoute } from 'components/SafeRoute'
 import { useProjectData } from 'hooks/useProjectData'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export default function Feedback() {
   const router = useRouter()

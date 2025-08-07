@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import styles from './IntegratedDashboard.module.scss'
 import { colors, getPhaseColor } from '../../tokens/colors'
 import moment from 'moment'
-import { useMemo, useState } from 'react'
 
 const IntegratedDashboard = ({ 
   projects = [], 

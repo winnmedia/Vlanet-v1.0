@@ -3,10 +3,10 @@ import moment from 'moment'
 import 'moment/locale/ko'
 
 // import Swiper core and required modules
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
+import { Navigation, Pagination as SwiperPagination, Scrollbar, A11y } from 'swiper/modules'
 
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Pagination } from 'antd'
+import { Pagination as AntPagination } from 'antd'
 // Import Swiper styles
 import 'swiper/css'
 

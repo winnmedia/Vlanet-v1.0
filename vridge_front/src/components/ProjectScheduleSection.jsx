@@ -1,6 +1,4 @@
 import React, { useState, useMemo } from 'react'
-import moment from 'moment'
-import { useMemo, useState } from 'react'
 import 'moment/locale/ko'
 
 moment.locale('ko')

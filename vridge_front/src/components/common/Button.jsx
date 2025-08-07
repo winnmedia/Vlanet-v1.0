@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './Button.module.scss'
-import { Button } from 'antd'
+import { Button as AntButton } from 'antd'
 
 /**
  * 공통 버튼 컴포넌트

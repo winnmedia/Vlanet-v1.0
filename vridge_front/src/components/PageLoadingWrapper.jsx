@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
 import LoadingAnimation from './LoadingAnimation'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 export default function PageLoadingWrapper({ children, requireAuth = true }) {

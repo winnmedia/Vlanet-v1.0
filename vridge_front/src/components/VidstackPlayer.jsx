@@ -1,6 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { MediaPlayer, MediaProvider } from '@vidstack/react'
-import { useEffect, useRef } from 'react'
 
 const VidstackPlayer = forwardRef(({ 
   videoUrl, 

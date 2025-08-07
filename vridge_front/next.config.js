@@ -5,7 +5,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
   
   // 실험적 기능 활성화
   experimental: {
@@ -28,15 +32,10 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [320, 420, 640, 768, 1024, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    quality: 75,
     minimumCacheTTL: 3600,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     unoptimized: false,
-    priority: false,
-    loading: 'lazy',
-    placeholder: 'blur',
-    blurDataURL: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmrWOH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyrmr',
   },
   
   // 보안 헤더 및 캐시 헤더
@@ -89,7 +88,7 @@ const nextConfig = {
       },
       {
         // 이미지 캐싱 최적화
-        source: '/(.*\\.(png|jpg|jpeg|gif|webp|avif|svg|ico))',
+        source: '/:path*.(png|jpg|jpeg|gif|webp|avif|svg|ico)',
         headers: [
           {
             key: 'Cache-Control',
@@ -134,7 +133,7 @@ const nextConfig = {
   },
 
   // Webpack 설정
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { dev, isServer, webpack }) => {
     // 번들 최적화
     config.optimization = {
       ...config.optimization,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import { GetFeedBack } from '../../api/feedback'
@@ -9,7 +9,6 @@ import PageTemplate from 'components/PageTemplate'
 import SideBar from 'components/SideBar'
 
 import moment from 'moment'
-import { useEffect, useState } from 'react'
 import 'moment/locale/ko'
 
 export default function FeedbackAll() {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react'
 import cacheManager from '../utils/cacheManager';
 import { getCacheConfigForUrl } from '../config/cacheConfig';
 

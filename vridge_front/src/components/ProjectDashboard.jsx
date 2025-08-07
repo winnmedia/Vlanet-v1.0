@@ -4,8 +4,6 @@ import { useRouter } from '../util/nextNavigation'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { Progress, Tag, Tooltip } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
-import { CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, FolderOpenOutlined, FolderOutlined, TeamOutlined } from '@ant-design/icons'
 import { 
   CalendarOutlined, 
   TeamOutlined, 

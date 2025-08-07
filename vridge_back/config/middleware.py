@@ -78,6 +78,21 @@ class RailwayHealthCheckMiddleware(MiddlewareMixin):
         return None
 
 
+class CORSOptionsMiddleware(MiddlewareMixin):
+    """Handle OPTIONS requests for CORS preflight"""
+    
+    def process_request(self, request):
+        if request.method == 'OPTIONS':
+            response = HttpResponse()
+            response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+            response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+            response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with'
+            response['Access-Control-Allow-Credentials'] = 'true'
+            response['Access-Control-Max-Age'] = '86400'
+            return response
+        return None
+
+
 class SecurityHeadersMiddleware(MiddlewareMixin):
     """Add security headers to all responses"""
     

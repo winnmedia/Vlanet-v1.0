@@ -1,9 +1,8 @@
-import React, { useState, useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SmartFormField from './SmartFormField'
 import AIProjectSuggestion from './AIProjectSuggestion'
 import TemplateSelector from './TemplateSelector'
-import { useCallback, useState } from 'react'
 
 export default function SmartProjectWizard({ onComplete }) {
   const [currentPhase, setCurrentPhase] = useState('smart-input') // 'smart-input', 'ai-suggestion', 'template', 'confirm'

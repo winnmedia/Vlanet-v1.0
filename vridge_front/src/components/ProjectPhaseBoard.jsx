@@ -1,9 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setPhaseCompleted, selectProjectPhases } from '../redux/projectPhases'
-
 import moment from 'moment'
-import { useEffect, useMemo, useState } from 'react'
 import 'moment/locale/ko'
 
 export default function ProjectPhaseBoard({ projects, onPhaseUpdate, projectCounts, showTitle = false }) {

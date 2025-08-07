@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
 import { Alert, message } from 'antd'
 
 export default function Alert({

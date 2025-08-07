@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { message } from 'antd'
-import React, { useState, useEffect } from 'react'
 
 export default function LoadingAnimation({ message, progress }) {
   const [humorousMessage, setHumorousMessage] = useState('')

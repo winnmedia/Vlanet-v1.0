@@ -5,14 +5,10 @@ import { useRouter, useParams } from '../../util/nextNavigation'
 import moment from 'moment'
 import 'moment/locale/ko'
 import cx from 'classnames'
-import DatePicker from 'react-datepicker'
-
-
+import ReactDatePicker from 'react-datepicker'
 import styled from 'styled-components'
-
 import CalendarModal from './CalendarModal'
-import { useState } from 'react'
-import { DatePicker, Modal, message } from 'antd'
+import { DatePicker as AntDatePicker, Modal, message } from 'antd'
 
 export function CalendarDate({
   index,

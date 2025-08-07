@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './MobileFirst.module.scss'
-import { useEffect, useState } from 'react'
 import { Progress } from 'antd'
 
 // Mobile-First Responsive Hook

@@ -1,7 +1,6 @@
-import React, { useRef, useImperativeHandle, forwardRef, useState, useCallback } from 'react';
+import React, { useCallback, useRef, forwardRef, useImperativeHandle, useState } from 'react'
 import ReactPlayer from 'react-player';
 import styles from './ReactVideoPlayer.module.scss';
-import { useCallback, useRef, useState } from 'react'
 
 const ReactVideoPlayer = forwardRef(({ 
   videoUrl, 

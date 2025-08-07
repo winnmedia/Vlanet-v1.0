@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from 'util/util'
 import { toast } from 'react-toastify'
@@ -43,7 +43,6 @@ import { useSelector } from 'react-redux'
 import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from 'api/feedback'
 
 import moment from 'moment'
-import { useEffect, useMemo, useRef, useState } from 'react'
 import { Upload, message } from 'antd'
 import 'moment/locale/ko'
 

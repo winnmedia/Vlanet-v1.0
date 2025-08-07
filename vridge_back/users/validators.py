@@ -56,7 +56,7 @@ class InputValidator:
     @classmethod
     def validate_password(cls, password):
         """
-        비밀번호 유효성 검증
+        비밀번호 유효성 검증 (사용자 친화적으로 완화)
         Returns: (is_valid: bool, error_message: str or None)
         """
         if not password:
@@ -69,34 +69,28 @@ class InputValidator:
         if len(password) > cls.PASSWORD_MAX_LENGTH:
             return False, f"비밀번호는 최대 {cls.PASSWORD_MAX_LENGTH}자까지 가능합니다."
         
-        # 복잡도 검증
-        has_upper = re.search(r'[A-Z]', password)
-        has_lower = re.search(r'[a-z]', password)
-        has_digit = re.search(r'\d', password)
-        has_special = re.search(r'[!@#$%^&*(),.?":{}|<>]', password)
+        # 사용자 친화적 비밀번호 정책
+        # 옵션 1: 문자 + 숫자
+        # 옵션 2: 문자 + 특수문자
+        # 옵션 3: 숫자 + 특수문자
+        has_letter = bool(re.search(r'[A-Za-z]', password))
+        has_digit = bool(re.search(r'\d', password))
+        has_special = bool(re.search(r'[!@#$%^&*(),.?":{}|<>_\-+=]', password))
         
-        missing_requirements = []
-        if not has_upper:
-            missing_requirements.append("대문자")
-        if not has_lower:
-            missing_requirements.append("소문자")
-        if not has_digit:
-            missing_requirements.append("숫자")
-        if not has_special:
-            missing_requirements.append("특수문자")
+        # 최소 2가지 타입만 있으면 OK
+        type_count = sum([has_letter, has_digit, has_special])
         
-        if len(missing_requirements) > 1:  # 4개 중 최소 3개 요구사항 충족
-            return False, f"비밀번호는 다음 중 최소 3가지를 포함해야 합니다: 대문자, 소문자, 숫자, 특수문자"
+        if type_count < 2:
+            if has_letter and not has_digit and not has_special:
+                return False, "비밀번호에 숫자나 특수문자를 추가해주세요."
+            elif has_digit and not has_letter and not has_special:
+                return False, "비밀번호에 문자나 특수문자를 추가해주세요."
+            else:
+                return False, "비밀번호는 문자, 숫자, 특수문자 중 2가지 이상을 포함해야 합니다."
         
-        # 동일 문자 반복 검증 (3회 이상 연속 반복 금지)
-        if re.search(r'(.)\1{2,}', password):
-            return False, "동일한 문자를 3회 이상 연속으로 사용할 수 없습니다."
-        
-        # 순차적 패턴 검증 (3자리 이상 연속)
-        sequential_patterns = ['1234', '2345', '3456', '4567', '5678', '6789', 'abcd', 'bcde', 'cdef']
-        for pattern in sequential_patterns:
-            if pattern in password.lower():
-                return False, "4자리 이상 순차적인 문자열을 사용할 수 없습니다."
+        # 너무 단순한 패턴만 체크 (완화)
+        if password.lower() in ['password', '12345678', 'qwerty', 'admin']:
+            return False, "너무 일반적인 비밀번호는 사용할 수 없습니다."
         
         return True, None
     

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import React, { useState } from 'react'
 // SCSS는 _app.js에서 글로벌로 import됨
 

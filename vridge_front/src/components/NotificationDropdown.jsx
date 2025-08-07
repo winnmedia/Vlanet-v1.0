@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { GetNotifications, GetUnreadNotificationCount, MarkNotificationsAsRead } from 'api/notification'
 import moment from 'moment'
-import { useEffect, useRef, useState } from 'react'
 import { message, notification } from 'antd'
 import 'moment/locale/ko'
 

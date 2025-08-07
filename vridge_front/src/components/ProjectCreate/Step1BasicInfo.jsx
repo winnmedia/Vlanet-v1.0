@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { message } from 'antd'
-import React, { useState, useEffect } from 'react'
 
 const Step1BasicInfo = ({ inputs, onChange, onValidationChange }) => {
   const { name, manager, consumer } = inputs

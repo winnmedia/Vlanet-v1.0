@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, forwardRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, forwardRef, useCallback } from 'react'
 import Image from 'next/image';
 import { getOptimizedImageProps, generateBlurDataURL, calculateAspectRatio } from '../utils/imageOptimizer';
 

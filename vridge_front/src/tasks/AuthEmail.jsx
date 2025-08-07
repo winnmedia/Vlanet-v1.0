@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { SendAuthNumber, EmailAuth } from 'api/auth'
 import { useRouter } from '../util/nextNavigation'
-import { useEffect, useMemo, useState } from 'react'
 import { message } from 'antd'
 
 export default function AuthEmail({

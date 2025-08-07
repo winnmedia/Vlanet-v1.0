@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import styles from './Toast.module.scss';
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {

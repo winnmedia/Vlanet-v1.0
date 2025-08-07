@@ -1,6 +1,5 @@
-import React, { useRef, useEffect, forwardRef, useImperativeHandle, useState } from 'react'
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react'
 import videojs from 'video.js'
-import { useEffect, useRef, useState } from 'react'
 import { Descriptions, Modal, Progress, Rate } from 'antd'
 
 // 한국어 설정

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom';
 import Toast from './Toast';
 import styles from './ToastContainer.module.scss';
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 let toastContainerInstance = null;

@@ -1,6 +1,5 @@
-import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import videojs from 'video.js'
-import { useEffect, useRef } from 'react'
 import { message } from 'antd'
 
 const VideoJsPlayer = forwardRef(({ 

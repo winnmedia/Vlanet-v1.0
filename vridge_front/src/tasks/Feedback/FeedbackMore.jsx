@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import FeedbackList from '../../components/FeedbackList/FeedbackList'
-import { useEffect, useState } from 'react'
 
 export default function FeedbackMore({ current_project, onTimeClick, onFeedbackSelect }) {
   const { user } = useSelector((s) => s.ProjectStore)

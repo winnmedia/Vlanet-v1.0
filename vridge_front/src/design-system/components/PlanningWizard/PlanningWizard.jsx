@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import styles from './PlanningWizard.module.scss'
 import { colors } from '../../tokens/colors'
 import { typography } from '../../tokens/typography'
-import { useState } from 'react'
 import { Progress } from 'antd'
 
 const PlanningWizard = ({ 

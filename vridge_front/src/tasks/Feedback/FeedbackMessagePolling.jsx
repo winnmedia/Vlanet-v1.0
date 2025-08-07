@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 import { SendChatMessage } from '../../api/chat'
-import { useEffect, useRef, useState } from 'react'
 import { message } from 'antd'
 
 export default function FeedbackMessagePolling({

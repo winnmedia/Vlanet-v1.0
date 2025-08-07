@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styles from './FeedbackTimeline.module.scss'
 import { colors, getFeedbackColor } from '../../tokens/colors'
 import moment from 'moment'
-import { useEffect, useRef, useState } from 'react'
 import { Progress, Timeline, message } from 'antd'
 
 const FeedbackTimeline = ({ 

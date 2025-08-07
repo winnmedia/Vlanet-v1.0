@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './PlanningWizard.module.scss'
 import { showInfo, showSuccess, showError } from '../Toast'
 import axios from '../../config/axios'
-import { useEffect, useState } from 'react'
 
 const PlanningWizard = ({ onComplete, onCancel }) => {
   const [step, setStep] = useState(1)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { AcceptInvitation, DeclineInvitation } from 'api/invitation'
 import { checkSession } from 'util/util'
@@ -6,8 +6,7 @@ import axios from '../../config/axios'
 import moment from 'moment'
 import 'moment/locale/ko'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
-import { debug404 } from 'utils/debug404'
-import { useEffect, useState } from 'react'
+import { debug404 } from '../../utils/debug404'
 import { message } from 'antd'
 
 export default function InvitationAccept() {

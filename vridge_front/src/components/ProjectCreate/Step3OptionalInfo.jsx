@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const GENRE_OPTIONS = [
   { value: 'corporate', label: '기업 홍보', icon: '🏢' },

@@ -1,3 +1,4 @@
+import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react'
 
 
 /* 상단 이미지 - 샘플, 기본 */
@@ -8,7 +9,6 @@ import useInput from 'hooks/UseInput'
 import useFile from 'hooks/Usefile'
 import ProcessDateEnhanced from 'tasks/Project/ProcessDateEnhanced'
 
-import React, { useState, useEffect, useRef, useCallback, useMemo, useCallback, useCallback } from 'react'
 import { useRouter } from '../../util/nextNavigation'
 import { CreateProjectAPI } from 'api/project'
 import { refetchProject, project_initial, project_dateRange, checkSession } from 'util/util'
@@ -18,7 +18,6 @@ import { formatProcessDatesForBackend } from 'utils/dateUtils'
 import { checkDomain, detectDuplicateTabs } from 'utils/domainCheck'
 import { showSuccess, showError, showWarning } from '../../components/Toast'
 import { toast } from 'react-toastify'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Input, message } from 'antd'
 
 export default function ProjectCreate() {

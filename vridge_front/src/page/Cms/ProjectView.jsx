@@ -1,3 +1,4 @@
+import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react'
 
 
 
@@ -14,7 +15,6 @@ import WorkflowTaskManager from 'components/WorkflowEngine/WorkflowTaskManager'
 import GanttChart from 'components/GanttChart/GanttChart'
 import DocumentManager from 'components/DocumentManager/DocumentManager'
 
-import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector } from 'react-redux'
 import { checkSession } from 'util/util'
@@ -32,7 +32,6 @@ import down from 'images/Cms/down_icon.svg'
 import { GetProject, UpdateDate } from 'api/project'
 import InviteInput from 'tasks/Project/InviteInput'
 import { useProjectData } from 'hooks/useProjectData'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 // 로딩 애니메이션 스타일
 const loadingAnimationStyle = `

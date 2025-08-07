@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 const CustomAlert = ({ message, type = 'info', onClose, duration = 3000, actions }) => {

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { isMobile, isIOS, isAndroid } from 'config/mobile-config';
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 const MobileDebug = () => {

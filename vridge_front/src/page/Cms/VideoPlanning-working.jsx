@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import { setGlobalLoading } from '../../redux/loading'
 import PageTemplate from '../../components/PageTemplate'
 import SideBar from '../../components/SideBar'
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 export default function VideoPlanning() {

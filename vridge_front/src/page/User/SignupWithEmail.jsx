@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 import { useRouter } from '../../util/nextNavigation';
 import { SendAuthNumber, EmailAuth, SignUp, CheckNickname } from "api/auth";
 import PasswordInput from "component/PasswordInput";

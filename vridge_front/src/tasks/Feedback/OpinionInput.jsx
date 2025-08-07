@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { CreateFeedback } from '../../api/feedback'
 import { checkSession } from '../../util/util'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 export default function OpinionInput({ project_id, current_project, refetch }) {

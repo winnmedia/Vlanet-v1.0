@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
-import { useEffect, useRef, useState } from 'react'
 
 export default function FeedbackMessage({
   Rating,

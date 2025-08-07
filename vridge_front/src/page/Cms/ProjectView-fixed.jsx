@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import { setGlobalLoading } from '../../redux/loading'
@@ -19,7 +19,6 @@ import 'moment/locale/ko'
 import down from 'images/Cms/down_icon.svg'
 import { UpdateDate } from 'api/project'
 import InviteInput from 'tasks/Project/InviteInput'
-import { useEffect, useMemo, useState } from 'react'
 
 
 export default function ProjectView() {

@@ -2,10 +2,6 @@
 import styles from './SideBar.module.scss'
 import cx from 'classnames'
 import React, { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react'
-import { useRouter, useLocation } from '../util/nextNavigation'
-import { useSelector } from 'react-redux'
-import { checkSession } from 'util/util'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const SideBar = memo(function SideBar({ tab, on_menu }) {
   const { navigate } = useRouter()

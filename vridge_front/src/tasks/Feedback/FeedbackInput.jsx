@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from 'react'
 import useInput from '../../hooks/UseInput'
-import React, { useState, useEffect } from 'react'
 import styles from './FeedbackInput.module.scss'
 import { CreateFeedback } from '../../api/feedback'
 import { checkSession } from '../../util/util'
@@ -8,7 +8,6 @@ import { toast } from 'react-toastify'
 import { PrimaryButton, SecondaryButton } from '../../components/common/Button'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import { useErrorHandler } from '../../hooks/useErrorHandler'
-import { useEffect, useState } from 'react'
 import { Button, message } from 'antd'
 
 export default function FeedbackInput({ project_id, refetch, initialTime, onTimeChange, onAIFeedbackClick, onFeedbackSuccess }) {

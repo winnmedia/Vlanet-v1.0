@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'
 import { useRouter } from '../util/nextNavigation';
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react'
 
 const PrivateRoute = ({ children }) => {
   const { user } = useSelector(state => state.ProjectStore);

@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from 'react'
 import FeedbackPlayer from './FeedbackPlayer'
 import VideoJsPlayer from './VideoJsPlayer'
-import { useEffect, useRef, useState } from 'react'
 // import VidstackPlayer from './VidstackPlayer' // 임시 비활성화
 
 const VideoPlayer = forwardRef(({ 

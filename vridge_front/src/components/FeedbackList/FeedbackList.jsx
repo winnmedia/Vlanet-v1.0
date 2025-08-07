@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import styles from './FeedbackList.module.scss';
 import moment from 'moment';
-import { useState } from 'react'
 import 'moment/locale/ko';
 
 moment.locale('ko');

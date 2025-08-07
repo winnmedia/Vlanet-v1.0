@@ -1,8 +1,4 @@
 import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import styles from './WorkflowProgress.module.scss'
-import { updateStageStatus, completeStage, initializeWorkflow } from '../../redux/workflow'
-import { useEffect } from 'react'
 
 const WorkflowProgress = ({ projectId }) => {
   const dispatch = useDispatch()

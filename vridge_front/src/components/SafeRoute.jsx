@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigationFlow } from 'hooks/useNavigationFlow'
-import { useEffect, useState } from 'react'
 
 export function SafeRoute({ children, checkResource, resourceId, resourceType = 'resource' }) {
   const { handleNotFound } = useNavigationFlow()

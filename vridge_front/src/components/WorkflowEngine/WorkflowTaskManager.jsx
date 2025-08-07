@@ -10,7 +10,6 @@ import styles from './WorkflowTaskManager.module.scss'
 import { Checkbox, Input, Button, Tag, Progress, Dropdown, Menu } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined } from '@ant-design/icons'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
 
 const WorkflowTaskManager = ({ stageId, projectId }) => {
   const dispatch = useDispatch()

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GetProject } from 'api/project'
 import { InviteProjectMember, CancelInvitation, GetProjectInvitations } from 'api/invitation'
 import { axiosCredentials } from 'util/util'
 import { alertSuccess, alertError, confirm } from 'util/alert'
-import { useEffect, useState } from 'react'
 import { message } from 'antd'
 
 export default function InviteInput({

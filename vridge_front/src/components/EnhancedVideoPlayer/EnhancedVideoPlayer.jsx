@@ -1,7 +1,6 @@
-import React, { useRef, useImperativeHandle, forwardRef, useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import ReactPlayer from 'react-player';
 import styles from './EnhancedVideoPlayer.module.scss';
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { message } from 'antd'
 
 const EnhancedVideoPlayer = forwardRef(({ 

@@ -3,7 +3,6 @@ import { useRouter } from '../../util/nextNavigation'
 import { useSelector } from 'react-redux'
 import { Spin, Card, Button, Typography, Space } from 'antd'
 import { LoadingOutlined, SettingOutlined, DashboardOutlined } from '@ant-design/icons'
-import { useEffect } from 'react'
 
 const { Title, Text, Paragraph } = Typography
 

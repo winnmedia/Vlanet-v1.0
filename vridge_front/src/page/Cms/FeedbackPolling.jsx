@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback, useCallback, useCallback } from 'react'
+import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter, useParams } from '../../util/nextNavigation'
 import { checkSession } from 'util/util'
 import { toast } from 'react-toastify'
@@ -42,7 +42,6 @@ import { FeedbackFile, GetFeedBack, DeleteFeedbackFile, GetEncodingStatus } from
 import { GetChatMessages } from 'api/chat'
 
 import moment from 'moment'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Upload, message } from 'antd'
 import 'moment/locale/ko'
 

@@ -7,7 +7,6 @@ import moment from 'moment'
 import 'moment/locale/ko'
 import UserAvatar from './UserAvatar'
 import styles from './Header.module.scss'
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { message, notification } from 'antd'
 
 const Header = memo(function Header({

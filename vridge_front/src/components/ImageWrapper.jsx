@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 // Next.js 이미지 래퍼 컴포넌트
 // src/images 경로를 /images (public) 경로로 변환

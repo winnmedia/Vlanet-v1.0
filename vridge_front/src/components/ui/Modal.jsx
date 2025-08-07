@@ -1,7 +1,6 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import classNames from 'classnames'
-import { useCallback, useEffect } from 'react'
 import { Modal } from 'antd'
 
 export default function Modal({

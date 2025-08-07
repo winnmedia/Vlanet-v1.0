@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react'
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import axios from 'axios';
 import './GanttChart.css';
 import { toast } from 'react-toastify';
-import { useEffect, useRef, useState } from 'react'
 import { message } from 'antd'
 
 // 프로젝트 단계 정의

@@ -94,12 +94,20 @@ class SignUp(View):
             # 이메일 형식 검증
             is_valid, error_msg = InputValidator.validate_email(email)
             if not is_valid:
-                return StandardResponse.validation_error({"email": error_msg})
+                return JsonResponse({
+                    "success": False,
+                    "message": error_msg,
+                    "field": "email"
+                }, status=400)
             
             # 닉네임 검증
             is_valid, error_msg = InputValidator.validate_text_input(nickname, "닉네임", max_length=50)
             if not is_valid:
-                return StandardResponse.validation_error({"email": error_msg})
+                return JsonResponse({
+                    "success": False,
+                    "message": error_msg,
+                    "field": "nickname"
+                }, status=400)
             
             if len(nickname) < 2:
                 return JsonResponse({"message": "닉네임은 최소 2자 이상이어야 합니다."}, status=400)
@@ -107,7 +115,11 @@ class SignUp(View):
             # 비밀번호 검증
             is_valid, error_msg = InputValidator.validate_password(password)
             if not is_valid:
-                return StandardResponse.validation_error({"email": error_msg})
+                return JsonResponse({
+                    "success": False,
+                    "message": error_msg,
+                    "field": "password"
+                }, status=400)
 
             logger.info(f"회원가입 시도 - 이메일: {email}, 닉네임: {nickname}")
             

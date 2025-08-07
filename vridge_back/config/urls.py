@@ -27,6 +27,7 @@ from .simple_health import simple_health_check
 from api_health import csrf_token_view
 from users import views as user_views
 from users.views_signup_safe import SafeSignUp, SafeSignIn
+from users.views_test import TestSignUp, TestCreate
 from rest_framework_simplejwt.views import TokenRefreshView
 
 # 개선된 인증 뷰 임포트
@@ -107,6 +108,9 @@ auth_patterns = [
     path('api/auth/check-email/', user_views.CheckEmail.as_view(), name='auth_check_email'),
     path('api/auth/check-nickname/', user_views.CheckNickname.as_view(), name='auth_check_nickname'),
     path('api/auth/me/', user_views.UserMe.as_view(), name='auth_me'),
+    # 테스트 엔드포인트
+    path('api/auth/test-signup/', TestSignUp.as_view(), name='test_signup'),
+    path('api/auth/test-create/', TestCreate.as_view(), name='test_create'),
 ]
 
 # 개선된 인증 뷰 V2가 있으면 사용

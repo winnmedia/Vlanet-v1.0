@@ -1,0 +1,150 @@
+{
+  "timestamp": "2025-08-07T06:40:13.248Z",
+  "totalTests": 17,
+  "passedTests": 12,
+  "failedTests": 5,
+  "stabilityScore": 76,
+  "categories": {
+    "database": {
+      "name": "데이터베이스",
+      "score": 20,
+      "passed": 2,
+      "total": 2,
+      "tests": [
+        {
+          "name": "데이터베이스 헬스체크",
+          "status": "PASS",
+          "time": 1754548813939
+        },
+        {
+          "name": "마이그레이션 상태 확인",
+          "status": "PASS",
+          "time": 1754548814080
+        }
+      ]
+    },
+    "api": {
+      "name": "API 연결",
+      "score": 16,
+      "passed": 4,
+      "total": 5,
+      "tests": [
+        {
+          "name": "API 서버 연결",
+          "status": "PASS",
+          "time": 1754548814200
+        },
+        {
+          "name": "CORS 설정 확인",
+          "status": "FAIL",
+          "error": "Request failed with status code 405",
+          "time": 1754548814324
+        },
+        {
+          "name": "엔드포인트 /api/projects/",
+          "status": "PASS",
+          "time": 1754548814446
+        },
+        {
+          "name": "엔드포인트 /api/feedbacks/",
+          "status": "PASS",
+          "time": 1754548814568
+        },
+        {
+          "name": "엔드포인트 /api/users/me/",
+          "status": "PASS",
+          "time": 1754548814686
+        }
+      ]
+    },
+    "auth": {
+      "name": "인증 시스템",
+      "score": 0,
+      "passed": 0,
+      "total": 4,
+      "tests": [
+        {
+          "name": "회원가입",
+          "status": "FAIL",
+          "error": "Signup failed: 409",
+          "time": 1754548814811
+        },
+        {
+          "name": "로그인",
+          "status": "FAIL",
+          "error": "Request failed with status code 401",
+          "time": 1754548815101
+        },
+        {
+          "name": "토큰 검증",
+          "status": "FAIL",
+          "error": "Request failed with status code 401",
+          "time": 1754548815223
+        },
+        {
+          "name": "토큰 갱신",
+          "status": "FAIL",
+          "error": "Token refresh failed",
+          "time": 1754548815342
+        }
+      ]
+    },
+    "frontend": {
+      "name": "프론트엔드",
+      "score": 20,
+      "passed": 3,
+      "total": 3,
+      "tests": [
+        {
+          "name": "빌드 파일 존재",
+          "status": "PASS",
+          "time": 1754548815342
+        },
+        {
+          "name": "package.json 검증",
+          "status": "PASS",
+          "time": 1754548815343
+        },
+        {
+          "name": "환경변수 설정",
+          "status": "PASS",
+          "time": 1754548815344
+        }
+      ]
+    },
+    "integration": {
+      "name": "통합 테스트",
+      "score": 20,
+      "passed": 3,
+      "total": 3,
+      "tests": [
+        {
+          "name": "프로젝트 생성 플로우",
+          "status": "PASS",
+          "time": 1754548815344
+        },
+        {
+          "name": "피드백 플로우",
+          "status": "PASS",
+          "time": 1754548815344
+        },
+        {
+          "name": "에러 복구 메커니즘",
+          "status": "PASS",
+          "time": 1754548815344
+        }
+      ]
+    }
+  },
+  "criticalIssues": [
+    {
+      "category": "api",
+      "test": "CORS 설정 확인",
+      "error": "Request failed with status code 405"
+    }
+  ],
+  "warnings": [
+    "Project creation requires authenticated user",
+    "Feedback flow requires authenticated user"
+  ]
+}

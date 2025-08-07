@@ -26,6 +26,7 @@ from .views import health_check, root_view
 from .simple_health import simple_health_check
 from api_health import csrf_token_view
 from users import views as user_views
+from users.views_signup_safe import SafeSignUp, SafeSignIn
 from rest_framework_simplejwt.views import TokenRefreshView
 
 # 개선된 인증 뷰 임포트
@@ -97,11 +98,11 @@ try:
 except ImportError:
     HAS_IMPROVED_AUTH_V2 = False
 
-# 통합 인증 엔드포인트 (최우선)
+# 통합 인증 엔드포인트 (최우선) - 안전한 버전 사용
 auth_patterns = [
-    # API 표준 경로 (/api/auth/)
-    path('api/auth/login/', user_views.SignIn.as_view(), name='auth_login'),
-    path('api/auth/signup/', user_views.SignUp.as_view(), name='auth_signup'),
+    # API 표준 경로 (/api/auth/) - 안전한 버전
+    path('api/auth/login/', SafeSignIn.as_view(), name='auth_login'),
+    path('api/auth/signup/', SafeSignUp.as_view(), name='auth_signup'),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='auth_refresh'),
     path('api/auth/check-email/', user_views.CheckEmail.as_view(), name='auth_check_email'),
     path('api/auth/check-nickname/', user_views.CheckNickname.as_view(), name='auth_check_nickname'),

@@ -8,11 +8,13 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // 테스트 설정
+const timestamp = Date.now();
 const CONFIG = {
   API_URL: process.env.API_URL || 'https://videoplanet.up.railway.app',
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
-  TEST_EMAIL: 'test_' + Date.now() + '@test.com',
+  TEST_EMAIL: `test_${timestamp}@test.com`,
   TEST_PASSWORD: 'Test1234!@#$',
+  TEST_NICKNAME: `TestUser${timestamp}`,
   TIMEOUT: 10000,
 };
 
@@ -150,11 +152,10 @@ async function testAuthentication() {
   
   // 회원가입
   await runTest('auth', '회원가입', async () => {
-    const response = await axios.post(`${CONFIG.API_URL}/users/signup/`, {
-      username: CONFIG.TEST_EMAIL,
+    const response = await axios.post(`${CONFIG.API_URL}/api/auth/signup/`, {
       email: CONFIG.TEST_EMAIL,
       password: CONFIG.TEST_PASSWORD,
-      nickname: 'TestUser',
+      nickname: CONFIG.TEST_NICKNAME,
     }, {
       timeout: CONFIG.TIMEOUT,
       validateStatus: () => true,
@@ -172,35 +173,50 @@ async function testAuthentication() {
   
   // 로그인
   await runTest('auth', '로그인', async () => {
-    const response = await axios.post(`${CONFIG.API_URL}/users/login/`, {
-      username: CONFIG.TEST_EMAIL,
+    const response = await axios.post(`${CONFIG.API_URL}/api/auth/login/`, {
+      email: CONFIG.TEST_EMAIL,
       password: CONFIG.TEST_PASSWORD,
     }, {
       timeout: CONFIG.TIMEOUT,
+      validateStatus: () => true,
     });
     
-    if (!response.data.access || !response.data.refresh) {
-      throw new Error('No tokens received');
+    if (response.status !== 200) {
+      throw new Error(`Login failed: ${response.status}`);
     }
     
-    accessToken = response.data.access;
-    refreshToken = response.data.refresh;
+    // 토큰 추출 (다양한 형식 지원)
+    accessToken = response.data.access_token || response.data.access;
+    refreshToken = response.data.refresh_token || response.data.refresh;
+    
+    if (!accessToken || !refreshToken) {
+      throw new Error('No tokens received');
+    }
   });
   
   // 토큰 검증
   await runTest('auth', '토큰 검증', async () => {
-    const response = await axios.get(`${CONFIG.API_URL}/users/me/`, {
+    if (!accessToken) {
+      testResults.warnings.push('No access token available for validation');
+      return;
+    }
+    const response = await axios.get(`${CONFIG.API_URL}/api/users/me/`, {
       headers: { 'Authorization': `Bearer ${accessToken}` },
       timeout: CONFIG.TIMEOUT,
+      validateStatus: () => true,
     });
     
     if (response.status !== 200) {
-      throw new Error('Token validation failed');
+      throw new Error(`Token validation failed: ${response.status}`);
     }
   });
   
   // 토큰 갱신
   await runTest('auth', '토큰 갱신', async () => {
+    if (!refreshToken) {
+      testResults.warnings.push('No refresh token available');
+      return;
+    }
     const response = await axios.post(`${CONFIG.API_URL}/api/auth/refresh/`, {
       refresh: refreshToken,
     }, {
@@ -214,8 +230,8 @@ async function testAuthentication() {
       return;
     }
     
-    if (!response.data.access) {
-      throw new Error('Token refresh failed');
+    if (!response.data.access && !response.data.access_token) {
+      throw new Error(`Token refresh failed: ${response.status}`);
     }
   });
 }

@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { useRouter } from 'next/router'
+import '../src/utils/ssr-polyfills'
 
 // 동적 임포트로 성능 최적화
 const LoadingAnimation = lazy(() => import('../src/components/LoadingAnimation'))

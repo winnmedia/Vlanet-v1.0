@@ -32,6 +32,27 @@ export default class MyDocument extends Document {
     return (
       <Html lang="ko">
         <Head>
+          {/* Global polyfill for self - MUST be first */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if (typeof self === 'undefined') {
+                  try {
+                    self = window || {};
+                  } catch (e) {
+                    self = {};
+                  }
+                }
+                if (typeof global === 'undefined') {
+                  try {
+                    global = window || {};
+                  } catch (e) {
+                    global = {};
+                  }
+                }
+              `,
+            }}
+          />
           <meta charSet="utf-8" />
           <link rel="icon" href="/favicon.ico" />
           <meta name="theme-color" content="#1631F8" />

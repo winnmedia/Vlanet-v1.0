@@ -9,6 +9,9 @@ try {
   console.log('[Next.js] Bundle analyzer not found, skipping...');
 }
 
+// Polyfill plugin
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -21,9 +24,12 @@ const nextConfig = {
   // 실험적 기능 활성화
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['antd', '@ant-design/plots'],
+    optimizePackageImports: ['antd', '@ant-design/plots', 'react-player', 'video.js'],
     webpackBuildWorker: true,
   },
+  
+  // 서버 외부 패키지 설정
+  serverExternalPackages: ['sharp'],
 
   // CSS 처리 설정
   transpilePackages: ['antd', '@ant-design/plots', 'rc-util', 'rc-pagination', 'rc-picker', 'rc-tree', 'rc-table'],
@@ -144,6 +150,41 @@ const nextConfig = {
 
   // Webpack 설정
   webpack: (config, { dev, isServer, webpack }) => {
+    // 서버와 클라이언트 모두에서 self 정의
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        'typeof self': JSON.stringify(isServer ? 'undefined' : 'object'),
+      })
+    );
+    
+    // Polyfill 추가
+    if (!isServer) {
+      // 클라이언트 사이드에서만 polyfill 추가
+      config.plugins.push(new NodePolyfillPlugin());
+    } else {
+      // 서버 사이드에서 self를 global로 대체
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          self: 'global',
+        })
+      );
+    }
+    
+    // SSR 환경에서 브라우저 전용 패키지 처리
+    if (isServer) {
+      // 서버 사이드에서 브라우저 전역 객체 정의
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+      };
+      
+      // 문제가 되는 모듈들을 무시
+      config.externals = [...(config.externals || []), 'sharp'];
+    }
+    
     // 번들 최적화
     config.optimization = {
       ...config.optimization,

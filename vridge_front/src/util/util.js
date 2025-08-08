@@ -26,15 +26,9 @@ export function axiosCredentials(method, url, data, config) {
   // 토큰 체크는 axios 인터셉터에서 처리됨
   const token = checkSession();
   
-  // 토큰이 없으면 에러 발생
+  // 토큰이 없으면 에러만 반환 (리다이렉트는 axios 인터셉터에서 처리)
   if (!token) {
-    console.error('No authentication token found');
-    // 로그인 페이지로 리다이렉트 (약간의 지연 추가)
-    setTimeout(() => {
-      if (typeof window !== 'undefined') {
-        window.location.href = '/Login';
-      }
-    }, 100);
+    console.error('No authentication token found for:', url);
     return Promise.reject(new Error('No authentication token'));
   }
   

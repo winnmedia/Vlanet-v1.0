@@ -104,6 +104,27 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// 공개 페이지 목록 정의
+const PUBLIC_PAGES = [
+  '/',
+  '/login',
+  '/Login',
+  '/signup',
+  '/Signup',
+  '/resetpw',
+  '/ResetPw',
+  '/terms',
+  '/privacy',
+  '/emailcheck'
+];
+
+// 현재 페이지가 공개 페이지인지 확인
+const isPublicPage = () => {
+  if (!isClient) return true;
+  const pathname = window.location.pathname;
+  return PUBLIC_PAGES.some(page => pathname === page || pathname.startsWith(page + '/'));
+};
+
 // 응답 인터셉터
 axiosInstance.interceptors.response.use(
   (response) => {
@@ -126,8 +147,10 @@ axiosInstance.interceptors.response.use(
       data: error.response?.data
     });
     
+    // 401 에러 처리 - 공개 페이지에서는 리다이렉트하지 않음
     if (error.response?.status === 401 && isClient) {
-      if (!window.location.pathname.includes('/Login') && !window.location.pathname.includes('/login')) {
+      // 공개 페이지가 아니고, 로그인 페이지도 아닌 경우만 리다이렉트
+      if (!isPublicPage() && !window.location.pathname.includes('/Login') && !window.location.pathname.includes('/login')) {
         try {
           localStorage.removeItem('VGID');
           document.cookie = 'vridge_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';

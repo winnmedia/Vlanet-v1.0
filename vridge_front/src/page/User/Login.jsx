@@ -60,8 +60,11 @@ export default function Login() {
 
   const CommonLoginSuccess = async (jwt, userData = null) => {
     console.log('Login success, saving token:', jwt)
-    // 모바일 환경을 고려한 안전한 토큰 저장
+    // 쿠키 및 localStorage에 토큰 저장
     try {
+      // 쿠키에 저장 (httpOnly가 아닌 경우)
+      document.cookie = `vridge_session=${jwt}; path=/; max-age=86400; SameSite=Lax`;
+      // localStorage에도 저장 (하위 호환성)
       typeof window !== 'undefined' && window.localStorage.setItem('VGID', jwt)
     } catch (e) {
       // localStorage 접근 실패 시 safeStorage 사용
@@ -99,15 +102,24 @@ export default function Login() {
       console.log('[Login] Loading project list after successful login')
       await refetchProject(dispatch, navigate, { signal: controller.signal })
       
-      if (uid && token) {
-        // 초대 링크 처리 페이지
+      // 리다이렉트 처리
+      // 1. URL에 from 파라미터가 있으면 해당 페이지로
+      const urlParams = new URLSearchParams(window.location.search);
+      const fromPage = urlParams.get('from');
+      
+      if (fromPage) {
+        console.log('Navigating back to:', fromPage)
+        navigate(fromPage, { replace: true })
+      } else if (uid && token) {
+        // 2. 초대 링크 처리 페이지
         console.log('Navigating to EmailCheck with uid and token')
         navigate(`/EmailCheck?uid=${uid}&token=${token}`)
       } else if (router.query?.returnUrl) {
-        // 초대 수락을 위해 로그인한 경우
+        // 3. 초대 수락을 위해 로그인한 경우
         console.log('Navigating to return URL:', router.query.returnUrl)
         navigate(router.query.returnUrl)
       } else {
+        // 4. 기본적으로 CmsHome으로
         console.log('Navigating to CmsHome')
         navigate('/cmshome', { replace: true })
       }
@@ -115,7 +127,9 @@ export default function Login() {
       if (err.name !== 'AbortError') {
         console.error('Failed to load projects after login:', err)
         // Still navigate even if project loading fails
-        navigate('/cmshome', { replace: true })
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromPage = urlParams.get('from');
+        navigate(fromPage || '/cmshome', { replace: true })
       }
     }
   }

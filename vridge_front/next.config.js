@@ -9,9 +9,6 @@ try {
   console.log('[Next.js] Bundle analyzer not found, skipping...');
 }
 
-// Polyfill plugin
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -157,12 +154,8 @@ const nextConfig = {
       })
     );
     
-    // Polyfill 추가
-    if (!isServer) {
-      // 클라이언트 사이드에서만 polyfill 추가
-      config.plugins.push(new NodePolyfillPlugin());
-    } else {
-      // 서버 사이드에서 self를 global로 대체
+    // 서버 사이드에서 self를 global로 대체
+    if (isServer) {
       config.plugins.push(
         new webpack.ProvidePlugin({
           self: 'global',

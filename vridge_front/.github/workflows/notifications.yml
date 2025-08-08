@@ -1,0 +1,402 @@
+name: 📢 Smart Notification System
+
+on:
+  workflow_run:
+    workflows: [
+      "🚀 VideoPlanet CI/CD Pipeline",
+      "🛡️ Security Scan Pipeline",
+      "📊 Performance Monitoring & Optimization"
+    ]
+    types: [completed]
+  push:
+    branches: [recovery-20250731, main]
+    tags: ['v*']
+  pull_request:
+    types: [opened, closed, ready_for_review]
+  deployment_status:
+  schedule:
+    # 매주 월요일 오전 9시 주간 리포트 (KST 18시)
+    - cron: '0 9 * * 1'
+
+jobs:
+  # 🎯 상황별 스마트 알림
+  smart-notifications:
+    name: 🎯 Context-Aware Notifications
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 워크플로우 상태 분석
+      - name: 📊 Analyze Workflow Status
+        id: analyze
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const context = github.context;
+            const { workflow_run, pull_request, deployment } = context.payload;
+            
+            let notificationLevel = 'info';
+            let emoji = '🔵';
+            let shouldNotify = false;
+            let message = '';
+            let details = '';
+            
+            // 워크플로우 실행 완료
+            if (workflow_run) {
+              const { name, conclusion, html_url } = workflow_run;
+              shouldNotify = true;
+              
+              if (conclusion === 'success') {
+                emoji = '✅';
+                notificationLevel = 'success';
+                message = `${name} 성공`;
+                details = `모든 작업이 성공적으로 완료되었습니다.`;
+              } else if (conclusion === 'failure') {
+                emoji = '❌';
+                notificationLevel = 'error';
+                message = `${name} 실패`;
+                details = `워크플로우에서 오류가 발생했습니다. 확인이 필요합니다.`;
+              } else if (conclusion === 'cancelled') {
+                emoji = '⚠️';
+                notificationLevel = 'warning';
+                message = `${name} 취소됨`;
+                details = `워크플로우가 사용자에 의해 취소되었습니다.`;
+              }
+            }
+            
+            // PR 상태 변경
+            if (pull_request) {
+              shouldNotify = true;
+              const { action, number, title, user } = pull_request;
+              
+              if (action === 'opened') {
+                emoji = '🔀';
+                message = `새 PR 생성: #${number}`;
+                details = `${user.login}님이 "${title}" PR을 생성했습니다.`;
+              } else if (action === 'closed' && pull_request.merged) {
+                emoji = '🎉';
+                notificationLevel = 'success';
+                message = `PR 머지 완료: #${number}`;
+                details = `"${title}" PR이 main 브랜치에 머지되었습니다.`;
+              } else if (action === 'ready_for_review') {
+                emoji = '👀';
+                message = `PR 리뷰 요청: #${number}`;
+                details = `"${title}" PR이 리뷰를 기다리고 있습니다.`;
+              }
+            }
+            
+            // 배포 상태
+            if (deployment) {
+              shouldNotify = true;
+              const { state, environment } = deployment;
+              
+              if (state === 'success') {
+                emoji = '🚀';
+                notificationLevel = 'success';
+                message = `${environment} 배포 성공`;
+                details = `프로덕션 환경에 성공적으로 배포되었습니다.`;
+              } else if (state === 'failure') {
+                emoji = '🚨';
+                notificationLevel = 'error';
+                message = `${environment} 배포 실패`;
+                details = `배포 중 오류가 발생했습니다. 즉시 확인이 필요합니다.`;
+              }
+            }
+            
+            // 태그 릴리즈
+            if (context.ref && context.ref.startsWith('refs/tags/v')) {
+              const version = context.ref.replace('refs/tags/', '');
+              shouldNotify = true;
+              emoji = '🎁';
+              notificationLevel = 'success';
+              message = `새 버전 릴리즈: ${version}`;
+              details = `VideoPlanet ${version}이 릴리즈되었습니다.`;
+            }
+            
+            // 출력 변수 설정
+            core.setOutput('should_notify', shouldNotify);
+            core.setOutput('level', notificationLevel);
+            core.setOutput('emoji', emoji);
+            core.setOutput('message', message);
+            core.setOutput('details', details);
+            core.setOutput('url', workflow_run?.html_url || pull_request?.html_url || '');
+            
+            return {
+              shouldNotify,
+              notificationLevel,
+              emoji,
+              message,
+              details
+            };
+
+      # Slack 알림 전송
+      - name: 📲 Send Slack Notification
+        if: steps.analyze.outputs.should_notify == 'true'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ steps.analyze.outputs.level }}
+          custom_payload: |
+            {
+              "text": "${{ steps.analyze.outputs.emoji }} VideoPlanet 알림",
+              "attachments": [
+                {
+                  "color": "${{ steps.analyze.outputs.level == 'success' && 'good' || steps.analyze.outputs.level == 'error' && 'danger' || 'warning' }}",
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "${{ steps.analyze.outputs.message }}"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "${{ steps.analyze.outputs.details }}"
+                      }
+                    },
+                    {
+                      "type": "context",
+                      "elements": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "🌐 브랜치: `${{ github.ref_name }}`\n📝 커밋: `${{ github.sha }}`.substring(0, 7)\n⏰ 시간: ${{ github.event.head_commit.timestamp }}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # Discord 알림 (선택사항)
+      - name: 🎮 Send Discord Notification
+        if: steps.analyze.outputs.should_notify == 'true' && secrets.DISCORD_WEBHOOK_URL
+        uses: Ilshidur/action-discord@master
+        with:
+          args: |
+            ${{ steps.analyze.outputs.emoji }} **VideoPlanet 알림**
+            
+            **${{ steps.analyze.outputs.message }}**
+            ${{ steps.analyze.outputs.details }}
+            
+            🌐 브랜치: `${{ github.ref_name }}`
+            📝 커밋: `${{ github.sha }}`
+            ⏰ 시간: ${{ github.event.head_commit.timestamp }}
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  # 📊 주간 리포트 생성
+  weekly-report:
+    name: 📊 Weekly Development Report
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 9 * * 1'
+    steps:
+      - uses: actions/checkout@v4
+
+      # 지난 주 활동 분석
+      - name: 📈 Analyze Weekly Activity
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { Octokit } = require('@octokit/rest');
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+            
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // 지난 주 날짜 계산
+            const lastWeek = new Date();
+            lastWeek.setDate(lastWeek.getDate() - 7);
+            const lastWeekISO = lastWeek.toISOString();
+            
+            try {
+              // PR 활동 분석
+              const { data: prs } = await octokit.rest.pulls.list({
+                owner,
+                repo,
+                state: 'all',
+                since: lastWeekISO
+              });
+              
+              // 커밋 활동 분석
+              const { data: commits } = await octokit.rest.repos.listCommits({
+                owner,
+                repo,
+                since: lastWeekISO
+              });
+              
+              // 이슈 활동 분석
+              const { data: issues } = await octokit.rest.issues.listForRepo({
+                owner,
+                repo,
+                since: lastWeekISO,
+                state: 'all'
+              });
+              
+              // 워크플로우 실행 분석
+              const { data: workflowRuns } = await octokit.rest.actions.listWorkflowRunsForRepo({
+                owner,
+                repo,
+                created: `>=${lastWeekISO}`
+              });
+              
+              // 통계 계산
+              const stats = {
+                totalPRs: prs.length,
+                mergedPRs: prs.filter(pr => pr.merged_at).length,
+                totalCommits: commits.length,
+                totalIssues: issues.length,
+                closedIssues: issues.filter(issue => issue.closed_at).length,
+                totalWorkflowRuns: workflowRuns.total_count,
+                successfulRuns: workflowRuns.workflow_runs.filter(run => run.conclusion === 'success').length,
+                failedRuns: workflowRuns.workflow_runs.filter(run => run.conclusion === 'failure').length
+              };
+              
+              // 주간 리포트 생성
+              const report = `
+              ## 📊 VideoPlanet 주간 개발 리포트
+              
+              ### 🗓️ ${lastWeek.toLocaleDateString('ko-KR')} ~ ${new Date().toLocaleDateString('ko-KR')}
+              
+              ### 📈 개발 활동 요약
+              - 📝 **커밋**: ${stats.totalCommits}개
+              - 🔀 **Pull Request**: ${stats.totalPRs}개 (머지: ${stats.mergedPRs}개)
+              - 🎯 **이슈**: ${stats.totalIssues}개 (해결: ${stats.closedIssues}개)
+              
+              ### 🚀 CI/CD 현황
+              - ✅ **성공한 빌드**: ${stats.successfulRuns}개
+              - ❌ **실패한 빌드**: ${stats.failedRuns}개
+              - 📊 **성공률**: ${Math.round((stats.successfulRuns / (stats.successfulRuns + stats.failedRuns)) * 100)}%
+              
+              ### 🎯 주요 성과
+              ${stats.mergedPRs > 0 ? `- ${stats.mergedPRs}개의 기능 개선 및 버그 수정 완료` : ''}
+              ${stats.closedIssues > 0 ? `- ${stats.closedIssues}개의 이슈 해결` : ''}
+              ${stats.failedRuns === 0 ? `- 모든 CI/CD 파이프라인 성공적 실행` : ''}
+              
+              ---
+              *자동 생성된 주간 리포트입니다.*
+              `;
+              
+              console.log(report);
+              
+              // 환경 변수로 리포트 전달
+              require('fs').writeFileSync('weekly-report.md', report);
+              core.exportVariable('WEEKLY_REPORT', report);
+              
+            } catch (error) {
+              console.error('주간 리포트 생성 실패:', error);
+              core.setFailed('주간 리포트 생성에 실패했습니다.');
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 주간 리포트 Slack 전송
+      - name: 📊 Send Weekly Report to Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "text": "📊 VideoPlanet 주간 개발 리포트",
+              "attachments": [
+                {
+                  "color": "good",
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "```\n${{ env.WEEKLY_REPORT }}\n```"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # 주간 리포트 저장
+      - name: 📁 Archive Weekly Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-report-${{ github.run_number }}
+          path: weekly-report.md
+          retention-days: 90
+
+  # 🚨 긴급 알림 (실패 시)
+  emergency-alert:
+    name: 🚨 Emergency Alert System
+    runs-on: ubuntu-latest
+    if: failure() && github.ref == 'refs/heads/recovery-20250731'
+    steps:
+      - name: 🚨 Critical Failure Alert
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          custom_payload: |
+            {
+              "text": "🚨 URGENT: VideoPlanet 프로덕션 문제 발생!",
+              "attachments": [
+                {
+                  "color": "danger",
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "🚨 프로덕션 환경 문제 감지"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "fields": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "*브랜치:* `recovery-20250731`"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*커밋:* `${{ github.sha }}`"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*시간:* ${{ github.event.head_commit.timestamp }}"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*작업자:* ${{ github.actor }}"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "actions",
+                      "elements": [
+                        {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "워크플로우 확인"
+                          },
+                          "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                        },
+                        {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "사이트 확인"
+                          },
+                          "url": "https://vlanet.net"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,0 +1,159 @@
+name: 🐛 Bug Report
+description: 버그나 예상치 못한 동작을 신고합니다
+title: "[BUG]: "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 버그 리포트
+        
+        버그를 신고해 주셔서 감사합니다! 아래 정보를 최대한 자세히 작성해 주시면 문제 해결에 큰 도움이 됩니다.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 🔍 문제 설명
+      description: 발생한 문제를 명확하고 간결하게 설명해 주세요.
+      placeholder: 예) 로그인 버튼을 클릭했을 때 페이지가 새로고침되지만 로그인되지 않습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 🔄 재현 단계
+      description: 버그를 재현할 수 있는 단계를 순서대로 작성해 주세요.
+      placeholder: |
+        1. '...' 페이지로 이동
+        2. '....' 클릭
+        3. '....' 입력
+        4. 오류 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: ✅ 예상된 동작
+      description: 어떤 결과를 기대했는지 설명해 주세요.
+      placeholder: 예) 로그인이 성공하고 메인 페이지로 이동해야 합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: ❌ 실제 동작
+      description: 실제로 무엇이 일어났는지 설명해 주세요.
+      placeholder: 예) 페이지가 새로고침되고 여전히 로그인 페이지에 남아있습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📷 스크린샷 / 동영상
+      description: 가능하다면 스크린샷이나 동영상을 첨부해 주세요.
+      placeholder: 이미지를 드래그 앤 드롭하거나 클릭해서 업로드하세요.
+
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: 🌐 브라우저
+      description: 어떤 브라우저에서 문제가 발생했나요?
+      multiple: true
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Opera
+        - 기타 (댓글에 명시)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: devices
+    attributes:
+      label: 📱 기기
+      description: 어떤 기기에서 문제가 발생했나요?
+      multiple: true
+      options:
+        - 데스크탑 (Windows)
+        - 데스크탑 (macOS)
+        - 데스크탑 (Linux)
+        - 모바일 (iOS)
+        - 모바일 (Android)
+        - 태블릿 (iPad)
+        - 태블릿 (Android)
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: 💻 운영체제 버전
+      description: 운영체제와 버전을 입력해 주세요.
+      placeholder: 예) Windows 11, macOS 14.1, iOS 17.1, Android 13
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: 🔧 콘솔 오류
+      description: 브라우저 개발자 도구 콘솔에 표시된 오류 메시지가 있다면 복사해 주세요.
+      placeholder: |
+        예) 
+        Uncaught TypeError: Cannot read property 'name' of undefined
+            at LoginComponent.tsx:45
+      render: shell
+
+  - type: textarea
+    id: network-errors
+    attributes:
+      label: 🌐 네트워크 오류
+      description: 네트워크 탭에서 실패한 요청이 있다면 상태 코드와 오류를 적어주세요.
+      placeholder: |
+        예)
+        POST /api/auth/login - 500 Internal Server Error
+        Response: {"error": "Database connection failed"}
+      render: shell
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: ⚡ 우선순위
+      description: 이 버그의 우선순위는 어느 정도인가요?
+      options:
+        - 🚨 Critical (서비스 사용 불가)
+        - 🔴 High (주요 기능 영향)
+        - 🟡 Medium (일부 기능 영향)
+        - 🟢 Low (UI 문제, 개선사항)
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 📝 추가 정보
+      description: 다른 관련 정보나 컨텍스트가 있다면 추가해 주세요.
+      placeholder: |
+        - 이 문제가 언제부터 시작되었는지
+        - 특정 조건에서만 발생하는지
+        - 임시 해결방법이 있는지
+        - 관련된 다른 이슈가 있는지
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: ✅ 확인사항
+      description: 버그 리포트 전 확인해 주세요
+      options:
+        - label: 기존 이슈에서 동일한 문제가 보고되지 않았는지 확인했습니다
+          required: true
+        - label: 최신 버전에서 여전히 문제가 발생하는지 확인했습니다
+          required: true
+        - label: 브라우저 캐시를 클리어하고 다시 시도해봤습니다
+          required: true

@@ -1,0 +1,180 @@
+name: 🚀 Feature Request
+description: 새로운 기능이나 개선사항을 제안합니다
+title: "[FEATURE]: "
+labels: ["enhancement", "feature-request"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🚀 기능 요청
+        
+        새로운 기능이나 개선사항을 제안해 주셔서 감사합니다! 아래 정보를 작성해 주시면 검토에 도움이 됩니다.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🤔 해결하려는 문제
+      description: 현재 어떤 문제나 불편함이 있나요?
+      placeholder: |
+        예) 현재 프로젝트 목록에서 검색 기능이 없어서 
+        프로젝트가 많을 때 찾기가 어렵습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 제안하는 해결책
+      description: 어떤 기능이나 개선사항을 원하시나요?
+      placeholder: |
+        예) 프로젝트 목록 상단에 검색창을 추가하여
+        프로젝트 이름, 설명, 태그로 필터링할 수 있게 하면 좋겠습니다.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: 🎯 기능 유형
+      description: 어떤 종류의 기능인가요?
+      options:
+        - 새로운 기능 (New Feature)
+        - UI/UX 개선 (UI/UX Improvement)
+        - 성능 최적화 (Performance)
+        - 접근성 개선 (Accessibility)
+        - 개발자 경험 개선 (Developer Experience)
+        - 기타 (Other)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: 📍 영향 받는 영역
+      description: 어떤 부분에 관련된 기능인가요?
+      multiple: true
+      options:
+        - 홈페이지
+        - 로그인/회원가입
+        - 프로젝트 관리
+        - 비디오 플래닝
+        - 피드백 시스템
+        - 마이페이지
+        - 관리자 페이지
+        - API
+        - 모바일 반응형
+        - 전체 시스템
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: 📖 사용자 스토리
+      description: 사용자 관점에서 이 기능이 어떻게 사용될지 설명해 주세요.
+      placeholder: |
+        예) 
+        - 사용자로서, 프로젝트 목록에서 특정 프로젝트를 빠르게 찾고 싶습니다
+        - 프로젝트 이름을 입력하면 실시간으로 필터링되어 결과를 볼 수 있습니다
+        - 태그나 카테고리로도 필터링할 수 있습니다
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: 🎨 목업/스케치
+      description: 가능하다면 UI 목업이나 스케치를 첨부해 주세요.
+      placeholder: 이미지를 드래그 앤 드롭하거나 클릭해서 업로드하세요.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔀 고려한 대안들
+      description: 다른 해결 방법들도 고려해 보셨나요?
+      placeholder: |
+        예) 
+        1. 카테고리별 탭으로 나누기
+        2. 정렬 옵션만 제공하기
+        3. 태그 시스템 도입하기
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: ⚡ 우선순위
+      description: 이 기능의 우선순위는 어느 정도인가요?
+      options:
+        - 🔴 High (핵심 기능, 빠른 구현 필요)
+        - 🟡 Medium (유용한 기능, 적당한 시기에)
+        - 🟢 Low (편의 기능, 여유가 있을 때)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: 🧩 예상 복잡도
+      description: 개발 복잡도는 어느 정도로 예상되나요?
+      options:
+        - 🟢 Simple (1-2일)
+        - 🟡 Medium (3-7일)
+        - 🔴 Complex (1주 이상)
+        - ❓ Unknown (잘 모르겠음)
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: ✅ 완료 기준
+      description: 이 기능이 완료되었다고 판단할 수 있는 기준들을 나열해 주세요.
+      placeholder: |
+        - [ ] 검색창이 프로젝트 목록 상단에 표시됨
+        - [ ] 프로젝트 이름으로 실시간 검색 가능
+        - [ ] 태그로 필터링 가능
+        - [ ] 검색 결과가 없을 때 안내 메시지 표시
+        - [ ] 모바일에서도 정상 동작
+
+  - type: textarea
+    id: business-value
+    attributes:
+      label: 💼 비즈니스 가치
+      description: 이 기능이 사용자나 비즈니스에 어떤 가치를 제공하나요?
+      placeholder: |
+        예) 
+        - 사용자가 프로젝트를 더 빨리 찾을 수 있어 생산성 향상
+        - 프로젝트 관리 효율성 증대
+        - 사용자 경험 개선으로 만족도 증가
+
+  - type: textarea
+    id: related-issues
+    attributes:
+      label: 🔗 관련 이슈들
+      description: 관련된 다른 이슈나 PR이 있다면 링크해 주세요.
+      placeholder: |
+        예) 
+        - Closes #123
+        - Related to #456
+        - Blocked by #789
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📝 추가 정보
+      description: 다른 관련 정보나 컨텍스트가 있다면 추가해 주세요.
+      placeholder: |
+        - 경쟁사 분석 결과
+        - 사용자 피드백
+        - 기술적 제약사항
+        - 참고할 만한 자료나 링크
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: ✅ 확인사항
+      description: 기능 요청 전 확인해 주세요
+      options:
+        - label: 기존 이슈에서 동일한 기능이 요청되지 않았는지 확인했습니다
+          required: true
+        - label: 현재 버전에서 이미 구현되어 있지 않은지 확인했습니다
+          required: true
+        - label: 이 기능이 VideoPlanet의 목표와 부합하는지 고려했습니다
+          required: true

@@ -4,7 +4,7 @@ import { axiosOpts, axiosCredentials } from 'util/util'
 export function SignUp(data) {
   return axiosOpts(
     'post',
-    `/users/signup/`,
+    `/auth/signup/`,
     data,
   )
 }
@@ -31,7 +31,7 @@ export function CheckEmail(email) {
 export function SignIn(data) {
   return axiosOpts(
     'post',
-    `/users/login/`,
+    `/auth/login/`,
     data,
   )
 }

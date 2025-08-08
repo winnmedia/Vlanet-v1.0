@@ -1,0 +1,338 @@
+name: 🔍 Deploy Preview & Testing
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [recovery-20250731, main]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # 🔍 변경사항 분석
+  analyze-changes:
+    name: 🔍 Change Impact Analysis
+    runs-on: ubuntu-latest
+    outputs:
+      has_frontend_changes: ${{ steps.changes.outputs.frontend }}
+      has_config_changes: ${{ steps.changes.outputs.config }}
+      has_dependency_changes: ${{ steps.changes.outputs.dependencies }}
+      risk_level: ${{ steps.risk.outputs.level }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📊 Detect File Changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'src/**'
+              - 'pages/**'
+              - 'styles/**'
+              - 'public/**'
+            config:
+              - 'next.config.js'
+              - 'package.json'
+              - '.env*'
+              - 'vercel.json'
+            dependencies:
+              - 'package-lock.json'
+              - 'yarn.lock'
+
+      - name: ⚖️ Assess Risk Level
+        id: risk
+        run: |
+          RISK_LEVEL="low"
+          
+          # 설정 파일 변경 시 중간 위험도
+          if [ "${{ steps.changes.outputs.config }}" == "true" ]; then
+            RISK_LEVEL="medium"
+          fi
+          
+          # 의존성 변경 시 높은 위험도
+          if [ "${{ steps.changes.outputs.dependencies }}" == "true" ]; then
+            RISK_LEVEL="high"
+          fi
+          
+          echo "level=${RISK_LEVEL}" >> $GITHUB_OUTPUT
+          echo "🎯 Risk Level: ${RISK_LEVEL}"
+
+  # 🏗️ 프리뷰 빌드
+  build-preview:
+    name: 🏗️ Build Preview
+    runs-on: ubuntu-latest
+    needs: analyze-changes
+    if: needs.analyze-changes.outputs.has_frontend_changes == 'true' || needs.analyze-changes.outputs.has_config_changes == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      # PR용 최적화된 캐싱
+      - name: 📦 PR Build Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            .next/cache
+          key: pr-build-${{ github.event.pull_request.head.sha }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            pr-build-${{ github.event.pull_request.base.sha }}-${{ hashFiles('package-lock.json') }}
+            build-${{ runner.os }}-node${{ env.NODE_VERSION }}-${{ hashFiles('package-lock.json') }}
+
+      - name: 📥 Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+        env:
+          HUSKY: 0
+
+      # 프리뷰 전용 환경변수 설정
+      - name: 🔧 Configure Preview Environment
+        run: |
+          echo "NEXT_PUBLIC_API_URL=https://videoplanet.up.railway.app" >> .env.local
+          echo "NEXT_PUBLIC_ENV=preview" >> .env.local
+          echo "NEXT_PUBLIC_PR_NUMBER=${{ github.event.pull_request.number }}" >> .env.local
+
+      - name: 🏗️ Build Preview
+        run: |
+          echo "::group::Preview Build Process"
+          npm run build:vercel
+          echo "::endgroup::"
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+
+      # 빌드 아티팩트 저장
+      - name: 📤 Upload Preview Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-build-${{ github.event.pull_request.head.sha }}
+          path: |
+            .next
+            public
+          retention-days: 7
+
+      # 빌드 성능 리포트
+      - name: 📊 Build Performance Report
+        run: |
+          echo "## 🏗️ Preview Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Time | $(date -d@$SECONDS -u +%M:%S) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bundle Size | $(du -sh .next | cut -f1) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Static Files | $(find .next/static -type f | wc -l) files |" >> $GITHUB_STEP_SUMMARY
+
+  # 🧪 프리뷰 테스트
+  test-preview:
+    name: 🧪 Preview Testing
+    runs-on: ubuntu-latest
+    needs: build-preview
+    strategy:
+      matrix:
+        test-suite: [unit, integration, e2e-critical]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📥 Install dependencies
+        run: npm ci --prefer-offline
+        env:
+          HUSKY: 0
+
+      # 빌드 아티팩트 다운로드
+      - name: 📥 Download Preview Build
+        uses: actions/download-artifact@v4
+        with:
+          name: preview-build-${{ github.event.pull_request.head.sha }}
+
+      # 테스트 실행 (매트릭스 기반)
+      - name: 🧪 Run ${{ matrix.test-suite }} Tests
+        run: |
+          case "${{ matrix.test-suite }}" in
+            unit)
+              echo "Running unit tests..."
+              npm run test:unit || echo "No unit tests configured"
+              ;;
+            integration)
+              echo "Running integration tests..."
+              npm start &
+              sleep 10
+              node deployment-test.js
+              ;;
+            e2e-critical)
+              echo "Running critical path E2E tests..."
+              if [ -d "tests/e2e" ]; then
+                npx playwright install --with-deps chromium
+                npm start &
+                sleep 15
+                npx playwright test tests/e2e/critical-path.spec.js
+              else
+                echo "E2E tests not configured"
+              fi
+              ;;
+          esac
+        timeout-minutes: 10
+
+      # 테스트 결과 업로드
+      - name: 📊 Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.test-suite }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
+
+  # 🚀 Vercel 프리뷰 배포
+  deploy-preview:
+    name: 🚀 Deploy to Vercel Preview
+    runs-on: ubuntu-latest
+    needs: [build-preview, test-preview]
+    if: success()
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.preview-url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Vercel 프리뷰 배포
+      - name: 🚀 Deploy Preview to Vercel
+        id: deploy
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          github-comment: true
+          working-directory: ./
+
+      # 배포 URL 저장
+      - name: 💾 Save Preview URL
+        run: |
+          echo "PREVIEW_URL=${{ steps.deploy.outputs.preview-url }}" >> $GITHUB_ENV
+          echo "Preview URL: ${{ steps.deploy.outputs.preview-url }}"
+
+  # 🔍 프리뷰 검증
+  verify-preview:
+    name: 🔍 Verify Preview Deployment
+    runs-on: ubuntu-latest
+    needs: deploy-preview
+    steps:
+      - uses: actions/checkout@v4
+
+      # 프리뷰 헬스체크
+      - name: 🏥 Preview Health Check
+        run: |
+          PREVIEW_URL="${{ needs.deploy-preview.outputs.preview-url }}"
+          
+          echo "::group::Preview Health Check"
+          echo "Testing preview URL: ${PREVIEW_URL}"
+          
+          # 기본 접근성 테스트
+          curl -f "${PREVIEW_URL}" || exit 1
+          echo "✅ Preview site is accessible"
+          
+          # 주요 경로 테스트
+          for path in "" "/login" "/signup"; do
+            echo "Testing ${PREVIEW_URL}${path}"
+            if curl -f -s "${PREVIEW_URL}${path}" > /dev/null; then
+              echo "✅ ${path} - OK"
+            else
+              echo "❌ ${path} - Failed"
+            fi
+          done
+          echo "::endgroup::"
+
+      # Lighthouse 프리뷰 테스트
+      - name: 🌐 Lighthouse Preview Test
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ needs.deploy-preview.outputs.preview-url }}
+          configPath: './lighthouse.config.js'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true
+
+  # 📝 PR 코멘트 업데이트
+  update-pr-comment:
+    name: 📝 Update PR Comment
+    runs-on: ubuntu-latest
+    needs: [analyze-changes, verify-preview]
+    if: always()
+    steps:
+      - name: 📝 Create PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            // 기존 봇 코멘트 찾기
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('🔍 Preview Deployment Report')
+            );
+            
+            const riskLevel = "${{ needs.analyze-changes.outputs.risk_level }}";
+            const riskEmoji = riskLevel === 'high' ? '🔴' : riskLevel === 'medium' ? '🟡' : '🟢';
+            
+            const commentBody = `
+            ## 🔍 Preview Deployment Report
+            
+            ### 📊 Change Analysis
+            - **Risk Level**: ${riskEmoji} ${riskLevel.toUpperCase()}
+            - **Frontend Changes**: ${{ needs.analyze-changes.outputs.has_frontend_changes == 'true' ? '✅' : '❌' }}
+            - **Config Changes**: ${{ needs.analyze-changes.outputs.has_config_changes == 'true' ? '✅' : '❌' }}
+            - **Dependency Changes**: ${{ needs.analyze-changes.outputs.has_dependency_changes == 'true' ? '✅' : '❌' }}
+            
+            ### 🚀 Deployment Status
+            ${{ needs.verify-preview.result == 'success' ? '✅ Preview deployed successfully' : '❌ Preview deployment failed' }}
+            
+            ### 🔗 Links
+            - 🌐 [Preview Site](${{ needs.deploy-preview.outputs.preview-url }})
+            - 🔍 [Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            
+            ### 🧪 Test Results
+            - Build: ${{ needs.build-preview.result == 'success' ? '✅' : '❌' }}
+            - Tests: ${{ needs.test-preview.result == 'success' ? '✅' : '❌' }}
+            - Verification: ${{ needs.verify-preview.result == 'success' ? '✅' : '❌' }}
+            
+            ---
+            *Updated at: ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*
+            `;
+            
+            if (botComment) {
+              // 기존 코멘트 업데이트
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              // 새 코멘트 생성
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }

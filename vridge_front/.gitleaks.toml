@@ -1,0 +1,76 @@
+# GitLeaks 설정 파일 - VideoPlanet 보안 검사
+
+title = "VideoPlanet GitLeaks Configuration"
+
+[extend]
+# 기본 룰셋 확장
+useDefault = true
+
+[[rules]]
+id = "api-key"
+description = "API Key 검출"
+regex = '''(?i)(api[_-]?key|apikey)['"]*\s*[:=]\s*['"][a-zA-Z0-9]{20,}['"]'''
+tags = ["api", "key", "secret"]
+
+[[rules]]
+id = "jwt-token" 
+description = "JWT 토큰 검출"
+regex = '''eyJ[A-Za-z0-9_/+-]*\.eyJ[A-Za-z0-9_/+-]*\.[A-Za-z0-9._/+-]*'''
+tags = ["jwt", "token"]
+
+[[rules]]
+id = "password-field"
+description = "하드코딩된 패스워드"
+regex = '''(?i)(password|passwd|pwd)['"]*\s*[:=]\s*['"][^'"\n]{8,}['"]'''
+tags = ["password", "credential"]
+
+[[rules]]
+id = "database-url"
+description = "데이터베이스 URL"
+regex = '''(postgresql|mysql|mongodb)://[^\s'"]+'''
+tags = ["database", "url", "connection"]
+
+[[rules]]
+id = "private-key"
+description = "개인 키"
+regex = '''-----BEGIN (RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY-----'''
+tags = ["private", "key", "pem"]
+
+[[rules]]
+id = "oauth-secret"
+description = "OAuth Secret"
+regex = '''(?i)(client[_-]?secret|oauth[_-]?secret)['"]*\s*[:=]\s*['"][a-zA-Z0-9]{20,}['"]'''
+tags = ["oauth", "secret", "client"]
+
+[[rules]]
+id = "vercel-token"
+description = "Vercel Token"
+regex = '''(?i)(vercel[_-]?token)['"]*\s*[:=]\s*['"][a-zA-Z0-9]{20,}['"]'''
+tags = ["vercel", "token", "deployment"]
+
+[[rules]]
+id = "railway-token"
+description = "Railway Token"
+regex = '''(?i)(railway[_-]?token)['"]*\s*[:=]\s*['"][a-zA-Z0-9]{20,}['"]'''
+tags = ["railway", "token", "deployment"]
+
+# 화이트리스트 - 오탐 방지
+[[allowlist]]
+description = "테스트 파일 허용"
+regexTarget = "filename"
+regex = '''(test|spec|mock|example)\.'''
+
+[[allowlist]]
+description = "환경 변수 예시 파일"
+regexTarget = "filename"
+regex = '''\.env\.(example|template|sample)$'''
+
+[[allowlist]]
+description = "공개 키 허용"
+regexTarget = "match"
+regex = '''-----BEGIN (PUBLIC KEY|CERTIFICATE)-----'''
+
+[[allowlist]]
+description = "예시 토큰 허용"
+regexTarget = "match"
+regex = '''(example|sample|test|demo|placeholder|YOUR_|<YOUR_)'''

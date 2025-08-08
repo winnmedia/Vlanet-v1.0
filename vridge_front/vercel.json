@@ -1,14 +1,11 @@
 {
-  "buildCommand": "npm install && npm run build:vercel",
+  "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
   "functions": {
     "pages/api/*": {
       "maxDuration": 10
     }
-  },
-  "env": {
-    "DISABLE_POSTCSS_PURGE": "@disable_postcss_purge"
   },
   "build": {
     "env": {

@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@ant-design/plots": "^2.6.1",
+    "@fullhuman/postcss-purgecss": "^5.0.0",
     "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^2.8.2",
     "@videojs/themes": "^1.0.1",
@@ -32,6 +33,7 @@
     "autoprefixer": "^10.4.21",
     "axios": "^1.11.0",
     "classnames": "^2.5.1",
+    "cssnano": "^6.1.2",
     "date-fns": "^4.1.0",
     "form-data": "^4.0.4",
     "immer": "^10.1.1",
@@ -61,7 +63,6 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
-    "@fullhuman/postcss-purgecss": "^5.0.0",
     "@next/bundle-analyzer": "^15.4.2",
     "@playwright/test": "^1.54.1",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
@@ -71,7 +72,6 @@
     "chalk": "^4.1.2",
     "chokidar": "^4.0.3",
     "colors": "^1.4.0",
-    "cssnano": "^6.1.2",
     "eslint": "^9.32.0",
     "eslint-config-next": "^15.4.6",
     "eslint-config-prettier": "^10.1.8",

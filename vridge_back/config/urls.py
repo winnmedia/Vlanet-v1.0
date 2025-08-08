@@ -22,6 +22,10 @@ from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views.generic import TemplateView
+import logging
+
+logger = logging.getLogger(__name__)
+
 from .views import health_check, root_view
 from .simple_health import simple_health_check
 from api_health import csrf_token_view
@@ -30,12 +34,17 @@ from users.views_signup_safe import SafeSignUp, SafeSignIn
 from users.views_test import TestSignUp, TestCreate
 from rest_framework_simplejwt.views import TokenRefreshView
 
-# 개선된 인증 뷰 임포트
-try:
-    from users.views_auth_fixed import ImprovedSignIn, TokenRefreshView, TokenVerifyView
-    HAS_IMPROVED_AUTH = True
-except ImportError:
-    HAS_IMPROVED_AUTH = False
+# Fallback 시스템을 통한 안정적인 인증 뷰 로드
+from .auth_fallback import get_auth_views
+
+auth_views = get_auth_views()
+login_view = auth_views['login']
+signup_view = auth_views['signup'] 
+refresh_view = auth_views['refresh']
+verify_view = auth_views['verify']
+
+# 레거시 코드 호환성 유지
+HAS_IMPROVED_AUTH = (login_view.__name__ == 'ImprovedSignIn')
 # from .debug_views import debug_info, test_error  # 삭제된 파일
 
 # token_blacklist import를 보호
@@ -71,6 +80,13 @@ def cors_test_view(request):
         }
     })
 
+# 디버그 뷰 임포트
+try:
+    from .urls_debug import URLDebugView, AuthTestView, auth_endpoint_status
+    HAS_DEBUG_VIEWS = True
+except ImportError:
+    HAS_DEBUG_VIEWS = False
+
 # 공개 프로젝트 목록 뷰 (임시)
 from django.views import View
 class PublicProjectListView(View):
@@ -99,12 +115,12 @@ try:
 except ImportError:
     HAS_IMPROVED_AUTH_V2 = False
 
-# 통합 인증 엔드포인트 (최우선) - 안전한 버전 사용
+# 통합 인증 엔드포인트 - Fallback 시스템 사용
 auth_patterns = [
-    # API 표준 경로 (/api/auth/) - 안전한 버전
-    path('api/auth/login/', SafeSignIn.as_view(), name='auth_login'),
-    path('api/auth/signup/', SafeSignUp.as_view(), name='auth_signup'),
-    path('api/auth/refresh/', TokenRefreshView.as_view(), name='auth_refresh'),
+    # API 표준 경로 (/api/auth/) - 환경별 적절한 뷰 사용
+    path('api/auth/login/', login_view.as_view(), name='auth_login'),
+    path('api/auth/signup/', signup_view.as_view(), name='auth_signup'),
+    path('api/auth/refresh/', refresh_view.as_view(), name='auth_refresh'),
     path('api/auth/check-email/', user_views.CheckEmail.as_view(), name='auth_check_email'),
     path('api/auth/check-nickname/', user_views.CheckNickname.as_view(), name='auth_check_nickname'),
     path('api/auth/me/', user_views.UserMe.as_view(), name='auth_me'),
@@ -113,16 +129,17 @@ auth_patterns = [
     path('api/auth/test-create/', TestCreate.as_view(), name='test_create'),
 ]
 
-# 개선된 인증 뷰 V2가 있으면 사용
-if HAS_IMPROVED_AUTH_V2:
-    auth_patterns[0] = path('api/auth/login/', ImprovedSignIn.as_view(), name='auth_login')
-    auth_patterns[1] = path('api/auth/signup/', ImprovedSignUp.as_view(), name='auth_signup')
-    auth_patterns.append(path('api/auth/test-users/', TestUserCreate.as_view(), name='test_users'))
+# verify 엔드포인트는 사용 가능한 경우에만 추가
+if verify_view:
+    auth_patterns.append(path('api/auth/verify/', verify_view.as_view(), name='auth_verify'))
 
-# 개선된 인증 뷰가 있으면 덮어쓰기
-if HAS_IMPROVED_AUTH:
-    auth_patterns[0] = path('api/auth/login/', ImprovedSignIn.as_view(), name='auth_login')
-    auth_patterns.append(path('api/auth/verify/', TokenVerifyView.as_view(), name='auth_verify'))
+# 개선된 인증 뷰 V2가 있으면 추가 테스트 엔드포인트 제공
+if HAS_IMPROVED_AUTH_V2:
+    try:
+        from users.views_auth_improved import TestUserCreate
+        auth_patterns.append(path('api/auth/test-users/', TestUserCreate.as_view(), name='test_users'))
+    except ImportError:
+        pass
 
 # 메인 URL 패턴
 urlpatterns = auth_patterns + [
@@ -139,6 +156,11 @@ urlpatterns = auth_patterns + [
     path("health/", simple_health_check, name="health"),  # 레거시 헬스체크
     path("cors-test/", cors_test_view, name="cors_test"),  # CORS 테스트
     path("public/projects/", PublicProjectListView.as_view(), name="public_projects"),  # 공개 프로젝트 목록
+    
+    # 디버그 엔드포인트 (Railway 환경 디버깅용)
+    path("api/debug/urls/", URLDebugView.as_view() if HAS_DEBUG_VIEWS else simple_health, name="debug_urls"),
+    path("api/debug/auth-status/", auth_endpoint_status if HAS_DEBUG_VIEWS else simple_health, name="debug_auth_status"),
+    path("api/debug/auth-test/", AuthTestView.as_view() if HAS_DEBUG_VIEWS else simple_health, name="debug_auth_test"),
     path("admin/", admin.site.urls),
     path("admin-dashboard/", include("admin_dashboard.urls")),  # 관리자 대시보드
     

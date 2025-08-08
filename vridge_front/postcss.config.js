@@ -1,9 +1,11 @@
 module.exports = {
-  plugins: {
-    autoprefixer: {},
-    ...(process.env.NODE_ENV === 'production'
-      ? {
-          '@fullhuman/postcss-purgecss': {
+  plugins: [
+    // PostCSS 플러그인을 배열 형식으로 명시적으로 정의
+    'autoprefixer',
+    // Production 환경에서만 PurgeCSS와 cssnano 적용
+    ...(process.env.NODE_ENV === 'production' && process.env.DISABLE_POSTCSS_PURGE !== 'true'
+      ? [
+          ['@fullhuman/postcss-purgecss', {
             content: [
               './pages/**/*.{js,jsx,ts,tsx}',
               './src/**/*.{js,jsx,ts,tsx}',
@@ -35,17 +37,17 @@ module.exports = {
               // 불필요한 클래스들
               'unused-class',
             ]
-          },
-          cssnano: {
+          }],
+          ['cssnano', {
             preset: ['default', {
               discardComments: {
                 removeAll: true,
               },
               normalizeUnicode: false,
             }]
-          }
-        }
-      : {}
+          }]
+        ]
+      : []
     ),
-  },
+  ],
 }

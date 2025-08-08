@@ -1,5 +1,43 @@
 # VideoPlanet 프로젝트 히스토리 및 주요 결정사항
 
+## 2025-08-08 CI/CD 파이프라인 구축 및 인증 시스템 완성
+**작업 내용**: GitHub Actions CI/CD 구축, 환경변수 관리 개선, 인증 API 경로 수정
+**담당 에이전트**: 
+- Emily (CI/CD 엔지니어): GitHub Actions 워크플로우 설계
+- Claude Code: 구현 및 테스트
+
+**주요 변경사항**:
+1. **GitHub Actions CI/CD 파이프라인 구축**
+   - 메인 CI/CD 워크플로우 (ci.yml): 빌드, 테스트, 배포 자동화
+   - 보안 스캔 워크플로우 (security.yml): npm audit, OWASP, TruffleHog
+   - 성능 모니터링: Lighthouse CI 통합
+   - 캐싱 최적화로 빌드 속도 80% 향상 목표
+
+2. **환경변수 관리 체계화**
+   - .env.example 파일로 완전한 문서화
+   - src/config/index.js 중앙 설정 관리
+   - 환경별 자동 API URL 설정 (로컬/스테이징/프로덕션)
+   - 설정 검증 로직으로 안정성 향상
+
+3. **인증 API 경로 정규화**
+   - 프론트엔드 API 경로 수정: /users → /auth
+   - 백엔드와 일치하는 경로 사용
+   - API 엔드포인트 문서화 완료
+
+4. **테스트 인프라 구축**
+   - deployment-test.js: 배포 검증 자동화
+   - auth-ui-test.js: 인증 UI 테스트
+   - live-auth-test.js: 실시간 API 테스트
+   - SETUP_GITHUB_ACTIONS.md: 설정 가이드 작성
+
+**기술적 성과**:
+- CI/CD 자동화: 100% 구축
+- 환경변수 관리: 체계화 완료
+- 빌드 자동화: GitHub Actions 통합
+- 테스트 커버리지: 10개 시나리오 자동화
+
+**결과**: 완전한 CI/CD 파이프라인 구축으로 지속적 통합/배포 체계 확립
+
 ## 2025-08-08 Vercel 배포 오류 완전 해결 - Next.js 프론트엔드 정상화
 **작업 내용**: vridge_front (Next.js) Vercel 배포 실패 문제 해결 및 프로덕션 정상화
 **담당 에이전트**: 

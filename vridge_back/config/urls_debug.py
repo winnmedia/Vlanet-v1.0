@@ -1,76 +1,51 @@
 """
-URL 디버깅 및 문제 해결을 위한 View
-Railway 환경에서 URL 매핑 문제를 진단
+디버그 URL 및 뷰
+인증 시스템 상태를 확인하기 위한 엔드포인트
 """
-from django.http import JsonResponse
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from django.http import JsonResponse
 from django.urls import get_resolver
 import json
 
-
-@method_decorator(csrf_exempt, name='dispatch')
 class URLDebugView(View):
-    """URL 매핑 상태를 확인하는 디버그 뷰"""
-    
+    """등록된 URL 패턴 확인"""
     def get(self, request):
-        """현재 등록된 모든 URL 패턴 반환"""
         resolver = get_resolver()
-        auth_urls = []
+        patterns = []
         
+        # URL 패턴 수집
         for pattern in resolver.url_patterns:
-            pattern_str = str(pattern.pattern)
-            if 'auth' in pattern_str:
-                url_info = {
-                    'pattern': pattern_str,
-                    'name': getattr(pattern, 'name', None)
-                }
-                
-                if hasattr(pattern, 'callback'):
-                    callback = pattern.callback
-                    if hasattr(callback, 'view_class'):
-                        url_info['view_class'] = f"{callback.view_class.__module__}.{callback.view_class.__name__}"
-                        url_info['methods'] = [m for m in ['get', 'post', 'put', 'patch', 'delete'] 
-                                              if hasattr(callback.view_class, m)]
-                    else:
-                        url_info['view'] = str(callback)
-                        
-                auth_urls.append(url_info)
+            if hasattr(pattern, 'pattern'):
+                patterns.append(str(pattern.pattern))
         
         return JsonResponse({
-            'auth_endpoints': auth_urls,
-            'total_patterns': len(resolver.url_patterns),
-            'settings_module': request.META.get('DJANGO_SETTINGS_MODULE', 'unknown')
+            "total_patterns": len(patterns),
+            "auth_patterns": [p for p in patterns if 'auth' in p],
+            "all_patterns": patterns[:50]  # 처음 50개만
         })
 
-
-@method_decorator(csrf_exempt, name='dispatch')
 class AuthTestView(View):
-    """인증 엔드포인트 테스트용 뷰"""
-    
+    """인증 테스트 엔드포인트"""
     def get(self, request):
-        """GET 요청 처리"""
         return JsonResponse({
-            'message': 'Auth test endpoint is working',
-            'method': 'GET',
-            'path': request.path
+            "message": "Auth test endpoint is working",
+            "method": "GET"
         })
     
     def post(self, request):
-        """POST 요청 처리"""
         try:
             data = json.loads(request.body) if request.body else {}
         except:
             data = {}
-            
+        
         return JsonResponse({
-            'message': 'Auth test endpoint is working',
-            'method': 'POST',
-            'path': request.path,
-            'received_data': data
+            "message": "Auth test endpoint received POST",
+            "received_data": data,
+            "headers": {
+                "Content-Type": request.headers.get("Content-Type"),
+                "Authorization": request.headers.get("Authorization", "Not provided")
+            }
         })
-
 
 def auth_endpoint_status(request):
     """인증 엔드포인트 상태 확인"""
@@ -80,48 +55,38 @@ def auth_endpoint_status(request):
         'auth_login': '/api/auth/login/',
         'auth_signup': '/api/auth/signup/',
         'auth_refresh': '/api/auth/refresh/',
-        'auth_check_email': '/api/auth/check-email/',
-        'auth_check_nickname': '/api/auth/check-nickname/',
         'auth_me': '/api/auth/me/',
     }
     
     status = {}
-    for name, expected_url in endpoints.items():
+    for name, path in endpoints.items():
         try:
-            actual_url = reverse(name)
+            url = reverse(name)
             status[name] = {
-                'expected': expected_url,
-                'actual': actual_url,
-                'match': expected_url == actual_url,
-                'status': 'OK' if expected_url == actual_url else 'MISMATCH'
+                "path": path,
+                "reverse_url": url,
+                "status": "registered"
             }
         except NoReverseMatch:
             status[name] = {
-                'expected': expected_url,
-                'actual': None,
-                'match': False,
-                'status': 'NOT_FOUND'
+                "path": path,
+                "status": "not_found"
             }
     
-    # View 클래스 임포트 확인
-    import_status = {}
+    # 현재 사용 중인 뷰 정보
     try:
-        from users.views_signup_safe import SafeSignUp, SafeSignIn
-        import_status['SafeSignUp'] = 'OK'
-        import_status['SafeSignIn'] = 'OK'
-    except ImportError as e:
-        import_status['SafeSignUp'] = f'FAILED: {e}'
-        import_status['SafeSignIn'] = f'FAILED: {e}'
-    
-    try:
-        from users.views_auth_fixed import ImprovedSignIn
-        import_status['ImprovedSignIn'] = 'OK'
-    except ImportError as e:
-        import_status['ImprovedSignIn'] = f'FAILED: {e}'
+        from config.auth_fallback import get_auth_views, _is_railway_env
+        auth_views = get_auth_views()
+        view_info = {
+            "is_railway": _is_railway_env(),
+            "login_view": auth_views['login'].__name__,
+            "signup_view": auth_views['signup'].__name__,
+        }
+    except:
+        view_info = {"error": "Could not load auth views"}
     
     return JsonResponse({
-        'endpoints': status,
-        'imports': import_status,
-        'host': request.get_host(),
-        'is_secure': request.is_secure()
+        "endpoints": status,
+        "view_info": view_info,
+        "message": "Use these endpoints for authentication"
     })

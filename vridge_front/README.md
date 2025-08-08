@@ -81,4 +81,4 @@ Vercel 대시보드에서 다음 환경 변수 설정 필요:
 
 ## 라이선스
 
-Private
+Private# GitHub Actions 트리거
